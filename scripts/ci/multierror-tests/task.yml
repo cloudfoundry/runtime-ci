@@ -4,12 +4,12 @@ platform: linux
 image: docker:///golang#1.5
 
 inputs:
-  - name: mega-ci
-  - name: multierror
-    path: gopath/src/github.com/cloudfoundry/multierror
+- name: runtime-ci
+- name: multierror
+  path: gopath/src/github.com/cloudfoundry/multierror
 
 run:
-  path: mega-ci/scripts/ci/multierror-tests/task
+  path: runtime-ci/scripts/ci/multierror-tests/task
 
 params:
   MULTIERROR_DIR: gopath/src/github.com/cloudfoundry/multierror

@@ -2,12 +2,13 @@ groups:
 - name: multierror
   jobs:
   - test-multierror
+
 resources:
-- name: mega-ci
+- name: runtime-ci
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/mega-ci.git
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 - name: multierror-master
   type: git
   source:
@@ -21,6 +22,6 @@ jobs:
     - get: multierror
       resource: multierror-master
       trigger: true
-    - get: mega-ci
+    - get: runtime-ci
   - task: run-tests
-    file: mega-ci/scripts/ci/multierror-tests/task.yml
+    file: runtime-ci/scripts/ci/multierror-tests/task.yml

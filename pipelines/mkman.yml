@@ -6,11 +6,11 @@ groups:
   - patch
 
 resources:
-- name: mega-ci
+- name: runtime-ci
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/mega-ci.git
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 - name: mkman-develop
   type: git
   source:
@@ -46,7 +46,7 @@ jobs:
   public: true
   plan:
   - aggregate:
-    - get: mega-ci
+    - get: runtime-ci
     - get: cf-release
     - get: spiff
       params:
@@ -55,7 +55,7 @@ jobs:
       resource: mkman-develop
       trigger: true
   - task: run-tests
-    file: mega-ci/scripts/ci/mkman-tests/task.yml
+    file: runtime-ci/scripts/ci/mkman-tests/task.yml
 
 - name: shipit
   public: true
