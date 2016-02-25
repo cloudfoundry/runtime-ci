@@ -1,0 +1,1117 @@
+groups:
+- name: cf-release
+  jobs:
+  - cf-release-unit-tests
+  - create-release
+  - deploy-and-test-tabasco
+  - deploy-and-test-openstack
+  - deploy-and-test-vsphere
+  - deploy-and-test-bosh-lite
+  - deploy-and-test-minimal
+  - deploy-and-test-a1
+  - rc
+- name: bosh
+  jobs:
+  - clean-all-the-boshes
+- name: pipeline-image
+  jobs:
+  - build-pipeline-image
+- name: smokes
+  jobs:
+  - tabasco-runtime-smokes
+  - tabasco-loggregator-smokes
+  - a1-runtime-smokes
+  - a1-loggregator-smokes
+- name: canaries
+  jobs:
+  - push-a1-canaries
+  - push-tabasco-canaries
+resources:
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
+
+- name: periodically
+  type: time
+  source:
+    interval: 10m
+
+- name: daily
+  type: time
+  source:
+    start: 23:00 -0700
+    stop: 23:30 -0700
+    interval: 24h
+
+- name: every-two-hours
+  type: time
+  source:
+    interval: 2h
+
+- name: version
+  type: semver
+  source:
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+    bucket: cf-release-versions
+    initial_version: 210.1.0
+    key: current-version
+    region_name: us-east-1
+
+- name: cf-release-tarball
+  type: s3
+  source:
+    bucket: cf-runtime-releases
+    regexp: cf-(\d+\.\d+\.\d+)-.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: tabasco-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: tabasco-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: openstack-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: openstack-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: vsphere-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: vsphere-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: bosh-lite-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: bosh-lite-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: a1-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: a1-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: smoke-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-smoke-tests.git
+
+- name: cf-release-develop
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-release.git
+
+- name: cf-release-runtime-deployed
+  type: git
+  source:
+    branch: runtime-deployed
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cf-release-runtime-passed
+  type: git
+  source:
+    branch: runtime-passed
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cf-release-release-candidate
+  type: git
+  source:
+    branch: release-candidate
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cf-release-acceptance-deployed
+  type: git
+  source:
+    branch: acceptance-deployed
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cf-release-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-release
+
+- name: deployments-runtime
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
+- name: pipeline-image
+  type: docker-image
+  source:
+    repository: cloudfoundry/runtime-ci
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}} 
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: pipeline-image-docker-file
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-release.git
+    paths:
+     - pipeline-image
+
+- name: bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-lite.git
+
+- name: runtime-credentials
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/runtime-credentials.git
+
+- name: bosh-lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+
+- name: openstack-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+
+- name: vsphere-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+
+- name: openstack-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.runtime-bb-1.cf-app.com:25555
+    username: {{openstack_bosh_username}}
+    password: {{openstack_bosh_password}}
+    deployment: cf-runtime-bb-1
+    ignore_ssl: true
+
+- name: vsphere-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.cat.wild.cf-app.com:25555
+    username: {{vsphere_bosh_username}}
+    password: {{vsphere_bosh_password}}
+    deployment: cf-cat
+    ignore_ssl: true
+
+- name: tabasco-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.tabasco.cf-app.com:25555
+    username: {{tabasco_bosh_username}}
+    password: {{tabasco_bosh_password}}
+    deployment: cf-tabasco
+    ignore_ssl: true
+
+- name: a1-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.a1.cf-app.com:25555
+    username: {{a1_bosh_username}}
+    password: {{a1_bosh_password}}
+    deployment: cf-a1
+    ignore_ssl: true
+
+- name: minimal-deployment
+  type: bosh-deployment
+  source:
+    target: https://54.165.111.247:25555
+    username: {{minimal_bosh_username}}
+    password: {{minimal_bosh_password}}
+    deployment: cf
+    ignore_ssl: true
+
+- name: cf-canaries
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/pivotal-cf-experimental/cf_canaries.git
+
+- name: deliver-capi-stories
+  type: tracker
+  source:
+    token: {{capi_tracker_token}}
+    project_id: "966314"
+    tracker_url: https://www.pivotaltracker.com
+
+jobs:
+- name: cf-release-unit-tests
+  plan:
+  - timeout: &timeout 4h
+    do:
+    - aggregate:
+      - get: cf-release-develop
+        trigger: true
+      - get: deployments-runtime
+    - aggregate:
+      - task: run-cf-release-unit-tests
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_cf_release_unit_tests.yml
+        config:
+          params:
+            CF_RELEASE_DIR: 'cf-release-develop'
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "cf-release unit tests failed"
+
+- name: create-release
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-develop
+        passed: [cf-release-unit-tests]
+        trigger: true
+      - get: deployments-runtime
+      - get: version
+        params:
+          bump: minor
+    - put: version
+      params:
+        file: version/number
+    - aggregate:
+      - task: create-release-tarball
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/create_release.yml
+        config:
+          params:
+            CF_RELEASE_DIR: 'cf-release-develop'
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "Could not create release tarball"
+    - put: cf-release-tarball
+      params:
+        from: cf-release-out/cf-(.*).tgz
+
+- name: clean-all-the-boshes
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: deployments-runtime
+      - get: daily
+        trigger: true
+    - aggregate:
+      - task: cleanup-runtime-ci
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        config:
+          params:
+            BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
+            BOSH_USER: {{runtime_ci_username}}
+            BOSH_PASSWORD: {{runtime_ci_password}}
+      - task: cleanup-tabasco
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        config:
+          params: &bosh-target-tabasco
+            BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
+            BOSH_USER: {{tabasco_bosh_username}}
+            BOSH_PASSWORD: {{tabasco_bosh_password}}
+      - task: cleanup-vsphere
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        tags: [vsphere]
+        config:
+          params: &bosh-target-cat
+            BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
+            BOSH_USER: {{vsphere_bosh_username}}
+            BOSH_PASSWORD: {{vsphere_bosh_password}}
+      - task: cleanup-openstack
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        config:
+          params: &bosh-target-runtime-bb-1
+            BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
+            BOSH_USER: {{openstack_bosh_username}}
+            BOSH_PASSWORD: {{openstack_bosh_password}}
+      - task: cleanup-minimal
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        config:
+          params:
+            BOSH_DIRECTOR: https://54.165.111.247:25555
+            BOSH_USER: {{minimal_bosh_username}}
+            BOSH_PASSWORD: {{minimal_bosh_password}} 
+      - task: cleanup-a1
+        privileged: true
+        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        config:
+          params: &bosh-target-a1
+            BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
+            BOSH_USER: {{a1_bosh_username}}
+            BOSH_PASSWORD: {{a1_bosh_password}}
+
+- name: deploy-and-test-tabasco
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [create-release]
+        trigger: true
+      - get: cf-release
+        resource: cf-release-develop
+        passed: [create-release]
+      - get: deployments-runtime
+      - get: aws-stemcell
+      - get: version
+        passed: [create-release]
+    - task: create-manifest
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      config:
+        params:
+          INFRASTRUCTURE: aws
+          ENVIRONMENT: tabasco
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "Could not create cf-release manifest"
+    - task: emit-datadog-deploy-start
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      config:
+        params:
+          TITLE: start_deploy
+          TEXT: start_deploy
+          PRIORITY: normal
+          AWS_ENV: tabasco
+          DATADOG_API_KEY: {{datadog_api_key}}
+    - put: tabasco-deployment
+      params:
+        manifest: manifest/deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "Could not deploy cf-release"
+      ensure:
+        do:
+        - task: emit-datadog-deploy-end
+          privileged: true
+          file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+          config:
+            params:
+              TITLE: end_deploy
+              TEXT: end_deploy
+              PRIORITY: normal
+              AWS_ENV: tabasco
+              DATADOG_API_KEY: {{datadog_api_key}}
+    - put: cf-release-runtime-deployed
+      params:
+        repository: cf-release
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "Could not push to cf-release"
+    - task: smoke-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-tabasco
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand smoke_tests --keep-alive'
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "smoke tests failed"
+    - task: acceptance-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-tabasco
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+      on_failure:
+        task: cannot-bump
+        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        config:
+          params:
+            <<: *canibump-params
+            REASON: "acceptance tests failed"
+      ensure:
+        put: tabasco-acceptance-tests-logs
+        params:
+          from: bosh-command-out/acceptance_tests(.*).tgz
+    - put: cf-release-runtime-passed
+      params:
+        repository: cf-release
+    - task: can-bump
+      file: deployments-runtime/runtime-ci/scripts/ci/can_bump.yml
+      config:
+        params: &canibump-params
+          URL: canibump.cfapps.io
+          TOKEN: {{canibump_token}}
+
+- name: deploy-and-test-vsphere
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [deploy-and-test-tabasco]
+        tags: [vsphere]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-tabasco]
+        trigger: true
+        tags: [vsphere]
+      - get: deployments-runtime
+        tags: [vsphere]
+      - get: vsphere-stemcell
+        tags: [vsphere]
+      - get: version
+        passed: [deploy-and-test-tabasco]
+        tags: [vsphere]
+    - task: create-manifest
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      tags: [vsphere]
+      config:
+        params:
+          INFRASTRUCTURE: vsphere
+          ENVIRONMENT: cat
+    - task: delete-vsphere-deployment
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      tags: [vsphere]
+      config:
+        params:
+          <<: *bosh-target-cat
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'delete deployment cf-cat'
+    - put: vsphere-deployment
+      tags: [vsphere]
+      params:
+        manifest: manifest/deployment.yml
+        stemcells: [vsphere-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+    - task: smoke-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      tags: [vsphere]
+      config:
+        params:
+          <<: *bosh-target-cat
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand smoke_tests --keep-alive'
+    - task: acceptance-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      tags: [vsphere]
+      config:
+        params:
+          <<: *bosh-target-cat
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+      ensure:
+        put: vsphere-acceptance-tests-logs
+        tags: [vsphere]
+        params:
+          from: bosh-command-out/acceptance_tests(.*).tgz
+
+- name: deploy-and-test-openstack
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [deploy-and-test-tabasco]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-tabasco]
+        trigger: true
+      - get: deployments-runtime
+      - get: openstack-stemcell
+      - get: version
+        passed: [deploy-and-test-tabasco]
+    - task: create-manifest
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      config:
+        params:
+          INFRASTRUCTURE: openstack
+          ENVIRONMENT: runtime-bb-1
+    - put: openstack-deployment
+      params:
+        manifest: manifest/deployment.yml
+        stemcells: [openstack-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+    - task: smoke-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-runtime-bb-1
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand smoke_tests --keep-alive'
+    - task: acceptance-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-runtime-bb-1
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+      ensure:
+        put: openstack-acceptance-tests-logs
+        params:
+          from: bosh-command-out/acceptance_tests(.*).tgz
+
+- name: deploy-and-test-bosh-lite
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [deploy-and-test-tabasco]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-tabasco]
+        trigger: true
+      - get: bosh-lite
+      - get: deployments-runtime
+      - get: version
+        passed: [deploy-and-test-tabasco]
+      - get: bosh-lite-stemcell
+    - task: deprovision-bosh-lite
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/deprovision_bosh_lite.yml
+      config:
+        params:
+          ENVIRONMENT: runtime-ci
+    - task: provision-bosh-lite
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite.yml
+      config:
+        params:
+          ENVIRONMENT: runtime-ci
+    - task: deploy-and-test-cf
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/deploy_cf_to_bosh_lite.yml
+      ensure:
+        put: bosh-lite-acceptance-tests-logs
+        params:
+          from: bosh-lite-output-dir/acceptance_tests(.*).tgz
+
+- name: deploy-and-test-minimal
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: aws-stemcell
+      - get: cf-release-tarball
+        passed: [deploy-and-test-tabasco]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-tabasco]
+        trigger: true
+        params:
+          submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
+      - get: deployments-runtime
+      - get: version
+        passed: [deploy-and-test-tabasco]
+    - task: create-manifest
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/create_minimal_cf_release_manifest.yml
+    - put: minimal-deployment
+      params:
+        manifest: manifest/deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+    - task: run-acceptance-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_acceptance_tests.yml
+      config:
+        params:
+          ENVIRONMENT: minimal-aws
+          SKIPS: NO_DEA_SUPPORT
+          NODES: 2
+
+- name: deploy-and-test-a1
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [deploy-and-test-tabasco]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-tabasco]
+        trigger: true
+      - get: deployments-runtime
+      - get: aws-stemcell
+      - get: version
+        passed: [deploy-and-test-tabasco]
+    - task: create-manifest
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      config:
+        params:
+          INFRASTRUCTURE: aws
+          ENVIRONMENT: a1
+    - task: emit-datadog-deploy-start
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      config:
+        params:
+          TITLE: start_deploy
+          TEXT: start_deploy
+          PRIORITY: normal
+          AWS_ENV: a1
+          DATADOG_API_KEY: {{datadog_api_key}}
+    - put: a1-deployment
+      params:
+        manifest: manifest/deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+    - task: emit-datadog-deploy-end
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      config:
+        params:
+          TITLE: end_deploy
+          TEXT: end_deploy
+          PRIORITY: normal
+          AWS_ENV: a1
+          DATADOG_API_KEY: {{datadog_api_key}}
+    - put: cf-release-acceptance-deployed
+      params:
+        repository: cf-release
+    - task: smoke-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-a1
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand smoke_tests --keep-alive'
+    - task: acceptance-tests
+      privileged: true
+      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-a1
+          DEPLOYMENT_YML: manifest/deployment.yml
+          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+      ensure:
+        put: a1-acceptance-tests-logs
+        params:
+          from: bosh-command-out/acceptance_tests(.*).tgz
+    - put: deliver-capi-stories
+      params:
+        repos:
+        - cf-release/src/cloud_controller_ng
+
+- name: rc
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: deployments-runtime
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
+        trigger: true
+        params:
+          submodules: none
+      - get: version
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
+    - put: cf-release-release-candidate
+      params:
+        repository: cf-release
+
+- name: build-pipeline-image
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: pipeline-image-docker-file
+        trigger: true
+        params:
+          submodules: none
+    - put: pipeline-image
+      params:
+        build: pipeline-image-docker-file/pipeline-image
+        push: true
+
+- name: tabasco-runtime-smokes
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: periodically
+        trigger: true
+      - get: smoke-tests
+      - get: deployments-runtime
+    - aggregate:
+      - task: run1
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params: &tabasco-smoke-params
+            SUITE_NAME: RUNTIME-SMOKE
+            API: https://api.tabasco.cf-app.com
+            APPS_DOMAIN: tabasco-app.cf-app.com
+            SKIP_SSL_VALIDATION: true
+            CF_USER: {{tabasco_runtime_smokes_username}}
+            CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+            ORG: runtime-smoke-tests
+            SPACE: concourse-runtime-smoke-tests-1
+            USE_EXISTING_ORG: true
+            ARGS: '--focus=Runtime:'
+      - task: run2
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *tabasco-smoke-params
+            SPACE: concourse-runtime-smoke-tests-2
+      - task: run3
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *tabasco-smoke-params
+            SPACE: concourse-runtime-smoke-tests-3
+      - task: run4
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *tabasco-smoke-params
+            SPACE: concourse-runtime-smoke-tests-4
+      on_success:
+        task: emit_datadog_success
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params: &tabasco-smoke-datadog-params
+            METRIC: smoke.status
+            TAGS: '"deployment:cf-tabasco","loggregator_enabled:0"'
+            DATADOG_API_KEY: {{datadog_api_key}}
+            VALUE: 1
+      on_failure:
+        task: emit_datadog_failure
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params:
+            <<: *tabasco-smoke-datadog-params
+            VALUE: 0
+
+- name: tabasco-loggregator-smokes
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: periodically
+        trigger: true
+      - get: smoke-tests
+      - get: deployments-runtime
+    - task: run1
+      file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+      config:
+        params:
+          SUITE_NAME: RUNTIME-SMOKE
+          API: https://api.tabasco.cf-app.com
+          APPS_DOMAIN: tabasco-app.cf-app.com
+          SKIP_SSL_VALIDATION: true
+          CF_USER: {{tabasco_runtime_smokes_username}}
+          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+          ORG: runtime-smoke-tests
+          SPACE: concourse-loggregator-smoke-tests
+          USE_EXISTING_ORG: true
+          ARGS: '--focus=Loggregator:'
+      on_success:
+        task: emit_datadog_success
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params: &tabasco-smoke-datadog-params
+            METRIC: smoke.status
+            TAGS: '"deployment:cf-tabasco","loggregator_enabled:1"'
+            DATADOG_API_KEY: {{datadog_api_key}}
+            VALUE: 1
+      on_failure:
+        task: emit_datadog_failure
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params:
+            <<: *tabasco-smoke-datadog-params
+            VALUE: 0
+
+- name: a1-runtime-smokes
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: periodically
+        trigger: true
+      - get: smoke-tests
+      - get: deployments-runtime
+    - aggregate:
+      - task: run1
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params: &a1-smoke-params
+            SUITE_NAME: RUNTIME-SMOKE
+            API: https://api.a1.cf-app.com
+            APPS_DOMAIN: a1-app.cf-app.com
+            SKIP_SSL_VALIDATION: true
+            CF_USER: {{tabasco_runtime_smokes_username}} 
+            CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+            ORG: runtime-smoke-tests
+            SPACE: concourse-runtime-smoke-tests-1
+            USE_EXISTING_ORG: true
+            ARGS: '--focus=Runtime:'
+      - task: run2
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-2
+      - task: run3
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-3
+      - task: run4
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-4
+      - task: run5
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-5
+      - task: run6
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-6
+      - task: run7
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-7
+      - task: run8
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-8
+      - task: run9
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-9
+      - task: run10
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-10
+      - task: run11
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests11
+      - task: run12
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-12
+      - task: run13
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-13
+      - task: run14
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-14
+      - task: run15
+        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        config:
+          params:
+            <<: *a1-smoke-params
+            SPACE: concourse-runtime-smoke-tests-15
+      on_success:
+        task: emit_datadog_success
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params: &a1-smoke-datadog-params
+            METRIC: smoke.status
+            TAGS: '"deployment:cf-a1","loggregator_enabled:0"'
+            DATADOG_API_KEY: {{datadog_api_key}}
+            VALUE: 1
+      on_failure:
+        task: emit_datadog_failure
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params:
+            <<: *a1-smoke-datadog-params
+            VALUE: 0
+
+
+- name: a1-loggregator-smokes
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: periodically
+        trigger: true
+      - get: smoke-tests
+      - get: deployments-runtime
+    - task: run1
+      file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+      config:
+        params:
+          SUITE_NAME: RUNTIME-SMOKE
+          API: https://api.a1.cf-app.com
+          APPS_DOMAIN: a1-app.cf-app.com
+          SKIP_SSL_VALIDATION: true
+          CF_USER: {{tabasco_runtime_smokes_username}}
+          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+          ORG: runtime-smoke-tests
+          SPACE: concourse-loggregator-smoke-tests
+          USE_EXISTING_ORG: true
+          ARGS: '--focus=Loggregator:'
+      on_success:
+        task: emit_datadog_success
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params: &a1-smoke-datadog-params
+            METRIC: smoke.status
+            TAGS: '"deployment:cf-a1","loggregator_enabled:1"'
+            DATADOG_API_KEY: {{datadog_api_key}}
+            VALUE: 1
+      on_failure:
+        task: emit_datadog_failure
+        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        config:
+          params:
+            <<: *a1-smoke-datadog-params
+            VALUE: 0
+
+- name: push-a1-canaries
+  public: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: deployments-runtime
+      - get: cf-canaries
+    - task: push-canaries
+      file: deployments-runtime/runtime-ci/scripts/ci/deploy-canaries.yml
+      config:
+        params:
+          CF_APPS_DOMAIN: a1-canaries.cf-app.com
+          CF_API_ENDPOINT: https://api.a1.cf-app.com
+          CF_API_ADMIN_USER: {{a1_canaries_admin_username}}
+          CF_API_ADMIN_PASSWORD: {{a1_canaries_admin_password}}
+          CF_API_CANARY_USER: {{a1_canaries_username}}
+          CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
+
+- name: push-tabasco-canaries
+  public: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: deployments-runtime
+      - get: cf-canaries
+    - task: push-canaries
+      file: deployments-runtime/runtime-ci/scripts/ci/deploy-canaries.yml
+      config:
+        params:
+          CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
+          CF_API_ENDPOINT: https://api.tabasco.cf-app.com
+          CF_API_ADMIN_USER: {{tabasco_canaries_admin_username}}
+          CF_API_ADMIN_PASSWORD: {{tabasco_canaries_admin_password}}
+          CF_API_CANARY_USER: {{tabasco_canaries_username}}
+          CF_API_CANARY_PASSWORD: {{tabasco_canaries_password}}
