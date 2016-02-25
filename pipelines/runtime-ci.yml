@@ -2,6 +2,7 @@ groups:
 - name: runtime-ci
   jobs:
   - test-runtime-ci
+  - all-jobs-public
 
 resources:
 - name: runtime-ci
