@@ -4,11 +4,11 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: cf-canaries
-  - name: mega-ci
+- name: cf-canaries
+- name: runtime-ci
 
 run:
-  path: mega-ci/scripts/ci/push-canaries/task
+  path: runtime-ci/scripts/ci/push-canaries/task
 
 params:
   CF_APPS_DOMAIN:

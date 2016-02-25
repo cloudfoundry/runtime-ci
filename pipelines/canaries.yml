@@ -4,11 +4,11 @@ groups:
     - push-canaries
 
 resources:
-- name: mega-ci
+- name: runtime-ci
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/mega-ci.git
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 - name: cf-canaries
   type: git
   source:
@@ -19,10 +19,10 @@ jobs:
   public: true
   plan:
   - aggregate:
-    - get: mega-ci
+    - get: runtime-ci
     - get: cf-canaries
   - task: push-canaries
-    file: mega-ci/scripts/ci/push-canaries/task.yml
+    file: runtime-ci/scripts/ci/push-canaries/task.yml
     config:
       params:
         CF_APPS_DOMAIN: {{cf_apps_domain}}
