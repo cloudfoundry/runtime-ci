@@ -1,0 +1,11 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/mega-ci
+
+inputs:
+- name: runtime-ci
+  path: gopath/src/github.com/cloudfoundry/runtime-ci
+
+run:
+  path: gopath/src/github.com/cloudfoundry/runtime-ci/scripts/ci/runtime-ci-tests/task

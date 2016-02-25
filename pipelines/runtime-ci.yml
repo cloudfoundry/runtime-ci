@@ -1,0 +1,21 @@
+groups:
+- name: runtime-ci
+  jobs:
+  - test-runtime-ci
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
+jobs:
+- name: test-runtime-ci
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+      trigger: true
+  - task: run-tests
+    file: runtime-ci/scripts/ci/runtime-ci-tests/task.yml
