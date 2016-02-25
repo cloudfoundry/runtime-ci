@@ -11,6 +11,15 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 jobs:
+- name: all-jobs-public
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+      trigger: true
+  - task: validate-all-jobs-public
+    file: runtime-ci/scripts/ci/validate-all-jobs-public/task.yml
+
 - name: test-runtime-ci
   public: true
   plan:

@@ -1,0 +1,10 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/validate-all-jobs-public/task
