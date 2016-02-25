@@ -2,8 +2,6 @@ groups:
 - name: mkman
   jobs:
   - test-mkman
-  - shipit
-  - patch
 
 resources:
 - name: runtime-ci
@@ -16,20 +14,6 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/mkman.git
-- name: mkman-master
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/mkman.git
-    private_key: {{mkman-private-key}}
-- name: mkman-version
-  type: semver
-  source:
-    driver: git
-    file: version
-    branch: master
-    uri: git@github.com:cloudfoundry/mkman-version.git
-    private_key: {{mkman-version-private-key}}
 - name: cf-release
   type: git
   source:
@@ -56,24 +40,3 @@ jobs:
       trigger: true
   - task: run-tests
     file: runtime-ci/scripts/ci/mkman-tests/task.yml
-
-- name: shipit
-  public: true
-  plan:
-  - aggregate:
-    - get: mkman
-      resource: mkman-develop
-      passed: [test-mkman]
-    - get: mkman-version
-  - put: mkman-master
-    params:
-      repository: mkman
-      tag: mkman-version/number
-      tag_prefix: v
-
-- name: patch
-  public: true
-  serial_groups: [version]
-  plan:
-  - put: mkman-version
-    params: {bump: patch}
