@@ -155,7 +155,7 @@ jobs:
       passed: [deploy-cf]
       trigger: true
   - task: smoke-tests
-    file: runtime-ci/scripts/ci/run-bosh-command.yml
+    file: runtime-ci/scripts/ci/run-bosh-command/task.yml
     config:
       params:
         COMMAND: 'run errand smoke_tests'
