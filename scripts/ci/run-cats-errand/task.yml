@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: private-credentials
+- name: runtime-ci
+
+outputs:
+  - name: logs-dir
+
+run:
+  path: runtime-ci/scripts/ci/run-cats-errand/task
+
+params:
+  DEPLOYMENT_NAME:
+  LOGS_DIR: logs-dir
+  ENVIRONMENT:

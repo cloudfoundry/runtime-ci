@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: cf-deployment
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/unit-tests-cf-deployment/task
+
+params:
+  CF_DEPLOYMENT_TRACE:

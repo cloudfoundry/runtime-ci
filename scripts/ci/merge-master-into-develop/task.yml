@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+- name: release-repo
+- name: release-repo-master
+
+outputs:
+- name: final-release-repo
+
+run:
+  path: runtime-ci/scripts/ci/merge-master-into-develop/task
+
+params:
+  MASTER_BRANCH:
+  MERGED_REPO: final-release-repo

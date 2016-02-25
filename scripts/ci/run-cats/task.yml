@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+- name: cf-release
+
+run:
+  path: runtime-ci/scripts/ci/run-cats/task
+
+params:
+  CF_API:
+  CF_ADMIN_USER: admin
+  CF_ADMIN_PASSWORD:
+  CF_APPS_DOMAIN:
+  SKIP_SSL_VALIDATION: false
+  USE_HTTP: false
+  NODES: 4
+  SUITES:
+  ADDITIONAL_ARGS:
