@@ -1,0 +1,30 @@
+#!/bin/bash
+set -ex
+
+# Cannot set -u before sourcing .bashrc because of all
+# the unbound variables in things beyond our control.
+set +u
+source ~/.bashrc
+set -u
+
+root_dir="${PWD}"
+
+# Inputs
+ENV_DIR="${root_dir}/${ENV_DIR:?"\$ENV_DIR not set"}"
+
+source "${ENV_DIR}/aws_environment"
+
+aws ec2 describe-instances --filters "Name=tag:Name,Values=${BOSH_LITE_NAME}" \
+  --output text --query 'Reservations[*].Instances[*].InstanceId' | \
+  tr '\n' ' ' > instances-to-delete
+
+if [ -s instances-to-delete ]
+then
+  echo "Deleting instances:"
+  cat instances-to-delete
+
+  aws ec2 terminate-instances --instance-ids $(cat instances-to-delete)
+  sleep 90
+else
+  echo "No instances to delete"
+fi

@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: environment-creds
+- name: deployments-runtime
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/deprovision_bosh_lite/task
+
+params:
+  ENV_DIR: environment-creds
+  BOSH_LITE_NAME: bosh-lite-ci

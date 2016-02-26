@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: environment-creds
+- name: deployments-runtime
+- name: bosh-lite
+
+outputs:
+- name: bosh-lite-ip
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite/task
+
+params:
+  ENV_DIR: environment-creds
+  BOSH_LITE_NAME: bosh-lite-ci
+  OUTPUT_DIR: bosh-lite-ip

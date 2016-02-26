@@ -1,0 +1,121 @@
+#!/bin/bash
+
+set -xe
+
+# Cannot set -u before sourcing .bashrc because of all
+# the unbound variables in things beyond our control.
+set +u
+source ~/.bashrc
+set -u
+
+root_dir=${PWD}
+
+# Inputs
+BOSH_LITE_IP_DIR="${root_dir}/${BOSH_LITE_IP_DIR:?"\$BOSH_LITE_IP_DIR not set"}"
+BOSH_LITE_STEMCELL_DIR="${root_dir}/${BOSH_LITE_STEMCELL_DIR:?"\$BOSH_LITE_STEMCELL_DIR not set"}"
+CF_RELEASE_DIR="${root_dir}/${CF_RELEASE_DIR:?"\$CF_RELEASE_DIR not set"}"
+CF_RELEASE_TARBALL_DIR="${root_dir}/${CF_RELEASE_TARBALL_DIR:?"\$CF_RELEASE_TARBALL_DIR not set"}"
+DOMAIN="${root_dir}/${DOMAIN:?"\$DOMAIN not set"}"
+
+# Outputs
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
+
+configure() {
+  export BOSH_LITE_IP="$(cat "${BOSH_LITE_IP_DIR}/bosh-lite-ip")"
+}
+
+log_in_to_bosh_lite() {
+  set +e
+  n=0
+  while [ true ]
+  do
+    # The bosh director may not yet be available
+    bosh -n target "${BOSH_LITE_IP}" && break
+    n=$[$n+1]
+    if [ $n ge 5 ]
+    then
+      exit 1
+    fi
+    sleep 15
+  done
+  set -e
+  bosh login admin admin
+}
+
+upload_stemcell() {
+  bosh upload stemcell \
+    --skip-if-exists \
+    "${BOSH_LITE_STEMCELL_DIR}"/*.tgz
+}
+
+build_manifest() {
+  pushd "${CF_RELEASE_DIR}" > /dev/null
+
+  cat > "${root_dir}/overrides.yml" <<EOF
+properties:
+  domain: ${DOMAIN}
+  acceptance_tests:
+    nodes: 1
+    include_sso: true
+    include_operator: true
+    include_logging: true
+    include_security_groups: true
+    include_internet_dependent: true
+    include_services: true
+  cc:
+    security_group_definitions:
+      - name: load_balancer
+        rules:
+        - protocol: all
+          destination: ${BOSH_LITE_IP}
+jobs:
+  - name: acceptance_tests
+    instances: 1
+  - name: smoke_tests
+    instances: 1
+
+EOF
+
+  scripts/generate-bosh-lite-dev-manifest "${root_dir}/overrides.yml"
+
+  CF_RELEASE_MANIFEST="${CF_RELEASE_DIR}/bosh-lite/deployments/cf.yml"
+
+  popd > /dev/null
+}
+
+deploy_release() {
+  bosh -n upload release --skip-if-exists "${CF_RELEASE_TARBALL_DIR}"/*.tgz
+  bosh -n -d "${CF_RELEASE_MANIFEST}" deploy
+}
+
+run_smoke_tests() {
+  bosh \
+    -d "${CF_RELEASE_MANIFEST}" \
+    run errand \
+    smoke_tests --keep-alive
+}
+
+run_acceptance_tests() {
+  bosh \
+    -d "${CF_RELEASE_MANIFEST}" \
+    run errand \
+    acceptance_tests \
+    --download-logs \
+    --logs-dir "${OUTPUT_DIR}" \
+    --keep-alive
+}
+
+main() {
+  configure
+  log_in_to_bosh_lite
+  upload_stemcell
+  build_manifest
+  deploy_release
+  sleep_duration=120
+  echo "Sleeping for ${sleep_duration} seconds to allow buildpacks to warm up."
+  sleep "${sleep_duration}"
+  run_smoke_tests
+  run_acceptance_tests
+}
+
+main
