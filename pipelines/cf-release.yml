@@ -269,6 +269,13 @@ resources:
     project_id: "966314"
     tracker_url: https://www.pivotaltracker.com
 
+- name: runtime-ci-env
+  type: git
+  source:
+    branch: master
+    private_key: {{runtime-ci-env-deploy-key}}
+    uri: git@github.com:cloudfoundry/runtime-ci-env.git
+
 jobs:
 - name: cf-release-unit-tests
   plan:
@@ -629,6 +636,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: environment-creds
+        resource: runtime-ci-env
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
       - get: cf-release
@@ -642,19 +651,13 @@ jobs:
       - get: bosh-lite-stemcell
     - task: deprovision-bosh-lite
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/deprovision_bosh_lite.yml
-      config:
-        params:
-          ENVIRONMENT: runtime-ci
+      file: deployments-runtime/runtime-ci/scripts/ci/deprovision_bosh_lite/task.yml
     - task: provision-bosh-lite
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite.yml
-      config:
-        params:
-          ENVIRONMENT: runtime-ci
+      file: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite/task.yml
     - task: deploy-and-test-cf
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/deploy_cf_to_bosh_lite.yml
+      file: deployments-runtime/runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task.yml
       ensure:
         put: bosh-lite-acceptance-tests-logs
         params:
