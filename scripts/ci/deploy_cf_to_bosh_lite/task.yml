@@ -5,7 +5,7 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
 - name: cf-release-tarball
-- name: deployments-runtime
+- name: runtime-ci
 - name: cf-release
 - name: bosh-lite-ip
 - name: bosh-lite-stemcell
@@ -14,7 +14,7 @@ outputs:
 - name: bosh-lite-output-dir
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task
+  path: runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task
 
 params:
   BOSH_LITE_STEMCELL_DIR: bosh-lite-stemcell

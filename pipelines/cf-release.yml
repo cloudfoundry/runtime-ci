@@ -276,6 +276,12 @@ resources:
     private_key: {{runtime-ci-env-deploy-key}}
     uri: git@github.com:cloudfoundry/runtime-ci-env.git
 
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
 jobs:
 - name: cf-release-unit-tests
   plan:
@@ -645,19 +651,19 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: bosh-lite
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: version
         passed: [deploy-and-test-tabasco]
       - get: bosh-lite-stemcell
     - task: deprovision-bosh-lite
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/deprovision_bosh_lite/task.yml
+      file: runtime-ci/scripts/ci/deprovision_bosh_lite/task.yml
     - task: provision-bosh-lite
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite/task.yml
+      file: runtime-ci/scripts/ci/provision_bosh_lite/task.yml
     - task: deploy-and-test-cf
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task.yml
+      file: runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task.yml
       ensure:
         put: bosh-lite-acceptance-tests-logs
         params:

@@ -5,14 +5,14 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
 - name: environment-creds
-- name: deployments-runtime
+- name: runtime-ci
 - name: bosh-lite
 
 outputs:
 - name: bosh-lite-ip
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/provision_bosh_lite/task
+  path: runtime-ci/scripts/ci/provision_bosh_lite/task
 
 params:
   ENV_DIR: environment-creds
