@@ -303,7 +303,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: &canibump-url canibump.cfapps.io
+            TOKEN: {{canibump_token}}
             REASON: "cf-release unit tests failed"
 
 - name: create-release
@@ -333,7 +334,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "Could not create release tarball"
     - put: cf-release-tarball
       params:
@@ -426,7 +428,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "Could not create cf-release manifest"
     - task: emit-datadog-deploy-start
       privileged: true
@@ -449,7 +452,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "Could not deploy cf-release"
       ensure:
         do:
@@ -471,7 +475,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
@@ -486,7 +491,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
@@ -501,7 +507,8 @@ jobs:
         file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
-            <<: *canibump-params
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
             REASON: "acceptance tests failed"
       ensure:
         put: tabasco-acceptance-tests-logs
@@ -513,7 +520,7 @@ jobs:
     - task: can-bump
       file: deployments-runtime/runtime-ci/scripts/ci/can_bump.yml
       config:
-        params: &canibump-params
+        params:
           URL: canibump.cfapps.io
           TOKEN: {{canibump_token}}
 
