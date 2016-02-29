@@ -801,7 +801,6 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: runtime-ci
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
