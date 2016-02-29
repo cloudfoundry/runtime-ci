@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: deployments-runtime
+  - name: aws-stemcell
+
+outputs:
+  - name: manifest
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/create_minimal_cf_release_manifest
+
+params:
+  OUTPUT_DIR: manifest
+

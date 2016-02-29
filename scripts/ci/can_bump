@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+curl -X PUT "$URL/yes" -d "token=$TOKEN" -d "buildnumber=0"

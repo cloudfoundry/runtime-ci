@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+pushd $CF_RELEASE_DIR
+  git branch -D develop_release_test
+  git checkout develop_release_test
+  git merge --no-ff origin/master_release_test
+popd
+
+
+
+

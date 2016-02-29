@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+set -u
+
+root_dir="${PWD}"
+
+# Outputs
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
+
+bosh \
+  -n \
+  --color\
+  -t "${BOSH_DIRECTOR}" \
+  -d "${DEPLOYMENT_YML}" \
+  $COMMAND

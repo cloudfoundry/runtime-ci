@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e -x
+
+source ~/.bashrc
+
+smoke_tests_manifest="${PWD}/${SMOKE_TESTS_MANIFEST}"
+
+$(dirname $0)/bosh_setup
+
+bosh deployment ${smoke_tests_manifest}
+
+set +e
+bosh run errand diego_smoke_tests --download-logs --keep-alive
+errand_result=$?
+set -e
+
+original_name=$(ls diego_smoke_tests.0.*.tgz)
+new_name=$(echo $original_name | sed 's/\.0\./\.0.0.0./')
+mv $original_name $new_name
+exit $errand_result

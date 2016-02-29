@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: deployments-runtime
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/run_acceptance_tests
+
+params:
+  ENVIRONMENT:
+  NODES: 1
+  SKIPS:

@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+set -u
+
+export CONFIG=${PWD}/deployments-runtime/${ENVIRONMENT}/integration_config.json
+
+cd cf-release/src/github.com/cloudfoundry/cf-acceptance-tests
+
+bin/test \
+  -r \
+  -slowSpecThreshold=120 \
+  -nodes "${NODES}" \
+  -skipPackage="logging,helpers,operator,v3,routing,backend_compatibility" \
+  -skip="${SKIPS}"

@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: deployments-runtime
+  - name: runtime-credentials
+  - name: cf-release-tarball
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/create_final_release
+
+params:
+  TARBALL_DIR:
+  CF_RELEASE_DIR:

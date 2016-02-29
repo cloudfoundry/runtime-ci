@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+curl -X PUT "$URL/no" -d "token=$TOKEN" -d "reason=$REASON" -d "buildnumber=0"
+

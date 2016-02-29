@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: smoke-tests
+  - name: deployments-runtime
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/run_smoketests
+
+params:
+  SUITE_NAME:
+  API:
+  APPS_DOMAIN:
+  SKIP_SSL_VALIDATION:
+  CF_USER:
+  CF_PASSWORD:
+  ORG:
+  SPACE:
+  USE_EXISTING_ORG:
+  ARGS:

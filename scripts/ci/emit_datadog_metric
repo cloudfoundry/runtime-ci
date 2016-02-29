@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e -x -u
+
+currenttime=$(date +%s)
+curl -fail -vvv -X POST -H "Content-type: application/json" \
+-d "{ \"series\" :
+         [{\"metric\":\"$METRIC\",
+          \"points\":[[$currenttime, $VALUE]],
+          \"type\":\"gauge\",
+          \"tags\":[$TAGS]}
+        ]
+    }" \
+"https://app.datadoghq.com/api/v1/series?api_key=$DATADOG_API_KEY"

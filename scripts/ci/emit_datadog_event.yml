@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: deployments-runtime
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event
+
+params:
+  TITLE:
+  TEXT:
+  PRIORITY:
+  AWS_ENV:
+  DATADOG_API_KEY:

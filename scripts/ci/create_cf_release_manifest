@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e -x
+
+root_dir="${PWD}"
+
+source ~/.bashrc
+
+# Outputs
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
+
+set -u
+
+cd cf-release
+
+./scripts/generate_deployment_manifest \
+  "${INFRASTRUCTURE}" \
+  "../deployments-runtime/${ENVIRONMENT}/stubs/cf/"*.yml > "${OUTPUT_DIR}/deployment.yml"
+

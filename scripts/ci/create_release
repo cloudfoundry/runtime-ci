@@ -1,0 +1,63 @@
+#!/bin/bash
+set -ex
+
+source ~/.bashrc
+
+set -u
+
+root_dir="${PWD}"
+
+# Inputs
+CF_RELEASE_DIR="${root_dir}/${CF_RELEASE_DIR:?"\$CF_RELEASE_DIR not set"}"
+
+# Outputs
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
+
+VERSION="$(cat version/number)"
+
+cd "${CF_RELEASE_DIR}"
+COMMIT_SHA=$(git rev-parse HEAD)
+
+CF_RELEASE_OUT="../create-release.out"
+for i in {1..5}; do
+  echo "Syncing blobs, attempt $i"
+  bosh -n --parallel 10 sync blobs && break
+done
+
+./scripts/unused_blobs
+
+for i in {1..5}; do
+  echo "Creating release, attempt $i"
+  bosh -n create release --with-tarball --version "${VERSION}" | tee -a "${CF_RELEASE_OUT}"
+  EXIT_STATUS=${PIPESTATUS[0]}
+  if [ "$EXIT_STATUS" = "0" ]; then
+    break
+  fi
+done
+
+if [ ! "$EXIT_STATUS" = "0" ]; then
+  echo "Failed to Create CF Release"
+  exit "${EXIT_STATUS}"
+fi
+
+VERSION=$(grep -a "Release version" "${CF_RELEASE_OUT}" | cut -d " " -f3)
+if [ "$VERSION" = "" ]; then
+  echo "No Release Version Found"
+  exit 1
+fi
+
+MANIFEST_YML=$(grep -a "Release manifest" $CF_RELEASE_OUT  | cut -d " " -f3)
+if [ "$MANIFEST_YML" = "" ]; then
+  echo "No Release Manifest Found"
+  exit 1
+fi
+
+TARBALL=$(grep -a "Release tarball" $CF_RELEASE_OUT | cut -d " " -f4)
+if [ "$TARBALL" = "" ]; then
+  echo "No Release Tarball Found"
+  exit 1
+fi
+
+mv "${MANIFEST_YML}" "${OUTPUT_DIR}/dev-manifest.yml"
+mv "${TARBALL}" "${OUTPUT_DIR}/cf-${VERSION}-${COMMIT_SHA}.tgz"
+mv "${CF_RELEASE_OUT}" "${OUTPUT_DIR}/"

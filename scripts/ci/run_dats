@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e -x
+
+source ~/.bashrc
+
+acceptance_tests_manifest=${PWD}/${ACCEPTANCE_TESTS_MANIFEST}
+
+$(dirname $0)/bosh_setup
+
+# Report which cf-release and diego-release SHAs were deployed together
+# for this run of the DATS
+bosh deployments
+bosh releases
+
+bosh deployment ${acceptance_tests_manifest}
+
+set +e
+bosh run errand diego_acceptance_tests --download-logs --keep-alive
+errand_result=$?
+set -e
+
+original_name=$(ls diego_acceptance_tests.0.*.tgz)
+new_name=$(echo $original_name | sed 's/\.0\./\.0.0.0./')
+mv $original_name $new_name
+exit $errand_result

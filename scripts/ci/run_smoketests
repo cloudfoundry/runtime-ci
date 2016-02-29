@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e -x -u
+
+echo "======CONFIG======"
+cat > config.json <<EOF
+{
+    "suite_name": "$SUITE_NAME",
+    "api": "$API",
+    "apps_domain": "$APPS_DOMAIN",
+    "skip_ssl_validation": $SKIP_SSL_VALIDATION,
+    "user": "$CF_USER",
+    "password": "$CF_PASSWORD",
+    "org": "$ORG",
+    "space": "$SPACE",
+    "use_existing_org": $USE_EXISTING_ORG
+}
+EOF
+export CONFIG=$PWD/config.json
+
+echo "======ENVIRONMENT======"
+printenv
+
+echo "======TEST======"
+cd smoke-tests
+
+set +e
+./bin/test -v -trace $ARGS
+EXITSTATUS=$?
+set -e
+
+echo "======TRACE======"
+cat smoke/results/CF-TRACE*
+
+exit $EXITSTATUS

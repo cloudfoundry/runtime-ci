@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e -x
+
+source ~/.bashrc
+
+root_dir="${PWD}"
+
+# Outputs
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"OUTPUT_DIR must be provided"}"
+
+STEMCELL_VERSION="$(cat aws-stemcell/version)"
+echo "REPLACE_WITH_BOSH_STEMCELL_VERSION: '${STEMCELL_VERSION}'" >> deployments-runtime/minimal-aws/manifest_config.yml
+
+ruby "deployments-runtime/runtime-ci/scripts/ci/template_the_manifest.rb" "cf-release/example_manifests/minimal-aws.yml" "deployments-runtime/minimal-aws/manifest_config.yml" > ${OUTPUT_DIR}/deployment.yml

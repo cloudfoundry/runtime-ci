@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: deployments-runtime
+
+run:
+  path: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric
+
+params:
+  METRIC:
+  TAGS:
+  DATADOG_API_KEY:
+  VALUE:
