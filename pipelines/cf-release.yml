@@ -155,13 +155,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-release
 
-- name: deployments-runtime
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/deployments-runtime.git
-
 - name: pipeline-image
   type: docker-image
   source:
@@ -290,17 +283,17 @@ jobs:
     - aggregate:
       - get: cf-release-develop
         trigger: true
-      - get: deployments-runtime
+      - get: runtime-ci
     - aggregate:
       - task: run-cf-release-unit-tests
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_cf_release_unit_tests.yml
+        file: runtime-ci/scripts/ci/run_cf_release_unit_tests.yml
         config:
           params:
             CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: &canibump-url canibump.cfapps.io
@@ -315,7 +308,7 @@ jobs:
       - get: cf-release-develop
         passed: [cf-release-unit-tests]
         trigger: true
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: version
         params:
           bump: minor
@@ -325,13 +318,13 @@ jobs:
     - aggregate:
       - task: create-release-tarball
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/create_release.yml
+        file: runtime-ci/scripts/ci/create_release.yml
         config:
           params:
             CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -346,13 +339,13 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: daily
         trigger: true
     - aggregate:
       - task: cleanup-runtime-ci
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         config:
           params:
             BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
@@ -360,7 +353,7 @@ jobs:
             BOSH_PASSWORD: {{runtime_ci_password}}
       - task: cleanup-tabasco
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         config:
           params: &bosh-target-tabasco
             BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
@@ -368,7 +361,7 @@ jobs:
             BOSH_PASSWORD: {{tabasco_bosh_password}}
       - task: cleanup-vsphere
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         tags: [vsphere]
         config:
           params: &bosh-target-cat
@@ -377,7 +370,7 @@ jobs:
             BOSH_PASSWORD: {{vsphere_bosh_password}}
       - task: cleanup-openstack
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         config:
           params: &bosh-target-runtime-bb-1
             BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
@@ -385,7 +378,7 @@ jobs:
             BOSH_PASSWORD: {{openstack_bosh_password}}
       - task: cleanup-minimal
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         config:
           params:
             BOSH_DIRECTOR: https://54.165.111.247:25555
@@ -393,7 +386,7 @@ jobs:
             BOSH_PASSWORD: {{minimal_bosh_password}} 
       - task: cleanup-a1
         privileged: true
-        file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
         config:
           params: &bosh-target-a1
             BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
@@ -412,20 +405,20 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [create-release]
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: aws-stemcell
       - get: version
         passed: [create-release]
     - task: create-manifest
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
       config:
         params:
           INFRASTRUCTURE: aws
           ENVIRONMENT: tabasco
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -433,7 +426,7 @@ jobs:
             REASON: "Could not create cf-release manifest"
     - task: emit-datadog-deploy-start
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event.yml
       config:
         params:
           TITLE: start_deploy
@@ -449,7 +442,7 @@ jobs:
           - cf-release-tarball/*.tgz
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -459,7 +452,7 @@ jobs:
         do:
         - task: emit-datadog-deploy-end
           privileged: true
-          file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+          file: runtime-ci/scripts/ci/emit_datadog_event.yml
           config:
             params:
               TITLE: end_deploy
@@ -472,7 +465,7 @@ jobs:
         repository: cf-release
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -480,7 +473,7 @@ jobs:
             REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-tabasco
@@ -488,7 +481,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -496,7 +489,7 @@ jobs:
             REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-tabasco
@@ -504,7 +497,7 @@ jobs:
           COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
       on_failure:
         task: cannot-bump
-        file: deployments-runtime/runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump.yml
         config:
           params:
             URL: *canibump-url
@@ -518,7 +511,7 @@ jobs:
       params:
         repository: cf-release
     - task: can-bump
-      file: deployments-runtime/runtime-ci/scripts/ci/can_bump.yml
+      file: runtime-ci/scripts/ci/can_bump.yml
       config:
         params:
           URL: canibump.cfapps.io
@@ -538,7 +531,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
         tags: [vsphere]
-      - get: deployments-runtime
+      - get: runtime-ci
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
@@ -547,7 +540,7 @@ jobs:
         tags: [vsphere]
     - task: create-manifest
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
       tags: [vsphere]
       config:
         params:
@@ -555,7 +548,7 @@ jobs:
           ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       tags: [vsphere]
       config:
         params:
@@ -571,7 +564,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       tags: [vsphere]
       config:
         params:
@@ -580,7 +573,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       tags: [vsphere]
       config:
         params:
@@ -605,13 +598,13 @@ jobs:
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
         trigger: true
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: openstack-stemcell
       - get: version
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
       config:
         params:
           INFRASTRUCTURE: openstack
@@ -624,7 +617,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1
@@ -632,7 +625,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1
@@ -691,12 +684,12 @@ jobs:
         trigger: true
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: version
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/create_minimal_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_minimal_cf_release_manifest.yml
     - put: minimal-deployment
       params:
         manifest: manifest/deployment.yml
@@ -705,7 +698,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: run-acceptance-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_acceptance_tests.yml
+      file: runtime-ci/scripts/ci/run_acceptance_tests.yml
       config:
         params:
           ENVIRONMENT: minimal-aws
@@ -724,20 +717,20 @@ jobs:
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
         trigger: true
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: aws-stemcell
       - get: version
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
       config:
         params:
           INFRASTRUCTURE: aws
           ENVIRONMENT: a1
     - task: emit-datadog-deploy-start
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event.yml
       config:
         params:
           TITLE: start_deploy
@@ -753,7 +746,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: emit-datadog-deploy-end
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event.yml
       config:
         params:
           TITLE: end_deploy
@@ -766,7 +759,7 @@ jobs:
         repository: cf-release
     - task: smoke-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-a1
@@ -774,7 +767,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command.yml
       config:
         params:
           <<: *bosh-target-a1
@@ -795,7 +788,7 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
@@ -834,10 +827,10 @@ jobs:
       - get: periodically
         trigger: true
       - get: smoke-tests
-      - get: deployments-runtime
+      - get: runtime-ci
     - aggregate:
       - task: run1
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params: &tabasco-smoke-params
             SUITE_NAME: RUNTIME-SMOKE
@@ -851,26 +844,26 @@ jobs:
             USE_EXISTING_ORG: true
             ARGS: '--focus=Runtime:'
       - task: run2
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-2
       - task: run3
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-3
       - task: run4
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-4
       on_success:
         task: emit_datadog_success
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params: &tabasco-smoke-datadog-params
             METRIC: smoke.status
@@ -879,7 +872,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params:
             <<: *tabasco-smoke-datadog-params
@@ -894,9 +887,9 @@ jobs:
       - get: periodically
         trigger: true
       - get: smoke-tests
-      - get: deployments-runtime
+      - get: runtime-ci
     - task: run1
-      file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+      file: runtime-ci/scripts/ci/run_smoketests.yml
       config:
         params:
           SUITE_NAME: RUNTIME-SMOKE
@@ -911,7 +904,7 @@ jobs:
           ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params: &tabasco-smoke-datadog-params
             METRIC: smoke.status
@@ -920,7 +913,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params:
             <<: *tabasco-smoke-datadog-params
@@ -935,10 +928,10 @@ jobs:
       - get: periodically
         trigger: true
       - get: smoke-tests
-      - get: deployments-runtime
+      - get: runtime-ci
     - aggregate:
       - task: run1
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params: &a1-smoke-params
             SUITE_NAME: RUNTIME-SMOKE
@@ -952,92 +945,92 @@ jobs:
             USE_EXISTING_ORG: true
             ARGS: '--focus=Runtime:'
       - task: run2
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-2
       - task: run3
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-3
       - task: run4
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-4
       - task: run5
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-5
       - task: run6
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-6
       - task: run7
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-7
       - task: run8
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-8
       - task: run9
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-9
       - task: run10
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-10
       - task: run11
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests11
       - task: run12
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-12
       - task: run13
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-13
       - task: run14
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-14
       - task: run15
-        file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-15
       on_success:
         task: emit_datadog_success
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params: &a1-smoke-datadog-params
             METRIC: smoke.status
@@ -1046,7 +1039,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params:
             <<: *a1-smoke-datadog-params
@@ -1062,9 +1055,9 @@ jobs:
       - get: periodically
         trigger: true
       - get: smoke-tests
-      - get: deployments-runtime
+      - get: runtime-ci
     - task: run1
-      file: deployments-runtime/runtime-ci/scripts/ci/run_smoketests.yml
+      file: runtime-ci/scripts/ci/run_smoketests.yml
       config:
         params:
           SUITE_NAME: RUNTIME-SMOKE
@@ -1079,7 +1072,7 @@ jobs:
           ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params: &a1-smoke-datadog-params
             METRIC: smoke.status
@@ -1088,7 +1081,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
         config:
           params:
             <<: *a1-smoke-datadog-params
@@ -1100,10 +1093,10 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: deployments-runtime/runtime-ci/scripts/ci/deploy-canaries.yml
+      file: runtime-ci/scripts/ci/deploy-canaries.yml
       config:
         params:
           CF_APPS_DOMAIN: a1-canaries.cf-app.com
@@ -1119,10 +1112,10 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: deployments-runtime
+      - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: deployments-runtime/runtime-ci/scripts/ci/deploy-canaries.yml
+      file: runtime-ci/scripts/ci/deploy-canaries.yml
       config:
         params:
           CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
