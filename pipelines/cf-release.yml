@@ -701,7 +701,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: runtime-ci/scripts/ci/create_minimal_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_minimal_cf_release_manifest/task.yml
     - put: minimal-deployment
       params:
         manifest: manifest/deployment.yml
@@ -710,7 +710,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: run-acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_acceptance_tests.yml
+      file: runtime-ci/scripts/ci/run_acceptance_tests/task.yml
       config:
         params:
           ENVIRONMENT: minimal-aws
@@ -736,14 +736,14 @@ jobs:
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest/task.yml
       config:
         params:
           INFRASTRUCTURE: aws
           ENVIRONMENT: a1
     - task: emit-datadog-deploy-start
       privileged: true
-      file: runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event/task.yml
       config:
         params:
           TITLE: start_deploy
@@ -759,7 +759,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: emit-datadog-deploy-end
       privileged: true
-      file: runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event/task.yml
       config:
         params:
           TITLE: end_deploy
@@ -772,7 +772,7 @@ jobs:
         repository: cf-release
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-a1
@@ -780,7 +780,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-a1
@@ -842,7 +842,7 @@ jobs:
       - get: runtime-ci
     - aggregate:
       - task: run1
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params: &tabasco-smoke-params
             SUITE_NAME: RUNTIME-SMOKE
@@ -856,26 +856,26 @@ jobs:
             USE_EXISTING_ORG: true
             ARGS: '--focus=Runtime:'
       - task: run2
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-2
       - task: run3
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-3
       - task: run4
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *tabasco-smoke-params
             SPACE: concourse-runtime-smoke-tests-4
       on_success:
         task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params: &tabasco-smoke-datadog-params
             METRIC: smoke.status
@@ -884,7 +884,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params:
             <<: *tabasco-smoke-datadog-params
@@ -901,7 +901,7 @@ jobs:
       - get: smoke-tests
       - get: runtime-ci
     - task: run1
-      file: runtime-ci/scripts/ci/run_smoketests.yml
+      file: runtime-ci/scripts/ci/run_smoketests/task.yml
       config:
         params:
           SUITE_NAME: RUNTIME-SMOKE
@@ -916,7 +916,7 @@ jobs:
           ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params: &tabasco-smoke-datadog-params
             METRIC: smoke.status
@@ -925,7 +925,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params:
             <<: *tabasco-smoke-datadog-params
@@ -943,7 +943,7 @@ jobs:
       - get: runtime-ci
     - aggregate:
       - task: run1
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params: &a1-smoke-params
             SUITE_NAME: RUNTIME-SMOKE
@@ -957,92 +957,92 @@ jobs:
             USE_EXISTING_ORG: true
             ARGS: '--focus=Runtime:'
       - task: run2
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-2
       - task: run3
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-3
       - task: run4
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-4
       - task: run5
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-5
       - task: run6
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-6
       - task: run7
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-7
       - task: run8
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-8
       - task: run9
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-9
       - task: run10
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-10
       - task: run11
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests11
       - task: run12
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-12
       - task: run13
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-13
       - task: run14
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-14
       - task: run15
-        file: runtime-ci/scripts/ci/run_smoketests.yml
+        file: runtime-ci/scripts/ci/run_smoketests/task.yml
         config:
           params:
             <<: *a1-smoke-params
             SPACE: concourse-runtime-smoke-tests-15
       on_success:
         task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params: &a1-smoke-datadog-params
             METRIC: smoke.status
@@ -1051,7 +1051,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params:
             <<: *a1-smoke-datadog-params
@@ -1069,7 +1069,7 @@ jobs:
       - get: smoke-tests
       - get: runtime-ci
     - task: run1
-      file: runtime-ci/scripts/ci/run_smoketests.yml
+      file: runtime-ci/scripts/ci/run_smoketests/task.yml
       config:
         params:
           SUITE_NAME: RUNTIME-SMOKE
@@ -1084,7 +1084,7 @@ jobs:
           ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params: &a1-smoke-datadog-params
             METRIC: smoke.status
@@ -1093,7 +1093,7 @@ jobs:
             VALUE: 1
       on_failure:
         task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit_datadog_metric.yml
+        file: runtime-ci/scripts/ci/emit_datadog_metric/task.yml
         config:
           params:
             <<: *a1-smoke-datadog-params
@@ -1108,7 +1108,7 @@ jobs:
       - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: runtime-ci/scripts/ci/deploy-canaries.yml
+      file: runtime-ci/scripts/ci/deploy-canaries/task.yml
       config:
         params:
           CF_APPS_DOMAIN: a1-canaries.cf-app.com
@@ -1127,7 +1127,7 @@ jobs:
       - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: runtime-ci/scripts/ci/deploy-canaries.yml
+      file: runtime-ci/scripts/ci/deploy-canaries/task.yml
       config:
         params:
           CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
