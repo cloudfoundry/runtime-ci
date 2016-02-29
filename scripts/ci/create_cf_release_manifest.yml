@@ -4,14 +4,14 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: cf-release
-  - name: deployments-runtime
+- name: cf-release
+- name: runtime-ci
 
 outputs:
-  - name: manifest
+- name: manifest
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/create_cf_release_manifest
+  path: runtime-ci/scripts/ci/create_cf_release_manifest
 
 params:
   INFRASTRUCTURE:

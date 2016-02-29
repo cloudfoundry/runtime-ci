@@ -4,11 +4,11 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: cf-canaries
-  - name: deployments-runtime
+- name: cf-canaries
+- name: runtime-ci
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/deploy-canaries
+  path: runtime-ci/scripts/ci/deploy-canaries
 
 params:
   CF_APPS_DOMAIN:

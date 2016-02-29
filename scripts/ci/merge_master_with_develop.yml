@@ -4,11 +4,11 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: cf-release
-  - name: deployments-runtime
+- name: cf-release
+- name: runtime-ci
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/merge_master_with_develop
+  path: runtime-ci/scripts/ci/merge_master_with_develop
 
 params:
   CF_RELEASE_DIR:

@@ -4,10 +4,10 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: deployments-runtime
+- name: runtime-ci
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/emit_datadog_event
+  path: runtime-ci/scripts/ci/emit_datadog_event
 
 params:
   TITLE:

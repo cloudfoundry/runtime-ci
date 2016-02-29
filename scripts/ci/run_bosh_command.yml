@@ -4,14 +4,14 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: deployments-runtime
-  - name: manifest
+- name: runtime-ci
+- name: manifest
 
 outputs:
-  - name: bosh-command-out
+- name: bosh-command-out
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/run_bosh_command
+  path: runtime-ci/scripts/ci/run_bosh_command
 
 params:
   BOSH_DIRECTOR:

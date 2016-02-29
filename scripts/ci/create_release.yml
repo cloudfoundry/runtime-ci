@@ -4,15 +4,15 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: cf-release-develop
-  - name: deployments-runtime
-  - name: version
+- name: cf-release-develop
+- name: runtime-ci
+- name: version
 
 outputs:
-  - name: cf-release-out
+- name: cf-release-out
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/create_release
+  path: runtime-ci/scripts/ci/create_release
 
 params:
   CF_RELEASE_DIR:

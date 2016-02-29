@@ -4,11 +4,11 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: smoke-tests
-  - name: deployments-runtime
+- name: smoke-tests
+- name: runtime-ci
 
 run:
-  path: deployments-runtime/runtime-ci/scripts/ci/run_smoketests
+  path: runtime-ci/scripts/ci/run_smoketests
 
 params:
   SUITE_NAME:
