@@ -7,7 +7,7 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/cannot_bump
+  path: runtime-ci/scripts/ci/cannot_bump/task
 
 params:
   URL:

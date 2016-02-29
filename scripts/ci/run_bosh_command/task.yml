@@ -11,7 +11,7 @@ outputs:
 - name: bosh-command-out
 
 run:
-  path: runtime-ci/scripts/ci/run_bosh_command
+  path: runtime-ci/scripts/ci/run_bosh_command/task
 
 params:
   BOSH_DIRECTOR:

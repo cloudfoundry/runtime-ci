@@ -287,13 +287,13 @@ jobs:
     - aggregate:
       - task: run-cf-release-unit-tests
         privileged: true
-        file: runtime-ci/scripts/ci/run_cf_release_unit_tests.yml
+        file: runtime-ci/scripts/ci/run_cf_release_unit_tests/task.yml
         config:
           params:
             CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: &canibump-url canibump.cfapps.io
@@ -318,13 +318,13 @@ jobs:
     - aggregate:
       - task: create-release-tarball
         privileged: true
-        file: runtime-ci/scripts/ci/create_release.yml
+        file: runtime-ci/scripts/ci/create_release/task.yml
         config:
           params:
             CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -345,7 +345,7 @@ jobs:
     - aggregate:
       - task: cleanup-runtime-ci
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         config:
           params:
             BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
@@ -353,7 +353,7 @@ jobs:
             BOSH_PASSWORD: {{runtime_ci_password}}
       - task: cleanup-tabasco
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         config:
           params: &bosh-target-tabasco
             BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
@@ -361,7 +361,7 @@ jobs:
             BOSH_PASSWORD: {{tabasco_bosh_password}}
       - task: cleanup-vsphere
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         tags: [vsphere]
         config:
           params: &bosh-target-cat
@@ -370,7 +370,7 @@ jobs:
             BOSH_PASSWORD: {{vsphere_bosh_password}}
       - task: cleanup-openstack
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         config:
           params: &bosh-target-runtime-bb-1
             BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
@@ -378,7 +378,7 @@ jobs:
             BOSH_PASSWORD: {{openstack_bosh_password}}
       - task: cleanup-minimal
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         config:
           params:
             BOSH_DIRECTOR: https://54.165.111.247:25555
@@ -386,7 +386,7 @@ jobs:
             BOSH_PASSWORD: {{minimal_bosh_password}} 
       - task: cleanup-a1
         privileged: true
-        file: runtime-ci/scripts/ci/run_bosh_cleanup.yml
+        file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
         config:
           params: &bosh-target-a1
             BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
@@ -411,14 +411,14 @@ jobs:
         passed: [create-release]
     - task: create-manifest
       privileged: true
-      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest/task.yml
       config:
         params:
           INFRASTRUCTURE: aws
           ENVIRONMENT: tabasco
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -426,7 +426,7 @@ jobs:
             REASON: "Could not create cf-release manifest"
     - task: emit-datadog-deploy-start
       privileged: true
-      file: runtime-ci/scripts/ci/emit_datadog_event.yml
+      file: runtime-ci/scripts/ci/emit_datadog_event/task.yml
       config:
         params:
           TITLE: start_deploy
@@ -442,7 +442,7 @@ jobs:
           - cf-release-tarball/*.tgz
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -452,7 +452,7 @@ jobs:
         do:
         - task: emit-datadog-deploy-end
           privileged: true
-          file: runtime-ci/scripts/ci/emit_datadog_event.yml
+          file: runtime-ci/scripts/ci/emit_datadog_event/task.yml
           config:
             params:
               TITLE: end_deploy
@@ -465,7 +465,7 @@ jobs:
         repository: cf-release
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -473,7 +473,7 @@ jobs:
             REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-tabasco
@@ -481,7 +481,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -489,7 +489,7 @@ jobs:
             REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-tabasco
@@ -497,7 +497,7 @@ jobs:
           COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
       on_failure:
         task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot_bump.yml
+        file: runtime-ci/scripts/ci/cannot_bump/task.yml
         config:
           params:
             URL: *canibump-url
@@ -511,7 +511,7 @@ jobs:
       params:
         repository: cf-release
     - task: can-bump
-      file: runtime-ci/scripts/ci/can_bump.yml
+      file: runtime-ci/scripts/ci/can_bump/task.yml
       config:
         params:
           URL: canibump.cfapps.io
@@ -540,7 +540,7 @@ jobs:
         tags: [vsphere]
     - task: create-manifest
       privileged: true
-      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest/task.yml
       tags: [vsphere]
       config:
         params:
@@ -548,7 +548,7 @@ jobs:
           ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       tags: [vsphere]
       config:
         params:
@@ -564,7 +564,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       tags: [vsphere]
       config:
         params:
@@ -573,7 +573,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       tags: [vsphere]
       config:
         params:
@@ -604,7 +604,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
-      file: runtime-ci/scripts/ci/create_cf_release_manifest.yml
+      file: runtime-ci/scripts/ci/create_cf_release_manifest/task.yml
       config:
         params:
           INFRASTRUCTURE: openstack
@@ -617,7 +617,7 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1
@@ -625,7 +625,7 @@ jobs:
           COMMAND: 'run errand smoke_tests --keep-alive'
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command.yml
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1

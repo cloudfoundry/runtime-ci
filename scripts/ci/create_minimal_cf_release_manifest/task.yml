@@ -6,14 +6,14 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release
 - name: runtime-ci
+- name: aws-stemcell
 
 outputs:
 - name: manifest
 
 run:
-  path: runtime-ci/scripts/ci/create_cf_release_manifest
+  path: runtime-ci/scripts/ci/create_minimal_cf_release_manifest/task
 
 params:
-  INFRASTRUCTURE:
-  ENVIRONMENT:
   OUTPUT_DIR: manifest
+

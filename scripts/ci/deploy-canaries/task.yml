@@ -8,7 +8,7 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/deploy-canaries
+  path: runtime-ci/scripts/ci/deploy-canaries/task
 
 params:
   CF_APPS_DOMAIN:

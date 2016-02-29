@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: cf-release-develop
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/run_cf_release_unit_tests/task
+
+params:
+  CF_RELEASE_DIR:

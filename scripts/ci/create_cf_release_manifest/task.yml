@@ -7,10 +7,13 @@ inputs:
 - name: cf-release
 - name: runtime-ci
 
+outputs:
+- name: manifest
+
 run:
-  path: runtime-ci/scripts/ci/run_acceptance_tests
+  path: runtime-ci/scripts/ci/create_cf_release_manifest/task
 
 params:
+  INFRASTRUCTURE:
   ENVIRONMENT:
-  NODES: 1
-  SKIPS:
+  OUTPUT_DIR: manifest

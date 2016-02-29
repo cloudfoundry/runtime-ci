@@ -7,8 +7,10 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/can_bump
+  path: runtime-ci/scripts/ci/emit_datadog_metric/task
 
 params:
-  URL:
-  TOKEN:
+  METRIC:
+  TAGS:
+  DATADOG_API_KEY:
+  VALUE:

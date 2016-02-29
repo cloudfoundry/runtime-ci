@@ -6,9 +6,12 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release
 - name: runtime-ci
+- name: runtime-credentials
+- name: cf-release-tarball
 
 run:
-  path: runtime-ci/scripts/ci/merge_master_with_develop
+  path: runtime-ci/scripts/ci/create_final_release/task
 
 params:
+  TARBALL_DIR:
   CF_RELEASE_DIR:

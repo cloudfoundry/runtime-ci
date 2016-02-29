@@ -7,10 +7,9 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/emit_datadog_metric
+  path: runtime-ci/scripts/ci/run_bosh_cleanup/task
 
 params:
-  METRIC:
-  TAGS:
-  DATADOG_API_KEY:
-  VALUE:
+  BOSH_DIRECTOR:
+  BOSH_USER:
+  BOSH_PASSWORD:
