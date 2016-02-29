@@ -1,6 +1,10 @@
 #!/bin/bash
-set -e -x
+set -ex
 
+# Cannot set -u before sourcing .bashrc because of all
+# the unbound variables in things beyond our control.
 source ~/.bashrc
+
+set -u
 
 curl -X PUT "$URL/yes" -d "token=$TOKEN" -d "buildnumber=0"

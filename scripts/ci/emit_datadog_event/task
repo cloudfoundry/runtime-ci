@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x -u
+set -eux
 
 curl  -X POST -H "Content-type: application/json" \
     -d '{
