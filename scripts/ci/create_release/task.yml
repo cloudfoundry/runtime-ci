@@ -12,7 +12,7 @@ outputs:
 - name: cf-release-out
 
 run:
-  path: runtime-ci/scripts/ci/create_release
+  path: runtime-ci/scripts/ci/create_release/task
 
 params:
   CF_RELEASE_DIR:
