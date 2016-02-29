@@ -4,10 +4,10 @@ set -e -x
 
 root_dir="${PWD}"
 
-source ~/.bashrc
-
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
+
+source ~/.bashrc
 
 set -u
 

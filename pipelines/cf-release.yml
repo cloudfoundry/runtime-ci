@@ -155,6 +155,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-release
 
+- name: deployments-runtime
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
 - name: pipeline-image
   type: docker-image
   source:
@@ -406,6 +413,7 @@ jobs:
         resource: cf-release-develop
         passed: [create-release]
       - get: runtime-ci
+      - get: deployments-runtime
       - get: aws-stemcell
       - get: version
         passed: [create-release]
@@ -533,6 +541,8 @@ jobs:
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
+      - get: deployments-runtime
+        tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
       - get: version
@@ -599,6 +609,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: runtime-ci
+      - get: deployments-runtime
       - get: openstack-stemcell
       - get: version
         passed: [deploy-and-test-tabasco]
@@ -685,6 +696,7 @@ jobs:
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
       - get: runtime-ci
+      - get: deployments-runtime
       - get: version
         passed: [deploy-and-test-tabasco]
     - task: create-manifest
@@ -718,6 +730,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: runtime-ci
+      - get: deployments-runtime
       - get: aws-stemcell
       - get: version
         passed: [deploy-and-test-tabasco]
