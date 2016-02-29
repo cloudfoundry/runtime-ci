@@ -1,8 +1,8 @@
 #!/bin/sh
-set -eu
+set -eux
 
+set +x
 CF_ADMIN_PASSWORD="${CF_ADMIN_PASSWORD:?}"
-
 set -x
 
 CF_API="${CF_API:?}"
