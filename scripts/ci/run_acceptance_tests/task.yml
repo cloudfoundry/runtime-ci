@@ -6,6 +6,7 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release
 - name: runtime-ci
+- name: deployments-runtime
 
 run:
   path: runtime-ci/scripts/ci/run_acceptance_tests/task
