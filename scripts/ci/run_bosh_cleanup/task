@@ -4,11 +4,12 @@ set -ex
 # Cannot set -u before sourcing .bashrc because of all
 # the unbound variables in things beyond our control.
 source ~/.bashrc
-
 set -u
 
+set +u
 if [ -n "$LOGS_DIR" ]; then
-  mkdir $LOGS_DIR
+  mkdir "${LOGS_DIR}"
 fi
+set -u
 
-bosh -n --color -t $BOSH_DIRECTOR cleanup
+bosh -n --color -t "${BOSH_DIRECTOR}" cleanup
