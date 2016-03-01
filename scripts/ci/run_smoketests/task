@@ -7,7 +7,21 @@ source ~/.bashrc
 
 set -u
 
-echo "======CONFIG======"
+# Inputs
+SUITE_NAME="${SUITE_NAME:?"\$SUITE_NAME not set"}"
+API="${API:?"\$API not set"}"
+APPS_DOMAIN="${APPS_DOMAIN:?"\$APPS_DOMAIN not set"}"
+SKIP_SSL_VALIDATION="${SKIP_SSL_VALIDATION:?"\$SKIP_SSL_VALIDATION not set"}"
+CF_USER="${CF_USER:?"\$CF_USER not set"}"
+ORG="${ORG:?"\$ORG not set"}"
+SPACE="${SPACE:?"\$SPACE not set"}"
+USE_EXISTING_ORG="${USE_EXISTING_ORG:?"\$USE_EXISTING_ORG not set"}"
+
+set +x
+CF_PASSWORD="${CF_PASSWORD:?"\$CF_PASSWORD not set"}"
+set -x
+
+set +x
 cat > config.json <<EOF
 {
     "suite_name": "$SUITE_NAME",
@@ -21,10 +35,8 @@ cat > config.json <<EOF
     "use_existing_org": $USE_EXISTING_ORG
 }
 EOF
+set -x
 export CONFIG=$PWD/config.json
-
-echo "======ENVIRONMENT======"
-printenv
 
 echo "======TEST======"
 cd smoke-tests
