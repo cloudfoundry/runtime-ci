@@ -14,7 +14,7 @@ BOSH_LITE_IP_DIR="${root_dir}/${BOSH_LITE_IP_DIR:?"\$BOSH_LITE_IP_DIR not set"}"
 BOSH_LITE_STEMCELL_DIR="${root_dir}/${BOSH_LITE_STEMCELL_DIR:?"\$BOSH_LITE_STEMCELL_DIR not set"}"
 CF_RELEASE_DIR="${root_dir}/${CF_RELEASE_DIR:?"\$CF_RELEASE_DIR not set"}"
 CF_RELEASE_TARBALL_DIR="${root_dir}/${CF_RELEASE_TARBALL_DIR:?"\$CF_RELEASE_TARBALL_DIR not set"}"
-DOMAIN="${root_dir}/${DOMAIN:?"\$DOMAIN not set"}"
+DOMAIN="${DOMAIN:?"\$DOMAIN not set"}"
 
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
