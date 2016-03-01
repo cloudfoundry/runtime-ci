@@ -7,6 +7,11 @@ source ~/.bashrc
 
 set -u
 
+root_dir="${PWD}"
+
+# Outputs
+FINAL_RELEASE_REPO_DIR="${root_dir}/${FINAL_RELEASE_REPO_DIR:?"\$FINAL_RELEASE_REPO_DIR not set"}"
+
 MASTER_BRANCH="${MASTER_BRANCH:-master}"
 
 if [ -n "${PRIVATE_YML_PATH}" ]; then
@@ -45,4 +50,4 @@ pushd release-repo > /dev/null
 popd > /dev/null
 
 shopt -s dotglob
-cp -R release-repo/* final-release-repo
+cp -R release-repo/* "${FINAL_RELEASE_REPO_DIR}"

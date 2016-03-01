@@ -19,3 +19,4 @@ params:
   RELEASE_NAME:
   PRIVATE_YML_PATH:
   MASTER_BRANCH:
+  FINAL_RELEASE_REPO_DIR: final-release-repo

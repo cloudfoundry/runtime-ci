@@ -16,7 +16,13 @@ outputs:
 - name: blessed-repo
 
 params:
-  BLESSED_REPO: blessed-repo
+  RELEASE_REPO_DIR: release-repo
+  RELEASE_REPO_MASTER_DIR: release-repo-master
+  CF_RELEASE_DIR: cf-release
+  CONSUL_RELEASE_DIR: consul-release
+  ETCD_RELEASE_DIR: etcd-release
+  STEMCELL_DIR: blessed-repo
+  BLESSED_REPO_DIR: blessed-repo
 
 run:
   path: runtime-ci/scripts/ci/commit-blessing/task

@@ -7,5 +7,15 @@ source ~/.bashrc
 
 set -u
 
-curl -X PUT "$URL/no" -d "token=$TOKEN" -d "reason=$REASON" -d "buildnumber=0"
+# Inputs
+URL="${URL:?"\$URL not set"}"
+TOKEN="${TOKEN:?"\$TOKEN not set"}"
+REASON="${REASON:?"\$REASON not set"}"
+
+curl \
+  -X PUT \
+  "${URL}/no" \
+  -d "token=${TOKEN}" \
+  -d "reason=${REASON}" \
+  -d "buildnumber=0"
 
