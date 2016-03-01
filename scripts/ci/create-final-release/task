@@ -14,13 +14,7 @@ FINAL_RELEASE_REPO_DIR="${root_dir}/${FINAL_RELEASE_REPO_DIR:?"\$FINAL_RELEASE_R
 
 MASTER_BRANCH="${MASTER_BRANCH:-master}"
 
-if [ -n "${PRIVATE_YML_PATH}" ]; then
-  cp "${PRIVATE_YML_PATH}" release-repo/config/
-else
-  set +x
-  ./runtime-ci/scripts/configure_final_release_bucket "${RELEASE_NAME}" ./private-credentials/oss-aws ./release-repo/config
-  set -x
-fi
+cp "${PRIVATE_YML_PATH}" release-repo/config/
 
 pushd release-repo > /dev/null
   git config user.name "CF MEGA BOT"
