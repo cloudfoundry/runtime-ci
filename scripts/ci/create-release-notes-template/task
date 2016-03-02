@@ -1,0 +1,76 @@
+#!/bin/sh
+set -eux
+
+tag=v$(cat cf-final-bosh-release/version)
+release_notes_body="The cf-release ${tag} was released on $(date +'%B %d, %Y').
+
+**Contents:**
+* <a href='#cc-and-service-broker-apis'>CC and Service Broker APIs</a>
+* <a href='#dea-warden-hm9000-runtime'>DEA-Warden-HM9000 Runtime</a>
+* <a href='#buildpacks-and-stacks'>Buildpacks and Stacks</a>
+* <a href='#identity'>Identity</a>
+* <a href='#routing'>Routing</a>
+* <a href='#loggregator'>Loggregator</a>
+* <a href='#internal-components'>Internal Components</a>
+* <a href='#job-spec-changes'>Job Spec Changes</a>
+* <a href='#recommended-bosh-stemcell-versions'>Recommended BOSH Stemcell Versions</a>
+* <a href='#recommended-diego-release-version'>Recommended diego-release Version</a>
+* <a href='#recommended-garden-linux-release-version'>Recommended garden-linux-release Version</a>
+* <a href='#recommended-etcd-release-version'>Recommended etcd-release Version</a>
+
+## <a name='cc-and-service-broker-apis'></a>CC and Service Broker APIs
+
+## <a name='dea-warden-hm9000-runtime'></a>DEA-Warden-HM9000 Runtime
+
+## <a name='buildpacks-and-stacks'></a>Buildpacks and Stacks
+
+## <a name='identity'></a>Identity
+
+## <a name='routing'></a>Routing
+
+## <a name='loggregator'></a>Loggregator
+
+## <a name='internal-components'></a>Internal Components
+
+## <a name='job-spec-changes'></a>Job Spec Changes
+
+## <a name='recommended-bosh-stemcell-versions'></a>Recommended BOSH Stemcell Versions
+
+* AWS:
+* vSphere:
+* OpenStack:
+* BOSH-Lite:
+
+These are soft recommendations; several different versions of the BOSH and stemcells are likely to work fine with this version of cf-release and the corresponding versions of diego-release, garden-linux-release, and etcd-release.
+
+## <a name='recommended-diego-release-version'></a>Recommended diego-release Version
+
+* diego-release Version:
+
+This is a soft recommendation; several different versions of the diego-release may work fine with this version of cf-release.
+
+## <a name='recommended-garden-linux-release-version'></a>Recommended garden-linux-release Version
+
+* garden-linux-release Version:
+
+This is a soft recommendation; several different versions of the garden-linux-release may work fine with this version of cf-release and the aforementioned version of diego-release.
+
+## <a name='recommended-etcd-release-version'></a>Recommended etcd-release Version
+
+* etcd-release Version:
+
+This is a soft recommendation; several different versions of the etcd-release may work fine with this version of cf-release and the aforementioned version of diego-release.
+"
+
+echo "Creating release notes"
+set +x
+	curl -f "https://api.github.com/repos/cloudfoundry/cf-release/releases?access_token=${GH_ACCESS_TOKEN}" \
+		-X POST	\
+		-d "{
+			\"tag_name\": \"${tag}\",
+			\"name\": \"${tag}\",
+			\"draft\": true,
+			\"body\": $(echo "$release_notes_body" | jq -s -R .)
+		   }"
+set -x
+echo "Succeeded creating release notes"

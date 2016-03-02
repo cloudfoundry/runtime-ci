@@ -1,0 +1,15 @@
+platform: linux
+
+# git, curl, jq
+image: docker:///concourse/git-resource
+
+inputs:
+- name: cf-final-bosh-release
+- name: runtime-ci 
+
+params:
+  TRACKER_API_TOKEN: ~
+  REQUESTER_ID: ~
+
+run:
+  path: runtime-ci/scripts/ci/request-pm-input/task

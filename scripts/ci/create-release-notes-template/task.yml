@@ -1,0 +1,14 @@
+platform: linux
+
+# git, curl, jq
+image: docker:///concourse/git-resource
+
+inputs:
+- name: cf-final-bosh-release
+- name: runtime-ci
+
+params:
+  GH_ACCESS_TOKEN: ~
+
+run:
+  path: runtime-ci/scripts/ci/create-release-notes-template/task

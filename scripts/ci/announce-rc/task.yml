@@ -1,0 +1,15 @@
+platform: linux
+
+# git, curl, jq
+image: docker:///concourse/git-resource
+
+inputs:
+- name: cf-github-release
+- name: cf-release-repo-develop
+- name: runtime-ci
+
+params:
+  GH_ACCESS_TOKEN: ~
+
+run:
+  path: runtime-ci/scripts/ci/announce-rc/task

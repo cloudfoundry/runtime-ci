@@ -1,0 +1,46 @@
+#!/bin/sh
+set -eux
+
+# Inputs
+REQUESTER_ID="${REQUESTER_ID:?"\$REQUESTER_ID not set"}"
+
+release_version=v$(cat cf-final-bosh-release/version)
+
+bp=1042066 # Buildpacks and Stacks
+capi=966314 # CAPI
+diego=1003146 # Diego
+id=997278 # Identity
+lamb=993188 # LAMB
+infr=1488988 # Infrastructure
+relint=1382120 # Release Integration
+prego=900612 # DEAs & HM9000
+rtg=1358110 # Routing
+
+story_description="
+**Please read these instructions, as they changed on 11 Feb 2016.**
+
+1. Contribute to your section of the release notes for ${release_version} [here](https://github.com/cloudfoundry/cf-release/releases).
+2. Also contribute to the 'Job Spec Changes' section, following the guidelines below:
+    - A typical entry looks something like \"Removed \\\`property.name\\\` property from \\\`job.name\\\` job. \\[details\\]\\(link/to/tracker/story\\)\"
+    - Add an entry whenever the release adds a property, removes a property, renames a property, adds a default value, removes a default value, changes a default value, changes the type of a property (e.g. going from integer to boolean), or changes the semantics of a property (i.e. what the property actually does).
+    - Do not assume users are using spiff templates.
+    - Job spec changes that require action by the user (e.g. new properites with no default) should be called out especially.
+3. Carefully check to see if you are the last person to complete your section of the release notes. If you are not the last person, save your changes as Draft, do not Publish them as they are not complete yet. If you are the last person, Publish your changes, do not save them as Draft, as no one will know to come along later and hit Publish.
+"
+
+for tracker_project_id in $bp $capi $diego $id $lamb $infr $relint $prego $rtg ; do
+    echo "Creating story for project:" $tracker_project_id
+    set +x
+        curl -s -f "https://www.pivotaltracker.com/services/v5/projects/${tracker_project_id}/stories" \
+            -X POST \
+            -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"name\":\"Contribute to cf-release ${release_version} GitHub release notes\",
+                \"story_type\":\"feature\",
+                \"requested_by_id\":${REQUESTER_ID},
+                \"estimate\":1,
+                \"description\": $(echo "$story_description" | jq -s -R .)}"
+    set -x
+    echo "Succeeded creating tracker story for project:" $tracker_project_id
+done

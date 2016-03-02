@@ -1,0 +1,165 @@
+#!/bin/sh
+set -eux
+
+last_version=$(cat cf-github-release/version)
+last_tag=$(cat cf-github-release/tag)
+next_tag=v$((${last_version} + 1))
+issue_title="CF ${next_tag}"
+gist_path=/tmp/gist
+
+cd cf-release-repo-develop
+	git fetch origin release-candidate:release-candidate
+
+	last_tag_sha=$(git show-ref ${last_tag} -s)
+	rc_sha=$(git show-ref release-candidate -s)
+
+	if ! git merge-base --is-ancestor ${last_tag_sha} ${rc_sha}; then
+		echo "ABORT: This release candidate has no new changes."
+		exit 1
+	fi
+
+	echo "Release Candidate SHA: ${rc_sha}" > ${gist_path}
+	echo "" >> ${gist_path}
+
+	echo "Job Spec Diffs:" >> ${gist_path}
+	for treeish in ${last_tag_sha} ${rc_sha}
+	do
+		git checkout ${treeish}
+		./scripts/update
+		cat jobs/*/spec > /tmp/${treeish}-job-specs
+	done
+	diff /tmp/${last_tag_sha}-job-specs /tmp/${rc_sha}-job-specs >> ${gist_path} || true
+	echo "" >> ${gist_path}
+
+	echo "Manifest Templates Diffs:" >> ${gist_path}
+	git diff ${last_tag_sha}..${rc_sha} -- templates >> ${gist_path}
+	echo "" >> ${gist_path}
+cd ..
+
+echo "Creating gist"
+set +x
+	gist_url=$(curl -s -f "https://api.github.com/gists?access_token=${GH_ACCESS_TOKEN}" \
+		-X POST	\
+		-d "{
+				\"description\": \"Diff from ${last_tag} to ${rc_sha}\",
+				\"public\": false,
+				\"files\": {
+					\"${last_tag}-to-${rc_sha}.diff\": {
+						\"content\": $(cat $gist_path | jq -s -R .)
+					}
+				}
+			}" | jq -r .html_url)
+set -x
+echo "Succeeded creating gist:" $gist_url
+
+comment_body="cf-release Release Candidate SHA for ${next_tag} Deploy:
+[${rc_sha}](https://github.com/cloudfoundry/cf-release/commit/${rc_sha})
+
+Details:
+${gist_url}
+
+**Please read these instructions, as they changed on 4 Nov 2015.**
+- Edit this comment by setting the approval for your section (delete the thumb you don't want)
+- Also set your GitHub handle as the approver
+- Add any additional comments you may have in your section
+- If you notice you are the last person to set your approval, as a courtesy please also add a new comment to the issue saying so, so that we get GitHub notifications that all approvals are done.
+
+----
+@Amit-PivotalLabs, @robdimsdale:
+Does this cf-release SHA look good for the release integration team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@Amit-PivotalLabs, @zankich:
+Does this cf-release SHA look good for the infrastructure team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@shalako, @crhino:
+Does this cf-release SHA look good for the routing team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@sreetummidi, @mbhave:
+Does this cf-release SHA look good for the identity team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@Jim-Campbell, @wfernandes:
+Does this cf-release SHA look good for the LAMB team? Do the a1 logging metrics look nominal?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@dieucao, @utako:
+Does this cf-release SHA look good for the CAPI team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@Dannyzen, @jtarchie:
+Does this cf-release SHA look good for the Buildpacks and Stacks team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@nebhale, @cgfrost:
+Does this cf-release SHA look good for the Java Buildpack team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@ematpl, @luan:
+Can you provide a compatible diego-release SHA?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
+@fraenkel, @sykesm:
+Does this cf-release SHA look good for the DEA + HM9000 team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+"
+
+echo "Finding cf-final-release-election issue number"
+set +x
+	issue_number=$(curl -s -f "https://api.github.com/repos/cloudfoundry/cf-final-release-election/issues?access_token=${GH_ACCESS_TOKEN}" \
+		| jq "map(select(.title == $(echo $issue_title | jq -R .)))[0].number")
+set -x
+
+if [ "${issue_number}" = "null" ]; then
+    echo "Issue ${issue_title} does not exist, will create"
+
+	echo "Creating cf-final-release-election issue"
+	set +x
+		curl -f "https://api.github.com/repos/cloudfoundry/cf-final-release-election/issues?access_token=${GH_ACCESS_TOKEN}" \
+			-X POST	\
+			-d "{\"title\": \"${issue_title}\", \"body\": $(echo "$comment_body" | jq -s -R .)}"
+	set -x
+	echo "Succeeded creating cf-final-release-election issue"
+else
+    echo "Succeeded finding cf-final-release-election issue number: $issue_number"
+
+	echo "Posting cf-final-release-election issue comment"
+	set +x
+		curl -f "https://api.github.com/repos/cloudfoundry/cf-final-release-election/issues/${issue_number}/comments?access_token=${GH_ACCESS_TOKEN}" \
+			-X POST	\
+			-d "{\"body\": $(echo "$comment_body" | jq -s -R .)}"
+	set -x
+	echo "Succeeded posting cf-final-release-election issue comment"
+fi
+
