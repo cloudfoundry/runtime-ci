@@ -14,7 +14,7 @@ OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
 SET_DEPLOYMENT_YML=""
 if [ -n "${DEPLOYMENT_YML}" ]; then
-  SET_DEPLOYMENT_YML="-d \"${DEPLOYMENT_YML}\""
+  SET_DEPLOYMENT_YML="-d ${DEPLOYMENT_YML}"
 fi
 
 bosh \
