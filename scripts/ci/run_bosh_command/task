@@ -12,9 +12,14 @@ root_dir="${PWD}"
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
+SET_DEPLOYMENT_YML=""
+if [ -z "${DEPLOYMENT_YML}" ]; then
+  SET_DEPLOYMENT_YML="-d \"${DEPLOYMENT_YML}\""
+fi
+
 bosh \
   -n \
   --color\
   -t "${BOSH_DIRECTOR}" \
-  -d "${DEPLOYMENT_YML}" \
+  "${SET_DEPLOYMENT_YML}" \
   $COMMAND

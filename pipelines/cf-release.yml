@@ -9,6 +9,7 @@ groups:
   - deploy-and-test-bosh-lite
   - deploy-and-test-minimal
   - deploy-and-test-a1
+  - run-a1-diego-cats
   - rc
 - name: bosh
   jobs:
@@ -795,6 +796,42 @@ jobs:
         repos:
         - cf-release/src/cloud_controller_ng
 
+- name: run-a1-diego-cats
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: version
+        passed: [deploy-and-test-a1]
+      - get: cf-release
+        resource: cf-release-runtime-passed
+        passed: [deploy-and-test-a1]
+        trigger: true
+    - task: download-manifest
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      config:
+        inputs:
+        - name: runtime-ci
+        params:
+          BOSH_DIRECTOR: bosh.a1.cf-app.com
+          BOSH_USER: {{a1_bosh_username}}
+          BOSH_PASSWORD: {{a1_bosh_password}}
+          COMMAND: "download manifest a1-diego-cats bosh-command-out/a1-diego-cats.yml"
+    - task: run-diego-cats
+      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      config:
+        inputs:
+        - name: runtime-ci
+        - name: bosh-command-out
+        params:
+          BOSH_DIRECTOR: bosh.a1.cf-app.com
+          BOSH_USER: {{a1_bosh_username}}
+          BOSH_PASSWORD: {{a1_bosh_password}}
+          DEPLOYMENT_YML: "bosh-command-out/a1-diego-cats.yml"
+          COMMAND: "run errand diego-cats --keep-alive --download-logs"
+
 - name: rc
   serial: true
   plan:
@@ -803,12 +840,12 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-runtime-passed
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, run-a1-diego-cats]
         trigger: true
         params:
           submodules: none
       - get: version
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, run-a1-diego-cats]
     - put: cf-release-release-candidate
       params:
         repository: cf-release
