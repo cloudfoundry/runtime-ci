@@ -21,7 +21,7 @@ params:
   CF_RELEASE_DIR: cf-release
   CONSUL_RELEASE_DIR: consul-release
   ETCD_RELEASE_DIR: etcd-release
-  STEMCELL_DIR: blessed-repo
+  STEMCELL_DIR: stemcell
   BLESSED_REPO_DIR: blessed-repo
 
 run:
