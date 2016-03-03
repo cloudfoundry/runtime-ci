@@ -7,7 +7,7 @@ next_tag=v$((${last_version} + 1))
 issue_title="CF ${next_tag}"
 gist_path=/tmp/gist
 
-cd cf-release-repo-develop
+cd cf-release-develop
 	git fetch origin release-candidate:release-candidate
 
 	last_tag_sha=$(git show-ref ${last_tag} -s)

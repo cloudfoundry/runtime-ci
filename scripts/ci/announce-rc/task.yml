@@ -5,7 +5,7 @@ image: docker:///concourse/git-resource
 
 inputs:
 - name: cf-github-release
-- name: cf-release-repo-develop
+- name: cf-release-develop
 - name: runtime-ci
 
 params:
