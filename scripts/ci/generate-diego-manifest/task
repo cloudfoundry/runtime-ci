@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e -x -u
+
+environment_path="${PWD}/${DEPLOYMENTS_DIR}/${ENVIRONMENT_NAME}"
+stubs_path="${environment_path}/stubs"
+templates_path="${environment_path}/templates"
+
+cf_deployment_name="cf-${ENVIRONMENT_NAME}"
+
+$(dirname $0)/bosh_setup
+
+pushd diego-release
+  bosh download manifest ${cf_deployment_name} > /tmp/cf.yml
+  spiff merge \
+    manifest-generation/misc-templates/aws-iaas-settings.yml \
+    ${templates_path}/diego/iaas-settings-internal.yml \
+    ${stubs_path}/diego/iaas-settings.yml \
+    /tmp/cf.yml \
+    > /tmp/iaas-settings.yml
+
+  ./scripts/generate-deployment-manifest \
+    -c /tmp/cf.yml \
+    -i /tmp/iaas-settings.yml \
+    -p ${stubs_path}/diego/property-overrides.yml \
+    -n ${stubs_path}/diego/instance-count-overrides.yml \
+    -k ${stubs_path}/diego/persistent-disk-overrides.yml \
+    -v ${stubs_path}/diego/release-versions.yml \
+    > ../generated-diego-manifest/diego-deployment.yml
+popd

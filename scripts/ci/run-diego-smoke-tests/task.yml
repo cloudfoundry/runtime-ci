@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: deployments-runtime
+  - name: runtime-ci
+
+outputs:
+  - name: smoke-test-results
+
+params:
+  BOSH_USER: ~
+  BOSH_PASSWORD: ~
+  BOSH_TARGET: ~
+  SMOKE_TESTS_MANIFEST: ~
+  DEPLOYMENT_TAG: ~
+  DEPLOYMENTS_DIR: ~
+  DATADOG_API_KEY: ~
+
+run:
+  path: runtime-ci/scripts/ci/run-diego-smoke-tests/task

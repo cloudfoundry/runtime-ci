@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e -x -u
+
+cf api --skip-ssl-validation $CF_TARGET
+cf auth $CF_USER $CF_PASSWORD
+
+# list existing feature flags
+cf feature-flags
+
+cf enable-feature-flag diego_docker || true

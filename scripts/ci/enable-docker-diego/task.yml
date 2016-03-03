@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: runtime-ci
+
+params:
+  CF_USER: ~
+  CF_PASSWORD: ~
+  CF_TARGET: ~
+
+run:
+  path: runtime-ci/scripts/ci/enable-docker-diego/task 
