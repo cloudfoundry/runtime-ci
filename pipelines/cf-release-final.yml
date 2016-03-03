@@ -23,6 +23,11 @@ resources:
     branch: develop
     private_key: {{cf-release-private-key}}
     uri: git@github.com:cloudfoundry/cf-release.git
+- name: cf-release-release-candidate
+  type: git
+  source:
+    branch: release-candidate
+    uri: https://github.com/cloudfoundry/cf-release.git
 - name: cf-release-master
   type: git
   source:
@@ -94,7 +99,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: cf-release-develop
+    - get: cf-release-release-candidate
     - get: cf-github-release
   - task: announce-rc
     file: runtime-ci/scripts/ci/announce-rc/task.yml
