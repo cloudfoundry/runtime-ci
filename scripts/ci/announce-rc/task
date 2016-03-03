@@ -50,7 +50,7 @@ set +x
 set -x
 echo "Succeeded creating gist:" $gist_url
 
-comment_body="cf-release Release Candidate SHA for ${next_tag} Deploy:
+comment_body="cf-release Release Candidate SHA for ${next_tag}:
 [${rc_sha}](https://github.com/cloudfoundry/cf-release/commit/${rc_sha})
 
 Details:
