@@ -9,7 +9,7 @@ gist_path=/tmp/gist
 
 cd cf-release-release-candidate
 	last_tag_sha=$(git show-ref ${last_tag} -s)
-	rc_sha=$(git show-ref release-candidate -s)
+	rc_sha=$(git show-ref release-candidate -s --heads)
 
 	if ! git merge-base --is-ancestor ${last_tag_sha} ${rc_sha}; then
 		echo "ABORT: This release candidate has no new changes."
