@@ -15,9 +15,10 @@ params:
   BOSH_PASSWORD: ~
   BOSH_TARGET: ~
   BOSH_USER: ~
-  DATADOG_API_KEY: ~
-  DEPLOYMENTS_DIR: ~
   ENVIRONMENT_NAME: ~
+  DEPLOYMENTS_RUNTIME_DIR: deployments-runtime
+  DIEGO_RELEASE_DIR: diego-release
+  GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
 
 run:
   path: runtime-ci/scripts/ci/generate-diego-manifest/task
