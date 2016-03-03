@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -x -u
+set -eux
 
 attempts=0
 until bosh -n target ${BOSH_TARGET}; do

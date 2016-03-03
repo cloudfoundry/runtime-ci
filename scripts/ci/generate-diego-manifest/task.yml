@@ -4,12 +4,12 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-  - name: deployments-runtime
-  - name: diego-release
-  - name: runtime-ci
+- name: deployments-runtime
+- name: diego-release
+- name: runtime-ci
 
 outputs:
-  - name: generated-diego-manifest
+- name: generated-diego-manifest
 
 params:
   BOSH_PASSWORD: ~
