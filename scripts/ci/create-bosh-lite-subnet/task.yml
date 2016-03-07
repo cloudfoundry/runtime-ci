@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+- name: runtime-ci-env
+
+outputs:
+- name: runtime-ci-env-output
+
+run:
+  path: runtime-ci/scripts/ci/create-bosh-lite-subnet/task
+
+params:
+  ENV_DIR: runtime-ci-env
+  AWS_ENV_PATH: aws_environment
+  BOSH_LITE_ENV_PATH: deployments/bosh-lite/boshlite_vagrant_env
+  OUTPUT_DIR: runtime-ci-env-output

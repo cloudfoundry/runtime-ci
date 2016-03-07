@@ -1,0 +1,40 @@
+#!/bin/bash -eux
+
+root_dir="${PWD}"
+ENV_DIR="${root_dir}/${ENV_DIR:?"\$ENV_DIR must be provided."}"
+BOSH_LITE_ENV_PATH="${BOSH_LITE_ENV_PATH:?"\$BOSH_LITE_ENV_PATH must be provided."}"
+AWS_ENV_PATH="${AWS_ENV_PATH:?"\$AWS_ENV_PATH must be provided."}"
+CIDR_BLOCK="10.10.64.0/24"
+
+OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR must be provided."}"
+
+source "${ENV_DIR}/${BOSH_LITE_ENV_PATH}"
+source "${ENV_DIR}/${AWS_ENV_PATH}"
+
+# Delete old subnet
+aws ec2 delete-subnet --subnet-id "${BOSH_LITE_SUBNET_ID}"
+#TODO make this ^^ idempotent
+
+# Create new subnet
+VPC_ID=$(aws ec2 describe-vpcs | jq -r .Vpcs[0].VpcId)
+
+# There should only ever be one VPC
+NEW_SUBNET_ID=$(aws ec2 create-subnet --vpc-id "${VPC_ID}" --cidr-block "${CIDR_BLOCK}" | jq -r ".Subnet.SubnetId")
+
+# Commit with updated subnet id
+shopt -s dotglob
+cp -r "${ENV_DIR}"/* "${OUTPUT_DIR}"
+cat << EOF > "${OUTPUT_DIR}/${BOSH_LITE_ENV_PATH}"
+export BOSH_LITE_SECURITY_GROUP=${BOSH_LITE_SECURITY_GROUP}
+export BOSH_LITE_SUBNET_ID=${NEW_SUBNET_ID}
+export BOSH_LITE_PRIVATE_IP=${BOSH_LITE_PRIVATE_IP}
+EOF
+
+pushd "${OUTPUT_DIR}" > /dev/null
+  git config user.name "CF MEGA BOT"
+  git config user.email "cf-mega@pivotal.io"
+
+  git add "${OUTPUT_DIR}/${BOSH_LITE_ENV_PATH}"
+  git commit -m "Update BOSH_LITE_SUBNET_ID [automated]"
+popd > /dev/null
+
