@@ -9,7 +9,7 @@ groups:
   - deploy-and-test-bosh-lite
   - deploy-and-test-minimal
   - deploy-and-test-a1
-  - run-a1-diego-cats
+  - a1-diego-deploy-and-test
   - rc
 - name: bosh
   jobs:
@@ -156,6 +156,30 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-release
 
+- name: diego-release-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/diego-release
+
+- name: diego-final-releases
+  type: s3
+  source:
+    bucket: diego-final-releases
+    regexp: diego-(.*).tgz
+    access_key_id: {{diego_final_release_bucket_access_key_id}}
+    secret_access_key: {{diego_final_release_bucket_secret_access_key}}
+
+- name: garden-linux-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/garden-linux-release
+
+- name: etcd-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+
 - name: deployments-runtime
   type: git
   source:
@@ -184,13 +208,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-lite.git
-
-- name: runtime-credentials
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/runtime-credentials.git
 
 - name: bosh-lite-stemcell
   type: bosh-io-stemcell
@@ -246,6 +263,24 @@ resources:
     username: {{a1_bosh_username}}
     password: {{a1_bosh_password}}
     deployment: cf-a1
+    ignore_ssl: true
+
+- name: a1-diego-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.a1.cf-app.com:25555
+    username: {{a1_bosh_username}}
+    password: {{a1_bosh_password}}
+    deployment: cf-a1-diego
+    ignore_ssl: true
+
+- name: a1-diego-cats-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.a1.cf-app.com:25555
+    username: {{a1_bosh_username}}
+    password: {{a1_bosh_password}}
+    deployment: a1-diego-cats
     ignore_ssl: true
 
 - name: minimal-deployment
@@ -719,6 +754,7 @@ jobs:
           NODES: 2
 
 - name: deploy-and-test-a1
+  serial_groups: [a1-pipeline]
   serial: true
   plan:
   - timeout: *timeout
@@ -796,41 +832,90 @@ jobs:
         repos:
         - cf-release/src/cloud_controller_ng
 
-- name: run-a1-diego-cats
+- name: a1-diego-deploy-and-test
+  serial_groups: [a1-pipeline]
   serial: true
   plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: version
-        passed: [deploy-and-test-a1]
-      - get: cf-release
-        resource: cf-release-runtime-passed
-        passed: [deploy-and-test-a1]
-        trigger: true
-    - task: download-manifest
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
-      config:
-        inputs:
-        - name: runtime-ci
-        params:
-          BOSH_DIRECTOR: bosh.a1.cf-app.com
-          BOSH_USER: {{a1_bosh_username}}
-          BOSH_PASSWORD: {{a1_bosh_password}}
-          COMMAND: "download manifest a1-diego-cats bosh-command-out/a1-diego-cats.yml"
-    - task: run-diego-cats
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
-      config:
-        inputs:
-        - name: runtime-ci
-        - name: bosh-command-out
-        params:
-          BOSH_DIRECTOR: bosh.a1.cf-app.com
-          BOSH_USER: {{a1_bosh_username}}
-          BOSH_PASSWORD: {{a1_bosh_password}}
-          DEPLOYMENT_YML: "bosh-command-out/a1-diego-cats.yml"
-          COMMAND: "run errand diego-cats --keep-alive --download-logs"
+  - aggregate:
+    - get: runtime-ci
+    - get: version
+      passed: [deploy-and-test-a1]
+    - get: diego-release
+      resource: diego-release-master
+      params: {submodules: none}
+    - get: diego-final-releases
+      trigger: true
+    - get: garden-linux-release-tarball
+      trigger: true
+    - get: etcd-release-tarball
+      trigger: true
+    - get: deployments-runtime
+      trigger: true
+    - get: bosh-stemcell
+      resource: aws-stemcell
+    - get: cf-release
+      resource: cf-release-runtime-passed
+      trigger: true
+      passed: [deploy-and-test-a1]
+  - task: generate-deployment-manifests
+    file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
+    config:
+      params:
+        BOSH_TARGET: bosh.a1.cf-app.com
+        ENVIRONMENT_NAME: a1
+        DEPLOYMENTS_DIR: deployments-runtime
+        BOSH_USER: {{a1_bosh_username}}
+        BOSH_PASSWORD: {{a1_bosh_password}}
+  - task: emit-diego-datadog-started
+    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    config:
+      params:
+        ENVIRONMENT: cf-a1-diego
+        STATE: started
+        DEPLOYMENT: diego
+        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+  - put: a1-diego-deployment
+    params:
+      manifest: generated-diego-manifest/diego-deployment.yml
+      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      stemcells: [bosh-stemcell/*.tgz]
+  - task: emit-datadog-finished
+    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    config:
+      params:
+        ENVIRONMENT: cf-a1-diego
+        STATE: finished
+        DEPLOYMENT: diego
+        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+  - task: enable-docker
+    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+    config:
+      params:
+        CF_TARGET: api.a1.cf-app.com
+        CF_USER: {{a1_admin_username}}
+        CF_PASSWORD: {{a1_admin_password}}
+  - put: a1-diego-cats-deployment
+    params:
+      manifest: deployments-runtime/a1/deployments/a1-diego-cats.yml
+      releases: []
+      stemcells: []
+  - task: cf-acceptance-tests
+    file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+    config:
+      inputs:
+      - name: runtime-ci
+      - name: deployments-runtime
+      params:
+        BOSH_DIRECTOR: bosh.a1.cf-app.com
+        BOSH_USER: {{a1_bosh_username}}
+        BOSH_PASSWORD: {{a1_bosh_password}}
+        DEPLOYMENT_YML: "deployments-runtime/a1/deployments/a1-diego-cats.yml"
+        COMMAND: "run errand diego-cats --keep-alive --download-logs --logs-dir bosh-command-out"
+    ensure:
+      put: a1-acceptance-tests-logs
+      params:
+        from: bosh-command-out/diego-cats(.*).tgz
+        to: a1-cats/
 
 - name: rc
   serial: true
@@ -840,12 +925,12 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-runtime-passed
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, run-a1-diego-cats]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
         trigger: true
         params:
           submodules: none
       - get: version
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, run-a1-diego-cats]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1]
     - put: cf-release-release-candidate
       params:
         repository: cf-release
