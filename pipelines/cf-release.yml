@@ -1150,8 +1150,8 @@ jobs:
         params:
           CF_APPS_DOMAIN: a1-canaries.cf-app.com
           CF_API_ENDPOINT: https://api.a1.cf-app.com
-          CF_API_ADMIN_USER: {{a1_canaries_admin_username}}
-          CF_API_ADMIN_PASSWORD: {{a1_canaries_admin_password}}
+          CF_API_ADMIN_USER: {{a1_admin_username}}
+          CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
           CF_API_CANARY_USER: {{a1_canaries_username}}
           CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
 
