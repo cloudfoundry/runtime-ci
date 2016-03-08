@@ -6,6 +6,7 @@ groups:
   - deploy-and-test-tabasco
   - deploy-and-test-openstack
   - deploy-and-test-vsphere
+  - create-bosh-lite-subnet
   - deploy-and-test-bosh-lite
   - deploy-and-test-minimal
   - deploy-and-test-a1
@@ -311,6 +312,15 @@ resources:
     branch: master
     private_key: {{runtime-ci-env-deploy-key}}
     uri: git@github.com:cloudfoundry/runtime-ci-env.git
+
+- name: bosh-lite-config
+  type: git
+  source:
+    branch: master
+    private_key: {{runtime-ci-env-read-write-deploy-key}}
+    uri: git@github.com:cloudfoundry/runtime-ci-env.git
+    paths:
+    - deployments/bosh-lite/boshlite_vagrant_env
 
 - name: runtime-ci
   type: git
@@ -683,12 +693,29 @@ jobs:
         params:
           from: bosh-command-out/acceptance_tests(.*).tgz
 
+- name: create-bosh-lite-subnet
+  serial: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: bosh-lite-config
+    - task: create-bosh-lite-subnet
+      file: runtime-ci/scripts/ci/create-bosh-lite-subnet/task.yml
+    - put: bosh-lite-config
+      params:
+        repository: bosh-lite-config-output
+
 - name: deploy-and-test-bosh-lite
   serial: true
   plan:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite-config
+        trigger: true
+        passed: [create-bosh-lite-subnet]
       - get: environment-creds
         resource: runtime-ci-env
       - get: cf-release-tarball
