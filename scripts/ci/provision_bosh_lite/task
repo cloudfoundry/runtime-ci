@@ -18,8 +18,10 @@ setup_env() {
 
   export BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq .Subnets[0].SubnetId)
 
+  set +x
   export BOSH_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
   export BOSH_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+  set -x
 }
 
 provision_bosh_lite() {
