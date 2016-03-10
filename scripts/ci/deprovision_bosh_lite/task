@@ -9,11 +9,6 @@ set -u
 
 root_dir="${PWD}"
 
-# Inputs
-ENV_DIR="${root_dir}/${ENV_DIR:?"\$ENV_DIR not set"}"
-
-source "${ENV_DIR}/aws_environment"
-
 aws ec2 describe-instances --filters "Name=tag:Name,Values=${BOSH_LITE_NAME}" \
   --output text --query 'Reservations[*].Instances[*].InstanceId' | \
   tr '\n' ' ' > instances-to-delete

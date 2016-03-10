@@ -4,7 +4,6 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-- name: environment-creds
 - name: runtime-ci
 - name: bosh-lite
 
@@ -15,6 +14,10 @@ run:
   path: runtime-ci/scripts/ci/provision_bosh_lite/task
 
 params:
-  ENV_DIR: environment-creds
   BOSH_LITE_NAME: bosh-lite-ci
+  BOSH_LITE_SECURITY_GROUP:
+  BOSH_LITE_PRIVATE_IP:
+  BOSH_AWS_ACCESS_KEY_ID:
+  BOSH_AWS_SECRET_ACCESS_KEY:
+  BOSH_LITE_PRIVATE_KEY:
   OUTPUT_DIR: bosh-lite-ip

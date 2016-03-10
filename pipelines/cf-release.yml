@@ -732,9 +732,22 @@ jobs:
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision_bosh_lite/task.yml
+      config:
+        params:
+          AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+          AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+          AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+
     - task: provision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/provision_bosh_lite/task.yml
+      config:
+        params:
+          BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
+          BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
+          BOSH_AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+          BOSH_AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+          SSH_KEY: {{bosh_lite_private_key}}
     - task: deploy-and-test-cf
       privileged: true
       file: runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task.yml

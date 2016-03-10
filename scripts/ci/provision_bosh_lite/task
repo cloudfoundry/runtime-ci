@@ -9,20 +9,14 @@ set -u
 
 root_dir="${PWD}"
 
-# Inputs
-ENV_DIR="${root_dir}/${ENV_DIR:?"\$ENV_DIR not set"}"
-
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"OUTPUT_DIR must be provided"}"
 
 setup_env() {
-  export BOSH_LITE_PRIVATE_KEY="${ENV_DIR}/keypair/id_rsa_bosh"
+  echo "${SSH_KEY}" > /tmp/bosh_lite_key
+  export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 
-  source "${ENV_DIR}/aws_environment"
-  export BOSH_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-  export BOSH_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-
-  source "${ENV_DIR}/deployments/bosh-lite/boshlite_vagrant_env"
+  export BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq .Subnets[0].SubnetId)
 }
 
 provision_bosh_lite() {
