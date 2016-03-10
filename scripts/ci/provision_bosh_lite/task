@@ -13,15 +13,14 @@ root_dir="${PWD}"
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"OUTPUT_DIR must be provided"}"
 
 setup_env() {
-  echo "${SSH_KEY}" > /tmp/bosh_lite_key
-  export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
-
-  export BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq -r .Subnets[0].SubnetId)
-
   set +x
+  echo "${SSH_KEY}" > /tmp/bosh_lite_key
   export BOSH_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
   export BOSH_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
   set -x
+
+  export BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq -r .Subnets[0].SubnetId)
+  export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 }
 
 provision_bosh_lite() {
