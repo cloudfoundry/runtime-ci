@@ -4,7 +4,6 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-- name: environment-creds
 - name: runtime-ci
 
 run:
