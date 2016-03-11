@@ -766,7 +766,6 @@ jobs:
           NODES: 2
 
 - name: deploy-and-test-a1
-  serial_groups: [a1-pipeline]
   serial: true
   plan:
   - timeout: *timeout
@@ -845,13 +844,12 @@ jobs:
         - cf-release/src/cloud_controller_ng
 
 - name: a1-diego-deploy-and-test
-  serial_groups: [a1-pipeline]
   serial: true
   plan:
   - aggregate:
     - get: runtime-ci
     - get: version
-      passed: [deploy-and-test-a1]
+      passed: [deploy-and-test-tabasco]
     - get: diego-release
       resource: diego-release-master
       params: {submodules: none}
@@ -868,7 +866,7 @@ jobs:
     - get: cf-release
       resource: cf-release-runtime-passed
       trigger: true
-      passed: [deploy-and-test-a1]
+      passed: [deploy-and-test-tabasco]
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
     config:
@@ -937,12 +935,12 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-runtime-passed
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, a1-diego-deploy-and-test]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
         trigger: true
         params:
           submodules: none
       - get: version
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, a1-diego-deploy-and-test]
+        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
     - put: cf-release-release-candidate
       params:
         repository: cf-release
