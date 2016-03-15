@@ -935,7 +935,7 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-runtime-passed
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
+        passed: [deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
         trigger: true
         params:
           submodules: none
