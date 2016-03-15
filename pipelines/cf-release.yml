@@ -940,7 +940,7 @@ jobs:
         params:
           submodules: none
       - get: version
-        passed: [deploy-and-test-openstack, deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
+        passed: [deploy-and-test-vsphere, deploy-and-test-bosh-lite, deploy-and-test-a1, a1-diego-deploy-and-test]
     - put: cf-release-release-candidate
       params:
         repository: cf-release
