@@ -41,7 +41,7 @@ release_notes_body="The cf-release ${tag} was released on $(date +'%B %d, %Y').
 * OpenStack:
 * BOSH-Lite:
 
-These are soft recommendations; several different versions of the BOSH and stemcells are likely to work fine with this version of cf-release and the corresponding versions of diego-release, garden-linux-release, and etcd-release.
+These are soft recommendations; several different versions of the stemcells are likely to work fine with this version of cf-release and the corresponding versions of diego-release, garden-linux-release, and etcd-release.
 
 ## <a name='recommended-diego-release-version'></a>Recommended diego-release Version
 
