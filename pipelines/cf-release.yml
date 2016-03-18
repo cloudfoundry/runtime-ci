@@ -791,8 +791,7 @@ jobs:
 - name: a1-cf-deploy
   serial: true
   serial_groups:
-  - smokes-deploy-lock
-  - cats-deploy-lock
+  - cf-a1-bosh-deployment-lock
   plan:
   - timeout: *timeout
     do:
@@ -851,7 +850,7 @@ jobs:
 - name: a1-smoke-tests
   serial: true
   serial_groups:
-  - smokes-deploy-lock
+  - cf-a1-bosh-deployment-lock
   plan:
   - timeout: *timeout
     do:
@@ -886,7 +885,7 @@ jobs:
 - name: a1-cf-cats
   serial: true
   serial_groups:
-  - cats-deploy-lock
+  - cf-a1-bosh-deployment-lock
   plan:
   - timeout: *timeout
     do:
