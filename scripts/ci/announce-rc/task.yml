@@ -4,7 +4,7 @@ platform: linux
 image: docker:///concourse/git-resource
 
 inputs:
-- name: cf-github-release
+- name: cf-bosh-io-release
 - name: cf-release-release-candidate
 - name: runtime-ci
 

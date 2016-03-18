@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eux
 
-last_version=$(cat cf-github-release/version)
-last_tag=$(cat cf-github-release/tag)
+last_version=$(cat cf-bosh-io-release/version)
+last_tag="v${last_version}"
 next_tag=v$((${last_version} + 1))
 issue_title="CF ${next_tag}"
 gist_path=/tmp/gist
