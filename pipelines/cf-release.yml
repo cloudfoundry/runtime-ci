@@ -792,6 +792,7 @@ jobs:
   serial: true
   serial_groups:
   - cf-a1-bosh-deployment-lock
+  - cf-deploy-and-diego-cats-lock
   plan:
   - timeout: *timeout
     do:
@@ -924,7 +925,7 @@ jobs:
 - name: a1-diego-deploy
   serial: true
   serial_groups:
-  - diego-cats-lock
+  - diego-deploy-and-diego-cats-lock
   plan:
   - aggregate:
     - get: runtime-ci
@@ -984,7 +985,8 @@ jobs:
 - name: a1-diego-cats
   serial: true
   serial_groups:
-  - diego-cats-lock
+  - diego-deploy-and-diego-cats-lock
+  - cf-deploy-and-diego-cats-lock
   plan:
   - timeout: *timeout
     do:
