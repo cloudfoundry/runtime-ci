@@ -381,13 +381,12 @@ jobs:
     - put: version
       params:
         file: version/number
-    - aggregate:
-      - task: create-release-tarball
-        privileged: true
-        file: runtime-ci/scripts/ci/create_release/task.yml
-        config:
-          params:
-            CF_RELEASE_DIR: 'cf-release-develop'
+    - task: create-release-tarball
+      privileged: true
+      file: runtime-ci/scripts/ci/create_release/task.yml
+      config:
+        params:
+          CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot_bump/task.yml
