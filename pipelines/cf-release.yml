@@ -863,17 +863,11 @@ jobs:
       - get: cf-a1-diego-manifest
         passed: [a1-diego-deploy]
         trigger: true
-      - get: cf-release-tarball
-        passed: [a1-cf-deploy]
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [a1-cf-deploy, a1-diego-deploy]
         trigger: true
       - get: runtime-ci
-      - get: deployments-runtime
-      - get: aws-stemcell
-      - get: version
-        passed: [a1-cf-deploy, a1-diego-deploy]
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run_bosh_command/task.yml
@@ -895,16 +889,11 @@ jobs:
         resource: cf-a1-manifest
         trigger: true
         passed: [ a1-smoke-tests ]
-      - get: cf-release-tarball
-        passed: [a1-smoke-tests]
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
-      - get: deployments-runtime
-      - get: version
-        passed: [a1-smoke-tests]
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run_bosh_command/task.yml
@@ -995,16 +984,12 @@ jobs:
         resource: cf-a1-manifest
         trigger: true
         passed: [ a1-smoke-tests ]
-      - get: cf-release-tarball
-        passed: [a1-smoke-tests]
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
       - get: deployments-runtime
-      - get: version
-        passed: [a1-smoke-tests]
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     config:
@@ -1203,8 +1188,6 @@ jobs:
         trigger: true
         params:
           submodules: none
-      - get: version
-        passed: [deploy-and-test-vsphere, deploy-and-test-bosh-lite, a1-cf-cats, a1-diego-cats]
     - put: cf-release-release-candidate
       params:
         repository: cf-release
