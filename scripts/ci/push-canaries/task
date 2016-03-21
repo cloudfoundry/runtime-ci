@@ -31,7 +31,7 @@ if [ "$SKIP_SSL_VALIDATION" == true ]; then
          SKIP_SSL_VALIDATION_FLAG="--skip-ssl-validation"
 fi
 
-cf api $CF_API_ENDPOINT $SKIP_SSL_VALIDATION_FLAG
+cf api "$CF_API_ENDPOINT" $SKIP_SSL_VALIDATION_FLAG
 set +x
 echo "Authenticating as $CF_API_ADMIN_USER"
 cf auth "$CF_API_ADMIN_USER" "$CF_API_ADMIN_PASSWORD"
@@ -42,11 +42,11 @@ echo "Succeeded creating user"
 set -x
 
 set +e
-cf create-org $CANARY_ORG
-cf target -o $CANARY_ORG
-cf create-space $CANARY_SPACE
-cf target -s $CANARY_SPACE
-cf set-space-role "$CF_API_CANARY_USER" $CANARY_ORG $CANARY_SPACE SpaceDeveloper
+cf create-org "$CANARY_ORG"
+cf target -o "$CANARY_ORG"
+cf create-space "$CANARY_SPACE"
+cf target -s "$CANARY_SPACE"
+cf set-space-role "$CF_API_CANARY_USER" "$CANARY_ORG" "$CANARY_SPACE" SpaceDeveloper
 set -e
 
 set +x
@@ -70,6 +70,6 @@ canaries --number-of-zero-downtime-apps="$NUM_ZERO_DOWNTIME_APPS" \
          --password="$CF_API_CANARY_PASSWORD" \
          --organization="CANARY_ORG" \
          --space="$CANARY_SPACE" \
-         $SKIP_SSL_VALIDATION_FLAG"
+         $SKIP_SSL_VALIDATION_FLAG
 echo "Succeeded running command"
 set -x
