@@ -68,7 +68,7 @@ canaries --number-of-zero-downtime-apps="$NUM_ZERO_DOWNTIME_APPS" \
          --app-domain="$CF_APPS_DOMAIN" \
          --username="$CF_API_CANARY_USER" \
          --password="$CF_API_CANARY_PASSWORD" \
-         --organization="CANARY_ORG" \
+         --organization="$CANARY_ORG" \
          --space="$CANARY_SPACE" \
          $SKIP_SSL_VALIDATION_FLAG
 echo "Succeeded running command"
