@@ -1388,7 +1388,7 @@ jobs:
       - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: runtime-ci/scripts/ci/deploy-canaries/task.yml
+      file: runtime-ci/scripts/ci/push-canaries/task.yml
       config:
         params:
           CF_APPS_DOMAIN: a1-canaries.cf-app.com
@@ -1397,6 +1397,13 @@ jobs:
           CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
           CF_API_CANARY_USER: {{a1_canaries_username}}
           CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
+          SKIP_SSL_VALIDATION: false
+          CANARY_ORG: canaries
+          CANARY_SPACE: coal-mine
+          NUM_ZERO_DOWNTIME_APPS: 20
+          NUM_INSTANCES_PER_APP: 2
+          NUM_INSTANCES_CANARY_INSTANCES: 20
+
 
 - name: push-tabasco-canaries
   public: true
@@ -1407,7 +1414,7 @@ jobs:
       - get: runtime-ci
       - get: cf-canaries
     - task: push-canaries
-      file: runtime-ci/scripts/ci/deploy-canaries/task.yml
+      file: runtime-ci/scripts/ci/push-canaries/task.yml
       config:
         params:
           CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
@@ -1416,6 +1423,12 @@ jobs:
           CF_API_ADMIN_PASSWORD: {{tabasco_canaries_admin_password}}
           CF_API_CANARY_USER: {{tabasco_canaries_username}}
           CF_API_CANARY_PASSWORD: {{tabasco_canaries_password}}
+          SKIP_SSL_VALIDATION: false
+          CANARY_ORG: canaries
+          CANARY_SPACE: coal-mine
+          NUM_ZERO_DOWNTIME_APPS: 20
+          NUM_INSTANCES_PER_APP: 2
+          NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: deploy-and-test-vsphere
   serial: true

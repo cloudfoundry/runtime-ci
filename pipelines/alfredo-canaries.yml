@@ -27,5 +27,13 @@ jobs:
       params:
         CF_APPS_DOMAIN: {{cf_apps_domain}}
         CF_API_ENDPOINT: {{cf_api_endpoint}}
-        CF_API_USER: {{cf_api_user}}
-        CF_API_PASSWORD: {{cf_api_password}}
+        CF_API_ADMIN_USER: {{cf_admin_user}}
+        CF_API_ADMIN_PASSWORD: {{cf_admin_password}}
+        CF_API_CANARY_USER: {{cf_canary_user}}
+        CF_API_CANARY_PASSWORD: {{cf_canary_password}}
+        SKIP_SSL_VALIDATION: true
+        CANARY_ORG: canaries
+        CANARY_SPACE: canaries
+        NUM_ZERO_DOWNTIME_APPS: 1
+        NUM_INSTANCES_PER_APP: 2
+        NUM_INSTANCES_CANARY_INSTANCES: 2
