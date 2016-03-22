@@ -7,7 +7,7 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/run-errand/task
+  path: runtime-ci/scripts/ci/delete-deployment/task
 
 params:
   BOSH_DIRECTOR:

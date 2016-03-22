@@ -12,7 +12,6 @@ root_dir="${PWD}"
 # Inputs
 BOSH_DIRECTOR="${BOSH_DIRECTOR:?"BOSH_DIRECTOR must be provided"}"
 BOSH_USER="${BOSH_USER:?"BOSH_USER must be provided"}"
-ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 
 set +x
 BOSH_PASSWORD="${BOSH_PASSWORD:?"BOSH_PASSWORD must be provided"}"
