@@ -1068,7 +1068,7 @@ jobs:
       params:
         <<: *bosh-target-a1
         DEPLOYMENT_NAME: a1-diego-cats
-        ERRAND_NAME: acceptance_tests
+        ERRAND_NAME: diego-cats
     ensure:
       put: a1-acceptance-tests-logs
       params:
