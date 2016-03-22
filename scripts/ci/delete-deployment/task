@@ -19,9 +19,6 @@ set -x
 
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
-# Outputs
-LOGS_DIR="${root_dir}/${LOGS_DIR}"
-
 bosh -t "$BOSH_DIRECTOR" download manifest "$DEPLOYMENT_NAME" manifest.yml
 
 bosh \
