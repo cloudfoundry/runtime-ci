@@ -721,12 +721,17 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: run-acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_acceptance_tests/task.yml
+      file: runtime-ci/scripts/ci/run-cats/task.yml
       config:
         params:
-          ENVIRONMENT: minimal-aws
-          SKIPS: NO_DEA_SUPPORT
+          CF_API: api.minimal-aws.cf-app.com
+          CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
+          CF_APPS_DOMAIN: minimal-aws.cf-app.com
+          SKIP_SSL_VALIDATION: true
+          USE_HTTP: false
           NODES: 2
+          SUITES: "apps detect docker internet_dependent route_services services security_groups"
+          ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
 
 - name: vsphere-cf-deploy
   serial: true
