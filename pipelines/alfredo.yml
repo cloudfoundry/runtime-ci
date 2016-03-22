@@ -120,12 +120,12 @@ jobs:
         BOSH_PASSWORD: {{cf_bosh_password}}
         CF_DEPLOYMENT_TRACE: true
   - task: cleanup
-    file: runtime-ci/scripts/ci/run-bosh-command/task.yml
+    file: runtime-ci/scripts/ci/run_bosh_cleanup/task.yml
     config:
       params:
-        DEPLOYMENT_NAME: cf-alfredo
-        COMMAND: cleanup
-        ENVIRONMENT: alfredo
+        BOSH_DIRECTOR: {{cf_bosh_director}}
+        BOSH_USER: {{cf_bosh_user}}
+        BOSH_PASSWORD: {{cf_bosh_password}}
 
 - name: run-smoke-tests
   public: true
@@ -155,20 +155,20 @@ jobs:
       passed: [deploy-cf]
       trigger: true
   - task: smoke-tests
-    file: runtime-ci/scripts/ci/run-bosh-command/task.yml
+    file: runtime-ci/scripts/ci/run-errand/task.yml
     config:
       params:
-        COMMAND: 'run errand smoke_tests'
+        BOSH_DIRECTOR: {{cf_bosh_director}}
+        BOSH_USER: {{cf_bosh_user}}
+        BOSH_PASSWORD: {{cf_bosh_password}}
+        ERRAND_NAME: smoke_tests
         DEPLOYMENT_NAME: cf-alfredo
-        ENVIRONMENT: alfredo
 
 - name: run-acceptance-tests
   public: true
   serial_groups: [deploy_cf_and_run_cats_errand]
   plan:
   - aggregate:
-    - get: private-credentials
-      resource: alfredo-env
     - get: runtime-ci
     - get: cf-release
       passed: [run-smoke-tests]
@@ -188,11 +188,15 @@ jobs:
       passed: [run-smoke-tests]
       trigger: true
   - task: acceptance-tests
-    file: runtime-ci/scripts/ci/run-cats-errand/task.yml
+    file: runtime-ci/scripts/ci/run-errand/task.yml
     config:
       params:
+        BOSH_DIRECTOR: {{cf_bosh_director}}
+        BOSH_USER: {{cf_bosh_user}}
+        BOSH_PASSWORD: {{cf_bosh_password}}
         DEPLOYMENT_NAME: cf-alfredo
         ENVIRONMENT: alfredo
+        ERRAND_NAME: acceptance_tests
     ensure:
       put: acceptance-tests-logs
       params:

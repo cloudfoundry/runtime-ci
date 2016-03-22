@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/run-errand/task
+
+params:
+  BOSH_DIRECTOR:
+  BOSH_USER:
+  BOSH_PASSWORD:

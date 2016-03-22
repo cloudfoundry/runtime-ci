@@ -5,18 +5,17 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
 - name: runtime-ci
-- name: manifest
 
 outputs:
-- name: bosh-command-out
+  - name: logs-dir
 
 run:
-  path: runtime-ci/scripts/ci/run_bosh_command/task
+  path: runtime-ci/scripts/ci/run-errand/task
 
 params:
   BOSH_DIRECTOR:
   BOSH_USER:
   BOSH_PASSWORD:
-  DEPLOYMENT_YML:
-  COMMAND:
-  OUTPUT_DIR: bosh-command-out
+  DEPLOYMENT_NAME:
+  ERRAND_NAME:
+  LOGS_DIR: logs-dir

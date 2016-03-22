@@ -550,12 +550,12 @@ jobs:
             REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-tabasco
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-tabasco
+          ERRAND_NAME: smoke_tests
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot_bump/task.yml
@@ -566,12 +566,12 @@ jobs:
             REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-tabasco
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_NAME: cf-tabasco
+          ERRAND_NAME: acceptance_tests
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot_bump/task.yml
@@ -583,7 +583,7 @@ jobs:
       ensure:
         put: tabasco-acceptance-tests-logs
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
     - put: cf-release-runtime-passed
       params:
         repository: cf-release
@@ -627,24 +627,24 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-runtime-bb-1
+          ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-runtime-bb-1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_NAME: cf-runtime-bb-1
+          ERRAND_NAME: acceptance_tests
       ensure:
         put: openstack-acceptance-tests-logs
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
 
 - name: deploy-and-test-bosh-lite
   serial: true
@@ -763,13 +763,12 @@ jobs:
           ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/delete-deployment/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'delete deployment cf-cat'
+          DEPLOYMENT_NAME: cf-cat
     - put: vsphere-deployment
       tags: [vsphere]
       params:
@@ -802,13 +801,13 @@ jobs:
         tags: [vsphere]
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-cat
+          ERRAND_NAME: smoke_tests
 
 - name: vsphere-cf-cats
   serial: true
@@ -831,18 +830,18 @@ jobs:
         tags: [vsphere]
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_NAME: cf-cat
+          ERRAND_NAME: acceptance_tests
       ensure:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
 
 - name: a1-cf-deploy
   serial: true
@@ -926,12 +925,12 @@ jobs:
       - get: runtime-ci
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-a1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-a1
+          ERRAND_NAME: smoke_tests
 
 - name: a1-cf-cats
   serial: true
@@ -952,16 +951,16 @@ jobs:
       - get: runtime-ci
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-a1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_NAME: cf-a1
+          ERRAND_NAME: acceptance_tests
       ensure:
         put: a1-acceptance-tests-logs
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
     - put: deliver-capi-stories
       params:
         repos:
@@ -1059,21 +1058,16 @@ jobs:
       releases: []
       stemcells: []
   - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+    file: runtime-ci/scripts/ci/run-errand/task.yml
     config:
-      inputs:
-      - name: runtime-ci
-      - name: deployments-runtime
       params:
-        BOSH_DIRECTOR: bosh.a1.cf-app.com
-        BOSH_USER: {{a1_bosh_username}}
-        BOSH_PASSWORD: {{a1_bosh_password}}
-        DEPLOYMENT_YML: "deployments-runtime/a1/deployments/a1-diego-cats.yml"
-        COMMAND: "run errand diego-cats --keep-alive --download-logs --logs-dir bosh-command-out"
+        <<: *bosh-target-a1
+        DEPLOYMENT_NAME: a1-diego-cats
+        ERRAND_NAME: acceptance_tests
     ensure:
       put: a1-acceptance-tests-logs
       params:
-        from: bosh-command-out/diego-cats(.*).tgz
+        from: logs-dir/diego-cats(.*).tgz
         to: a1-cats/
 
 
@@ -1462,13 +1456,12 @@ jobs:
           ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/delete-deployment/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'delete deployment cf-cat'
+          DEPLOYMENT_NAME: cf-cat
     - put: vsphere-deployment
       tags: [vsphere]
       params:
@@ -1478,27 +1471,27 @@ jobs:
           - cf-release-tarball/*.tgz
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-cat
+          ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       config:
         params:
           <<: *bosh-target-cat
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_NAME: cf-cat
+          ERRAND_NAME: acceptance_tests
       ensure:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
 
 - name: deploy-and-test-a1
   serial: true
@@ -1554,24 +1547,24 @@ jobs:
         repository: cf-release
     - task: smoke-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-a1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand smoke_tests --keep-alive'
+          DEPLOYMENT_NAME: cf-a1
+          ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
-      file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-a1
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-command-out'
+          DEPLOYMENT_YML: cf-a1
+          ERRAND_NAME: acceptance_tests
       ensure:
         put: a1-acceptance-tests-logs
         params:
-          from: bosh-command-out/acceptance_tests(.*).tgz
+          from: logs-dir/acceptance_tests(.*).tgz
     - put: deliver-capi-stories
       params:
         repos:
@@ -1639,19 +1632,16 @@ jobs:
       releases: []
       stemcells: []
   - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run_bosh_command/task.yml
+    file: runtime-ci/scripts/ci/run-errand/task.yml
     config:
-      inputs:
-      - name: runtime-ci
-      - name: deployments-runtime
       params:
         BOSH_DIRECTOR: bosh.a1.cf-app.com
         BOSH_USER: {{a1_bosh_username}}
         BOSH_PASSWORD: {{a1_bosh_password}}
-        DEPLOYMENT_YML: "deployments-runtime/a1/deployments/a1-diego-cats.yml"
-        COMMAND: "run errand diego-cats --keep-alive --download-logs --logs-dir bosh-command-out"
+        DEPLOYMENT_YML: a1-diego-cats
+        ERRAND_NAME: acceptance_tests
     ensure:
       put: a1-acceptance-tests-logs
       params:
-        from: bosh-command-out/diego-cats(.*).tgz
+        from: logs-dir/diego-cats(.*).tgz
         to: a1-cats/
