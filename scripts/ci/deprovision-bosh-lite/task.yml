@@ -7,7 +7,7 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/deprovision_bosh_lite/task
+  path: runtime-ci/scripts/ci/deprovision-bosh-lite/task
 
 params:
   ENV_DIR: environment-creds

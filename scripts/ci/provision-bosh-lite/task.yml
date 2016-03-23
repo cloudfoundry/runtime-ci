@@ -11,7 +11,7 @@ outputs:
 - name: bosh-lite-ip
 
 run:
-  path: runtime-ci/scripts/ci/provision_bosh_lite/task
+  path: runtime-ci/scripts/ci/provision-bosh-lite/task
 
 params:
   BOSH_LITE_NAME: bosh-lite-ci

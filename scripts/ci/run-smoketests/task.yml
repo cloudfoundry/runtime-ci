@@ -8,7 +8,7 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/run_smoketests/task
+  path: runtime-ci/scripts/ci/run-smoketests/task
 
 params:
   SUITE_NAME:

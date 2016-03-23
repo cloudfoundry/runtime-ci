@@ -7,11 +7,10 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/emit_datadog_event/task
+  path: runtime-ci/scripts/ci/emit-datadog-metric/task
 
 params:
-  TITLE:
-  TEXT:
-  PRIORITY:
-  AWS_ENV:
+  METRIC:
+  TAGS:
   DATADOG_API_KEY:
+  VALUE:

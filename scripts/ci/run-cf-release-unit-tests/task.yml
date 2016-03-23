@@ -6,15 +6,9 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release-develop
 - name: runtime-ci
-- name: version
-
-outputs:
-- name: cf-release-out
 
 run:
-  path: runtime-ci/scripts/ci/create_release/task
+  path: runtime-ci/scripts/ci/run-cf-release-unit-tests/task
 
 params:
   CF_RELEASE_DIR:
-  TARBALL:
-  OUTPUT_DIR: cf-release-out

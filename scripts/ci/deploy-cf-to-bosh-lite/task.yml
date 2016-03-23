@@ -14,7 +14,7 @@ outputs:
 - name: bosh-lite-output-dir
 
 run:
-  path: runtime-ci/scripts/ci/deploy_cf_to_bosh_lite/task
+  path: runtime-ci/scripts/ci/deploy-cf-to-bosh-lite/task
 
 params:
   BOSH_LITE_STEMCELL_DIR: bosh-lite-stemcell

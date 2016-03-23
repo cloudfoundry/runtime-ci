@@ -7,9 +7,9 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/run_bosh_cleanup/task
+  path: runtime-ci/scripts/ci/cannot-bump/task
 
 params:
-  BOSH_DIRECTOR:
-  BOSH_USER:
-  BOSH_PASSWORD:
+  URL:
+  TOKEN:
+  REASON:

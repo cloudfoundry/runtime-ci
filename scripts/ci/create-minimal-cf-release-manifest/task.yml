@@ -13,7 +13,7 @@ outputs:
 - name: manifest
 
 run:
-  path: runtime-ci/scripts/ci/create_minimal_cf_release_manifest/task
+  path: runtime-ci/scripts/ci/create-minimal-cf-release-manifest/task
 
 params:
   RUNTIME_CI_DIR: runtime-ci

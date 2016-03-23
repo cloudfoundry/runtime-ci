@@ -7,9 +7,8 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/cannot_bump/task
+  path: runtime-ci/scripts/ci/can-bump/task
 
 params:
   URL:
   TOKEN:
-  REASON:
