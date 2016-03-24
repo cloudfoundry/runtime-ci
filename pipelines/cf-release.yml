@@ -506,10 +506,8 @@ jobs:
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
       config:
         params:
-          TITLE: start_deploy
-          TEXT: start_deploy
-          PRIORITY: normal
-          AWS_ENV: tabasco
+          STATE: started
+          EVENT_TAG_DEPLOYMENT: cf-tabasco
           DATADOG_API_KEY: {{tabasco_datadog_api_key}}
     - put: tabasco-deployment
       params:
@@ -532,10 +530,8 @@ jobs:
           file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
           config:
             params:
-              TITLE: end_deploy
-              TEXT: end_deploy
-              PRIORITY: normal
-              AWS_ENV: tabasco
+              STATE: finished
+              EVENT_TAG_DEPLOYMENT: cf-tabasco
               DATADOG_API_KEY: {{tabasco_datadog_api_key}}
     - put: cf-release-runtime-deployed
       params:
@@ -883,10 +879,8 @@ jobs:
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
       config:
         params:
-          TITLE: start_deploy
-          TEXT: start_deploy
-          PRIORITY: normal
-          AWS_ENV: a1
+          STATE: started
+          EVENT_TAG_DEPLOYMENT: cf-a1
           DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
@@ -899,10 +893,8 @@ jobs:
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
       config:
         params:
-          TITLE: end_deploy
-          TEXT: end_deploy
-          PRIORITY: normal
-          AWS_ENV: a1
+          STATE: finished
+          EVENT_TAG_DEPLOYMENT: cf-a1
           DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: cf-release-acceptance-deployed
       params:
@@ -1010,12 +1002,11 @@ jobs:
     params:
       file: generated-diego-manifest/diego-deployment.yml
   - task: emit-diego-datadog-started
-    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     config:
       params:
-        ENVIRONMENT: cf-a1-diego
         STATE: started
-        DEPLOYMENT: diego
+        EVENT_TAG_DEPLOYMENT: cf-a1-diego
         DATADOG_API_KEY: {{diego_datadog_api_key}} 
   - put: a1-diego-deployment
     params:
@@ -1023,12 +1014,11 @@ jobs:
       releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
-    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     config:
       params:
-        ENVIRONMENT: cf-a1-diego
         STATE: finished
-        DEPLOYMENT: diego
+        EVENT_TAG_DEPLOYMENT: cf-a1-diego
         DATADOG_API_KEY: {{diego_datadog_api_key}} 
 
 - name: a1-diego-cats
@@ -1526,10 +1516,8 @@ jobs:
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
       config:
         params:
-          TITLE: start_deploy
-          TEXT: start_deploy
-          PRIORITY: normal
-          AWS_ENV: a1
+          STATE: started
+          EVENT_TAG_DEPLOYMENT: cf-a1
           DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
@@ -1542,10 +1530,8 @@ jobs:
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
       config:
         params:
-          TITLE: end_deploy
-          TEXT: end_deploy
-          PRIORITY: normal
-          AWS_ENV: a1
+          STATE: finished
+          EVENT_TAG_DEPLOYMENT: cf-a1
           DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: cf-release-acceptance-deployed
       params:
@@ -1604,12 +1590,11 @@ jobs:
         BOSH_USER: {{a1_bosh_username}}
         BOSH_PASSWORD: {{a1_bosh_password}}
   - task: emit-diego-datadog-started
-    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     config:
       params:
-        ENVIRONMENT: cf-a1-diego
         STATE: started
-        DEPLOYMENT: diego
+        EVENT_TAG_DEPLOYMENT: cf-a1-diego
         DATADOG_API_KEY: {{diego_datadog_api_key}} 
   - put: a1-diego-deployment
     params:
@@ -1617,12 +1602,11 @@ jobs:
       releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
-    file: runtime-ci/scripts/ci/emit-diego-datadog-event/task.yml
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     config:
       params:
-        ENVIRONMENT: cf-a1-diego
         STATE: finished
-        DEPLOYMENT: diego
+        EVENT_TAG_DEPLOYMENT: cf-a1-diego
         DATADOG_API_KEY: {{diego_datadog_api_key}} 
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
