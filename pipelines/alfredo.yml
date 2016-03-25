@@ -46,7 +46,12 @@ resources:
     branch: develop
     ignore_paths: [blessed_versions.json]
     uri: https://github.com/cloudfoundry/cf-deployment.git
-- name: cf-deployment-develop-merge-target
+
+# This resource sometimmes gets in a bad state where history is out of order
+# or out of date. The easiest way to reset the history is to create a new
+# resource, so we're using the counter at the end of the name to create unique
+# resource (and also keep track of how many times this problem has happened).
+- name: cf-deployment-develop-merge-target-1
   type: git
   source:
     branch: develop
@@ -302,10 +307,10 @@ jobs:
       resource: cf-deployment-master
       trigger: true
     - get: release-repo
-      resource: cf-deployment-develop-merge-target
+      resource: cf-deployment-develop-merge-target-1
       params: {fetch: [master]}
   - task: merge-master-into-develop
     file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-  - put: cf-deployment-develop-merge-target
+  - put: cf-deployment-develop-merge-target-1
     params:
       repository: final-release-repo
