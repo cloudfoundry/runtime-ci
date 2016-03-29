@@ -15,6 +15,7 @@ groups:
   - vsphere-cf-deploy
   - vsphere-smoke-tests
   - vsphere-cf-cats
+  - update-compatibility
   - rc
 - name: bosh
   jobs:
@@ -195,6 +196,13 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/diego-release
+
+- name: diego-cf-compatibility
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry-incubator/diego-cf-compatibility
+    private_key: {{diego_cf_compatibility_private_key}}
 
 - name: diego-final-releases
   type: s3
@@ -920,6 +928,30 @@ jobs:
         passed: [a1-cf-deploy, a1-diego-deploy]
         trigger: true
       - get: runtime-ci
+      - get: aws-stemcell
+        passed: [ a1-cf-deploy, a1-diego-deploy ]
+        params:
+          tarball: false
+        trigger: true
+      - get: diego-final-releases
+        passed: [ a1-diego-deploy ]
+        trigger: true
+      - get: diego-release-master
+        resource: diego-release-master
+        trigger: true
+        passed: [ a1-diego-deploy ]
+        params:
+          submodules: none
+      - get: garden-linux-release-tarball
+        trigger: true
+        passed: [ a1-diego-deploy ]
+        params:
+          tarball: false
+      - get: etcd-release-tarball
+        trigger: true
+        passed: [ a1-diego-deploy ]
+        params:
+          tarball: false
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -946,6 +978,11 @@ jobs:
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
+      - get: aws-stemcell
+        passed: [ a1-smoke-tests ]
+        params:
+          tarball: false
+        trigger: true
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -1040,6 +1077,30 @@ jobs:
         trigger: true
       - get: runtime-ci
       - get: deployments-runtime
+      - get: aws-stemcell
+        passed: [ a1-smoke-tests ]
+        params:
+          tarball: false
+        trigger: true
+      - get: diego-final-releases
+        passed: [ a1-smoke-tests ]
+        trigger: true
+      - get: diego-release-master
+        resource: diego-release-master
+        trigger: true
+        passed: [ a1-smoke-tests ]
+        params:
+          submodules: none
+      - get: garden-linux-release-tarball
+        trigger: true
+        passed: [ a1-smoke-tests ]
+        params:
+          tarball: false
+      - get: etcd-release-tarball
+        trigger: true
+        passed: [ a1-smoke-tests ]
+        params:
+          tarball: false
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     config:
@@ -1065,6 +1126,41 @@ jobs:
         from: logs-dir/diego-cats(.*).tgz
         to: a1-cats/
 
+- name: update-compatibility
+  plan:
+  - timeout: *timeout
+    do:
+      - aggregate:
+        - get: runtime-ci
+        - get: cf-release-runtime-passed
+          passed: [ a1-cf-cats, a1-diego-cats, vsphere-cf-cats, deploy-and-test-bosh-lite]
+          trigger: true
+        - get: stemcell
+          resource: aws-stemcell
+          passed: [ a1-cf-cats, a1-diego-cats]
+          trigger: true
+        - get: diego-final-releases
+          passed: [ a1-diego-cats ]
+          trigger: true
+        - get: diego-release-master
+          passed: [ a1-diego-cats ]
+          trigger: true
+        - get: garden-linux-release-tarball
+          passed: [ a1-diego-cats ]
+          trigger: true
+        - get: etcd-release-tarball
+          passed: [ a1-diego-cats ]
+          trigger: true
+      - task: update-compatibility
+        file: runtime-ci/scripts/ci/record_compatible_versions/task.yml
+        config:
+          params:
+            BOSH_TARGET: https://bosh.a1.cf-app.com
+            BOSH_USER: {{a1_bosh_username}}
+            BOSH_PASSWORD: {{a1_bosh_password}}
+      - put: diego-cf-compatibility
+        params:
+          repository: updated-diego-cf-compatibility
 
 - name: rc
   serial: true
