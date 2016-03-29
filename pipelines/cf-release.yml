@@ -1132,7 +1132,9 @@ jobs:
     do:
       - aggregate:
         - get: runtime-ci
-        - get: cf-release-runtime-passed
+        - get: diego-cf-compatibility
+        - get: cf-release
+          resource: cf-release-runtime-passed
           passed: [ a1-cf-cats, a1-diego-cats, vsphere-cf-cats, deploy-and-test-bosh-lite]
           trigger: true
         - get: stemcell
