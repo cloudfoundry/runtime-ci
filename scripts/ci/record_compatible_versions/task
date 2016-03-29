@@ -34,7 +34,7 @@ garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
 # Etcd Release Version
 etcd_release_version=$(cd etcd-release-tarball; cat version)
 
-pushd diego-cf-compatibility
+pushd diego-cf-compatibility > /dev/null
   if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
     echo "date,director version,cf-release commit SHA,diego-release commit SHA,diego-release version,gaden-linux-release version,etcd-release version,stemcell" \
       > "$COMPATIBILITY_FILE"
@@ -46,4 +46,7 @@ pushd diego-cf-compatibility
 
   git add "$COMPATIBILITY_FILE"
   git commit -m "Update ${COMPATIBILITY_FILE}"
-popd
+popd > /dev/null
+
+shopt -s dotglob
+cp -R diego-cf-compatibility/* updated-diego-cf-compatibility
