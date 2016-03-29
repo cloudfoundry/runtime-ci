@@ -7,7 +7,6 @@ current_date=$(date)
 
 # Director version
 bosh target $BOSH_TARGET
-bosh login $BOSH_USER $BOSH_PASSWORD
 bosh status
 director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
 
