@@ -27,7 +27,7 @@ templates_path="${environment_path}/templates"
 cf_deployment_name="cf-${ENVIRONMENT_NAME}"
 
 my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-scripts_dir="$(cd "${my_dir}/../.." && pwd)"
+scripts_dir="$(cd "${my_dir}/.." && pwd)"
 
 "${scripts_dir}/bosh_setup"
 
