@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e -x -u
+
+# Date
+current_date=$(date)
+
+# Director version
+bosh target $BOSH_TARGET
+bosh login $BOSH_USER $BOSH_PASSWORD
+bosh status
+director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
+
+# CF Release SHA
+cf_release_sha=$(cd cf-release; git rev-parse HEAD)
+
+# CF Stemcell
+tar xzf stemcell/stemcell.tgz
+stemcell_name=$(cat stemcell.MF | grep -e "^name" | cut -f2 -d' ')
+stemcell_version=$(cat stemcell.MF | grep -e "^version" | cut -f2 -d' ' | tr -d "'")
+stemcell="${stemcell_name}/${stemcell_version}"
+
+# Diego Release Version
+diego_release_version=$(cd diego-final-releases; cat version)
+
+# Diego Release SHA
+diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
+
+# Diego Stemcell (nothing -- same as cf-release stemcell)
+
+# Garden Linux Release Version
+garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
+
+# Etcd Release Version
+etcd_release_version=$(cd etcd-release-tarball; cat version)
+
+pushd diego-cf-compatibility
+  if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
+    echo "date,director version,cf-release commit SHA,diego-release commit SHA,diego-release version,gaden-linux-release version,etcd-release version,stemcell" \
+      > "$COMPATIBILITY_FILE"
+  fi
+  echo "${current_date},${director_version},${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${stemcell}" >> "$COMPATIBILITY_FILE"
+
+  git config user.email "cf-release-integration@pivotal.io"
+  git config user.name "CI (automated)"
+
+  git add "$COMPATIBILITY_FILE"
+  git commit -m "Update ${COMPATIBILITY_FILE}"
+popd

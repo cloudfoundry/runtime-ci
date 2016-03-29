@@ -1,0 +1,25 @@
+platform: linux
+
+image: docker:///cloudfoundry/diego-pipeline
+
+inputs:
+  - name: runtime-ci
+  - name: cf-release
+  - name: stemcell
+  - name: diego-final-releases
+  - name: diego-release-master
+  - name: garden-linux-release-tarball
+  - name: etcd-release-tarball
+  - name: diego-cf-compatibility
+
+outputs:
+  - name: updated-diego-cf-compatibility
+
+params:
+  BOSH_PASSWORD:
+  BOSH_TARGET:
+  BOSH_USER:
+  COMPATIBILITY_FILE: compatibility-v3.csv
+
+run:
+  path: runtime-ci/scripts/ci/record_compatible_versions/task
