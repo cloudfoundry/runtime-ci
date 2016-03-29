@@ -1154,7 +1154,7 @@ jobs:
           passed: [ a1-diego-cats ]
           trigger: true
       - task: update-compatibility
-        file: runtime-ci/scripts/ci/record_compatible_versions/task.yml
+        file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
         config:
           params:
             BOSH_TARGET: https://bosh.a1.cf-app.com
