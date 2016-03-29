@@ -22,4 +22,4 @@ params:
   COMPATIBILITY_FILE: compatibility-v3.csv
 
 run:
-  path: runtime-ci/scripts/ci/record_compatible_versions/task
+  path: runtime-ci/scripts/ci/record-compatible-versions/task
