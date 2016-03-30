@@ -10,27 +10,16 @@ bosh target $BOSH_TARGET
 bosh status
 director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
 
-# CF Release SHA
 cf_release_sha=$(cd cf-release; git rev-parse HEAD)
+diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
 
-# CF Stemcell
 tar xzf stemcell/stemcell.tgz
 stemcell_name=$(cat stemcell.MF | grep -e "^name" | cut -f2 -d' ')
 stemcell_version=$(cat stemcell.MF | grep -e "^version" | cut -f2 -d' ' | tr -d "'")
 stemcell="${stemcell_name}/${stemcell_version}"
 
-# Diego Release Version
 diego_release_version=$(cd diego-final-releases; cat version)
-
-# Diego Release SHA
-diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
-
-# Diego Stemcell (nothing -- same as cf-release stemcell)
-
-# Garden Linux Release Version
 garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
-
-# Etcd Release Version
 etcd_release_version=$(cd etcd-release-tarball; cat version)
 
 new_row="${director_version},${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${stemcell}"
