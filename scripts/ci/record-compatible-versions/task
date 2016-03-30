@@ -33,12 +33,18 @@ garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
 # Etcd Release Version
 etcd_release_version=$(cd etcd-release-tarball; cat version)
 
+new_row="${director_version},${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${stemcell}"
+if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
+  echo "No changes to be made".
+  exit 0
+fi
+
 pushd diego-cf-compatibility > /dev/null
   if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
     echo "date,director version,cf-release commit SHA,diego-release commit SHA,diego-release version,gaden-linux-release version,etcd-release version,stemcell" \
       > "$COMPATIBILITY_FILE"
   fi
-  echo "${current_date},${director_version},${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${stemcell}" >> "$COMPATIBILITY_FILE"
+  echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"
 
   git config user.email "cf-release-integration@pivotal.io"
   git config user.name "CI (automated)"
