@@ -5,6 +5,7 @@ image: docker:///cloudfoundry/diego-pipeline
 
 inputs:
 - name: runtime-ci
+- name: cf-a1-diego-manifest
 
 params:
   BOSH_USER: ~
