@@ -1,6 +1,6 @@
 platform: linux
 
-# git, curl, jq
+# sh, curl, jq, ... DOES NOT ACTUALLY NEED git!
 image: docker:///concourse/git-resource
 
 inputs:

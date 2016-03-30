@@ -5,56 +5,9 @@ last_version=$(cat cf-bosh-io-release/version)
 last_tag="v${last_version}"
 next_tag=v$((${last_version} + 1))
 issue_title="CF ${next_tag}"
-gist_path=/tmp/gist
-
-cd cf-release-release-candidate
-	last_tag_sha=$(git show-ref ${last_tag} -s)
-	rc_sha=$(git show-ref release-candidate -s --heads)
-
-	if ! git merge-base --is-ancestor ${last_tag_sha} ${rc_sha}; then
-		echo "ABORT: This release candidate has no new changes."
-		exit 1
-	fi
-
-	echo "Release Candidate SHA: ${rc_sha}" > ${gist_path}
-	echo "" >> ${gist_path}
-
-	echo "Job Spec Diffs:" >> ${gist_path}
-	for treeish in ${last_tag_sha} ${rc_sha}
-	do
-		git checkout ${treeish}
-		./scripts/update
-		cat jobs/*/spec > /tmp/${treeish}-job-specs
-	done
-	diff /tmp/${last_tag_sha}-job-specs /tmp/${rc_sha}-job-specs >> ${gist_path} || true
-	echo "" >> ${gist_path}
-
-	echo "Manifest Templates Diffs:" >> ${gist_path}
-	git diff ${last_tag_sha}..${rc_sha} -- templates >> ${gist_path}
-	echo "" >> ${gist_path}
-cd ..
-
-echo "Creating gist"
-set +x
-	gist_url=$(curl -s -f "https://api.github.com/gists?access_token=${GH_ACCESS_TOKEN}" \
-		-X POST	\
-		-d "{
-				\"description\": \"Diff from ${last_tag} to ${rc_sha}\",
-				\"public\": false,
-				\"files\": {
-					\"${last_tag}-to-${rc_sha}.diff\": {
-						\"content\": $(cat $gist_path | jq -s -R .)
-					}
-				}
-			}" | jq -r .html_url)
-set -x
-echo "Succeeded creating gist:" $gist_url
 
 comment_body="cf-release Release Candidate SHA for ${next_tag}:
 [${rc_sha}](https://github.com/cloudfoundry/cf-release/commit/${rc_sha})
-
-Details:
-${gist_url}
 
 **Please read these instructions, as they changed on 4 Nov 2015.**
 - Edit this comment by setting the approval for your section (delete the thumb you don't want)
