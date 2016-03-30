@@ -31,6 +31,7 @@ groups:
 - name: canaries
   jobs:
   - push-a1-canaries
+  - push-a1-diego-canaries
   - push-tabasco-canaries
 - name: rubbish-bin
   jobs:
@@ -99,7 +100,7 @@ resources:
 - name: cf-a1-diego-manifest
   type: s3
   source:
-    bucket: cf-a1-diego-manifest 
+    bucket: cf-a1-diego-manifest
     versioned_file: diego-deployment.yml
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
@@ -1043,7 +1044,7 @@ jobs:
       params:
         STATE: started
         EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+        DATADOG_API_KEY: {{diego_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1055,7 +1056,7 @@ jobs:
       params:
         STATE: finished
         EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+        DATADOG_API_KEY: {{diego_datadog_api_key}}
 
 - name: a1-diego-cats
   serial: true
@@ -1100,6 +1101,9 @@ jobs:
         passed: [ a1-smoke-tests ]
         params:
           tarball: false
+      - get: cf-a1-diego-manifest
+        passed: [a1-smoke-tests]
+        trigger: true
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     config:
@@ -1480,6 +1484,23 @@ jobs:
           NUM_INSTANCES_PER_APP: 2
           NUM_INSTANCES_CANARY_INSTANCES: 20
 
+- name: push-a1-diego-canaries
+  public: true
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-a1-diego-manifest
+        passed: [a1-diego-cats]
+        trigger: true
+    - task: push-diego-canaries
+      file: runtime-ci/scripts/ci/push-diego-canaries/task.yml
+      config:
+        params:
+          <<: *bosh-target-a1
+          CANARY_APP_ERRAND_MANIFEST: cf-a1-diego-manifest/diego-deployment.yml
+          RUNTIME_CI_DIR: runtime-ci
 
 - name: push-tabasco-canaries
   public: true
@@ -1682,7 +1703,7 @@ jobs:
       params:
         STATE: started
         EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+        DATADOG_API_KEY: {{diego_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1694,7 +1715,7 @@ jobs:
       params:
         STATE: finished
         EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}} 
+        DATADOG_API_KEY: {{diego_datadog_api_key}}
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     config:
