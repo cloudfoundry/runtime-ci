@@ -15,7 +15,6 @@ groups:
   - vsphere-cf-deploy
   - vsphere-smoke-tests
   - vsphere-cf-cats
-  - update-compatibility
   - rc
 - name: bosh
   jobs:
@@ -1126,59 +1125,49 @@ jobs:
         from: logs-dir/diego-cats(.*).tgz
         to: a1-cats/
 
-- name: update-compatibility
-  plan:
-  - timeout: *timeout
-    do:
-      - aggregate:
-        - get: runtime-ci
-        - get: diego-cf-compatibility
-        - get: cf-release
-          resource: cf-release-runtime-passed
-          passed: [ a1-cf-cats, a1-diego-cats, vsphere-cf-cats, deploy-and-test-bosh-lite]
-          trigger: true
-        - get: stemcell
-          resource: aws-stemcell
-          passed: [ a1-cf-cats, a1-diego-cats]
-          trigger: true
-        - get: diego-final-releases
-          passed: [ a1-diego-cats ]
-          trigger: true
-        - get: diego-release-master
-          passed: [ a1-diego-cats ]
-          trigger: true
-        - get: garden-linux-release-tarball
-          passed: [ a1-diego-cats ]
-          trigger: true
-        - get: etcd-release-tarball
-          passed: [ a1-diego-cats ]
-          trigger: true
-      - task: update-compatibility
-        file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-        config:
-          params:
-            BOSH_TARGET: https://bosh.a1.cf-app.com
-            BOSH_USER: {{a1_bosh_username}}
-            BOSH_PASSWORD: {{a1_bosh_password}}
-      - put: diego-cf-compatibility
-        params:
-          repository: updated-diego-cf-compatibility
-
 - name: rc
   serial: true
   plan:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: runtime-ci
+      - get: diego-cf-compatibility
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [vsphere-cf-cats, deploy-and-test-bosh-lite, a1-cf-cats, a1-diego-cats]
         trigger: true
         params:
           submodules: none
+      - get: stemcell
+        resource: aws-stemcell
+        passed: [ a1-cf-cats, a1-diego-cats]
+        trigger: true
+      - get: diego-final-releases
+        passed: [ a1-diego-cats ]
+        trigger: true
+      - get: diego-release-master
+        passed: [ a1-diego-cats ]
+        trigger: true
+      - get: garden-linux-release-tarball
+        passed: [ a1-diego-cats ]
+        trigger: true
+      - get: etcd-release-tarball
+        passed: [ a1-diego-cats ]
+        trigger: true
     - put: cf-release-release-candidate
       params:
         repository: cf-release
+    - task: update-compatibility
+      file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
+      config:
+        params:
+          BOSH_TARGET: https://bosh.a1.cf-app.com
+          BOSH_USER: {{a1_bosh_username}}
+          BOSH_PASSWORD: {{a1_bosh_password}}
+    - put: diego-cf-compatibility
+      params:
+        repository: updated-diego-cf-compatibility
 
 - name: build-pipeline-image
   serial: true
