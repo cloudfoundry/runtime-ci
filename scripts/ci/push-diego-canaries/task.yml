@@ -9,7 +9,7 @@ inputs:
 params:
   BOSH_USER: ~
   BOSH_PASSWORD: ~
-  BOSH_TARGET: ~
+  BOSH_DIRECTOR: ~
   CANARY_APP_ERRAND_MANIFEST: ~
   RUNTIME_CI_DIR: runtime-ci
 
