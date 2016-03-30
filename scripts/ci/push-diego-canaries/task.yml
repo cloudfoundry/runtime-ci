@@ -14,5 +14,5 @@ params:
   RUNTIME_CI_DIR: runtime-ci
 
 run:
-  path: runtime-ci/concourse/push-diego-canaries/task
+  path: runtime-ci/scripts/ci/push-diego-canaries/task
 
