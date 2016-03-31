@@ -1159,19 +1159,21 @@ jobs:
       - get: etcd-release-tarball
         passed: [ a1-diego-cats ]
         trigger: true
-    - put: cf-release-release-candidate
-      params:
-        repository: cf-release
-    - task: update-compatibility
-      file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-      config:
+    - aggregate:
+      - put: cf-release-release-candidate
         params:
-          BOSH_TARGET: https://bosh.a1.cf-app.com
-          BOSH_USER: {{a1_bosh_username}}
-          BOSH_PASSWORD: {{a1_bosh_password}}
-    - put: diego-cf-compatibility
-      params:
-        repository: updated-diego-cf-compatibility
+          repository: cf-release
+      - do:
+        - task: update-compatibility
+          file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
+          config:
+            params:
+              BOSH_TARGET: https://bosh.a1.cf-app.com
+              BOSH_USER: {{a1_bosh_username}}
+              BOSH_PASSWORD: {{a1_bosh_password}}
+        - put: diego-cf-compatibility
+          params:
+            repository: updated-diego-cf-compatibility
 
 - name: build-pipeline-image
   serial: true
