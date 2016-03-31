@@ -6,7 +6,7 @@ set -e -x -u
 current_date=$(date -u "+%Y-%m-%dT%H:%M:%Sz")
 
 # Director version
-bosh target $BOSH_TARGET
+bosh target "$BOSH_TARGET"
 bosh status
 director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
 
@@ -14,8 +14,8 @@ cf_release_sha=$(cd cf-release; git rev-parse HEAD)
 diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
 
 tar xzf stemcell/stemcell.tgz
-stemcell_name=$(cat stemcell.MF | grep -e "^name" | cut -f2 -d' ')
-stemcell_version=$(cat stemcell.MF | grep -e "^version" | cut -f2 -d' ' | tr -d "'")
+stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
+stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
 stemcell="${stemcell_name}/${stemcell_version}"
 
 diego_release_version=$(cd diego-final-releases; cat version)
