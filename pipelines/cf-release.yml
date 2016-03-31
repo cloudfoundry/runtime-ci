@@ -1501,9 +1501,6 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: cf-a1-diego-manifest
-        passed: [a1-diego-cats]
-        trigger: true
       - get: deployments-runtime
     - put: a1-diego-canary-deployment
       params:
