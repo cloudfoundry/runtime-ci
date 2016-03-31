@@ -28,7 +28,7 @@ if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,director version,cf-release commit SHA,diego-release commit SHA,diego-release version,gaden-linux-release version,etcd-release version,stemcell" \
+      echo "date,director-version,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,stemcell" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"
