@@ -1496,7 +1496,6 @@ jobs:
           NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: push-a1-diego-canaries
-  public: true
   plan:
   - timeout: *timeout
     do:
