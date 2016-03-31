@@ -325,6 +325,15 @@ resources:
     deployment: a1-diego-cats
     ignore_ssl: true
 
+- name: a1-diego-canary-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.a1.cf-app.com:25555
+    username: {{a1_bosh_username}}
+    password: {{a1_bosh_password}}
+    deployment: a1-push-canary-app
+    ignore_ssl: true
+
 - name: minimal-deployment
   type: bosh-deployment
   source:
@@ -1496,13 +1505,18 @@ jobs:
       - get: cf-a1-diego-manifest
         passed: [a1-diego-cats]
         trigger: true
-    - task: push-diego-canaries
-      file: runtime-ci/scripts/ci/push-diego-canaries/task.yml
+    - put: a1-diego-canary-deployment
+      params:
+        manifest: deployments-runtime/a1/deployments/a1-push-canary-app.yml
+        releases: []
+        stemcells: []
+    - task: push-canary-app
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       config:
         params:
           <<: *bosh-target-a1
-          CANARY_APP_ERRAND_MANIFEST: cf-a1-diego-manifest/diego-deployment.yml
-          RUNTIME_CI_DIR: runtime-ci
+          DEPLOYMENT_NAME: a1-push-canary-app
+          ERRAND_NAME: push_canary_app
 
 - name: push-tabasco-canaries
   public: true
