@@ -3,7 +3,7 @@
 set -e -x -u
 
 # Date
-current_date=$(date)
+current_date=$(date -u "+%Y-%m-%dT%H:%M:%Sz")
 
 # Director version
 bosh target $BOSH_TARGET
