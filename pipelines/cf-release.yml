@@ -1044,6 +1044,7 @@ jobs:
         DEPLOYMENTS_DIR: deployments-runtime
         BOSH_USER: {{a1_bosh_username}}
         BOSH_PASSWORD: {{a1_bosh_password}}
+        INFRASTRUCTURE: aws
   - put: cf-a1-diego-manifest
     params:
       file: generated-diego-manifest/diego-deployment.yml
@@ -1710,6 +1711,7 @@ jobs:
         DEPLOYMENTS_DIR: deployments-runtime
         BOSH_USER: {{a1_bosh_username}}
         BOSH_PASSWORD: {{a1_bosh_password}}
+        INFRASTRUCTURE: aws
   - task: emit-diego-datadog-started
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     config:
