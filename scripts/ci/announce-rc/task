@@ -6,6 +6,10 @@ last_tag="v${last_version}"
 next_tag=v$((${last_version} + 1))
 issue_title="CF ${next_tag}"
 
+cd cf-release-release-candidate
+  rc_sha=$(git show-ref release-candidate -s --heads)
+cd ..
+
 comment_body="cf-release Release Candidate SHA for ${next_tag}:
 [${rc_sha}](https://github.com/cloudfoundry/cf-release/commit/${rc_sha})
 
