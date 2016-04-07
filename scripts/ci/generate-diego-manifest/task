@@ -16,6 +16,7 @@ ENVIRONMENT_NAME="${ENVIRONMENT_NAME:?"\$ENVIRONMENT_NAME not set"}"
 BOSH_USER="${BOSH_USER:?"\$BOSH_USER not set"}"
 BOSH_PASSWORD="${BOSH_PASSWORD:?"\$BOSH_PASSWORD not set"}"
 BOSH_TARGET="${BOSH_TARGET:?"\$BOSH_TARGET not set"}"
+INFRASTRUCTURE="${INFRASTRUCTURE:?"\$INFRASTRUCTURE not set"}"
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
@@ -34,7 +35,7 @@ scripts_dir="$(cd "${my_dir}/.." && pwd)"
 pushd "${DIEGO_RELEASE_DIR}"
   bosh download manifest "${cf_deployment_name}" > /tmp/cf.yml
   spiff merge \
-    manifest-generation/misc-templates/aws-iaas-settings.yml \
+    "manifest-generation/misc-templates/${INFRASTRUCTURE}-iaas-settings.yml" \
     "${templates_path}/diego/iaas-settings-internal.yml" \
     "${stubs_path}/diego/iaas-settings.yml" \
     /tmp/cf.yml \
