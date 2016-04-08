@@ -42,10 +42,13 @@ echo "======TEST======"
 cd smoke-tests
 
 set +e
-./bin/test -v -trace $ARGS
+./bin/test -v -trace $ARGS > output.log
 EXITSTATUS=$?
 
 if [[ $EXITSTATUS -ne 0 ]]; then
+    echo "======Output====="
+    cat output.log
+
     echo "======TRACE======"
     cat smoke/results/CF-TRACE*
 fi
