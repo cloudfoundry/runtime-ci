@@ -44,9 +44,10 @@ cd smoke-tests
 set +e
 ./bin/test -v -trace $ARGS
 EXITSTATUS=$?
-set -e
 
-echo "======TRACE======"
-cat smoke/results/CF-TRACE*
+if [[ $EXITSTATUS -ne 0 ]]; then
+    echo "======TRACE======"
+    cat smoke/results/CF-TRACE*
+fi
 
 exit $EXITSTATUS
