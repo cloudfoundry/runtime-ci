@@ -19,11 +19,8 @@ set -x
 
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
-bosh -t "$BOSH_DIRECTOR" download manifest "$DEPLOYMENT_NAME" manifest.yml
-
 bosh \
   -n \
   --color \
   -t "$BOSH_DIRECTOR" \
-  -d manifest.yml \
   delete deployment "$DEPLOYMENT_NAME"
