@@ -9,10 +9,22 @@ set -u
 
 # Inputs
 URL="${URL:?"\$URL not set"}"
+
+set +x
 TOKEN="${TOKEN:?"\$TOKEN not set"}"
+
+cat <<EOF
+curl \
+  -X PUT \
+  "${URL}/yes" \
+  -d "token=[REDACTED]" \
+  -d "buildnumber=0"
+EOF
 
 curl \
   -X PUT \
   "${URL}/yes" \
   -d "token=${TOKEN}" \
   -d "buildnumber=0"
+
+
