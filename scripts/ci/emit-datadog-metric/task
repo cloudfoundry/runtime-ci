@@ -2,6 +2,19 @@
 set -eux
 
 currenttime=$(date +%s)
+cat <<EOF
+curl -fail -vvv -X POST -H "Content-type: application/json" \
+-d "{ \"series\" :
+         [{\"metric\":\"$METRIC\",
+          \"points\":[[$currenttime, $VALUE]],
+          \"type\":\"gauge\",
+          \"tags\":[$TAGS]}
+        ]
+    }" \
+"https://app.datadoghq.com/api/v1/series?api_key=[REDACTED]"
+EOF
+
+set +x
 curl -fail -vvv -X POST -H "Content-type: application/json" \
 -d "{ \"series\" :
          [{\"metric\":\"$METRIC\",
