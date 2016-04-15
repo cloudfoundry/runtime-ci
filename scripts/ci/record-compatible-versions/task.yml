@@ -10,6 +10,7 @@ inputs:
   - name: diego-release-master
   - name: garden-linux-release-tarball
   - name: etcd-release-tarball
+  - name: cflinuxfs2-rootfs-release-tarball
   - name: diego-cf-compatibility
 
 outputs:
@@ -19,7 +20,7 @@ params:
   BOSH_PASSWORD:
   BOSH_USER:
   BOSH_TARGET:
-  COMPATIBILITY_FILE: compatibility-v3.csv
+  COMPATIBILITY_FILE: compatibility-v4.csv
 
 run:
   path: runtime-ci/scripts/ci/record-compatible-versions/task

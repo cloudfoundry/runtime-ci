@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -x -u
+set -eux
 
 # Date
 current_date=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
@@ -21,14 +21,15 @@ stemcell="${stemcell_name}/${stemcell_version}"
 diego_release_version=$(cd diego-final-releases; cat version)
 garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
 etcd_release_version=$(cd etcd-release-tarball; cat version)
+cflinuxfs2_release_version=$(cd cflinuxfs2-rootfs-release-tarball; cat version)
 
-new_row="${director_version},${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${stemcell}"
+new_row="${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${cflinuxfs2_release_version},${stemcell},${director_version}"
 if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
   echo "No changes to be made".
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,director-version,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,stemcell" \
+      echo "date,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,stemcell,director-version" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"
