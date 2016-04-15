@@ -3,7 +3,7 @@ set -eux
 
 currenttime=$(date +%s)
 cat <<EOF
-curl -fail -vvv -X POST -H "Content-type: application/json" \
+curl -fail -X POST -H "Content-type: application/json" \
 -d "{ \"series\" :
          [{\"metric\":\"$METRIC\",
           \"points\":[[$currenttime, $VALUE]],
@@ -15,7 +15,7 @@ curl -fail -vvv -X POST -H "Content-type: application/json" \
 EOF
 
 set +x
-curl -fail -vvv -X POST -H "Content-type: application/json" \
+curl -fail -X POST -H "Content-type: application/json" \
 -d "{ \"series\" :
          [{\"metric\":\"$METRIC\",
           \"points\":[[$currenttime, $VALUE]],
