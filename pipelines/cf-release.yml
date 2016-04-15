@@ -222,6 +222,11 @@ resources:
   source:
     repository: cloudfoundry-incubator/etcd-release
 
+- name: cflinuxfs2-rootfs-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
+
 - name: deployments-runtime
   type: git
   source:
@@ -234,7 +239,7 @@ resources:
   source:
     repository: cloudfoundry/runtime-ci
     username: {{dockerhub_username}}
-    password: {{dockerhub_password}} 
+    password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: pipeline-image-docker-file
@@ -961,6 +966,11 @@ jobs:
         passed: [ a1-diego-deploy ]
         params:
           tarball: false
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+        passed: [ a1-diego-deploy ]
+        params:
+          tarball: false
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -1027,6 +1037,8 @@ jobs:
       trigger: true
     - get: etcd-release-tarball
       trigger: true
+    - get: cflinuxfs2-rootfs-release-tarball
+      trigger: true
     - get: deployments-runtime
       trigger: true
     - get: bosh-stemcell
@@ -1058,7 +1070,7 @@ jobs:
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
-      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
@@ -1107,6 +1119,11 @@ jobs:
         params:
           tarball: false
       - get: etcd-release-tarball
+        trigger: true
+        passed: [ a1-smoke-tests ]
+        params:
+          tarball: false
+      - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ a1-smoke-tests ]
         params:
@@ -1167,6 +1184,9 @@ jobs:
         passed: [ a1-diego-cats ]
         trigger: true
       - get: etcd-release-tarball
+        passed: [ a1-diego-cats ]
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
         passed: [ a1-diego-cats ]
         trigger: true
     - aggregate:
@@ -1700,6 +1720,7 @@ jobs:
     - get: diego-final-releases
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
+    - get: cflinuxfs2-rootfs-release-tarball
     - get: deployments-runtime
     - get: bosh-stemcell
       resource: aws-stemcell
@@ -1726,7 +1747,7 @@ jobs:
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
-      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz]
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
