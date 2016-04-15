@@ -60,6 +60,12 @@ This is a soft recommendation; several different versions of the garden-linux-re
 * etcd-release Version:
 
 This is a soft recommendation; several different versions of the etcd-release may work fine with this version of cf-release and the aforementioned version of diego-release.
+
+## <a name='recommended-cflinuxfs2-rootfs-release-version'></a>Recommended cflinuxfs2-rootfs-release Version
+
+* cflinuxfs2-rootfs-release Version:
+
+This is a soft recommendation; several different versions of the cflinuxfs2-rootfs-release may work fine with this version of cf-release and the aforementioned version of diego-release.
 "
 
 echo "Creating release notes"
