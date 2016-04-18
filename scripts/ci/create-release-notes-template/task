@@ -17,6 +17,7 @@ release_notes_body="The cf-release ${tag} was released on $(date +'%B %d, %Y').
 * <a href='#recommended-diego-release-version'>Recommended diego-release Version</a>
 * <a href='#recommended-garden-linux-release-version'>Recommended garden-linux-release Version</a>
 * <a href='#recommended-etcd-release-version'>Recommended etcd-release Version</a>
+* <a href='#recommended-cflinuxfs2-rootfs-release-version'>Recommended cflinuxfs2-rootfs-release Version</a>
 
 ## <a name='cc-and-service-broker-apis'></a>CC and Service Broker APIs
 
