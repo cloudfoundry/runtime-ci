@@ -7,14 +7,12 @@ source ~/.bashrc
 
 set -u
 
-MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export MY_DIR
+# Inputs
+RUNTIME_CI_DIR="${PWD}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR not set"}"
 
-root_dir="${MY_DIR}/../../../"
-
-pushd "${root_dir}" > /dev/null
+pushd "${RUNTIME_CI_DIR}" > /dev/null
   bundle install
   bundle exec rspec \
     --color \
-    "${MY_DIR}/validate_jobs_public.rb"
+    "scripts/ci/validate-all-jobs-public/validate_jobs_public.rb"
 popd > /dev/null

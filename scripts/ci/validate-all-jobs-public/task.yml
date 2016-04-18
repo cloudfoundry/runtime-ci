@@ -8,3 +8,6 @@ inputs:
 
 run:
   path: runtime-ci/scripts/ci/validate-all-jobs-public/task
+
+params:
+  RUNTIME_CI_DIR: runtime-ci
