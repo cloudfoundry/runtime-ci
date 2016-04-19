@@ -387,17 +387,15 @@ jobs:
       - task: run-cf-release-unit-tests
         privileged: true
         file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
-        config:
-          params:
-            CF_RELEASE_DIR: 'cf-release-develop'
+        params:
+          CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: &canibump-url canibump.cfapps.io
-            TOKEN: {{canibump_token}}
-            REASON: "cf-release unit tests failed"
+        params:
+          URL: &canibump-url canibump.cfapps.io
+          TOKEN: {{canibump_token}}
+          REASON: "cf-release unit tests failed"
 
 - name: create-release
   plan:
@@ -417,17 +415,15 @@ jobs:
     - task: create-release-tarball
       privileged: true
       file: runtime-ci/scripts/ci/create-release/task.yml
-      config:
-        params:
-          CF_RELEASE_DIR: 'cf-release-develop'
+      params:
+        CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "Could not create release tarball"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "Could not create release tarball"
     - put: cf-release-tarball
       params:
         from: cf-release-out/cf-(.*).tgz
@@ -444,52 +440,46 @@ jobs:
       - task: cleanup-runtime-ci
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        config:
-          params:
-            BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
-            BOSH_USER: {{runtime_ci_username}}
-            BOSH_PASSWORD: {{runtime_ci_password}}
+        params:
+          BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
+          BOSH_USER: {{runtime_ci_username}}
+          BOSH_PASSWORD: {{runtime_ci_password}}
       - task: cleanup-tabasco
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        config:
-          params: &bosh-target-tabasco
-            BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
-            BOSH_USER: {{tabasco_bosh_username}}
-            BOSH_PASSWORD: {{tabasco_bosh_password}}
+        params: &bosh-target-tabasco
+          BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
+          BOSH_USER: {{tabasco_bosh_username}}
+          BOSH_PASSWORD: {{tabasco_bosh_password}}
       - task: cleanup-vsphere
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
         tags: [vsphere]
-        config:
-          params: &bosh-target-cat
-            BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
-            BOSH_USER: {{vsphere_bosh_username}}
-            BOSH_PASSWORD: {{vsphere_bosh_password}}
+        params: &bosh-target-cat
+          BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
+          BOSH_USER: {{vsphere_bosh_username}}
+          BOSH_PASSWORD: {{vsphere_bosh_password}}
       - task: cleanup-openstack
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        config:
-          params: &bosh-target-runtime-bb-1
-            BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
-            BOSH_USER: {{openstack_bosh_username}}
-            BOSH_PASSWORD: {{openstack_bosh_password}}
+        params: &bosh-target-runtime-bb-1
+          BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
+          BOSH_USER: {{openstack_bosh_username}}
+          BOSH_PASSWORD: {{openstack_bosh_password}}
       - task: cleanup-minimal
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        config:
-          params:
-            BOSH_DIRECTOR: https://54.165.111.247:25555
-            BOSH_USER: {{minimal_bosh_username}}
-            BOSH_PASSWORD: {{minimal_bosh_password}} 
+        params:
+          BOSH_DIRECTOR: https://54.165.111.247:25555
+          BOSH_USER: {{minimal_bosh_username}}
+          BOSH_PASSWORD: {{minimal_bosh_password}}
       - task: cleanup-a1
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        config:
-          params: &bosh-target-a1
-            BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
-            BOSH_USER: {{a1_bosh_username}}
-            BOSH_PASSWORD: {{a1_bosh_password}}
+        params: &bosh-target-a1
+          BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
+          BOSH_USER: {{a1_bosh_username}}
+          BOSH_PASSWORD: {{a1_bosh_password}}
 
 - name: deploy-and-test-tabasco
   serial: true
@@ -511,26 +501,23 @@ jobs:
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      config:
-        params:
-          INFRASTRUCTURE: aws
-          ENVIRONMENT: tabasco
+      params:
+        INFRASTRUCTURE: aws
+        ENVIRONMENT: tabasco
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "Could not create cf-release manifest"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "Could not create cf-release manifest"
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      config:
-        params:
-          STATE: started
-          EVENT_TAG_DEPLOYMENT: cf-tabasco
-          DATADOG_API_KEY: {{tabasco_datadog_api_key}}
+      params:
+        STATE: started
+        EVENT_TAG_DEPLOYMENT: cf-tabasco
+        DATADOG_API_KEY: {{tabasco_datadog_api_key}}
     - put: tabasco-deployment
       params:
         manifest: manifest/deployment.yml
@@ -540,64 +527,57 @@ jobs:
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "Could not deploy cf-release"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "Could not deploy cf-release"
       ensure:
         do:
         - task: emit-datadog-deploy-end
           privileged: true
           file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-          config:
-            params:
-              STATE: finished
-              EVENT_TAG_DEPLOYMENT: cf-tabasco
-              DATADOG_API_KEY: {{tabasco_datadog_api_key}}
+          params:
+            STATE: finished
+            EVENT_TAG_DEPLOYMENT: cf-tabasco
+            DATADOG_API_KEY: {{tabasco_datadog_api_key}}
     - put: cf-release-runtime-deployed
       params:
         repository: cf-release
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "Could not push to cf-release"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-tabasco
-          DEPLOYMENT_NAME: cf-tabasco
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-tabasco
+        DEPLOYMENT_NAME: cf-tabasco
+        ERRAND_NAME: smoke_tests
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "smoke tests failed"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-tabasco
-          DEPLOYMENT_NAME: cf-tabasco
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-tabasco
+        DEPLOYMENT_NAME: cf-tabasco
+        ERRAND_NAME: acceptance_tests
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        config:
-          params:
-            URL: *canibump-url
-            TOKEN: {{canibump_token}}
-            REASON: "acceptance tests failed"
+        params:
+          URL: *canibump-url
+          TOKEN: {{canibump_token}}
+          REASON: "acceptance tests failed"
       ensure:
         put: tabasco-acceptance-tests-logs
         params:
@@ -607,11 +587,9 @@ jobs:
         repository: cf-release
     - task: can-bump
       file: runtime-ci/scripts/ci/can-bump/task.yml
-      config:
-        params:
-          URL: canibump.cfapps.io
-          TOKEN: {{canibump_token}}
-
+      params:
+        URL: canibump.cfapps.io
+        TOKEN: {{canibump_token}}
 
 - name: deploy-and-test-openstack
   serial: true
@@ -633,10 +611,9 @@ jobs:
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      config:
-        params:
-          INFRASTRUCTURE: openstack
-          ENVIRONMENT: runtime-bb-1
+      params:
+        INFRASTRUCTURE: openstack
+        ENVIRONMENT: runtime-bb-1
     - put: openstack-deployment
       params:
         manifest: manifest/deployment.yml
@@ -646,19 +623,17 @@ jobs:
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-runtime-bb-1
-          DEPLOYMENT_NAME: cf-runtime-bb-1
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-runtime-bb-1
+        DEPLOYMENT_NAME: cf-runtime-bb-1
+        ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-runtime-bb-1
-          DEPLOYMENT_NAME: cf-runtime-bb-1
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-runtime-bb-1
+        DEPLOYMENT_NAME: cf-runtime-bb-1
+        ERRAND_NAME: acceptance_tests
       ensure:
         put: openstack-acceptance-tests-logs
         params:
@@ -684,23 +659,21 @@ jobs:
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
-      config:
-        params:
-          AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
-          AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-          AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+      params:
+        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
     - task: provision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
-      config:
-        params:
-          AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-          AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-          AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
-          BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
-          BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
-          BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
-          SSH_KEY: {{bosh_lite_private_key}}
+      params:
+        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+        BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
+        BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
+        BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
+        SSH_KEY: {{bosh_lite_private_key}}
     - task: deploy-and-test-cf
       privileged: true
       file: runtime-ci/scripts/ci/deploy-cf-to-bosh-lite/task.yml
@@ -740,16 +713,15 @@ jobs:
     - task: run-acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-cats/task.yml
-      config:
-        params:
-          CF_API: api.minimal-aws.cf-app.com
-          CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
-          CF_APPS_DOMAIN: minimal-aws.cf-app.com
-          SKIP_SSL_VALIDATION: true
-          USE_HTTP: false
-          NODES: 2
-          SUITES: "apps detect docker internet_dependent route_services services security_groups"
-          ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
+      params:
+        CF_API: api.minimal-aws.cf-app.com
+        CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
+        CF_APPS_DOMAIN: minimal-aws.cf-app.com
+        SKIP_SSL_VALIDATION: true
+        USE_HTTP: false
+        NODES: 2
+        SUITES: "apps detect docker internet_dependent route_services services security_groups"
+        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
 
 - name: vsphere-cf-deploy
   serial: true
@@ -780,18 +752,16 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
       tags: [vsphere]
-      config:
-        params:
-          INFRASTRUCTURE: vsphere
-          ENVIRONMENT: cat
+      params:
+        INFRASTRUCTURE: vsphere
+        ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
       file: runtime-ci/scripts/ci/delete-deployment/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
     - put: vsphere-deployment
       tags: [vsphere]
       params:
@@ -802,7 +772,7 @@ jobs:
     - put: cf-vsphere-manifest
       params:
         file: manifest/deployment.yml
-  
+
 - name: vsphere-smoke-tests
   serial: true
   serial_groups:
@@ -826,11 +796,10 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
+        ERRAND_NAME: smoke_tests
 
 - name: vsphere-cf-cats
   serial: true
@@ -855,11 +824,10 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
+        ERRAND_NAME: acceptance_tests
       ensure:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
@@ -889,21 +857,19 @@ jobs:
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      config:
-        params:
-          INFRASTRUCTURE: aws
-          ENVIRONMENT: a1
+      params:
+        INFRASTRUCTURE: aws
+        ENVIRONMENT: a1
     - put: cf-a1-manifest
       params:
         file: manifest/deployment.yml
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      config:
-        params:
-          STATE: started
-          EVENT_TAG_DEPLOYMENT: cf-a1
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
+      params:
+        STATE: started
+        EVENT_TAG_DEPLOYMENT: cf-a1
+        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
         manifest: manifest/deployment.yml
@@ -913,11 +879,10 @@ jobs:
     - task: emit-datadog-deploy-end
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      config:
-        params:
-          STATE: finished
-          EVENT_TAG_DEPLOYMENT: cf-a1
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
+      params:
+        STATE: finished
+        EVENT_TAG_DEPLOYMENT: cf-a1
+        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: cf-release-acceptance-deployed
       params:
         repository: cf-release
@@ -974,11 +939,10 @@ jobs:
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-a1
-          DEPLOYMENT_NAME: cf-a1
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-a1
+        DEPLOYMENT_NAME: cf-a1
+        ERRAND_NAME: smoke_tests
 
 - name: a1-cf-cats
   serial: true
@@ -1005,11 +969,10 @@ jobs:
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-a1
-          DEPLOYMENT_NAME: cf-a1
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-a1
+        DEPLOYMENT_NAME: cf-a1
+        ERRAND_NAME: acceptance_tests
       ensure:
         put: a1-acceptance-tests-logs
         params:
@@ -1049,24 +1012,22 @@ jobs:
       passed: [deploy-and-test-tabasco]
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
-    config:
-      params:
-        BOSH_TARGET: bosh.a1.cf-app.com
-        ENVIRONMENT_NAME: a1
-        DEPLOYMENTS_DIR: deployments-runtime
-        BOSH_USER: {{a1_bosh_username}}
-        BOSH_PASSWORD: {{a1_bosh_password}}
-        INFRASTRUCTURE: aws
+    params:
+      BOSH_TARGET: bosh.a1.cf-app.com
+      ENVIRONMENT_NAME: a1
+      DEPLOYMENTS_DIR: deployments-runtime
+      BOSH_USER: {{a1_bosh_username}}
+      BOSH_PASSWORD: {{a1_bosh_password}}
+      INFRASTRUCTURE: aws
   - put: cf-a1-diego-manifest
     params:
       file: generated-diego-manifest/diego-deployment.yml
   - task: emit-diego-datadog-started
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    config:
-      params:
-        STATE: started
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}}
+    params:
+      STATE: started
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{diego_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1074,11 +1035,10 @@ jobs:
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    config:
-      params:
-        STATE: finished
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}}
+    params:
+      STATE: finished
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{diego_datadog_api_key}}
 
 - name: a1-diego-cats
   serial: true
@@ -1133,11 +1093,10 @@ jobs:
         trigger: true
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-    config:
-      params:
-        CF_TARGET: api.a1.cf-app.com
-        CF_USER: {{a1_admin_username}}
-        CF_PASSWORD: {{a1_admin_password}}
+    params:
+      CF_TARGET: api.a1.cf-app.com
+      CF_USER: {{a1_admin_username}}
+      CF_PASSWORD: {{a1_admin_password}}
   - put: a1-diego-cats-deployment
     params:
       manifest: deployments-runtime/a1/deployments/a1-diego-cats.yml
@@ -1145,11 +1104,10 @@ jobs:
       stemcells: []
   - task: cf-acceptance-tests
     file: runtime-ci/scripts/ci/run-errand/task.yml
-    config:
-      params:
-        <<: *bosh-target-a1
-        DEPLOYMENT_NAME: a1-diego-cats
-        ERRAND_NAME: diego-cats
+    params:
+      <<: *bosh-target-a1
+      DEPLOYMENT_NAME: a1-diego-cats
+      ERRAND_NAME: diego-cats
     ensure:
       put: a1-acceptance-tests-logs
       params:
@@ -1196,11 +1154,10 @@ jobs:
       - do:
         - task: update-compatibility
           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-          config:
-            params:
-              BOSH_TARGET: https://bosh.a1.cf-app.com
-              BOSH_USER: {{a1_bosh_username}}
-              BOSH_PASSWORD: {{a1_bosh_password}}
+          params:
+            BOSH_TARGET: https://bosh.a1.cf-app.com
+            BOSH_USER: {{a1_bosh_username}}
+            BOSH_PASSWORD: {{a1_bosh_password}}
         - put: diego-cf-compatibility
           params:
             repository: updated-diego-cf-compatibility
@@ -1235,52 +1192,46 @@ jobs:
     - aggregate:
       - task: run1
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params: &tabasco-smoke-params
-            SUITE_NAME: RUNTIME-SMOKE
-            API: https://api.tabasco.cf-app.com
-            APPS_DOMAIN: tabasco-app.cf-app.com
-            SKIP_SSL_VALIDATION: true
-            CF_USER: {{tabasco_runtime_smokes_username}}
-            CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-            ORG: runtime-smoke-tests
-            SPACE: concourse-runtime-smoke-tests-1
-            USE_EXISTING_ORG: true
-            ARGS: '--focus=Runtime:'
+        params: &tabasco-smoke-params
+          SUITE_NAME: RUNTIME-SMOKE
+          API: https://api.tabasco.cf-app.com
+          APPS_DOMAIN: tabasco-app.cf-app.com
+          SKIP_SSL_VALIDATION: true
+          CF_USER: {{tabasco_runtime_smokes_username}}
+          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+          ORG: runtime-smoke-tests
+          SPACE: concourse-runtime-smoke-tests-1
+          USE_EXISTING_ORG: true
+          ARGS: '--focus=Runtime:'
       - task: run2
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *tabasco-smoke-params
-            SPACE: concourse-runtime-smoke-tests-2
+        params:
+          <<: *tabasco-smoke-params
+          SPACE: concourse-runtime-smoke-tests-2
       - task: run3
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *tabasco-smoke-params
-            SPACE: concourse-runtime-smoke-tests-3
+        params:
+          <<: *tabasco-smoke-params
+          SPACE: concourse-runtime-smoke-tests-3
       - task: run4
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *tabasco-smoke-params
-            SPACE: concourse-runtime-smoke-tests-4
+        params:
+          <<: *tabasco-smoke-params
+          SPACE: concourse-runtime-smoke-tests-4
       on_success:
         task: emit_datadog_success
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params: &tabasco-smoke-datadog-params
-            METRIC: smoke.status
-            TAGS: '"deployment:cf-tabasco","loggregator_enabled:0"'
-            DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-            VALUE: 1
+        params: &tabasco-smoke-datadog-params
+          METRIC: smoke.status
+          TAGS: '"deployment:cf-tabasco","loggregator_enabled:0"'
+          DATADOG_API_KEY: {{tabasco_datadog_api_key}}
+          VALUE: 1
       on_failure:
         task: emit_datadog_failure
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params:
-            <<: *tabasco-smoke-datadog-params
-            VALUE: 0
+        params:
+          <<: *tabasco-smoke-datadog-params
+          VALUE: 0
 
 - name: tabasco-loggregator-smokes
   serial: true
@@ -1294,34 +1245,31 @@ jobs:
       - get: runtime-ci
     - task: run1
       file: runtime-ci/scripts/ci/run-smoketests/task.yml
-      config:
-        params:
-          SUITE_NAME: RUNTIME-SMOKE
-          API: https://api.tabasco.cf-app.com
-          APPS_DOMAIN: tabasco-app.cf-app.com
-          SKIP_SSL_VALIDATION: true
-          CF_USER: {{tabasco_runtime_smokes_username}}
-          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-          ORG: runtime-smoke-tests
-          SPACE: concourse-loggregator-smoke-tests
-          USE_EXISTING_ORG: true
-          ARGS: '--focus=Loggregator:'
+      params:
+        SUITE_NAME: RUNTIME-SMOKE
+        API: https://api.tabasco.cf-app.com
+        APPS_DOMAIN: tabasco-app.cf-app.com
+        SKIP_SSL_VALIDATION: true
+        CF_USER: {{tabasco_runtime_smokes_username}}
+        CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+        ORG: runtime-smoke-tests
+        SPACE: concourse-loggregator-smoke-tests
+        USE_EXISTING_ORG: true
+        ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params: &tabasco-smoke-datadog-params
-            METRIC: smoke.status
-            TAGS: '"deployment:cf-tabasco","loggregator_enabled:1"'
-            DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-            VALUE: 1
+        params: &tabasco-smoke-datadog-params
+          METRIC: smoke.status
+          TAGS: '"deployment:cf-tabasco","loggregator_enabled:1"'
+          DATADOG_API_KEY: {{tabasco_datadog_api_key}}
+          VALUE: 1
       on_failure:
         task: emit_datadog_failure
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params:
-            <<: *tabasco-smoke-datadog-params
-            VALUE: 0
+        params:
+          <<: *tabasco-smoke-datadog-params
+          VALUE: 0
 
 - name: a1-runtime-smokes
   serial: true
@@ -1336,118 +1284,101 @@ jobs:
     - aggregate:
       - task: run1
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params: &a1-smoke-params
-            SUITE_NAME: RUNTIME-SMOKE
-            API: https://api.a1.cf-app.com
-            APPS_DOMAIN: a1-app.cf-app.com
-            SKIP_SSL_VALIDATION: true
-            CF_USER: {{tabasco_runtime_smokes_username}} 
-            CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-            ORG: runtime-smoke-tests
-            SPACE: concourse-runtime-smoke-tests-1
-            USE_EXISTING_ORG: true
-            ARGS: '--focus=Runtime:'
+        params: &a1-smoke-params
+          SUITE_NAME: RUNTIME-SMOKE
+          API: https://api.a1.cf-app.com
+          APPS_DOMAIN: a1-app.cf-app.com
+          SKIP_SSL_VALIDATION: true
+          CF_USER: {{tabasco_runtime_smokes_username}}
+          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+          ORG: runtime-smoke-tests
+          SPACE: concourse-runtime-smoke-tests-1
+          USE_EXISTING_ORG: true
+          ARGS: '--focus=Runtime:'
       - task: run2
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-2
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-2
       - task: run3
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-3
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-3
       - task: run4
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-4
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-4
       - task: run5
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-5
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-5
       - task: run6
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-6
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-6
       - task: run7
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-7
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-7
       - task: run8
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-8
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-8
       - task: run9
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-9
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-9
       - task: run10
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-10
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-10
       - task: run11
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests11
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests11
       - task: run12
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-12
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-12
       - task: run13
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-13
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-13
       - task: run14
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-14
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-14
       - task: run15
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        config:
-          params:
-            <<: *a1-smoke-params
-            SPACE: concourse-runtime-smoke-tests-15
+        params:
+          <<: *a1-smoke-params
+          SPACE: concourse-runtime-smoke-tests-15
       on_success:
         task: emit_datadog_success
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params: &a1-smoke-datadog-params
-            METRIC: smoke.status
-            TAGS: '"deployment:cf-a1","loggregator_enabled:0"'
-            DATADOG_API_KEY: {{a1_datadog_api_key}}
-            VALUE: 1
+        params: &a1-smoke-datadog-params
+          METRIC: smoke.status
+          TAGS: '"deployment:cf-a1","loggregator_enabled:0"'
+          DATADOG_API_KEY: {{a1_datadog_api_key}}
+          VALUE: 1
       on_failure:
         task: emit_datadog_failure
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params:
-            <<: *a1-smoke-datadog-params
-            VALUE: 0
+        params:
+          <<: *a1-smoke-datadog-params
+          VALUE: 0
 
 
 - name: a1-loggregator-smokes
@@ -1462,34 +1393,31 @@ jobs:
       - get: runtime-ci
     - task: run1
       file: runtime-ci/scripts/ci/run-smoketests/task.yml
-      config:
-        params:
-          SUITE_NAME: RUNTIME-SMOKE
-          API: https://api.a1.cf-app.com
-          APPS_DOMAIN: a1-app.cf-app.com
-          SKIP_SSL_VALIDATION: true
-          CF_USER: {{tabasco_runtime_smokes_username}}
-          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-          ORG: runtime-smoke-tests
-          SPACE: concourse-loggregator-smoke-tests
-          USE_EXISTING_ORG: true
-          ARGS: '--focus=Loggregator:'
+      params:
+        SUITE_NAME: RUNTIME-SMOKE
+        API: https://api.a1.cf-app.com
+        APPS_DOMAIN: a1-app.cf-app.com
+        SKIP_SSL_VALIDATION: true
+        CF_USER: {{tabasco_runtime_smokes_username}}
+        CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+        ORG: runtime-smoke-tests
+        SPACE: concourse-loggregator-smoke-tests
+        USE_EXISTING_ORG: true
+        ARGS: '--focus=Loggregator:'
       on_success:
         task: emit_datadog_success
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params: &a1-smoke-datadog-params
-            METRIC: smoke.status
-            TAGS: '"deployment:cf-a1","loggregator_enabled:1"'
-            DATADOG_API_KEY: {{a1_datadog_api_key}}
-            VALUE: 1
+        params: &a1-smoke-datadog-params
+          METRIC: smoke.status
+          TAGS: '"deployment:cf-a1","loggregator_enabled:1"'
+          DATADOG_API_KEY: {{a1_datadog_api_key}}
+          VALUE: 1
       on_failure:
         task: emit_datadog_failure
         file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        config:
-          params:
-            <<: *a1-smoke-datadog-params
-            VALUE: 0
+        params:
+          <<: *a1-smoke-datadog-params
+          VALUE: 0
 
 - name: push-a1-canaries
   public: true
@@ -1501,20 +1429,19 @@ jobs:
       - get: cf-canaries
     - task: push-canaries
       file: runtime-ci/scripts/ci/push-canaries/task.yml
-      config:
-        params:
-          CF_APPS_DOMAIN: a1-canaries.cf-app.com
-          CF_API_ENDPOINT: https://api.a1.cf-app.com
-          CF_API_ADMIN_USER: {{a1_admin_username}}
-          CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
-          CF_API_CANARY_USER: {{a1_canaries_username}}
-          CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
-          SKIP_SSL_VALIDATION: false
-          CANARY_ORG: canaries
-          CANARY_SPACE: coal-mine
-          NUM_ZERO_DOWNTIME_APPS: 20
-          NUM_INSTANCES_PER_APP: 2
-          NUM_INSTANCES_CANARY_INSTANCES: 20
+      params:
+        CF_APPS_DOMAIN: a1-canaries.cf-app.com
+        CF_API_ENDPOINT: https://api.a1.cf-app.com
+        CF_API_ADMIN_USER: {{a1_admin_username}}
+        CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
+        CF_API_CANARY_USER: {{a1_canaries_username}}
+        CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
+        SKIP_SSL_VALIDATION: false
+        CANARY_ORG: canaries
+        CANARY_SPACE: coal-mine
+        NUM_ZERO_DOWNTIME_APPS: 20
+        NUM_INSTANCES_PER_APP: 2
+        NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: push-a1-diego-canaries
   plan:
@@ -1527,18 +1454,17 @@ jobs:
         trigger: true
     - task: push-canary-app
       file: runtime-ci/scripts/ci/push-diego-canary/task.yml
-      config:
-        params:
-          DEPLOYMENT_NAME: a1-push-canary-app
-          CF_API_ENDPOINT: https://api.a1.cf-app.com
-          CF_API_ADMIN_USER: {{a1_admin_username}}
-          CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
-          CF_API_CANARY_USER: {{a1_canaries_username}}
-          CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
-          SKIP_SSL_VALIDATION: false
-          CANARY_ORG: canaries
-          CANARY_SPACE: canaries
-          DATADOG_API_KEY: {{diego_datadog_api_key}}
+      params:
+        DEPLOYMENT_NAME: a1-push-canary-app
+        CF_API_ENDPOINT: https://api.a1.cf-app.com
+        CF_API_ADMIN_USER: {{a1_admin_username}}
+        CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
+        CF_API_CANARY_USER: {{a1_canaries_username}}
+        CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
+        SKIP_SSL_VALIDATION: false
+        CANARY_ORG: canaries
+        CANARY_SPACE: canaries
+        DATADOG_API_KEY: {{diego_datadog_api_key}}
 
 - name: push-tabasco-canaries
   public: true
@@ -1550,20 +1476,19 @@ jobs:
       - get: cf-canaries
     - task: push-canaries
       file: runtime-ci/scripts/ci/push-canaries/task.yml
-      config:
-        params:
-          CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
-          CF_API_ENDPOINT: https://api.tabasco.cf-app.com
-          CF_API_ADMIN_USER: {{tabasco_canaries_admin_username}}
-          CF_API_ADMIN_PASSWORD: {{tabasco_canaries_admin_password}}
-          CF_API_CANARY_USER: {{tabasco_canaries_username}}
-          CF_API_CANARY_PASSWORD: {{tabasco_canaries_password}}
-          SKIP_SSL_VALIDATION: false
-          CANARY_ORG: canaries
-          CANARY_SPACE: coal-mine
-          NUM_ZERO_DOWNTIME_APPS: 20
-          NUM_INSTANCES_PER_APP: 2
-          NUM_INSTANCES_CANARY_INSTANCES: 20
+      params:
+        CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
+        CF_API_ENDPOINT: https://api.tabasco.cf-app.com
+        CF_API_ADMIN_USER: {{tabasco_canaries_admin_username}}
+        CF_API_ADMIN_PASSWORD: {{tabasco_canaries_admin_password}}
+        CF_API_CANARY_USER: {{tabasco_canaries_username}}
+        CF_API_CANARY_PASSWORD: {{tabasco_canaries_password}}
+        SKIP_SSL_VALIDATION: false
+        CANARY_ORG: canaries
+        CANARY_SPACE: coal-mine
+        NUM_ZERO_DOWNTIME_APPS: 20
+        NUM_INSTANCES_PER_APP: 2
+        NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: deploy-and-test-vsphere
   serial: true
@@ -1591,18 +1516,16 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
       tags: [vsphere]
-      config:
-        params:
-          INFRASTRUCTURE: vsphere
-          ENVIRONMENT: cat
+      params:
+        INFRASTRUCTURE: vsphere
+        ENVIRONMENT: cat
     - task: delete-vsphere-deployment
       privileged: true
       file: runtime-ci/scripts/ci/delete-deployment/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
     - put: vsphere-deployment
       tags: [vsphere]
       params:
@@ -1614,20 +1537,18 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
+        ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
-      config:
-        params:
-          <<: *bosh-target-cat
-          DEPLOYMENT_NAME: cf-cat
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
+        ERRAND_NAME: acceptance_tests
       ensure:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
@@ -1653,18 +1574,16 @@ jobs:
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      config:
-        params:
-          INFRASTRUCTURE: aws
-          ENVIRONMENT: a1
+      params:
+        INFRASTRUCTURE: aws
+        ENVIRONMENT: a1
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      config:
-        params:
-          STATE: started
-          EVENT_TAG_DEPLOYMENT: cf-a1
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
+      params:
+        STATE: started
+        EVENT_TAG_DEPLOYMENT: cf-a1
+        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
         manifest: manifest/deployment.yml
@@ -1674,30 +1593,27 @@ jobs:
     - task: emit-datadog-deploy-end
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      config:
-        params:
-          STATE: finished
-          EVENT_TAG_DEPLOYMENT: cf-a1
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
+      params:
+        STATE: finished
+        EVENT_TAG_DEPLOYMENT: cf-a1
+        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: cf-release-acceptance-deployed
       params:
         repository: cf-release
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-a1
-          DEPLOYMENT_NAME: cf-a1
-          ERRAND_NAME: smoke_tests
+      params:
+        <<: *bosh-target-a1
+        DEPLOYMENT_NAME: cf-a1
+        ERRAND_NAME: smoke_tests
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      config:
-        params:
-          <<: *bosh-target-a1
-          DEPLOYMENT_YML: cf-a1
-          ERRAND_NAME: acceptance_tests
+      params:
+        <<: *bosh-target-a1
+        DEPLOYMENT_YML: cf-a1
+        ERRAND_NAME: acceptance_tests
       ensure:
         put: a1-acceptance-tests-logs
         params:
@@ -1729,21 +1645,19 @@ jobs:
       passed: [deploy-and-test-tabasco]
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
-    config:
-      params:
-        BOSH_TARGET: bosh.a1.cf-app.com
-        ENVIRONMENT_NAME: a1
-        DEPLOYMENTS_DIR: deployments-runtime
-        BOSH_USER: {{a1_bosh_username}}
-        BOSH_PASSWORD: {{a1_bosh_password}}
-        INFRASTRUCTURE: aws
+    params:
+      BOSH_TARGET: bosh.a1.cf-app.com
+      ENVIRONMENT_NAME: a1
+      DEPLOYMENTS_DIR: deployments-runtime
+      BOSH_USER: {{a1_bosh_username}}
+      BOSH_PASSWORD: {{a1_bosh_password}}
+      INFRASTRUCTURE: aws
   - task: emit-diego-datadog-started
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    config:
-      params:
-        STATE: started
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}}
+    params:
+      STATE: started
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{diego_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1751,18 +1665,16 @@ jobs:
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    config:
-      params:
-        STATE: finished
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{diego_datadog_api_key}}
+    params:
+      STATE: finished
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{diego_datadog_api_key}}
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-    config:
-      params:
-        CF_TARGET: api.a1.cf-app.com
-        CF_USER: {{a1_admin_username}}
-        CF_PASSWORD: {{a1_admin_password}}
+    params:
+      CF_TARGET: api.a1.cf-app.com
+      CF_USER: {{a1_admin_username}}
+      CF_PASSWORD: {{a1_admin_password}}
   - put: a1-diego-cats-deployment
     params:
       manifest: deployments-runtime/a1/deployments/a1-diego-cats.yml
@@ -1770,13 +1682,12 @@ jobs:
       stemcells: []
   - task: cf-acceptance-tests
     file: runtime-ci/scripts/ci/run-errand/task.yml
-    config:
-      params:
-        BOSH_DIRECTOR: bosh.a1.cf-app.com
-        BOSH_USER: {{a1_bosh_username}}
-        BOSH_PASSWORD: {{a1_bosh_password}}
-        DEPLOYMENT_YML: a1-diego-cats
-        ERRAND_NAME: acceptance_tests
+    params:
+      BOSH_DIRECTOR: bosh.a1.cf-app.com
+      BOSH_USER: {{a1_bosh_username}}
+      BOSH_PASSWORD: {{a1_bosh_password}}
+      DEPLOYMENT_YML: a1-diego-cats
+      ERRAND_NAME: acceptance_tests
     ensure:
       put: a1-acceptance-tests-logs
       params:

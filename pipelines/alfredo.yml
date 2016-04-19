@@ -87,9 +87,8 @@ jobs:
       trigger: true
   - task: unit-tests
     file: runtime-ci/scripts/ci/unit-tests-cf-deployment/task.yml
-    config:
-      params:
-        CF_DEPLOYMENT_TRACE: true
+    params:
+      CF_DEPLOYMENT_TRACE: "true"
 
 - name: deploy-cf
   public: true
@@ -116,21 +115,19 @@ jobs:
       trigger: true
   - task: deploy-cf
     file: runtime-ci/scripts/ci/deploy-cf-alone/task.yml
-    config:
-      params:
-        STUB_PATH: {{cf_stub_path}}
-        STUB_PARTS_PATH: {{cf_stub_parts_path}}
-        BOSH_DIRECTOR: {{cf_bosh_director}}
-        BOSH_USER: {{cf_bosh_user}}
-        BOSH_PASSWORD: {{cf_bosh_password}}
-        CF_DEPLOYMENT_TRACE: true
+    params:
+      STUB_PATH: {{cf_stub_path}}
+      STUB_PARTS_PATH: {{cf_stub_parts_path}}
+      BOSH_DIRECTOR: {{cf_bosh_director}}
+      BOSH_USER: {{cf_bosh_user}}
+      BOSH_PASSWORD: {{cf_bosh_password}}
+      CF_DEPLOYMENT_TRACE: "true"
   - task: cleanup
     file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-    config:
-      params:
-        BOSH_DIRECTOR: {{cf_bosh_director}}
-        BOSH_USER: {{cf_bosh_user}}
-        BOSH_PASSWORD: {{cf_bosh_password}}
+    params:
+      BOSH_DIRECTOR: {{cf_bosh_director}}
+      BOSH_USER: {{cf_bosh_user}}
+      BOSH_PASSWORD: {{cf_bosh_password}}
 
 - name: run-smoke-tests
   public: true
@@ -161,13 +158,12 @@ jobs:
       trigger: true
   - task: smoke-tests
     file: runtime-ci/scripts/ci/run-errand/task.yml
-    config:
-      params:
-        BOSH_DIRECTOR: {{cf_bosh_director}}
-        BOSH_USER: {{cf_bosh_user}}
-        BOSH_PASSWORD: {{cf_bosh_password}}
-        ERRAND_NAME: smoke_tests
-        DEPLOYMENT_NAME: cf-alfredo
+    params:
+      BOSH_DIRECTOR: {{cf_bosh_director}}
+      BOSH_USER: {{cf_bosh_user}}
+      BOSH_PASSWORD: {{cf_bosh_password}}
+      ERRAND_NAME: smoke_tests
+      DEPLOYMENT_NAME: cf-alfredo
 
 - name: run-acceptance-tests
   public: true
@@ -194,14 +190,13 @@ jobs:
       trigger: true
   - task: acceptance-tests
     file: runtime-ci/scripts/ci/run-errand/task.yml
-    config:
-      params:
-        BOSH_DIRECTOR: {{cf_bosh_director}}
-        BOSH_USER: {{cf_bosh_user}}
-        BOSH_PASSWORD: {{cf_bosh_password}}
-        DEPLOYMENT_NAME: cf-alfredo
-        ENVIRONMENT: alfredo
-        ERRAND_NAME: acceptance_tests
+    params:
+      BOSH_DIRECTOR: {{cf_bosh_director}}
+      BOSH_USER: {{cf_bosh_user}}
+      BOSH_PASSWORD: {{cf_bosh_password}}
+      DEPLOYMENT_NAME: cf-alfredo
+      ENVIRONMENT: alfredo
+      ERRAND_NAME: acceptance_tests
     ensure:
       put: acceptance-tests-logs
       params:
@@ -232,39 +227,36 @@ jobs:
       trigger: true
   - task: cli-compatibility
     file: runtime-ci/scripts/ci/run-cats/task.yml
-    config:
+    params:
+      CF_API: {{alfredo-cf-api}}
+      CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
+      CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
+      SKIP_SSL_VALIDATION: "true"
+      USE_HTTP: "false"
+      SUITES: "."
+  - aggregate:
+    - task: everything-else
+      file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         CF_API: {{alfredo-cf-api}}
         CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
         CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
-        SKIP_SSL_VALIDATION: true
-        USE_HTTP: false
-        SUITES: "."
-  - aggregate:
-    - task: everything-else
-      file: runtime-ci/scripts/ci/run-cats/task.yml
-      config:
-        params:
-          CF_API: {{alfredo-cf-api}}
-          CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
-          CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
-          SKIP_SSL_VALIDATION: true
-          USE_HTTP: false
-          NODES: 8
-          SUITES: "apps assets detect docker internet_dependent operator routing"
-          ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "false"
+        NODES: 8
+        SUITES: "apps assets detect docker internet_dependent operator routing"
+        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
     - task: services-security_groups-ssh
       file: runtime-ci/scripts/ci/run-cats/task.yml
-      config:
-        params:
-          CF_API: {{alfredo-cf-api}}
-          CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
-          CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
-          NODES: 8
-          SKIP_SSL_VALIDATION: true
-          USE_HTTP: false
-          SUITES: "services security_groups ssh"
-          ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
+      params:
+        CF_API: {{alfredo-cf-api}}
+        CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
+        CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
+        NODES: 8
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "false"
+        SUITES: "services security_groups ssh"
+        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
 
 - name: bless
   public: true
@@ -308,7 +300,8 @@ jobs:
       trigger: true
     - get: release-repo
       resource: cf-deployment-develop-merge-target-1
-      params: {fetch: [master]}
+      params:
+        fetch: [master]
   - task: merge-master-into-develop
     file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
   - put: cf-deployment-develop-merge-target-1

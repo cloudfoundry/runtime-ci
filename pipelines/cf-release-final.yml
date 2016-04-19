@@ -65,10 +65,9 @@ jobs:
       resource: cf-release-credentials
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
-    config:
-      params:
-        RELEASE_NAME: cf
-        PRIVATE_YML_PATH: private-credentials/private.yml
+    params:
+      RELEASE_NAME: cf
+      PRIVATE_YML_PATH: private-credentials/private.yml
   - put: cf-release-master
     params:
       repository: final-release-repo
@@ -101,9 +100,8 @@ jobs:
     - get: cf-bosh-io-release
   - task: announce-rc
     file: runtime-ci/scripts/ci/announce-rc/task.yml
-    config:
-      params:
-        GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
+    params:
+      GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
 
 - name: create-release-notes
   public: true
@@ -114,12 +112,10 @@ jobs:
     - get: runtime-ci
   - task: create-release-notes-template
     file: runtime-ci/scripts/ci/create-release-notes-template/task.yml
-    config:
-      params:
-        GH_ACCESS_TOKEN: {{release_notes_bot_github_access_token}}
+    params:
+      GH_ACCESS_TOKEN: {{release_notes_bot_github_access_token}}
   - task: request-pm-input
     file: runtime-ci/scripts/ci/request-pm-input/task.yml
-    config:
-      params:
-        TRACKER_API_TOKEN: {{tracker_api_token}}
-        REQUESTER_ID: {{requester_id}}
+    params:
+      TRACKER_API_TOKEN: {{tracker_api_token}}
+      REQUESTER_ID: {{requester_id}}
