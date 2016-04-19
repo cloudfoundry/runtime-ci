@@ -1,0 +1,66 @@
+groups:
+- name: canibump
+  jobs:
+  - push-canibump
+  - set-canibump-no
+  - set-canibump-yes
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: canibump-repo
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/canibump.git
+- name: canibump-app
+  type: cf
+  source:
+    api: {{canibump_cf_api}}
+    username: {{canibump_push_user}}
+    password: {{canibump_push_password}}
+    organization: {{canibump_org}}
+    space: {{canibump_space}}
+
+jobs:
+- name: push-canibump
+  public: true
+  plan:
+  - timeout: &timeout 4h
+    do:
+    - aggregate:
+      - get: canibump-repo
+      - get: runtime-ci
+    - put: canibump-app
+      params:
+        manifest: canibump-repo/manifest.yml
+        path: canibump-repo
+        environment_variables:
+          CAN_I_BUMP_TOKEN: {{canibump_token}}
+
+- name: set-canibump-yes
+  plan:
+  - timeout: *timeout
+    do:
+    - get: runtime-ci
+    - task: can-bump
+      file: runtime-ci/scripts/ci/can-bump/task.yml
+      params:
+        URL: *canibump-url
+        TOKEN: {{canibump_token}}
+
+- name: set-canibump-no
+  public: true
+  plan:
+  - timeout: *timeout
+    do:
+    - get: runtime-ci
+    - task: cannot-bump
+      file: runtime-ci/scripts/ci/cannot-bump/task.yml
+      params:
+        URL: &canibump-url canibump.cfapps.io
+        TOKEN: {{canibump_token}}
+        REASON: "manually set by the Release Integration team"

@@ -33,9 +33,6 @@ groups:
   - push-a1-canaries
   - push-a1-diego-canaries
   - push-tabasco-canaries
-- name: canibump
-  jobs:
-  - push-canibump
 - name: rubbish-bin
   jobs:
   - deploy-and-test-a1
@@ -376,21 +373,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-
-- name: canibump-repo
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/canibump.git
-
-- name: canibump-app
-  type: cf
-  source:
-    api: {{canibump_cf_api}}
-    username: {{canibump_push_user}}
-    password: {{canibump_push_password}}
-    organization: {{canibump_org}}
-    space: {{canibump_space}}
 
 jobs:
 - name: cf-release-unit-tests
@@ -1582,21 +1564,6 @@ jobs:
           NUM_ZERO_DOWNTIME_APPS: 20
           NUM_INSTANCES_PER_APP: 2
           NUM_INSTANCES_CANARY_INSTANCES: 20
-
-- name: push-canibump
-  public: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: canibump-repo
-      - get: runtime-ci
-    - put: canibump-app
-      params:
-        manifest: canibump-repo/manifest.yml
-        path: canibump-repo
-        environment_variables:
-          CAN_I_BUMP_TOKEN: {{canibump_token}}
 
 - name: deploy-and-test-vsphere
   serial: true
