@@ -5,7 +5,7 @@ set -eu
 echo "Setting target to ${CF_TARGET}"
 cf api --skip-ssl-validation "${CF_TARGET}"
 
-echo "Authenticating as ${CF_API_ADMIN_USER}"
+echo "Authenticating as ${CF_USER}"
 cf auth "${CF_USER}" "${CF_PASSWORD}"
 
 echo "Listing existing feature flags"
