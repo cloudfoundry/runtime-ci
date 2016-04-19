@@ -76,7 +76,7 @@ Does this cf-release SHA look good for the Java Buildpack team?  Any bugs, regre
 - **Comments**:
 
 ----
-@ematpl, @luan:
+@ematpl, @jfmyers9:
 Can you provide a compatible diego-release SHA?
 - **Approval**: :+1: / :-1:
 - **Decider**:
