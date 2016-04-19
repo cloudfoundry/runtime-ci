@@ -1,11 +1,15 @@
 #!/bin/bash
 
-set -e -x -u
+set -eu
 
-cf api --skip-ssl-validation $CF_TARGET
-cf auth $CF_USER $CF_PASSWORD
+echo "Setting target to ${CF_TARGET}"
+cf api --skip-ssl-validation "${CF_TARGET}"
 
-# list existing feature flags
+echo "Authenticating as ${CF_API_ADMIN_USER}"
+cf auth "${CF_USER}" "${CF_PASSWORD}"
+
+echo "Listing existing feature flags"
 cf feature-flags
 
+echo "Enabling diego feature flag"
 cf enable-feature-flag diego_docker || true
