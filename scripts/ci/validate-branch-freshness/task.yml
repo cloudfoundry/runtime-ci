@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+- name: repo
+
+run:
+  path: runtime-ci/scripts/ci/validate-branch-freshness/task
+
+params:
