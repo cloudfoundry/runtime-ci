@@ -383,6 +383,7 @@ resources:
 
 jobs:
 - name: cf-release-unit-tests
+  public: true
   plan:
   - timeout: &timeout 4h
     do:
@@ -405,6 +406,7 @@ jobs:
           REASON: "cf-release unit tests failed"
 
 - name: cf-release-branch-freshness
+  public: true
   plan:
   - timeout: &timeout 4h
     do:
@@ -420,6 +422,7 @@ jobs:
       file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
 
 - name: create-release
+  public: true
   plan:
   - timeout: *timeout
     do:
@@ -451,6 +454,7 @@ jobs:
         from: cf-release-out/cf-(.*).tgz
 
 - name: clean-all-the-boshes
+  public: true
   plan:
   - timeout: *timeout
     do:
@@ -504,6 +508,7 @@ jobs:
           BOSH_PASSWORD: {{a1_bosh_password}}
 
 - name: deploy-and-test-tabasco
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -614,6 +619,7 @@ jobs:
         TOKEN: {{canibump_token}}
 
 - name: deploy-and-test-openstack
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -662,6 +668,7 @@ jobs:
           from: logs-dir/acceptance_tests(.*).tgz
 
 - name: deploy-and-test-bosh-lite
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -705,6 +712,7 @@ jobs:
           from: bosh-lite-output-dir/acceptance_tests(.*).tgz
 
 - name: deploy-and-test-minimal
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -746,6 +754,7 @@ jobs:
         ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
 
 - name: vsphere-cf-deploy
+  public: true
   serial: true
   serial_groups:
   - vsphere-deploy
@@ -796,6 +805,7 @@ jobs:
         file: manifest/deployment.yml
 
 - name: vsphere-smoke-tests
+  public: true
   serial: true
   serial_groups:
   - vsphere-deploy
@@ -824,6 +834,7 @@ jobs:
         ERRAND_NAME: smoke_tests
 
 - name: vsphere-cf-cats
+  public: true
   serial: true
   serial_groups:
   - vsphere-deploy
@@ -857,6 +868,7 @@ jobs:
           from: logs-dir/acceptance_tests(.*).tgz
 
 - name: a1-cf-deploy
+  public: true
   serial: true
   serial_groups:
   - cf-a1-bosh-deployment-lock
@@ -910,6 +922,7 @@ jobs:
         repository: cf-release
 
 - name: a1-smoke-tests
+  public: true
   serial: true
   serial_groups:
   - cf-a1-bosh-deployment-lock
@@ -967,6 +980,7 @@ jobs:
         ERRAND_NAME: smoke_tests
 
 - name: a1-cf-cats
+  public: true
   serial: true
   serial_groups:
   - cf-a1-bosh-deployment-lock
@@ -1005,6 +1019,7 @@ jobs:
         - cf-release/src/cloud_controller_ng
 
 - name: a1-diego-deploy
+  public: true
   serial: true
   serial_groups:
   - diego-deploy-and-diego-cats-lock
@@ -1063,6 +1078,7 @@ jobs:
       DATADOG_API_KEY: {{a1_datadog_api_key}}
 
 - name: a1-diego-cats
+  public: true
   serial: true
   serial_groups:
   - diego-deploy-and-diego-cats-lock
@@ -1137,6 +1153,7 @@ jobs:
         to: a1-cats/
 
 - name: rc
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1185,6 +1202,7 @@ jobs:
             repository: updated-diego-cf-compatibility
 
 - name: build-pipeline-image
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1202,6 +1220,7 @@ jobs:
         push: true
 
 - name: tabasco-runtime-smokes
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1256,6 +1275,7 @@ jobs:
           VALUE: 0
 
 - name: tabasco-loggregator-smokes
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1294,6 +1314,7 @@ jobs:
           VALUE: 0
 
 - name: a1-runtime-smokes
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1404,6 +1425,7 @@ jobs:
 
 
 - name: a1-loggregator-smokes
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1466,6 +1488,7 @@ jobs:
         NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: push-a1-diego-canaries
+  public: true
   plan:
   - timeout: *timeout
     do:
@@ -1513,6 +1536,7 @@ jobs:
         NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: deploy-and-test-vsphere
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1578,6 +1602,7 @@ jobs:
           from: logs-dir/acceptance_tests(.*).tgz
 
 - name: deploy-and-test-a1
+  public: true
   serial: true
   plan:
   - timeout: *timeout
@@ -1646,6 +1671,7 @@ jobs:
         - cf-release/src/cloud_controller_ng
 
 - name: a1-diego-deploy-and-test
+  public: true
   serial: true
   plan:
   - aggregate:

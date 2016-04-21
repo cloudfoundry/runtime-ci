@@ -42,6 +42,7 @@ jobs:
           CAN_I_BUMP_TOKEN: {{canibump_token}}
 
 - name: set-canibump-yes
+  public: true
   plan:
   - timeout: *timeout
     do:
