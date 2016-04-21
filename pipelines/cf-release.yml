@@ -1049,7 +1049,7 @@ jobs:
     params:
       STATE: started
       EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{diego_datadog_api_key}}
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1060,7 +1060,7 @@ jobs:
     params:
       STATE: finished
       EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{diego_datadog_api_key}}
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
 
 - name: a1-diego-cats
   serial: true
@@ -1486,7 +1486,7 @@ jobs:
         SKIP_SSL_VALIDATION: false
         CANARY_ORG: canaries
         CANARY_SPACE: canaries
-        DATADOG_API_KEY: {{diego_datadog_api_key}}
+        DATADOG_API_KEY: {{a1_datadog_api_key}}
 
 - name: push-tabasco-canaries
   public: true
@@ -1679,7 +1679,7 @@ jobs:
     params:
       STATE: started
       EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{diego_datadog_api_key}}
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
   - put: a1-diego-deployment
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
@@ -1690,7 +1690,7 @@ jobs:
     params:
       STATE: finished
       EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{diego_datadog_api_key}}
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     params:
