@@ -41,18 +41,6 @@ jobs:
         environment_variables:
           CAN_I_BUMP_TOKEN: {{canibump_token}}
 
-- name: set-canibump-yes
-  public: true
-  plan:
-  - timeout: *timeout
-    do:
-    - get: runtime-ci
-    - task: can-bump
-      file: runtime-ci/scripts/ci/can-bump/task.yml
-      params:
-        URL: *canibump-url
-        TOKEN: {{canibump_token}}
-
 - name: set-canibump-no
   public: true
   plan:
@@ -65,3 +53,16 @@ jobs:
         URL: &canibump-url canibump.cfapps.io
         TOKEN: {{canibump_token}}
         REASON: "manually set by the Release Integration team"
+
+- name: set-canibump-yes
+  public: true
+  plan:
+  - timeout: *timeout
+    do:
+    - get: runtime-ci
+    - task: can-bump
+      file: runtime-ci/scripts/ci/can-bump/task.yml
+      params:
+        URL: *canibump-url
+        TOKEN: {{canibump_token}}
+
