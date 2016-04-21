@@ -2,6 +2,7 @@ groups:
 - name: cf-release
   jobs:
   - cf-release-unit-tests
+  - cf-release-branch-freshness
   - create-release
   - deploy-and-test-tabasco
   - deploy-and-test-openstack
@@ -152,6 +153,12 @@ resources:
     uri: https://github.com/cloudfoundry/cf-smoke-tests.git
 
 - name: cf-release-develop
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-release.git
+
+- name: cf-release-all-branches
   type: git
   source:
     branch: develop
@@ -396,6 +403,21 @@ jobs:
           URL: &canibump-url canibump.cfapps.io
           TOKEN: {{canibump_token}}
           REASON: "cf-release unit tests failed"
+
+- name: cf-release-branch-freshness
+  plan:
+  - timeout: &timeout 4h
+    do:
+    - aggregate:
+      - get: repo
+        resource: cf-release-all-branches
+        trigger: true
+        params:
+          submodules: none
+      - get: runtime-ci
+    - task: validate-branches
+      privileged: true
+      file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
 
 - name: create-release
   plan:
