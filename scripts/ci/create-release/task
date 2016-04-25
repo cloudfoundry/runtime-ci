@@ -42,8 +42,8 @@ if [ ! "$EXIT_STATUS" = "0" ]; then
   exit "${EXIT_STATUS}"
 fi
 
-VERSION=$(grep -a "Release version" "${CF_RELEASE_OUT}" | cut -d " " -f3)
-if [ "$VERSION" = "" ]; then
+FOUND_VERSION=$(grep -a "Release version" "${CF_RELEASE_OUT}" | cut -d " " -f3)
+if [ "${FOUND_VERSION}" = "" ]; then
   echo "No Release Version Found"
   exit 1
 fi
@@ -61,5 +61,5 @@ if [ "$TARBALL" = "" ]; then
 fi
 
 mv "${MANIFEST_YML}" "${OUTPUT_DIR}/dev-manifest.yml"
-mv "${TARBALL}" "${OUTPUT_DIR}/cf-${VERSION}-${COMMIT_SHA}.tgz"
+mv "${TARBALL}" "${OUTPUT_DIR}/cf-${FOUND_VERSION}-${COMMIT_SHA}.tgz"
 mv "${CF_RELEASE_OUT}" "${OUTPUT_DIR}/"
