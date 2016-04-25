@@ -408,7 +408,7 @@ jobs:
 - name: cf-release-branch-freshness
   public: true
   plan:
-  - timeout: &timeout 4h
+  - timeout: *timeout
     do:
     - aggregate:
       - get: repo
