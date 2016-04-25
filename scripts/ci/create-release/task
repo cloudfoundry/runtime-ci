@@ -15,7 +15,7 @@ CF_RELEASE_DIR="${root_dir}/${CF_RELEASE_DIR:?"\$CF_RELEASE_DIR not set"}"
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
-VERSION="$(cat version/number)"
+VERSION="$(date +%s)" # current time in seconds
 
 cd "${CF_RELEASE_DIR}"
 COMMIT_SHA=$(git rev-parse HEAD)

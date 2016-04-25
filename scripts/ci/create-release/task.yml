@@ -6,7 +6,6 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release-develop
 - name: runtime-ci
-- name: version
 
 outputs:
 - name: cf-release-out

@@ -64,16 +64,6 @@ resources:
   source:
     interval: 2h
 
-- name: version
-  type: semver
-  source:
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-    bucket: cf-release-versions
-    initial_version: 210.1.0
-    key: current-version
-    region_name: us-east-1
-
 - name: cf-release-tarball
   type: s3
   source:
@@ -431,12 +421,6 @@ jobs:
         passed: [cf-release-unit-tests]
         trigger: true
       - get: runtime-ci
-      - get: version
-        params:
-          bump: minor
-    - put: version
-      params:
-        file: version/number
     - task: create-release-tarball
       privileged: true
       file: runtime-ci/scripts/ci/create-release/task.yml
@@ -523,8 +507,6 @@ jobs:
       - get: runtime-ci
       - get: deployments-runtime
       - get: aws-stemcell
-      - get: version
-        passed: [create-release]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -634,8 +616,6 @@ jobs:
       - get: runtime-ci
       - get: deployments-runtime
       - get: openstack-stemcell
-      - get: version
-        passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -682,8 +662,6 @@ jobs:
         trigger: true
       - get: bosh-lite
       - get: runtime-ci
-      - get: version
-        passed: [deploy-and-test-tabasco]
       - get: bosh-lite-stemcell
     - task: deprovision-bosh-lite
       privileged: true
@@ -729,8 +707,6 @@ jobs:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
       - get: runtime-ci
       - get: deployments-runtime
-      - get: version
-        passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-minimal-cf-release-manifest/task.yml
@@ -775,9 +751,6 @@ jobs:
       - get: deployments-runtime
         tags: [vsphere]
       - get: vsphere-stemcell
-        tags: [vsphere]
-      - get: version
-        passed: [deploy-and-test-tabasco]
         tags: [vsphere]
     - task: create-manifest
       privileged: true
@@ -886,8 +859,6 @@ jobs:
       - get: runtime-ci
       - get: deployments-runtime
       - get: aws-stemcell
-      - get: version
-        passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -1026,8 +997,6 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: version
-      passed: [deploy-and-test-tabasco]
     - get: diego-release
       resource: diego-release-master
       params: {submodules: none}
@@ -1554,9 +1523,6 @@ jobs:
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
-      - get: version
-        passed: [deploy-and-test-tabasco]
-        tags: [vsphere]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -1615,8 +1581,6 @@ jobs:
       - get: runtime-ci
       - get: deployments-runtime
       - get: aws-stemcell
-      - get: version
-        passed: [deploy-and-test-tabasco]
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -1675,8 +1639,6 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: version
-      passed: [deploy-and-test-tabasco]
     - get: diego-release
       resource: diego-release-master
       params: {submodules: none}
