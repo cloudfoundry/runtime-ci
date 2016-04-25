@@ -1040,7 +1040,6 @@ jobs:
     - get: cflinuxfs2-rootfs-release-tarball
       trigger: true
     - get: deployments-runtime
-      trigger: true
     - get: bosh-stemcell
       resource: aws-stemcell
     - get: cf-release
