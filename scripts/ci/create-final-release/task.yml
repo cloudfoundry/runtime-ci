@@ -5,7 +5,7 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
 - name: runtime-ci
-- name: private-credentials
+- name: oss-s3-buckets-stack
 - name: release-repo
 - name: release-repo-master
 
@@ -16,7 +16,9 @@ run:
   path: runtime-ci/scripts/ci/create-final-release/task
 
 params:
+  RUNTIME_CI_DIR: runtime-ci
   RELEASE_NAME:
-  PRIVATE_YML_PATH:
   MASTER_BRANCH:
+  RELEASE_REPO_DIR: release-repo
   FINAL_RELEASE_REPO_DIR: final-release-repo
+  STACK_REPO_DIR: oss-s3-buckets-stack

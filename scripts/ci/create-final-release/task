@@ -9,12 +9,25 @@ set -u
 
 root_dir="${PWD}"
 
+# Inputs
+RELEASE_NAME="${RELEASE_NAME:?"\$RELEASE_NAME not set"}"
+RUNTIME_CI_DIR="${root_dir}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR not set"}"
+STACK_REPO_DIR="${root_dir}/${STACK_REPO_DIR:?"\$STACK_REPO_DIR not set"}"
+RELEASE_REPO_DIR="${root_dir}/${RELEASE_REPO_DIR:?"\$RELEASE_REPO_DIR not set"}"
+
 # Outputs
 FINAL_RELEASE_REPO_DIR="${root_dir}/${FINAL_RELEASE_REPO_DIR:?"\$FINAL_RELEASE_REPO_DIR not set"}"
 
 MASTER_BRANCH="${MASTER_BRANCH:-master}"
 
-cp "${PRIVATE_YML_PATH}" release-repo/config/
+set +x
+"${RUNTIME_CI_DIR}/scripts/configure_final_release_bucket" \
+  "${RELEASE_NAME}" \
+  "${STACK_REPO_DIR}" \
+  "${RELEASE_REPO_DIR}/config"
+set -x
+
+# cp "${PRIVATE_YML_PATH}" release-repo/config/
 
 pushd release-repo > /dev/null
   git config user.name "CF MEGA BOT"
