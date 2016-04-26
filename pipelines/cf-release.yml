@@ -609,6 +609,7 @@ jobs:
     - aggregate:
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
+        trigger: true
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
@@ -656,6 +657,7 @@ jobs:
     - aggregate:
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
+        trigger: true
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
@@ -699,6 +701,7 @@ jobs:
       - get: aws-stemcell
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
+        trigger: true
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
@@ -740,6 +743,7 @@ jobs:
     - aggregate:
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
+        trigger: true
         tags: [vsphere]
       - get: cf-release
         resource: cf-release-runtime-passed
@@ -852,6 +856,7 @@ jobs:
     - aggregate:
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
+        trigger: true
       - get: cf-release
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
