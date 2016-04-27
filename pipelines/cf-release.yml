@@ -734,7 +734,6 @@ jobs:
 
 - name: vsphere-cf-deploy
   public: true
-  serial: true
   serial_groups:
   - vsphere-deploy
   plan:
@@ -783,7 +782,6 @@ jobs:
 
 - name: vsphere-smoke-tests
   public: true
-  serial: true
   serial_groups:
   - vsphere-deploy
   plan:
@@ -812,7 +810,6 @@ jobs:
 
 - name: vsphere-cf-cats
   public: true
-  serial: true
   serial_groups:
   - vsphere-deploy
   plan:
