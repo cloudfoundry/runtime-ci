@@ -1,6 +1,10 @@
 #!/bin/bash
 
-set -eux
+set -ex
+
+source ~/.bashrc
+
+set -u
 
 # Date
 current_date=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
