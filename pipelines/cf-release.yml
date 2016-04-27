@@ -993,7 +993,6 @@ jobs:
 
 - name: a1-diego-deploy
   public: true
-  serial: true
   serial_groups:
   - diego-deploy-and-diego-cats-lock
   plan:
@@ -1049,7 +1048,6 @@ jobs:
 
 - name: a1-diego-cats
   public: true
-  serial: true
   serial_groups:
   - diego-deploy-and-diego-cats-lock
   - cf-deploy-and-diego-cats-lock
