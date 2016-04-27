@@ -646,9 +646,8 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
-        trigger: true
       - get: runtime-ci
       - get: deployments-runtime
       - get: openstack-stemcell
@@ -694,9 +693,8 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
-        trigger: true
       - get: bosh-lite
       - get: runtime-ci
       - get: bosh-lite-stemcell
@@ -738,9 +736,8 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
-        trigger: true
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
       - get: runtime-ci
@@ -781,9 +778,8 @@ jobs:
         trigger: true
         tags: [vsphere]
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
-        trigger: true
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
@@ -832,7 +828,7 @@ jobs:
         passed:
         - vsphere-cf-deploy
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [vsphere-cf-deploy]
         trigger: true
         tags: [vsphere]
@@ -860,7 +856,7 @@ jobs:
         passed:
         - vsphere-smoke-tests
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [vsphere-smoke-tests]
         trigger: true
         tags: [vsphere]
@@ -892,9 +888,8 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
-        trigger: true
       - get: runtime-ci
       - get: deployments
         resource: a1-env
@@ -949,7 +944,7 @@ jobs:
         passed: [a1-diego-deploy]
         trigger: true
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [a1-cf-deploy, a1-diego-deploy]
         trigger: true
       - get: runtime-ci
@@ -1004,15 +999,13 @@ jobs:
         trigger: true
         passed: [ a1-smoke-tests ]
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [a1-smoke-tests]
-        trigger: true
       - get: runtime-ci
       - get: aws-stemcell
         passed: [ a1-smoke-tests ]
         params:
           tarball: false
-        trigger: true
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -1052,7 +1045,7 @@ jobs:
     - get: bosh-stemcell
       resource: aws-stemcell
     - get: cf-release
-      resource: cf-release-runtime-passed
+      resource: cf-release-develop
       trigger: true
       passed: [deploy-and-test-tabasco]
   - task: generate-deployment-manifests
@@ -1099,7 +1092,7 @@ jobs:
         trigger: true
         passed: [ a1-smoke-tests ]
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
@@ -1170,7 +1163,7 @@ jobs:
       - get: runtime-ci
       - get: diego-cf-compatibility
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [vsphere-cf-cats, deploy-and-test-bosh-lite, a1-cf-cats, a1-diego-cats]
         trigger: true
         params:
@@ -1554,7 +1547,7 @@ jobs:
         passed: [deploy-and-test-tabasco]
         tags: [vsphere]
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
         tags: [vsphere]
       - get: runtime-ci
@@ -1617,7 +1610,7 @@ jobs:
       - get: cf-release-tarball
         passed: [deploy-and-test-tabasco]
       - get: cf-release
-        resource: cf-release-runtime-passed
+        resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
       - get: runtime-ci
       - get: deployments
@@ -1693,7 +1686,7 @@ jobs:
     - get: bosh-stemcell
       resource: aws-stemcell
     - get: cf-release
-      resource: cf-release-runtime-passed
+      resource: cf-release-develop
       passed: [deploy-and-test-tabasco]
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
