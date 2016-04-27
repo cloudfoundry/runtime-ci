@@ -14,5 +14,5 @@ cd cf-release
 
 ./scripts/generate_deployment_manifest \
   "${INFRASTRUCTURE}" \
-  "../deployments-runtime/${ENVIRONMENT}/stubs/cf/"*.yml > "${OUTPUT_DIR}/deployment.yml"
+  "../deployments/stubs/cf/"*.yml > "${OUTPUT_DIR}/deployment.yml"
 

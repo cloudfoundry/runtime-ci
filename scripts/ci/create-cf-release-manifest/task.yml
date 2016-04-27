@@ -6,7 +6,7 @@ image: docker:///cloudfoundry/runtime-ci
 inputs:
 - name: cf-release
 - name: runtime-ci
-- name: deployments-runtime
+- name: deployments
 
 outputs:
 - name: manifest
@@ -16,5 +16,4 @@ run:
 
 params:
   INFRASTRUCTURE:
-  ENVIRONMENT:
   OUTPUT_DIR: manifest
