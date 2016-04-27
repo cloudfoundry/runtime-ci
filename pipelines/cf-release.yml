@@ -136,6 +136,41 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
+- name: a1-env
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_a1_env}}
+    uri: git@github.com:cloudfoundry/a1-env.git
+
+- name: cat-env
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_cat_env}}
+    uri: git@github.com:cloudfoundry/cat-env.git
+
+- name: dumbledore-env
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_dumbledore_env}}
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+
+- name: minimal-env
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_minimal_env}}
+    uri: git@github.com:cloudfoundry/minimal-env.git
+
+- name: tabasco-env
+  type: git
+  source:
+    branch: master
+    private_key: {{cf_release_tabasco_env}}
+    uri: git@github.com:cloudfoundry/tabasco-env.git
+
 - name: smoke-tests
   type: git
   source:
@@ -709,7 +744,8 @@ jobs:
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: minimal-env
     - task: create-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-minimal-cf-release-manifest/task.yml
@@ -751,7 +787,8 @@ jobs:
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
-      - get: deployments-runtime
+      - get: deployments
+        resource: cat-env
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
@@ -859,7 +896,8 @@ jobs:
         passed: [deploy-and-test-tabasco]
         trigger: true
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: a1-env
       - get: aws-stemcell
     - task: create-manifest
       privileged: true
@@ -1009,7 +1047,8 @@ jobs:
       trigger: true
     - get: cflinuxfs2-rootfs-release-tarball
       trigger: true
-    - get: deployments-runtime
+    - get: deployments
+      resource: a1-env
     - get: bosh-stemcell
       resource: aws-stemcell
     - get: cf-release
@@ -1021,7 +1060,7 @@ jobs:
     params:
       BOSH_TARGET: bosh.a1.cf-app.com
       ENVIRONMENT_NAME: a1
-      DEPLOYMENTS_DIR: deployments-runtime
+      DEPLOYMENTS_DIR: deployments
       BOSH_USER: {{a1_bosh_username}}
       BOSH_PASSWORD: {{a1_bosh_password}}
       INFRASTRUCTURE: aws
@@ -1064,7 +1103,8 @@ jobs:
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: a1-env
       - get: aws-stemcell
         passed: [ a1-smoke-tests ]
         params:
@@ -1105,7 +1145,7 @@ jobs:
       CF_PASSWORD: {{a1_admin_password}}
   - put: a1-diego-cats-deployment
     params:
-      manifest: deployments-runtime/a1/deployments/a1-diego-cats.yml
+      manifest: deployments/deployments/a1-diego-cats.yml
       releases: []
       stemcells: []
   - task: cf-acceptance-tests
@@ -1519,7 +1559,8 @@ jobs:
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
-      - get: deployments-runtime
+      - get: deployments
+        resource: cat-env
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
@@ -1579,7 +1620,8 @@ jobs:
         resource: cf-release-runtime-passed
         passed: [deploy-and-test-tabasco]
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: a1-env
       - get: aws-stemcell
     - task: create-manifest
       privileged: true
@@ -1646,7 +1688,8 @@ jobs:
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
     - get: cflinuxfs2-rootfs-release-tarball
-    - get: deployments-runtime
+    - get: deployments
+      resource: a1-env
     - get: bosh-stemcell
       resource: aws-stemcell
     - get: cf-release
@@ -1657,7 +1700,7 @@ jobs:
     params:
       BOSH_TARGET: bosh.a1.cf-app.com
       ENVIRONMENT_NAME: a1
-      DEPLOYMENTS_DIR: deployments-runtime
+      DEPLOYMENTS_DIR: deployments
       BOSH_USER: {{a1_bosh_username}}
       BOSH_PASSWORD: {{a1_bosh_password}}
       INFRASTRUCTURE: aws
@@ -1686,7 +1729,7 @@ jobs:
       CF_PASSWORD: {{a1_admin_password}}
   - put: a1-diego-cats-deployment
     params:
-      manifest: deployments-runtime/a1/deployments/a1-diego-cats.yml
+      manifest: deployments/deployments/a1-diego-cats.yml
       releases: []
       stemcells: []
   - task: cf-acceptance-tests
