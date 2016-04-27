@@ -4,7 +4,7 @@ platform: linux
 image: docker:///cloudfoundry/runtime-ci
 
 inputs:
-- name: deployments-runtime
+- name: deployments
 - name: diego-release
 - name: runtime-ci
 
@@ -16,7 +16,7 @@ params:
   BOSH_TARGET: ~
   BOSH_USER: ~
   ENVIRONMENT_NAME: ~
-  DEPLOYMENTS_RUNTIME_DIR: deployments-runtime
+  DEPLOYMENTS_DIR: deployments
   DIEGO_RELEASE_DIR: diego-release
   GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
   INFRASTRUCTURE: ~
