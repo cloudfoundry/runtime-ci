@@ -540,7 +540,8 @@ jobs:
         resource: cf-release-develop
         passed: [create-release]
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: tabasco-env
       - get: aws-stemcell
     - task: create-manifest
       privileged: true
@@ -649,7 +650,8 @@ jobs:
         resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
       - get: runtime-ci
-      - get: deployments-runtime
+      - get: deployments
+        resource: dumbledore-env
       - get: openstack-stemcell
     - task: create-manifest
       privileged: true
