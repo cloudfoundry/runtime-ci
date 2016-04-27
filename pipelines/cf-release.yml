@@ -68,7 +68,7 @@ resources:
   type: s3
   source:
     bucket: cf-runtime-releases
-    regexp: cf-(\d+\.\d+\.\d+)-.*.tgz
+    regexp: cf-(\d+)-.*.tgz
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
