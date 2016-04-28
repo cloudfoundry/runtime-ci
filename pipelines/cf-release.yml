@@ -419,7 +419,7 @@ jobs:
           task: cannot-bump
           file: runtime-ci/scripts/ci/cannot-bump/task.yml
           params:
-            URL: *canibump-url
+            URL: &canibump-url canibump.cfapps.io
             TOKEN: {{canibump_token}}
             REASON: "could not clone cf-release"
       - get: runtime-ci
@@ -433,7 +433,7 @@ jobs:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
         params:
-          URL: &canibump-url canibump.cfapps.io
+          URL: *canibump-url
           TOKEN: {{canibump_token}}
           REASON: "cf-release unit tests failed"
 
