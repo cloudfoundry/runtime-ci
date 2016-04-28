@@ -415,6 +415,13 @@ jobs:
     - aggregate:
       - get: cf-release-develop
         trigger: true
+        on_failure:
+          task: cannot-bump
+          file: runtime-ci/scripts/ci/cannot-bump/task.yml
+          params:
+            URL: *canibump-url
+            TOKEN: {{canibump_token}}
+            REASON: "could not clone cf-release"
       - get: runtime-ci
     - aggregate:
       - task: run-cf-release-unit-tests
