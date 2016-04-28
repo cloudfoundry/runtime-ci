@@ -955,6 +955,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-cf-deploy, a1-diego-deploy]
+      - get: cf-release-tarball
+        passed: [a1-cf-deploy, a1-diego-deploy]
         trigger: true
       - get: runtime-ci
       - get: aws-stemcell
@@ -1010,6 +1012,9 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-smoke-tests]
+      - get: cf-release-tarball
+        passed: [a1-smoke-tests]
+        trigger: true
       - get: runtime-ci
       - get: aws-stemcell
         passed: [ a1-smoke-tests ]
@@ -1055,8 +1060,10 @@ jobs:
       resource: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-      trigger: true
       passed: [deploy-and-test-tabasco]
+    - get: cf-release-tarball
+      passed: [deploy-and-test-tabasco]
+      trigger: true
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
     params:
@@ -1102,6 +1109,8 @@ jobs:
         passed: [ a1-smoke-tests ]
       - get: cf-release
         resource: cf-release-develop
+        passed: [a1-smoke-tests]
+      - get: cf-release-tarball
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
