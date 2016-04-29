@@ -511,13 +511,6 @@ jobs:
           BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
           BOSH_USER: {{vsphere_bosh_username}}
           BOSH_PASSWORD: {{vsphere_bosh_password}}
-      - task: cleanup-openstack
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        params: &bosh-target-runtime-bb-1
-          BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
-          BOSH_USER: {{openstack_bosh_username}}
-          BOSH_PASSWORD: {{openstack_bosh_password}}
       - task: cleanup-minimal
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
