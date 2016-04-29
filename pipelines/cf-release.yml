@@ -668,8 +668,10 @@ jobs:
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        <<: *bosh-target-runtime-bb-1
+      params: &bosh-target-runtime-bb-1
+        BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
+        BOSH_USER: {{openstack_bosh_username}}
+        BOSH_PASSWORD: {{openstack_bosh_password}}
         DEPLOYMENT_NAME: cf-runtime-bb-1
         ERRAND_NAME: smoke_tests
     - task: acceptance-tests
