@@ -42,12 +42,12 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-release
-- name: cf-release-credentials
+- name: oss-s3-buckets-stack
   type: git
   source:
     branch: master
-    private_key: {{cf-release-credentials-private-key}}
-    uri: git@github.com:cloudfoundry/cf-release-credentials.git
+    uri: git@github.com:cloudfoundry/oss-s3-buckets-stack.git
+    private_key: {{oss_s3_buckets_stack_private_key}}
 
 jobs:
 - name: create-final-release
@@ -61,13 +61,11 @@ jobs:
       trigger: true
     - get: release-repo-master
       resource: cf-release-master
-    - get: private-credentials
-      resource: cf-release-credentials
+    - get: oss-s3-buckets-stack
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     params:
       RELEASE_NAME: cf
-      PRIVATE_YML_PATH: private-credentials/private.yml
   - put: cf-release-master
     params:
       repository: final-release-repo

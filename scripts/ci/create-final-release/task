@@ -27,8 +27,6 @@ set +x
   "${RELEASE_REPO_DIR}/config"
 set -x
 
-# cp "${PRIVATE_YML_PATH}" release-repo/config/
-
 pushd release-repo > /dev/null
   git config user.name "CF MEGA BOT"
   git config user.email "cf-mega@pivotal.io"
