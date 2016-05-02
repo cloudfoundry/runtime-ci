@@ -23,9 +23,9 @@ MASTER_BRANCH="${MASTER_BRANCH:-master}"
 set +x
   source "${STACK_REPO_DIR}/aws_environment"
 
-  "${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION is not set"}"
-  "${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID is not set"}"
-  "${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY is not set"}"
+  AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION is not set"}"
+  AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID is not set"}"
+  AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY is not set"}"
 set -x
 
 BLOBS_BUCKET_ACCESS_KEY_ID=$(aws cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" \
