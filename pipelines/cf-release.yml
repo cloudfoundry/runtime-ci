@@ -136,6 +136,14 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
+- name: a1-diego-cats-acceptance-tests-logs
+  type: s3
+  source:
+    bucket: a1-acceptance-tests-logs
+    regexp: a1-cats/diego-cats.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
 - name: a1-env
   type: git
   source:
@@ -240,7 +248,7 @@ resources:
   type: s3
   source:
     bucket: diego-final-releases
-    regexp: diego-(.*).tgz
+    regexp: diego-*.tgz
     access_key_id: {{diego_final_release_bucket_access_key_id}}
     secret_access_key: {{diego_final_release_bucket_secret_access_key}}
 
@@ -477,7 +485,7 @@ jobs:
           REASON: "Could not create release tarball"
     - put: cf-release-tarball
       params:
-        from: cf-release-out/cf-(.*).tgz
+        file: cf-release-out/cf-*.tgz
 
 - name: clean-all-the-boshes
   public: true
@@ -626,7 +634,7 @@ jobs:
       ensure:
         put: tabasco-acceptance-tests-logs
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
     - put: cf-release-runtime-passed
       params:
         repository: cf-release
@@ -684,7 +692,7 @@ jobs:
       ensure:
         put: openstack-acceptance-tests-logs
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
 
 - name: deploy-and-test-bosh-lite
   public: true
@@ -726,7 +734,7 @@ jobs:
       ensure:
         put: bosh-lite-acceptance-tests-logs
         params:
-          from: bosh-lite-output-dir/acceptance_tests(.*).tgz
+          file: bosh-lite-output-dir/acceptance_tests.*.tgz
 
 - name: deploy-and-test-minimal
   public: true
@@ -876,7 +884,7 @@ jobs:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
 
 - name: a1-cf-deploy
   public: true
@@ -1025,7 +1033,7 @@ jobs:
       ensure:
         put: a1-acceptance-tests-logs
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
     - put: deliver-capi-stories
       params:
         repos:
@@ -1161,10 +1169,9 @@ jobs:
       DEPLOYMENT_NAME: a1-diego-cats
       ERRAND_NAME: diego-cats
     ensure:
-      put: a1-acceptance-tests-logs
+      put: a1-diego-cats-acceptance-tests-logs
       params:
-        from: logs-dir/diego-cats(.*).tgz
-        to: a1-cats/
+        file: logs-dir/diego-cats(.*).tgz
 
 - name: rc
   public: true
@@ -1611,7 +1618,7 @@ jobs:
         put: vsphere-acceptance-tests-logs
         tags: [vsphere]
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
 
 - name: deploy-and-test-a1
   public: true
@@ -1675,7 +1682,7 @@ jobs:
       ensure:
         put: a1-acceptance-tests-logs
         params:
-          from: logs-dir/acceptance_tests(.*).tgz
+          file: logs-dir/acceptance_tests.*.tgz
     - put: deliver-capi-stories
       params:
         repos:
@@ -1747,7 +1754,7 @@ jobs:
       DEPLOYMENT_YML: a1-diego-cats
       ERRAND_NAME: acceptance_tests
     ensure:
-      put: a1-acceptance-tests-logs
+      put: a1-diego-cats-acceptance-tests-logs
       params:
-        from: logs-dir/diego-cats(.*).tgz
-        to: a1-cats/
+        file: logs-dir/diego-cats.*.tgz
+
