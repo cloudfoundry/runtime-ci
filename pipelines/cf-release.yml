@@ -1171,7 +1171,7 @@ jobs:
     ensure:
       put: a1-diego-cats-acceptance-tests-logs
       params:
-        file: logs-dir/diego-cats(.*).tgz
+        file: logs-dir/diego-cats.*.tgz
 
 - name: rc
   public: true
