@@ -248,7 +248,7 @@ resources:
   type: s3
   source:
     bucket: diego-final-releases
-    regexp: diego-*.tgz
+    regexp: diego-(.*).tgz
     access_key_id: {{diego_final_release_bucket_access_key_id}}
     secret_access_key: {{diego_final_release_bucket_secret_access_key}}
 
