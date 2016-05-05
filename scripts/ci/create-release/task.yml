@@ -4,16 +4,17 @@ platform: linux
 image: docker:///relintdockerhubpushbot/create-release
 
 inputs:
-- name: cf-release-develop
+- name: release-repo
 - name: runtime-ci
 
 outputs:
-- name: cf-release-out
+- name: release-out
 
 run:
   path: runtime-ci/scripts/ci/create-release/task
 
 params:
-  CF_RELEASE_DIR:
+  RELEASE_NAME: cf
+  RELEASE_DIR:
   TARBALL:
-  OUTPUT_DIR: cf-release-out
+  OUTPUT_DIR: release-out
