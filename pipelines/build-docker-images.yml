@@ -1,0 +1,974 @@
+groups:
+- name: build-pipeline-images
+  jobs:
+  - trigger-all-builds
+  - build-announce-rc-docker-image
+  - build-can-bump-docker-image
+  - build-cannot-bump-docker-image
+  - build-commit-blessing-docker-image
+  - build-create-cf-release-manifest-docker-image
+  - build-create-final-release-docker-image
+  - build-create-minimal-cf-release-manifest-docker-image
+  - build-create-release-docker-image
+  - build-create-release-notes-template-docker-image
+  - build-delete-deployment-docker-image
+  - build-deploy-cf-alone-docker-image
+  - build-deploy-cf-to-bosh-lite-docker-image
+  - build-deprovision-bosh-lite-docker-image
+  - build-emit-datadog-event-docker-image
+  - build-emit-datadog-metric-docker-image
+  - build-enable-docker-diego-docker-image
+  - build-generate-diego-manifest-docker-image
+  - build-merge-master-into-develop-docker-image
+  - build-multierror-tests-docker-image
+  - build-provision-bosh-lite-docker-image
+  - build-push-canaries-docker-image
+  - build-push-diego-canary-docker-image
+  - build-record-compatible-versions-docker-image
+  - build-request-pm-input-docker-image
+  - build-run-bosh-cleanup-docker-image
+  - build-run-cats-docker-image
+  - build-run-cf-release-unit-tests-docker-image
+  - build-run-errand-docker-image
+  - build-run-smoketests-docker-image
+  - build-runtime-ci-tests-docker-image
+  - build-unit-tests-cf-deployment-docker-image
+  - build-validate-all-jobs-public-docker-image
+  - build-validate-branch-freshness-docker-image
+
+resources:
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
+
+- name: runtime-ci-announce-rc
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/announce-rc/Dockerfile]
+- name: runtime-ci-can-bump
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/can-bump/Dockerfile]
+- name: runtime-ci-cannot-bump
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/cannot-bump/Dockerfile]
+- name: runtime-ci-commit-blessing
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/commit-blessing/Dockerfile]
+- name: runtime-ci-create-cf-release-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-cf-release-manifest/Dockerfile]
+- name: runtime-ci-create-final-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-final-release/Dockerfile]
+- name: runtime-ci-create-minimal-cf-release-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-minimal-cf-release-manifest/Dockerfile]
+- name: runtime-ci-create-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-release/Dockerfile]
+- name: runtime-ci-create-release-notes-template
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-release-notes-template/Dockerfile]
+- name: runtime-ci-delete-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/delete-deployment/Dockerfile]
+- name: runtime-ci-deploy-cf-alone
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/deploy-cf-alone/Dockerfile]
+- name: runtime-ci-deploy-cf-to-bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/deploy-cf-to-bosh-lite/Dockerfile]
+- name: runtime-ci-deprovision-bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/deprovision-bosh-lite/Dockerfile]
+- name: runtime-ci-emit-datadog-event
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/emit-datadog-event/Dockerfile]
+- name: runtime-ci-emit-datadog-metric
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/emit-datadog-metric/Dockerfile]
+- name: runtime-ci-enable-docker-diego
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/enable-docker-diego/Dockerfile]
+- name: runtime-ci-generate-diego-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/generate-diego-manifest/Dockerfile]
+- name: runtime-ci-merge-master-into-develop
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/merge-master-into-develop/Dockerfile]
+- name: runtime-ci-multierror-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/multierror-tests/Dockerfile]
+- name: runtime-ci-provision-bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/provision-bosh-lite/Dockerfile]
+- name: runtime-ci-push-canaries
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/push-canaries/Dockerfile]
+- name: runtime-ci-push-diego-canary
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/push-diego-canary/Dockerfile]
+- name: runtime-ci-record-compatible-versions
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/record-compatible-versions/Dockerfile]
+- name: runtime-ci-request-pm-input
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/request-pm-input/Dockerfile]
+- name: runtime-ci-run-bosh-cleanup
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-bosh-cleanup/Dockerfile]
+- name: runtime-ci-run-cats
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-cats/Dockerfile]
+- name: runtime-ci-run-cf-release-unit-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-cf-release-unit-tests/Dockerfile]
+- name: runtime-ci-run-errand
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-errand/Dockerfile]
+- name: runtime-ci-run-smoketests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-smoketests/Dockerfile]
+- name: runtime-ci-runtime-ci-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/runtime-ci-tests/Dockerfile]
+- name: runtime-ci-unit-tests-cf-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/unit-tests-cf-deployment/Dockerfile]
+- name: runtime-ci-validate-all-jobs-public
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/validate-all-jobs-public/Dockerfile]
+- name: runtime-ci-validate-branch-freshness
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/validate-branch-freshness/Dockerfile]
+
+# All the docker images
+- name: announce-rc-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/announce-rc
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: can-bump-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/can-bump
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: cannot-bump-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cannot-bump
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: commit-blessing-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/commit-blessing
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-cf-release-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-cf-release-manifest
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-final-release-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-final-release
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-minimal-cf-release-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-minimal-cf-release-manifest
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-release-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-release
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-release-notes-template-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-release-notes-template
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: delete-deployment-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/delete-deployment
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: deploy-cf-alone-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/deploy-cf-alone
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: deploy-cf-to-bosh-lite-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/deploy-cf-to-bosh-lite
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: deprovision-bosh-lite-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/deprovision-bosh-lite
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: emit-datadog-event-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/emit-datadog-event
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: emit-datadog-metric-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/emit-datadog-metric
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: enable-docker-diego-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/enable-docker-diego
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: generate-diego-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/generate-diego-manifest
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: merge-master-into-develop-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/merge-master-into-develop
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: multierror-tests-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/multierror-tests
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: provision-bosh-lite-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/provision-bosh-lite
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: push-canaries-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/push-canaries
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: push-diego-canary-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/push-diego-canary
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: record-compatible-versions-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/record-compatible-versions
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: request-pm-input-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/request-pm-input
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-bosh-cleanup-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-bosh-cleanup
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-cats-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-cats
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-cf-release-unit-tests-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-cf-release-unit-tests
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-errand-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-errand
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-smoketests-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-smoketests
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: runtime-ci-tests-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/runtime-ci-tests
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: unit-tests-cf-deployment-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/unit-tests-cf-deployment
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: validate-all-jobs-public-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/validate-all-jobs-public
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: validate-branch-freshness-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/validate-branch-freshness
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+jobs:
+- name: build-announce-rc-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-announce-rc
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: announce-rc-pipeline-image
+        params:
+          build: runtime-ci-announce-rc/scripts/ci/announce-rc
+          push: true
+- name: build-can-bump-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-can-bump
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: can-bump-pipeline-image
+        params:
+          build: runtime-ci-can-bump/scripts/ci/can-bump
+          push: true
+- name: build-cannot-bump-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-cannot-bump
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: cannot-bump-pipeline-image
+        params:
+          build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
+          push: true
+- name: build-commit-blessing-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-commit-blessing
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: commit-blessing-pipeline-image
+        params:
+          build: runtime-ci-commit-blessing/scripts/ci/commit-blessing
+          push: true
+- name: build-create-cf-release-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-create-cf-release-manifest
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-cf-release-manifest-pipeline-image
+        params:
+          build: runtime-ci-create-cf-release-manifest/scripts/ci/create-cf-release-manifest
+          push: true
+- name: build-create-final-release-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-create-final-release
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-final-release-pipeline-image
+        params:
+          build: runtime-ci-create-final-release/scripts/ci/create-final-release
+          push: true
+- name: build-create-minimal-cf-release-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-create-minimal-cf-release-manifest
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-minimal-cf-release-manifest-pipeline-image
+        params:
+          build: runtime-ci-create-minimal-cf-release-manifest/scripts/ci/create-minimal-cf-release-manifest
+          push: true
+- name: build-create-release-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-create-release
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-release-pipeline-image
+        params:
+          build: runtime-ci-create-release/scripts/ci/create-release
+          push: true
+- name: build-create-release-notes-template-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-create-release-notes-template
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-release-notes-template-pipeline-image
+        params:
+          build: runtime-ci-create-release-notes-template/scripts/ci/create-release-notes-template
+          push: true
+- name: build-delete-deployment-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-delete-deployment
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: delete-deployment-pipeline-image
+        params:
+          build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
+          push: true
+- name: build-deploy-cf-alone-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-deploy-cf-alone
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: deploy-cf-alone-pipeline-image
+        params:
+          build: runtime-ci-deploy-cf-alone/scripts/ci/deploy-cf-alone
+          push: true
+- name: build-deploy-cf-to-bosh-lite-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-deploy-cf-to-bosh-lite
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: deploy-cf-to-bosh-lite-pipeline-image
+        params:
+          build: runtime-ci-deploy-cf-to-bosh-lite/scripts/ci/deploy-cf-to-bosh-lite
+          push: true
+- name: build-deprovision-bosh-lite-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-deprovision-bosh-lite
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: deprovision-bosh-lite-pipeline-image
+        params:
+          build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
+          push: true
+- name: build-emit-datadog-event-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-emit-datadog-event
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: emit-datadog-event-pipeline-image
+        params:
+          build: runtime-ci-emit-datadog-event/scripts/ci/emit-datadog-event
+          push: true
+- name: build-emit-datadog-metric-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-emit-datadog-metric
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: emit-datadog-metric-pipeline-image
+        params:
+          build: runtime-ci-emit-datadog-metric/scripts/ci/emit-datadog-metric
+          push: true
+- name: build-enable-docker-diego-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-enable-docker-diego
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: enable-docker-diego-pipeline-image
+        params:
+          build: runtime-ci-enable-docker-diego/scripts/ci/enable-docker-diego
+          push: true
+- name: build-generate-diego-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-generate-diego-manifest
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: generate-diego-manifest-pipeline-image
+        params:
+          build: runtime-ci-generate-diego-manifest/scripts/ci/generate-diego-manifest
+          push: true
+- name: build-merge-master-into-develop-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-merge-master-into-develop
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: merge-master-into-develop-pipeline-image
+        params:
+          build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
+          push: true
+- name: build-multierror-tests-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-multierror-tests
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: multierror-tests-pipeline-image
+        params:
+          build: runtime-ci-multierror-tests/scripts/ci/multierror-tests
+          push: true
+- name: build-provision-bosh-lite-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-provision-bosh-lite
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: provision-bosh-lite-pipeline-image
+        params:
+          build: runtime-ci-provision-bosh-lite/scripts/ci/provision-bosh-lite
+          push: true
+- name: build-push-canaries-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-push-canaries
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: push-canaries-pipeline-image
+        params:
+          build: runtime-ci-push-canaries/scripts/ci/push-canaries
+          push: true
+- name: build-push-diego-canary-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-push-diego-canary
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: push-diego-canary-pipeline-image
+        params:
+          build: runtime-ci-push-diego-canary/scripts/ci/push-diego-canary
+          push: true
+- name: build-record-compatible-versions-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-record-compatible-versions
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: record-compatible-versions-pipeline-image
+        params:
+          build: runtime-ci-record-compatible-versions/scripts/ci/record-compatible-versions
+          push: true
+- name: build-request-pm-input-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-request-pm-input
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: request-pm-input-pipeline-image
+        params:
+          build: runtime-ci-request-pm-input/scripts/ci/request-pm-input
+          push: true
+- name: build-run-bosh-cleanup-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-run-bosh-cleanup
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-bosh-cleanup-pipeline-image
+        params:
+          build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
+          push: true
+- name: build-run-cats-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-run-cats
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-cats-pipeline-image
+        params:
+          build: runtime-ci-run-cats/scripts/ci/run-cats
+          push: true
+- name: build-run-cf-release-unit-tests-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-run-cf-release-unit-tests
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-cf-release-unit-tests-pipeline-image
+        params:
+          build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
+          push: true
+- name: build-run-errand-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-run-errand
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-errand-pipeline-image
+        params:
+          build: runtime-ci-run-errand/scripts/ci/run-errand
+          push: true
+- name: build-run-smoketests-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-run-smoketests
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-smoketests-pipeline-image
+        params:
+          build: runtime-ci-run-smoketests/scripts/ci/run-smoketests
+          push: true
+- name: build-runtime-ci-tests-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-runtime-ci-tests
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: runtime-ci-tests-pipeline-image
+        params:
+          build: runtime-ci-runtime-ci-tests/scripts/ci/runtime-ci-tests
+          push: true
+- name: build-unit-tests-cf-deployment-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-unit-tests-cf-deployment
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: unit-tests-cf-deployment-pipeline-image
+        params:
+          build: runtime-ci-unit-tests-cf-deployment/scripts/ci/unit-tests-cf-deployment
+          push: true
+- name: build-validate-all-jobs-public-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-validate-all-jobs-public
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: validate-all-jobs-public-pipeline-image
+        params:
+          build: runtime-ci-validate-all-jobs-public/scripts/ci/validate-all-jobs-public
+          push: true
+- name: build-validate-branch-freshness-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci-validate-branch-freshness
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: validate-branch-freshness-pipeline-image
+        params:
+          build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
+          push: true
