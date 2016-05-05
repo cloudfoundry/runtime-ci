@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///cloudfoundry/runtime-ci
+image: docker:///relintdockerhubpushbot/push-diego-canary
 
 inputs:
 - name: runtime-ci

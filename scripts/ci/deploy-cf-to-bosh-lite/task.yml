@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///cloudfoundry/runtime-ci
+image: docker:///relintdockerhubpushbot/deploy-cf-to-bosh-lite
 
 inputs:
 - name: cf-release-tarball

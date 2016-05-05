@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///cloudfoundry/runtime-ci
+image: docker:///relintdockerhubpushbot/commit-blessing
 
 inputs:
 - name: runtime-ci

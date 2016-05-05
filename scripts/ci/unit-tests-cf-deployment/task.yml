@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///cloudfoundry/runtime-ci
+image: docker:///relintdockerhubpushbot/unit-tests-cf-deployment
 
 inputs:
 - name: cf-deployment

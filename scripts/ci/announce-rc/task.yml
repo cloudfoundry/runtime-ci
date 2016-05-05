@@ -1,7 +1,6 @@
 platform: linux
 
-# sh, curl, jq, ... DOES NOT ACTUALLY NEED git!
-image: docker:///concourse/git-resource
+image: docker:///relintdockerhubpushbot/announce-rc
 
 inputs:
 - name: cf-bosh-io-release
