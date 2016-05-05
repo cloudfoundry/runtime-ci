@@ -31,7 +31,7 @@ RUN \
   cd /tmp/chruby && git reset --hard 310bd34d1fcbb3365814c85018114123cef5a41f && \
   cd /tmp/chruby && ./scripts/setup.sh && \
   echo 'source /usr/local/share/chruby/chruby.sh' >> $HOME/.bashrc && \
-  echo 'chruby 2.2.4' >> $HOME/.bashrc && \
+  echo 'chruby 2.3.1' >> $HOME/.bashrc && \
   rm -rf /tmp/*
 
 ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
