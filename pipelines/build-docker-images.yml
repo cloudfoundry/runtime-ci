@@ -1,7 +1,7 @@
 groups:
-- name: build-pipeline-images
+- name: build-docker-images
   jobs:
-  - trigger-all-builds
+  - trigger-all-image-builds
   - build-announce-rc-docker-image
   - build-can-bump-docker-image
   - build-cannot-bump-docker-image
@@ -43,6 +43,11 @@ resources:
     start: 3:00 -0700
     stop: 3:30 -0700
     interval: 168h
+
+- name: trigger-resource
+  type: time
+  source:
+    interval: 2h
 
 - name: runtime-ci-announce-rc
   type: git
@@ -477,11 +482,20 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
+- name: trigger-all-image-builds
+  public: true
+  serial: true
+  plan:
+  - get: trigger-resource
+
 - name: build-announce-rc-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-announce-rc
         trigger: true
@@ -497,6 +511,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-can-bump
         trigger: true
@@ -512,6 +529,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-cannot-bump
         trigger: true
@@ -527,6 +547,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-commit-blessing
         trigger: true
@@ -542,6 +565,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-create-cf-release-manifest
         trigger: true
@@ -557,6 +583,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-create-final-release
         trigger: true
@@ -572,6 +601,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-create-minimal-cf-release-manifest
         trigger: true
@@ -587,6 +619,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-create-release
         trigger: true
@@ -602,6 +637,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-create-release-notes-template
         trigger: true
@@ -617,6 +655,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-delete-deployment
         trigger: true
@@ -632,6 +673,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-deploy-cf-alone
         trigger: true
@@ -647,6 +691,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-deploy-cf-to-bosh-lite
         trigger: true
@@ -662,6 +709,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-deprovision-bosh-lite
         trigger: true
@@ -677,6 +727,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-emit-datadog-event
         trigger: true
@@ -692,6 +745,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-emit-datadog-metric
         trigger: true
@@ -707,6 +763,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-enable-docker-diego
         trigger: true
@@ -722,6 +781,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-generate-diego-manifest
         trigger: true
@@ -737,6 +799,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-merge-master-into-develop
         trigger: true
@@ -752,6 +817,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-multierror-tests
         trigger: true
@@ -767,6 +835,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-provision-bosh-lite
         trigger: true
@@ -782,6 +853,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-push-canaries
         trigger: true
@@ -797,6 +871,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-push-diego-canary
         trigger: true
@@ -812,6 +889,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-record-compatible-versions
         trigger: true
@@ -827,6 +907,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-request-pm-input
         trigger: true
@@ -842,6 +925,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-run-bosh-cleanup
         trigger: true
@@ -857,6 +943,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-run-cats
         trigger: true
@@ -872,6 +961,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-run-cf-release-unit-tests
         trigger: true
@@ -887,6 +979,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-run-errand
         trigger: true
@@ -902,6 +997,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-run-smoketests
         trigger: true
@@ -917,6 +1015,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-runtime-ci-tests
         trigger: true
@@ -932,6 +1033,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-unit-tests-cf-deployment
         trigger: true
@@ -947,6 +1051,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-validate-all-jobs-public
         trigger: true
@@ -962,6 +1069,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
     - aggregate:
       - get: runtime-ci-validate-branch-freshness
         trigger: true
