@@ -24,16 +24,6 @@ RUN \
   rm -rf /usr/local/src/ruby-2.3.1 && \
   rm -rf /tmp/*
 
-RUN \
-  echo '' > $HOME/.bashrc && \
-  echo "[ -f ~/.bashrc ] && source ~/.bashrc" >> $HOME/.bash_profile && \
-  git clone https://github.com/postmodern/chruby /tmp/chruby && \
-  cd /tmp/chruby && git reset --hard 310bd34d1fcbb3365814c85018114123cef5a41f && \
-  cd /tmp/chruby && ./scripts/setup.sh && \
-  echo 'source /usr/local/share/chruby/chruby.sh' >> $HOME/.bashrc && \
-  echo 'chruby 2.3.1' >> $HOME/.bashrc && \
-  rm -rf /tmp/*
-
 ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
 RUN \
   gem update --system && \

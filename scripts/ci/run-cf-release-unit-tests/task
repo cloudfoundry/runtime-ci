@@ -12,13 +12,6 @@ printenv
 
 cd $CF_RELEASE_DIR
 
-chruby $(cat .ruby-version)
-
-# AUFS has weird issues with file permissions in docker.
-# We found this solution here:
-# https://github.com/docker/docker/issues/783#issuecomment-56013588
-mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
-
 gem install bundler
 
 scripts/test
