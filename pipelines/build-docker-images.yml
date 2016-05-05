@@ -493,6 +493,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -511,6 +513,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -529,6 +533,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -547,6 +553,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -565,6 +573,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -583,6 +593,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -601,6 +613,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -619,6 +633,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -637,6 +653,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -655,6 +673,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -673,6 +693,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -691,6 +713,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -709,6 +733,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -727,6 +753,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -745,6 +773,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -763,6 +793,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -781,6 +813,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -799,6 +833,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -817,6 +853,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -835,6 +873,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -853,6 +893,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -871,6 +913,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -889,6 +933,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -907,6 +953,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -925,6 +973,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -943,6 +993,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -961,6 +1013,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -979,6 +1033,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -997,6 +1053,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -1015,6 +1073,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -1033,6 +1093,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -1051,6 +1113,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
@@ -1069,6 +1133,8 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: weekly
+      trigger: true
     - get: trigger-resource
       trigger: true
       passed: [trigger-all-image-builds]
