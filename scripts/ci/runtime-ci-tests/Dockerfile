@@ -5,6 +5,7 @@ RUN \
   apt-get -y install \
     build-essential \
     mercurial \
+    software-properties-common \
     wget
 
 RUN \
