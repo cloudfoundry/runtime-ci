@@ -11,7 +11,7 @@ root_dir="${PWD}"
 
 # Inputs
 RELEASE_DIR="${root_dir}/${RELEASE_DIR:?"\$RELEASE_DIR not set"}"
-RELEASE_NAME="${root_dir}/${RELEASE_NAME:?"\$RELEASE_NAME not set"}"
+RELEASE_NAME="${RELEASE_NAME:?"\$RELEASE_NAME not set"}"
 
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
