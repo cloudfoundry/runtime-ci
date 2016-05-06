@@ -15,6 +15,5 @@ run:
 
 params:
   RELEASE_NAME: cf
-  RELEASE_DIR:
-  TARBALL:
+  RELEASE_DIR: release-repo
   OUTPUT_DIR: release-out
