@@ -5,7 +5,8 @@ RUN \
   apt-get -y install \
     wget \
     python-software-properties \
-    python-pip
+    python-pip \
+    jq
 
 RUN \
   wget https://releases.hashicorp.com/vagrant/1.8.1/vagrant_1.8.1_x86_64.deb -P /tmp && \

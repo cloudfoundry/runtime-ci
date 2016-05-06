@@ -1,12 +1,14 @@
 FROM ubuntu:trusty
 
 RUN \
+  echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" > /etc/apt/sources.list.d/backports.list && \
   apt-get update && \
   apt-get -y install \
     build-essential \
     mercurial \
     software-properties-common \
-    wget
+    wget \
+    jq/trusty-backports
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \

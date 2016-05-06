@@ -6,7 +6,8 @@ RUN \
     build-essential \
     mercurial \
     software-properties-common \
-    wget
+    wget \
+    curl
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
@@ -21,3 +22,6 @@ RUN \
   tar xzvf /tmp/go1.6.2.linux-amd64.tar.gz -C /usr/local && \
   mkdir $GOPATH && \
   rm -rf /tmp/*
+
+RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.17.1&source=github-rel" && \
+  dpkg -i cf.deb

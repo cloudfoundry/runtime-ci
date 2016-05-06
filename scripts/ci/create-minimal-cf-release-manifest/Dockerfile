@@ -15,3 +15,5 @@ RUN \
   ruby-install ruby 2.3.1 && \
   rm -rf /usr/local/src/ruby-2.3.1 && \
   rm -rf /tmp/*
+
+ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
