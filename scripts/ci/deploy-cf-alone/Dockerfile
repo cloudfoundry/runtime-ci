@@ -7,6 +7,8 @@ RUN \
   apt-get -y install \
     build-essential \
     wget \
+    curl \
+    unzip \
     jq
 
 RUN \
@@ -23,3 +25,9 @@ RUN \
   gem update --system && \
   gem install bundler --no-rdoc --no-ri && \
   gem install bosh_cli --version 1.3215.0 --no-rdoc --no-ri
+
+RUN \
+  curl -v -L -o ./spiff.zip https://github.com/cloudfoundry-incubator/spiff/releases/download/v1.0.7/spiff_linux_amd64.zip && \
+  unzip ./spiff.zip -d /usr/local/bin && \
+  chmod +x /usr/local/bin/spiff && \
+  rm -f ./spiff.zip
