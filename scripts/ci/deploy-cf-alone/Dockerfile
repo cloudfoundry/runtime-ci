@@ -3,13 +3,14 @@ FROM ubuntu:trusty
 ENV HOME /root
 
 RUN \
+  echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" > /etc/apt/sources.list.d/backports.list && \
   apt-get update && \
   apt-get -y install \
     build-essential \
     wget \
     curl \
     unzip \
-    jq
+    jq/trusty-backports
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
