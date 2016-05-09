@@ -10,6 +10,7 @@ RUN \
     wget \
     curl \
     unzip \
+    software-properties-common \
     jq/trusty-backports
 
 RUN \
@@ -32,3 +33,10 @@ RUN \
   unzip ./spiff.zip -d /usr/local/bin && \
   chmod +x /usr/local/bin/spiff && \
   rm -f ./spiff.zip
+
+RUN \
+  add-apt-repository ppa:git-core/ppa -y && \
+  apt-get update && \
+  apt-get install -y git && \
+  apt-get remove -y --purge software-properties-common
+
