@@ -31,3 +31,13 @@ RUN \
 RUN \
   go get github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
   go install github.com/pivotal-cf-experimental/bosh-bootloader/bbl
+
+RUN \
+  wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
+  tar zxf /tmp/v0.4.1.tar.gz -C /tmp && \
+  cd /tmp/ruby-install-0.4.1 && make install && \
+  ruby-install ruby 2.1.8 && \
+  rm -rf /usr/local/src/ruby-2.1.8 && \
+  rm -rf /tmp/*
+
+ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH

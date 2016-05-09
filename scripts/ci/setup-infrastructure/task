@@ -10,6 +10,14 @@ pushd env-repo
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf
+
+
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add state.json
+    git commit -m "Update state.json"
+  fi
 popd
 
 
