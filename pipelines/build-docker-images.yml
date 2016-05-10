@@ -248,6 +248,13 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/validate-branch-freshness/Dockerfile]
 
+- name: generate-deployment-manifest-from-bbl-docker
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/runtime-ci-validate-branch-freshness/Dockerfile]
+
 # All the docker images
 - name: announce-rc-pipeline-image
   type: docker-image
@@ -477,6 +484,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/validate-branch-freshness
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: generate-deployment-manifest-from-bbl-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/generate-deployment-manifest-from-bbl
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1145,6 +1159,26 @@ jobs:
           submodules: none
     - aggregate:
       - put: validate-branch-freshness-pipeline-image
+        params:
+          build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
+          push: true
+- name: build-generate-deployment-manifest-from-bbl-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: generate-deployment-manifest-from-bbl-docker
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: generate-deployment-manifest-from-bbl-pipeline-image
         params:
           build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
           push: true
