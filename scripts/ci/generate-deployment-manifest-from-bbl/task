@@ -4,16 +4,17 @@ set -x
 set -e
 set -u
 
-DIRECTOR_UUID=$(jq -r .bosh.state.director_id < ./updated-env-repo/state.json)
+pushd updated-env-repo
+  DIRECTOR_UUID=$(jq -r .bosh.state.director_id < ./state.json)
+  ./deployments/nats.sh
 
-./updated-env-repo/nats.sh
-
-if [[ -n $(git status --porcelain) ]]; then
-  git config user.name "CF MEGA BOT"
-  git config user.email "cf-mega@pivotal.io"
-  git add deployments/nats.yml
-  git commit -m "Update nats deployment manifest"
-fi
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add ./deployments/nats.yml
+    git commit -m "Update nats deployment manifest"
+  fi
+popd
 
 shopt -s dotglob
 cp -R updated-env-repo/* updated-env-repo-with-manifest
