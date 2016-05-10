@@ -27,4 +27,5 @@ pushd env-repo
   fi
 popd
 
-cp -R env-repo/ updated-env-repo/
+shopt -s dotglob
+cp -R env-repo/* updated-env-repo/
