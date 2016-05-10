@@ -19,11 +19,15 @@ pushd env-repo
     unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf
   set -x
 
+  bbl --state-dir bbl-infrastructure director-address > bbl-infrastructure/target
+  bbl --state-dir bbl-infrastructure director-username > bbl-infrastructure/username
+  bbl --state-dir bbl-infrastructure director-password > bbl-infrastructure/password
+
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
-    git add bbl-infrastructure/state.json
-    git commit -m "Update state.json"
+    git add bbl-infrastructure
+    git commit -m "Update bbl artifacts"
   fi
 popd
 

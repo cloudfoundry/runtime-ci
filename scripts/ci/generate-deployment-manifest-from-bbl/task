@@ -6,7 +6,7 @@ set -u
 
 DIRECTOR_UUID=$(jq -r .bosh.state.director_id < env-repo/bbl-infrastructure/state.json)
 
-  cat <<EOF > manifest/nats.yml
+cat <<EOF > manifest/nats.yml
 ---
 name: nats
 director_uuid: $DIRECTOR_UUID
