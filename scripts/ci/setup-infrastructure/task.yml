@@ -7,7 +7,7 @@ inputs:
 - name: runtime-ci
 - name: env-repo
 
-output:
+outputs:
 - name: updated-env-repo
 
 run:
