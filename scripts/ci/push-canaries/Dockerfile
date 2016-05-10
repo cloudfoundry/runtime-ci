@@ -7,6 +7,12 @@ RUN \
     wget
 
 RUN \
+  add-apt-repository ppa:git-core/ppa -y && \
+  apt-get update && \
+  apt-get install -y git && \
+  apt-get remove -y --purge software-properties-common
+
+RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
   tar zxf /tmp/v0.4.1.tar.gz -C /tmp && \
   cd /tmp/ruby-install-0.4.1 && make install && \
