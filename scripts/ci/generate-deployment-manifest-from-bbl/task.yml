@@ -5,10 +5,10 @@ image: docker:///relintdockerhubpushbot/generate-deployment-manifest-from-bbl
 
 inputs:
 - name: runtime-ci
-- name: updated-env-repo
+- name: env-repo
 
 outputs:
-- name: updated-env-repo-with-manifest
+- name: manifest
 
 params:
 

@@ -4,17 +4,49 @@ set -x
 set -e
 set -u
 
-pushd updated-env-repo
-  export DIRECTOR_UUID=$(jq -r .bosh.state.director_id < ./state.json)
-  ./deployments/nats.sh
+DIRECTOR_UUID=$(jq -r .bosh.state.director_id < env-repo/bbl-infrastructure/state.json)
 
-  if [[ -n $(git status --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add ./deployments/nats.yml
-    git commit -m "Update nats deployment manifest"
-  fi
-popd
-
-shopt -s dotglob
-cp -R updated-env-repo/* updated-env-repo-with-manifest
+  cat <<EOF > manifest/nats.yml
+---
+name: nats
+director_uuid: $DIRECTOR_UUID
+releases:
+- name: nats
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+instance_groups:
+- name: nats-server
+  azs: [z1, z2, z3, z4]
+  instances: 3
+  jobs:
+  - name: nats
+    release: nats
+    properties:
+      nats:
+        port: 6363
+        user: nats
+        password: nats
+  networks:
+  - name: private
+  vm_type: m3.medium
+  stemcell: default
+- name: smoke-tests
+  azs: [z1]
+  vm_type: m3.medium
+  stemcell: default
+  instances: 1
+  lifecycle: errand
+  jobs:
+  - name: smoke-tests
+    release: nats
+  networks:
+  - name: private
+EOF
