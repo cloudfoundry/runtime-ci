@@ -5,11 +5,19 @@ set -e
 set -u
 
 pushd env-repo
+  echo "bbl --state-dir . \
+    --aws-access-key-id [REDACTED] \
+    --aws-secret-access-key [REDACTED] \
+    --aws-region us-east-1 \
+    unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf"
+
+  set +x
   bbl --state-dir . \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf
+  set -x
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
