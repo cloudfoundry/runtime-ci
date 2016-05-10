@@ -4,6 +4,7 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
+    software-properties-common \
     wget
 
 RUN \
