@@ -7,6 +7,9 @@ inputs:
 - name: runtime-ci
 - name: env-repo
 
+output:
+- name: updated-env-repo
+
 run:
   path: runtime-ci/scripts/ci/setup-infrastructure/task
 

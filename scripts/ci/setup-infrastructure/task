@@ -11,7 +11,6 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf
 
-
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
@@ -20,4 +19,4 @@ pushd env-repo
   fi
 popd
 
-
+cp -R env-repo/ updated-env-repo/
