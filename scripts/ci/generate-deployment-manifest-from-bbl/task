@@ -5,7 +5,7 @@ set -e
 set -u
 
 pushd updated-env-repo
-  DIRECTOR_UUID=$(jq -r .bosh.state.director_id < ./state.json)
+  export DIRECTOR_UUID=$(jq -r .bosh.state.director_id < ./state.json)
   ./deployments/nats.sh
 
   if [[ -n $(git status --porcelain) ]]; then
