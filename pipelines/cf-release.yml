@@ -394,13 +394,6 @@ resources:
     branch: master
     uri: https://github.com/pivotal-cf-experimental/cf_canaries.git
 
-- name: deliver-capi-stories
-  type: tracker
-  source:
-    token: {{capi_tracker_token}}
-    project_id: "966314"
-    tracker_url: https://www.pivotaltracker.com
-
 - name: runtime-ci-env
   type: git
   source:
@@ -1034,10 +1027,6 @@ jobs:
         put: a1-acceptance-tests-logs
         params:
           file: logs-dir/acceptance_tests.*.tgz
-    - put: deliver-capi-stories
-      params:
-        repos:
-        - cf-release/src/cloud_controller_ng
 
 - name: a1-diego-deploy
   public: true
@@ -1683,10 +1672,6 @@ jobs:
         put: a1-acceptance-tests-logs
         params:
           file: logs-dir/acceptance_tests.*.tgz
-    - put: deliver-capi-stories
-      params:
-        repos:
-        - cf-release/src/cloud_controller_ng
 
 - name: a1-diego-deploy-and-test
   public: true
