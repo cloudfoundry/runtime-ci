@@ -5,7 +5,8 @@ RUN \
   apt-get -y install \
     build-essential \
     wget \
-    curl
+    curl \
+    openssh-client
 
 ENV GOPATH $HOME/go
 ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
