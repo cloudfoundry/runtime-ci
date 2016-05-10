@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/generate-deployment-manifest-from-bbl
+
+inputs:
+- name: runtime-ci
+- name: updated-env-repo
+
+outputs:
+- name: updated-env-repo-with-manifest
+
+params:
+
+run:
+  path: runtime-ci/scripts/ci/generate-deployment-manifest-from-bbl/task
