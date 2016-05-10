@@ -460,15 +460,14 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: cf-release-develop
+      - get: release-repo
         passed: [cf-release-unit-tests]
         trigger: true
+        resource: cf-release-develop
       - get: runtime-ci
     - task: create-release-tarball
       privileged: true
       file: runtime-ci/scripts/ci/create-release/task.yml
-      params:
-        CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
@@ -478,7 +477,7 @@ jobs:
           REASON: "Could not create release tarball"
     - put: cf-release-tarball
       params:
-        file: cf-release-out/cf-*.tgz
+        file: release-out/cf-*.tgz
 
 - name: clean-all-the-boshes
   public: true
