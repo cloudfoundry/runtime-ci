@@ -1,0 +1,18 @@
+
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/bosh-deploy
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+
+run:
+  path: runtime-ci/scripts/ci/bosh-deploy/task
+
+params:
+  TARGET_FILE:
+  USERNAME_FILE:
+  PASSWORD_FILE:
+  MANIFEST:
