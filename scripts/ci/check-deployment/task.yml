@@ -1,5 +1,5 @@
 platform: linux
-image: docker:///cloudfoundry/check-deployment
+image: docker:///relintdockerhubpushbot/check-deployment
 
 inputs:
 - name: runtime-ci
