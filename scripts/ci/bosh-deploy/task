@@ -15,7 +15,7 @@ bosh \
   -t "${BOSH_DIRECTOR}" \
   -u "${BOSH_USER}" \
   -p "${BOSH_PASSWORD}" \
-  -d "${MANIFEST}" \
+  -d "${BOSH_MANIFEST}" \
   deploy \
   --redact-diff
 set -x
