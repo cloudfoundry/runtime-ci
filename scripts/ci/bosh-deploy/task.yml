@@ -7,6 +7,7 @@ image: docker:///relintdockerhubpushbot/bosh-deploy
 inputs:
 - name: runtime-ci
 - name: env-repo
+- name: manifest
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy/task
