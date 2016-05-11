@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -x
+bosh -t "$BOSH_TARGET" deployments 2>&1 | grep "No deployments"

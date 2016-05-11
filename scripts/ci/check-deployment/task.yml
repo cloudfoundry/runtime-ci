@@ -1,0 +1,13 @@
+platform: linux
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/check-deployment/task
+
+params:
+  BOSH_USER:
+  BOSH_PASSWORD:
+  BOSH_TARGET:
