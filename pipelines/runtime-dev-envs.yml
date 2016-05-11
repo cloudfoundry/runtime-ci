@@ -10,38 +10,39 @@ resources:
   source:
     interval: 15m
 
+- name: runtime-ci
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    branch: master
+
 jobs:
 - name: green-means-nothing-deployed-on-runtime1
   public: true
   plan:
-  - get: every-15-minutes
-    trigger: true
+  - aggregate:
+    - get: every-15-minutes
+      trigger: true
+    - get: runtime-ci
+      trigger: true
   - task: check-deployments
-    config:
-      platform: linux
-      image: docker:///cloudfoundry/runtime-ci
-      run:
-        path: '/bin/bash'
-        args:
-          - '-c'
-          - 'set -x; source ~/.bashrc; bosh -t micro.runtime1.cf-app.com deployments 2>&1 | grep "No deployments"'
-      params:
-        BOSH_USER: {{runtime_1_bosh_user}}
-        BOSH_PASSWORD: {{runtime_1_bosh_password}}
+    file: runtime-ci/scripts/ci/check-deployment/task.yml
+    params:
+      BOSH_USER: {{runtime_1_bosh_user}}
+      BOSH_PASSWORD: {{runtime_1_bosh_password}}
+      BOSH_TARGET: micro.runtime1.cf-app.com
+
 - name: green-means-nothing-deployed-on-runtime2
   public: true
   plan:
-  - get: every-15-minutes
-    trigger: true
+  - aggregate:
+    - get: every-15-minutes
+      trigger: true
+    - get: runtime-ci
+      trigger: true
   - task: check-deployments
-    config:
-      platform: linux
-      image: docker:///cloudfoundry/runtime-ci
-      run:
-        path: '/bin/bash'
-        args:
-          - '-c'
-          - 'set -x; source ~/.bashrc; bosh -t micro.runtime2.cf-app.com deployments 2>&1 | grep "No deployments"'
-      params:
-        BOSH_USER: {{runtime_2_bosh_user}}
-        BOSH_PASSWORD: {{runtime_2_bosh_password}}
+    file: runtime-ci/scripts/ci/check-deployment/task.yml
+    params:
+      BOSH_USER: {{runtime_2_bosh_user}}
+      BOSH_PASSWORD: {{runtime_2_bosh_password}}
+      BOSH_TARGET: micro.runtime2.cf-app.com
