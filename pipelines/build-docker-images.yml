@@ -37,6 +37,7 @@ groups:
   - build-validate-branch-freshness-docker-image
   - build-generate-deployment-manifest-from-bbl-docker-image
   - build-setup-infrastructure-docker-image
+  - build-check-deployment-docker-image
 
 resources:
 - name: weekly
@@ -261,6 +262,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/setup-infrastructure/Dockerfile]
+- name: runtime-ci-check-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/check-deployment/Dockerfile]
 
 # All the docker images
 - name: announce-rc-pipeline-image
@@ -505,6 +512,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/setup-infrastructure
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: check-deployment-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/check-deployment
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1215,4 +1229,24 @@ jobs:
       - put: setup-infrastructure-pipeline-image
         params:
           build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure
+          push: true
+- name: build-check-deployment-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-check-deployment
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: check-deployment-pipeline-image
+        params:
+          build: runtime-ci-check-deployment/scripts/ci/check-deployment
           push: true
