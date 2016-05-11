@@ -4,7 +4,8 @@ set -x
 set -e
 set -u
 
-DIRECTOR_UUID=$(jq -r .bosh.state.director_id < env-repo/bbl-infrastructure/state.json)
+DIRECTOR_URL=$(bbl --state-dir env-repo/bbl-infrastructure director-address)
+DIRECTOR_UUID=$(bosh -t $DIRECTOR_URL status --uuid)
 
 cat <<EOF > manifest/nats.yml
 ---
