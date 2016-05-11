@@ -1,5 +1,5 @@
 platform: linux
-image: docker:///cloudfoundry/runtime-ci
+image: docker:///cloudfoundry/check-deployment
 
 inputs:
 - name: runtime-ci
