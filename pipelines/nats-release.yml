@@ -1,0 +1,112 @@
+---
+groups:
+- name: nats-release
+  jobs:
+    - deploy-nats
+    - run-smoke-tests
+    - setup-infrastructure
+
+resource_types:
+- name: bosh-deployment
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-deployment-resource
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: nats-release
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/nats-release.git
+- name: hagrid-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_private_key}}
+- name: hagrid-env-updated
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_private_key}}
+- name: hagrid-nats-deployment
+  type: bosh-deployment
+  source:
+    deployment: nats
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-ubuntu-trusty-go_agent
+
+jobs:
+- name: setup-infrastructure
+  plan:
+  - get: env-repo
+    resource: hagrid-env
+    trigger: true
+  - get: runtime-ci
+  - task: run-bbl
+    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    privileged: false
+    params:
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+  - put: hagrid-env-updated
+    params:
+      repository: updated-env-repo
+
+- name: deploy-nats
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: release-repo
+      resource: nats-release
+      trigger: true
+    - get: env-repo
+      trigger: true
+      passed: [ setup-infrastructure ]
+      resource: hagrid-env-updated
+    - get: aws-stemcell
+    - get: runtime-ci
+  - task: create-release
+    file: runtime-ci/scripts/ci/create-release/task.yml
+    privileged: true
+    params:
+      RELEASE_NAME: nats
+  - task: generate-deployment-manifest
+    file: runtime-ci/scripts/ci/generate-deployment-manifest-from-bbl/task.yml
+    privileged: false
+  - task: bosh-deploy
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    params:
+      TARGET_FILE: env-repo/bbl-infrastructure/target
+      USERNAME_FILE: env-repo/bbl-infrastructure/username
+      PASSWORD_FILE: env-repo/bbl-infrastructure/password
+      BOSH_MANIFEST: manifest/nats.yml
+
+- name: run-smoke-tests
+  public: true
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+      passed: [deploy-nats]
+    - get: runtime-ci
+    - get: env-repo
+      resource: hagrid-env
+  - task: run-smoke-tests
+    file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+    params:
+      BOSH_DIRECTOR_FILE: env-repo/bbl-infrastructure/target
+      BOSH_USER_FILE: env-repo/bbl-infrastructure/username
+      BOSH_PASSWORD_FILE: env-repo/bbl-infrastructure/password
+      DEPLOYMENT_NAME: nats
+      ERRAND_NAME: smoke-tests
+
