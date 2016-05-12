@@ -8,6 +8,7 @@ inputs:
 - name: runtime-ci
 - name: env-repo
 - name: manifest
+- name: release-out
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy/task

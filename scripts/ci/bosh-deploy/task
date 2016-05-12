@@ -7,6 +7,8 @@ set +x
 BOSH_PASSWORD=$(cat $PASSWORD_FILE)
 set -x
 
+bosh -n -t ${BOSH_DIRECTOR} upload release release-out/nats-*.tgz --skip-if-exists
+
 echo "bosh -n -t ${BOSH_DIRECTOR} -u ${BOSH_USER} -p REDACTED -d ${BOSH_MANIFEST} deploy --redact-diff"
 
 set +x
