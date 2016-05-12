@@ -16,14 +16,44 @@ set -x
 # Outputs
 LOGS_DIR="${root_dir}/${LOGS_DIR}"
 
-bosh -t "$BOSH_DIRECTOR" download manifest "$DEPLOYMENT_NAME" manifest.yml
+set +x
+echo 'bosh \
+  -t "$BOSH_DIRECTOR" \
+  -u "${BOSH_USER}" \
+  -p "REDACTED" \
+  download manifest \
+  "$DEPLOYMENT_NAME" \
+  manifest.yml'
+
+bosh \
+  -t "$BOSH_DIRECTOR" \
+  -u "${BOSH_USER}" \
+  -p "${BOSH_PASSWORD}" \
+  download manifest \
+  "$DEPLOYMENT_NAME" \
+  manifest.yml
+
+echo 'bosh \
+  -n \
+  --color \
+  -t "$BOSH_DIRECTOR" \
+  -u "${BOSH_USER}" \
+  -p "REDACTED" \
+  -d manifest.yml \
+  run errand "$ERRAND_NAME" \
+  --keep-alive \
+  --download-logs \
+  --logs-dir "$LOGS_DIR"'
 
 bosh \
   -n \
   --color \
   -t "$BOSH_DIRECTOR" \
+  -u "${BOSH_USER}" \
+  -p "${BOSH_PASSWORD}" \
   -d manifest.yml \
   run errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
   --logs-dir "$LOGS_DIR"
+set -x
