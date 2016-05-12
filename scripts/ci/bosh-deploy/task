@@ -5,13 +5,19 @@ BOSH_DIRECTOR=$(cat $TARGET_FILE)
 BOSH_USER=$(cat $USERNAME_FILE)
 set +x
 BOSH_PASSWORD=$(cat $PASSWORD_FILE)
-set -x
 
-bosh -n -t ${BOSH_DIRECTOR} upload release release-out/nats-*.tgz --skip-if-exists
+echo "bosh -n  -t ${BOSH_DIRECTOR}  -u ${BOSH_USER}  -p REDACTED  upload release  release-out/nats-*.tgz  --skip-if-exists"
+bosh \
+  -n \
+  -t ${BOSH_DIRECTOR} \
+  -u "${BOSH_USER}" \
+  -p "${BOSH_PASSWORD}" \
+  upload release \
+  release-out/nats-*.tgz \
+  --skip-if-exists
+
 
 echo "bosh -n -t ${BOSH_DIRECTOR} -u ${BOSH_USER} -p REDACTED -d ${BOSH_MANIFEST} deploy --redact-diff"
-
-set +x
 bosh \
   -n \
   -t "${BOSH_DIRECTOR}" \
