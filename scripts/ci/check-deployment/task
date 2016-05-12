@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -ux
+set -eux
+set -o pipefail
 
-# exit code 0 means the director responds with some deployments;
-# exit code 1 means either no deployments, or director didn't respond.
-
-! bosh -t "${BOSH_TARGET}" deployments
+bosh -t "${BOSH_TARGET}" deployments 2>&1 | grep "No deployments"
