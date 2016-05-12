@@ -4,11 +4,7 @@ set -exu
 root_dir="${PWD}"
 
 # Inputs
-
-if [[ -n $BOSH_DIRECTOR ]]; then
-  BOSH_DIRECTOR="${BOSH_DIRECTOR_FILE:?"BOSH_DIRECTOR or BOSH_DIRECTOR_FILE must be provided"}"
-fi
-
+BOSH_DIRECTOR="${BOSH_DIRECTOR:?"BOSH_DIRECTOR must be provided"}"
 BOSH_USER="${BOSH_USER:?"BOSH_USER must be provided"}"
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
