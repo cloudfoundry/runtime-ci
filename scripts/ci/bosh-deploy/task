@@ -16,6 +16,15 @@ bosh \
   release-out/nats-*.tgz \
   --skip-if-exists
 
+echo "bosh -n  -t ${BOSH_DIRECTOR}  -u ${BOSH_USER}  -p REDACTED  upload stemcell  https://bosh.io/d/stemcells/bosh-aws-xen-ubuntu-trusty-go_agent --skip-if-exists"
+bosh \
+  -n \
+  -t ${BOSH_DIRECTOR} \
+  -u "${BOSH_USER}" \
+  -p "${BOSH_PASSWORD}" \
+  upload stemcell \
+  https://bosh.io/d/stemcells/bosh-aws-xen-ubuntu-trusty-go_agent \
+  --skip-if-exists
 
 echo "bosh -n -t ${BOSH_DIRECTOR} -u ${BOSH_USER} -p REDACTED -d ${BOSH_MANIFEST} deploy --redact-diff"
 bosh \
