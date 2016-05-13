@@ -19,9 +19,6 @@ export PATH="${GOPATH}/bin":${PATH}
 
 cd "${GOPATH}/src/github.com/cloudfoundry/cf-acceptance-tests"
 
-export GOPATH=${PWD}/Godeps/_workspace:${GOPATH}
-export PATH=${PWD}/Godeps/_workspace/bin:${PATH}
-
 go get github.com/onsi/ginkgo/ginkgo
 
 cat > integration_config.json <<EOF
