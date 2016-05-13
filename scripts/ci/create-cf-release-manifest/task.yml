@@ -16,4 +16,5 @@ run:
 
 params:
   INFRASTRUCTURE:
+  STUBS_PATH: deployments/stubs/cf/*.yml
   OUTPUT_DIR: manifest

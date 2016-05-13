@@ -6,9 +6,7 @@ root_dir="${PWD}"
 # Outputs
 OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
-cd cf-release
-
-./scripts/generate_deployment_manifest \
+cf-release/scripts/generate_deployment_manifest \
   "${INFRASTRUCTURE}" \
-  "../deployments/stubs/cf/"*.yml > "${OUTPUT_DIR}/deployment.yml"
+  "${STUBS_PATH}" > "${OUTPUT_DIR}/deployment.yml"
 
