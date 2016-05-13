@@ -6,7 +6,14 @@ RUN \
     build-essential \
     wget \
     curl \
-    openssh-client
+    openssh-client \
+    software-properties-common
+
+RUN \
+  add-apt-repository ppa:git-core/ppa -y && \
+  apt-get update && \
+  apt-get install -y git && \
+  apt-get remove -y --purge software-properties-common
 
 ENV GOPATH $HOME/go
 ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
