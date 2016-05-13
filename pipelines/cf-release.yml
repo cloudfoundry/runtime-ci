@@ -20,9 +20,6 @@ groups:
 - name: bosh
   jobs:
   - clean-all-the-boshes
-- name: pipeline-image
-  jobs:
-  - build-pipeline-image
 - name: smokes
   jobs:
   - tabasco-runtime-smokes
@@ -39,14 +36,8 @@ groups:
   - deploy-and-test-a1
   - a1-diego-deploy-and-test
   - deploy-and-test-vsphere
-resources:
-- name: weekly
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
-    interval: 168h
 
+resources:
 - name: periodically
   type: time
   source:
@@ -273,22 +264,6 @@ resources:
     branch: master
     private_key: {{cf_release_private_key}}
     uri: git@github.com:cloudfoundry/deployments-runtime.git
-
-- name: pipeline-image
-  type: docker-image
-  source:
-    repository: cloudfoundry/runtime-ci
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: pipeline-image-docker-file
-  type: git
-  source:
-    branch: develop
-    uri: https://github.com/cloudfoundry/cf-release.git
-    paths:
-     - pipeline-image
 
 - name: bosh-lite
   type: git
@@ -1209,24 +1184,6 @@ jobs:
         - put: diego-cf-compatibility
           params:
             repository: updated-diego-cf-compatibility
-
-- name: build-pipeline-image
-  public: true
-  serial: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: pipeline-image-docker-file
-        trigger: true
-        params:
-          submodules: none
-    - put: pipeline-image
-      params:
-        build: pipeline-image-docker-file/pipeline-image
-        push: true
 
 - name: tabasco-runtime-smokes
   public: true
