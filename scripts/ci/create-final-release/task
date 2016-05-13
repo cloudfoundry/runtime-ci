@@ -15,19 +15,17 @@ FINAL_RELEASE_REPO_DIR="${root_dir}/${FINAL_RELEASE_REPO_DIR:?"\$FINAL_RELEASE_R
 MASTER_BRANCH="${MASTER_BRANCH:-master}"
 
 set +x
-  source "${STACK_REPO_DIR}/aws_environment"
+source "${STACK_REPO_DIR}/aws_environment"
 
-  AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION is not set"}"
-  AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID is not set"}"
-  AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY is not set"}"
-set -x
+AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION is not set"}"
+AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID is not set"}"
+AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY is not set"}"
 
 BLOBS_BUCKET_ACCESS_KEY_ID=$(aws cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" \
   | jq .Stacks[0].Outputs[0].OutputValue)
 BLOBS_BUCKET_SECRET_KEY=$(aws cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" \
   | jq .Stacks[0].Outputs[1].OutputValue)
 
-set -x
 
 cat > "${RELEASE_REPO_DIR}/config//private.yml" <<EOF
 ---
@@ -36,6 +34,8 @@ blobstore:
     secret_access_key: ${BLOBS_BUCKET_SECRET_KEY}
     access_key_id: ${BLOBS_BUCKET_ACCESS_KEY_ID}
 EOF
+
+set -x
 
 pushd release-repo > /dev/null
   git config user.name "CF MEGA BOT"

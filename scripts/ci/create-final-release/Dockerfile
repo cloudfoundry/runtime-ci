@@ -7,7 +7,10 @@ RUN \
   apt-get -y install \
     build-essential \
     wget \
-    software-properties-common
+    software-properties-common \
+    python-software-properties \
+    python-pip \
+    jq
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
@@ -29,3 +32,6 @@ RUN \
   gem update --system && \
   gem install bundler --no-rdoc --no-ri && \
   gem install bosh_cli --version 1.3215.0 --no-rdoc --no-ri
+
+RUN \
+  pip install awscli==1.6.6
