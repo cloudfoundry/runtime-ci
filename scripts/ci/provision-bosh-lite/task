@@ -1,11 +1,6 @@
 #!/bin/bash
 set -exu
 
-root_dir="${PWD}"
-
-# Outputs
-OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"OUTPUT_DIR must be provided"}"
-
 setup_env() {
   set +x
   echo "${SSH_KEY}" > /tmp/bosh_lite_key
@@ -22,7 +17,11 @@ provision_bosh_lite() {
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
-  echo "${BOSH_LITE_IP}" > "${OUTPUT_DIR}/bosh-lite-ip"
+  echo "${BOSH_LITE_IP}" > bosh-lite-ip/bosh-lite-ip
+
+  bosh -t "${BOSH_LITE_IP}" login admin admin
+  DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
+  echo "\"director_uuid\": \"${DIRECTOR_UUID}\"" > bosh-director-uuid/director-uuid.yml
 
   popd
 }

@@ -9,6 +9,7 @@ inputs:
 
 outputs:
 - name: bosh-lite-ip
+- name: bosh-director-uuid
 
 run:
   path: runtime-ci/scripts/ci/provision-bosh-lite/task
@@ -22,4 +23,3 @@ params:
   AWS_DEFAULT_REGION:
   BOSH_LITE_KEYPAIR:
   SSH_KEY:
-  OUTPUT_DIR: bosh-lite-ip
