@@ -9,7 +9,7 @@ inputs:
 
 outputs:
 - name: bosh-lite-ip
-- name: bosh-director-uuid
+- name: bosh-lite-stub
 
 run:
   path: runtime-ci/scripts/ci/provision-bosh-lite/task

@@ -21,8 +21,25 @@ provision_bosh_lite() {
 
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
-  echo "\"director_uuid\": \"${DIRECTOR_UUID}\"" > bosh-director-uuid/director-uuid.yml
+  cat << EOF > bosh-lite-stub/stub.yml
+director_uuid: $DIRECTOR_UUID
+properties:
+  acceptance_tests:
+    nodes: 1
+    include_sso: true
+    include_operator: true
+    include_logging: true
+    include_security_groups: true
+    include_internet_dependent: true
+    include_services: true
+  cc:
+    security_group_definitions:
+      - name: load_balancer
+        rules:
+        - protocol: all
+          destination: ${BOSH_LITE_IP}
 
+EOF
   popd
 }
 
