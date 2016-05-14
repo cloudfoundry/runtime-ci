@@ -40,6 +40,9 @@ properties:
           destination: ${BOSH_LITE_IP}
 
 EOF
+
+  echo "admin" > bosh-lite-creds/username
+  echo "admin" > bosh-lite-creds/password
   popd
 }
 

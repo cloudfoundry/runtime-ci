@@ -10,6 +10,7 @@ inputs:
 outputs:
 - name: bosh-lite-ip
 - name: bosh-lite-stub
+- name: bosh-lite-creds
 
 run:
   path: runtime-ci/scripts/ci/provision-bosh-lite/task
