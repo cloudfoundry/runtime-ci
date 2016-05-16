@@ -1,0 +1,37 @@
+#!/bin/bash
+set -exu
+
+create_stub() {
+  BOSH_LITE_IP=$(cat bosh-lite-ip/ip)
+
+  bosh -t "${BOSH_LITE_IP}" login admin admin
+  DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
+  cat << EOF > ../deployments/stub.yml
+director_uuid: $DIRECTOR_UUID
+properties:
+  acceptance_tests:
+    nodes: 1
+    include_sso: true
+    include_operator: true
+    include_logging: true
+    include_security_groups: true
+    include_internet_dependent: true
+    include_services: true
+  cc:
+    security_group_definitions:
+      - name: load_balancer
+        rules:
+        - protocol: all
+          destination: ${BOSH_LITE_IP}
+
+EOF
+
+  echo "admin" > ../bosh-lite-creds/username
+  echo "admin" > ../bosh-lite-creds/password
+}
+
+main() {
+  create_stub
+}
+
+main
