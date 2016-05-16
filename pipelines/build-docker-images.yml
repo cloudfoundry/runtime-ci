@@ -22,8 +22,6 @@ groups:
   - build-merge-master-into-develop-docker-image
   - build-multierror-tests-docker-image
   - build-provision-bosh-lite-docker-image
-  - build-push-canaries-docker-image
-  - build-push-diego-canary-docker-image
   - build-record-compatible-versions-docker-image
   - build-request-pm-input-docker-image
   - build-run-bosh-cleanup-docker-image
@@ -172,18 +170,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/provision-bosh-lite/Dockerfile]
-- name: runtime-ci-push-canaries
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/push-canaries/Dockerfile]
-- name: runtime-ci-push-diego-canary
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/push-diego-canary/Dockerfile]
 - name: runtime-ci-record-compatible-versions
   type: git
   source:
@@ -407,20 +393,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/provision-bosh-lite
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: push-canaries-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/push-canaries
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: push-diego-canary-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/push-diego-canary
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -929,46 +901,6 @@ jobs:
       - put: provision-bosh-lite-pipeline-image
         params:
           build: runtime-ci-provision-bosh-lite/scripts/ci/provision-bosh-lite
-          push: true
-- name: build-push-canaries-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
-    - aggregate:
-      - get: runtime-ci-push-canaries
-        trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: push-canaries-pipeline-image
-        params:
-          build: runtime-ci-push-canaries/scripts/ci/push-canaries
-          push: true
-- name: build-push-diego-canary-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
-    - aggregate:
-      - get: runtime-ci-push-diego-canary
-        trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: push-diego-canary-pipeline-image
-        params:
-          build: runtime-ci-push-diego-canary/scripts/ci/push-diego-canary
           push: true
 - name: build-record-compatible-versions-docker-image
   public: true

@@ -25,11 +25,6 @@ groups:
   - tabasco-loggregator-smokes
   - a1-runtime-smokes
   - a1-loggregator-smokes
-- name: canaries
-  jobs:
-  - push-a1-canaries
-  - push-a1-diego-canaries
-  - push-tabasco-canaries
 - name: rubbish-bin
   jobs:
   - deploy-and-test-a1
@@ -344,15 +339,6 @@ resources:
     deployment: a1-diego-cats
     ignore_ssl: true
 
-- name: a1-diego-canary-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.a1.cf-app.com:25555
-    username: {{a1_bosh_username}}
-    password: {{a1_bosh_password}}
-    deployment: a1-push-canary-app
-    ignore_ssl: true
-
 - name: minimal-deployment
   type: bosh-deployment
   source:
@@ -361,12 +347,6 @@ resources:
     password: {{minimal_bosh_password}}
     deployment: cf
     ignore_ssl: true
-
-- name: cf-canaries
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/pivotal-cf-experimental/cf_canaries.git
 
 - name: runtime-ci-env
   type: git
@@ -1391,78 +1371,6 @@ jobs:
         params:
           <<: *a1-smoke-datadog-params
           VALUE: 0
-
-- name: push-a1-canaries
-  public: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-canaries
-    - task: push-canaries
-      file: runtime-ci/scripts/ci/push-canaries/task.yml
-      params:
-        CF_APPS_DOMAIN: a1-canaries.cf-app.com
-        CF_API_ENDPOINT: https://api.a1.cf-app.com
-        CF_API_ADMIN_USER: {{a1_admin_username}}
-        CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
-        CF_API_CANARY_USER: {{a1_canaries_username}}
-        CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
-        SKIP_SSL_VALIDATION: false
-        CANARY_ORG: canaries
-        CANARY_SPACE: coal-mine
-        NUM_ZERO_DOWNTIME_APPS: 20
-        NUM_INSTANCES_PER_APP: 2
-        NUM_INSTANCES_CANARY_INSTANCES: 20
-
-- name: push-a1-diego-canaries
-  public: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: diego-release
-        resource: diego-release-master
-        trigger: true
-    - task: push-canary-app
-      file: runtime-ci/scripts/ci/push-diego-canary/task.yml
-      params:
-        DEPLOYMENT_NAME: a1-push-canary-app
-        CF_API_ENDPOINT: https://api.a1.cf-app.com
-        CF_API_ADMIN_USER: {{a1_admin_username}}
-        CF_API_ADMIN_PASSWORD: {{a1_admin_password}}
-        CF_API_CANARY_USER: {{a1_canaries_username}}
-        CF_API_CANARY_PASSWORD: {{a1_canaries_password}}
-        SKIP_SSL_VALIDATION: false
-        CANARY_ORG: canaries
-        CANARY_SPACE: canaries
-        DATADOG_API_KEY: {{a1_datadog_api_key}}
-
-- name: push-tabasco-canaries
-  public: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-canaries
-    - task: push-canaries
-      file: runtime-ci/scripts/ci/push-canaries/task.yml
-      params:
-        CF_APPS_DOMAIN: tabasco-canaries.cf-app.com
-        CF_API_ENDPOINT: https://api.tabasco.cf-app.com
-        CF_API_ADMIN_USER: {{tabasco_canaries_admin_username}}
-        CF_API_ADMIN_PASSWORD: {{tabasco_canaries_admin_password}}
-        CF_API_CANARY_USER: {{tabasco_canaries_username}}
-        CF_API_CANARY_PASSWORD: {{tabasco_canaries_password}}
-        SKIP_SSL_VALIDATION: false
-        CANARY_ORG: canaries
-        CANARY_SPACE: coal-mine
-        NUM_ZERO_DOWNTIME_APPS: 20
-        NUM_INSTANCES_PER_APP: 2
-        NUM_INSTANCES_CANARY_INSTANCES: 20
 
 - name: deploy-and-test-vsphere
   public: true
