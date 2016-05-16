@@ -9,7 +9,6 @@ groups:
   - deploy-and-test-bosh-lite
   - deploy-and-test-minimal
   - a1-cf-deploy
-  - a1-cf-cats
   - a1-smoke-tests
   - a1-diego-deploy
   - a1-diego-cats
@@ -966,42 +965,6 @@ jobs:
         DEPLOYMENT_NAME: cf-a1
         ERRAND_NAME: smoke_tests
 
-- name: a1-cf-cats
-  public: true
-  serial: true
-  serial_groups:
-  - cf-a1-bosh-deployment-lock
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: manifest
-        resource: cf-a1-manifest
-        trigger: true
-        passed: [ a1-smoke-tests ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [a1-smoke-tests]
-      - get: cf-release-tarball
-        passed: [a1-smoke-tests]
-        trigger: true
-      - get: runtime-ci
-      - get: aws-stemcell
-        passed: [ a1-smoke-tests ]
-        params:
-          tarball: false
-    - task: acceptance-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        <<: *bosh-target-a1
-        DEPLOYMENT_NAME: cf-a1
-        ERRAND_NAME: acceptance_tests
-      ensure:
-        put: a1-acceptance-tests-logs
-        params:
-          file: logs-dir/acceptance_tests.*.tgz
-
 - name: a1-diego-deploy
   public: true
   serial_groups:
@@ -1147,13 +1110,13 @@ jobs:
       - get: diego-cf-compatibility
       - get: cf-release
         resource: cf-release-develop
-        passed: [vsphere-cf-cats, deploy-and-test-bosh-lite, a1-cf-cats, a1-diego-cats]
+        passed: [vsphere-cf-cats, deploy-and-test-bosh-lite, a1-diego-cats]
         trigger: true
         params:
           submodules: none
       - get: stemcell
         resource: aws-stemcell
-        passed: [ a1-cf-cats, a1-diego-cats]
+        passed: [ a1-diego-cats]
         trigger: true
       - get: diego-final-releases
         passed: [ a1-diego-cats ]
