@@ -9,7 +9,7 @@ inputs:
 
 outputs:
 - name: bosh-lite-ip
-- name: bosh-lite-stub
+- name: deployments
 - name: bosh-lite-creds
 
 run:
