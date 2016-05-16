@@ -88,7 +88,7 @@ resources:
   type: s3
   source:
     bucket: bosh-lite-ip
-    regexp: (ip)
+    regexp: (bosh-lite-ip)
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
@@ -696,7 +696,7 @@ jobs:
   - aggregate:
     - put: bosh-lite-ip
       params:
-        file: bosh-lite-ip/ip
+        file: bosh-lite-ip/bosh-lite-ip
 - name: bosh-lite-cf-deploy
   public: true
   serial: true
@@ -762,13 +762,6 @@ jobs:
         DEPLOYMENT_NAME: cf-warden
         ERRAND_NAME: acceptance_tests
         LOGS_DIR: acceptance-tests-logs-dir
-#    - task: deploy-and-test-cf
-#      privileged: true
-#      file: runtime-ci/scripts/ci/deploy-cf-to-bosh-lite/task.yml
-#      ensure:
-#        put: bosh-lite-acceptance-tests-logs
-#        params:
-#          file: bosh-lite-output-dir/acceptance_tests.*.tgz
 
 - name: deploy-and-test-minimal
   public: true
