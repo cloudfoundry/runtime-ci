@@ -32,7 +32,7 @@ provision_bosh_lite() {
 
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
-  cat << EOF > bosh-lite-stub/stub.yml
+  cat << EOF > ../bosh-lite-stub/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
   acceptance_tests:
