@@ -5,7 +5,6 @@ image: docker:///relintdockerhubpushbot/run-errand-bbl
 
 inputs:
 - name: runtime-ci
-- name: env-repo
 
 outputs:
   - name: logs-dir
