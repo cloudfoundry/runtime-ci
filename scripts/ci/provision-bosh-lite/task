@@ -8,7 +8,14 @@ setup_env() {
   export BOSH_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
   set -x
 
-  export BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq -r .Subnets[0].SubnetId)
+  export BOSH_LITE_SUBNET_ID
+  BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq -r .Subnets[0].SubnetId)
+
+  export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
+}
+
+provision_bosh_lite() {
+  pushd bosh-lite
   export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 }
 
@@ -17,7 +24,7 @@ provision_bosh_lite() {
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
-  echo "${BOSH_LITE_IP}" > bosh-lite-ip/bosh-lite-ip
+  echo "${BOSH_LITE_IP}" > ../bosh-lite-ip/bosh-lite-ip
 
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
@@ -41,8 +48,8 @@ properties:
 
 EOF
 
-  echo "admin" > bosh-lite-creds/username
-  echo "admin" > bosh-lite-creds/password
+  echo "admin" > ../bosh-lite-creds/username
+  echo "admin" > ../bosh-lite-creds/password
   popd
 }
 
