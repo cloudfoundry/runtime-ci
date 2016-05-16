@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -eux
 
 set +x
@@ -11,8 +11,6 @@ CF_APPS_DOMAIN="${CF_APPS_DOMAIN:?}"
 SKIP_SSL_VALIDATION="${SKIP_SSL_VALIDATION:?}"
 USE_HTTP="${USE_HTTP:?}"
 NODES="${NODES:?}"
-SUITES="${SUITES:-}"
-ADDITIONAL_ARGS="${ADDITIONAL_ARGS:-}"
 
 export GOPATH="${PWD}/cf-release"
 export PATH="${GOPATH}/bin":${PATH}
@@ -20,6 +18,18 @@ export PATH="${GOPATH}/bin":${PATH}
 cd "${GOPATH}/src/github.com/cloudfoundry/cf-acceptance-tests"
 
 go get github.com/onsi/ginkgo/ginkgo
+
+set +x
+echo "cat > integration_config.json <<EOF
+{
+  'api': '${CF_API}',
+  'admin_user': '${CF_ADMIN_USER}',
+  'admin_password': '[REDACTED]',
+  'apps_domain': '${CF_APPS_DOMAIN}',
+  'skip_ssl_validation': ${SKIP_SSL_VALIDATION},
+  'use_http': ${USE_HTTP}
+}
+EOF"
 
 cat > integration_config.json <<EOF
 {
@@ -31,9 +41,39 @@ cat > integration_config.json <<EOF
   "use_http": ${USE_HTTP}
 }
 EOF
+set -x
+
 export CONFIG=$PWD/integration_config.json
 
+SKIP_PACKAGES="-skipPackage=helpers,"
+$INCLUDE_DIEGO_SSH || SKIP_PACKAGES="${SKIP_PACKAGES}ssh,"
+$INCLUDE_V3 || SKIP_PACKAGES="${SKIP_PACKAGES}v3,"
+$INCLUDE_DIEGO_DOCKER || SKIP_PACKAGES="${SKIP_PACKAGES}docker,"
+$INCLUDE_BACKEND_COMPATIBILITY || SKIP_PACKAGES="${SKIP_PACKAGES}backend_compatibility,"
+$INCLUDE_SECURITY_GROUPS || SKIP_PACKAGES="${SKIP_PACKAGES}security_groups,"
+$INCLUDE_LOGGING || SKIP_PACKAGES="${SKIP_PACKAGES}logging,"
+$INCLUDE_OPERATOR || SKIP_PACKAGES="${SKIP_PACKAGES}operator,"
+$INCLUDE_INTERNET_DEPENDENT || SKIP_PACKAGES="${SKIP_PACKAGES}internet_dependent,"
+$INCLUDE_SERVICES || SKIP_PACKAGES="${SKIP_PACKAGES}services,"
+$INCLUDE_ROUTE_SERVICES || SKIP_PACKAGES="${SKIP_PACKAGES}route_services,"
+
+# Remove trailing comma
+SKIP_PACKAGES=$(echo $SKIP_PACKAGES | sed -E 's/(.*)(,)/\1/')
+
+
+SKIPS="-skip="
+$SKIP_SSO && SKIPS="${SKIPS}SSO|"
+[[ "$BACKEND" = "diego" ]] && SKIPS="${SKIPS}NO_DIEGO_SUPPORT|"
+[[ "$BACKEND" = "dea" ]] && SKIPS="${SKIPS}NO_DEA_SUPPORT|"
+[[ "$BACKEND" = "" ]] && SKIPS="${SKIPS}NO_DEA_SUPPORT|NO_DIEGO_SUPPORT|"
+
+
+SKIPS=$(echo $SKIPS | sed -E 's/(.*)(\|)/\1/')
+
 ./bin/test \
+  -r \
+  -slowSpecThreshold=120 -randomizeAllSpecs \
   -nodes "${NODES}" \
-  "${ADDITIONAL_ARGS}" \
-  "${SUITES}"
+  "${SKIP_PACKAGES}" \
+  "${SKIPS}" \
+  -keepGoing

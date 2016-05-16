@@ -11,6 +11,18 @@ run:
   path: runtime-ci/scripts/ci/run-cats/task
 
 params:
+  INCLUDE_DIEGO_SSH: false
+  INCLUDE_DIEGO_DOCKER: false
+  INCLUDE_BACKEND_COMPATIBILITY: false
+  INCLUDE_V3: false
+  INCLUDE_SECURITY_GROUPS: false
+  INCLUDE_LOGGING: false
+  INCLUDE_OPERATOR: false
+  INCLUDE_INTERNET_DEPENDENT: false
+  INCLUDE_SERVICES: false
+  INCLUDE_ROUTE_SERVICES: false
+  SKIP_SSO: false
+  BACKEND:
   CF_API:
   CF_ADMIN_USER: admin
   CF_ADMIN_PASSWORD:
@@ -18,5 +30,3 @@ params:
   SKIP_SSL_VALIDATION: false
   USE_HTTP: false
   NODES: 4
-  SUITES:
-  ADDITIONAL_ARGS:

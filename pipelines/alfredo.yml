@@ -225,38 +225,21 @@ jobs:
     - get: consul-release
       passed: [run-smoke-tests]
       trigger: true
-  - task: cli-compatibility
+  - task: run-acceptance-tests
     file: runtime-ci/scripts/ci/run-cats/task.yml
     params:
+      INCLUDE_SECURITY_GROUPS: true
+      INCLUDE_OPERATOR: true
+      INCLUDE_INTERNET_DEPENDENT: true
+      INCLUDE_SERVICES: true
+      SKIP_SSO: false
+      BACKEND: dea
       CF_API: {{alfredo-cf-api}}
       CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
       CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
       SKIP_SSL_VALIDATION: "true"
       USE_HTTP: "false"
-      SUITES: "."
-  - aggregate:
-    - task: everything-else
-      file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        CF_API: {{alfredo-cf-api}}
-        CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
-        CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "false"
-        NODES: 8
-        SUITES: "apps assets detect docker internet_dependent operator routing"
-        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
-    - task: services-security_groups-ssh
-      file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        CF_API: {{alfredo-cf-api}}
-        CF_ADMIN_PASSWORD: {{alfredo-cf-admin-password}}
-        CF_APPS_DOMAIN: {{alfredo-cf-apps-domain}}
-        NODES: 8
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "false"
-        SUITES: "services security_groups ssh"
-        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
+      NODES: 8
 
 - name: bless
   public: true
