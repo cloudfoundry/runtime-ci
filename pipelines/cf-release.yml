@@ -88,7 +88,7 @@ resources:
   type: s3
   source:
     bucket: bosh-lite-ip
-    regexp: (bosh-lite-ip)
+    versioned_file: bosh-lite-ip
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
