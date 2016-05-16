@@ -26,6 +26,10 @@ provision_bosh_lite() {
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
   echo "${BOSH_LITE_IP}" > ../bosh-lite-ip/bosh-lite-ip
 
+  sleep_time=20
+  echo "sleeping ${sleep_time} seconds to allow bosh-director to come online"
+  sleep "${sleep_time}"
+
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
   cat << EOF > bosh-lite-stub/stub.yml
