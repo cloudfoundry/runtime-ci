@@ -711,6 +711,14 @@ jobs:
         resource: cf-release-develop
         passed: [provision-bosh-lite]
       - get: runtime-ci
+      - get: bosh-lite-ip
+        resource: cf-release-develop
+        passed: [provision-bosh-lite]
+    - task: create-bosh-lite-stub
+      file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
+      params:
+        INFRASTRUCTURE: bosh-lite
+        STUBS_PATH: deployments/*.yml
     - task: create-manifest
       file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
       params:

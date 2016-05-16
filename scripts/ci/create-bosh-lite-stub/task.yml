@@ -8,7 +8,6 @@ inputs:
 - name: bosh-lite-ip
 
 outputs:
-- name: bosh-lite-ip
 - name: deployments
 - name: bosh-lite-creds
 
