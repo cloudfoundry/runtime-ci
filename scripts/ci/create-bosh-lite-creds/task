@@ -2,8 +2,8 @@
 set -exu
 
 create_creds() {
-  echo "admin" > bosh-lite-creds/username
-  echo "admin" > bosh-lite-creds/password
+  echo "admin" > bosh-user-file-dir/username
+  echo "admin" > bosh-password-file-dir/password
 }
 
 main() {

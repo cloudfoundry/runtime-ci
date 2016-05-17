@@ -7,7 +7,8 @@ inputs:
 - name: runtime-ci
 
 outputs:
-- name: bosh-lite-creds
+- name: bosh-user-file-dir
+- name: bosh-password-file-dir
 
 run:
   path: runtime-ci/scripts/ci/create-bosh-lite-creds/task
