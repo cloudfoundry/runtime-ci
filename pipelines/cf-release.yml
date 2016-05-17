@@ -764,6 +764,16 @@ jobs:
         PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
         INSTANCE_COUNT_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
         RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
+    - put: bosh-lite-deployment-diego
+      params:
+        target_file: bosh-lite-ip/bosh-lite-ip
+        manifest: generated-diego-manifest/diego-deployment.yml
+        stemcells: [bosh-lite-stemcell/*.tgz]
+        releases:
+        - diego-final-releases/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-release-tarball/*.tgz
 
 - name: bosh-lite-smoke-tests
   public: true
