@@ -5,10 +5,12 @@ image: docker:///relintdockerhubpushbot/provision-bosh-lite
 
 inputs:
 - name: runtime-ci
-- name: bosh-lite-ip
 
 outputs:
 - name: deployments
+
+params:
+  BOSH_LITE_IP:
 
 run:
   path: runtime-ci/scripts/ci/create-bosh-lite-stub/task

@@ -732,6 +732,7 @@ jobs:
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
+        BOSH_LITE_IP: {{bosh_lite_private_ip}}
         INFRASTRUCTURE: bosh-lite
         STUBS_PATH: deployments/*.yml
     - task: create-manifest
