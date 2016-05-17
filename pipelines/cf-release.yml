@@ -452,6 +452,11 @@ jobs:
     - put: cf-release-tarball
       params:
         file: release-out/cf-*.tgz
+    - task: can-bump
+      file: runtime-ci/scripts/ci/can-bump/task.yml
+      params:
+        URL: canibump.cfapps.io
+        TOKEN: {{canibump_token}}
 
 - name: clean-all-the-boshes
   public: true
@@ -523,13 +528,6 @@ jobs:
       params:
         INFRASTRUCTURE: aws
         ENVIRONMENT: tabasco
-      on_failure:
-        task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        params:
-          URL: *canibump-url
-          TOKEN: {{canibump_token}}
-          REASON: "Could not create cf-release manifest"
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
@@ -543,13 +541,6 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-      on_failure:
-        task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        params:
-          URL: *canibump-url
-          TOKEN: {{canibump_token}}
-          REASON: "Could not deploy cf-release"
       ensure:
         do:
         - task: emit-datadog-deploy-end
@@ -562,13 +553,6 @@ jobs:
     - put: cf-release-runtime-deployed
       params:
         repository: cf-release
-      on_failure:
-        task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        params:
-          URL: *canibump-url
-          TOKEN: {{canibump_token}}
-          REASON: "Could not push to cf-release"
     - task: smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -576,13 +560,6 @@ jobs:
         <<: *bosh-target-tabasco
         DEPLOYMENT_NAME: cf-tabasco
         ERRAND_NAME: smoke_tests
-      on_failure:
-        task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        params:
-          URL: *canibump-url
-          TOKEN: {{canibump_token}}
-          REASON: "smoke tests failed"
     - task: acceptance-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -590,13 +567,6 @@ jobs:
         <<: *bosh-target-tabasco
         DEPLOYMENT_NAME: cf-tabasco
         ERRAND_NAME: acceptance_tests
-      on_failure:
-        task: cannot-bump
-        file: runtime-ci/scripts/ci/cannot-bump/task.yml
-        params:
-          URL: *canibump-url
-          TOKEN: {{canibump_token}}
-          REASON: "acceptance tests failed"
       ensure:
         put: tabasco-acceptance-tests-logs
         params:
@@ -604,11 +574,6 @@ jobs:
     - put: cf-release-runtime-passed
       params:
         repository: cf-release
-    - task: can-bump
-      file: runtime-ci/scripts/ci/can-bump/task.yml
-      params:
-        URL: canibump.cfapps.io
-        TOKEN: {{canibump_token}}
 
 - name: deploy-and-test-openstack
   public: true
