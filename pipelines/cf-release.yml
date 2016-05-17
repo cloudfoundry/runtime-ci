@@ -4,7 +4,6 @@ groups:
   - cf-release-unit-tests
   - cf-release-branch-freshness
   - create-release
-  - deploy-and-test-tabasco
   - deploy-and-test-openstack
   - bosh-lite-provision
   - bosh-lite-cf-deploy
@@ -34,6 +33,7 @@ groups:
   - deploy-and-test-a1
   - a1-diego-deploy-and-test
   - deploy-and-test-vsphere
+  - deploy-and-test-tabasco
 
 resources:
 - name: periodically
@@ -583,11 +583,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
       - get: runtime-ci
       - get: deployments
         resource: dumbledore-env
@@ -634,11 +634,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         params:
           submodules: none
       - get: bosh-lite
@@ -822,11 +822,11 @@ jobs:
     - aggregate:
       - get: aws-stemcell
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
       - get: runtime-ci
@@ -863,12 +863,12 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         trigger: true
         tags: [vsphere]
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
@@ -974,11 +974,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
       - get: runtime-ci
       - get: deployments
         resource: a1-env
@@ -1100,9 +1100,9 @@ jobs:
       resource: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-      passed: [deploy-and-test-tabasco]
+      passed: [create-release]
     - get: cf-release-tarball
-      passed: [deploy-and-test-tabasco]
+      passed: [create-release]
       trigger: true
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
@@ -1593,11 +1593,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         tags: [vsphere]
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
@@ -1657,10 +1657,10 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
       - get: cf-release
         resource: cf-release-develop
-        passed: [deploy-and-test-tabasco]
+        passed: [create-release]
       - get: runtime-ci
       - get: deployments
         resource: a1-env
@@ -1732,7 +1732,7 @@ jobs:
       resource: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-      passed: [deploy-and-test-tabasco]
+      passed: [create-release]
   - task: generate-deployment-manifests
     file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
     params:
