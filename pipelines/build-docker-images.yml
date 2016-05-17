@@ -49,6 +49,42 @@ resources:
   source:
     interval: 2h
 
+- name: create-bosh-lite-creds
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-bosh-lite-creds/Dockerfile]
+- name: create-bosh-lite-stub
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-bosh-lite-stub/Dockerfile]
+- name: create-diego-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-diego-manifest/Dockerfile]
+- name: run-errand-bbl
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-errand-bbl/Dockerfile]
+- name: write-bosh-target-file
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/write-bosh-target-file/Dockerfile]
+- name: bosh-deploy
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-deploy/Dockerfile]
 - name: runtime-ci-announce-rc
   type: git
   source:
@@ -249,6 +285,48 @@ resources:
     paths: [scripts/ci/check-deployment/Dockerfile]
 
 # All the docker images
+- name: create-bosh-lite-creds-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-bosh-lite-creds
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-bosh-lite-stub-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-bosh-lite-stub
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: create-diego-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-diego-manifest
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-errand-bbl-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-errand-bbl
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: write-bosh-target-file-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-bosh-target-file
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-deploy-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-deploy
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: announce-rc-pipeline-image
   type: docker-image
   source:
@@ -488,6 +566,126 @@ jobs:
   plan:
   - get: trigger-resource
 
+- name: build-bosh-deploy-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-bosh-deploy
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: bosh-deploy-pipeline-image
+        params:
+          build: runtime-ci-bosh-deploy/scripts/ci/bosh-deploy
+          push: true
+- name: build-write-bosh-target-file-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-write-bosh-target-file
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: write-bosh-target-file-pipeline-image
+        params:
+          build: runtime-ci-write-bosh-target-file/scripts/ci/write-bosh-target-file
+          push: true
+- name: build-run-errand-bbl-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-run-errand-bbl
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: run-errand-bbl-pipeline-image
+        params:
+          build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
+          push: true
+- name: build-create-diego-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-create-diego-manifest
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-diego-manifest-pipeline-image
+        params:
+          build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
+          push: true
+- name: build-create-bosh-lite-stub-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-create-bosh-lite-stub
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-bosh-lite-stub-pipeline-image
+        params:
+          build: runtime-ci-create-bosh-lite-stub/scripts/ci/create-bosh-lite-stub
+          push: true
+- name: build-create-bosh-lite-creds-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-create-bosh-lite-creds
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: create-bosh-lite-creds-pipeline-image
+        params:
+          build: runtime-ci-create-bosh-lite-creds/scripts/ci/create-bosh-lite-creds
+          push: true
 - name: build-announce-rc-docker-image
   public: true
   plan:
