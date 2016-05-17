@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/provision-bosh-lite
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: bosh-lite-creds
+
+run:
+  path: runtime-ci/scripts/ci/create-bosh-lite-creds/task

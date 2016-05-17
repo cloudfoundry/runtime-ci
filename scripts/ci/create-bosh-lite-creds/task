@@ -1,0 +1,13 @@
+#!/bin/bash
+set -exu
+
+create_creds() {
+  echo "admin" > bosh-lite-creds/username
+  echo "admin" > bosh-lite-creds/password
+}
+
+main() {
+  create_creds
+}
+
+main

@@ -761,6 +761,8 @@ jobs:
       - get: cf-release-tarball
         passed: [bosh-lite-provision]
         trigger: true
+    - task: create-bosh-lite-creds
+      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
     - task: run-smoke-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
