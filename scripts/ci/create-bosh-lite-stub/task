@@ -2,7 +2,7 @@
 set -exu
 
 create_stub() {
-  BOSH_LITE_IP=$(cat bosh-lite-ip/ip)
+  BOSH_LITE_IP=$(cat bosh-lite-ip/bosh-lite-ip)
 
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)

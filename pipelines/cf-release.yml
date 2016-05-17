@@ -712,7 +712,7 @@ jobs:
         passed: [provision-bosh-lite]
       - get: runtime-ci
       - get: bosh-lite-ip
-        resource: cf-release-develop
+        resource: bosh-lite-ip
         passed: [provision-bosh-lite]
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
