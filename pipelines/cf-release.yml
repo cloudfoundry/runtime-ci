@@ -340,6 +340,14 @@ resources:
     deployment: cf-warden
     ignore_ssl: true
 
+- name: bosh-lite-deployment-diego
+  type: bosh-deployment
+  source:
+    username: admin
+    password: admin
+    deployment: cf-warden-diego
+    ignore_ssl: true
+
 - name: a1-diego-deployment
   type: bosh-deployment
   source:
