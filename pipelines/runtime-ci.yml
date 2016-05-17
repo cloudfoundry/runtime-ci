@@ -29,3 +29,12 @@ jobs:
       trigger: true
   - task: run-tests
     file: runtime-ci/scripts/ci/runtime-ci-tests/task.yml
+
+- name: verify-every-task-has-docker-image
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+      trigger: true
+  - task: verify-every-task-has-docker-image
+    file: runtime-ci/scripts/ci/verify-every-task-has-docker-image/task.yml

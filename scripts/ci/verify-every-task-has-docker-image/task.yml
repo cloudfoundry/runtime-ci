@@ -1,0 +1,10 @@
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/verify-every-task-has-docker-image
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/scripts/ci/verify-every-task-has-docker-image/task

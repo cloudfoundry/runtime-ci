@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -eu
+
+function verify_image {
+  set +e
+  if ! grep "image: docker:///relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
+    echo "${1}/task.yml"
+    grep 'image:' task.yml
+  fi
+  set -e
+}
+
+errors_file=$(mktemp /tmp/errors.XXXXX)
+pushd runtime-ci/scripts/ci >/dev/null
+  find . -type d ! -path . | while read dir; do
+    pushd "${dir}" >/dev/null
+      verify_image "${dir}" >> "${errors_file}"
+    popd >/dev/null; done
+popd >/dev/null
+
+if [ -s "${errors_file}" ]; then
+  cat "${errors_file}"
+  exit 1
+fi
