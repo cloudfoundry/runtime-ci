@@ -775,7 +775,6 @@ jobs:
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
         ERRAND_NAME: smoke_tests
-        LOGS_DIR: smoke-tests-logs-dir
 - name: bosh-lite-acceptance-tests
   public: true
   serial_groups:
@@ -810,8 +809,10 @@ jobs:
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
         ERRAND_NAME: acceptance_tests
-        LOGS_DIR: acceptance-tests-logs-dir
-
+      ensure:
+        put: bosh-lite-acceptance-tests-logs
+        params:
+          file: logs-dir/acceptance_tests.*.tgz
 - name: deploy-and-test-minimal
   public: true
   serial: true
