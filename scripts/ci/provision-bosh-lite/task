@@ -24,7 +24,6 @@ provision_bosh_lite() {
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
-  echo "${BOSH_LITE_IP}" > ../bosh-lite-ip/bosh-lite-ip
 
   sleep_time=20
   echo "sleeping ${sleep_time} seconds to allow bosh-director to come online"
