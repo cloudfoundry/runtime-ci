@@ -4,13 +4,13 @@ set -exu
 root_dir="${PWD}"
 
 # Inputs
-BOSH_DIRECTOR=$(cat ${BOSH_DIRECTOR_FILE:?"Path to BOSH_DIRECTOR_FILE must be provided"})
-BOSH_USER=$(cat ${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"})
+BOSH_DIRECTOR=$(cat "${BOSH_DIRECTOR_FILE:?"Path to BOSH_DIRECTOR_FILE must be provided"}")
+BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
 set +x
-BOSH_PASSWORD=$(cat ${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"})
+BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
 set -x
 
 # Outputs
