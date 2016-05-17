@@ -26,8 +26,7 @@ properties:
 
 EOF
 
-  echo "admin" > bosh-lite-creds/username
-  echo "admin" > bosh-lite-creds/password
+  cat deployments/stub.yml
 }
 
 main() {

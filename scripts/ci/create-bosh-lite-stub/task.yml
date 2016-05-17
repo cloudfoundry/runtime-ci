@@ -9,7 +9,6 @@ inputs:
 
 outputs:
 - name: deployments
-- name: bosh-lite-creds
 
 run:
   path: runtime-ci/scripts/ci/create-bosh-lite-stub/task
