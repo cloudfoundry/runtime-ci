@@ -15,6 +15,7 @@ groups:
   - a1-smoke-tests
   - a1-diego-deploy
   - a1-diego-cats
+  - a1-diego-cats-task
   - vsphere-cf-deploy
   - vsphere-smoke-tests
   - vsphere-cf-cats
@@ -1251,6 +1252,88 @@ jobs:
       put: a1-diego-cats-acceptance-tests-logs
       params:
         file: logs-dir/diego-cats.*.tgz
+
+- name: a1-diego-cats-task
+  public: true
+  serial_groups:
+  - diego-deploy-and-diego-cats-lock
+  - cf-deploy-and-diego-cats-lock
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: manifest
+        resource: cf-a1-manifest
+        trigger: true
+        passed: [ a1-diego-cats ]
+      - get: cf-release
+        resource: cf-release-develop
+        passed: [a1-diego-cats]
+      - get: cf-release-tarball
+        passed: [a1-diego-cats]
+        trigger: true
+      - get: runtime-ci
+      - get: deployments
+        resource: a1-env
+      - get: aws-stemcell
+        passed: [ a1-diego-cats ]
+        params:
+          tarball: false
+        trigger: true
+      - get: diego-final-releases
+        passed: [ a1-diego-cats ]
+        trigger: true
+      - get: diego-release-master
+        resource: diego-release-master
+        trigger: true
+        passed: [ a1-diego-cats ]
+        params:
+          submodules: none
+      - get: garden-linux-release-tarball
+        trigger: true
+        passed: [ a1-diego-cats ]
+        params:
+          tarball: false
+      - get: etcd-release-tarball
+        trigger: true
+        passed: [ a1-diego-cats ]
+        params:
+          tarball: false
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+        passed: [ a1-diego-cats ]
+        params:
+          tarball: false
+  - task: enable-docker
+    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+    params:
+      CF_TARGET: api.a1.cf-app.com
+      CF_USER: {{a1_admin_username}}
+      CF_PASSWORD: {{a1_admin_password}}
+  - task: cf-acceptance-tests
+    file: runtime-ci/scripts/ci/run-cats/task.yml
+    params:
+      INCLUDE_BACKEND_COMPATIBILITY: false
+      INCLUDE_INTERNET_DEPENDENT: true
+      INCLUDE_DIEGO_DOCKER: true
+      INCLUDE_DIEGO_SSH: true
+      INCLUDE_LOGGING: true
+      INCLUDE_ROUTE_SERVICES: true
+      INCLUDE_ROUTING: true
+      INCLUDE_SECURITY_GROUPS: true
+      INCLUDE_SERVICES: true
+      INCLUDE_SSO: true
+      INCLUDE_V3: true
+      INCLUDE_OPERATOR: true
+      SKIP_SSO: false
+      BACKEND: diego
+      CF_API: "api.a1.cf-app.com"
+      CF_ADMIN_USER: {{a1_admin_username}}
+      CF_ADMIN_PASSWORD: {{a1_admin_password}}
+      CF_APPS_DOMAIN: a1-app.cf-app.com
+      SKIP_SSL_VALIDATION: "true"
+      USE_HTTP: "true"
+      NODES: 6
 
 - name: rc
   public: true
