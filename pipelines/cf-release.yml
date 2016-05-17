@@ -6,7 +6,7 @@ groups:
   - create-release
   - deploy-and-test-tabasco
   - deploy-and-test-openstack
-  - provision-bosh-lite
+  - bosh-lite-provision
   - bosh-lite-cf-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
@@ -659,7 +659,7 @@ jobs:
         params:
           file: logs-dir/acceptance_tests.*.tgz
 
-- name: provision-bosh-lite
+- name: bosh-lite-provision
   public: true
   serial: true
   plan:
@@ -682,7 +682,7 @@ jobs:
         AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
         AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-    - task: provision-bosh-lite
+    - task: bosh-lite-provision
       privileged: true
       file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
       params:
@@ -705,15 +705,15 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [provision-bosh-lite]
+        passed: [bosh-lite-provision]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [provision-bosh-lite]
+        passed: [bosh-lite-provision]
       - get: runtime-ci
       - get: bosh-lite-ip
         resource: bosh-lite-ip
-        passed: [provision-bosh-lite]
+        passed: [bosh-lite-provision]
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
