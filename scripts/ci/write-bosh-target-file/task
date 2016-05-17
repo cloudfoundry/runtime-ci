@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -xeu
+
+echo "${BOSH_TARGET}" > "${BOSH_TARGET_FILE_DIR}/bosh_target"

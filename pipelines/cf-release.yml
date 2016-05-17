@@ -85,14 +85,6 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
-- name: bosh-lite-ip
-  type: s3
-  source:
-    bucket: bosh-lite-ip
-    versioned_file: bosh-lite-ip
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
 - name: tabasco-acceptance-tests-logs
   type: s3
   source:
@@ -706,10 +698,6 @@ jobs:
         BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
         SSH_KEY: {{bosh_lite_private_key}}
-  - aggregate:
-    - put: bosh-lite-ip
-      params:
-        file: bosh-lite-ip/bosh-lite-ip
 - name: bosh-lite-cf-deploy
   public: true
   serial_groups:
@@ -727,10 +715,6 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
-      - get: bosh-lite-ip
-        resource: bosh-lite-ip
-        passed: [bosh-lite-provision]
-        trigger: true
       - get: bosh-lite-stemcell
         passed: [bosh-lite-provision]
         trigger: true
@@ -755,9 +739,13 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
         STUBS_PATH: deployments/*.yml
+    - task: write-bosh-target-file
+      file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
+      params:
+        BOSH_TARGET: {{bosh_lite_private_ip}}
     - put: bosh-lite-deployment
       params:
-        target_file: bosh-lite-ip/bosh-lite-ip
+        target_file: bosh-target-file-dir/bosh_target
         manifest: manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
@@ -775,7 +763,7 @@ jobs:
         RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
     - put: bosh-lite-deployment-diego
       params:
-        target_file: bosh-lite-ip/bosh-lite-ip
+        target_file: bosh-target-file-dir/bosh_target
         manifest: generated-diego-manifest/diego-deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases:
@@ -804,16 +792,16 @@ jobs:
       - get: cf-release-tarball
         passed: [bosh-lite-cf-deploy]
         trigger: true
-      - get: bosh-director-file-dir
-        resource: bosh-lite-ip
-        passed: [bosh-lite-cf-deploy]
-        trigger: true
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+    - task: write-bosh-target-file
+      file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
+      params:
+        BOSH_TARGET: {{bosh_lite_private_ip}}
     - task: run-smoke-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
-        BOSH_DIRECTOR_FILE: bosh-director-file-dir/bosh-lite-ip
+        BOSH_DIRECTOR_FILE: bosh-target-file-dir/bosh_target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
@@ -838,16 +826,16 @@ jobs:
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true
-      - get: bosh-director-file-dir
-        resource: bosh-lite-ip
-        passed: [bosh-lite-smoke-tests]
-        trigger: true
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+    - task: write-bosh-target-file
+      file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
+      params:
+        BOSH_TARGET: {{bosh_lite_private_ip}}
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
-        BOSH_DIRECTOR_FILE: bosh-director-file-dir/bosh-lite-ip
+        BOSH_DIRECTOR_FILE: bosh-target-file-dir/bosh_target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden

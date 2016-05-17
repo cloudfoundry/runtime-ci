@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/write-bosh-target-file
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: bosh-target-file-dir
+
+run:
+  path: runtime-ci/scripts/ci/write-bosh-target-file/task
+
+params:
+  BOSH_TARGET:
+  BOSH_TARGET_FILE_DIR: bosh-target-file-dir
