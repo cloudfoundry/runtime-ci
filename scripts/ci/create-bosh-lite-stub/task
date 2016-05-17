@@ -10,7 +10,7 @@ create_stub() {
 director_uuid: $DIRECTOR_UUID
 properties:
   acceptance_tests:
-    nodes: 1
+    nodes: 2
     include_sso: true
     include_operator: true
     include_logging: true
