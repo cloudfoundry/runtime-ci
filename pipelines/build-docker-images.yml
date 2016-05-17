@@ -13,7 +13,6 @@ groups:
   - build-create-release-notes-template-docker-image
   - build-delete-deployment-docker-image
   - build-deploy-cf-alone-docker-image
-  - build-deploy-cf-to-bosh-lite-docker-image
   - build-deprovision-bosh-lite-docker-image
   - build-emit-datadog-event-docker-image
   - build-emit-datadog-metric-docker-image
@@ -116,12 +115,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/deploy-cf-alone/Dockerfile]
-- name: runtime-ci-deploy-cf-to-bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/deploy-cf-to-bosh-lite/Dockerfile]
 - name: runtime-ci-deprovision-bosh-lite
   type: git
   source:
@@ -330,13 +323,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/deploy-cf-alone
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: deploy-cf-to-bosh-lite-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/deploy-cf-to-bosh-lite
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -721,26 +707,6 @@ jobs:
       - put: deploy-cf-alone-pipeline-image
         params:
           build: runtime-ci-deploy-cf-alone/scripts/ci/deploy-cf-alone
-          push: true
-- name: build-deploy-cf-to-bosh-lite-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
-    - aggregate:
-      - get: runtime-ci-deploy-cf-to-bosh-lite
-        trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: deploy-cf-to-bosh-lite-pipeline-image
-        params:
-          build: runtime-ci-deploy-cf-to-bosh-lite/scripts/ci/deploy-cf-to-bosh-lite
           push: true
 - name: build-deprovision-bosh-lite-docker-image
   public: true
