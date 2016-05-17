@@ -759,7 +759,7 @@ jobs:
         BOSH_TARGET: {{bosh_lite_private_ip}}
         BOSH_USER: admin
         ENVIRONMENT_NAME: warden
-        CF_MANIFEST: cf-manifest/*.yml
+        CF_MANIFEST: cf-manifest/manifest.yml
         DIEGO_RELEASE_DIR: diego-release
         IAAS_SETTINGS: diego-release/manifest-generation/bosh-lite-stubs/iaas-settings.yml
         PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
