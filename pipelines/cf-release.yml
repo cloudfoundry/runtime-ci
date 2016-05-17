@@ -950,25 +950,18 @@ jobs:
         trigger: true
         tags: [vsphere]
     - task: acceptance-tests
-      file: runtime-ci/scripts/ci/run-cats/task.yml
+      privileged: true
+      file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       params:
-        INCLUDE_SSO: true
-        INCLUDE_OPERATOR: true
-        INCLUDE_LOGGING: true
-        INCLUDE_SECURITY_GROUPS: true
-        INCLUDE_INTERNET_DEPENDENT: true
-        INCLUDE_SERVICES: true
-        INCLUDE_V3: false
-        SKIP_SSO: false
-        BACKEND: diego
-        CF_API: "api.cat.wild.cf-app.com"
-        CF_ADMIN_USER: {{cat_cf_admin_username}}
-        CF_ADMIN_PASSWORD: {{cat_cf_admin_password}}
-        CF_APPS_DOMAIN: cat.wild.cf-app.com
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "true"
-        NODES: 4
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat
+        ERRAND_NAME: acceptance_tests
+      ensure:
+        put: vsphere-acceptance-tests-logs
+        tags: [vsphere]
+        params:
+          file: logs-dir/acceptance_tests.*.tgz
 
 - name: a1-cf-deploy
   public: true
@@ -1192,35 +1185,30 @@ jobs:
         passed: [ a1-smoke-tests ]
         params:
           tarball: false
+      - get: cf-a1-diego-manifest
+        passed: [a1-smoke-tests]
+        trigger: true
   - task: enable-docker
     file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
     params:
       CF_TARGET: api.a1.cf-app.com
       CF_USER: {{a1_admin_username}}
       CF_PASSWORD: {{a1_admin_password}}
-  - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run-cats/task.yml
+  - put: a1-diego-cats-deployment
     params:
-      INCLUDE_BACKEND_COMPATIBILITY: false
-      INCLUDE_INTERNET_DEPENDENT: true
-      INCLUDE_DIEGO_DOCKER: true
-      INCLUDE_DIEGO_SSH: true
-      INCLUDE_LOGGING: true
-      INCLUDE_ROUTE_SERVICES: false
-      INCLUDE_ROUTING: true
-      INCLUDE_SECURITY_GROUPS: true
-      INCLUDE_SERVICES: true
-      INCLUDE_SSO: true
-      INCLUDE_V3: false
-      SKIP_SSO: false
-      BACKEND: diego
-      CF_API: "api.a1.cf-app.com"
-      CF_ADMIN_USER: {{a1_admin_username}}
-      CF_ADMIN_PASSWORD: {{a1_admin_password}}
-      CF_APPS_DOMAIN: a1-app.cf-app.com
-      SKIP_SSL_VALIDATION: "true"
-      USE_HTTP: "true"
-      NODES: 6
+      manifest: deployments/deployments/a1-diego-cats.yml
+      releases: []
+      stemcells: []
+  - task: cf-acceptance-tests
+    file: runtime-ci/scripts/ci/run-errand/task.yml
+    params:
+      <<: *bosh-target-a1
+      DEPLOYMENT_NAME: a1-diego-cats
+      ERRAND_NAME: diego-cats
+    ensure:
+      put: a1-diego-cats-acceptance-tests-logs
+      params:
+        file: logs-dir/diego-cats.*.tgz
 
 - name: rc
   public: true
