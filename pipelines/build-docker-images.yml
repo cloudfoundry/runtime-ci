@@ -49,37 +49,37 @@ resources:
   source:
     interval: 2h
 
-- name: create-bosh-lite-creds
+- name: runtime-ci-create-bosh-lite-creds
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-bosh-lite-creds/Dockerfile]
-- name: create-bosh-lite-stub
+- name: runtime-ci-create-bosh-lite-stub
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-bosh-lite-stub/Dockerfile]
-- name: create-diego-manifest
+- name: runtime-ci-create-diego-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-diego-manifest/Dockerfile]
-- name: run-errand-bbl
+- name: runtime-ci-run-errand-bbl
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-errand-bbl/Dockerfile]
-- name: write-bosh-target-file
+- name: runtime-ci-write-bosh-target-file
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-bosh-target-file/Dockerfile]
-- name: bosh-deploy
+- name: runtime-ci-bosh-deploy
   type: git
   source:
     branch: master
