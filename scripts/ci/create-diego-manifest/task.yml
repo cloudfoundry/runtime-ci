@@ -16,6 +16,7 @@ params:
   BOSH_TARGET: ~
   BOSH_USER: ~
   ENVIRONMENT_NAME: ~
+  CF_MANIFEST:
   DIEGO_RELEASE_DIR: diego-release
   GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
   PROPERTY_OVERRIDES:

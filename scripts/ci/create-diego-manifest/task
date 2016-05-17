@@ -8,10 +8,10 @@ set +x
 BOSH_PASSWORD="${BOSH_PASSWORD:?"\$BOSH_PASSWORD not set"}"
 set -x
 DIEGO_RELEASE_DIR="${root_dir}/${DIEGO_RELEASE_DIR:?"\$DIEGO_RELEASE_DIR not set"}"
-ENVIRONMENT_NAME="${ENVIRONMENT_NAME:?"\$ENVIRONMENT_NAME not set"}"
 BOSH_USER="${BOSH_USER:?"\$BOSH_USER not set"}"
 BOSH_TARGET="${BOSH_TARGET:?"\$BOSH_TARGET not set"}"
 
+CF_MANIFEST=${root_dir}/${CF_MANIFEST:?"\$CF_MANIFEST not set"}
 PROPERTY_OVERRIDES="${root_dir}/${PROPERTY_OVERRIDES:?"\$PROPERTY_OVERRIDES not set"}"
 INSTANCE_COUNT_OVERRIDES="${root_dir}/${INSTANCE_COUNT_OVERRIDES:?"\$INSTANCE_COUNT_OVERRIDES not set"}"
 RELEASE_VERSIONS="${root_dir}/${RELEASE_VERSIONS:?"\$RELEASE_VERSIONS not set"}"
@@ -20,19 +20,14 @@ IAAS_SETTINGS="${root_dir}/${IAAS_SETTINGS:?"\$IAAS_SETTINGS not set"}"
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
 
-
-cf_deployment_name="cf-${ENVIRONMENT_NAME}"
-
 my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 scripts_dir="$(cd "${my_dir}/.." && pwd)"
 
 "${scripts_dir}/bosh_setup"
 
 pushd "${DIEGO_RELEASE_DIR}"
-  bosh download manifest "${cf_deployment_name}" > /tmp/cf.yml
-
   ./scripts/generate-deployment-manifest \
-    -c /tmp/cf.yml \
+    -c "${CF_MANIFEST}" \
     -i "${IAAS_SETTINGS}" \
     -p "${PROPERTY_OVERRIDES}" \
     -n "${INSTANCE_COUNT_OVERRIDES}" \
