@@ -35,6 +35,12 @@ groups:
   - build-generate-deployment-manifest-from-bbl-docker-image
   - build-setup-infrastructure-docker-image
   - build-check-deployment-docker-image
+  - build-create-bosh-lite-creds-docker-image
+  - build-create-bosh-lite-stub-docker-image
+  - build-create-diego-manifest-docker-image
+  - build-run-errand-bbl-docker-image
+  - build-write-bosh-target-file-docker-image
+  - build-bosh-deploy-docker-image
 
 resources:
 - name: weekly
