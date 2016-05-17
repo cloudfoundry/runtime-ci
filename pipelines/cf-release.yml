@@ -672,9 +672,12 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [deploy-and-test-tabasco]
+        params:
+          submodules: none
       - get: bosh-lite
       - get: runtime-ci
       - get: bosh-lite-stemcell
+        trigger: true
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -710,10 +713,16 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-provision]
+        params:
+          submodules: none
       - get: runtime-ci
       - get: bosh-lite-ip
         resource: bosh-lite-ip
         passed: [bosh-lite-provision]
+        trigger: true
+      - get: bosh-lite-stemcell
+        passed: [bosh-lite-provision]
+        trigger: true
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
@@ -740,6 +749,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-cf-deploy]
+        params:
+          submodules: none
       - get: runtime-ci
     - task: run-smoke-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
@@ -760,6 +771,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-smoke-tests]
+        params:
+          submodules: none
       - get: runtime-ci
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
