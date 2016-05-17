@@ -726,7 +726,7 @@ jobs:
         STUBS_PATH: deployments/*.yml
     - put: bosh-lite-deployment
       params:
-        target_file: bosh-lite-ip/ip
+        target_file: bosh-lite-ip/bosh-lite-ip
         manifest: manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
