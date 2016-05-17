@@ -661,7 +661,8 @@ jobs:
 
 - name: bosh-lite-provision
   public: true
-  serial: true
+  serial_groups:
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -702,7 +703,8 @@ jobs:
         file: bosh-lite-ip/bosh-lite-ip
 - name: bosh-lite-cf-deploy
   public: true
-  serial: true
+  serial_groups:
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -741,7 +743,8 @@ jobs:
         releases: [ cf-release-tarball/*.tgz]
 - name: bosh-lite-smoke-tests
   public: true
-  serial: true
+  serial_groups:
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -763,7 +766,8 @@ jobs:
         LOGS_DIR: smoke-tests-logs-dir
 - name: bosh-lite-acceptance-tests
   public: true
-  serial: true
+  serial_groups:
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
