@@ -1,0 +1,27 @@
+---
+platform: linux
+
+image: docker:///relintdockerhubpushbot/generate-diego-manifest
+
+inputs:
+- name: deployments
+- name: diego-release
+- name: runtime-ci
+
+outputs:
+- name: generated-diego-manifest
+
+params:
+  BOSH_PASSWORD: ~
+  BOSH_TARGET: ~
+  BOSH_USER: ~
+  ENVIRONMENT_NAME: ~
+  DIEGO_RELEASE_DIR: diego-release
+  GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
+  PROPERTY_OVERRIDES:
+  INSTANCE_COUNT_OVERRIDES:
+  RELEASE_VERSIONS:
+  IAAS_SETTINGS:
+
+run:
+  path: runtime-ci/scripts/ci/create-diego-manifest/task

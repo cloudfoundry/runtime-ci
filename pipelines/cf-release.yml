@@ -725,6 +725,17 @@ jobs:
       - get: bosh-lite-stemcell
         passed: [bosh-lite-provision]
         trigger: true
+      - get: diego-release
+        resource: diego-release-master
+        params: {submodules: none}
+      - get: diego-final-releases
+        trigger: true
+      - get: garden-linux-release-tarball
+        trigger: true
+      - get: etcd-release-tarball
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
@@ -741,6 +752,19 @@ jobs:
         manifest: manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
+    - task: create-diego-manifest
+      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+      params:
+        BOSH_PASSWORD: admin
+        BOSH_TARGET: {{bosh_lite_private_ip}}
+        BOSH_USER: admin
+        ENVIRONMENT_NAME: warden
+        DIEGO_RELEASE_DIR: diego-release
+        IAAS_SETTINGS: diego-release/manifest-generation/bosh-lite-stubs/iaas-settings.yml
+        PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
+        INSTANCE_COUNT_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
+        RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
+
 - name: bosh-lite-smoke-tests
   public: true
   serial_groups:
