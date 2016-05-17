@@ -1,3 +1,4 @@
+---
 platform: linux
 
 image: docker:///relintdockerhubpushbot/announce-rc

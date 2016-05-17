@@ -1,4 +1,6 @@
+---
 platform: linux
+
 image: docker:///relintdockerhubpushbot/check-deployment
 
 inputs:

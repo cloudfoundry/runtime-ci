@@ -1,6 +1,6 @@
+---
 platform: linux
 
-# git, curl, jq
 image: docker:///concourse/git-resource
 
 inputs:

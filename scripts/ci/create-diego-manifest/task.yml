@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/generate-diego-manifest
+image: docker:///relintdockerhubpushbot/create-diego-manifest
 
 inputs:
 - name: deployments
