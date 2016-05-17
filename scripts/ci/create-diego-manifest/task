@@ -37,6 +37,5 @@ pushd "${DIEGO_RELEASE_DIR}"
     -p "${PROPERTY_OVERRIDES}" \
     -n "${INSTANCE_COUNT_OVERRIDES}" \
     -v "${RELEASE_VERSIONS}" \
-    -r \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
