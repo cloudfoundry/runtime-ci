@@ -41,7 +41,7 @@ groups:
   - build-run-errand-bbl-docker-image
   - build-write-bosh-target-file-docker-image
   - build-bosh-deploy-docker-image
-  - build-verify-every-task-has-correct-docker-image-docker-image
+  - build-verify-every-task-has-docker-image
   - build-verify-every-task-has-correct-docker-build-docker-image
 
 resources:
@@ -312,7 +312,7 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: verify-every-task-has-correct-docker-image-pipeline-image
+- name: verify-every-task-has-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/verify-every-task-has-correct-docker-image
@@ -620,7 +620,7 @@ jobs:
         params:
           build: runtime-ci-verify-every-task-has-correct-docker-build/scripts/ci/verify-every-task-has-docker-build
           push: true
-- name: build-verify-every-task-has-correct-docker-image-docker-image
+- name: build-verify-every-task-has-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -636,7 +636,7 @@ jobs:
         params:
           submodules: none
     - aggregate:
-      - put: verify-every-task-has-correct-docker-image-pipeline-image
+      - put: verify-every-task-has-pipeline-image
         params:
           build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-docker-image
           push: true
