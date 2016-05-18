@@ -4,6 +4,7 @@ groups:
   - test-runtime-ci
   - all-jobs-public
   - verify-every-task-has-docker-image
+  - verify-every-task-has-docker-build
 
 resources:
 - name: runtime-ci
