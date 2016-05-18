@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker:///relintdockerhubpushbot/record-compatible-versions
+    repository: relintdockerhubpushbot/record-compatible-versions
 
 inputs:
   - name: runtime-ci

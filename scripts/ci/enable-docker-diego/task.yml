@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker:///relintdockerhubpushbot/enable-docker-diego
+    repository: relintdockerhubpushbot/enable-docker-diego
 
 inputs:
   - name: runtime-ci

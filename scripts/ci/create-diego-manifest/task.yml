@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker:///relintdockerhubpushbot/create-diego-manifest
+    repository: relintdockerhubpushbot/create-diego-manifest
 
 inputs:
 - name: diego-release

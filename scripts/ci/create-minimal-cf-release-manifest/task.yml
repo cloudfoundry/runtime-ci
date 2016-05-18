@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker:///relintdockerhubpushbot/create-minimal-cf-release-manifest
+    repository: relintdockerhubpushbot/create-minimal-cf-release-manifest
 
 inputs:
 - name: cf-release

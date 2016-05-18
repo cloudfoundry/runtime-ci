@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker:///relintdockerhubpushbot/validate-branch-freshness
+    repository: relintdockerhubpushbot/validate-branch-freshness
 
 inputs:
 - name: runtime-ci
