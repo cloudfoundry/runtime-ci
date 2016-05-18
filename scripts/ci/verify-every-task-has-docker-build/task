@@ -28,3 +28,5 @@ if [ -s "${errors_file}" ]; then
   cat "${errors_file}"
   exit 1
 fi
+
+echo "All tasks have an associated job to build their docker image"

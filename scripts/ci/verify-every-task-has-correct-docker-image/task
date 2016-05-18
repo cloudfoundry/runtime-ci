@@ -29,3 +29,5 @@ if [ -s "${errors_file}" ]; then
   cat "${errors_file}"
   exit 1
 fi
+
+echo "All tasks use the correct docker image"
