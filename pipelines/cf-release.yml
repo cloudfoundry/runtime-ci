@@ -5,8 +5,7 @@ groups:
   - cf-release-branch-freshness
   - create-release
   - deploy-and-test-openstack
-  - bosh-lite-provision
-  - bosh-lite-cf-deploy
+  - bosh-lite-provision-cf-deploy
   - bosh-lite-diego-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
@@ -625,7 +624,7 @@ jobs:
         params:
           file: logs-dir/acceptance_tests.*.tgz
 
-- name: bosh-lite-provision
+- name: bosh-lite-provision-cf-deploy
   public: true
   serial_groups:
   - bosh-lite
@@ -663,26 +662,6 @@ jobs:
         BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
         SSH_KEY: {{bosh_lite_private_key}}
-- name: bosh-lite-cf-deploy
-  public: true
-  serial_groups:
-  - bosh-lite
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-release-tarball
-        passed: [bosh-lite-provision]
-        trigger: true
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [bosh-lite-provision]
-        params:
-          submodules: none
-      - get: runtime-ci
-      - get: bosh-lite-stemcell
-        passed: [bosh-lite-provision]
-        trigger: true
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
@@ -713,11 +692,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
         params:
           submodules: none
       - get: runtime-ci
@@ -737,9 +716,9 @@ jobs:
         trigger: true
       - get: cf-manifest
         resource: bosh-lite-deployment
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
       - get: bosh-lite-stemcell
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
         trigger: true
     - aggregate:
       - task: create-diego-manifest
