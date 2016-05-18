@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///concourse/git-resource
+image: docker:///relintdockerhubpushbot/request-pm-input
 
 inputs:
 - name: cf-final-bosh-release

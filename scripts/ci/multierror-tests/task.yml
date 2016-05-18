@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///golang#1.6
+image: docker:///relintdockerhubpushbot/multierror-tests
 
 inputs:
 - name: runtime-ci
