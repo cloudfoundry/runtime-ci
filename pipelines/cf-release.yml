@@ -396,14 +396,13 @@ jobs:
           params:
             URL: &canibump-url canibump.cfapps.io
             TOKEN: {{canibump_token}}
-            REASON: "could not clone cf-release"
+            REASON: "could not clone cf-release, possibly due to unpushed submodule"
       - get: runtime-ci
-    - aggregate:
-      - task: run-cf-release-unit-tests
-        privileged: true
-        file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
-        params:
-          CF_RELEASE_DIR: 'cf-release-develop'
+    - task: run-cf-release-unit-tests
+      privileged: true
+      file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
+      params:
+        CF_RELEASE_DIR: 'cf-release-develop'
       on_failure:
         task: cannot-bump
         file: runtime-ci/scripts/ci/cannot-bump/task.yml
