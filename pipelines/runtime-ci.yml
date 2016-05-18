@@ -4,7 +4,7 @@ groups:
   - test-runtime-ci
   - all-jobs-public
   - verify-every-task-has-correct-docker-image
-  - verify-every-task-has-correct-docker-build
+  - verify-every-task-has-docker-build
 
 resources:
 - name: runtime-ci
@@ -41,11 +41,11 @@ jobs:
   - task: verify-every-task-has-correct-docker-image
     file: runtime-ci/scripts/ci/verify-every-task-has-correct-docker-image/task.yml
 
-- name: verify-every-task-has-correct-docker-build
+- name: verify-every-task-has-docker-build
   public: true
   plan:
   - aggregate:
     - get: runtime-ci
       trigger: true
-  - task: verify-every-task-has-correct-docker-build
-    file: runtime-ci/scripts/ci/verify-every-task-has-correct-docker-build/task.yml
+  - task: verify-every-task-has-docker-build
+    file: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task.yml
