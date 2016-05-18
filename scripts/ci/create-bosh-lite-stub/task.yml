@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/create-bosh-lite-stub
+  source:
+    repository: docker:///relintdockerhubpushbot/create-bosh-lite-stub
 
 inputs:
 - name: runtime-ci

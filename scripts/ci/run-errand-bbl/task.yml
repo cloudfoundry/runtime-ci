@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/run-errand-bbl
+  source:
+    repository: docker:///relintdockerhubpushbot/run-errand-bbl
 
 inputs:
 - name: runtime-ci

@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/merge-master-into-develop
+  source:
+    repository: docker:///relintdockerhubpushbot/merge-master-into-develop
 
 inputs:
 - name: runtime-ci

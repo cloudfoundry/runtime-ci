@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/unit-tests-cf-deployment
+  source:
+    repository: docker:///relintdockerhubpushbot/unit-tests-cf-deployment
 
 inputs:
 - name: cf-deployment

@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/deprovision-bosh-lite
+  source:
+    repository: docker:///relintdockerhubpushbot/deprovision-bosh-lite
 
 inputs:
 - name: runtime-ci

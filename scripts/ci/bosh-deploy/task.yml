@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/bosh-deploy
+  source:
+    repository: docker:///relintdockerhubpushbot/bosh-deploy
 
 inputs:
 - name: runtime-ci

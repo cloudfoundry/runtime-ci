@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/can-bump
+  source:
+    repository: docker:///relintdockerhubpushbot/can-bump
 
 inputs:
 - name: runtime-ci

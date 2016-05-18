@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/multierror-tests
+  source:
+    repository: docker:///relintdockerhubpushbot/multierror-tests
 
 inputs:
 - name: runtime-ci

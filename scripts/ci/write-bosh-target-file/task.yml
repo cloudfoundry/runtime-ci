@@ -3,7 +3,8 @@ platform: linux
 
 image_resource:
   type: docker
-  repository: docker:///relintdockerhubpushbot/write-bosh-target-file
+  source:
+    repository: docker:///relintdockerhubpushbot/write-bosh-target-file
 
 inputs:
 - name: runtime-ci
