@@ -20,6 +20,7 @@ pushd runtime-ci/scripts/ci >/dev/null
 popd >/dev/null
 
 if [ -s "${errors_file}" ]; then
+  echo "The following tasks are missing from the build-docker-image pipeline"
   cat "${errors_file}"
   exit 1
 fi
