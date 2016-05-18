@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -eu
+
+function verify_image_exists_in_pipeline_yml {
+  set +e
+  if ! grep "$(basename "${1}")" "${root_dir}/pipelines/build-docker-images.yml" >/dev/null; then
+    echo "${1}"
+  fi
+  set -e
+}
+
+root_dir=$(pwd)/runtime-ci
+errors_file=$(mktemp /tmp/errors.XXXXX)
+pushd runtime-ci/scripts/ci >/dev/null
+  find . -type d ! -path . | while read dir; do
+    pushd "${dir}" >/dev/null
+      verify_image_exists_in_pipeline_yml "${dir}" >> "${errors_file}"
+    popd >/dev/null; done
+popd >/dev/null
+
+if [ -s "${errors_file}" ]; then
+  cat "${errors_file}"
+  exit 1
+fi
