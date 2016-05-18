@@ -9,7 +9,7 @@ RUNTIME_CI_DIR="${root_dir}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR must be provided
 
 function verify_image_exists_in_pipeline_yml {
   set +e
-  if ! grep "$(basename "${1}")" "${root_dir}/pipelines/build-docker-images.yml" >/dev/null; then
+  if ! grep "$(basename "${1}")" "${RUNTIME_CI_DIR}/pipelines/build-docker-images.yml" >/dev/null; then
     echo "${1}"
   fi
   set -e
