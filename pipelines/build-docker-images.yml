@@ -42,6 +42,7 @@ groups:
   - build-write-bosh-target-file-docker-image
   - build-bosh-deploy-docker-image
   - build-verify-every-task-has-docker-image-docker-image
+  - build-verify-every-task-has-docker-build-docker-image
 
 resources:
 - name: weekly
@@ -56,6 +57,12 @@ resources:
   source:
     interval: 2h
 
+- name: runtime-ci-verify-every-task-has-docker-build
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/verify-every-task-has-docker-build/Dockerfile]
 - name: runtime-ci-verify-every-task-has-docker-image
   type: git
   source:
@@ -298,6 +305,13 @@ resources:
     paths: [scripts/ci/check-deployment/Dockerfile]
 
 # All the docker images
+- name: verify-every-task-has-docker-build-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/verify-every-task-has-docker-build
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: verify-every-task-has-docker-image-pipeline-image
   type: docker-image
   source:
@@ -586,6 +600,26 @@ jobs:
   plan:
   - get: trigger-resource
 
+- name: build-verify-every-task-has-docker-build-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - get: weekly
+      trigger: true
+    - get: trigger-resource
+      trigger: true
+      passed: [trigger-all-image-builds]
+    - aggregate:
+      - get: runtime-ci-verify-every-task-has-docker-build
+        trigger: true
+        params:
+          submodules: none
+    - aggregate:
+      - put: verify-every-task-has-docker-build-pipeline-image
+        params:
+          build: runtime-ci-verify-every-task-has-docker-build/scripts/ci/verify-every-task-has-docker-build
+          push: true
 - name: build-verify-every-task-has-docker-image-docker-image
   public: true
   plan:
