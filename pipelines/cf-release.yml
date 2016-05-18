@@ -735,16 +735,21 @@ jobs:
       - get: cf-manifest
         resource: bosh-lite-deployment
         passed: [bosh-lite-cf-deploy]
-    - task: create-diego-manifest
-      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-      params:
-        BOSH_PASSWORD: admin
-        BOSH_TARGET: {{bosh_lite_private_ip}}
-        BOSH_USER: admin
-        IAAS_SETTINGS: diego-release/manifest-generation/bosh-lite-stubs/iaas-settings.yml
-        PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
-        INSTANCE_COUNT_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
-        RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
+    - aggregate:
+      - task: create-diego-manifest
+        file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+        params:
+          BOSH_PASSWORD: admin
+          BOSH_TARGET: {{bosh_lite_private_ip}}
+          BOSH_USER: admin
+          IAAS_SETTINGS: diego-release/manifest-generation/bosh-lite-stubs/iaas-settings.yml
+          PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
+          INSTANCE_COUNT_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
+          RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
+      - task: write-bosh-target-file
+        file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
+        params:
+          BOSH_TARGET: {{bosh_lite_private_ip}}
     - put: bosh-lite-deployment-diego
       params:
         target_file: bosh-target-file-dir/bosh_target
