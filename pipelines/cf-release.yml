@@ -735,6 +735,9 @@ jobs:
       - get: cf-manifest
         resource: bosh-lite-deployment
         passed: [bosh-lite-cf-deploy]
+      - get: bosh-lite-stemcell
+        passed: [bosh-lite-cf-deploy]
+        trigger: true
     - aggregate:
       - task: create-diego-manifest
         file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
