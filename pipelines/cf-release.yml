@@ -7,6 +7,7 @@ groups:
   - deploy-and-test-openstack
   - bosh-lite-provision
   - bosh-lite-cf-deploy
+  - bosh-lite-diego-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
   - deploy-and-test-minimal
@@ -682,17 +683,6 @@ jobs:
       - get: bosh-lite-stemcell
         passed: [bosh-lite-provision]
         trigger: true
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-      - get: diego-final-releases
-        trigger: true
-      - get: garden-linux-release-tarball
-        trigger: true
-      - get: etcd-release-tarball
-        trigger: true
-      - get: cflinuxfs2-rootfs-release-tarball
-        trigger: true
     - task: create-bosh-lite-stub
       file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
       params:
@@ -714,8 +704,37 @@ jobs:
         manifest: manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
-    - get: cf-manifest
-      resource: bosh-lite-deployment
+- name: bosh-lite-diego-deploy
+  public: true
+  serial_groups:
+  - bosh-lite
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release-tarball
+        passed: [bosh-lite-cf-deploy]
+        trigger: true
+      - get: cf-release
+        resource: cf-release-develop
+        passed: [bosh-lite-cf-deploy]
+        params:
+          submodules: none
+      - get: runtime-ci
+      - get: diego-release
+        resource: diego-release-master
+        params: {submodules: none}
+      - get: diego-final-releases
+        trigger: true
+      - get: garden-linux-release-tarball
+        trigger: true
+      - get: etcd-release-tarball
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+      - get: cf-manifest
+        resource: bosh-lite-deployment
+        passed: [bosh-lite-cf-deploy]
     - task: create-diego-manifest
       file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
       params:
@@ -736,7 +755,6 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
-
 - name: bosh-lite-smoke-tests
   public: true
   serial_groups:
@@ -747,15 +765,12 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-develop
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-diego-deploy]
         params:
           submodules: none
       - get: runtime-ci
-      - get: bosh-lite-stemcell
-        passed: [bosh-lite-cf-deploy]
-        trigger: true
       - get: cf-release-tarball
-        passed: [bosh-lite-cf-deploy]
+        passed: [bosh-lite-diego-deploy]
         trigger: true
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
@@ -785,9 +800,6 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
-      - get: bosh-lite-stemcell
-        passed: [bosh-lite-smoke-tests]
-        trigger: true
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true

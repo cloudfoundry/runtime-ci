@@ -4,7 +4,6 @@ platform: linux
 image: docker:///relintdockerhubpushbot/create-diego-manifest
 
 inputs:
-- name: deployments
 - name: diego-release
 - name: runtime-ci
 - name: cf-manifest
