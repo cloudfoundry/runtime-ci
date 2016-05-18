@@ -2,7 +2,7 @@
 platform: linux
 
 image_resource:
-- type: docker
+  type: docker
   repository: docker:///relintdockerhubpushbot/create-bosh-lite-stub
 
 inputs:
