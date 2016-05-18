@@ -11,3 +11,6 @@ inputs:
 
 run:
   path: runtime-ci/scripts/ci/verify-every-task-has-docker-image/task
+
+params:
+  RUNTIME_CI_DIR: runtime-ci

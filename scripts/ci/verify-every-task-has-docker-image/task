@@ -2,9 +2,14 @@
 
 set -eu
 
+root_dir="${PWD}"
+
+# Inputs
+RUNTIME_CI_DIR="${root_dir}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR must be provided"}"
+
 function verify_image {
   set +e
-  if ! grep "repository: docker:///relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
+  if ! grep "repository: relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
     echo "${1}/task.yml"
     grep 'image:' task.yml
   fi
@@ -12,14 +17,15 @@ function verify_image {
 }
 
 errors_file=$(mktemp /tmp/errors.XXXXX)
-pushd runtime-ci/scripts/ci >/dev/null
-  find . -type d ! -path . | while read dir; do
+pushd "${RUNTIME_CI_DIR}/scripts/ci" >/dev/null
+  find . -type d ! -path . | while read -r dir; do
     pushd "${dir}" >/dev/null
       verify_image "${dir}" >> "${errors_file}"
     popd >/dev/null; done
 popd >/dev/null
 
 if [ -s "${errors_file}" ]; then
+  echo "The following tasks are not using the correct docker image:"
   cat "${errors_file}"
   exit 1
 fi
