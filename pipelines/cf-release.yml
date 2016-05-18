@@ -789,7 +789,7 @@ jobs:
     - task: run-smoke-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
-        BOSH_DIRECTOR_FILE: bosh-target-file-dir/bosh_target
+        BOSH_TARGET_FILE: bosh-target-file-dir/bosh_target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
@@ -820,7 +820,7 @@ jobs:
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
-        BOSH_DIRECTOR_FILE: bosh-target-file-dir/bosh_target
+        BOSH_TARGET_FILE: bosh-target-file-dir/bosh_target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
