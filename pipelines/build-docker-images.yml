@@ -605,818 +605,695 @@ jobs:
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-verify-every-task-has-correct-docker-build
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: verify-every-task-has-correct-docker-build-pipeline-image
-        params:
-          build: runtime-ci-verify-every-task-has-correct-docker-build/scripts/ci/verify-every-task-has-docker-build
-          push: true
+    - put: verify-every-task-has-correct-docker-build-pipeline-image
+      params:
+        build: runtime-ci-verify-every-task-has-correct-docker-build/scripts/ci/verify-every-task-has-docker-build
+        push: true
 - name: build-verify-every-task-has-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-verify-every-task-has-correct-docker-image
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: verify-every-task-has-pipeline-image
-        params:
-          build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-docker-image
-          push: true
+    - put: verify-every-task-has-pipeline-image
+      params:
+        build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-docker-image
+        push: true
 - name: build-bosh-deploy-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-bosh-deploy
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: bosh-deploy-pipeline-image
-        params:
-          build: runtime-ci-bosh-deploy/scripts/ci/bosh-deploy
-          push: true
+    - put: bosh-deploy-pipeline-image
+      params:
+        build: runtime-ci-bosh-deploy/scripts/ci/bosh-deploy
+        push: true
 - name: build-write-bosh-target-file-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-write-bosh-target-file
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: write-bosh-target-file-pipeline-image
-        params:
-          build: runtime-ci-write-bosh-target-file/scripts/ci/write-bosh-target-file
-          push: true
+    - put: write-bosh-target-file-pipeline-image
+      params:
+        build: runtime-ci-write-bosh-target-file/scripts/ci/write-bosh-target-file
+        push: true
 - name: build-run-errand-bbl-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-errand-bbl
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-errand-bbl-pipeline-image
-        params:
-          build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
-          push: true
+    - put: run-errand-bbl-pipeline-image
+      params:
+        build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
+        push: true
 - name: build-create-diego-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-diego-manifest
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-diego-manifest-pipeline-image
-        params:
-          build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
-          push: true
+    - put: create-diego-manifest-pipeline-image
+      params:
+        build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
+        push: true
 - name: build-create-bosh-lite-stub-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-bosh-lite-stub
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-bosh-lite-stub-pipeline-image
-        params:
-          build: runtime-ci-create-bosh-lite-stub/scripts/ci/create-bosh-lite-stub
-          push: true
+    - put: create-bosh-lite-stub-pipeline-image
+      params:
+        build: runtime-ci-create-bosh-lite-stub/scripts/ci/create-bosh-lite-stub
+        push: true
 - name: build-create-bosh-lite-creds-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-bosh-lite-creds
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-bosh-lite-creds-pipeline-image
-        params:
-          build: runtime-ci-create-bosh-lite-creds/scripts/ci/create-bosh-lite-creds
-          push: true
+    - put: create-bosh-lite-creds-pipeline-image
+      params:
+        build: runtime-ci-create-bosh-lite-creds/scripts/ci/create-bosh-lite-creds
+        push: true
 - name: build-announce-rc-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-announce-rc
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: announce-rc-pipeline-image
-        params:
-          build: runtime-ci-announce-rc/scripts/ci/announce-rc
-          push: true
+    - put: announce-rc-pipeline-image
+      params:
+        build: runtime-ci-announce-rc/scripts/ci/announce-rc
+        push: true
 - name: build-can-bump-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-can-bump
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: can-bump-pipeline-image
-        params:
-          build: runtime-ci-can-bump/scripts/ci/can-bump
-          push: true
+    - put: can-bump-pipeline-image
+      params:
+        build: runtime-ci-can-bump/scripts/ci/can-bump
+        push: true
 - name: build-cannot-bump-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-cannot-bump
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: cannot-bump-pipeline-image
-        params:
-          build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
-          push: true
+    - put: cannot-bump-pipeline-image
+      params:
+        build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
+        push: true
 - name: build-commit-blessing-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-commit-blessing
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: commit-blessing-pipeline-image
-        params:
-          build: runtime-ci-commit-blessing/scripts/ci/commit-blessing
-          push: true
+    - put: commit-blessing-pipeline-image
+      params:
+        build: runtime-ci-commit-blessing/scripts/ci/commit-blessing
+        push: true
 - name: build-create-cf-release-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-cf-release-manifest
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-cf-release-manifest-pipeline-image
-        params:
-          build: runtime-ci-create-cf-release-manifest/scripts/ci/create-cf-release-manifest
-          push: true
+    - put: create-cf-release-manifest-pipeline-image
+      params:
+        build: runtime-ci-create-cf-release-manifest/scripts/ci/create-cf-release-manifest
+        push: true
 - name: build-create-final-release-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-final-release
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-final-release-pipeline-image
-        params:
-          build: runtime-ci-create-final-release/scripts/ci/create-final-release
-          push: true
+    - put: create-final-release-pipeline-image
+      params:
+        build: runtime-ci-create-final-release/scripts/ci/create-final-release
+        push: true
 - name: build-create-minimal-cf-release-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-minimal-cf-release-manifest
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-minimal-cf-release-manifest-pipeline-image
-        params:
-          build: runtime-ci-create-minimal-cf-release-manifest/scripts/ci/create-minimal-cf-release-manifest
-          push: true
+    - put: create-minimal-cf-release-manifest-pipeline-image
+      params:
+        build: runtime-ci-create-minimal-cf-release-manifest/scripts/ci/create-minimal-cf-release-manifest
+        push: true
 - name: build-create-release-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-release
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-release-pipeline-image
-        params:
-          build: runtime-ci-create-release/scripts/ci/create-release
-          push: true
+    - put: create-release-pipeline-image
+      params:
+        build: runtime-ci-create-release/scripts/ci/create-release
+        push: true
 - name: build-create-release-notes-template-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-create-release-notes-template
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: create-release-notes-template-pipeline-image
-        params:
-          build: runtime-ci-create-release-notes-template/scripts/ci/create-release-notes-template
-          push: true
+    - put: create-release-notes-template-pipeline-image
+      params:
+        build: runtime-ci-create-release-notes-template/scripts/ci/create-release-notes-template
+        push: true
 - name: build-delete-deployment-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-delete-deployment
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: delete-deployment-pipeline-image
-        params:
-          build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
-          push: true
+    - put: delete-deployment-pipeline-image
+      params:
+        build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
+        push: true
 - name: build-deploy-cf-alone-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-deploy-cf-alone
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: deploy-cf-alone-pipeline-image
-        params:
-          build: runtime-ci-deploy-cf-alone/scripts/ci/deploy-cf-alone
-          push: true
+    - put: deploy-cf-alone-pipeline-image
+      params:
+        build: runtime-ci-deploy-cf-alone/scripts/ci/deploy-cf-alone
+        push: true
 - name: build-deprovision-bosh-lite-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-deprovision-bosh-lite
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: deprovision-bosh-lite-pipeline-image
-        params:
-          build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
-          push: true
+    - put: deprovision-bosh-lite-pipeline-image
+      params:
+        build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
+        push: true
 - name: build-emit-datadog-event-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-emit-datadog-event
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: emit-datadog-event-pipeline-image
-        params:
-          build: runtime-ci-emit-datadog-event/scripts/ci/emit-datadog-event
-          push: true
+    - put: emit-datadog-event-pipeline-image
+      params:
+        build: runtime-ci-emit-datadog-event/scripts/ci/emit-datadog-event
+        push: true
 - name: build-emit-datadog-metric-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-emit-datadog-metric
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: emit-datadog-metric-pipeline-image
-        params:
-          build: runtime-ci-emit-datadog-metric/scripts/ci/emit-datadog-metric
-          push: true
+    - put: emit-datadog-metric-pipeline-image
+      params:
+        build: runtime-ci-emit-datadog-metric/scripts/ci/emit-datadog-metric
+        push: true
 - name: build-enable-docker-diego-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-enable-docker-diego
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: enable-docker-diego-pipeline-image
-        params:
-          build: runtime-ci-enable-docker-diego/scripts/ci/enable-docker-diego
-          push: true
+    - put: enable-docker-diego-pipeline-image
+      params:
+        build: runtime-ci-enable-docker-diego/scripts/ci/enable-docker-diego
+        push: true
 - name: build-generate-diego-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-generate-diego-manifest
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: generate-diego-manifest-pipeline-image
-        params:
-          build: runtime-ci-generate-diego-manifest/scripts/ci/generate-diego-manifest
-          push: true
+    - put: generate-diego-manifest-pipeline-image
+      params:
+        build: runtime-ci-generate-diego-manifest/scripts/ci/generate-diego-manifest
+        push: true
 - name: build-merge-master-into-develop-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-merge-master-into-develop
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: merge-master-into-develop-pipeline-image
-        params:
-          build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
-          push: true
+    - put: merge-master-into-develop-pipeline-image
+      params:
+        build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
+        push: true
 - name: build-multierror-tests-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-multierror-tests
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: multierror-tests-pipeline-image
-        params:
-          build: runtime-ci-multierror-tests/scripts/ci/multierror-tests
-          push: true
+    - put: multierror-tests-pipeline-image
+      params:
+        build: runtime-ci-multierror-tests/scripts/ci/multierror-tests
+        push: true
 - name: build-provision-bosh-lite-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-provision-bosh-lite
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: provision-bosh-lite-pipeline-image
-        params:
-          build: runtime-ci-provision-bosh-lite/scripts/ci/provision-bosh-lite
-          push: true
+    - put: provision-bosh-lite-pipeline-image
+      params:
+        build: runtime-ci-provision-bosh-lite/scripts/ci/provision-bosh-lite
+        push: true
 - name: build-record-compatible-versions-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-record-compatible-versions
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: record-compatible-versions-pipeline-image
-        params:
-          build: runtime-ci-record-compatible-versions/scripts/ci/record-compatible-versions
-          push: true
+    - put: record-compatible-versions-pipeline-image
+      params:
+        build: runtime-ci-record-compatible-versions/scripts/ci/record-compatible-versions
+        push: true
 - name: build-request-pm-input-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-request-pm-input
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: request-pm-input-pipeline-image
-        params:
-          build: runtime-ci-request-pm-input/scripts/ci/request-pm-input
-          push: true
+    - put: request-pm-input-pipeline-image
+      params:
+        build: runtime-ci-request-pm-input/scripts/ci/request-pm-input
+        push: true
 - name: build-run-bosh-cleanup-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-bosh-cleanup
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-bosh-cleanup-pipeline-image
-        params:
-          build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
-          push: true
+    - put: run-bosh-cleanup-pipeline-image
+      params:
+        build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
+        push: true
 - name: build-run-cats-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cats
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-cats-pipeline-image
-        params:
-          build: runtime-ci-run-cats/scripts/ci/run-cats
-          push: true
+    - put: run-cats-pipeline-image
+      params:
+        build: runtime-ci-run-cats/scripts/ci/run-cats
+        push: true
 - name: build-run-cf-release-unit-tests-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cf-release-unit-tests
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-cf-release-unit-tests-pipeline-image
-        params:
-          build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
-          push: true
+    - put: run-cf-release-unit-tests-pipeline-image
+      params:
+        build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
+        push: true
 - name: build-run-errand-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-errand
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-errand-pipeline-image
-        params:
-          build: runtime-ci-run-errand/scripts/ci/run-errand
-          push: true
+    - put: run-errand-pipeline-image
+      params:
+        build: runtime-ci-run-errand/scripts/ci/run-errand
+        push: true
 - name: build-run-smoketests-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-run-smoketests
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: run-smoketests-pipeline-image
-        params:
-          build: runtime-ci-run-smoketests/scripts/ci/run-smoketests
-          push: true
+    - put: run-smoketests-pipeline-image
+      params:
+        build: runtime-ci-run-smoketests/scripts/ci/run-smoketests
+        push: true
 - name: build-runtime-ci-tests-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-runtime-ci-tests
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: runtime-ci-tests-pipeline-image
-        params:
-          build: runtime-ci-runtime-ci-tests/scripts/ci/runtime-ci-tests
-          push: true
+    - put: runtime-ci-tests-pipeline-image
+      params:
+        build: runtime-ci-runtime-ci-tests/scripts/ci/runtime-ci-tests
+        push: true
 - name: build-unit-tests-cf-deployment-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-unit-tests-cf-deployment
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: unit-tests-cf-deployment-pipeline-image
-        params:
-          build: runtime-ci-unit-tests-cf-deployment/scripts/ci/unit-tests-cf-deployment
-          push: true
+    - put: unit-tests-cf-deployment-pipeline-image
+      params:
+        build: runtime-ci-unit-tests-cf-deployment/scripts/ci/unit-tests-cf-deployment
+        push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-validate-all-jobs-public
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: validate-all-jobs-public-pipeline-image
-        params:
-          build: runtime-ci-validate-all-jobs-public/scripts/ci/validate-all-jobs-public
-          push: true
+    - put: validate-all-jobs-public-pipeline-image
+      params:
+        build: runtime-ci-validate-all-jobs-public/scripts/ci/validate-all-jobs-public
+        push: true
 - name: build-validate-branch-freshness-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-validate-branch-freshness
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: validate-branch-freshness-pipeline-image
-        params:
-          build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
-          push: true
+    - put: validate-branch-freshness-pipeline-image
+      params:
+        build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
+        push: true
 - name: build-generate-deployment-manifest-from-bbl-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-generate-deployment-manifest-from-bbl
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: generate-deployment-manifest-from-bbl-pipeline-image
-        params:
-          build: runtime-ci-generate-deployment-manifest-from-bbl/scripts/ci/generate-deployment-manifest-from-bbl
-          push: true
+    - put: generate-deployment-manifest-from-bbl-pipeline-image
+      params:
+        build: runtime-ci-generate-deployment-manifest-from-bbl/scripts/ci/generate-deployment-manifest-from-bbl
+        push: true
 - name: build-setup-infrastructure-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-setup-infrastructure
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: setup-infrastructure-pipeline-image
-        params:
-          build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure
-          push: true
+    - put: setup-infrastructure-pipeline-image
+      params:
+        build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure
+        push: true
 - name: build-check-deployment-docker-image
   public: true
   plan:
   - timeout: 4h
     do:
-    - get: weekly
-      trigger: true
-    - get: trigger-resource
-      trigger: true
-      passed: [trigger-all-image-builds]
     - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
       - get: runtime-ci-check-deployment
         trigger: true
-        params:
-          submodules: none
-    - aggregate:
-      - put: check-deployment-pipeline-image
-        params:
-          build: runtime-ci-check-deployment/scripts/ci/check-deployment
-          push: true
+    - put: check-deployment-pipeline-image
+      params:
+        build: runtime-ci-check-deployment/scripts/ci/check-deployment
+        push: true
