@@ -7,6 +7,7 @@ inputs:
 - name: diego-release
 - name: runtime-ci
 - name: cf-manifest
+- name: diego-stubs
 
 outputs:
 - name: generated-diego-manifest

@@ -721,6 +721,9 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
+      - get: diego-stubs
+        resource: diego-release-master
+        params: {submodules: none}
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
@@ -745,10 +748,10 @@ jobs:
           BOSH_PASSWORD: admin
           BOSH_TARGET: {{bosh_lite_private_ip}}
           BOSH_USER: admin
-          IAAS_SETTINGS: diego-release/manifest-generation/bosh-lite-stubs/iaas-settings.yml
-          PROPERTY_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/property-overrides.yml
-          INSTANCE_COUNT_OVERRIDES: diego-release/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
-          RELEASE_VERSIONS: diego-release/manifest-generation/bosh-lite-stubs/release-versions.yml
+          IAAS_SETTINGS: diego-stubs/manifest-generation/bosh-lite-stubs/iaas-settings.yml
+          PROPERTY_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/property-overrides.yml
+          INSTANCE_COUNT_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
+          RELEASE_VERSIONS: diego-stubs/manifest-generation/bosh-lite-stubs/release-versions.yml
       - task: write-bosh-target-file
         file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
         params:
