@@ -46,6 +46,8 @@ resources:
 
 jobs:
 - name: setup-infrastructure
+  public: true
+  serial_groups: [nats-deploy]
   plan:
   - get: env-repo
     resource: hagrid-env
@@ -63,7 +65,7 @@ jobs:
 
 - name: deploy-nats
   public: true
-  serial: true
+  serial_groups: [nats-deploy]
   plan:
   - aggregate:
     - get: release-repo
@@ -93,6 +95,7 @@ jobs:
 
 - name: run-smoke-tests
   public: true
+  serial_groups: [nats-deploy]
   plan:
   - aggregate:
     - get: nats-release
