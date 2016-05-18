@@ -4,13 +4,13 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/verify-every-task-has-docker-build
+    repository: relintdockerhubpushbot/verify-every-task-has-correct-docker-build
 
 inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task
+  path: runtime-ci/scripts/ci/verify-every-task-has-correct-docker-build/task
 
 params:
   RUNTIME_CI_DIR: runtime-ci
