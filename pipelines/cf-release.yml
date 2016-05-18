@@ -723,11 +723,12 @@ jobs:
     - aggregate:
       - task: create-diego-manifest
         file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+        input_mapping: {iaas-settings: diego-stubs}
         params:
           BOSH_PASSWORD: admin
           BOSH_TARGET: {{bosh_lite_private_ip}}
           BOSH_USER: admin
-          IAAS_SETTINGS: diego-stubs/manifest-generation/bosh-lite-stubs/iaas-settings.yml
+          IAAS_SETTINGS: iaas-settings/manifest-generation/bosh-lite-stubs/iaas-settings.yml
           PROPERTY_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/property-overrides.yml
           INSTANCE_COUNT_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
           RELEASE_VERSIONS: diego-stubs/manifest-generation/bosh-lite-stubs/release-versions.yml

@@ -11,6 +11,7 @@ inputs:
 - name: runtime-ci
 - name: cf-manifest
 - name: diego-stubs
+- name: iaas-settings
 
 outputs:
 - name: generated-diego-manifest
