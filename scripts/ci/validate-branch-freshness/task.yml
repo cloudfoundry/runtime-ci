@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/validate-branch-freshness
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/validate-branch-freshness
 
 inputs:
 - name: runtime-ci

@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/deploy-cf-alone
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/deploy-cf-alone
 
 inputs:
 - name: runtime-ci

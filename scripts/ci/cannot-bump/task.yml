@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/cannot-bump
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/cannot-bump
 
 inputs:
 - name: runtime-ci

@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/create-bosh-lite-creds
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/create-bosh-lite-creds
 
 inputs:
 - name: runtime-ci

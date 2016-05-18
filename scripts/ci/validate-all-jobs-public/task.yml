@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/validate-all-jobs-public
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/validate-all-jobs-public
 
 inputs:
 - name: runtime-ci

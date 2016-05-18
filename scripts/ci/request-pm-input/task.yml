@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/request-pm-input
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/request-pm-input
 
 inputs:
 - name: cf-final-bosh-release

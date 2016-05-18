@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/run-errand
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/run-errand
 
 inputs:
 - name: runtime-ci

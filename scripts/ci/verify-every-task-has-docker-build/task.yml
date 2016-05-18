@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/verify-every-task-has-docker-build
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/verify-every-task-has-docker-build
 
 inputs:
 - name: runtime-ci

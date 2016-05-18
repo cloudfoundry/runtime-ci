@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/run-cats
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/run-cats
 
 inputs:
 - name: runtime-ci

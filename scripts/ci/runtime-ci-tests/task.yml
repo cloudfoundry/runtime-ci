@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/runtime-ci-tests
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/runtime-ci-tests
 
 inputs:
 - name: runtime-ci

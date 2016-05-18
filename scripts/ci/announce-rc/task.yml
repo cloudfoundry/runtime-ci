@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/announce-rc
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/announce-rc
 
 inputs:
 - name: cf-bosh-io-release

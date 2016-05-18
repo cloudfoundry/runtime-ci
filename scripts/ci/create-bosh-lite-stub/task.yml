@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/create-bosh-lite-stub
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/create-bosh-lite-stub
 
 inputs:
 - name: runtime-ci

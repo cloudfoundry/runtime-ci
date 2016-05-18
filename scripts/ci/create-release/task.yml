@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/create-release
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/create-release
 
 inputs:
 - name: release-repo

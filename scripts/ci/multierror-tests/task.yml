@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/multierror-tests
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/multierror-tests
 
 inputs:
 - name: runtime-ci

@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/delete-deployment
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/delete-deployment
 
 inputs:
 - name: runtime-ci

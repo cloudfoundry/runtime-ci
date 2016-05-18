@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/unit-tests-cf-deployment
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/unit-tests-cf-deployment
 
 inputs:
 - name: cf-deployment

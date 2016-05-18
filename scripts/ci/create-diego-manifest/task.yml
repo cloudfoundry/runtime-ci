@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/create-diego-manifest
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/create-diego-manifest
 
 inputs:
 - name: diego-release

@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/generate-deployment-manifest-from-bbl
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/generate-deployment-manifest-from-bbl
 
 inputs:
 - name: runtime-ci

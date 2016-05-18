@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/create-release-notes-template
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/create-release-notes-template
 
 inputs:
 - name: cf-final-bosh-release

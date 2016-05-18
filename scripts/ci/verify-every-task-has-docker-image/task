@@ -4,7 +4,7 @@ set -eu
 
 function verify_image {
   set +e
-  if ! grep "image: docker:///relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
+  if ! grep "repository: docker:///relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
     echo "${1}/task.yml"
     grep 'image:' task.yml
   fi

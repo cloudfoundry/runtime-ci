@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/setup-infrastructure
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/setup-infrastructure
 
 inputs:
 - name: runtime-ci

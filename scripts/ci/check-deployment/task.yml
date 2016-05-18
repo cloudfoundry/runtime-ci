@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/check-deployment
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/check-deployment
 
 inputs:
 - name: runtime-ci

@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/enable-docker-diego
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/enable-docker-diego
 
 inputs:
   - name: runtime-ci
@@ -12,4 +14,4 @@ params:
   CF_TARGET: ~
 
 run:
-  path: runtime-ci/scripts/ci/enable-docker-diego/task 
+  path: runtime-ci/scripts/ci/enable-docker-diego/task

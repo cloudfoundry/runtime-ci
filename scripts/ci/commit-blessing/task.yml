@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/commit-blessing
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/commit-blessing
 
 inputs:
 - name: runtime-ci

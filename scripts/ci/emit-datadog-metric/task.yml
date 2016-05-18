@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/emit-datadog-metric
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/emit-datadog-metric
 
 inputs:
 - name: runtime-ci

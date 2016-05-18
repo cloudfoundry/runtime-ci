@@ -1,7 +1,9 @@
 ---
 platform: linux
 
-image: docker:///relintdockerhubpushbot/run-smoketests
+image_resource:
+- type: docker
+  repository: docker:///relintdockerhubpushbot/run-smoketests
 
 inputs:
 - name: smoke-tests
