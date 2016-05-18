@@ -4,7 +4,7 @@ set -exu
 root_dir="${PWD}"
 
 # Inputs
-BOSH_DIRECTOR=$(cat "${BOSH_DIRECTOR_FILE:?"Path to BOSH_DIRECTOR_FILE must be provided"}")
+BOSH_TARGET=$(cat "${BOSH_TARGET_FILE:?"Path to BOSH_TARGET_FILE must be provided"}")
 BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
@@ -18,7 +18,7 @@ LOGS_DIR="${root_dir}/${LOGS_DIR}"
 
 set +x
 echo 'bosh \
-  -t "$BOSH_DIRECTOR" \
+  -t "${BOSH_TARGET}" \
   -u "${BOSH_USER}" \
   -p "REDACTED" \
   download manifest \
@@ -26,7 +26,7 @@ echo 'bosh \
   manifest.yml'
 
 bosh \
-  -t "$BOSH_DIRECTOR" \
+  -t "${BOSH_TARGET}" \
   -u "${BOSH_USER}" \
   -p "${BOSH_PASSWORD}" \
   download manifest \
@@ -36,7 +36,7 @@ bosh \
 echo 'bosh \
   -n \
   --color \
-  -t "$BOSH_DIRECTOR" \
+  -t "$BOSH_TARGET" \
   -u "${BOSH_USER}" \
   -p "REDACTED" \
   -d manifest.yml \
@@ -48,7 +48,7 @@ echo 'bosh \
 bosh \
   -n \
   --color \
-  -t "$BOSH_DIRECTOR" \
+  -t "${BOSH_TARGET}" \
   -u "${BOSH_USER}" \
   -p "${BOSH_PASSWORD}" \
   -d manifest.yml \
