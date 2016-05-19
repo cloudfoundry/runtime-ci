@@ -6,7 +6,7 @@ BOSH_LITE_IP="${BOSH_LITE_IP:?"\$BOSH_LITE_IP not set"}"
 create_stub() {
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
-  cat << EOF > deployments/stub.yml
+  cat << EOF > bosh-lite-stub/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
   acceptance_tests:
@@ -26,7 +26,7 @@ properties:
 
 EOF
 
-  cat deployments/stub.yml
+  cat bosh-lite-stub/stub.yml
 }
 
 main() {

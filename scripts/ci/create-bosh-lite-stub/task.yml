@@ -10,7 +10,7 @@ inputs:
 - name: runtime-ci
 
 outputs:
-- name: deployments
+- name: bosh-lite-stub
 
 params:
   BOSH_LITE_IP:
