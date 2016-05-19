@@ -1,0 +1,19 @@
+#!/bin/bash
+
+root_dir="${PWD}"
+INFRASTRUCTURE="${root_dir}/${INFRASTRUCTURE:?"\$INFRASTRUCTURE not set"}"
+CF_MANIFEST_PATH="${root_dir}/${CF_MANIFEST_PATH:?"\$CF_MANIFEST_PATH not set"}"
+IAAS_SETTINGS_TEMPLATE_PATH="${root_dir}/${IAAS_SETTINGS_TEMPLATE_PATH:?"\$IAAS_SETTINGS_TEMPLATE_PATH not set"}"
+IAAS_SETTINGS_STUB_PATH="${root_dir}/${IAAS_SETTINGS_STUB_PATH:?"\$IAAS_SETTINGS_STUB_PATH not set"}"
+
+output_dir="${root_dir}/iaas-settings"
+
+pushd diego-release > /dev/null
+  spiff merge \
+    "manifest-generation/misc-templates/${INFRASTRUCTURE}-iaas-settings.yml" \
+    "${IAAS_SETTINGS_TEMPLATE_PATH}" \
+    "${IAAS_SETTINGS_STUB_PATH}" \
+    "${CF_MANIFEST_PATH}" \
+    > "${output_dir}/iaas-settings.yml"
+popd > /dev/null
+

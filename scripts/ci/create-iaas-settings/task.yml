@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-iaas-settings
+
+inputs:
+- name: diego-release
+- name: cf-manifest
+- name: deployments
+- name: runtime-ci
+
+outputs:
+- name: iaas-settings
+
+params:
+  INFRASTRUCTURE: ~
+  CF_MANIFEST_PATH: cf-manifest/cf.yml
+  IAAS_SETTINGS_TEMPLATE_PATH: deployments/templates/diego/iaas-settings-internal.yml
+  IAAS_SETTINGS_STUB_PATH: deployments/stubs/diego/iaas-settings.yml
+
+run:
+  path: runtime-ci/scripts/ci/generate-diego-manifest/task
