@@ -13,7 +13,6 @@ groups:
   - generate-a1-manifests
   - a1-cf-deploy
   - a1-smoke-tests
-  - a1-diego-deploy
   - a1-diego-cats
   - a1-diego-cats-task
   - vsphere-cf-deploy
@@ -969,6 +968,7 @@ jobs:
   serial_groups:
   - cf-a1-bosh-deployment-lock
   - cf-deploy-and-diego-cats-lock
+  - diego-deploy-and-diego-cats-lock
   plan:
   - timeout: *timeout
     do:
@@ -986,6 +986,20 @@ jobs:
       - get: cf-a1-manifest
         trigger: true
         passed: [ generate-a1-manifests ]
+      - get: cf-a1-diego-manifest
+        passed: [ generate-a1-manifests ]
+        trigger: true
+      - get: diego-release
+        resource: diego-release-master
+        params: {submodules: none}
+      - get: diego-final-releases
+        trigger: true
+      - get: garden-linux-release-tarball
+        trigger: true
+      - get: etcd-release-tarball
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
@@ -1009,6 +1023,24 @@ jobs:
     - put: cf-release-acceptance-deployed
       params:
         repository: cf-release
+  - task: emit-diego-datadog-started
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
+    params:
+      STATE: started
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
+  - put: a1-diego-deployment
+    params:
+      manifest: cf-a1-diego-manifest/diego-deployment.yml
+      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
+      stemcells: [aws-stemcell/*.tgz]
+  - task: emit-datadog-finished
+    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
+    params:
+      STATE: finished
+      EVENT_TAG_DEPLOYMENT: cf-a1-diego
+      DATADOG_API_KEY: {{a1_datadog_api_key}}
+
 
 - name: a1-smoke-tests
   public: true
@@ -1024,42 +1056,42 @@ jobs:
         passed: [ a1-cf-deploy ]
         trigger: true
       - get: cf-a1-diego-manifest
-        passed: [a1-diego-deploy]
+        passed: [a1-cf-deploy]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [a1-cf-deploy, a1-diego-deploy]
+        passed: [a1-cf-deploy]
       - get: cf-release-tarball
-        passed: [a1-cf-deploy, a1-diego-deploy]
+        passed: [a1-cf-deploy]
         trigger: true
       - get: runtime-ci
       - get: aws-stemcell
-        passed: [ a1-cf-deploy, a1-diego-deploy ]
+        passed: [ a1-cf-deploy]
         params:
           tarball: false
         trigger: true
       - get: diego-final-releases
-        passed: [ a1-diego-deploy ]
+        passed: [ a1-cf-deploy ]
         trigger: true
       - get: diego-release-master
         resource: diego-release-master
         trigger: true
-        passed: [ a1-diego-deploy ]
+        passed: [ a1-cf-deploy ]
         params:
           submodules: none
       - get: garden-linux-release-tarball
         trigger: true
-        passed: [ a1-diego-deploy ]
+        passed: [ a1-cf-deploy ]
         params:
           tarball: false
       - get: etcd-release-tarball
         trigger: true
-        passed: [ a1-diego-deploy ]
+        passed: [ a1-cf-deploy ]
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
-        passed: [ a1-diego-deploy ]
+        passed: [ a1-cf-deploy ]
         params:
           tarball: false
     - task: smoke-tests
@@ -1125,55 +1157,6 @@ jobs:
     - put: cf-a1-diego-manifest
       params:
         file: generated-diego-manifest/diego-deployment.yml
-
-- name: a1-diego-deploy
-  public: true
-  serial_groups:
-  - diego-deploy-and-diego-cats-lock
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: diego-release
-      resource: diego-release-master
-      params: {submodules: none}
-    - get: diego-final-releases
-      trigger: true
-    - get: garden-linux-release-tarball
-      trigger: true
-    - get: etcd-release-tarball
-      trigger: true
-    - get: cflinuxfs2-rootfs-release-tarball
-      trigger: true
-    - get: deployments
-      resource: a1-env
-    - get: bosh-stemcell
-      resource: aws-stemcell
-    - get: cf-release
-      resource: cf-release-develop
-      passed: [generate-a1-manifests]
-    - get: cf-release-tarball
-      passed: [generate-a1-manifests]
-      trigger: true
-    - get: cf-a1-diego-manifest
-      passed: [ generate-a1-manifests ]
-      trigger: true
-  - task: emit-diego-datadog-started
-    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    params:
-      STATE: started
-      EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{a1_datadog_api_key}}
-  - put: a1-diego-deployment
-    params:
-      manifest: cf-a1-diego-manifest/diego-deployment.yml
-      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
-      stemcells: [bosh-stemcell/*.tgz]
-  - task: emit-datadog-finished
-    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    params:
-      STATE: finished
-      EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{a1_datadog_api_key}}
 
 - name: a1-diego-cats
   public: true
