@@ -10,6 +10,7 @@ groups:
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
   - deploy-and-test-minimal
+  - generate-a1-manifests
   - a1-cf-deploy
   - a1-smoke-tests
   - a1-diego-deploy
@@ -973,24 +974,18 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [create-release]
+        passed: [generate-a1-manifests]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [create-release]
+        passed: [generate-a1-manifests]
       - get: runtime-ci
       - get: deployments
         resource: a1-env
       - get: aws-stemcell
-    - task: create-manifest
-      privileged: true
-      file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      params:
-        INFRASTRUCTURE: aws
-        ENVIRONMENT: a1
-    - put: cf-a1-manifest
-      params:
-        file: manifest/deployment.yml
+      - get: cf-a1-manifest
+        trigger: true
+        passed: [ generate-a1-manifests ]
     - task: emit-datadog-deploy-start
       privileged: true
       file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
@@ -1000,7 +995,7 @@ jobs:
         DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
-        manifest: manifest/deployment.yml
+        manifest: cf-a1-manifest/deployment.yml
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
@@ -1075,6 +1070,62 @@ jobs:
         DEPLOYMENT_NAME: cf-a1
         ERRAND_NAME: smoke_tests
 
+- name: generate-a1-manifests
+  public: true
+  plan:
+  - aggregate:
+    - get: a1-env
+    - get: diego-release-master
+      trigger: true
+      params:
+        submodules: none
+    - get: runtime-ci
+    - get: cf-release-develop
+      trigger: true
+      passed: [ create-release ]
+      params:
+        submodules: none
+    - get: cf-release-tarball
+      trigger: true
+      passed: [ create-release ]
+  - task: create-cf-manifest
+    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+    input_mapping:
+      cf-release: cf-release-develop
+      deployments: a1-env
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: a1
+  - task: create-diego-iaas-settings
+    file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
+    input_mapping:
+      cf-manifest: manifest
+      deployments: a1-env
+      diego-release: diego-release-master
+    params:
+      INFRASTRUCTURE: aws
+      CF_MANIFEST_PATH: cf-manifest/deployment.yml
+  - task: create-diego-manifest
+    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+    input_mapping:
+      diego-release: diego-release-master
+      cf-manifest: manifest
+      diego-stubs: a1-env
+    params:
+      BOSH_USER: {{a1_bosh_username}}
+      BOSH_PASSWORD: {{a1_bosh_password}}
+      BOSH_TARGET: bosh.a1.cf-app.com
+      PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
+      INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
+      RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
+  - aggregate:
+    - put: cf-a1-manifest
+      params:
+        file: manifest/deployment.yml
+    - put: cf-a1-diego-manifest
+      params:
+        file: generated-diego-manifest/diego-deployment.yml
+
 - name: a1-diego-deploy
   public: true
   serial_groups:
@@ -1099,22 +1150,13 @@ jobs:
       resource: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-      passed: [create-release]
+      passed: [generate-a1-manifests]
     - get: cf-release-tarball
-      passed: [create-release]
+      passed: [generate-a1-manifests]
       trigger: true
-  - task: generate-deployment-manifests
-    file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
-    params:
-      BOSH_TARGET: bosh.a1.cf-app.com
-      ENVIRONMENT_NAME: a1
-      DEPLOYMENTS_DIR: deployments
-      BOSH_USER: {{a1_bosh_username}}
-      BOSH_PASSWORD: {{a1_bosh_password}}
-      INFRASTRUCTURE: aws
-  - put: cf-a1-diego-manifest
-    params:
-      file: generated-diego-manifest/diego-deployment.yml
+    - get: cf-a1-diego-manifest
+      passed: [ generate-a1-manifests ]
+      trigger: true
   - task: emit-diego-datadog-started
     file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
     params:
@@ -1123,7 +1165,7 @@ jobs:
       DATADOG_API_KEY: {{a1_datadog_api_key}}
   - put: a1-diego-deployment
     params:
-      manifest: generated-diego-manifest/diego-deployment.yml
+      manifest: cf-a1-diego-manifest/diego-deployment.yml
       releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
       stemcells: [bosh-stemcell/*.tgz]
   - task: emit-datadog-finished
