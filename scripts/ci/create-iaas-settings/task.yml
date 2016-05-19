@@ -22,4 +22,4 @@ params:
   IAAS_SETTINGS_STUB_PATH: deployments/stubs/diego/iaas-settings.yml
 
 run:
-  path: runtime-ci/scripts/ci/generate-diego-manifest/task
+  path: runtime-ci/scripts/ci/create-iaas-settings/task
