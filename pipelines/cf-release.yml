@@ -6,11 +6,11 @@ groups:
   - create-release
   - deploy-and-test-openstack
   - bosh-lite-provision-cf-deploy
-  - bosh-lite-diego-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
   - deploy-and-test-minimal
   - generate-a1-manifests
+  - generate-bosh-lite-manifests
   - a1-cf-deploy
   - a1-smoke-tests
   - a1-diego-cats
@@ -77,10 +77,26 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
+- name: cf-bosh-lite-manifest
+  type: s3
+  source:
+    bucket: cf-bosh-lite-manifest
+    versioned_file: deployment.yml
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
 - name: cf-a1-diego-manifest
   type: s3
   source:
     bucket: cf-a1-diego-manifest
+    versioned_file: diego-deployment.yml
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: cf-bosh-lite-diego-manifest
+  type: s3
+  source:
+    bucket: cf-bosh-lite-diego-manifest
     versioned_file: diego-deployment.yml
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
@@ -632,18 +648,33 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite
+      - get: runtime-ci
       - get: cf-release-tarball
-        passed: [create-release]
+        passed: [generate-bosh-lite-manifests]
+        trigger: true
+      - get: diego-final-releases
+        trigger: true
+      - get: garden-linux-release-tarball
+        trigger: true
+      - get: etcd-release-tarball
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+      - get: cf-bosh-lite-manifest
+        trigger: true
+        passed: [ generate-bosh-lite-manifests ]
+      - get: cf-bosh-lite-diego-manifest
+        trigger: true
+        passed: [ generate-bosh-lite-manifests ]
+      - get: bosh-lite-stemcell
         trigger: true
       - get: cf-release
         resource: cf-release-develop
         passed: [create-release]
         params:
           submodules: none
-      - get: bosh-lite
-      - get: runtime-ci
-      - get: bosh-lite-stemcell
-        trigger: true
+      - get: diego-release-master
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -662,17 +693,6 @@ jobs:
         BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
         SSH_KEY: {{bosh_lite_private_key}}
-    - task: create-bosh-lite-stub
-      file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
-      params:
-        BOSH_LITE_IP: {{bosh_lite_private_ip}}
-        INFRASTRUCTURE: bosh-lite
-        STUBS_PATH: deployments/*.yml
-    - task: create-manifest
-      file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      params:
-        INFRASTRUCTURE: bosh-lite
-        STUBS_PATH: deployments/*.yml
     - task: write-bosh-target-file
       file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
       params:
@@ -680,66 +700,13 @@ jobs:
     - put: bosh-lite-deployment
       params:
         target_file: bosh-target-file-dir/bosh_target
-        manifest: manifest/deployment.yml
+        manifest: cf-bosh-lite-manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
-- name: bosh-lite-diego-deploy
-  public: true
-  serial_groups:
-  - bosh-lite
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-release-tarball
-        passed: [bosh-lite-provision-cf-deploy]
-        trigger: true
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [bosh-lite-provision-cf-deploy]
-        params:
-          submodules: none
-      - get: runtime-ci
-      - get: diego-stubs
-        resource: diego-release-master
-        params: {submodules: none}
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-      - get: diego-final-releases
-        trigger: true
-      - get: garden-linux-release-tarball
-        trigger: true
-      - get: etcd-release-tarball
-        trigger: true
-      - get: cflinuxfs2-rootfs-release-tarball
-        trigger: true
-      - get: cf-manifest
-        resource: bosh-lite-deployment
-        passed: [bosh-lite-provision-cf-deploy]
-      - get: bosh-lite-stemcell
-        passed: [bosh-lite-provision-cf-deploy]
-        trigger: true
-    - aggregate:
-      - task: create-diego-manifest
-        file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-        input_mapping: {iaas-settings: diego-stubs}
-        params:
-          BOSH_PASSWORD: admin
-          BOSH_TARGET: {{bosh_lite_private_ip}}
-          BOSH_USER: admin
-          IAAS_SETTINGS: iaas-settings/manifest-generation/bosh-lite-stubs/iaas-settings.yml
-          PROPERTY_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/property-overrides.yml
-          INSTANCE_COUNT_OVERRIDES: diego-stubs/manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
-          RELEASE_VERSIONS: diego-stubs/manifest-generation/bosh-lite-stubs/release-versions.yml
-      - task: write-bosh-target-file
-        file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
-        params:
-          BOSH_TARGET: {{bosh_lite_private_ip}}
     - put: bosh-lite-deployment-diego
       params:
         target_file: bosh-target-file-dir/bosh_target
-        manifest: generated-diego-manifest/diego-deployment.yml
+        manifest: cf-bosh-lite-diego-manifest/diego-deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases:
         - diego-final-releases/*.tgz
@@ -756,13 +723,33 @@ jobs:
     - aggregate:
       - get: cf-release
         resource: cf-release-develop
-        passed: [bosh-lite-diego-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
         params:
           submodules: none
+      - get: diego-release-master
+        passed: [ bosh-lite-provision-cf-deploy ]
       - get: runtime-ci
       - get: cf-release-tarball
-        passed: [bosh-lite-diego-deploy]
+        passed: [bosh-lite-provision-cf-deploy]
         trigger: true
+      - get: diego-final-releases
+        passed: [ bosh-lite-provision-cf-deploy ]
+        trigger: true
+      - get: garden-linux-release-tarball
+        passed: [ bosh-lite-provision-cf-deploy ]
+        trigger: true
+      - get: etcd-release-tarball
+        passed: [ bosh-lite-provision-cf-deploy ]
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        passed: [ bosh-lite-provision-cf-deploy ]
+        trigger: true
+      - get: cf-bosh-lite-manifest
+        passed: [ bosh-lite-provision-cf-deploy ]
+        trigger: true
+      - get: cf-bosh-lite-diego-manifest
+        trigger: true
+        passed: [ bosh-lite-provision-cf-deploy ]
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
     - task: write-bosh-target-file
@@ -790,10 +777,30 @@ jobs:
         passed: [bosh-lite-smoke-tests]
         params:
           submodules: none
+      - get: diego-release-master
+        passed: [ bosh-lite-smoke-tests ]
       - get: runtime-ci
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true
+      - get: diego-final-releases
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: garden-linux-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: etcd-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cf-bosh-lite-manifest
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cf-bosh-lite-diego-manifest
+        trigger: true
+        passed: [ bosh-lite-smoke-tests ]
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
     - task: write-bosh-target-file
@@ -1124,10 +1131,9 @@ jobs:
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
       cf-release: cf-release-develop
-      deployments: a1-env
+      cf-stubs: a1-env
     params:
       INFRASTRUCTURE: aws
-      ENVIRONMENT: a1
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
@@ -1155,6 +1161,59 @@ jobs:
       params:
         file: manifest/deployment.yml
     - put: cf-a1-diego-manifest
+      params:
+        file: generated-diego-manifest/diego-deployment.yml
+
+- name: generate-bosh-lite-manifests
+  public: true
+  plan:
+  - aggregate:
+    - get: diego-release-master
+      trigger: true
+      params:
+        submodules: none
+    - get: runtime-ci
+    - get: cf-release-develop
+      trigger: true
+      passed: [ create-release ]
+      params:
+        submodules: none
+    - get: cf-release-tarball
+      trigger: true
+      passed: [ create-release ]
+  - task: create-bosh-lite-stub
+    file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
+    params:
+      BOSH_LITE_IP: {{bosh_lite_private_ip}}
+    output_mapping:
+      bosh-lite-stub: cf-stubs
+  - task: create-cf-manifest
+    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+    input_mapping:
+      cf-release: cf-release-develop
+    params:
+      INFRASTRUCTURE: bosh-lite
+      STUBS_PATH: stub.yml
+  - task: create-diego-manifest
+    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+    input_mapping:
+      diego-release: diego-release-master
+      cf-manifest: manifest
+      diego-stubs: diego-release-master
+      iaas-settings: diego-release-master
+    params:
+      BOSH_USER: {{a1_bosh_username}}
+      BOSH_PASSWORD: {{a1_bosh_password}}
+      BOSH_TARGET: bosh.a1.cf-app.com
+      PROPERTY_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
+      INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
+      RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
+      IAAS_SETTINGS_PATH: manifest-generation/bosh-lite-stubs/iaas-settings.yml
+  - aggregate:
+    - put: cf-bosh-lite-manifest
+      params:
+        file: manifest/deployment.yml
+    - put: cf-bosh-lite-diego-manifest
       params:
         file: generated-diego-manifest/diego-deployment.yml
 
@@ -1336,19 +1395,19 @@ jobs:
         passed: [ a1-diego-cats]
         trigger: true
       - get: diego-final-releases
-        passed: [ a1-diego-cats ]
+        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
       - get: diego-release-master
-        passed: [ a1-diego-cats ]
+        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
       - get: garden-linux-release-tarball
-        passed: [ a1-diego-cats ]
+        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
       - get: etcd-release-tarball
-        passed: [ a1-diego-cats ]
+        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
-        passed: [ a1-diego-cats ]
+        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
     - aggregate:
       - put: cf-release-release-candidate
