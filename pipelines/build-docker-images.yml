@@ -43,6 +43,7 @@ groups:
   - build-bosh-deploy-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
+  - build-create-iaas-settings-docker-image
 
 resources:
 - name: weekly
@@ -57,6 +58,12 @@ resources:
   source:
     interval: 2h
 
+- name: runtime-ci-create-iaas-settings
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-iaas-settings/Dockerfile]
 - name: runtime-ci-verify-every-task-has-docker-build
   type: git
   source:
@@ -305,6 +312,13 @@ resources:
     paths: [scripts/ci/check-deployment/Dockerfile]
 
 # All the docker images
+- name: create-iaas-settings-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-iaas-settings
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: verify-every-task-has-docker-build-pipeline-image
   type: docker-image
   source:
@@ -600,6 +614,23 @@ jobs:
   plan:
   - get: trigger-resource
 
+- name: build-create-iaas-settings-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-create-iaas-settings
+        trigger: true
+    - put: create-iaas-settings-pipeline-image
+      params:
+        build: runtime-ci-create-iaas-settings/scripts/ci/create-iaas-settings
+        push: true
 - name: build-verify-every-task-has-docker-build-docker-image
   public: true
   plan:
