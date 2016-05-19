@@ -1,11 +1,6 @@
 #!/bin/bash
 set -exu
 
-root_dir="${PWD}"
-
-# Outputs
-OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
-
 cf-release/scripts/generate_deployment_manifest \
   "${INFRASTRUCTURE}" \
   cf-stubs/${STUBS_PATH} > manifest/deployment.yml
