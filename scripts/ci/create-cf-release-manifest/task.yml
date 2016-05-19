@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: cf-release
 - name: runtime-ci
-- name: deployments
+- name: cf-stubs
 
 outputs:
 - name: manifest
@@ -19,5 +19,4 @@ run:
 
 params:
   INFRASTRUCTURE:
-  STUBS_PATH: deployments/stubs/cf/*.yml
-  OUTPUT_DIR: manifest
+  STUBS_PATH: stubs/cf/*.yml

@@ -8,5 +8,5 @@ OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
 cf-release/scripts/generate_deployment_manifest \
   "${INFRASTRUCTURE}" \
-  ${STUBS_PATH} > "${OUTPUT_DIR}/deployment.yml"
+  cf-stubs/${STUBS_PATH} > manifest/deployment.yml
 
