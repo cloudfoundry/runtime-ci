@@ -16,7 +16,6 @@ groups:
   - a1-cf-deploy
   - a1-smoke-tests
   - a1-diego-cats
-  - a1-diego-cats-task
   - vsphere-cf-deploy
   - vsphere-smoke-tests
   - vsphere-cf-cats
@@ -339,15 +338,6 @@ resources:
     username: {{a1_bosh_username}}
     password: {{a1_bosh_password}}
     deployment: cf-a1-diego
-    ignore_ssl: true
-
-- name: a1-diego-cats-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.a1.cf-app.com:25555
-    username: {{a1_bosh_username}}
-    password: {{a1_bosh_password}}
-    deployment: a1-diego-cats
     ignore_ssl: true
 
 - name: minimal-deployment
@@ -1210,82 +1200,6 @@ jobs:
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ a1-smoke-tests ]
-        params:
-          tarball: false
-      - get: cf-a1-diego-manifest
-        passed: [a1-smoke-tests]
-        trigger: true
-  - task: enable-docker
-    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-    params:
-      CF_TARGET: api.a1.cf-app.com
-      CF_USER: {{a1_admin_username}}
-      CF_PASSWORD: {{a1_admin_password}}
-  - put: a1-diego-cats-deployment
-    params:
-      manifest: deployments/deployments/a1-diego-cats.yml
-      releases: []
-      stemcells: []
-  - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run-errand/task.yml
-    params:
-      <<: *bosh-target-a1
-      DEPLOYMENT_NAME: a1-diego-cats
-      ERRAND_NAME: diego-cats
-    ensure:
-      put: a1-diego-cats-acceptance-tests-logs
-      params:
-        file: logs-dir/diego-cats.*.tgz
-
-- name: a1-diego-cats-task
-  public: true
-  serial_groups:
-  - diego-deploy-and-diego-cats-lock
-  - cf-deploy-and-diego-cats-lock
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: manifest
-        resource: cf-a1-manifest
-        trigger: true
-        passed: [ a1-diego-cats ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [a1-diego-cats]
-      - get: cf-release-tarball
-        passed: [a1-diego-cats]
-        trigger: true
-      - get: runtime-ci
-      - get: deployments
-        resource: a1-env
-      - get: aws-stemcell
-        passed: [ a1-diego-cats ]
-        params:
-          tarball: false
-        trigger: true
-      - get: diego-final-releases
-        passed: [ a1-diego-cats ]
-        trigger: true
-      - get: diego-release-master
-        resource: diego-release-master
-        trigger: true
-        passed: [ a1-diego-cats ]
-        params:
-          submodules: none
-      - get: garden-linux-release-tarball
-        trigger: true
-        passed: [ a1-diego-cats ]
-        params:
-          tarball: false
-      - get: etcd-release-tarball
-        trigger: true
-        passed: [ a1-diego-cats ]
-        params:
-          tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
-        trigger: true
-        passed: [ a1-diego-cats ]
         params:
           tarball: false
   - task: enable-docker
