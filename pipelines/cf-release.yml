@@ -25,8 +25,6 @@ groups:
   - clean-all-the-boshes
 - name: smokes
   jobs:
-  - tabasco-runtime-smokes
-  - tabasco-loggregator-smokes
   - a1-runtime-smokes
   - a1-loggregator-smokes
 - name: rubbish-bin
@@ -34,7 +32,6 @@ groups:
   - deploy-and-test-a1
   - a1-diego-deploy-and-test
   - deploy-and-test-vsphere
-  - deploy-and-test-tabasco
 
 resources:
 - name: periodically
@@ -99,14 +96,6 @@ resources:
   source:
     bucket: cf-bosh-lite-diego-manifest
     versioned_file: diego-deployment.yml
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: tabasco-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: tabasco-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
@@ -177,13 +166,6 @@ resources:
     branch: master
     private_key: {{cf_release_minimal_env}}
     uri: git@github.com:cloudfoundry/minimal-env.git
-
-- name: tabasco-env
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_tabasco_env}}
-    uri: git@github.com:cloudfoundry/tabasco-env.git
 
 - name: smoke-tests
   type: git
@@ -322,15 +304,6 @@ resources:
     username: {{vsphere_bosh_username}}
     password: {{vsphere_bosh_password}}
     deployment: cf-cat
-    ignore_ssl: true
-
-- name: tabasco-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.tabasco.cf-app.com:25555
-    username: {{tabasco_bosh_username}}
-    password: {{tabasco_bosh_password}}
-    deployment: cf-tabasco
     ignore_ssl: true
 
 - name: a1-deployment
@@ -491,13 +464,6 @@ jobs:
           BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
           BOSH_USER: {{runtime_ci_username}}
           BOSH_PASSWORD: {{runtime_ci_password}}
-      - task: cleanup-tabasco
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        params: &bosh-target-tabasco
-          BOSH_DIRECTOR: https://bosh.tabasco.cf-app.com:25555
-          BOSH_USER: {{tabasco_bosh_username}}
-          BOSH_PASSWORD: {{tabasco_bosh_password}}
       - task: cleanup-vsphere
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
@@ -520,76 +486,6 @@ jobs:
           BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
           BOSH_USER: {{a1_bosh_username}}
           BOSH_PASSWORD: {{a1_bosh_password}}
-
-- name: deploy-and-test-tabasco
-  public: true
-  serial: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-release-tarball
-        passed: [create-release]
-        trigger: true
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [create-release]
-      - get: runtime-ci
-      - get: deployments
-        resource: tabasco-env
-      - get: aws-stemcell
-    - task: create-manifest
-      privileged: true
-      file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      params:
-        INFRASTRUCTURE: aws
-        ENVIRONMENT: tabasco
-    - task: emit-datadog-deploy-start
-      privileged: true
-      file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      params:
-        STATE: started
-        EVENT_TAG_DEPLOYMENT: cf-tabasco
-        DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-    - put: tabasco-deployment
-      params:
-        manifest: manifest/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
-        releases:
-          - cf-release-tarball/*.tgz
-      ensure:
-        do:
-        - task: emit-datadog-deploy-end
-          privileged: true
-          file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-          params:
-            STATE: finished
-            EVENT_TAG_DEPLOYMENT: cf-tabasco
-            DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-    - put: cf-release-runtime-deployed
-      params:
-        repository: cf-release
-    - task: smoke-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        <<: *bosh-target-tabasco
-        DEPLOYMENT_NAME: cf-tabasco
-        ERRAND_NAME: smoke_tests
-    - task: acceptance-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        <<: *bosh-target-tabasco
-        DEPLOYMENT_NAME: cf-tabasco
-        ERRAND_NAME: acceptance_tests
-      ensure:
-        put: tabasco-acceptance-tests-logs
-        params:
-          file: logs-dir/acceptance_tests.*.tgz
-    - put: cf-release-runtime-passed
-      params:
-        repository: cf-release
 
 - name: deploy-and-test-openstack
   public: true
@@ -1441,100 +1337,6 @@ jobs:
           params:
             repository: updated-diego-cf-compatibility
 
-- name: tabasco-runtime-smokes
-  public: true
-  serial: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: periodically
-        trigger: true
-      - get: smoke-tests
-      - get: runtime-ci
-    - aggregate:
-      - task: run1
-        file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        params: &tabasco-smoke-params
-          SUITE_NAME: RUNTIME-SMOKE
-          API: https://api.tabasco.cf-app.com
-          APPS_DOMAIN: tabasco-app.cf-app.com
-          SKIP_SSL_VALIDATION: true
-          CF_USER: {{tabasco_runtime_smokes_username}}
-          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-          ORG: runtime-smoke-tests
-          SPACE: concourse-runtime-smoke-tests-1
-          USE_EXISTING_ORG: true
-          ARGS: '--focus=Runtime:'
-      - task: run2
-        file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        params:
-          <<: *tabasco-smoke-params
-          SPACE: concourse-runtime-smoke-tests-2
-      - task: run3
-        file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        params:
-          <<: *tabasco-smoke-params
-          SPACE: concourse-runtime-smoke-tests-3
-      - task: run4
-        file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        params:
-          <<: *tabasco-smoke-params
-          SPACE: concourse-runtime-smoke-tests-4
-      on_success:
-        task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params: &tabasco-smoke-datadog-params
-          METRIC: smoke.status
-          TAGS: '"deployment:cf-tabasco","loggregator_enabled:0"'
-          DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-          VALUE: 1
-      on_failure:
-        task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params:
-          <<: *tabasco-smoke-datadog-params
-          VALUE: 0
-
-- name: tabasco-loggregator-smokes
-  public: true
-  serial: true
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: periodically
-        trigger: true
-      - get: smoke-tests
-      - get: runtime-ci
-    - task: run1
-      file: runtime-ci/scripts/ci/run-smoketests/task.yml
-      params:
-        SUITE_NAME: RUNTIME-SMOKE
-        API: https://api.tabasco.cf-app.com
-        APPS_DOMAIN: tabasco-app.cf-app.com
-        SKIP_SSL_VALIDATION: true
-        CF_USER: {{tabasco_runtime_smokes_username}}
-        CF_PASSWORD: {{tabasco_runtime_smokes_password}}
-        ORG: runtime-smoke-tests
-        SPACE: concourse-loggregator-smoke-tests
-        USE_EXISTING_ORG: true
-        ARGS: '--focus=Loggregator:'
-      on_success:
-        task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params: &tabasco-smoke-datadog-params
-          METRIC: smoke.status
-          TAGS: '"deployment:cf-tabasco","loggregator_enabled:1"'
-          DATADOG_API_KEY: {{tabasco_datadog_api_key}}
-          VALUE: 1
-      on_failure:
-        task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params:
-          <<: *tabasco-smoke-datadog-params
-          VALUE: 0
-
 - name: a1-runtime-smokes
   public: true
   serial: true
@@ -1554,8 +1356,8 @@ jobs:
           API: https://api.a1.cf-app.com
           APPS_DOMAIN: a1-app.cf-app.com
           SKIP_SSL_VALIDATION: true
-          CF_USER: {{tabasco_runtime_smokes_username}}
-          CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+          CF_USER: {{a1_runtime_smokes_username}}
+          CF_PASSWORD: {{a1_runtime_smokes_password}}
           ORG: runtime-smoke-tests
           SPACE: concourse-runtime-smoke-tests-1
           USE_EXISTING_ORG: true
@@ -1664,8 +1466,8 @@ jobs:
         API: https://api.a1.cf-app.com
         APPS_DOMAIN: a1-app.cf-app.com
         SKIP_SSL_VALIDATION: true
-        CF_USER: {{tabasco_runtime_smokes_username}}
-        CF_PASSWORD: {{tabasco_runtime_smokes_password}}
+        CF_USER: {{a1_runtime_smokes_username}}
+        CF_PASSWORD: {{a1_runtime_smokes_password}}
         ORG: runtime-smoke-tests
         SPACE: concourse-loggregator-smoke-tests
         USE_EXISTING_ORG: true
