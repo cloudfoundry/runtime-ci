@@ -17,6 +17,7 @@ properties:
     include_security_groups: true
     include_internet_dependent: true
     include_services: true
+    backend: dea
   cc:
     security_group_definitions:
       - name: load_balancer
