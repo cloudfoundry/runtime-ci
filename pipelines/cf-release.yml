@@ -30,7 +30,6 @@ groups:
 - name: rubbish-bin
   jobs:
   - deploy-and-test-a1
-  - a1-diego-deploy-and-test
   - deploy-and-test-vsphere
 
 resources:
@@ -1160,10 +1159,6 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
-      - get: manifest
-        resource: cf-a1-manifest
-        trigger: true
-        passed: [ a1-smoke-tests ]
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-smoke-tests]
@@ -1171,8 +1166,6 @@ jobs:
         passed: [a1-smoke-tests]
         trigger: true
       - get: runtime-ci
-      - get: deployments
-        resource: a1-env
       - get: aws-stemcell
         passed: [ a1-smoke-tests ]
         params:
@@ -1559,74 +1552,3 @@ jobs:
         put: a1-acceptance-tests-logs
         params:
           file: logs-dir/acceptance_tests.*.tgz
-
-- name: a1-diego-deploy-and-test
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: diego-release
-      resource: diego-release-master
-      params: {submodules: none}
-    - get: diego-final-releases
-    - get: garden-linux-release-tarball
-    - get: etcd-release-tarball
-    - get: cflinuxfs2-rootfs-release-tarball
-    - get: deployments
-      resource: a1-env
-    - get: bosh-stemcell
-      resource: aws-stemcell
-    - get: cf-release
-      resource: cf-release-develop
-      passed: [create-release]
-  - task: generate-deployment-manifests
-    file: runtime-ci/scripts/ci/generate-diego-manifest/task.yml
-    params:
-      BOSH_TARGET: bosh.a1.cf-app.com
-      ENVIRONMENT_NAME: a1
-      DEPLOYMENTS_DIR: deployments
-      BOSH_USER: {{a1_bosh_username}}
-      BOSH_PASSWORD: {{a1_bosh_password}}
-      INFRASTRUCTURE: aws
-  - task: emit-diego-datadog-started
-    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    params:
-      STATE: started
-      EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{a1_datadog_api_key}}
-  - put: a1-diego-deployment
-    params:
-      manifest: generated-diego-manifest/diego-deployment.yml
-      releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz]
-      stemcells: [bosh-stemcell/*.tgz]
-  - task: emit-datadog-finished
-    file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-    params:
-      STATE: finished
-      EVENT_TAG_DEPLOYMENT: cf-a1-diego
-      DATADOG_API_KEY: {{a1_datadog_api_key}}
-  - task: enable-docker
-    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-    params:
-      CF_TARGET: api.a1.cf-app.com
-      CF_USER: {{a1_admin_username}}
-      CF_PASSWORD: {{a1_admin_password}}
-  - put: a1-diego-cats-deployment
-    params:
-      manifest: deployments/deployments/a1-diego-cats.yml
-      releases: []
-      stemcells: []
-  - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run-errand/task.yml
-    params:
-      BOSH_DIRECTOR: bosh.a1.cf-app.com
-      BOSH_USER: {{a1_bosh_username}}
-      BOSH_PASSWORD: {{a1_bosh_password}}
-      DEPLOYMENT_YML: a1-diego-cats
-      ERRAND_NAME: acceptance_tests
-    ensure:
-      put: a1-diego-cats-acceptance-tests-logs
-      params:
-        file: logs-dir/diego-cats.*.tgz
-
