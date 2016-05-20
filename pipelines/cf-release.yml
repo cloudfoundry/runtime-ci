@@ -846,29 +846,36 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: manifest
-        resource: cf-vsphere-manifest
-        trigger: true
-        passed:
-        - vsphere-smoke-tests
+        tags: [ vsphere ]
       - get: cf-release
         resource: cf-release-develop
         passed: [vsphere-smoke-tests]
         trigger: true
         tags: [vsphere]
     - task: acceptance-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      tags: [vsphere]
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+      tags: [ vsphere ]
       params:
-        <<: *bosh-target-cat
-        DEPLOYMENT_NAME: cf-cat
-        ERRAND_NAME: acceptance_tests
-      ensure:
-        put: vsphere-acceptance-tests-logs
-        tags: [vsphere]
-        params:
-          file: logs-dir/acceptance_tests.*.tgz
+        INCLUDE_BACKEND_COMPATIBILITY: false
+        INCLUDE_INTERNET_DEPENDENT: true
+        INCLUDE_DIEGO_DOCKER: false
+        INCLUDE_DIEGO_SSH: false
+        INCLUDE_LOGGING: true
+        INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_ROUTING: true
+        INCLUDE_SECURITY_GROUPS: true
+        INCLUDE_SERVICES: true
+        INCLUDE_V3: false
+        INCLUDE_OPERATOR: true
+        SKIP_SSO: false
+        BACKEND: dea
+        CF_API: "api.cat.wild.cf-app.com"
+        CF_ADMIN_USER: {{vsphere_bosh_username}}
+        CF_ADMIN_PASSWORD: {{vsphere_bosh_password}}
+        CF_APPS_DOMAIN: cat.wild.cf-app.com
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "true"
+        NODES: 6
 
 - name: a1-cf-deploy
   public: true
@@ -1213,7 +1220,6 @@ jobs:
       INCLUDE_ROUTING: true
       INCLUDE_SECURITY_GROUPS: true
       INCLUDE_SERVICES: true
-      INCLUDE_SSO: true
       INCLUDE_V3: true
       INCLUDE_OPERATOR: true
       SKIP_SSO: false
