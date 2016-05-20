@@ -11,6 +11,7 @@ groups:
   - deploy-and-test-minimal
   - generate-a1-manifests
   - generate-bosh-lite-manifests
+  - generate-vsphere-manifests
   - a1-cf-deploy
   - a1-smoke-tests
   - a1-diego-cats
@@ -859,7 +860,6 @@ jobs:
         NODES: 2
         SUITES: "apps detect docker internet_dependent route_services services security_groups"
         ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
-
 - name: vsphere-cf-deploy
   public: true
   serial_groups:
@@ -878,18 +878,13 @@ jobs:
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
-      - get: deployments
-        resource: cat-env
+      - get: cat-env
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
-    - task: create-manifest
-      privileged: true
-      file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      tags: [vsphere]
-      params:
-        INFRASTRUCTURE: vsphere
-        ENVIRONMENT: cat
+      - get: cf-vsphere-manifest
+        passed: [ generate-vsphere-manifests ]
+        trigger: true
     - task: delete-vsphere-deployment
       privileged: true
       file: runtime-ci/scripts/ci/delete-deployment/task.yml
@@ -900,13 +895,10 @@ jobs:
     - put: vsphere-deployment
       tags: [vsphere]
       params:
-        manifest: manifest/deployment.yml
+        manifest: cf-vsphere-manifest/deployment.yml
         stemcells: [vsphere-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-    - put: cf-vsphere-manifest
-      params:
-        file: manifest/deployment.yml
 
 - name: vsphere-smoke-tests
   public: true
@@ -1216,6 +1208,31 @@ jobs:
     - put: cf-bosh-lite-diego-manifest
       params:
         file: generated-diego-manifest/diego-deployment.yml
+
+- name: generate-vsphere-manifests
+  public: true
+  plan:
+  - aggregate:
+    - get: cat-env
+    - get: runtime-ci
+    - get: cf-release-develop
+      trigger: true
+      passed: [ create-release ]
+      params:
+        submodules: none
+    - get: cf-release-tarball
+      trigger: true
+      passed: [ create-release ]
+  - task: create-cf-manifest
+    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+    input_mapping:
+      cf-release: cf-release-develop
+      cf-stubs: cat-env
+    params:
+      INFRASTRUCTURE: vsphere
+  - put: cf-vsphere-manifest
+    params:
+      file: manifest/deployment.yml
 
 - name: a1-diego-cats
   public: true
