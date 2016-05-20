@@ -4,7 +4,6 @@ groups:
   - cf-deployment-unit-tests
   - deploy-cf
   - run-smoke-tests
-  - run-acceptance-tests
   - run-cats
   - bless
   - merge-master-into-develop
@@ -165,43 +164,6 @@ jobs:
       ERRAND_NAME: smoke_tests
       DEPLOYMENT_NAME: cf-alfredo
 
-- name: run-acceptance-tests
-  public: true
-  serial_groups: [deploy-cf-and-run-cats-errand]
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-release
-      passed: [run-smoke-tests]
-      trigger: true
-    - get: etcd-release
-      passed: [run-smoke-tests]
-      trigger: true
-    - get: cf-deployment
-      resource: cf-deployment-develop
-      passed: [run-smoke-tests]
-      trigger: true
-    - get: stemcell
-      resource: aws-stemcell
-      passed: [run-smoke-tests]
-      trigger: true
-    - get: consul-release
-      passed: [run-smoke-tests]
-      trigger: true
-  - task: acceptance-tests
-    file: runtime-ci/scripts/ci/run-errand/task.yml
-    params:
-      BOSH_DIRECTOR: {{cf_bosh_director}}
-      BOSH_USER: {{cf_bosh_user}}
-      BOSH_PASSWORD: {{cf_bosh_password}}
-      DEPLOYMENT_NAME: cf-alfredo
-      ENVIRONMENT: alfredo
-      ERRAND_NAME: acceptance_tests
-    ensure:
-      put: acceptance-tests-logs
-      params:
-        from: logs-dir/acceptance_tests(.*).tgz
-
 - name: run-cats
   public: true
   serial_groups: [deploy-cf-and-run-cats-script]
@@ -248,23 +210,23 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-release
-      passed: [run-acceptance-tests]
+      passed: [run-cats]
       trigger: true
     - get: etcd-release
-      passed: [run-acceptance-tests]
+      passed: [run-cats]
       trigger: true
     - get: release-repo
       resource: cf-deployment-develop
-      passed: [run-acceptance-tests]
+      passed: [run-cats]
       trigger: true
     - get: release-repo-master
       resource: cf-deployment-master
     - get: stemcell
       resource: aws-stemcell
-      passed: [run-acceptance-tests]
+      passed: [run-cats]
       trigger: true
     - get: consul-release
-      passed: [run-acceptance-tests]
+      passed: [run-cats]
       trigger: true
   - task: commit-blessing
     file: runtime-ci/scripts/ci/commit-blessing/task.yml
