@@ -7,7 +7,8 @@ RUN \
     wget \
     curl \
     openssh-client \
-    software-properties-common
+    software-properties-common \
+    unzip
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
