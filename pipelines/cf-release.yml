@@ -8,7 +8,8 @@ groups:
   - bosh-lite-provision-cf-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
-  - deploy-and-test-minimal
+  - deploy-minimal
+  - minimal-acceptance-tests
   - generate-a1-manifests
   - generate-bosh-lite-manifests
   - generate-vsphere-manifests
@@ -716,9 +717,11 @@ jobs:
         put: bosh-lite-acceptance-tests-logs
         params:
           file: logs-dir/acceptance_tests.*.tgz
-- name: deploy-and-test-minimal
+- name: deploy-minimal
   public: true
   serial: true
+  serial_groups:
+  - deploy-minimal
   plan:
   - timeout: *timeout
     do:
@@ -744,18 +747,39 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-    - task: run-acceptance-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        CF_API: api.minimal-aws.cf-app.com
-        CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
-        CF_APPS_DOMAIN: minimal-aws.cf-app.com
-        SKIP_SSL_VALIDATION: true
-        USE_HTTP: false
-        NODES: 2
-        SUITES: "apps detect docker internet_dependent route_services services security_groups"
-        ADDITIONAL_ARGS: "-skip=NO_DEA_SUPPORT -slowSpecThreshold=240 -keepGoing -failOnPending"
+- name: minimal-acceptance-tests
+  public: true
+  serial_groups:
+  - deploy-minimal
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-release-develop
+      trigger: true
+      passed: [ deploy-minimal ]
+  - task: run-acceptance-tests
+    file: runtime-ci/scripts/ci/run-cats/task.yml
+    input_mapping:
+      cf-release: cf-release-develop
+    params:
+      CF_API: api.minimal-aws.cf-app.com
+      CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
+      CF_APPS_DOMAIN: minimal-aws.cf-app.com
+      SKIP_SSL_VALIDATION: true
+      USE_HTTP: false
+      NODES: 4
+      BACKEND: dea
+      INCLUDE_DIEGO_SSH: false
+      INCLUDE_DIEGO_DOCKER: false
+      INCLUDE_BACKEND_COMPATIBILITY: false
+      INCLUDE_V3: false
+      INCLUDE_SECURITY_GROUPS: true
+      INCLUDE_LOGGING: true
+      INCLUDE_OPERATOR: true
+      INCLUDE_INTERNET_DEPENDENT: true
+      INCLUDE_SERVICES: true
+      INCLUDE_ROUTE_SERVICES: true
+      SKIP_SSO: false
 - name: vsphere-cf-deploy
   public: true
   serial_groups:
