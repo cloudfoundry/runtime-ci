@@ -41,11 +41,6 @@ resources:
     stop: 23:30 -0700
     interval: 24h
 
-- name: every-two-hours
-  type: time
-  source:
-    interval: 2h
-
 - name: cf-release-tarball
   type: s3
   source:
@@ -208,12 +203,6 @@ resources:
     private_key: {{cf_release_private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
-- name: cf-release-master
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-release
-
 - name: diego-release-master
   type: git
   source:
@@ -249,13 +238,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-
-- name: deployments-runtime
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/deployments-runtime.git
 
 - name: bosh-lite
   type: git
@@ -343,13 +325,6 @@ resources:
     password: {{minimal_bosh_password}}
     deployment: cf
     ignore_ssl: true
-
-- name: runtime-ci-env
-  type: git
-  source:
-    branch: master
-    private_key: {{runtime-ci-env-deploy-key}}
-    uri: git@github.com:cloudfoundry/runtime-ci-env.git
 
 - name: runtime-ci
   type: git
