@@ -665,6 +665,16 @@ jobs:
       file: runtime-ci/scripts/ci/write-bosh-target-file/task.yml
       params:
         BOSH_TARGET: {{bosh_lite_private_ip}}
+    - task: write-api-target-file
+      file: runtime-ci/scripts/ci/write-bosh-lite-api-target-file/task.yml
+      params:
+        BOSH_TARGET: {{bosh_lite_private_ip}}
+    - task: enable-docker
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      params:
+        CF_TARGET_FILE: bosh-lite-api-target-file-dir/api_target
+        CF_USER: {{a1_admin_username}}
+        CF_PASSWORD: {{a1_admin_password}}
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:

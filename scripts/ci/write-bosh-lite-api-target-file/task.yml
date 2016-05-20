@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-bosh-lite-api-target-file
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: bosh-lite-api-target-file-dir
+
+run:
+  path: runtime-ci/scripts/ci/write-bosh-lite-api-target-file/task
+
+params:
+  BOSH_TARGET:
+  API_TARGET_FILE_DIR: bosh-lite-api-target-file-dir

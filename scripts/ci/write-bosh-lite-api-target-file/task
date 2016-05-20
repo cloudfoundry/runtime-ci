@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -xeu
+
+echo "api.${BOSH_TARGET}.xip.io" > "${API_TARGET_FILE_DIR}/api_target"
