@@ -569,7 +569,7 @@ jobs:
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [create-release]
+        passed: [generate-bosh-lite-manifests]
         params:
           submodules: none
       - get: diego-release-master
@@ -789,12 +789,12 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [create-release]
+        passed: [generate-vsphere-manifests]
         trigger: true
         tags: [vsphere]
       - get: cf-release
         resource: cf-release-develop
-        passed: [create-release]
+        passed: [generate-vsphere-manifests]
         tags: [vsphere]
       - get: runtime-ci
         tags: [vsphere]
