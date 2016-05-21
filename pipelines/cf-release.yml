@@ -841,8 +841,8 @@ jobs:
         SKIP_SSO: false
         BACKEND: dea
         CF_API: "api.cat.wild.cf-app.com"
-        CF_ADMIN_USER: {{vsphere_bosh_username}}
-        CF_ADMIN_PASSWORD: {{vsphere_bosh_password}}
+        CF_ADMIN_USER: {{vsphere_cf_username}}
+        CF_ADMIN_PASSWORD: {{vsphere_cf_password}}
         CF_APPS_DOMAIN: cat.wild.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
