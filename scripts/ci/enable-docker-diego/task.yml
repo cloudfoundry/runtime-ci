@@ -13,7 +13,7 @@ inputs:
 params:
   CF_USER: ~
   CF_PASSWORD: ~
-  CF_TARGET_PATH: cf_target
+  CF_API_TARGET_PATH: api_target
 
 run:
   path: runtime-ci/scripts/ci/enable-docker-diego/task

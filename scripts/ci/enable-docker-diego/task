@@ -3,7 +3,7 @@
 set -eu
 
 root_dir="${PWD}"
-cf_target=$(cat "${root_dir}/cf-target/${CF_TARGET_PATH:?"\$CF_TARGET_PATH is not set"}")
+cf_target=$(cat "${root_dir}/cf-target/${CF_API_TARGET_PATH:?"\$CF_API_TARGET_PATH is not set"}")
 
 echo "Setting target to ${cf_target}"
 cf api --skip-ssl-validation "${cf_target}"
