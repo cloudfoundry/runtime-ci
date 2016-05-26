@@ -5,14 +5,12 @@ groups:
   - build-announce-rc-docker-image
   - build-can-bump-docker-image
   - build-cannot-bump-docker-image
-  - build-commit-blessing-docker-image
   - build-create-cf-release-manifest-docker-image
   - build-create-final-release-docker-image
   - build-create-minimal-cf-release-manifest-docker-image
   - build-create-release-docker-image
   - build-create-release-notes-template-docker-image
   - build-delete-deployment-docker-image
-  - build-deploy-cf-alone-docker-image
   - build-deprovision-bosh-lite-docker-image
   - build-emit-datadog-event-docker-image
   - build-emit-datadog-metric-docker-image
@@ -28,7 +26,6 @@ groups:
   - build-run-errand-docker-image
   - build-run-smoketests-docker-image
   - build-runtime-ci-tests-docker-image
-  - build-unit-tests-cf-deployment-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-generate-deployment-manifest-from-bbl-docker-image
@@ -130,12 +127,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/cannot-bump/Dockerfile]
-- name: runtime-ci-commit-blessing
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/commit-blessing/Dockerfile]
 - name: runtime-ci-create-cf-release-manifest
   type: git
   source:
@@ -172,12 +163,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/delete-deployment/Dockerfile]
-- name: runtime-ci-deploy-cf-alone
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/deploy-cf-alone/Dockerfile]
 - name: runtime-ci-deprovision-bosh-lite
   type: git
   source:
@@ -268,12 +253,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/runtime-ci-tests/Dockerfile]
-- name: runtime-ci-unit-tests-cf-deployment
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/unit-tests-cf-deployment/Dockerfile]
 - name: runtime-ci-validate-all-jobs-public
   type: git
   source:
@@ -396,13 +375,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: commit-blessing-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/commit-blessing
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: create-cf-release-manifest-pipeline-image
   type: docker-image
   source:
@@ -442,13 +414,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/delete-deployment
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: deploy-cf-alone-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/deploy-cf-alone
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -554,13 +519,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/runtime-ci-tests
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: unit-tests-cf-deployment-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/unit-tests-cf-deployment
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -818,23 +776,6 @@ jobs:
       params:
         build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
         push: true
-- name: build-commit-blessing-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-commit-blessing
-        trigger: true
-    - put: commit-blessing-pipeline-image
-      params:
-        build: runtime-ci-commit-blessing/scripts/ci/commit-blessing
-        push: true
 - name: build-create-cf-release-manifest-docker-image
   public: true
   plan:
@@ -936,23 +877,6 @@ jobs:
     - put: delete-deployment-pipeline-image
       params:
         build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
-        push: true
-- name: build-deploy-cf-alone-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-deploy-cf-alone
-        trigger: true
-    - put: deploy-cf-alone-pipeline-image
-      params:
-        build: runtime-ci-deploy-cf-alone/scripts/ci/deploy-cf-alone
         push: true
 - name: build-deprovision-bosh-lite-docker-image
   public: true
@@ -1208,23 +1132,6 @@ jobs:
     - put: runtime-ci-tests-pipeline-image
       params:
         build: runtime-ci-runtime-ci-tests/scripts/ci/runtime-ci-tests
-        push: true
-- name: build-unit-tests-cf-deployment-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-unit-tests-cf-deployment
-        trigger: true
-    - put: unit-tests-cf-deployment-pipeline-image
-      params:
-        build: runtime-ci-unit-tests-cf-deployment/scripts/ci/unit-tests-cf-deployment
         push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true

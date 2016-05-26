@@ -1,7 +1,0 @@
-#!/bin/bash
-set -exu
-
-pushd cf-deployment
-  bundle install
-  bundle exec rspec
-popd
