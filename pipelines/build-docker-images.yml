@@ -25,7 +25,6 @@ groups:
   - build-run-cf-release-unit-tests-docker-image
   - build-run-errand-docker-image
   - build-run-smoketests-docker-image
-  - build-runtime-ci-tests-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-generate-deployment-manifest-from-bbl-docker-image
@@ -247,12 +246,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-smoketests/Dockerfile]
-- name: runtime-ci-runtime-ci-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/runtime-ci-tests/Dockerfile]
 - name: runtime-ci-validate-all-jobs-public
   type: git
   source:
@@ -512,13 +505,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-smoketests
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: runtime-ci-tests-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/runtime-ci-tests
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1115,23 +1101,6 @@ jobs:
     - put: run-smoketests-pipeline-image
       params:
         build: runtime-ci-run-smoketests/scripts/ci/run-smoketests
-        push: true
-- name: build-runtime-ci-tests-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-runtime-ci-tests
-        trigger: true
-    - put: runtime-ci-tests-pipeline-image
-      params:
-        build: runtime-ci-runtime-ci-tests/scripts/ci/runtime-ci-tests
         push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true

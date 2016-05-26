@@ -1,7 +1,6 @@
 groups:
 - name: runtime-ci
   jobs:
-  - test-runtime-ci
   - all-jobs-public
   - verify-every-task-has-correct-docker-image
   - verify-every-task-has-docker-build
@@ -22,15 +21,6 @@ jobs:
       trigger: true
   - task: validate-all-jobs-public
     file: runtime-ci/scripts/ci/validate-all-jobs-public/task.yml
-
-- name: test-runtime-ci
-  public: true
-  plan:
-  - aggregate:
-    - get: runtime-ci
-      trigger: true
-  - task: run-tests
-    file: runtime-ci/scripts/ci/runtime-ci-tests/task.yml
 
 - name: verify-every-task-has-correct-docker-image
   public: true
