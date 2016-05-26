@@ -33,7 +33,7 @@ groups:
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
-  - build-create-bosh-lite-diego-manifest-docker-image
+  - build-create-bosh-lite-diego-cats-manifest-docker-image
   - build-run-errand-bbl-docker-image
   - build-write-target-file-docker-image
   - build-bosh-deploy-docker-image
@@ -91,12 +91,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-diego-manifest/Dockerfile]
-- name: runtime-ci-create-bosh-lite-diego-manifest
+- name: runtime-ci-create-bosh-lite-diego-cats-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-bosh-lite-diego-manifest/Dockerfile]
+    paths: [scripts/ci/create-bosh-lite-diego-cats-manifest/Dockerfile]
 - name: runtime-ci-run-errand-bbl
   type: git
   source:
@@ -333,10 +333,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-bosh-lite-diego-manifest-pipeline-image
+- name: create-bosh-lite-diego-cats-manifest-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-bosh-lite-diego-manifest
+    repository: relintdockerhubpushbot/create-bosh-lite-diego-cats-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -691,7 +691,7 @@ jobs:
       params:
         build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
         push: true
-- name: build-create-bosh-lite-diego-manifest-docker-image
+- name: build-create-bosh-lite-diego-cats-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -702,11 +702,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-bosh-lite-diego-manifest
+      - get: runtime-ci-create-bosh-lite-diego-cats-manifest
         trigger: true
-    - put: create-bosh-lite-diego-manifest-pipeline-image
+    - put: create-bosh-lite-diego-cats-manifest-pipeline-image
       params:
-        build: runtime-ci-create-bosh-lite-diego-manifest/scripts/ci/create-bosh-lite-diego-manifest
+        build: runtime-ci-create-bosh-lite-diego-cats-manifest/scripts/ci/create-bosh-lite-diego-cats-manifest
         push: true
 - name: build-create-bosh-lite-stub-docker-image
   public: true
