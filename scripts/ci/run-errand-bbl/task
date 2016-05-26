@@ -4,7 +4,7 @@ set -exu
 root_dir="${PWD}"
 
 # Inputs
-BOSH_TARGET=$(cat "${BOSH_TARGET_FILE:?"Path to BOSH_TARGET_FILE must be provided"}")
+BOSH_TARGET=$(cat "${root_dir}/target-file-dir/${BOSH_TARGET_FILE:?"Path to BOSH_TARGET_FILE must be provided"}")
 BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
