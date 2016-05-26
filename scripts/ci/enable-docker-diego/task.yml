@@ -7,12 +7,13 @@ image_resource:
     repository: relintdockerhubpushbot/enable-docker-diego
 
 inputs:
-  - name: runtime-ci
+- name: runtime-ci
+- name: cf-target
 
 params:
   CF_USER: ~
   CF_PASSWORD: ~
-  CF_TARGET: ~
+  CF_TARGET_PATH: cf_target
 
 run:
   path: runtime-ci/scripts/ci/enable-docker-diego/task
