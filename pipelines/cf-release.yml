@@ -175,20 +175,6 @@ resources:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
 
-- name: cf-release-runtime-deployed
-  type: git
-  source:
-    branch: runtime-deployed
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/cf-release.git
-
-- name: cf-release-runtime-passed
-  type: git
-  source:
-    branch: runtime-passed
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/cf-release.git
-
 - name: cf-release-release-candidate
   type: git
   source:
@@ -946,12 +932,6 @@ jobs:
         EVENT_TAG_DEPLOYMENT: cf-a1
         DATADOG_API_KEY: {{a1_datadog_api_key}}
     - aggregate:
-      - put: cf-release-runtime-deployed
-        params:
-          repository: cf-release
-      - put: cf-release-runtime-passed
-        params:
-          repository: cf-release
       - put: cf-release-acceptance-deployed
         params:
           repository: cf-release
