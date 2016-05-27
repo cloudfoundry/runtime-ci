@@ -12,10 +12,10 @@ SKIP_SSL_VALIDATION="${SKIP_SSL_VALIDATION:?}"
 USE_HTTP="${USE_HTTP:?}"
 NODES="${NODES:?}"
 
-export GOPATH="${PWD}"
+export GOPATH="${PWD}/gopath"
 export PATH="${GOPATH}/bin":${PATH}
 
-cd "${GOPATH}/gopath/src/github.com/cloudfoundry/cf-acceptance-tests"
+cd "${GOPATH}/src/github.com/cloudfoundry/cf-acceptance-tests"
 
 go get github.com/onsi/ginkgo/ginkgo
 
@@ -56,7 +56,7 @@ set -u
 set -x
 
 # Remove trailing comma
-sed -i='' -E '$s/(.*),$/\1/' integration_config.json
+sed -ibak -E '$s/(.*),$/\1/' integration_config.json
 
 echo "}" >> integration_config.json
 

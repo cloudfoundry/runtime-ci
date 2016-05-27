@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: cf-acceptance-tests
-  path: gopath/src/github.com/cloudfoundry/cf-acceptance-tests
+  path: gopath/src/github.com/cloudfoundry
 
 
 run:
