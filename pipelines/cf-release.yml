@@ -655,14 +655,10 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_private_ip}}
-    - task: write-api-target-file
-      file: runtime-ci/scripts/ci/write-bosh-lite-api-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_private_ip}}
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
-        BOSH_TARGET_FILE: target-file-dir/target
+        BOSH_TARGET_FILE: target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
