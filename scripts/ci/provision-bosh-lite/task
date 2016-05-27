@@ -16,11 +16,6 @@ setup_env() {
 
 provision_bosh_lite() {
   pushd bosh-lite
-  export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
-}
-
-provision_bosh_lite() {
-  pushd bosh-lite
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"

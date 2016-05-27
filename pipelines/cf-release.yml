@@ -545,6 +545,7 @@ jobs:
         AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
         BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
         BOSH_LITE_PRIVATE_IP: {{bosh_lite_private_ip}}
+        BOSH_LITE_ELASTIC_IP: {{bosh_lite_elastic_ip}}
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
         SSH_KEY: {{bosh_lite_private_key}}
     - task: write-target-file
@@ -583,6 +584,8 @@ jobs:
           submodules: none
       - get: diego-release-master
         passed: [ bosh-lite-provision-cf-deploy ]
+        params:
+          submodules: none
       - get: runtime-ci
       - get: cf-release-tarball
         passed: [bosh-lite-provision-cf-deploy]
@@ -633,6 +636,8 @@ jobs:
           submodules: none
       - get: diego-release-master
         passed: [ bosh-lite-smoke-tests ]
+        params:
+          submodules: none
       - get: runtime-ci
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
@@ -685,6 +690,8 @@ jobs:
           submodules: none
       - get: diego-release-master
         passed: [ bosh-lite-smoke-tests ]
+        params:
+          submodules: none
       - get: runtime-ci
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
