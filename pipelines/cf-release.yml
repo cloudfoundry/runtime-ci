@@ -713,10 +713,16 @@ jobs:
         TARGET: {{bosh_lite_private_ip}}
       output_mapping:
         target-file-dir: bosh-lite-target-file
+    - task: write-bosh-lite-api-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.{{bosh_lite_private_ip}}.xip.io
+      output_mapping:
+        target-file-dir: bosh-lite-api-target-file
     - task: enable-docker
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
-        cf-target: bosh-lite-target-file
+        cf-target: bosh-lite-api-target-file
       params:
         CF_USER: admin
         CF_PASSWORD: admin
