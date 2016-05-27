@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cats-from-cf-release
+
+inputs:
+- name: cf-release
+
+outputs:
+- name: cf-acceptance-tests
+
+params:
+
+run:
+  path: runtime-ci/scripts/ci/cats-from-cf-release/task
+
