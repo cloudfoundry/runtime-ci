@@ -889,6 +889,8 @@ jobs:
         passed: [vsphere-smoke-tests]
         trigger: true
         tags: [vsphere]
+    - task: cats-from-cf-release
+      file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
     - task: acceptance-tests
       file: runtime-ci/scripts/ci/run-cats/task.yml
       tags: [ vsphere ]
