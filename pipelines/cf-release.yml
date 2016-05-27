@@ -8,6 +8,7 @@ groups:
   - bosh-lite-provision-cf-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
+  - bosh-lite-diego-cats
   - deploy-minimal
   - minimal-acceptance-tests
   - generate-a1-manifests
@@ -495,7 +496,8 @@ jobs:
 - name: bosh-lite-provision-cf-deploy
   public: true
   serial_groups:
-  - bosh-lite
+  - bosh-lite-dea
+  - bosh-lite-diego
   plan:
   - timeout: *timeout
     do:
@@ -568,7 +570,8 @@ jobs:
 - name: bosh-lite-smoke-tests
   public: true
   serial_groups:
-  - bosh-lite
+  - bosh-lite-dea
+  - bosh-lite-diego
   plan:
   - timeout: *timeout
     do:
@@ -618,7 +621,7 @@ jobs:
 - name: bosh-lite-acceptance-tests
   public: true
   serial_groups:
-  - bosh-lite
+  - bosh-lite-dea
   plan:
   - timeout: *timeout
     do:
@@ -667,67 +670,73 @@ jobs:
         put: bosh-lite-acceptance-tests-logs
         params:
           file: logs-dir/acceptance_tests.*.tgz
-#- name: bosh-lite-diego-cats
-#  public: true
-#  serial_groups:
-#  - bosh-lite
-#  plan:
-#  - timeout: *timeout
-#    do:
-#    - aggregate:
-#      - get: cf-release
-#        resource: cf-release-develop
-#        passed: [bosh-lite-smoke-tests]
-#        params:
-#          submodules: none
-#      - get: diego-release-master
-#        passed: [ bosh-lite-smoke-tests ]
-#      - get: runtime-ci
-#      - get: cf-release-tarball
-#        passed: [bosh-lite-smoke-tests]
-#        trigger: true
-#      - get: diego-final-releases
-#        passed: [ bosh-lite-smoke-tests ]
-#        trigger: true
-#      - get: garden-linux-release-tarball
-#        passed: [ bosh-lite-smoke-tests ]
-#        trigger: true
-#      - get: etcd-release-tarball
-#        passed: [ bosh-lite-smoke-tests ]
-#        trigger: true
-#      - get: cflinuxfs2-rootfs-release-tarball
-#        passed: [ bosh-lite-smoke-tests ]
-#        trigger: true
-#      - get: cf-bosh-lite-manifest
-#        passed: [ bosh-lite-smoke-tests ]
-#        trigger: true
-#      - get: cf-bosh-lite-diego-manifest
-#        trigger: true
-#        passed: [ bosh-lite-smoke-tests ]
-#    - task: write-api-target-file
-#      file: runtime-ci/scripts/ci/write-bosh-lite-api-target-file/task.yml
-#      params:
-#        TARGET: {{bosh_lite_private_ip}}
-#    - task: enable-docker
-#      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-#      input_mapping:
-#        cf-target: bosh-lite-api-target-file-dir
-#      params:
-#        CF_USER: {{a1_admin_username}}
-#        CF_PASSWORD: {{a1_admin_password}}
-#    - put: bosh-lite-diego-cats-deployment
-#      params:
-#        manifest: deployments/deployments/bosh-lite-diego-cats.yml
-#        releases: []
-#        stemcells: []
-#    - task: cf-acceptance-tests
-#      file: runtime-ci/scripts/ci/run-errand/task.yml
-#      params:
-#        BOSH_DIRECTOR: {{bosh_lite_private_ip}}
-#        BOSH_USER: admin
-#        BOSH_PASSWORD: admin
-#        DEPLOYMENT_NAME: bosh-lite-diego-cats
-#        ERRAND_NAME: diego-cats
+- name: bosh-lite-diego-cats
+  public: true
+  serial_groups:
+  - bosh-lite-diego
+  plan:
+  - timeout: *timeout
+    do:
+    - aggregate:
+      - get: cf-release
+        resource: cf-release-develop
+        passed: [bosh-lite-smoke-tests]
+        params:
+          submodules: none
+      - get: diego-release-master
+        passed: [ bosh-lite-smoke-tests ]
+      - get: runtime-ci
+      - get: cf-release-tarball
+        passed: [bosh-lite-smoke-tests]
+        trigger: true
+      - get: diego-final-releases
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: garden-linux-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: etcd-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cf-bosh-lite-manifest
+        passed: [ bosh-lite-smoke-tests ]
+        trigger: true
+      - get: cf-bosh-lite-diego-manifest
+        trigger: true
+        passed: [ bosh-lite-smoke-tests ]
+    - task: write-bosh-lite-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: {{bosh_lite_private_ip}}
+      output_mapping:
+        target-file-dir: bosh-lite-target-file
+    - task: enable-docker
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: bosh-lite-target-file
+      params:
+        CF_USER: admin
+        CF_PASSWORD: admin
+    - task: create-bosh-lite-diego-cats-manifest
+      file: scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
+      input_mapping:
+        cf-manifest: cf-bosh-lite-manifest
+    - put: bosh-lite-diego-cats-deployment
+      params:
+        manifest: deployments/deployments/bosh-lite-diego-cats.yml
+        releases: []
+        stemcells: []
+    - task: cf-acceptance-tests
+      file: runtime-ci/scripts/ci/run-errand/task.yml
+      params:
+        BOSH_DIRECTOR: {{bosh_lite_private_ip}}
+        BOSH_USER: admin
+        BOSH_PASSWORD: admin
+        DEPLOYMENT_NAME: bosh-lite-diego-cats
+        ERRAND_NAME: diego-cats
 - name: deploy-minimal
   public: true
   serial: true

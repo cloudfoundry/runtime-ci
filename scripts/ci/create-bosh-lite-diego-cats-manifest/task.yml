@@ -8,9 +8,15 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: bosh-lite-target-file
+- name: cf-manifest
 
 outputs:
 - name: bosh-lite-diego-cats-manifest
+
+params:
+  BOSH_LITE_TARGET_FILE_PATH: target
+  CF_MANIFEST_PATH: deployment.yml
 
 run:
   path: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task

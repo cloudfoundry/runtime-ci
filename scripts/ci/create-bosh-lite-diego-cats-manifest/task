@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cat << EOF > output/manifest.yml
-director_uuid: c3e3311f-08c9-4809-8083-4aa184fd24da
+director_uuid: $(grep director_uuid cf-manifest/"$CF_MANIFEST_PATH" | cut -d' ' -f2)
 
 name: bosh-lite-diego-cats
 
@@ -11,29 +11,47 @@ releases:
 
 networks:
 - name: default
-  type: dynamic
-  cloud_properties:
-    subnet: subnet-48c86563
-    security_groups:
-    - cf
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.4.0/30
+    reserved:
+    - 10.244.4.1
+    static:
+    - 10.244.4.2
+  - cloud_properties:
+      name: random
+    range: 10.244.4.4/30
+    reserved:
+    - 10.244.4.5
+    static:
+    - 10.244.4.6
+  - cloud_properties:
+      name: random
+    range: 10.244.4.8/30
+    reserved:
+    - 10.244.4.9
+    static:
+    - 10.244.4.10
 
 resource_pools:
-- name: xlarge_errand
+- cloud_properties:
+    name: random
+  env:
+    bosh:
+      password: \$6\$4gDD3aV0rdqlrKC\$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: xlarge_errand
   network: default
   stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
     version: latest
-  cloud_properties:
-    availability_zone: us-east-1b
-    instance_type: c3.xlarge
 
 compilation:
-  network: default
-  reuse_compilation_vms: true
-  workers: 6
   cloud_properties:
-    availability_zone: us-east-1b
-    instance_type: c3.large
+    name: random
+  network: cf1
+  reuse_compilation_vms: true
+  workers: 2
 
 update:
   canaries: 1
@@ -57,23 +75,23 @@ properties:
   acceptance_tests:
     admin_password: admin
     admin_user: admin
-    api: api.a1.cf-app.com
-    apps_domain: a1-app.cf-app.com
+    api: api.$(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
+    apps_domain: $(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
     backend: diego
-    client_secret: xFZ4m8AaFwyspjr8
-    include_backend_compatibility: false
+    client_secret: gorouter-secret
+    include_backend_compatibility: true
     include_internet_dependent: true
     include_diego_docker: true
     include_diego_ssh: true
     include_logging: true
-    include_route_services: false
+    include_route_services: true
     include_routing: true
     include_security_groups: true
     include_services: true
     include_sso: true
-    include_v3: false
+    include_v3: true
     nodes: 6
-    skip_diego_unsupported_tests: true
-    system_domain: a1.cf-app.com
+    skip_diego_unsupported_tests: false
+    system_domain: $(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
     use_http: true
 EOF
