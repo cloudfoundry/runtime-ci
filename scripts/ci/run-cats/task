@@ -26,11 +26,11 @@ cat > integration_config.json <<EOF
   "admin_user": "${CF_ADMIN_USER}",
   "admin_password": "${CF_ADMIN_PASSWORD}",
   "apps_domain": "${CF_APPS_DOMAIN}",
-  "skip_ssl_validation": "${SKIP_SSL_VALIDATION}",
-  "use_http": "${USE_HTTP}",
+  "skip_ssl_validation": ${SKIP_SSL_VALIDATION},
+  "use_http": ${USE_HTTP},
   "existing_user": "${EXISTING_USER}",
-  "use_existing_user": "$( [ ! -z "${EXISTING_USER}" ] && echo true || echo false)",
-  "keep_user_at_suite_end": "$( [ ! -z "${EXISTING_USER}" ] && echo true || echo false)",
+  "use_existing_user": $( [ ! -z "${EXISTING_USER}" ] && echo true || echo false),
+  "keep_user_at_suite_end": $( [ ! -z "${EXISTING_USER}" ] && echo true || echo false),
   "existing_user_password": "${EXISTING_USER_PASSWORD}",
 EOF
 
