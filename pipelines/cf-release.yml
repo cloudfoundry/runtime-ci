@@ -1238,6 +1238,8 @@ jobs:
     params:
       CF_USER: {{a1_admin_username}}
       CF_PASSWORD: {{a1_admin_password}}
+  - task: cats-from-cf-release
+    file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
   - task: cf-acceptance-tests
     file: runtime-ci/scripts/ci/run-cats/task.yml
     params:
