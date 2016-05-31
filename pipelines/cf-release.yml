@@ -1239,6 +1239,10 @@ jobs:
     - get: cf-release-tarball
       trigger: true
       passed: [ create-release ]
+    - get: diego-release-master
+      trigger: true
+      params:
+        submodules: none
   - task: create-cf-manifest
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
