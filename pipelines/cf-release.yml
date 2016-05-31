@@ -1249,6 +1249,7 @@ jobs:
       params:
         submodules: none
   - task: create-cf-manifest
+    tags: [vsphere]
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
       cf-release: cf-release-develop
@@ -1256,6 +1257,7 @@ jobs:
     params:
       INFRASTRUCTURE: vsphere
   - task: create-diego-manifest
+    tags: [vsphere]
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
       diego-release: diego-release-master
@@ -1272,9 +1274,11 @@ jobs:
       IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
   - aggregate:
     - put: cf-vsphere-manifest
+      tags: [vsphere]
       params:
         file: manifest/deployment.yml
     - put: cf-vsphere-diego-manifest
+      tags: [vsphere]
       params:
         file: generated-diego-manifest/diego-deployment.yml
 
