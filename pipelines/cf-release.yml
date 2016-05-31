@@ -1250,21 +1250,13 @@ jobs:
       cf-stubs: cat-env
     params:
       INFRASTRUCTURE: vsphere
-  - task: create-diego-iaas-settings
-    file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
-    input_mapping:
-      cf-manifest: manifest
-      deployments: cat-env
-      diego-release: diego-release-master
-    params:
-      INFRASTRUCTURE: vsphere
-      CF_MANIFEST_PATH: cf-manifest/deployment.yml
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
       diego-release: diego-release-master
       cf-manifest: manifest
       diego-stubs: cat-env
+      iaas-settings: cat-env
     params:
       BOSH_USER: {{vsphere_bosh_username}}
       BOSH_PASSWORD: {{vsphere_bosh_password}}
@@ -1272,6 +1264,7 @@ jobs:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
+      IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
   - aggregate:
     - put: cf-vsphere-manifest
       params:
