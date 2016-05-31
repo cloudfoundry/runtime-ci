@@ -1265,7 +1265,7 @@ jobs:
     params:
       BOSH_USER: {{vsphere_bosh_username}}
       BOSH_PASSWORD: {{vsphere_bosh_password}}
-      BOSH_TARGET: bosh.cat.cf-app.com
+      BOSH_TARGET: bosh.cat.wild.cf-app.com
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
