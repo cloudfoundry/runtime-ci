@@ -899,7 +899,7 @@ jobs:
       - put: vsphere-diego-deployment
         tags: [vsphere]
         params:
-          manifest: cf-vsphere-diego-manifest/deployment.yml
+          manifest: cf-vsphere-diego-manifest/diego-deployment.yml
           stemcells: [vsphere-stemcell/*.tgz]
           releases:
             diego-final-releases/*.tgz
