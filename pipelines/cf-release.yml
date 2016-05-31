@@ -822,7 +822,7 @@ jobs:
         CF_APPS_DOMAIN: minimal-aws.cf-app.com
         SKIP_SSL_VALIDATION: true
         USE_HTTP: false
-        NODES: 4
+        NODES: 2
         BACKEND: dea
         INCLUDE_DIEGO_SSH: false
         INCLUDE_DIEGO_DOCKER: false
