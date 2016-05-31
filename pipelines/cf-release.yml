@@ -1230,16 +1230,21 @@ jobs:
   plan:
   - aggregate:
     - get: cat-env
+      tags: [vsphere]
     - get: runtime-ci
+      tags: [vsphere]
     - get: cf-release-develop
+      tags: [vsphere]
       trigger: true
       passed: [ create-release ]
       params:
         submodules: none
     - get: cf-release-tarball
+      tags: [vsphere]
       trigger: true
       passed: [ create-release ]
     - get: diego-release-master
+      tags: [vsphere]
       trigger: true
       params:
         submodules: none
