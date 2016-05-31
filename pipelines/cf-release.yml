@@ -902,10 +902,10 @@ jobs:
           manifest: cf-vsphere-diego-manifest/diego-deployment.yml
           stemcells: [vsphere-stemcell/*.tgz]
           releases:
-            diego-final-releases/*.tgz
-            garden-linux-release-tarball/*.tgz
-            etcd-release-tarball/*.tgz
-            cflinuxfs2-rootfs-release-tarball/*.tgz
+          - diego-final-releases/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-release-tarball/*.tgz
 
 - name: vsphere-smoke-tests
   public: true
