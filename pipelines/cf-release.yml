@@ -567,7 +567,7 @@ jobs:
     - task: write-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: {{bosh_lite_private_ip}}
+        TARGET: {{bosh_lite_elastic_ip}}
     - put: bosh-lite-deployment
       params:
         target_file: target-file-dir/target
@@ -629,7 +629,7 @@ jobs:
     - task: write-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: {{bosh_lite_private_ip}}
+        TARGET: {{bosh_lite_elastic_ip}}
     - task: run-smoke-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
@@ -678,7 +678,7 @@ jobs:
     - task: write-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: {{bosh_lite_private_ip}}
+        TARGET: {{bosh_lite_elastic_ip}}
     - task: run-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
@@ -733,13 +733,13 @@ jobs:
     - task: write-bosh-lite-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: {{bosh_lite_private_ip}}
+        TARGET: {{bosh_lite_elastic_ip}}
       output_mapping:
         target-file-dir: bosh-lite-target-file
     - task: write-bosh-lite-api-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: api.{{bosh_lite_private_ip}}.xip.io
+        TARGET: api.{{bosh_lite_elastic_ip}}.xip.io
       output_mapping:
         target-file-dir: bosh-lite-api-target-file
     - task: enable-docker
@@ -761,7 +761,7 @@ jobs:
     - task: cf-acceptance-tests
       file: runtime-ci/scripts/ci/run-errand/task.yml
       params:
-        BOSH_DIRECTOR: {{bosh_lite_private_ip}}
+        BOSH_DIRECTOR: {{bosh_lite_elastic_ip}}
         BOSH_USER: admin
         BOSH_PASSWORD: admin
         DEPLOYMENT_NAME: bosh-lite-diego-cats
@@ -1192,7 +1192,7 @@ jobs:
   - task: create-bosh-lite-stub
     file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
     params:
-      BOSH_LITE_IP: {{bosh_lite_private_ip}}
+      BOSH_LITE_IP: {{bosh_lite_elastic_ip}}
     output_mapping:
       bosh-lite-stub: cf-stubs
   - task: create-cf-manifest
@@ -1212,7 +1212,7 @@ jobs:
     params:
       BOSH_USER: admin
       BOSH_PASSWORD: admin
-      BOSH_TARGET: {{bosh_lite_private_ip}}
+      BOSH_TARGET: {{bosh_lite_elastic_ip}}
       PROPERTY_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
