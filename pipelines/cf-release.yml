@@ -353,6 +353,8 @@ jobs:
     - aggregate:
       - get: cf-release-develop
         trigger: true
+        params:
+          submodules: none
         on_failure:
           task: cannot-bump
           file: runtime-ci/scripts/ci/cannot-bump/task.yml
@@ -546,6 +548,8 @@ jobs:
         params:
           submodules: none
       - get: diego-release-master
+        params:
+          submodules: none
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -851,6 +855,8 @@ jobs:
         resource: cf-release-develop
         passed: [generate-vsphere-manifests]
         tags: [vsphere]
+        params:
+          submodules: none
       - get: runtime-ci
         tags: [vsphere]
       - get: cat-env
@@ -923,6 +929,8 @@ jobs:
         - vsphere-cf-deploy
       - get: cf-release
         resource: cf-release-develop
+        params:
+          submodules: none
         passed: [vsphere-cf-deploy]
         trigger: true
         tags: [vsphere]
@@ -994,6 +1002,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [generate-a1-manifests]
+        params:
+          submodules: none
       - get: runtime-ci
       - get: deployments
         resource: a1-env
@@ -1076,6 +1086,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-cf-deploy]
+        params:
+          submodules: none
       - get: cf-release-tarball
         passed: [a1-cf-deploy]
         trigger: true
