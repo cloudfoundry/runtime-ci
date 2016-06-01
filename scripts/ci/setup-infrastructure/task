@@ -1,22 +1,42 @@
 #!/bin/bash
 
-set -x
-set -e
-set -u
+set -xeu
 
 pushd env-repo
-  echo "bbl --state-dir bbl-infrastructure \
+
+
+  set +x
+  echo "bbl \
+    --state-dir bbl-infrastructure \
     --aws-access-key-id [REDACTED] \
     --aws-secret-access-key [REDACTED] \
     --aws-region us-east-1 \
-    unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf"
-
-  set +x
-  bbl --state-dir bbl-infrastructure \
+    unsupported-deploy-bosh-on-aws-for-concourse"
+  bbl \
+    --state-dir bbl-infrastructure \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
     --aws-region us-east-1 \
-    unsupported-deploy-bosh-on-aws-for-concourse --lb-type cf
+    unsupported-deploy-bosh-on-aws-for-concourse
+
+  echo "bbl \
+    --state-dir bbl-infrastructure \
+    --aws-access-key-id [REDACTED] \
+    --aws-secret-access-key [REDACTED] \
+    --aws-region us-east-1 \
+    unsupported-create-lbs \
+    --type=cf \
+    --cert=<(echo [REDACTED]) \
+    --key=<(echo [REDACTED]"
+  bbl \
+    --state-dir bbl-infrastructure \
+    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
+    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+    --aws-region us-east-1 \
+    unsupported-create-lbs \
+    --type=cf \
+    --cert=<(echo "$BBL_LB_CERT") \
+    --key=<(echo "$BBL_LB_KEY")
   set -x
 
   bbl --state-dir bbl-infrastructure director-address > bbl-infrastructure/target
