@@ -894,24 +894,23 @@ jobs:
       params:
         <<: *bosh-target-cat
         DEPLOYMENT_NAME: cf-cat
-    - aggregate:
-      - put: vsphere-deployment
-        tags: [vsphere]
-        params:
-          manifest: cf-vsphere-manifest/deployment.yml
-          stemcells: [vsphere-stemcell/*.tgz]
-          releases:
-            - cf-release-tarball/*.tgz
-      - put: vsphere-diego-deployment
-        tags: [vsphere]
-        params:
-          manifest: cf-vsphere-diego-manifest/diego-deployment.yml
-          stemcells: [vsphere-stemcell/*.tgz]
-          releases:
-          - diego-final-releases/*.tgz
-          - garden-linux-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-release-tarball/*.tgz
+    - put: vsphere-deployment
+      tags: [vsphere]
+      params:
+        manifest: cf-vsphere-manifest/deployment.yml
+        stemcells: [vsphere-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: vsphere-diego-deployment
+      tags: [vsphere]
+      params:
+        manifest: cf-vsphere-diego-manifest/diego-deployment.yml
+        stemcells: [vsphere-stemcell/*.tgz]
+        releases:
+        - diego-final-releases/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-release-tarball/*.tgz
 
 - name: vsphere-smoke-tests
   public: true
