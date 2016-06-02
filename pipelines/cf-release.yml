@@ -885,37 +885,39 @@ jobs:
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
-    - task: delete-cf
-      privileged: true
-      file: runtime-ci/scripts/ci/delete-deployment/task.yml
-      tags: [vsphere]
-      params:
-        <<: *bosh-target-cat
-        DEPLOYMENT_NAME: cf-cat
-    - task: delete-diego
-      privileged: true
-      file: runtime-ci/scripts/ci/delete-deployment/task.yml
-      tags: [vsphere]
-      params:
-        <<: *bosh-target-cat
-        DEPLOYMENT_NAME: cf-cat-diego
-    - put: vsphere-deployment
-      tags: [vsphere]
-      params:
-        manifest: cf-vsphere-manifest/deployment.yml
-        stemcells: [vsphere-stemcell/*.tgz]
-        releases:
-          - cf-release-tarball/*.tgz
-    - put: vsphere-diego-deployment
-      tags: [vsphere]
-      params:
-        manifest: cf-vsphere-diego-manifest/diego-deployment.yml
-        stemcells: [vsphere-stemcell/*.tgz]
-        releases:
-        - diego-final-releases/*.tgz
-        - garden-linux-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-release-tarball/*.tgz
+    - aggregate:
+      - task: delete-cf
+        privileged: true
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        tags: [vsphere]
+        params:
+          <<: *bosh-target-cat
+          DEPLOYMENT_NAME: cf-cat
+      - task: delete-diego
+        privileged: true
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        tags: [vsphere]
+        params:
+          <<: *bosh-target-cat
+          DEPLOYMENT_NAME: cf-cat-diego
+    - aggregate:
+      - put: vsphere-deployment
+        tags: [vsphere]
+        params:
+          manifest: cf-vsphere-manifest/deployment.yml
+          stemcells: [vsphere-stemcell/*.tgz]
+          releases:
+            - cf-release-tarball/*.tgz
+      - put: vsphere-diego-deployment
+        tags: [vsphere]
+        params:
+          manifest: cf-vsphere-diego-manifest/diego-deployment.yml
+          stemcells: [vsphere-stemcell/*.tgz]
+          releases:
+          - diego-final-releases/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-release-tarball/*.tgz
 
 - name: vsphere-smoke-tests
   public: true
