@@ -940,7 +940,6 @@ jobs:
         trigger: true
         tags: [vsphere]
       - get: cf-release-tarball
-        passed: [generate-vsphere-manifests]
         trigger: true
         tags: [vsphere]
         passed: [vsphere-cf-deploy]
