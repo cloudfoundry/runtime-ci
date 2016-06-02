@@ -3,8 +3,6 @@
 set -xeu
 
 pushd env-repo
-
-
   set +x
   echo "bbl \
     --state-dir bbl-infrastructure \

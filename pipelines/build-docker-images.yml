@@ -29,6 +29,7 @@ groups:
   - build-validate-branch-freshness-docker-image
   - build-generate-deployment-manifest-from-bbl-docker-image
   - build-setup-infrastructure-docker-image
+  - build-destroy-infrastructure-docker-image
   - build-check-deployment-docker-image
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
@@ -277,6 +278,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/setup-infrastructure/Dockerfile]
+- name: runtime-ci-destroy-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/destroy-infrastructure/Dockerfile]
 - name: runtime-ci-check-deployment
   type: git
   source:
@@ -547,6 +554,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/setup-infrastructure
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: destroy-infrastructure-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/destroy-infrastructure
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1200,6 +1214,23 @@ jobs:
     - put: setup-infrastructure-pipeline-image
       params:
         build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure
+        push: true
+- name: build-destroy-infrastructure-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-destroy-infrastructure
+        trigger: true
+    - put: destroy-infrastructure-pipeline-image
+      params:
+        build: runtime-ci-destroy-infrastructure/scripts/ci/destroy-infrastructure
         push: true
 - name: build-check-deployment-docker-image
   public: true
