@@ -27,7 +27,8 @@ pushd env-repo
     unsupported-create-lbs \
     --type=cf \
     --cert=<(echo [REDACTED]) \
-    --key=<(echo [REDACTED]"
+    --key=<(echo [REDACTED]) \
+    --skip-if-exists"
   bbl \
     --state-dir bbl-infrastructure \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
@@ -36,7 +37,8 @@ pushd env-repo
     unsupported-create-lbs \
     --type=cf \
     --cert=<(echo "$BBL_LB_CERT") \
-    --key=<(echo "$BBL_LB_KEY")
+    --key=<(echo "$BBL_LB_KEY") \
+    --skip-if-exists
   set -x
 
   bbl --state-dir bbl-infrastructure director-address > bbl-infrastructure/target
