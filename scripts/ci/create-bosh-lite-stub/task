@@ -19,6 +19,8 @@ properties:
     include_services: true
     backend: dea
   cc:
+    system_domain: "${BOSH_LITE_IP}.xip.io"
+    apps_domain: "${BOSH_LITE_IP}.xip.io"
     security_group_definitions:
       - name: load_balancer
         rules:
