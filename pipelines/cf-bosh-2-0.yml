@@ -1,0 +1,44 @@
+---
+groups:
+- name: bosh-2.0
+  jobs:
+    - setup-infrastructure
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: hermione-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+- name: hermione-env-updated
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+
+jobs:
+- name: setup-infrastructure
+  public: true
+  serial_groups: [hermione]
+  plan:
+  - get: env-repo
+    resource: hermione-env
+    trigger: true
+  - get: runtime-ci
+  - task: run-bbl
+    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{bbl_lb_cert}}
+      BBL_LB_KEY: {{bbl_lb_key}}
+  - put: hermione-env-updated
+    params:
+      repository: updated-env-repo
