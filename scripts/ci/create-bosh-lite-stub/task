@@ -9,6 +9,8 @@ create_stub() {
   cat << EOF > bosh-lite-stub/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
+  system_domain: "${BOSH_LITE_IP}.xip.io"
+  apps_domain: "${BOSH_LITE_IP}.xip.io"
   acceptance_tests:
     nodes: 4
     include_sso: true
@@ -19,8 +21,6 @@ properties:
     include_services: true
     backend: dea
   cc:
-    system_domain: "${BOSH_LITE_IP}.xip.io"
-    apps_domain: "${BOSH_LITE_IP}.xip.io"
     security_group_definitions:
       - name: load_balancer
         rules:
