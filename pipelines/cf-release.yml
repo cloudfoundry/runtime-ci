@@ -887,13 +887,20 @@ jobs:
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
-    - task: delete-vsphere-deployment
+    - task: delete-cf
       privileged: true
       file: runtime-ci/scripts/ci/delete-deployment/task.yml
       tags: [vsphere]
       params:
         <<: *bosh-target-cat
         DEPLOYMENT_NAME: cf-cat
+    - task: delete-diego
+      privileged: true
+      file: runtime-ci/scripts/ci/delete-deployment/task.yml
+      tags: [vsphere]
+      params:
+        <<: *bosh-target-cat
+        DEPLOYMENT_NAME: cf-cat-diego
     - put: vsphere-deployment
       tags: [vsphere]
       params:
