@@ -353,8 +353,6 @@ jobs:
     - aggregate:
       - get: cf-release-develop
         trigger: true
-        params:
-          submodules: none
         on_failure:
           task: cannot-bump
           file: runtime-ci/scripts/ci/cannot-bump/task.yml
