@@ -752,7 +752,7 @@ jobs:
         CF_USER: admin
         CF_PASSWORD: admin
     - task: create-bosh-lite-diego-cats-manifest
-      file: scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
+      file: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
       input_mapping:
         cf-manifest: cf-bosh-lite-manifest
     - put: bosh-lite-diego-cats-deployment
