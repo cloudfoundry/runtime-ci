@@ -1001,6 +1001,44 @@ jobs:
         passed: [vsphere-smoke-tests]
         trigger: true
         tags: [vsphere]
+      - get: cf-release-tarball
+        trigger: true
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+      - get: vsphere-stemcell
+        tags: [vsphere]
+        params:
+          tarball: false
+        passed: [vsphere-smoke-tests]
+      - get: diego-release
+        resource: diego-release-master
+        params: {submodules: none}
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+      - get: diego-final-releases
+        trigger: true
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+        params:
+          tarball: false
+      - get: garden-linux-release-tarball
+        trigger: true
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+        params:
+          tarball: false
+      - get: etcd-release-tarball
+        trigger: true
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+        params:
+          tarball: false
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+        tags: [vsphere]
+        passed: [vsphere-smoke-tests]
+        params:
+          tarball: false
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
     - task: acceptance-tests
