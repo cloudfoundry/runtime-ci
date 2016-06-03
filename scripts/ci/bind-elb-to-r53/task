@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -eu
+set -eu
 
 cf_router_load_balancer_url() {
   bbl \
