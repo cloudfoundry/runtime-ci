@@ -49,7 +49,7 @@ resource_pools:
 compilation:
   cloud_properties:
     name: random
-  network: cf1
+  network: default
   reuse_compilation_vms: true
   workers: 2
 
