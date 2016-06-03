@@ -1468,29 +1468,64 @@ jobs:
       - get: diego-cf-compatibility
       - get: cf-release
         resource: cf-release-develop
-        passed: [vsphere-cf-cats, bosh-lite-acceptance-tests, a1-diego-cats]
+        passed:
+        - vsphere-cf-cats
+        - bosh-lite-acceptance-tests
+        - a1-diego-cats
         trigger: true
         params:
           submodules: none
       - get: stemcell
         resource: aws-stemcell
-        passed: [ a1-diego-cats]
+        passed:
+        - a1-diego-cats
         trigger: true
+        params:
+          tarball: false
+      - get: vsphere-stemcell
+        passed:
+        - vsphere-cf-cats
+        trigger: true
+        params:
+          tarball: false
       - get: diego-final-releases
-        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
+        passed:
+        - a1-diego-cats
+        - bosh-lite-acceptance-tests
+        - vsphere-cf-cats
         trigger: true
+        params:
+          tarball: false
       - get: diego-release-master
-        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
+        passed:
+        - a1-diego-cats
+        - bosh-lite-acceptance-tests
+        - vsphere-cf-cats
         trigger: true
       - get: garden-linux-release-tarball
-        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
+        passed:
+        - a1-diego-cats
+        - bosh-lite-acceptance-tests
+        - vsphere-cf-cats
         trigger: true
+        params:
+          tarball: false
       - get: etcd-release-tarball
-        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
+        passed:
+        - a1-diego-cats
+        - bosh-lite-acceptance-tests
+        - vsphere-cf-cats
+        params:
+          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
-        passed: [ a1-diego-cats, bosh-lite-acceptance-tests ]
         trigger: true
+        passed:
+        - a1-diego-cats
+        - bosh-lite-acceptance-tests
+        - vsphere-cf-cats
+        params:
+          tarball: false
     - aggregate:
       - put: cf-release-release-candidate
         params:
