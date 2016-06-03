@@ -585,10 +585,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: write-bind-elb-to-r53-pipeline-image
+- name: bind-elb-to-r53-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/write-bind-elb-to-r53
+    repository: relintdockerhubpushbot/bind-elb-to-r53
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1280,7 +1280,7 @@ jobs:
       params:
         build: runtime-ci-write-bosh-lite-api-target-file/scripts/ci/write-bosh-lite-api-target-file
         push: true
-- name: build-write-bind-elb-to-r53-docker-image
+- name: build-bind-elb-to-r53-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -1291,10 +1291,10 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-bind-elb-to-r53
+      - get: runtime-ci-bind-elb-to-r53
         trigger: true
-    - put: write-bind-elb-to-r53-pipeline-image
+    - put: bind-elb-to-r53-pipeline-image
       params:
-        build: runtime-ci-write-bind-elb-to-r53/scripts/ci/write-bind-elb-to-r53
+        build: runtime-ci-bind-elb-to-r53/scripts/ci/bind-elb-to-r53
         push: true
 
