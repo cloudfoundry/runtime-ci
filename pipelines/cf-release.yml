@@ -757,7 +757,7 @@ jobs:
         cf-manifest: cf-bosh-lite-manifest
     - put: bosh-lite-diego-cats-deployment
       params:
-        manifest: deployments/deployments/bosh-lite-diego-cats.yml
+        manifest: bosh-lite-diego-cats-manifest/manifest.yml
         target_file: bosh-lite-target-file/target
         releases: []
         stemcells: []
