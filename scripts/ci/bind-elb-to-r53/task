@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#set -eu
+
+cf_router_load_balancer_url() {
+  bbl \
+    --state-dir bbl-infrastructure \
+    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
+    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+    --aws-region us-east-1 \
+    unsupported-lbs \
+    | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
+}
+
+aws_hosted_zone_id_from_partial_name() {
+  aws route53 list-hosted-zones \
+    | jq -r ".HostedZones[] | select(.Name | contains(\"${1}\")) | .Id"
+}
+
+write_change_file() {
+  cat << EOF > "$1"
+{
+    "Comment": "Update api.$2 to point to ELB",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "api.$2.",
+                "Type": "CNAME",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "${3}"
+                    }
+                ]
+            }
+        }
+    ]
+}
+EOF
+}
+
+post_change_file() {
+  aws route53 change-resource-record-sets \
+    --hosted-zone-id "${2}" \
+    --change-batch "file://${1}"
+}
+
+main() {
+  pushd env-repo
+    stack_name=$(jq -r '.stack.name' < bbl-infrastructure/state.json)
+
+    cf_router_lb_url=$(cf_router_load_balancer_url "${stack_name}")
+
+    aws_hosted_zone_id=$(aws_hosted_zone_id_from_partial_name "${DOMAIN}")
+
+    change_file=/tmp/change_file
+
+    write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}"
+
+    post_change_file "${change_file}" "${aws_hosted_zone_id}"
+  popd
+}
+
+main
