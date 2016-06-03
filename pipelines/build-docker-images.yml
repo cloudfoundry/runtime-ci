@@ -42,6 +42,7 @@ groups:
   - build-verify-every-task-has-docker-build-docker-image
   - build-create-iaas-settings-docker-image
   - build-write-bosh-lite-api-target-file-docker-image
+  - build-bind-elb-to-r53-docker-image
 
 resources:
 - name: weekly
@@ -296,6 +297,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-bosh-lite-api-target-file/Dockerfile]
+- name: runtime-ci-bind-elb-to-r53
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bind-elb-to-r53/Dockerfile]
 
 # All the docker images
 - name: create-iaas-settings-pipeline-image
@@ -575,6 +582,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-bosh-lite-api-target-file
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: write-bind-elb-to-r53-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-bind-elb-to-r53
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1265,5 +1279,22 @@ jobs:
     - put: write-bosh-lite-api-target-file-pipeline-image
       params:
         build: runtime-ci-write-bosh-lite-api-target-file/scripts/ci/write-bosh-lite-api-target-file
+        push: true
+- name: build-write-bind-elb-to-r53-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-write-bind-elb-to-r53
+        trigger: true
+    - put: write-bind-elb-to-r53-pipeline-image
+      params:
+        build: runtime-ci-write-bind-elb-to-r53/scripts/ci/write-bind-elb-to-r53
         push: true
 
