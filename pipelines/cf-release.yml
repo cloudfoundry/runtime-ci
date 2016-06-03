@@ -1039,6 +1039,18 @@ jobs:
         passed: [vsphere-smoke-tests]
         params:
           tarball: false
+    - task: write-api-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.cat.wild.cf-app.com
+    - task: enable-docker
+      tags: [ vsphere ]
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{vsphere_cf_username}}
+        CF_PASSWORD: {{vsphere_cf_password}}
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
     - task: acceptance-tests
@@ -1047,17 +1059,17 @@ jobs:
       params:
         INCLUDE_BACKEND_COMPATIBILITY: false
         INCLUDE_INTERNET_DEPENDENT: true
-        INCLUDE_DIEGO_DOCKER: false
-        INCLUDE_DIEGO_SSH: false
+        INCLUDE_DIEGO_DOCKER: true
+        INCLUDE_DIEGO_SSH: true
         INCLUDE_LOGGING: true
         INCLUDE_ROUTE_SERVICES: true
         INCLUDE_ROUTING: true
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
-        INCLUDE_V3: false
+        INCLUDE_V3: true
         INCLUDE_OPERATOR: true
         SKIP_SSO: false
-        BACKEND: dea
+        BACKEND: diego
         CF_API: "api.cat.wild.cf-app.com"
         CF_ADMIN_USER: {{vsphere_cf_username}}
         CF_ADMIN_PASSWORD: {{vsphere_cf_password}}
@@ -1472,6 +1484,7 @@ jobs:
         - vsphere-cf-cats
         - bosh-lite-acceptance-tests
         - a1-diego-cats
+        - vsphere-cf-cats
         trigger: true
         params:
           submodules: none
