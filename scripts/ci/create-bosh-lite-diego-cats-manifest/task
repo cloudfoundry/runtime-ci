@@ -14,25 +14,22 @@ networks:
   subnets:
   - cloud_properties:
       name: random
-    range: 10.244.5.0/30
+    range: 10.244.4.0/30
     reserved:
-    - 10.244.5.1
-    static:
-    - 10.244.5.2
+    - 10.244.4.1
+    static: []
   - cloud_properties:
       name: random
-    range: 10.244.5.4/30
+    range: 10.244.4.4/30
     reserved:
-    - 10.244.5.5
-    static:
-    - 10.244.5.6
+    - 10.244.4.5
+    static: []
   - cloud_properties:
       name: random
-    range: 10.244.5.8/30
+    range: 10.244.4.8/30
     reserved:
-    - 10.244.5.9
-    static:
-    - 10.244.5.10
+    - 10.244.4.9
+    static: []
 
 resource_pools:
 - cloud_properties:
