@@ -7,6 +7,7 @@ RUN \
     mercurial \
     software-properties-common \
     wget \
+    python-pip \
     jq
 
 RUN \
