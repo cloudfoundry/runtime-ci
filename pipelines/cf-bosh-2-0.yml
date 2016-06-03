@@ -2,7 +2,8 @@
 groups:
 - name: bosh-2.0
   jobs:
-    - setup-infrastructure
+  - destroy-infrastructure
+  - setup-infrastructure
 
 resources:
 - name: runtime-ci
@@ -24,15 +25,33 @@ resources:
     private_key: {{hermione_env_private_key}}
 
 jobs:
+- name: destroy-infrastructure
+  public: true
+  serial_groups: [hermione]
+  plan:
+  - aggregate:
+    - get: env-repo
+      resource: hermione-env
+    - get: runtime-ci
+  - task: destroy-infrastructure
+    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{bbl_lb_cert}}
+      BBL_LB_KEY: {{bbl_lb_key}}
+  - put: hermione-env-updated
+    params:
+      repository: updated-env-repo
 - name: setup-infrastructure
   public: true
   serial_groups: [hermione]
   plan:
-  - get: env-repo
-    resource: hermione-env
-    trigger: true
-  - get: runtime-ci
-  - task: run-bbl
+  - aggregate:
+    - get: env-repo
+      resource: hermione-env
+    - get: runtime-ci
+  - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
@@ -42,3 +61,13 @@ jobs:
   - put: hermione-env-updated
     params:
       repository: updated-env-repo
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{bbl_lb_cert}}
+      BBL_LB_KEY: {{bbl_lb_key}}
+      DOMAIN: {{hermione_domain}}
