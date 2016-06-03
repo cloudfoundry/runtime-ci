@@ -91,4 +91,5 @@ properties:
     skip_diego_unsupported_tests: false
     system_domain: $(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
     use_http: true
+    skip_ssl_validation: true
 EOF
