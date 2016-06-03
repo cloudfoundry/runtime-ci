@@ -758,6 +758,7 @@ jobs:
     - put: bosh-lite-diego-cats-deployment
       params:
         manifest: deployments/deployments/bosh-lite-diego-cats.yml
+        target_file: bosh-lite-target-file/target
         releases: []
         stemcells: []
     - task: cf-acceptance-tests

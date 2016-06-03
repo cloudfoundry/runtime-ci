@@ -1,7 +1,6 @@
 #!/bin/bash
 
-mkdir output
-cat <<EOF > output/manifest.yml
+cat <<EOF > bosh-lite-diego-cats-manifest/manifest.yml
 director_uuid: $(grep director_uuid cf-manifest/"$CF_MANIFEST_PATH" | cut -d' ' -f2)
 
 name: bosh-lite-diego-cats
