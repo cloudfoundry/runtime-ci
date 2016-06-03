@@ -11,6 +11,11 @@ resource_types:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-deployment-resource
+- name: docker-image
+  type: docker-image
+  source:
+    repository: concourse/docker-image-resource
+
 
 resources:
 - name: runtime-ci

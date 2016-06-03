@@ -4,6 +4,12 @@ groups:
   - green-means-nothing-deployed-on-runtime1
   - green-means-nothing-deployed-on-runtime2
 
+resource_types:
+- name: docker-image
+  type: docker-image
+  source:
+    repository: concourse/docker-image-resource
+
 resources:
 - name: every-15-minutes
   type: time
