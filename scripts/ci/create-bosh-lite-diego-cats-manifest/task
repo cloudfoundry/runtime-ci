@@ -72,8 +72,8 @@ properties:
   acceptance_tests:
     admin_password: admin
     admin_user: admin
-    api: api.$(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
-    apps_domain: $(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
+    api: api.bosh-lite.runtime-ci.cf-app.com
+    apps_domain: api.bosh-lite.runtime-ci.cf-app.com
     backend: diego
     client_secret: gorouter-secret
     include_backend_compatibility: true
@@ -89,7 +89,7 @@ properties:
     include_v3: true
     nodes: 6
     skip_diego_unsupported_tests: false
-    system_domain: $(cat bosh-lite-target-file/"$BOSH_LITE_TARGET_FILE_PATH").xip.io
+    system_domain: api.bosh-lite.runtime-ci.cf-app.com
     use_http: true
     skip_ssl_validation: true
 EOF

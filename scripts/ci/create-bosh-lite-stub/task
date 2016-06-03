@@ -9,8 +9,8 @@ create_stub() {
   cat << EOF > bosh-lite-stub/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
-  system_domain: "${BOSH_LITE_IP}.xip.io"
-  apps_domain: "${BOSH_LITE_IP}.xip.io"
+  system_domain: api.bosh-lite.runtime-ci.cf-app.com
+  apps_domain: api.bosh-lite.runtime-ci.cf-app.com
   acceptance_tests:
     nodes: 4
     include_sso: true

@@ -747,7 +747,7 @@ jobs:
     - task: write-bosh-lite-api-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: api.{{bosh_lite_elastic_ip}}.xip.io
+        TARGET: api.bosh-lite.runtime-ci.cf-app.com
       output_mapping:
         target-file-dir: bosh-lite-api-target-file
     - task: enable-docker

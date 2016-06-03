@@ -2,4 +2,4 @@
 
 set -xeu
 
-echo "api.${BOSH_TARGET}.xip.io" > "${API_TARGET_FILE_DIR}/api_target"
+echo "api.bosh-lite.runtime-ci.cf-app.com" > "${API_TARGET_FILE_DIR}/api_target"
