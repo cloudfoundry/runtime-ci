@@ -73,7 +73,7 @@ properties:
     admin_password: admin
     admin_user: admin
     api: api.bosh-lite.runtime-ci.cf-app.com
-    apps_domain: api.bosh-lite.runtime-ci.cf-app.com
+    apps_domain: bosh-lite.runtime-ci.cf-app.com
     backend: diego
     client_secret: gorouter-secret
     include_backend_compatibility: true
@@ -89,7 +89,7 @@ properties:
     include_v3: true
     nodes: 6
     skip_diego_unsupported_tests: false
-    system_domain: api.bosh-lite.runtime-ci.cf-app.com
+    system_domain: bosh-lite.runtime-ci.cf-app.com
     use_http: true
     skip_ssl_validation: true
 EOF
