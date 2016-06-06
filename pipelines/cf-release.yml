@@ -1003,13 +1003,13 @@ jobs:
     - aggregate:
       - get: runtime-ci
         tags: [ vsphere ]
-        params:
-          submodules: [ 'src/github.com/cloudfoundry/cf-acceptance-tests' ]
       - get: cf-release
         resource: cf-release-develop
         passed: [vsphere-smoke-tests]
         trigger: true
         tags: [vsphere]
+        params:
+          submodules: [ 'src/github.com/cloudfoundry/cf-acceptance-tests' ]
       - get: cf-release-tarball
         trigger: true
         tags: [vsphere]
