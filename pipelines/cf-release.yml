@@ -1003,6 +1003,8 @@ jobs:
     - aggregate:
       - get: runtime-ci
         tags: [ vsphere ]
+        params:
+          submodules: [ 'src/github.com/cloudfoundry/cf-acceptance-tests' ]
       - get: cf-release
         resource: cf-release-develop
         passed: [vsphere-smoke-tests]
@@ -1406,6 +1408,8 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-smoke-tests]
+        params:
+          submodules: [ 'src/github.com/cloudfoundry/cf-acceptance-tests' ]
       - get: cf-release-tarball
         passed: [a1-smoke-tests]
         trigger: true
@@ -1491,7 +1495,6 @@ jobs:
         - vsphere-cf-cats
         - bosh-lite-acceptance-tests
         - a1-diego-cats
-        - vsphere-cf-cats
         trigger: true
         params:
           submodules: none
