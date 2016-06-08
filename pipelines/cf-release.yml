@@ -1504,7 +1504,7 @@ jobs:
         - a1-diego-cats
         trigger: true
         params:
-          tarball: false
+          tarball: true
       - get: vsphere-stemcell
         passed:
         - vsphere-cf-cats
