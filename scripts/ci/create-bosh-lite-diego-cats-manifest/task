@@ -86,7 +86,7 @@ properties:
     include_security_groups: true
     include_services: true
     include_sso: true
-    include_v3: true
+    include_v3: false
     nodes: 6
     skip_diego_unsupported_tests: false
     system_domain: bosh-lite.runtime-ci.cf-app.com
