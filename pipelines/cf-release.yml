@@ -1075,7 +1075,7 @@ jobs:
         INCLUDE_ROUTING: true
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
-        INCLUDE_V3: true
+        INCLUDE_V3: false
         INCLUDE_OPERATOR: true
         SKIP_SSO: false
         BACKEND: diego
@@ -1468,7 +1468,7 @@ jobs:
       INCLUDE_ROUTING: true
       INCLUDE_SECURITY_GROUPS: true
       INCLUDE_SERVICES: true
-      INCLUDE_V3: true
+      INCLUDE_V3: false
       INCLUDE_OPERATOR: true
       SKIP_SSO: false
       BACKEND: diego
