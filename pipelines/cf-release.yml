@@ -672,29 +672,40 @@ jobs:
       - get: cf-bosh-lite-manifest
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
-    - task: create-bosh-lite-creds
-      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
-    - task: write-target-file
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-    - task: enable-docker
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-      input_mapping:
-        cf-target: bosh-lite-api-target-file
-      params:
-        CF_USER: admin
-        CF_PASSWORD: admin
-    - task: create-bosh-lite-diego-cats-manifest
-      file: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
-      input_mapping:
-        cf-manifest: cf-bosh-lite-manifest
-    - put: bosh-lite-diego-cats-deployment
-      params:
-        manifest: bosh-lite-diego-cats-manifest/manifest.yml
-        target_file: bosh-lite-target-file/target
-        releases: []
-        stemcells: []
+    - aggregate:
+      - do: # enable docker
+        - task: create-bosh-lite-creds
+          file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+        - task: write-api-target-file
+          file: runtime-ci/scripts/ci/write-target-file/task.yml
+          params:
+            TARGET: api.bosh-lite.runtime-ci.cf-app.com
+          output_mapping:
+            target-file-dir: bosh-lite-api-target-file
+        - task: enable-docker
+          file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+          input_mapping:
+            cf-target: bosh-lite-api-target-file
+          params:
+            CF_USER: {{bosh_lite_cf_user}}
+            CF_PASSWORD: {{bosh_lite_cf_password}}
+      - do: # bosh deploy a1-diego-cats
+        - task: write-bosh-target-file
+          file: runtime-ci/scripts/ci/write-target-file/task.yml
+          params:
+            TARGET: {{bosh_lite_elastic_ip}}
+          output_mapping:
+            target-file-dir: bosh-lite-target-file
+        - task: create-bosh-lite-diego-cats-manifest
+          file: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
+          input_mapping:
+            cf-manifest: cf-bosh-lite-manifest
+        - put: bosh-lite-diego-cats-deployment
+          params:
+            manifest: bosh-lite-diego-cats-manifest/manifest.yml
+            target_file: bosh-lite-target-file/target
+            releases: []
+            stemcells: []
     - aggregate:
       - task: run-acceptance-tests
         file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
@@ -704,6 +715,8 @@ jobs:
           BOSH_PASSWORD_FILE: bosh-password-file-dir/password
           DEPLOYMENT_NAME: cf-warden
           ERRAND_NAME: acceptance_tests
+        input_mapping:
+          target-file-dir: bosh-lite-target-file
         ensure:
           put: bosh-lite-acceptance-tests-logs
           params:
@@ -712,10 +725,14 @@ jobs:
         file: runtime-ci/scripts/ci/run-errand/task.yml
         params:
           BOSH_DIRECTOR: {{bosh_lite_elastic_ip}}
-          BOSH_USER: admin
-          BOSH_PASSWORD: admin
+          BOSH_USER: {{bosh_lite_cf_user}}
+          BOSH_PASSWORD: {{bosh_lite_cf_password}}
           DEPLOYMENT_NAME: bosh-lite-diego-cats
           ERRAND_NAME: diego-cats
+        ensure:
+          put: bosh-lite-acceptance-tests-logs
+          params:
+            file: logs-dir/diego-cats.*.tgz
 - name: deploy-minimal
   public: true
   serial: true
