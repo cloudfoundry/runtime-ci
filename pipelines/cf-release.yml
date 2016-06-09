@@ -592,6 +592,11 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite-stemcell
+        passed: [bosh-lite-provision-cf-deploy]
+        params:
+          tarball: false
+        trigger: true
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-provision-cf-deploy]
@@ -644,6 +649,11 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite-stemcell
+        passed: [bosh-lite-smoke-tests]
+        params:
+          tarball: false
+        trigger: true
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-smoke-tests]
@@ -1456,6 +1466,12 @@ jobs:
         trigger: true
         params:
           submodules: none
+      - get: bosh-lite-stemcell
+        passed:
+        - bosh-lite-acceptance-tests
+        params:
+          tarball: false
+        trigger: true
       - get: stemcell
         resource: aws-stemcell
         passed:
