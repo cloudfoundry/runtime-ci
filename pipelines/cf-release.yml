@@ -8,7 +8,6 @@ groups:
   - bosh-lite-provision-cf-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
-  - bosh-lite-diego-cats
   - deploy-minimal
   - minimal-acceptance-tests
   - generate-a1-manifests
@@ -520,7 +519,6 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite-dea
-  - bosh-lite-diego
   plan:
   - timeout: *timeout
     do:
@@ -596,7 +594,6 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite-dea
-  - bosh-lite-diego
   plan:
   - timeout: *timeout
     do:
@@ -687,69 +684,6 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
-    - task: run-acceptance-tests
-      file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
-      params:
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: bosh-user-file-dir/username
-        BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-        DEPLOYMENT_NAME: cf-warden
-        ERRAND_NAME: acceptance_tests
-      ensure:
-        put: bosh-lite-acceptance-tests-logs
-        params:
-          file: logs-dir/acceptance_tests.*.tgz
-- name: bosh-lite-diego-cats
-  public: true
-  serial_groups:
-  - bosh-lite-diego
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [bosh-lite-smoke-tests]
-        params:
-          submodules: none
-      - get: diego-release-master
-        passed: [ bosh-lite-smoke-tests ]
-        params:
-          submodules: none
-      - get: runtime-ci
-      - get: cf-release-tarball
-        passed: [bosh-lite-smoke-tests]
-        trigger: true
-      - get: diego-final-releases
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-      - get: garden-linux-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-      - get: etcd-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-      - get: cflinuxfs2-rootfs-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-      - get: cf-bosh-lite-manifest
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-      - get: cf-bosh-lite-diego-manifest
-        trigger: true
-        passed: [ bosh-lite-smoke-tests ]
-    - task: write-bosh-lite-target-file
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-      output_mapping:
-        target-file-dir: bosh-lite-target-file
-    - task: write-bosh-lite-api-target-file
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.bosh-lite.runtime-ci.cf-app.com
-      output_mapping:
-        target-file-dir: bosh-lite-api-target-file
     - task: enable-docker
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
@@ -767,14 +701,27 @@ jobs:
         target_file: bosh-lite-target-file/target
         releases: []
         stemcells: []
-    - task: cf-acceptance-tests
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        BOSH_DIRECTOR: {{bosh_lite_elastic_ip}}
-        BOSH_USER: admin
-        BOSH_PASSWORD: admin
-        DEPLOYMENT_NAME: bosh-lite-diego-cats
-        ERRAND_NAME: diego-cats
+    - aggregate:
+      - task: run-acceptance-tests
+        file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+        params:
+          BOSH_TARGET_FILE: target
+          BOSH_USER_FILE: bosh-user-file-dir/username
+          BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+          DEPLOYMENT_NAME: cf-warden
+          ERRAND_NAME: acceptance_tests
+        ensure:
+          put: bosh-lite-acceptance-tests-logs
+          params:
+            file: logs-dir/acceptance_tests.*.tgz
+      - task: run-diego-acceptance-tests
+        file: runtime-ci/scripts/ci/run-errand/task.yml
+        params:
+          BOSH_DIRECTOR: {{bosh_lite_elastic_ip}}
+          BOSH_USER: admin
+          BOSH_PASSWORD: admin
+          DEPLOYMENT_NAME: bosh-lite-diego-cats
+          ERRAND_NAME: diego-cats
 - name: deploy-minimal
   public: true
   serial: true
