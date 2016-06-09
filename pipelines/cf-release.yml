@@ -836,6 +836,7 @@ jobs:
         tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
+        trigger: true
       - get: cf-vsphere-manifest
         passed: [ generate-vsphere-manifests ]
         trigger: true
@@ -923,6 +924,7 @@ jobs:
         params:
           tarball: false
         passed: [vsphere-cf-deploy]
+        trigger: true
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
@@ -987,6 +989,7 @@ jobs:
         params:
           tarball: false
         passed: [vsphere-smoke-tests]
+        trigger: true
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
