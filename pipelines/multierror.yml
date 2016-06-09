@@ -3,12 +3,6 @@ groups:
   jobs:
   - test-multierror
 
-resource_types:
-- name: docker-image
-  type: docker-image
-  source:
-    repository: concourse/docker-image-resource
-
 resources:
 - name: runtime-ci
   type: git
