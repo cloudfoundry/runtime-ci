@@ -2,6 +2,12 @@
 
 set -xeu
 
+BBL_LB_CERT="${BBL_LB_CERT:?"BBL_LB_CERT must be provided"}"
+BBL_LB_KEY="${BBL_LB_KEY:?"BBL_LB_KEY must be provided"}"
+
+echo "$BBL_LB_CERT" > /tmp/bbl-cert
+echo "$BBL_LB_KEY" > /tmp/bbl-key
+
 pushd env-repo
   set +x
   echo "bbl \
@@ -34,8 +40,8 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-create-lbs \
     --type=cf \
-    --cert=<(echo "$BBL_LB_CERT") \
-    --key=<(echo "$BBL_LB_KEY") \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key \
     --skip-if-exists
   set -x
 
