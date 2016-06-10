@@ -45,10 +45,6 @@ pushd env-repo
     --skip-if-exists
   set -x
 
-  bbl --state-dir bbl-infrastructure director-address > bbl-infrastructure/target
-  bbl --state-dir bbl-infrastructure director-username > bbl-infrastructure/username
-  bbl --state-dir bbl-infrastructure director-password > bbl-infrastructure/password
-
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
