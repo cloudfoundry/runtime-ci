@@ -8,7 +8,7 @@ cf_router_load_balancer_url() {
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
     --aws-region us-east-1 \
-    unsupported-lbs \
+    lbs \
     | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
 
