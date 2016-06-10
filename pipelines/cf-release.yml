@@ -574,9 +574,15 @@ jobs:
         manifest: cf-bosh-lite-manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
+    - task: write-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: {{bosh_lite_elastic_ip}}
+      output_mapping:
+        target-file-dir: target-file-dir-diego
     - put: bosh-lite-deployment-diego
       params:
-        target_file: target-file-dir/target
+        target_file: target-file-dir-diego/target
         manifest: cf-bosh-lite-diego-manifest/diego-deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases:
