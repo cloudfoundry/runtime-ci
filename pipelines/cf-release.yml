@@ -705,7 +705,7 @@ jobs:
           params:
             CF_USER: {{bosh_lite_cf_user}}
             CF_PASSWORD: {{bosh_lite_cf_password}}
-      - do: # bosh deploy a1-diego-cats
+      - do: # bosh deploy bosh-lite-diego-cats
         - task: write-bosh-target-file
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
@@ -1419,42 +1419,41 @@ jobs:
         passed: [ a1-smoke-tests ]
         params:
           tarball: false
-  - task: write-api-target-file
-    file: runtime-ci/scripts/ci/write-target-file/task.yml
-    params:
-      TARGET: api.a1.cf-app.com
-  - task: enable-docker
-    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-    input_mapping:
-      cf-target: target-file-dir
-    params:
-      CF_USER: {{a1_admin_username}}
-      CF_PASSWORD: {{a1_admin_password}}
-  - task: cats-from-cf-release
-    file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
-  - task: cf-acceptance-tests
-    file: runtime-ci/scripts/ci/run-cats/task.yml
-    params:
-      INCLUDE_BACKEND_COMPATIBILITY: false
-      INCLUDE_INTERNET_DEPENDENT: true
-      INCLUDE_DIEGO_DOCKER: true
-      INCLUDE_DIEGO_SSH: true
-      INCLUDE_LOGGING: true
-      INCLUDE_ROUTE_SERVICES: true
-      INCLUDE_ROUTING: true
-      INCLUDE_SECURITY_GROUPS: true
-      INCLUDE_SERVICES: true
-      INCLUDE_V3: false
-      INCLUDE_OPERATOR: true
-      SKIP_SSO: false
-      BACKEND: diego
-      CF_API: "api.a1.cf-app.com"
-      CF_ADMIN_USER: {{a1_admin_username}}
-      CF_ADMIN_PASSWORD: {{a1_admin_password}}
-      CF_APPS_DOMAIN: a1-app.cf-app.com
-      SKIP_SSL_VALIDATION: "true"
-      USE_HTTP: "true"
-      NODES: 6
+    - task: write-api-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.a1.cf-app.com
+    - task: enable-docker
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{a1_admin_username}}
+        CF_PASSWORD: {{a1_admin_password}}
+    - task: cats-from-cf-release
+      file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
+    - task: cf-acceptance-tests
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+      params:
+        INCLUDE_BACKEND_COMPATIBILITY: false
+        INCLUDE_INTERNET_DEPENDENT: true
+        INCLUDE_DIEGO_DOCKER: true
+        INCLUDE_DIEGO_SSH: true
+        INCLUDE_LOGGING: true
+        INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_SECURITY_GROUPS: true
+        INCLUDE_SERVICES: true
+        INCLUDE_V3: false
+        INCLUDE_OPERATOR: true
+        SKIP_SSO: false
+        BACKEND: diego
+        CF_API: "api.a1.cf-app.com"
+        CF_ADMIN_USER: {{a1_admin_username}}
+        CF_ADMIN_PASSWORD: {{a1_admin_password}}
+        CF_APPS_DOMAIN: a1-app.cf-app.com
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "true"
+        NODES: 6
 
 - name: rc
   public: true
