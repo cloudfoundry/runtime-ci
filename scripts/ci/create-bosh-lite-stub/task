@@ -19,6 +19,11 @@ properties:
     include_security_groups: true
     include_internet_dependent: true
     include_services: true
+    include_v3: false
+    include_route_services: true
+    include_diego_docker: false
+    include_diego_ssh: false
+    include_backend_compatability: true
     backend: dea
   cc:
     security_group_definitions:
