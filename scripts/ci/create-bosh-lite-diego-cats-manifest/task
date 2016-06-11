@@ -82,11 +82,11 @@ properties:
     include_diego_ssh: true
     include_logging: true
     include_route_services: true
-    include_routing: true
     include_security_groups: true
     include_services: true
-    include_sso: true
     include_v3: false
+    include_sso: true
+    include_operator: true
     nodes: 6
     skip_diego_unsupported_tests: false
     system_domain: bosh-lite.runtime-ci.cf-app.com

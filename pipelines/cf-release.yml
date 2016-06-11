@@ -1049,7 +1049,6 @@ jobs:
         INCLUDE_DIEGO_SSH: true
         INCLUDE_LOGGING: true
         INCLUDE_ROUTE_SERVICES: true
-        INCLUDE_ROUTING: true
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
