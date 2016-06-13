@@ -2,9 +2,6 @@
 
 set -xeu
 
-echo "$BBL_LB_CERT" > /tmp/bbl-cert
-echo "$BBL_LB_KEY" > /tmp/bbl-key
-
 pushd env-repo
   set +x
   echo "bbl \
@@ -20,28 +17,31 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse
 
-  if [[ -e /tmp/bbl-cert ]]; then
-  echo "bbl \
-    --state-dir bbl-infrastructure \
-    --aws-access-key-id [REDACTED] \
-    --aws-secret-access-key [REDACTED] \
-    --aws-region us-east-1 \
-    unsupported-create-lbs \
-    --type=cf \
-    --cert=/tmp/bbl-cert \
-    --key=/tmp/bbl-key \
-    --skip-if-exists"
+  if [[ -z "$BBL_LB_CERT" && -z "$BBL_LB_KEY" ]]; then
+    echo "$BBL_LB_CERT" > /tmp/bbl-cert
+    echo "$BBL_LB_KEY" > /tmp/bbl-key
 
-  bbl \
-    --state-dir bbl-infrastructure \
-    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-    --aws-region us-east-1 \
-    unsupported-create-lbs \
-    --type=cf \
-    --cert=/tmp/bbl-cert \
-    --key=/tmp/bbl-key \
-    --skip-if-exists
+    echo "bbl \
+      --state-dir bbl-infrastructure \
+      --aws-access-key-id [REDACTED] \
+      --aws-secret-access-key [REDACTED] \
+      --aws-region us-east-1 \
+      unsupported-create-lbs \
+      --type=cf \
+      --cert=/tmp/bbl-cert \
+      --key=/tmp/bbl-key \
+      --skip-if-exists"
+
+    bbl \
+      --state-dir bbl-infrastructure \
+      --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
+      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+      --aws-region us-east-1 \
+      unsupported-create-lbs \
+      --type=cf \
+      --cert=/tmp/bbl-cert \
+      --key=/tmp/bbl-key \
+      --skip-if-exists
   fi
   set -x
 
