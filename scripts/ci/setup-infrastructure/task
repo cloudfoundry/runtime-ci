@@ -2,9 +2,6 @@
 
 set -xeu
 
-BBL_LB_CERT="${BBL_LB_CERT:?"BBL_LB_CERT must be provided"}"
-BBL_LB_KEY="${BBL_LB_KEY:?"BBL_LB_KEY must be provided"}"
-
 echo "$BBL_LB_CERT" > /tmp/bbl-cert
 echo "$BBL_LB_KEY" > /tmp/bbl-key
 
@@ -23,6 +20,7 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse
 
+  if [[ -e /tmp/bbl-cert ]]; then
   echo "bbl \
     --state-dir bbl-infrastructure \
     --aws-access-key-id [REDACTED] \
@@ -30,9 +28,10 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-create-lbs \
     --type=cf \
-    --cert=<(echo [REDACTED]) \
-    --key=<(echo [REDACTED]) \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key \
     --skip-if-exists"
+
   bbl \
     --state-dir bbl-infrastructure \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
@@ -43,6 +42,7 @@ pushd env-repo
     --cert=/tmp/bbl-cert \
     --key=/tmp/bbl-key \
     --skip-if-exists
+  fi
   set -x
 
   if [[ -n $(git status --porcelain) ]]; then
