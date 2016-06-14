@@ -8,7 +8,9 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: env-repo
+- name: target
+- name: username
+- name: password
 - name: manifest
 - name: release-out
 
@@ -19,4 +21,4 @@ params:
   TARGET_FILE:
   USERNAME_FILE:
   PASSWORD_FILE:
-  BOSH_MANIFEST:
+  MANIFEST_FILE:

@@ -1,10 +1,12 @@
 #!/bin/bash
 set -eux
 
-BOSH_TARGET=$(cat "${TARGET_FILE}")
-BOSH_USER=$(cat "${USERNAME_FILE}")
+BOSH_TARGET=$(cat "target/${TARGET_FILE}")
+BOSH_USER=$(cat username/"${USERNAME_FILE}")
+BOSH_MANIFEST=$(cat "manifest/${MANIFEST_FILE}")
 set +x
-BOSH_PASSWORD=$(cat "${PASSWORD_FILE}")
+BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+
 
 echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload release  release-out/nats-*.tgz  --skip-if-exists"
 bosh \
