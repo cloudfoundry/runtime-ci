@@ -3,7 +3,7 @@ set -eux
 
 BOSH_TARGET=$(cat "target/${TARGET_FILE}")
 BOSH_USER=$(cat username/"${USERNAME_FILE}")
-BOSH_MANIFEST=$(cat "manifest/${MANIFEST_FILE}")
+BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
