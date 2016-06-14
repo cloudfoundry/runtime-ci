@@ -712,6 +712,8 @@ jobs:
             BOSH_PASSWORD_FILE: bosh-password-file-dir/password
             DEPLOYMENT_NAME: bosh-lite-diego-cats
             ERRAND_NAME: diego-cats
+          input_mapping:
+            target-file-dir: bosh-lite-target-file
 - name: deploy-minimal
   public: true
   serial: true
