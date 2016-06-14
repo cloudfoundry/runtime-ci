@@ -16,4 +16,4 @@ outputs:
 params:
 
 run:
-  path: runtime-ci/scripts/ci/generate-deployment-manifest-from-bbl/task
+  path: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task
