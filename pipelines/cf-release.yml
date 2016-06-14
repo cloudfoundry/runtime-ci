@@ -117,7 +117,7 @@ resources:
   type: s3
   source:
     bucket: bosh-lite-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
+    regexp: errand\-logs\-(.*)\.tgz
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
@@ -690,8 +690,6 @@ jobs:
         trigger: true
     - aggregate:
       - do: # enable docker
-        - task: create-bosh-lite-creds
-          file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-api-target-file
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
@@ -723,32 +721,52 @@ jobs:
             releases: []
             stemcells: []
     - aggregate:
-      - task: run-acceptance-tests
-        file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
-        params:
-          BOSH_TARGET_FILE: target
-          BOSH_USER_FILE: bosh-user-file-dir/username
-          BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-          DEPLOYMENT_NAME: cf-warden
-          ERRAND_NAME: acceptance_tests
-        input_mapping:
-          target-file-dir: bosh-lite-target-file
-        ensure:
-          put: bosh-lite-acceptance-tests-logs
+      - do:
+        - task: create-bosh-lite-creds
+          file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+        - task: write-bosh-target-file
+          file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
-            file: logs-dir/acceptance_tests.*.tgz
-      - task: run-diego-acceptance-tests
-        file: runtime-ci/scripts/ci/run-errand/task.yml
-        params:
-          BOSH_DIRECTOR: {{bosh_lite_elastic_ip}}
-          BOSH_USER: {{bosh_lite_cf_user}}
-          BOSH_PASSWORD: {{bosh_lite_cf_password}}
-          DEPLOYMENT_NAME: bosh-lite-diego-cats
-          ERRAND_NAME: diego-cats
-        ensure:
-          put: bosh-lite-acceptance-tests-logs
+            TARGET: {{bosh_lite_elastic_ip}}
+          output_mapping:
+            target-file-dir: bosh-lite-target-file
+        - task: run-acceptance-tests
+          file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
-            file: logs-dir/diego-cats.*.tgz
+            BOSH_TARGET_FILE: target
+            BOSH_USER_FILE: bosh-user-file-dir/username
+            BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+            DEPLOYMENT_NAME: cf-warden
+            ERRAND_NAME: acceptance_tests
+            LOGS_FILE_REGEX: acceptance_tests\..*\.tgz
+          input_mapping:
+            target-file-dir: bosh-lite-target-file
+          ensure:
+            put: bosh-lite-acceptance-tests-logs
+            params:
+              file: logs-dir/errand-logs-*.tgz
+      - do:
+        - task: create-bosh-lite-creds
+          file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+        - task: write-bosh-target-file
+          file: runtime-ci/scripts/ci/write-target-file/task.yml
+          params:
+            TARGET: {{bosh_lite_elastic_ip}}
+          output_mapping:
+            target-file-dir: bosh-lite-target-file
+        - task: run-diego-acceptance-tests
+          file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+          params:
+            BOSH_TARGET_FILE: target
+            BOSH_USER_FILE: bosh-user-file-dir/username
+            BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+            DEPLOYMENT_NAME: bosh-lite-diego-cats
+            ERRAND_NAME: diego-cats
+            LOGS_FILE_REGEX: diego-cats\..*\.tgz
+          ensure:
+            put: bosh-lite-acceptance-tests-logs
+            params:
+              file: logs-dir/errand-logs-*.tgz
 - name: deploy-minimal
   public: true
   serial: true

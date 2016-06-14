@@ -13,9 +13,6 @@ set +x
 BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
 set -x
 
-# Outputs
-LOGS_DIR="${root_dir}/${LOGS_DIR}"
-
 set +x
 echo 'bosh \
   -t "${BOSH_TARGET}" \
@@ -43,7 +40,7 @@ echo 'bosh \
   run errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
-  --logs-dir "$LOGS_DIR"'
+  --logs-dir logs-dir'
 
 bosh \
   -n \
@@ -55,5 +52,8 @@ bosh \
   run errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
-  --logs-dir "$LOGS_DIR"
+  --logs-dir logs-dir
 set -x
+
+log_file=$(ls | grep -e "$LOGS_FILE_REGEX")
+mv "logs-dir/$log_file" "$logs-dir/errand-logs-$(date +%s).tgz"
