@@ -20,12 +20,12 @@ aws_hosted_zone_id_from_partial_name() {
 write_change_file() {
   cat << EOF > "$1"
 {
-    "Comment": "Update api.$2 to point to ELB",
+    "Comment": "Update *.$2 to point to ELB",
     "Changes": [
         {
             "Action": "UPSERT",
             "ResourceRecordSet": {
-                "Name": "api.$2.",
+                "Name": "*.$2.",
                 "Type": "CNAME",
                 "TTL": 300,
                 "ResourceRecords": [
