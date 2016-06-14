@@ -97,46 +97,6 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
-- name: openstack-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: openstack-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: vsphere-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: vsphere-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: bosh-lite-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: bosh-lite-acceptance-tests-logs
-    regexp: errand\-logs\-(.*)\.tgz
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: a1-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: a1-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: a1-diego-cats-acceptance-tests-logs
-  type: s3
-  source:
-    bucket: a1-acceptance-tests-logs
-    regexp: a1-cats/diego-cats.*.tgz
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
 - name: a1-env
   type: git
   source:
@@ -504,11 +464,6 @@ jobs:
         <<: *bosh-target-runtime-bb-1
         DEPLOYMENT_NAME: cf-runtime-bb-1
         ERRAND_NAME: acceptance_tests
-      ensure:
-        put: openstack-acceptance-tests-logs
-        params:
-          file: logs-dir/acceptance_tests.*.tgz
-
 - name: bosh-lite-provision-cf-deploy
   public: true
   serial_groups:
@@ -738,13 +693,8 @@ jobs:
             BOSH_PASSWORD_FILE: bosh-password-file-dir/password
             DEPLOYMENT_NAME: cf-warden
             ERRAND_NAME: acceptance_tests
-            LOGS_FILE_REGEX: acceptance_tests\..*\.tgz
           input_mapping:
             target-file-dir: bosh-lite-target-file
-          ensure:
-            put: bosh-lite-acceptance-tests-logs
-            params:
-              file: logs-dir/errand-logs-*.tgz
       - do:
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
@@ -762,11 +712,6 @@ jobs:
             BOSH_PASSWORD_FILE: bosh-password-file-dir/password
             DEPLOYMENT_NAME: bosh-lite-diego-cats
             ERRAND_NAME: diego-cats
-            LOGS_FILE_REGEX: diego-cats\..*\.tgz
-          ensure:
-            put: bosh-lite-acceptance-tests-logs
-            params:
-              file: logs-dir/errand-logs-*.tgz
 - name: deploy-minimal
   public: true
   serial: true

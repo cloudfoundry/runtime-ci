@@ -54,6 +54,3 @@ bosh \
   --download-logs \
   --logs-dir logs-dir
 set -x
-
-log_file=$(ls | grep -e "$LOGS_FILE_REGEX")
-mv "logs-dir/$log_file" "$logs-dir/errand-logs-$(date +%s).tgz"
