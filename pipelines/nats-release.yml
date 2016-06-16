@@ -93,6 +93,8 @@ jobs:
     privileged: false
   - task: upload-release
     file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+    input_mapping:
+      release: release-out
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
