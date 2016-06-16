@@ -11,7 +11,7 @@ inputs:
 - name: runtime-ci
 
 outputs:
-- name: release-out
+- name: release-tarball
 
 run:
   path: runtime-ci/scripts/ci/create-release/task
