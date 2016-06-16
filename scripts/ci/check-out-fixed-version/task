@@ -1,0 +1,12 @@
+#!/bin/bash
+set -exu
+
+GIT_REF="${GIT_REF:-master}"
+
+pushd release-repo > /dev/null
+  git checkout $GIT_REF
+  git submodule update --recursive --init
+popd > /dev/null
+
+shopt -s dotglob
+cp -R release-repo/* release-repo-out
