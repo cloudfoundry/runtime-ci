@@ -14,6 +14,6 @@ bosh \
   -u "${BOSH_USER}" \
   -p "${BOSH_PASSWORD}" \
   upload release \
-  "release-out/${RELEASE_NAME}" \
+  release-out/${RELEASE_NAME} \
   --skip-if-exists
 set -x
