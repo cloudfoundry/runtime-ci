@@ -7,7 +7,7 @@ set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
 
-echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload release  release-out/$RELEASE_NAME  --skip-if-exists"
+echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload release  release/$RELEASE_NAME  --skip-if-exists"
 bosh \
   -n \
   -t "${BOSH_TARGET}" \
