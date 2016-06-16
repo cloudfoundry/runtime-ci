@@ -91,6 +91,13 @@ jobs:
   - task: generate-deployment-manifest
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
     privileged: false
+  - task: upload-release
+    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+    params:
+      TARGET_FILE: env-repo/bbl-infrastructure/target
+      USERNAME_FILE: env-repo/bbl-infrastructure/username
+      PASSWORD_FILE: env-repo/bbl-infrastructure/password
+      RELEASE_NAME: nats-*.yml
   - task: bosh-deploy
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     params:

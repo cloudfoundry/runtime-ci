@@ -39,6 +39,7 @@ groups:
   - build-run-errand-bbl-docker-image
   - build-write-target-file-docker-image
   - build-bosh-deploy-docker-image
+  - build-bosh-upload-release-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-create-iaas-settings-docker-image
@@ -119,6 +120,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-deploy/Dockerfile]
+- name: runtime-ci-bosh-upload-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-upload-release/Dockerfile]
 - name: runtime-ci-announce-rc
   type: git
   source:
@@ -386,6 +393,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-deploy
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-upload-release-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-upload-release
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -695,6 +709,23 @@ jobs:
     - put: bosh-deploy-pipeline-image
       params:
         build: runtime-ci-bosh-deploy/scripts/ci/bosh-deploy
+        push: true
+- name: build-bosh-upload-release-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bosh-upload-release
+        trigger: true
+    - put: bosh-upload-release-pipeline-image
+      params:
+        build: runtime-ci-bosh-upload-release/scripts/ci/bosh-upload-release
         push: true
 - name: build-write-target-file-docker-image
   public: true

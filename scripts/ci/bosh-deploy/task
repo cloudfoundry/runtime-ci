@@ -7,17 +7,6 @@ BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
-
-echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload release  release-out/nats-*.tgz  --skip-if-exists"
-bosh \
-  -n \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  upload release \
-  release-out/nats-*.tgz \
-  --skip-if-exists
-
 echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload stemcell  https://bosh.io/d/stemcells/bosh-aws-xen-ubuntu-trusty-go_agent --skip-if-exists"
 bosh \
   -n \
