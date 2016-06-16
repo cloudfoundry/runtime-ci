@@ -94,10 +94,10 @@ jobs:
   - task: upload-release
     file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
     params:
-      TARGET_FILE: env-repo/bbl-infrastructure/target
-      USERNAME_FILE: env-repo/bbl-infrastructure/username
-      PASSWORD_FILE: env-repo/bbl-infrastructure/password
-      RELEASE_NAME: nats-*.yml
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      RELEASE_NAME: nats-*.tgz
   - task: bosh-deploy
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     params:
