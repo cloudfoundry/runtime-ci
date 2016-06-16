@@ -19,4 +19,4 @@ run:
 params:
   RELEASE_NAME: cf
   RELEASE_DIR: release-repo
-  OUTPUT_DIR: release-out
+  OUTPUT_DIR: release-tarball
