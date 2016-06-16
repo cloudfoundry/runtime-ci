@@ -79,6 +79,10 @@ jobs:
       resource: hagrid-env-updated
     - get: aws-stemcell
     - get: runtime-ci
+  - task: extract-creds
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
   - task: create-release
     file: runtime-ci/scripts/ci/create-release/task.yml
     privileged: true
@@ -90,10 +94,10 @@ jobs:
   - task: bosh-deploy
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     params:
-      TARGET_FILE: env-repo/bbl-infrastructure/target
-      USERNAME_FILE: env-repo/bbl-infrastructure/username
-      PASSWORD_FILE: env-repo/bbl-infrastructure/password
-      BOSH_MANIFEST: manifest/nats.yml
+      TARGET_FILE:   target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      MANIFEST_FILE: nats.yml
 
 - name: run-smoke-tests
   public: true
