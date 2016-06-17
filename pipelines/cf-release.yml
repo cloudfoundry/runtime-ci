@@ -372,7 +372,7 @@ jobs:
           REASON: "Could not create release tarball"
     - put: cf-release-tarball
       params:
-        file: release-out/cf-*.tgz
+        file: release-tarball/cf-*.tgz
     - task: can-bump
       file: runtime-ci/scripts/ci/can-bump/task.yml
       params:
