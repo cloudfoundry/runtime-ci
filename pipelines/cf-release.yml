@@ -467,7 +467,7 @@ jobs:
 - name: bosh-lite-provision-cf-deploy
   public: true
   serial_groups:
-  - bosh-lite-dea
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -548,7 +548,7 @@ jobs:
 - name: bosh-lite-smoke-tests
   public: true
   serial_groups:
-  - bosh-lite-dea
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -605,7 +605,7 @@ jobs:
 - name: bosh-lite-acceptance-tests
   public: true
   serial_groups:
-  - bosh-lite-dea
+  - bosh-lite
   plan:
   - timeout: *timeout
     do:
@@ -1229,6 +1229,8 @@ jobs:
 
 - name: generate-bosh-lite-manifests
   public: true
+  serial_groups:
+  - bosh-lite
   plan:
   - aggregate:
     - get: diego-release-master
