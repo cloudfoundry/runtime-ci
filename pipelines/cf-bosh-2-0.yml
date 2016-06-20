@@ -50,6 +50,7 @@ jobs:
   - aggregate:
     - get: env-repo
       resource: hermione-env
+      trigger: true
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
