@@ -13,7 +13,7 @@ inputs:
 - name: password
 - name: manifest
 
-output:
+outputs:
 - name: manifest-updated
 
 run:
