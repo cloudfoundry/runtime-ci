@@ -21,7 +21,9 @@ for i in {1..5}; do
   bosh -n --parallel 10 sync blobs && break
 done
 
-./scripts/unused_blobs
+if [[ -e scripts/unused_blobs ]]; then
+  ./scripts/unused_blobs
+fi
 
 for i in {1..5}; do
   echo "Creating release, attempt $i"
