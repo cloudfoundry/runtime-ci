@@ -12,7 +12,7 @@ OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 VERSION="$(date +%s)" # current time in seconds
 
 if [[ ! -z "$RELEASE_DIR" ]]; then
-  mv release-repo "$RELEASE_DIR"
+  ln -s release-repo "$RELEASE_DIR"
   cd "$RELEASE_DIR"
 else
   cd release-repo
