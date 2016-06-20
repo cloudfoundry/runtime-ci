@@ -1,0 +1,20 @@
+#!/bin/bash
+set -eux
+
+BOSH_TARGET=$(cat "target/${TARGET_FILE}")
+BOSH_USER=$(cat username/"${USERNAME_FILE}")
+BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
+set +x
+BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+
+echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED status --uuid"
+UUID=$(bosh -n  -t "${BOSH_TARGET}"  -u "${BOSH_USER}"  -p "${BOSH_PASSWORD}" status --uuid)
+set -x
+
+if grep director_uuid "${BOSH_MANIFEST}"; then
+ sed -i "s/director_uuid\:.*/director_uuid: $UUID/g" "${BOSH_MANIFEST}"
+else
+  echo "director_uuid: $UUID" >> "${BOSH_MANIFEST}"
+fi
+
+cp "${BOSH_MANIFEST}" "manifest-updated/${MANIFEST_FILE}"
