@@ -12,7 +12,13 @@ OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"\$OUTPUT_DIR not set"}"
 
 VERSION="$(date +%s)" # current time in seconds
 
-cd "${RELEASE_DIR}"
+if [[ ! -z "$RELEASE_DIR" ]]; then
+  mv release-repo "$RELEASE_DIR"
+  cd "$RELEASE_DIR"
+else
+  cd release-repo
+fi
+
 COMMIT_SHA=$(git rev-parse HEAD)
 
 RELEASE_OUT="../create-release.out"
