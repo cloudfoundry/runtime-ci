@@ -1415,7 +1415,7 @@ jobs:
       params:
         build: runtime-ci-bind-elb-to-r53/scripts/ci/bind-elb-to-r53
         push: true
-- name: build-bind-elb-to-r53-docker-image
+- name: build-unbind-elb-from-r53-docker-image
   public: true
   plan:
   - timeout: 4h
