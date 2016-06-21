@@ -45,6 +45,7 @@ groups:
   - build-create-iaas-settings-docker-image
   - build-write-bosh-lite-api-target-file-docker-image
   - build-bind-elb-to-r53-docker-image
+  - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
   - build-check-out-fixed-version-docker-image
   - build-bosh-uuid-docker-image
@@ -320,6 +321,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bind-elb-to-r53/Dockerfile]
+- name: runtime-ci-unbind-elb-from-r53
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/unbind-elb-from-r53/Dockerfile]
 - name: runtime-ci-cats-from-cf-release
   type: git
   source:
@@ -638,6 +645,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bind-elb-to-r53
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: unbind-elb-from-r53-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/unbind-elb-from-r53
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1400,6 +1414,23 @@ jobs:
     - put: bind-elb-to-r53-pipeline-image
       params:
         build: runtime-ci-bind-elb-to-r53/scripts/ci/bind-elb-to-r53
+        push: true
+- name: build-bind-elb-to-r53-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-unbind-elb-from-r53
+        trigger: true
+    - put: unbind-elb-from-r53-pipeline-image
+      params:
+        build: runtime-ci-unbind-elb-from-r53/scripts/ci/unbind-elb-from-r53
         push: true
 - name: build-cats-from-cf-release-docker-image
   public: true
