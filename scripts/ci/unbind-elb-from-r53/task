@@ -41,9 +41,19 @@ EOF
 }
 
 post_change_file() {
-  aws route53 change-resource-record-sets \
+  set +e
+  OUTPUT=$(aws route53 change-resource-record-sets \
     --hosted-zone-id "${2}" \
-    --change-batch "file://${1}"
+    --change-batch "file://${1}")
+  EXIT_STATUS=$?
+  set -e
+
+  if [[ "$EXIT_STATUS" -ne 0 ]]; then
+    if ! grep "not found" "$OUTPUT"; then
+      echo "$OUTPUT"
+      exit 1
+    fi
+  fi
 }
 
 main() {
