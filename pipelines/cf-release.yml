@@ -1436,7 +1436,6 @@ jobs:
         passed:
         - bosh-lite-acceptance-tests
         - a1-diego-cats
-        - vsphere-cf-cats
         trigger: true
         params:
           submodules: none
