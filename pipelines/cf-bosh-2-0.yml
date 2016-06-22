@@ -36,7 +36,7 @@ jobs:
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
-      env-repo: updated-env-repo
+      env-repo: env-repo
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
