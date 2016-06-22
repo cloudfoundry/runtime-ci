@@ -1447,7 +1447,6 @@ jobs:
         trigger: true
       - get: vsphere-stemcell
         passed:
-        - vsphere-cf-cats
         params:
           tarball: false
         trigger: true
@@ -1462,7 +1461,6 @@ jobs:
         passed:
         - a1-diego-cats
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
         trigger: true
         params:
           tarball: false
@@ -1470,13 +1468,11 @@ jobs:
         passed:
         - a1-diego-cats
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
         trigger: true
       - get: garden-linux-release-tarball
         passed:
         - a1-diego-cats
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
         trigger: true
         params:
           tarball: false
@@ -1485,7 +1481,6 @@ jobs:
         passed:
         - a1-diego-cats
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
@@ -1493,7 +1488,6 @@ jobs:
         passed:
         - a1-diego-cats
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
         params:
           tarball: false
     - aggregate:
