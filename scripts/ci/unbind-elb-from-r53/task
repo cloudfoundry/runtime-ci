@@ -27,6 +27,7 @@ write_change_file() {
             "ResourceRecordSet": {
                 "Name": "*.$2.",
                 "Type": "CNAME",
+                "TTL": 300,
                 "ResourceRecords": [
                     {
                         "Value": "${3}"
