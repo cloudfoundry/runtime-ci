@@ -33,13 +33,6 @@ jobs:
     - get: env-repo
       resource: hermione-env
     - get: runtime-ci
-  - task: destroy-infrastructure
-    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
-    params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{bbl_lb_cert}}
-      BBL_LB_KEY: {{bbl_lb_key}}
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
@@ -50,6 +43,13 @@ jobs:
       BBL_LB_CERT: {{bbl_lb_cert}}
       BBL_LB_KEY: {{bbl_lb_key}}
       DOMAIN: {{hermione_domain}}
+  - task: destroy-infrastructure
+    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{bbl_lb_cert}}
+      BBL_LB_KEY: {{bbl_lb_key}}
   - put: hermione-env-updated
     params:
       repository: updated-env-repo
