@@ -17,7 +17,7 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse
 
-  if [[ -z "$BBL_LB_CERT" && -z "$BBL_LB_KEY" ]]; then
+  if [[ -n "$BBL_LB_CERT" && -n "$BBL_LB_KEY" ]]; then
     echo "$BBL_LB_CERT" > /tmp/bbl-cert
     echo "$BBL_LB_KEY" > /tmp/bbl-key
 
