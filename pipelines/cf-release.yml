@@ -167,7 +167,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: git@github.com:cloudfoundry-incubator/diego-cf-compatibility
+    uri: git@github.com:cloudfoundry/diego-cf-compatibility
     private_key: {{diego_cf_compatibility_private_key}}
 
 - name: diego-final-releases
