@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: diego-release
-- name: cf-manifest
 - name: deployments
 - name: runtime-ci
 
@@ -17,7 +16,6 @@ outputs:
 
 params:
   INFRASTRUCTURE: ~
-  CF_MANIFEST_PATH: cf-manifest/cf.yml
   IAAS_SETTINGS_TEMPLATE_PATH: deployments/templates/diego/iaas-settings-internal.yml
   IAAS_SETTINGS_STUB_PATH: deployments/stubs/diego/iaas-settings.yml
 

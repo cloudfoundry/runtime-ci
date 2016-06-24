@@ -1200,12 +1200,10 @@ jobs:
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
-      cf-manifest: manifest
       deployments: a1-env
       diego-release: diego-release-master
     params:
       INFRASTRUCTURE: aws
-      CF_MANIFEST_PATH: cf-manifest/deployment.yml
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
