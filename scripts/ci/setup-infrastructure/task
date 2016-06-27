@@ -1,18 +1,23 @@
 #!/bin/bash
 
 set -xeu
+DIR="$(pwd)"
 
 function commit_bbl_state_file {
-  set -x
-  if [[ -n $(git status --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add bbl-infrastructure
-    git commit -m "Update bbl artifacts"
-  fi
+  pushd "${DIR}/env-repo"
+    set -x
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add bbl-infrastructure
+      git commit -m "Update bbl artifacts"
+    fi
+  popd
 
-  shopt -s dotglob
-  cp -R env-repo/* updated-env-repo/
+  pushd "${DIR}"
+    shopt -s dotglob
+    cp -R env-repo/* updated-env-repo/
+  popd
 }
 
 trap commit_bbl_state_file EXIT
