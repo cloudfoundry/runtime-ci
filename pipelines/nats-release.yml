@@ -62,7 +62,7 @@ jobs:
       BBL_LB_CERT: {{hagrid_bbl_lb_cert}}
       BBL_LB_KEY: {{hagrid_bbl_lb_key}}
     ensure:
-    - put: hagrid-env-updated
+      put: hagrid-env-updated
       params:
         repository: updated-env-repo
 
