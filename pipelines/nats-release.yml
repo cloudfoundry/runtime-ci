@@ -61,9 +61,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
       BBL_LB_CERT: {{hagrid_bbl_lb_cert}}
       BBL_LB_KEY: {{hagrid_bbl_lb_key}}
-  - put: hagrid-env-updated
-    params:
-      repository: updated-env-repo
+    ensure:
+    - put: hagrid-env-updated
+      params:
+        repository: updated-env-repo
 
 - name: deploy-nats
   public: true
