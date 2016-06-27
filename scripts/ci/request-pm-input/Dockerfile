@@ -4,4 +4,5 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
-    curl
+    curl \
+    jq
