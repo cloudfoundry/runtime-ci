@@ -94,7 +94,7 @@ jobs:
   - task: upload-release
     file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
     input_mapping:
-      release: release-out
+      release: release-tarball
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
