@@ -56,6 +56,15 @@ instance_groups:
   jobs:
   - name: smoke-tests
     release: nats
+    properties:
+      nats:
+        port: 6363
+        user: nats
+        password: nats
+        machines:
+        - 10.0.31.190
+        - 10.0.47.190
+        - 10.0.63.190
   networks:
   - name: private
 EOF
