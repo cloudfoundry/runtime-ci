@@ -35,8 +35,16 @@ instance_groups:
         port: 6363
         user: nats
         password: nats
+        machines:
+        - 10.0.31.190
+        - 10.0.47.190
+        - 10.0.63.190
   networks:
   - name: private
+    static_ips:
+      - 10.0.31.190
+      - 10.0.47.190
+      - 10.0.63.190
   vm_type: m3.medium
   stemcell: default
 - name: smoke-tests
