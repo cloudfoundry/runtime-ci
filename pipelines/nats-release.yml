@@ -120,16 +120,20 @@ jobs:
     - get: runtime-ci
     - get: env-repo
       resource: hagrid-env
+  - task: extract-creds
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
   - task: run-smoke-tests
     file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
     input_mapping:
-      target-file-dir: env-repo
-      bosh-user-file-dir: env-repo
-      bosh-password-file-dir: env-repo
+      target-file-dir: target
+      bosh-user-file-dir: username
+      bosh-password-file-dir: password
     params:
-      BOSH_TARGET_FILE: bbl-infrastructure/target
-      BOSH_USER_FILE: bosh-user-file-dir/bbl-infrastructure/username
-      BOSH_PASSWORD_FILE: bosh-password-file-dir/bbl-infrastructure/password
+      BOSH_TARGET_FILE: target
+      BOSH_USER_FILE: bosh-user-file-dir/username
+      BOSH_PASSWORD_FILE: bosh-password-file-dir/password
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
 
