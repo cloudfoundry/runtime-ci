@@ -2,6 +2,21 @@
 
 set -xeu
 
+function commit_bbl_state_file {
+  set -x
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add bbl-infrastructure
+    git commit -m "Update bbl artifacts"
+  fi
+
+  shopt -s dotglob
+  cp -R env-repo/* updated-env-repo/
+}
+
+trap commit_bbl_state_file EXIT
+
 pushd env-repo
   set +x
   echo "bbl \
@@ -43,15 +58,4 @@ pushd env-repo
       --key=/tmp/bbl-key \
       --skip-if-exists
   fi
-  set -x
-
-  if [[ -n $(git status --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add bbl-infrastructure
-    git commit -m "Update bbl artifacts"
-  fi
 popd
-
-shopt -s dotglob
-cp -R env-repo/* updated-env-repo/
