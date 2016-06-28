@@ -695,15 +695,6 @@ jobs:
             ERRAND_NAME: acceptance_tests
           input_mapping:
             target-file-dir: bosh-lite-target-file
-      - do:
-        - task: create-bosh-lite-creds
-          file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
-        - task: write-bosh-target-file
-          file: runtime-ci/scripts/ci/write-target-file/task.yml
-          params:
-            TARGET: {{bosh_lite_elastic_ip}}
-          output_mapping:
-            target-file-dir: bosh-lite-target-file
         - task: run-diego-acceptance-tests
           file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
