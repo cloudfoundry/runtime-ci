@@ -310,30 +310,98 @@ var _ = Describe("Configwriter", func() {
 																							"existing_user": "",
 																							"use_existing_user": false,
 																							"keep_user_at_suite_end": false,
-																							"existing_user_password": "",
-																							"backend": "",
-																							"staticfile_buildpack_name": "",
-																							"java_buildpack_name": "",
-																							"ruby_buildpack_name": "",
-																							"nodejs_buildpack_name": "",
-																							"go_buildpack_name": "",
-																							"python_buildpack_name": "",
-																							"php_buildpack_name": "",
-																							"binary_buildpack_name": "",
-																							"persistent_app_host": "",
-																							"persistent_app_space": "",
-																							"persistent_app_org": "",
-																							"persistent_app_quota_name": "",
-																							"default_timeout": 0,
-																							"cf_push_timeout": 0,
-																							"long_curl_timeout": 0,
-																							"broker_start_timeout": 0
+																							"existing_user_password": ""
 																							}`))
 		})
 	})
 
 	Context("When all the env variable are provided", func() {
+		BeforeEach(func() {
+			os.Setenv("CF_API", "non-empty-value")
+			os.Setenv("CF_ADMIN_USER", "non-empty-value")
+			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
+			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
+			os.Setenv("SKIP_SSL_VALIDATION", "true")
+			os.Setenv("USE_HTTP", "true")
+			os.Setenv("EXISTING_USER", "non-empty-value")
+			os.Setenv("EXISTING_USER_PASSWORD", "non-empty-value")
+			os.Setenv("BACKEND", "non-empty-value")
+			os.Setenv("PERSISTENT_APP_HOST", "non-empty-value")
+			os.Setenv("PERSISTENT_APP_SPACE", "non-empty-value")
+			os.Setenv("PERSISTENT_APP_ORG", "non-empty-value")
+			os.Setenv("PERSISTENT_APP_QUOTA_NAME", "non-empty-value")
+			os.Setenv("DEFAULT_TIMEOUT", "1")
+			os.Setenv("CF_PUSH_TIMEOUT", "1")
+			os.Setenv("LONG_CURL_TIMEOUT", "1")
+			os.Setenv("BROKER_START_TIMEOUT", "1")
+			os.Setenv("STATICFILE_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("JAVA_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("RUBY_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("NODEJS_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("GO_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("PYTHON_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("PHP_BUILDPACK_NAME", "non-empty-value")
+			os.Setenv("BINARY_BUILDPACK_NAME", "non-empty-value")
+		})
+		AfterEach(func() {
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+			os.Unsetenv("EXISTING_USER")
+			os.Unsetenv("EXISTING_USER_PASSWORD")
+			os.Unsetenv("BACKEND")
+			os.Unsetenv("PERSISTENT_APP_HOST")
+			os.Unsetenv("PERSISTENT_APP_SPACE")
+			os.Unsetenv("PERSISTENT_APP_ORG")
+			os.Unsetenv("PERSISTENT_APP_QUOTA_NAME")
+			os.Unsetenv("DEFAULT_TIMEOUT")
+			os.Unsetenv("CF_PUSH_TIMEOUT")
+			os.Unsetenv("LONG_CURL_TIMEOUT")
+			os.Unsetenv("BROKER_START_TIMEOUT")
+			os.Unsetenv("STATICFILE_BUILDPACK_NAME")
+			os.Unsetenv("JAVA_BUILDPACK_NAME")
+			os.Unsetenv("RUBY_BUILDPACK_NAME")
+			os.Unsetenv("NODEJS_BUILDPACK_NAME")
+			os.Unsetenv("GO_BUILDPACK_NAME")
+			os.Unsetenv("PYTHON_BUILDPACK_NAME")
+			os.Unsetenv("PHP_BUILDPACK_NAME")
+			os.Unsetenv("BINARY_BUILDPACK_NAME")
+		})
 		It("Renders a valid integration_config when marshalling to json", func() {
+			configJson, err := json.Marshal(configwriter.GenerateConfigFromEnv())
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(configJson)).To(MatchJSON(`{
+																							"api": "non-empty-value",
+																							"admin_user": "non-empty-value",
+																							"admin_password": "non-empty-value",
+																							"apps_domain": "non-empty-value",
+																							"skip_ssl_validation": true,
+																							"use_http": true,
+																							"existing_user": "non-empty-value",
+																							"use_existing_user": true,
+																							"keep_user_at_suite_end": true,
+																							"existing_user_password": "non-empty-value",
+																							"backend": "non-empty-value",
+																							"staticfile_buildpack_name": "non-empty-value",
+																							"java_buildpack_name": "non-empty-value",
+																							"ruby_buildpack_name": "non-empty-value",
+																							"nodejs_buildpack_name": "non-empty-value",
+																							"go_buildpack_name": "non-empty-value",
+																							"python_buildpack_name": "non-empty-value",
+																							"php_buildpack_name": "non-empty-value",
+																							"binary_buildpack_name": "non-empty-value",
+																							"persistent_app_host": "non-empty-value",
+																							"persistent_app_space": "non-empty-value",
+																							"persistent_app_org": "non-empty-value",
+																							"persistent_app_quota_name": "non-empty-value",
+																							"default_timeout": 1,
+																							"cf_push_timeout": 1,
+																							"long_curl_timeout": 1,
+																							"broker_start_timeout": 1
+																							}`))
 
 		})
 	})

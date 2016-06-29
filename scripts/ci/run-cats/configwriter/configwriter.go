@@ -16,23 +16,23 @@ type config struct {
 	UseExistingUser        bool   `json:"use_existing_user"`
 	KeepUserAtSuiteEnd     bool   `json:"keep_user_at_suite_end"`
 	ExistingUserPassword   string `json:"existing_user_password"`
-	Backend                string `json:"backend"`
-	StaticBuildpackName    string `json:"staticfile_buildpack_name"`
-	JavaBuildpackName      string `json:"java_buildpack_name"`
-	RubyBuildpackName      string `json:"ruby_buildpack_name"`
-	NodeJsBuildpackName    string `json:"nodejs_buildpack_name"`
-	GoBuildpackName        string `json:"go_buildpack_name"`
-	PythonBuildpackName    string `json:"python_buildpack_name"`
-	PhpBuildpackName       string `json:"php_buildpack_name"`
-	BinaryBuildpackName    string `json:"binary_buildpack_name"`
-	PersistentAppHost      string `json:"persistent_app_host"`
-	PersistentAppSpace     string `json:"persistent_app_space"`
-	PersistentAppOrg       string `json:"persistent_app_org"`
-	PersistentAppQuotaName string `json:"persistent_app_quota_name"`
-	DefaultTimeout         int    `json:"default_timeout"`
-	CfPushTimeout          int    `json:"cf_push_timeout"`
-	LongCurlTimeout        int    `json:"long_curl_timeout"`
-	BrokerStartTimeout     int    `json:"broker_start_timeout"`
+	Backend                string `json:"backend,omitempty"`
+	StaticBuildpackName    string `json:"staticfile_buildpack_name,omitempty"`
+	JavaBuildpackName      string `json:"java_buildpack_name,omitempty"`
+	RubyBuildpackName      string `json:"ruby_buildpack_name,omitempty"`
+	NodeJsBuildpackName    string `json:"nodejs_buildpack_name,omitempty"`
+	GoBuildpackName        string `json:"go_buildpack_name,omitempty"`
+	PythonBuildpackName    string `json:"python_buildpack_name,omitempty"`
+	PhpBuildpackName       string `json:"php_buildpack_name,omitempty"`
+	BinaryBuildpackName    string `json:"binary_buildpack_name,omitempty"`
+	PersistentAppHost      string `json:"persistent_app_host,omitempty"`
+	PersistentAppSpace     string `json:"persistent_app_space,omitempty"`
+	PersistentAppOrg       string `json:"persistent_app_org,omitempty"`
+	PersistentAppQuotaName string `json:"persistent_app_quota_name,omitempty"`
+	DefaultTimeout         int    `json:"default_timeout,omitempty"`
+	CfPushTimeout          int    `json:"cf_push_timeout,omitempty"`
+	LongCurlTimeout        int    `json:"long_curl_timeout,omitempty"`
+	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
 }
 
 func GenerateConfigFromEnv() config {
