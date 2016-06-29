@@ -16,7 +16,6 @@ groups:
   - build-emit-datadog-metric-docker-image
   - build-enable-docker-diego-docker-image
   - build-merge-master-into-develop-docker-image
-  - build-multierror-tests-docker-image
   - build-provision-bosh-lite-docker-image
   - build-record-compatible-versions-docker-image
   - build-request-pm-input-docker-image
@@ -213,12 +212,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/merge-master-into-develop/Dockerfile]
-- name: runtime-ci-multierror-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/multierror-tests/Dockerfile]
 - name: runtime-ci-provision-bosh-lite
   type: git
   source:
@@ -519,13 +512,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/merge-master-into-develop
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: multierror-tests-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/multierror-tests
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1108,23 +1094,6 @@ jobs:
     - put: merge-master-into-develop-pipeline-image
       params:
         build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
-        push: true
-- name: build-multierror-tests-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-multierror-tests
-        trigger: true
-    - put: multierror-tests-pipeline-image
-      params:
-        build: runtime-ci-multierror-tests/scripts/ci/multierror-tests
         push: true
 - name: build-provision-bosh-lite-docker-image
   public: true
