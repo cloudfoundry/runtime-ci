@@ -2,7 +2,9 @@ package configwriter_test
 
 import (
 	"encoding/json"
+	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
@@ -11,63 +13,93 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func randomBool() bool {
+	rand.Seed(time.Now().UTC().UnixNano())
+	return rand.Intn(2) == 0
+}
+
 var _ = Describe("Configwriter", func() {
 	It("Generates a config object", func() {
-		config := configwriter.GenerateConfig("", "")
+		config := configwriter.GenerateConfigFromEnv()
 		Expect(config).NotTo(BeNil())
 	})
 
-	Context("When a valid CF_API envvar is set", func() {
+	Context("When valid CF envvars are set", func() {
+
+		expectedApi := "api.example.com" + "_" + time.Now().String()
+		expectedAdminUser := "admin_user" + "_" + time.Now().String()
+		expectedPassword := "admin_password" + "_" + time.Now().String()
+		expectedAppsDomain := "apps_domain" + "_" + time.Now().String()
+		expectedSkipSslValidation := randomBool()
+		expectedUseHttp := randomBool()
+		expectedExistingUser := "existing_user" + "_" + time.Now().String()
+		expectedExistingUserPassword := "expected_existing_user_password" + "_" + time.Now().String()
+
 		BeforeEach(func() {
-			os.Setenv("CF_API", "api.example.com")
+			os.Setenv("CF_API", expectedApi)
+			os.Setenv("CF_ADMIN_USER", expectedAdminUser)
+			os.Setenv("CF_ADMIN_PASSWORD", expectedPassword)
+			os.Setenv("CF_APPS_DOMAIN", expectedAppsDomain)
+			os.Setenv("SKIP_SSL_VALIDATION", strconv.FormatBool(expectedSkipSslValidation))
+			os.Setenv("USE_HTTP", strconv.FormatBool(expectedUseHttp))
+			os.Setenv("EXISTING_USER", expectedExistingUser)
+			os.Setenv("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
 		})
 
 		AfterEach(func() {
 			os.Unsetenv("CF_API")
-		})
-
-		It("Generates a config object with the correct 'api'", func() {
-			config := configwriter.GenerateConfigFromEnv()
-			Expect(config).NotTo(BeNil())
-			Expect(config.Api).To(Equal("api.example.com"))
-		})
-
-	})
-
-	Context("When a valid CF_ADMIN_USER envvar is set", func() {
-		expectedAdminUser := "admin_user" + "_" + time.Now().String()
-		BeforeEach(func() {
-			os.Setenv("CF_ADMIN_USER", expectedAdminUser)
-		})
-
-		AfterEach(func() {
 			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+			os.Unsetenv("EXISTING_USER")
+			os.Unsetenv("EXISTING_USER_PASSWORD")
 		})
 
-		It("Generates a config object with the correct 'admin_user'", func() {
+		It("Generates a config object with the correct CF env variables set", func() {
 			config := configwriter.GenerateConfigFromEnv()
 			Expect(config).NotTo(BeNil())
+			Expect(config.Api).To(Equal(expectedApi))
 			Expect(config.AdminUser).To(Equal(expectedAdminUser))
+			Expect(config.AdminPassword).To(Equal(expectedPassword))
+			Expect(config.AppsDomain).To(Equal(expectedAppsDomain))
+			Expect(config.SkipSslValidation).To(Equal(expectedSkipSslValidation))
+			Expect(config.UseHttp).To(Equal(expectedUseHttp))
+			Expect(config.ExistingUser).To(Equal(expectedExistingUser))
+			Expect(config.ExistingUserPassword).To(Equal(expectedExistingUserPassword))
+		})
+
+		It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
+			expectedExistingUser := "existing_user" + "_" + time.Now().String()
+			os.Setenv("EXISTING_USER", expectedExistingUser)
+			config := configwriter.GenerateConfigFromEnv()
+			Expect(config.UseExistingUser).To(Equal(true))
+			Expect(config.KeepUserAtSuiteEnd).To(Equal(true))
+		})
+
+		It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
+			os.Unsetenv("EXISTING_USER")
+			config := configwriter.GenerateConfigFromEnv()
+			Expect(config.UseExistingUser).To(Equal(false))
+			Expect(config.KeepUserAtSuiteEnd).To(Equal(false))
 		})
 	})
 
-	Context("When a valid CF admin_user property is passed", func() {
-
-		It("Generates a config object with 'admin_user' set correctly", func() {
-			expectedAdminUser := "admin_user" + "_" + time.Now().String()
-			config := configwriter.GenerateConfig("", expectedAdminUser)
-			Expect(config).NotTo(BeNil())
-			Expect(config.AdminUser).To(Equal(expectedAdminUser))
-		})
-	})
 	It("Uses the correct keynames when marshalling to json", func() {
 		configJson, err := json.Marshal(configwriter.GenerateConfigFromEnv())
 		Expect(err).NotTo(HaveOccurred())
-		Expect(string(configJson)).To(Equal(
-			`{
-"api": "",
-"admin_user": ""
-}`,
-		))
+		Expect(string(configJson)).To(MatchJSON(`{
+																							"api": "",
+																							"admin_user": "",
+																							"admin_password": "",
+																							"apps_domain": "",
+																							"skip_ssl_validation": false,
+																							"use_http": false,
+																							"existing_user": "",
+																							"use_existing_user": false,
+																							"keep_user_at_suite_end": false,
+																							"existing_user_password": ""
+																							}`))
 	})
 })
