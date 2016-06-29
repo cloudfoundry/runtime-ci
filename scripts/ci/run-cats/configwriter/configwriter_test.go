@@ -34,6 +34,7 @@ var _ = Describe("Configwriter", func() {
 		expectedUseHttp := randomBool()
 		expectedExistingUser := "existing_user" + "_" + time.Now().String()
 		expectedExistingUserPassword := "expected_existing_user_password" + "_" + time.Now().String()
+		expectedBackend := "expected_backend" + "_" + time.Now().String()
 
 		BeforeEach(func() {
 			os.Setenv("CF_API", expectedApi)
@@ -44,6 +45,7 @@ var _ = Describe("Configwriter", func() {
 			os.Setenv("USE_HTTP", strconv.FormatBool(expectedUseHttp))
 			os.Setenv("EXISTING_USER", expectedExistingUser)
 			os.Setenv("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
+			os.Setenv("BACKEND", expectedBackend)
 		})
 
 		AfterEach(func() {
@@ -55,6 +57,7 @@ var _ = Describe("Configwriter", func() {
 			os.Unsetenv("USE_HTTP")
 			os.Unsetenv("EXISTING_USER")
 			os.Unsetenv("EXISTING_USER_PASSWORD")
+			os.Unsetenv("BACKEND")
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
@@ -68,6 +71,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(config.UseHttp).To(Equal(expectedUseHttp))
 			Expect(config.ExistingUser).To(Equal(expectedExistingUser))
 			Expect(config.ExistingUserPassword).To(Equal(expectedExistingUserPassword))
+			Expect(config.Backend).To(Equal(expectedBackend))
 		})
 
 		It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
@@ -162,6 +166,38 @@ var _ = Describe("Configwriter", func() {
 				Expect(config.PersistentAppQuotaName).To(Equal(""))
 			})
 
+		})
+
+		Context("When one or more of the allowed timeout values are provided", func() {
+			rand.Seed(time.Now().UTC().UnixNano())
+			expectedDefaultTimeout := rand.Intn(100)
+			expectedCfPushTimeout := rand.Intn(100)
+			expectedLongCurlTimeout := rand.Intn(100)
+			expectedBrokerStartTimeout := rand.Intn(100)
+
+			BeforeEach(func() {
+				os.Setenv("DEFAULT_TIMEOUT", strconv.Itoa(expectedDefaultTimeout))
+				os.Setenv("CF_PUSH_TIMEOUT", strconv.Itoa(expectedCfPushTimeout))
+				os.Setenv("LONG_CURL_TIMEOUT", strconv.Itoa(expectedLongCurlTimeout))
+				os.Setenv("BROKER_START_TIMEOUT", strconv.Itoa(expectedBrokerStartTimeout))
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("DEFAULT_TIMEOUT")
+				os.Unsetenv("CF_PUSH_TIMEOUT")
+				os.Unsetenv("LONG_CURL_TIMEOUT")
+				os.Unsetenv("BROKER_START_TIMEOUT")
+			})
+
+			It("Generates a config object with the correct timeout variables set", func() {
+				config := configwriter.GenerateConfigFromEnv()
+				Expect(config).NotTo(BeNil())
+				Expect(config.DefaultTimeout).To(Equal(expectedDefaultTimeout))
+				Expect(config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
+				Expect(config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
+				Expect(config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
+
+			})
 		})
 
 		Context("When one or more of the allowed buildpacks is provided", func() {
@@ -275,6 +311,7 @@ var _ = Describe("Configwriter", func() {
 																							"use_existing_user": false,
 																							"keep_user_at_suite_end": false,
 																							"existing_user_password": "",
+																							"backend": "",
 																							"staticfile_buildpack_name": "",
 																							"java_buildpack_name": "",
 																							"ruby_buildpack_name": "",
@@ -286,7 +323,11 @@ var _ = Describe("Configwriter", func() {
 																							"persistent_app_host": "",
 																							"persistent_app_space": "",
 																							"persistent_app_org": "",
-																							"persistent_app_quota_name": ""
+																							"persistent_app_quota_name": "",
+																							"default_timeout": 0,
+																							"cf_push_timeout": 0,
+																							"long_curl_timeout": 0,
+																							"broker_start_timeout": 0
 																							}`))
 		})
 	})
