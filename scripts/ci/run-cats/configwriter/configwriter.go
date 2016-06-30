@@ -1,6 +1,7 @@
 package configwriter
 
 import (
+	"encoding/json"
 	"os"
 	"strconv"
 )
@@ -75,4 +76,12 @@ func GenerateConfigFromEnv() config {
 		LongCurlTimeout:    longCurlTimeout,
 		BrokerStartTimeout: brokerStartTimeout,
 	}
+}
+
+func WriteConfigToFile(destination string, config config) {
+	configFile, _ := os.Create(destination + "integration_config.json")
+	configJson, _ := json.Marshal(config)
+	contents := []byte(configJson)
+
+	configFile.Write(contents)
 }

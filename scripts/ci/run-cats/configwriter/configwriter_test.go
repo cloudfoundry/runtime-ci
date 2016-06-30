@@ -2,6 +2,7 @@ package configwriter_test
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"strconv"
@@ -323,6 +324,72 @@ var _ = Describe("Configwriter", func() {
 																							"cf_push_timeout": 1,
 																							"long_curl_timeout": 1,
 																							"broker_start_timeout": 1
+																							}`))
+
+			})
+		})
+
+	})
+
+	Describe("writing the integration_confg json file", func() {
+
+		Context("when no env vars are set", func() {
+
+			It("writes the config object to the destination file as json", func() {
+				config := configwriter.GenerateConfigFromEnv()
+				tempDir := os.TempDir()
+
+				configwriter.WriteConfigToFile(tempDir, config)
+
+				Expect(tempDir + "integration_config.json").To(BeARegularFile())
+
+				file, _ := os.Open(tempDir + "integration_config.json")
+				contents, _ := ioutil.ReadFile(file.Name())
+				Expect(contents).To(MatchJSON(`{
+																							"api": "",
+																							"admin_user": "",
+																							"admin_password": "",
+																							"apps_domain": "",
+																							"skip_ssl_validation": false,
+																							"use_http": false,
+																							"existing_user": "",
+																							"use_existing_user": false,
+																							"keep_user_at_suite_end": false,
+																							"existing_user_password": ""
+																							}`))
+
+			})
+		})
+
+		Context("when env vars are set", func() {
+			BeforeEach(func() {
+				os.Setenv("CF_API", "cf-api-value")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("CF_API")
+			})
+
+			It("writes the config object to the destination file as json", func() {
+				config := configwriter.GenerateConfigFromEnv()
+				tempDir := os.TempDir()
+
+				configwriter.WriteConfigToFile(tempDir, config)
+
+				file, _ := os.Open(tempDir + "integration_config.json")
+				contents, _ := ioutil.ReadFile(file.Name())
+
+				Expect(contents).To(MatchJSON(`{
+																							"api": "cf-api-value",
+																							"admin_user": "",
+																							"admin_password": "",
+																							"apps_domain": "",
+																							"skip_ssl_validation": false,
+																							"use_http": false,
+																							"existing_user": "",
+																							"use_existing_user": false,
+																							"keep_user_at_suite_end": false,
+																							"existing_user_password": ""
 																							}`))
 
 			})
