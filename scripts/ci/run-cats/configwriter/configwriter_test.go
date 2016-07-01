@@ -336,19 +336,22 @@ var _ = Describe("Configwriter", func() {
 	Describe("writing the integration_config.json file", func() {
 		Context("when no env vars are set", func() {
 			var tempDir string
+			var err error
 
 			BeforeEach(func() {
-				tempDir = os.TempDir()
+				tempDir, err = ioutil.TempDir("", "")
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			AfterEach(func() {
-				os.Remove(tempDir)
+				err := os.RemoveAll(tempDir)
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			It("writes the config object to the destination file as json", func() {
 				configFile := configwriter.NewConfigFile(tempDir)
 
-				file := configFile.WriteConfigToFile()
+				file, _ := configFile.WriteConfigToFile()
 
 				Expect(tempDir + "integration_config.json").To(BeARegularFile())
 				Expect(tempDir + "integration_config.json").To(Equal(file.Name()))
@@ -371,16 +374,21 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when env vars are set", func() {
 			var tempDir string
+			var err error
 
 			BeforeEach(func() {
-				tempDir = os.TempDir()
+				tempDir, err = ioutil.TempDir("", "")
+				Expect(err).NotTo(HaveOccurred())
+
 				os.Setenv("CF_API", "cf-api-value")
 			})
 
 			AfterEach(func() {
-				os.Remove(tempDir)
-				os.Unsetenv("CONFIG")
-				os.Unsetenv("CF_API")
+				err := os.RemoveAll(tempDir)
+				Expect(err).NotTo(HaveOccurred())
+
+				err = os.Unsetenv("CONFIG")
+				err = os.Unsetenv("CF_API")
 			})
 
 			It("writes the config object to the destination file as json", func() {
@@ -405,18 +413,33 @@ var _ = Describe("Configwriter", func() {
 																							}`))
 			})
 		})
+
+		Context("when the destinationDir is invalid", func() {
+			It("fails with a nice error", func() {
+				configFile := configwriter.NewConfigFile("/badpath")
+
+				_, err := configFile.WriteConfigToFile()
+
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Unable to write integration_config.json to /badpath"))
+			})
+		})
 	})
 
 	Describe("exporting the config environment variable", func() {
 		Context("when no env vars are set", func() {
 			var tempDir string
+			var err error
 
 			BeforeEach(func() {
-				tempDir = os.TempDir()
+				tempDir, err = ioutil.TempDir("", "")
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			AfterEach(func() {
-				os.Remove(tempDir)
+				err := os.RemoveAll(tempDir)
+				Expect(err).NotTo(HaveOccurred())
+
 				os.Unsetenv("CONFIG")
 			})
 

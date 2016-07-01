@@ -89,13 +89,25 @@ func generateConfigFromEnv() config {
 	}
 }
 
-func (configFile *configFile) WriteConfigToFile() *os.File {
-	integrationConfigFile, _ := os.Create(configFile.DestinationDir + "integration_config.json")
-	configJson, _ := json.Marshal(configFile.Config)
+func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
+	integrationConfigFile, err := os.Create(configFile.DestinationDir + "integration_config.json")
+	if err != nil {
+		return nil, fmt.Errorf("Unable to write integration_config.json to %s", configFile.DestinationDir)
+	}
+
+	configJson, err := json.Marshal(configFile.Config)
+	if err != nil {
+		return nil, err
+	}
+
 	contents := []byte(configJson)
 
-	integrationConfigFile.Write(contents)
-	return integrationConfigFile
+	_, err = integrationConfigFile.Write(contents)
+	if err != nil {
+		return nil, err
+	}
+
+	return integrationConfigFile, nil
 }
 
 func (configFile *configFile) ExportConfigFilePath() {
