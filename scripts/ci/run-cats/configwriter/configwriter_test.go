@@ -335,9 +335,17 @@ var _ = Describe("Configwriter", func() {
 
 	Describe("writing the integration_config.json file", func() {
 		Context("when no env vars are set", func() {
+			var tempDir string
+
+			BeforeEach(func() {
+				tempDir = os.TempDir()
+			})
+
+			AfterEach(func() {
+				os.Remove(tempDir)
+			})
 
 			It("writes the config object to the destination file as json", func() {
-				tempDir := os.TempDir()
 				configFile := configwriter.NewConfigFile(tempDir)
 
 				file := configFile.WriteConfigToFile()
@@ -362,16 +370,20 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		Context("when env vars are set", func() {
+			var tempDir string
+
 			BeforeEach(func() {
+				tempDir = os.TempDir()
 				os.Setenv("CF_API", "cf-api-value")
 			})
 
 			AfterEach(func() {
+				os.Remove(tempDir)
+				os.Unsetenv("CONFIG")
 				os.Unsetenv("CF_API")
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				tempDir := os.TempDir()
 				configFile := configwriter.NewConfigFile(tempDir)
 
 				configFile.WriteConfigToFile()
