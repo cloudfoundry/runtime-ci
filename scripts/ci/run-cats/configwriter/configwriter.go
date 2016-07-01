@@ -2,8 +2,10 @@ package configwriter
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type config struct {
@@ -36,7 +38,16 @@ type config struct {
 	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
 }
 
-func GenerateConfigFromEnv() config {
+type configFile struct {
+	Config         config
+	DestinationDir string
+}
+
+func NewConfigFile(destinationDir string) configFile {
+	return configFile{generateConfigFromEnv(), destinationDir}
+}
+
+func generateConfigFromEnv() config {
 	skipSslValidation, _ := strconv.ParseBool(os.Getenv("SKIP_SSL_VALIDATION"))
 	useHttp, _ := strconv.ParseBool(os.Getenv("USE_HTTP"))
 	defaultTimeout, _ := strconv.Atoi(os.Getenv("DEFAULT_TIMEOUT"))
@@ -78,10 +89,20 @@ func GenerateConfigFromEnv() config {
 	}
 }
 
-func WriteConfigToFile(destination string, config config) {
-	configFile, _ := os.Create(destination + "integration_config.json")
-	configJson, _ := json.Marshal(config)
+func (configFile *configFile) WriteConfigToFile() *os.File {
+	integrationConfigFile, _ := os.Create(configFile.DestinationDir + "integration_config.json")
+	configJson, _ := json.Marshal(configFile.Config)
 	contents := []byte(configJson)
 
-	configFile.Write(contents)
+	integrationConfigFile.Write(contents)
+	return integrationConfigFile
+}
+
+func (configFile *configFile) ExportConfigFilePath() {
+	path := configFile.DestinationDir
+	if !strings.HasSuffix(path, "/") {
+		path += "/"
+	}
+
+	os.Setenv("CONFIG", fmt.Sprintf("%sintegration_config.json", path))
 }

@@ -22,29 +22,30 @@ func randomBool() bool {
 var _ = Describe("Configwriter", func() {
 	Context("when env vars are not set", func() {
 		It("returns an empty config object", func() {
-			config := configwriter.GenerateConfigFromEnv()
-			Expect(config).NotTo(BeNil())
-			Expect(config.Api).To(Equal(""))
-			Expect(config.AdminUser).To(Equal(""))
-			Expect(config.AdminPassword).To(Equal(""))
-			Expect(config.AppsDomain).To(Equal(""))
-			Expect(config.SkipSslValidation).To(BeFalse())
-			Expect(config.UseHttp).To(BeFalse())
-			Expect(config.ExistingUser).To(Equal(""))
-			Expect(config.ExistingUserPassword).To(Equal(""))
-			Expect(config.Backend).To(Equal(""))
-			Expect(config.PersistentAppHost).To(Equal(""))
-			Expect(config.PersistentAppSpace).To(Equal(""))
-			Expect(config.PersistentAppOrg).To(Equal(""))
-			Expect(config.PersistentAppQuotaName).To(Equal(""))
-			Expect(config.StaticBuildpackName).To(Equal(""))
-			Expect(config.JavaBuildpackName).To(Equal(""))
-			Expect(config.RubyBuildpackName).To(Equal(""))
-			Expect(config.NodeJsBuildpackName).To(Equal(""))
-			Expect(config.GoBuildpackName).To(Equal(""))
-			Expect(config.PythonBuildpackName).To(Equal(""))
-			Expect(config.PhpBuildpackName).To(Equal(""))
-			Expect(config.BinaryBuildpackName).To(Equal(""))
+			configFile := configwriter.NewConfigFile("/dir/name")
+			Expect(configFile).NotTo(BeNil())
+			Expect(configFile.Config.Api).To(Equal(""))
+			Expect(configFile.Config.AdminUser).To(Equal(""))
+			Expect(configFile.Config.AdminPassword).To(Equal(""))
+			Expect(configFile.Config.AppsDomain).To(Equal(""))
+			Expect(configFile.Config.SkipSslValidation).To(BeFalse())
+			Expect(configFile.Config.UseHttp).To(BeFalse())
+			Expect(configFile.Config.ExistingUser).To(Equal(""))
+			Expect(configFile.Config.ExistingUserPassword).To(Equal(""))
+			Expect(configFile.Config.Backend).To(Equal(""))
+			Expect(configFile.Config.PersistentAppHost).To(Equal(""))
+			Expect(configFile.Config.PersistentAppSpace).To(Equal(""))
+			Expect(configFile.Config.PersistentAppOrg).To(Equal(""))
+			Expect(configFile.Config.PersistentAppQuotaName).To(Equal(""))
+			Expect(configFile.Config.StaticBuildpackName).To(Equal(""))
+			Expect(configFile.Config.JavaBuildpackName).To(Equal(""))
+			Expect(configFile.Config.RubyBuildpackName).To(Equal(""))
+			Expect(configFile.Config.NodeJsBuildpackName).To(Equal(""))
+			Expect(configFile.Config.GoBuildpackName).To(Equal(""))
+			Expect(configFile.Config.PythonBuildpackName).To(Equal(""))
+			Expect(configFile.Config.PhpBuildpackName).To(Equal(""))
+			Expect(configFile.Config.BinaryBuildpackName).To(Equal(""))
+			Expect(configFile.DestinationDir).To(Equal("/dir/name"))
 		})
 	})
 
@@ -163,33 +164,34 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
-			config := configwriter.GenerateConfigFromEnv()
-			Expect(config).NotTo(BeNil())
-			Expect(config.Api).To(Equal(expectedApi))
-			Expect(config.AdminUser).To(Equal(expectedAdminUser))
-			Expect(config.AdminPassword).To(Equal(expectedPassword))
-			Expect(config.AppsDomain).To(Equal(expectedAppsDomain))
-			Expect(config.SkipSslValidation).To(Equal(expectedSkipSslValidation))
-			Expect(config.UseHttp).To(Equal(expectedUseHttp))
-			Expect(config.ExistingUser).To(Equal(expectedExistingUser))
-			Expect(config.ExistingUserPassword).To(Equal(expectedExistingUserPassword))
-			Expect(config.Backend).To(Equal(expectedBackend))
-			Expect(config.PersistentAppHost).To(Equal(expectedPersistedAppHost))
-			Expect(config.PersistentAppSpace).To(Equal(expectedPersistedAppSpace))
-			Expect(config.PersistentAppOrg).To(Equal(expectedPersistedAppOrg))
-			Expect(config.PersistentAppQuotaName).To(Equal(expectedPersistedAppQuotaName))
-			Expect(config.DefaultTimeout).To(Equal(expectedDefaultTimeout))
-			Expect(config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
-			Expect(config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
-			Expect(config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
-			Expect(config.StaticBuildpackName).To(Equal(expectedStaticBuildpackName))
-			Expect(config.JavaBuildpackName).To(Equal(expectedJavaBuildpackName))
-			Expect(config.RubyBuildpackName).To(Equal(expectedRubyBuildpackName))
-			Expect(config.NodeJsBuildpackName).To(Equal(expectedNodeJsBuildpackName))
-			Expect(config.GoBuildpackName).To(Equal(expectedGoBuildpackName))
-			Expect(config.PythonBuildpackName).To(Equal(expectedPythonBuildpackName))
-			Expect(config.PhpBuildpackName).To(Equal(expectedPhpBuildpackName))
-			Expect(config.BinaryBuildpackName).To(Equal(expectedBinaryBuildpackName))
+			configFile := configwriter.NewConfigFile("/some/dir")
+			Expect(configFile).NotTo(BeNil())
+			Expect(configFile.Config.Api).To(Equal(expectedApi))
+			Expect(configFile.Config.AdminUser).To(Equal(expectedAdminUser))
+			Expect(configFile.Config.AdminPassword).To(Equal(expectedPassword))
+			Expect(configFile.Config.AppsDomain).To(Equal(expectedAppsDomain))
+			Expect(configFile.Config.SkipSslValidation).To(Equal(expectedSkipSslValidation))
+			Expect(configFile.Config.UseHttp).To(Equal(expectedUseHttp))
+			Expect(configFile.Config.ExistingUser).To(Equal(expectedExistingUser))
+			Expect(configFile.Config.ExistingUserPassword).To(Equal(expectedExistingUserPassword))
+			Expect(configFile.Config.Backend).To(Equal(expectedBackend))
+			Expect(configFile.Config.PersistentAppHost).To(Equal(expectedPersistedAppHost))
+			Expect(configFile.Config.PersistentAppSpace).To(Equal(expectedPersistedAppSpace))
+			Expect(configFile.Config.PersistentAppOrg).To(Equal(expectedPersistedAppOrg))
+			Expect(configFile.Config.PersistentAppQuotaName).To(Equal(expectedPersistedAppQuotaName))
+			Expect(configFile.Config.DefaultTimeout).To(Equal(expectedDefaultTimeout))
+			Expect(configFile.Config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
+			Expect(configFile.Config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
+			Expect(configFile.Config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
+			Expect(configFile.Config.StaticBuildpackName).To(Equal(expectedStaticBuildpackName))
+			Expect(configFile.Config.JavaBuildpackName).To(Equal(expectedJavaBuildpackName))
+			Expect(configFile.Config.RubyBuildpackName).To(Equal(expectedRubyBuildpackName))
+			Expect(configFile.Config.NodeJsBuildpackName).To(Equal(expectedNodeJsBuildpackName))
+			Expect(configFile.Config.GoBuildpackName).To(Equal(expectedGoBuildpackName))
+			Expect(configFile.Config.PythonBuildpackName).To(Equal(expectedPythonBuildpackName))
+			Expect(configFile.Config.PhpBuildpackName).To(Equal(expectedPhpBuildpackName))
+			Expect(configFile.Config.BinaryBuildpackName).To(Equal(expectedBinaryBuildpackName))
+			Expect(configFile.DestinationDir).To(Equal("/some/dir"))
 		})
 
 		Context("when 'ExistingUser' is provided", func() {
@@ -198,9 +200,9 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
-				config := configwriter.GenerateConfigFromEnv()
-				Expect(config.UseExistingUser).To(Equal(true))
-				Expect(config.KeepUserAtSuiteEnd).To(Equal(true))
+				configFile := configwriter.NewConfigFile("/some/dir")
+				Expect(configFile.Config.UseExistingUser).To(Equal(true))
+				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(true))
 			})
 		})
 
@@ -210,17 +212,17 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
-				config := configwriter.GenerateConfigFromEnv()
-				Expect(config).NotTo(BeNil())
-				Expect(config.UseExistingUser).To(Equal(false))
-				Expect(config.KeepUserAtSuiteEnd).To(Equal(false))
+				configFile := configwriter.NewConfigFile("")
+				Expect(configFile).NotTo(BeNil())
+				Expect(configFile.Config.UseExistingUser).To(Equal(false))
+				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(false))
 			})
 		})
 	})
 
 	Describe("marshaling the struct", func() {
 		It("does not render optional keys if their values are empty", func() {
-			configJson, err := json.Marshal(configwriter.GenerateConfigFromEnv())
+			configJson, err := json.Marshal(configwriter.NewConfigFile("").Config)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(configJson)).To(MatchJSON(`{
 																							"api": "",
@@ -294,7 +296,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("renders the variables in the integration_config", func() {
-				configJson, err := json.Marshal(configwriter.GenerateConfigFromEnv())
+				configJson, err := json.Marshal(configwriter.NewConfigFile("").Config)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(configJson)).To(MatchJSON(`{
 																							"api": "non-empty-value",
@@ -331,19 +333,18 @@ var _ = Describe("Configwriter", func() {
 
 	})
 
-	Describe("writing the integration_confg json file", func() {
-
+	Describe("writing the integration_config.json file", func() {
 		Context("when no env vars are set", func() {
 
 			It("writes the config object to the destination file as json", func() {
-				config := configwriter.GenerateConfigFromEnv()
 				tempDir := os.TempDir()
+				configFile := configwriter.NewConfigFile(tempDir)
 
-				configwriter.WriteConfigToFile(tempDir, config)
+				file := configFile.WriteConfigToFile()
 
 				Expect(tempDir + "integration_config.json").To(BeARegularFile())
+				Expect(tempDir + "integration_config.json").To(Equal(file.Name()))
 
-				file, _ := os.Open(tempDir + "integration_config.json")
 				contents, _ := ioutil.ReadFile(file.Name())
 				Expect(contents).To(MatchJSON(`{
 																							"api": "",
@@ -357,7 +358,6 @@ var _ = Describe("Configwriter", func() {
 																							"keep_user_at_suite_end": false,
 																							"existing_user_password": ""
 																							}`))
-
 			})
 		})
 
@@ -371,10 +371,10 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				config := configwriter.GenerateConfigFromEnv()
 				tempDir := os.TempDir()
+				configFile := configwriter.NewConfigFile(tempDir)
 
-				configwriter.WriteConfigToFile(tempDir, config)
+				configFile.WriteConfigToFile()
 
 				file, _ := os.Open(tempDir + "integration_config.json")
 				contents, _ := ioutil.ReadFile(file.Name())
@@ -391,10 +391,30 @@ var _ = Describe("Configwriter", func() {
 																							"keep_user_at_suite_end": false,
 																							"existing_user_password": ""
 																							}`))
-
 			})
 		})
-
 	})
 
+	Describe("exporting the config environment variable", func() {
+		Context("when no env vars are set", func() {
+			var tempDir string
+
+			BeforeEach(func() {
+				tempDir = os.TempDir()
+			})
+
+			AfterEach(func() {
+				os.Remove(tempDir)
+				os.Unsetenv("CONFIG")
+			})
+
+			It("exports the location of the integration_config.json file", func() {
+				configFile := configwriter.NewConfigFile("/some/path")
+
+				configFile.ExportConfigFilePath()
+
+				Expect(os.Getenv("CONFIG")).To(Equal("/some/path/integration_config.json"))
+			})
+		})
+	})
 })
