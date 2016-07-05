@@ -3,17 +3,30 @@ package commandgenerator
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
-func GenerateCmd() string {
+func GenerateCmd() (string, []string) {
 	nodes := os.Getenv("NODES")
+	var testBinPath string
 
-	return fmt.Sprintf(
-		"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %s %s %s -keepGoing",
-		nodes,
-		generateSkipPackages(),
-		generateSkips(),
-	)
+	catsPath, keyExists := os.LookupEnv("CATS_PATH")
+	if keyExists {
+		testBinPath = filepath.Clean(catsPath + "/bin/test")
+	} else {
+		testBinPath = "gopath/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
+	}
+
+	return testBinPath, []string{
+		"-r",
+		"-slowSpecThreshold=120",
+		"-randomizeAllSpecs",
+		"-nodes",
+		fmt.Sprintf("%s", nodes),
+		fmt.Sprintf("%s", generateSkipPackages()),
+		fmt.Sprintf("%s", generateSkips()),
+		"-keepGoing",
+	}
 }
 
 func generateSkips() string {
@@ -25,10 +38,10 @@ func generateSkips() string {
 
 	switch os.Getenv("BACKEND") {
 	case "diego":
-		skip += "NO_DEA_SUPPORT"
+		skip += "NO_DIEGO_SUPPORT"
 
 	case "dea":
-		skip += "NO_DIEGO_SUPPORT"
+		skip += "NO_DEA_SUPPORT"
 
 	default:
 		skip += "NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"
@@ -59,7 +72,8 @@ func generateSkipPackages() string {
 	skipPackages := "-skipPackage=helpers"
 
 	for _, envVar := range envVarMap {
-		if os.Getenv(envVar.envKey) != "" {
+		envVarValue, envVarExists := os.LookupEnv(envVar.envKey)
+		if !envVarExists || envVarValue != "true" {
 			skipPackages += "," + envVar.envValue
 		}
 	}

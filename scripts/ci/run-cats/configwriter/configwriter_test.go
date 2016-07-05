@@ -225,17 +225,17 @@ var _ = Describe("Configwriter", func() {
 			configJson, err := json.Marshal(configwriter.NewConfigFile("").Config)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(configJson)).To(MatchJSON(`{
-																							"api": "",
-																							"admin_user": "",
-																							"admin_password": "",
-																							"apps_domain": "",
-																							"skip_ssl_validation": false,
-																							"use_http": false,
-																							"existing_user": "",
-																							"use_existing_user": false,
-																							"keep_user_at_suite_end": false,
-																							"existing_user_password": ""
-																							}`))
+                                              "api": "",
+                                              "admin_user": "",
+                                              "admin_password": "",
+                                              "apps_domain": "",
+                                              "skip_ssl_validation": false,
+                                              "use_http": false,
+                                              "existing_user": "",
+                                              "use_existing_user": false,
+                                              "keep_user_at_suite_end": false,
+                                              "existing_user_password": ""
+                                              }`))
 		})
 
 		Context("when any env variables are provided", func() {
@@ -353,8 +353,8 @@ var _ = Describe("Configwriter", func() {
 
 				file, _ := configFile.WriteConfigToFile()
 
-				Expect(tempDir + "integration_config.json").To(BeARegularFile())
-				Expect(tempDir + "integration_config.json").To(Equal(file.Name()))
+				Expect(tempDir + "/integration_config.json").To(BeARegularFile())
+				Expect(tempDir + "/integration_config.json").To(Equal(file.Name()))
 
 				contents, _ := ioutil.ReadFile(file.Name())
 				Expect(contents).To(MatchJSON(`{
@@ -396,9 +396,10 @@ var _ = Describe("Configwriter", func() {
 
 				configFile.WriteConfigToFile()
 
-				file, _ := os.Open(tempDir + "integration_config.json")
-				contents, _ := ioutil.ReadFile(file.Name())
-
+				file, err := os.Open(tempDir + "/integration_config.json")
+				Expect(err).NotTo(HaveOccurred())
+				contents, err := ioutil.ReadFile(file.Name())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(contents).To(MatchJSON(`{
 																							"api": "cf-api-value",
 																							"admin_user": "",
@@ -423,6 +424,38 @@ var _ = Describe("Configwriter", func() {
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Unable to write integration_config.json to /badpath"))
 			})
+		})
+	})
+
+	Context("when the destinationDir doesn't end with a trailing slash", func() {
+		BeforeEach(func() {
+			os.Setenv("CF_API", "cf-api-value")
+		})
+		AfterEach(func() {
+			os.Unsetenv("CF_API")
+		})
+
+		It("should successfully write integration_config.json", func() {
+			configFile := configwriter.NewConfigFile("/tmp")
+
+			_, err := configFile.WriteConfigToFile()
+
+			file, err := os.Open("/tmp/integration_config.json")
+			Expect(err).NotTo(HaveOccurred())
+			contents, _ := ioutil.ReadFile(file.Name())
+
+			Expect(contents).To(MatchJSON(`{
+                                    "api": "cf-api-value",
+                                    "admin_user": "",
+                                    "admin_password": "",
+                                    "apps_domain": "",
+                                    "skip_ssl_validation": false,
+                                    "use_http": false,
+                                    "existing_user": "",
+                                    "use_existing_user": false,
+                                    "keep_user_at_suite_end": false,
+                                    "existing_user_password": ""
+                                    }`))
 		})
 	})
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
-	"strings"
 )
 
 type config struct {
@@ -44,7 +44,7 @@ type configFile struct {
 }
 
 func NewConfigFile(destinationDir string) configFile {
-	return configFile{generateConfigFromEnv(), destinationDir}
+	return configFile{generateConfigFromEnv(), filepath.Clean(destinationDir)}
 }
 
 func generateConfigFromEnv() config {
@@ -90,7 +90,7 @@ func generateConfigFromEnv() config {
 }
 
 func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
-	integrationConfigFile, err := os.Create(configFile.DestinationDir + "integration_config.json")
+	integrationConfigFile, err := os.Create(configFile.DestinationDir + "/integration_config.json")
 	if err != nil {
 		return nil, fmt.Errorf("Unable to write integration_config.json to %s", configFile.DestinationDir)
 	}
@@ -111,10 +111,5 @@ func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
 }
 
 func (configFile *configFile) ExportConfigFilePath() {
-	path := configFile.DestinationDir
-	if !strings.HasSuffix(path, "/") {
-		path += "/"
-	}
-
-	os.Setenv("CONFIG", fmt.Sprintf("%sintegration_config.json", path))
+	os.Setenv("CONFIG", fmt.Sprintf("%s/integration_config.json", configFile.DestinationDir))
 }
