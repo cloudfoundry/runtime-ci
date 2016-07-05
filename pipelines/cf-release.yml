@@ -1224,7 +1224,9 @@ jobs:
     input_mapping:
       diego-release: diego-release-master
       cf-manifest: manifest
-      diego-stubs: a1-env
+      property-overrides: a1-env
+      instance-count-overrides: a1-env
+      release-versions: a1-env
     params:
       BOSH_USER: {{a1_bosh_username}}
       BOSH_PASSWORD: {{a1_bosh_password}}
@@ -1277,7 +1279,9 @@ jobs:
     input_mapping:
       diego-release: diego-release-master
       cf-manifest: manifest
-      diego-stubs: diego-release-master
+      property-overrides: diego-release-master
+      instance-count-overrides: diego-release-master
+      release-versions: diego-release-master
       iaas-settings: diego-release-master
     params:
       BOSH_USER: admin
@@ -1332,8 +1336,10 @@ jobs:
     input_mapping:
       diego-release: diego-release-master
       cf-manifest: manifest
-      diego-stubs: cat-env
       iaas-settings: cat-env
+      property-overrides: cat-env
+      instance-count-overrides: cat-env
+      release-versions: cat-env
     params:
       BOSH_USER: {{vsphere_bosh_username}}
       BOSH_PASSWORD: {{vsphere_bosh_password}}
