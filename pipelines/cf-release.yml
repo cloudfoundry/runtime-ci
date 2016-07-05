@@ -695,6 +695,7 @@ jobs:
             ERRAND_NAME: acceptance_tests
           input_mapping:
             target-file-dir: bosh-lite-target-file
+      - do:
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-bosh-target-file
