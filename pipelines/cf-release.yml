@@ -643,6 +643,9 @@ jobs:
       - get: cf-bosh-lite-manifest
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+      - get: cf-bosh-lite-diego-manifest
+        trigger: true
+        passed: [ bosh-lite-smoke-tests ]
     - aggregate:
       - do: # enable docker
         - task: write-api-target-file
@@ -879,6 +882,10 @@ jobs:
         trigger: true
         passed:
         - vsphere-cf-deploy
+      - get: cf-vsphere-diego-manifest
+        passed: [ vsphere-cf-deploy ]
+        trigger: true
+        tags: [vsphere]
       - get: cf-release
         resource: cf-release-develop
         params:
@@ -942,6 +949,14 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: cf-vsphere-manifest
+        passed: [ vsphere-smoke-tests ]
+        trigger: true
+        tags: [vsphere]
+      - get: cf-vsphere-diego-manifest
+        passed: [ vsphere-smoke-tests ]
+        trigger: true
+        tags: [vsphere]
       - get: runtime-ci
         tags: [ vsphere ]
       - get: cf-release
@@ -1346,6 +1361,12 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: cf-a1-manifest
+        trigger: true
+        passed: [ a1-smoke-tests ]
+      - get: cf-a1-diego-manifest
+        passed: [ a1-smoke-tests ]
+        trigger: true
       - get: cf-release
         resource: cf-release-develop
         passed: [a1-smoke-tests]
