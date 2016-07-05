@@ -1032,7 +1032,7 @@ jobs:
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
-        INCLUDE_OPERATOR: true
+        INCLUDE_OPERATOR: false
         SKIP_SSO: false
         BACKEND: diego
         CF_API: "api.cat.wild.cf-app.com"
@@ -1436,7 +1436,7 @@ jobs:
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
-        INCLUDE_OPERATOR: true
+        INCLUDE_OPERATOR: false
         SKIP_SSO: false
         BACKEND: diego
         CF_API: "api.a1.cf-app.com"
