@@ -17,7 +17,7 @@ function verify_image_exists_in_pipeline_yml {
 
 errors_file=$(mktemp /tmp/errors.XXXXX)
 pushd "${RUNTIME_CI_DIR}/scripts/ci" >/dev/null
-  find . -type d ! -path . | while read -r dir; do
+  find . -type d ! -path . -prune | while read -r dir; do
     pushd "${dir}" >/dev/null
       verify_image_exists_in_pipeline_yml "${dir}" >> "${errors_file}"
     popd >/dev/null; done
