@@ -9,9 +9,6 @@ create_stub() {
   cat << EOF > bosh-lite-stub/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
-  capi:
-    nsync:
-      diego_privileged_containers: true
   system_domain: bosh-lite.runtime-ci.cf-app.com
   apps_domain: bosh-lite.runtime-ci.cf-app.com
   acceptance_tests:
