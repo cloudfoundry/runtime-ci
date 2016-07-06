@@ -27,3 +27,6 @@ RUN \
 RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.17.1&source=github-rel" && \
   dpkg -i cf.deb
 
+RUN mkdir -p $GOPATH/src/github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats
+ADD . $GOPATH/src/github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/
+RUN cd $GOPATH/src/github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats && go install
