@@ -49,7 +49,7 @@ post_change_file() {
   set -e
 
   if [[ "$EXIT_STATUS" -ne 0 ]]; then
-    if ! grep "not found" "$OUTPUT"; then
+    if ! grep "not found" <(echo "$OUTPUT"); then
       echo "$OUTPUT"
       exit 1
     fi
