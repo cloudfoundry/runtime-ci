@@ -4,6 +4,7 @@ groups:
   jobs:
   - destroy-infrastructure
   - setup-infrastructure
+  - deploy-releases
 
 resources:
 - name: runtime-ci
@@ -23,6 +24,21 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
+- name: capi-release-repo
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-release.git
+- name: nats-release-repo
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/nats-release.git
+- name: routing-release-repo
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/routing-release.git
 
 jobs:
 - name: destroy-infrastructure
@@ -82,3 +98,95 @@ jobs:
       BBL_LB_CERT: {{bbl_lb_cert}}
       BBL_LB_KEY: {{bbl_lb_key}}
       DOMAIN: {{hermione_domain}}
+- name: deploy-releases
+  public: true
+  serial_groups: [ hermione ]
+  plan:
+  - aggregate:
+    - get: capi-release-repo
+    - get: nats-release-repo
+    - get: routing-release-repo
+    - get: hermione-env-updated
+      trigger: true
+      passed: [ setup-infrastructure ]
+    - get: runtime-ci
+  - task: extract-creds
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hermione-env-updated
+  - aggregate:
+    - do:
+      - task: create-nats-release
+        file: runtime-ci/scripts/ci/create-release/task.yml
+        input_mapping:
+          release-repo: nats-release-repo
+        output_mapping:
+          release-tarball: nats-release-tarball
+        params:
+          RELEASE_NAME: nats
+      - task: upload-nats-release
+        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+        input_mapping:
+          release: nats-release-tarball
+        params:
+          TARGET_FILE: target
+          USERNAME_FILE: username
+          PASSWORD_FILE: password
+          RELEASE_NAME: nats-*.tgz
+    - do:
+      - task: create-routing-release
+        file: runtime-ci/scripts/ci/create-release/task.yml
+        input_mapping:
+          release-repo: routing-release-repo
+        output_mapping:
+          release-tarball: routing-release-tarball
+        params:
+          RELEASE_DIR: routing-release
+          RELEASE_NAME: routing
+      - task: upload-routing-release
+        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+        input_mapping:
+          release: routing-release-tarball
+        params:
+          TARGET_FILE: target
+          USERNAME_FILE: username
+          PASSWORD_FILE: password
+          RELEASE_NAME: routing-*.tgz
+    - do:
+      - task: create-capi-release
+        file: runtime-ci/scripts/ci/create-release/task.yml
+        input_mapping:
+          release-repo: capi-release-repo
+        output_mapping:
+          release-tarball: capi-release-tarball
+        params:
+          RELEASE_NAME: capi
+      - task: upload-capi-release
+        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+        input_mapping:
+          release: capi-release-tarball
+        params:
+          TARGET_FILE: target
+          USERNAME_FILE: username
+          PASSWORD_FILE: password
+          RELEASE_NAME: capi-*.tgz
+  - task: set-bosh-uuid
+    file: runtime-ci/scripts/ci/bosh-uuid/task.yml
+    input_mapping:
+      manifest: hermione-env-updated
+    params:
+      TARGET_FILE:  target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      MANIFEST_FILE: cf-deployment.yml
+  - task: bosh-deploy-cf
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest: manifest-updated
+    params:
+      TARGET_FILE:  target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      MANIFEST_FILE: cf-deployment.yml
