@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eux
+
+pushd "${TEST_PATH:-"TEST_PATH is required"}" > /dev/null
+  ginkgo \
+    "${GINKGO_PARAMS-'GINKGO_PARAMS is required'}"
+popd > /dev/null

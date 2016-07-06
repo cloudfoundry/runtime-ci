@@ -41,7 +41,6 @@ groups:
   - build-bosh-upload-release-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
-  - build-verify-every-task-is-used-in-a-pipeline-docker-image
   - build-create-iaas-settings-docker-image
   - build-write-bosh-lite-api-target-file-docker-image
   - build-bind-elb-to-r53-docker-image
@@ -49,6 +48,11 @@ groups:
   - build-cats-from-cf-release-docker-image
   - build-check-out-fixed-version-docker-image
   - build-bosh-uuid-docker-image
+- name: run-cats-tests
+  jobs:
+  - test-cats-golang
+  - fake-run-cats
+  - build-run-cats-docker-image
 
 resources:
 - name: weekly
@@ -75,12 +79,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/verify-every-task-has-docker-build/Dockerfile]
-- name: runtime-ci-verify-every-task-is-used-in-a-pipeline
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/verify-every-task-is-used-in-a-pipeline/Dockerfile]
 - name: runtime-ci-verify-every-task-has-correct-docker-image
   type: git
   source:
@@ -346,6 +344,19 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-uuid/Dockerfile]
 
+- name: fake-CATs
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-cats/fixtures/pass]
+
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
 # All the docker images
 - name: create-iaas-settings-pipeline-image
   type: docker-image
@@ -358,13 +369,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/verify-every-task-has-docker-build
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: verify-every-task-is-used-in-a-pipeline-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/verify-every-task-is-used-in-a-pipeline
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -717,23 +721,6 @@ jobs:
     - put: verify-every-task-has-docker-build-pipeline-image
       params:
         build: runtime-ci-verify-every-task-has-docker-build/scripts/ci/verify-every-task-has-docker-build
-        push: true
-- name: build-verify-every-task-is-used-in-a-pipeline-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-verify-every-task-is-used-in-a-pipeline
-        trigger: true
-    - put: verify-every-task-is-used-in-a-pipeline-pipeline-image
-      params:
-        build: runtime-ci-verify-every-task-is-used-in-a-pipeline/scripts/ci/verify-every-task-is-used-in-a-pipeline
         push: true
 - name: build-verify-every-task-has-correct-docker-image-docker-image
   public: true
@@ -1194,6 +1181,47 @@ jobs:
       params:
         build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
         push: true
+
+- name: test-cats-golang
+  public: true
+  plan:
+    - do:
+      - get: runtime-ci
+        trigger: true
+      - get: fake-CATs
+      - get: runtime-ci-run-cats
+      - task: run-cats-unit-tests
+        file: runtime-ci/scripts/ci/run-ginkgo/task.yml
+        input_mapping:
+          project: runtime-ci
+        params:
+          TEST_PATH: scripts/ci/run-cats/
+          GINKGO_PARAMS: -r .
+
+- name: fake-run-cats
+  public: true
+  plan:
+    - do:
+      - get: runtime-ci
+        trigger: true
+        passed:
+        - test-cats-golang
+      - get: fake-CATs
+        passed: [test-cats-golang]
+      - get: runtime-ci-run-cats
+      - task: run-cats
+        file: runtime-ci/scripts/ci/run-cats/task.yml
+        input_mapping:
+          cf-acceptance-tests: fake-CATs
+        params:
+          CF_API: api.example.com
+          CF_ADMIN_USER: cf-admin-user
+          CF_ADMIN_PASSWORD: cf-admin-password
+          CF_APPS_DOMAIN: apps.example.com
+          EXISTING_USER: existing-user
+          EXISTING_USER_PASSWORD: existing-user-password
+
+
 - name: build-run-cats-docker-image
   public: true
   plan:
@@ -1207,10 +1235,12 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cats
         trigger: true
+        passed: [fake-run-cats]
     - put: run-cats-pipeline-image
       params:
         build: runtime-ci-run-cats/scripts/ci/run-cats
         push: true
+
 - name: build-run-cf-release-unit-tests-docker-image
   public: true
   plan:
