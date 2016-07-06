@@ -478,7 +478,6 @@ jobs:
         passed: [generate-bosh-lite-manifests]
         trigger: true
       - get: diego-final-releases
-        trigger: true
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
@@ -501,6 +500,8 @@ jobs:
       - get: diego-release-master
         params:
           submodules: none
+        passed: [ generate-bosh-lite-manifests ]
+        trigger: true
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -823,8 +824,9 @@ jobs:
         resource: diego-release-master
         params: {submodules: none}
         tags: [vsphere]
-      - get: diego-final-releases
         trigger: true
+        passed: [ generate-vsphere-manifests ]
+      - get: diego-final-releases
         tags: [vsphere]
       - get: garden-linux-release-tarball
         trigger: true
@@ -1075,8 +1077,9 @@ jobs:
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
-      - get: diego-final-releases
         trigger: true
+        passed: [ generate-a1-manifests ]
+      - get: diego-final-releases
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
