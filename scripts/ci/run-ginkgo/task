@@ -2,7 +2,11 @@
 
 set -eux
 
-pushd "${TEST_PATH:-"TEST_PATH is required"}" > /dev/null
+ginkgo_path="$GOPATH/src/${GO_SRC_PATH:-'GO_SRC_PATH is required'}"
+
+mkdir -p $ginkgo_path
+pushd $ginkgo_path > /dev/null
+  mv ${TEST_PATH:-"TEST_PATH is required"}/* .
   ginkgo \
     ${GINKGO_PARAMS-'GINKGO_PARAMS is required'}
 popd > /dev/null

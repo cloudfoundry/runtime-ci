@@ -14,5 +14,6 @@ run:
   path: runtime-ci/scripts/ci/run-ginkgo/task
 
 params:
+  GO_SRC_PATH:
   TEST_PATH: project
   GINKGO_PARAMS: -r .

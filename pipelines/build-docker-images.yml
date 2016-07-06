@@ -1210,6 +1210,7 @@ jobs:
         input_mapping:
           project: runtime-ci
         params:
+          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/
           TEST_PATH: project/scripts/ci/run-cats/
           GINKGO_PARAMS: -r .
 
