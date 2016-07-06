@@ -7,6 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/run-ginkgo
 
 inputs:
+- name: runtime-ci
 - name: project
 
 run:
