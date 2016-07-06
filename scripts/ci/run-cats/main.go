@@ -35,6 +35,8 @@ func main() {
 				fmt.Printf("ERR:" + err.Error())
 				os.Exit(status.ExitStatus())
 			}
+		} else {
+			panic(err)
 		}
 	} else {
 		fmt.Println(string(output))
