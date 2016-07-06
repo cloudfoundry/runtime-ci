@@ -157,9 +157,15 @@ var _ = Describe("Commandgenerator", func() {
 	})
 
 	Context("When the path to CATS isn't explicitly provided", func() {
+		BeforeEach(func() {
+			os.Setenv("GOPATH", "/go")
+		})
+		AfterEach(func() {
+			os.Unsetenv("GOPATH")
+		})
 		It("Should return a sane default command path for use in Concourse", func() {
 			cmd, _ := commandgenerator.GenerateCmd()
-			Expect(cmd).To(Equal("gopath/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))
+			Expect(cmd).To(Equal("/go/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))
 		})
 	})
 

@@ -14,7 +14,7 @@ func GenerateCmd() (string, []string) {
 	if keyExists {
 		testBinPath = filepath.Clean(catsPath + "/bin/test")
 	} else {
-		testBinPath = "gopath/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
+		testBinPath = os.Getenv("GOPATH") + "/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
 	}
 
 	return testBinPath, []string{
