@@ -39,3 +39,12 @@ jobs:
       trigger: true
   - task: verify-every-task-has-docker-build
     file: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task.yml
+
+- name: verify-every-task-is-used-in-a-pipeline
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+      trigger: true
+  - task: verify-every-task-is-used-in-a-pipeline
+    file: runtime-ci/scripts/ci/verify-every-task-is-used-in-a-pipeline/task.yml
