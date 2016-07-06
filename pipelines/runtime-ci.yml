@@ -4,6 +4,7 @@ groups:
   - all-jobs-public
   - verify-every-task-has-correct-docker-image
   - verify-every-task-has-docker-build
+  - verify-every-task-is-used-in-a-pipeline
 
 resources:
 - name: runtime-ci
