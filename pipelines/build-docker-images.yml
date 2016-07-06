@@ -248,7 +248,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-cats/Dockerfile]
+    paths: [scripts/ci/run-cats]
 - name: runtime-ci-run-cf-release-unit-tests
   type: git
   source:
