@@ -357,7 +357,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-cats/fixtures/pass]
+    paths: [scripts/ci/run-cats/]
 
 - name: runtime-ci
   type: git
@@ -1230,6 +1230,7 @@ jobs:
         input_mapping:
           caat-golang: fake-CATs
         params:
+          CATS_PATH: ./fixtures/pass/
           CF_API: api.example.com
           CF_ADMIN_USER: cf-admin-user
           CF_ADMIN_PASSWORD: cf-admin-password
