@@ -1228,7 +1228,7 @@ jobs:
       - task: run-cats
         file: runtime-ci/scripts/ci/run-cats/task_caat.yml
         input_mapping:
-          cf-acceptance-tests: fake-CATs
+          caat-golang: fake-CATs
         params:
           CF_API: api.example.com
           CF_ADMIN_USER: cf-admin-user
