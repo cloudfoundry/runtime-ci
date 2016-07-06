@@ -48,6 +48,8 @@ groups:
   - build-cats-from-cf-release-docker-image
   - build-check-out-fixed-version-docker-image
   - build-bosh-uuid-docker-image
+  - build-run-ginkgo-docker-image
+
 - name: run-cats-tests
   jobs:
   - test-cats-golang
@@ -343,6 +345,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-uuid/Dockerfile]
+- name: runtime-ci-run-ginkgo
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-ginkgo/Dockerfile]
 
 - name: fake-CATs
   type: git
@@ -677,6 +685,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-uuid
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-ginkgo-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-ginkgo
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1514,3 +1529,20 @@ jobs:
         build: runtime-ci-bosh-uuid/scripts/ci/bosh-uuid
         push: true
 
+- name: build-run-ginkgo-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-run-ginkgo
+        trigger: true
+    - put: run-ginkgo-pipeline-image
+      params:
+        build: runtime-ci-run-ginkgo/scripts/ci/run-ginkgo
+        push: true
