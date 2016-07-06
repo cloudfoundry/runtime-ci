@@ -50,8 +50,6 @@ func buildMissingKeyList() string {
 		"CF_ADMIN_USER",
 		"CF_ADMIN_PASSWORD",
 		"CF_APPS_DOMAIN",
-		"EXISTING_USER",
-		"EXISTING_USER_PASSWORD",
 	}
 
 	for _, key := range requiredEnvKeys {

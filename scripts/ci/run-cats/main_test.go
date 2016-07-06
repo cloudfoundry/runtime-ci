@@ -27,9 +27,7 @@ var _ = Describe("Main", func() {
 CF_API
 CF_ADMIN_USER
 CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN
-EXISTING_USER
-EXISTING_USER_PASSWORD`,
+CF_APPS_DOMAIN`,
 			))
 
 			Expect(string(session.Out.Contents())).NotTo(ContainSubstring("CONFIG="))
@@ -54,9 +52,7 @@ EXISTING_USER_PASSWORD`,
 			Expect(session.Out).To(gbytes.Say(`Missing required environment variables:
 CF_ADMIN_USER
 CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN
-EXISTING_USER
-EXISTING_USER_PASSWORD`,
+CF_APPS_DOMAIN`,
 			))
 			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 
@@ -72,8 +68,6 @@ EXISTING_USER_PASSWORD`,
 			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
 			os.Setenv("SKIP_SSL_VALIDATION", "true")
 			os.Setenv("USE_HTTP", "true")
-			os.Setenv("EXISTING_USER", "non-empty-value")
-			os.Setenv("EXISTING_USER_PASSWORD", "non-empty-value")
 		})
 		AfterEach(func() {
 			os.Unsetenv("CATS_PATH")
@@ -83,8 +77,6 @@ EXISTING_USER_PASSWORD`,
 			os.Unsetenv("CF_APPS_DOMAIN")
 			os.Unsetenv("SKIP_SSL_VALIDATION")
 			os.Unsetenv("USE_HTTP")
-			os.Unsetenv("EXISTING_USER")
-			os.Unsetenv("EXISTING_USER_PASSWORD")
 		})
 
 		It("Sets CONFIG envvar to the path for the generated config file", func() {
