@@ -1226,7 +1226,7 @@ jobs:
         passed: [test-cats-golang]
       - get: runtime-ci-run-cats
       - task: run-cats
-        file: runtime-ci/scripts/ci/run-cats/task.yml
+        file: runtime-ci/scripts/ci/run-cats/task_caat.yml
         input_mapping:
           cf-acceptance-tests: fake-CATs
         params:

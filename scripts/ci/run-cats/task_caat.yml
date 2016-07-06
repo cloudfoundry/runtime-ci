@@ -1,0 +1,60 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-cats
+
+inputs:
+- name: runtime-ci
+- name: caat-golang
+  path: gopath/src/github.com/cloudfoundry/runtime-ci
+
+
+run:
+  path: runtime-ci/scripts/ci/run-cats/task_caat
+
+params:
+  BACKEND:
+  CF_ADMIN_PASSWORD:
+  CF_ADMIN_USER:
+
+  INCLUDE_BACKEND_COMPATIBILITY: false
+  INCLUDE_DIEGO_DOCKER: false
+  INCLUDE_DIEGO_SSH: false
+  INCLUDE_INTERNET_DEPENDENT: false
+  INCLUDE_LOGGING: false
+  INCLUDE_OPERATOR: false
+  INCLUDE_ROUTE_SERVICES: false
+  INCLUDE_SECURITY_GROUPS: false
+  INCLUDE_SERVICES: false
+  INCLUDE_TASKS: false
+  INCLUDE_V3: false
+
+  BINARY_BUILDPACK_NAME:
+  GO_BUILDPACK_NAME:
+  JAVA_BUILDPACK_NAME:
+  NODEJS_BUILDPACK_NAME:
+  PHP_BUILDPACK_NAME:
+  PYTHON_BUILDPACK_NAME:
+  RUBY_BUILDPACK_NAME:
+  STATICFILE_BUILDPACK_NAME:
+
+  BROKER_START_TIMEOUT:
+  CF_API:
+  CF_APPS_DOMAIN:
+  CF_PUSH_TIMEOUT:
+  DEFAULT_TIMEOUT:
+  EXISTING_USER:
+  EXISTING_USER_PASSWORD:
+  LONG_CURL_TIMEOUT:
+  NODES: 2
+  PERSISTENT_APP_HOST:
+  PERSISTENT_APP_ORG:
+  PERSISTENT_APP_QUOTA_NAME:
+  PERSISTENT_APP_SPACE:
+  SKIP_SSL_VALIDATION: false
+  SKIP_SSO: true
+  USE_HTTP: false
+
