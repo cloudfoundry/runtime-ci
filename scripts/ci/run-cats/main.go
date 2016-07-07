@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"syscall"
@@ -28,20 +30,54 @@ func main() {
 	path, arguments := commandgenerator.GenerateCmd()
 	command := exec.Command(path, arguments...)
 
-	output, err := command.Output()
+	stdOut, err := command.StdoutPipe()
+	if err != nil {
+		panic(err)
+	}
+	stdErr, err := command.StderrPipe()
+	if err != nil {
+		panic(err)
+	}
+
+	go func(stdout io.ReadCloser) {
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			fmt.Printf("%s\n", scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "There was an error with the Stdout scanner in attached container", err)
+		}
+	}(stdOut)
+
+	go func(stderr io.ReadCloser) {
+		scanner := bufio.NewScanner(stderr)
+		for scanner.Scan() {
+			fmt.Fprintf(os.Stderr, "%s\n", scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "There was an error with the Stderr scanner in attached container", err)
+		}
+	}(stdErr)
+
+	err = command.Start()
+	if err != nil {
+		panic(err)
+	}
+	err = command.Wait()
+
 	if err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 				fmt.Fprintf(os.Stderr, "ERR:"+err.Error())
-				fmt.Fprintf(os.Stderr, string(output))
 				os.Exit(status.ExitStatus())
 			}
 		} else {
 			panic(err)
 		}
-	} else {
-		fmt.Println(string(output))
 	}
+
+	stdOut.Close()
+	stdErr.Close()
 }
 
 func buildMissingKeyList() string {
