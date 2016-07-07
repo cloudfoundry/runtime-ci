@@ -45,7 +45,8 @@ post_change_file() {
   set +e
   OUTPUT=$(aws route53 change-resource-record-sets \
     --hosted-zone-id "${2}" \
-    --change-batch "file://${1}")
+    --change-batch "file://${1}"\
+    2>&1)
   EXIT_STATUS=$?
   set -e
 
