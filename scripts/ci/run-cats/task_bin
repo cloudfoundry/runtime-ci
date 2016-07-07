@@ -2,6 +2,11 @@
 set -xeu
 
 cp -R cf-acceptance-tests/cf-acceptance-tests /go/src/github.com/cloudfoundry/
+
+pushd /go/src/github.com/cloudfoundry/cf-acceptance-tests
+  go get github.com/onsi/ginkgo/ginkgo
+popd
+
 set +e
 run-cats
 
