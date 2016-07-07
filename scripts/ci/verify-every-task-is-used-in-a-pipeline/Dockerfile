@@ -6,7 +6,9 @@ RUN \
   apt-get -y install \
     build-essential \
     software-properties-common \
-    silversearcher-ag
+    ack-grep
+
+RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \

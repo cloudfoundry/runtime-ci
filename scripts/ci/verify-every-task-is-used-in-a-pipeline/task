@@ -5,7 +5,7 @@ set -u
 pushd runtime-ci >> /dev/null
   FAIL=false
   for task_file in scripts/ci/*/task.yml; do
-    ag "$task_file" pipelines >> /dev/null
+    ack "$task_file" pipelines >> /dev/null
     # task_is_used "$task_file"
     EXIT_STATUS=$?
     if [[ $EXIT_STATUS -ne 0 ]]; then
