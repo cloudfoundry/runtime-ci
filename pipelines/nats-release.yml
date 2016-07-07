@@ -6,12 +6,6 @@ groups:
     - run-smoke-tests
     - setup-infrastructure
 
-resource_types:
-- name: bosh-deployment
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-deployment-resource
-
 resources:
 - name: runtime-ci
   type: git
@@ -35,10 +29,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
-- name: hagrid-nats-deployment
-  type: bosh-deployment
-  source:
-    deployment: nats
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
