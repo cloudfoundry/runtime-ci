@@ -95,7 +95,7 @@ func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
 		return nil, fmt.Errorf("Unable to write integration_config.json to %s", configFile.DestinationDir)
 	}
 
-	configJson, err := json.Marshal(configFile.Config)
+	configJson, err := json.MarshalIndent(configFile.Config, "", "\t")
 	if err != nil {
 		return nil, err
 	}
