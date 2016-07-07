@@ -1,5 +1,8 @@
 #!/bin/bash
 set -xeu
 
-cp -R cf-acceptance-tests /go/src/github.com/cloudfoundry/cf-acceptance-tests
+cp -R cf-acceptance-tests /go/src/github.com/cloudfoundry/
+set +e
 run-cats
+
+exit $?
