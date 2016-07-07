@@ -41,6 +41,7 @@ EOF
 }
 
 post_change_file() {
+  set -x
   set +e
   OUTPUT=$(aws route53 change-resource-record-sets \
     --hosted-zone-id "${2}" \
@@ -56,6 +57,7 @@ post_change_file() {
       echo "Route already deleted. Proceeding..."
     fi
   fi
+  set +x
 }
 
 main() {
