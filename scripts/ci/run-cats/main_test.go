@@ -58,6 +58,40 @@ CF_APPS_DOMAIN`,
 
 		})
 	})
+	Context("When invalid TIMEOUT env vars are set", func() {
+		BeforeEach(func() {
+			os.Setenv("CATS_PATH", ".")
+			os.Setenv("CF_API", "non-empty-value")
+			os.Setenv("CF_ADMIN_USER", "non-empty-value")
+			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
+			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
+			os.Setenv("SKIP_SSL_VALIDATION", "true")
+			os.Setenv("USE_HTTP", "true")
+
+			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "not a timeout")
+		})
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+
+			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+		})
+
+		It("Should exit with an appropriate error message and exit code", func() {
+			command := exec.Command(binPath)
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session, 30).Should(gexec.Exit(1))
+			Expect(session.Err).To(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
+			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+		})
+	})
 
 	Context("When all required env vars are set", func() {
 		BeforeEach(func() {
@@ -126,10 +160,10 @@ CF_APPS_DOMAIN`,
 			os.Setenv("PERSISTENT_APP_SPACE", "cats-app-space")
 			os.Setenv("PERSISTENT_APP_ORG", "cats-app-org")
 			os.Setenv("PERSISTENT_APP_QUOTA_NAME", "cats-app-quota")
-			os.Setenv("DEFAULT_TIMEOUT", "60")
-			os.Setenv("CF_PUSH_TIMEOUT", "120")
-			os.Setenv("LONG_CURL_TIMEOUT", "180")
-			os.Setenv("BROKER_START_TIMEOUT", "240")
+			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "60")
+			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120")
+			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180")
+			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240")
 			os.Setenv("STATICFILE_BUILDPACK_NAME", "static-buildpack")
 			os.Setenv("JAVA_BUILDPACK_NAME", "java-buildpack")
 			os.Setenv("RUBY_BUILDPACK_NAME", "ruby-buildpack")
@@ -167,10 +201,10 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("PERSISTENT_APP_SPACE")
 			os.Unsetenv("PERSISTENT_APP_ORG")
 			os.Unsetenv("PERSISTENT_APP_QUOTA_NAME")
-			os.Unsetenv("DEFAULT_TIMEOUT")
-			os.Unsetenv("CF_PUSH_TIMEOUT")
-			os.Unsetenv("LONG_CURL_TIMEOUT")
-			os.Unsetenv("BROKER_START_TIMEOUT")
+			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("STATICFILE_BUILDPACK_NAME")
 			os.Unsetenv("JAVA_BUILDPACK_NAME")
 			os.Unsetenv("RUBY_BUILDPACK_NAME")

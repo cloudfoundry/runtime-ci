@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
+	. "github.com/onsi/ginkgo/extensions/table"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,7 +23,9 @@ func randomBool() bool {
 var _ = Describe("Configwriter", func() {
 	Context("when env vars are not set", func() {
 		It("returns an empty config object", func() {
-			configFile := configwriter.NewConfigFile("/dir/name")
+			configFile, err := configwriter.NewConfigFile("/dir/name")
+
+			Expect(err).NotTo(HaveOccurred())
 			Expect(configFile).NotTo(BeNil())
 			Expect(configFile.Config.Api).To(Equal(""))
 			Expect(configFile.Config.AdminUser).To(Equal(""))
@@ -49,7 +52,7 @@ var _ = Describe("Configwriter", func() {
 		})
 	})
 
-	Context("When valid CF envvars are set", func() {
+	Context("When CF envvars are set", func() {
 		var (
 			expectedApi                   string
 			expectedAdminUser             string
@@ -164,7 +167,7 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
-			configFile := configwriter.NewConfigFile("/some/dir")
+			configFile, _ := configwriter.NewConfigFile("/some/dir")
 			Expect(configFile).NotTo(BeNil())
 			Expect(configFile.Config.Api).To(Equal(expectedApi))
 			Expect(configFile.Config.AdminUser).To(Equal(expectedAdminUser))
@@ -179,10 +182,10 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.PersistentAppSpace).To(Equal(expectedPersistedAppSpace))
 			Expect(configFile.Config.PersistentAppOrg).To(Equal(expectedPersistedAppOrg))
 			Expect(configFile.Config.PersistentAppQuotaName).To(Equal(expectedPersistedAppQuotaName))
-			Expect(configFile.Config.DefaultTimeout).To(Equal(expectedDefaultTimeout))
-			Expect(configFile.Config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
-			Expect(configFile.Config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
-			Expect(configFile.Config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
+			Expect(*configFile.Config.DefaultTimeout).To(Equal(expectedDefaultTimeout))
+			Expect(*configFile.Config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
+			Expect(*configFile.Config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
+			Expect(*configFile.Config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
 			Expect(configFile.Config.StaticBuildpackName).To(Equal(expectedStaticBuildpackName))
 			Expect(configFile.Config.JavaBuildpackName).To(Equal(expectedJavaBuildpackName))
 			Expect(configFile.Config.RubyBuildpackName).To(Equal(expectedRubyBuildpackName))
@@ -200,7 +203,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
-				configFile := configwriter.NewConfigFile("/some/dir")
+				configFile, _ := configwriter.NewConfigFile("/some/dir")
 				Expect(configFile.Config.UseExistingUser).To(Equal(true))
 				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(true))
 			})
@@ -212,17 +215,60 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
-				configFile := configwriter.NewConfigFile("")
+				configFile, _ := configwriter.NewConfigFile("")
 				Expect(configFile).NotTo(BeNil())
 				Expect(configFile.Config.UseExistingUser).To(Equal(false))
 				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(false))
 			})
 		})
+
+		Context("when timeouts are negative values", func() {
+			AfterEach(func() {
+				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			})
+
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
+				os.Setenv(envVarKey, "-1")
+				_, err := configwriter.NewConfigFile("")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
+			},
+				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS"),
+				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS"),
+				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS"),
+				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS"),
+			)
+		})
+
+		Context("when timeouts are strings", func() {
+			AfterEach(func() {
+				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
+				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			})
+
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
+				os.Setenv(envVarKey, "not an int")
+				_, err := configwriter.NewConfigFile("")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
+			},
+				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS"),
+				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS"),
+				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS"),
+				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS"),
+			)
+		})
 	})
 
 	Describe("marshaling the struct", func() {
 		It("does not render optional keys if their values are empty", func() {
-			configJson, err := json.Marshal(configwriter.NewConfigFile("").Config)
+			configWriter, _ := configwriter.NewConfigFile("")
+			configJson, err := json.Marshal(configWriter.Config)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(configJson)).To(MatchJSON(`{
                                               "api": "",
@@ -296,7 +342,8 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("renders the variables in the integration_config", func() {
-				configJson, err := json.Marshal(configwriter.NewConfigFile("").Config)
+				configWriter, _ := configwriter.NewConfigFile("")
+				configJson, err := json.Marshal(configWriter.Config)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(configJson)).To(MatchJSON(`{
 																							"api": "non-empty-value",
@@ -349,7 +396,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile := configwriter.NewConfigFile(tempDir)
+				configFile, _ := configwriter.NewConfigFile(tempDir)
 
 				file, _ := configFile.WriteConfigToFile()
 
@@ -392,7 +439,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile := configwriter.NewConfigFile(tempDir)
+				configFile, _ := configwriter.NewConfigFile(tempDir)
 
 				configFile.WriteConfigToFile()
 
@@ -417,7 +464,7 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when the destinationDir is invalid", func() {
 			It("fails with a nice error", func() {
-				configFile := configwriter.NewConfigFile("/badpath")
+				configFile, _ := configwriter.NewConfigFile("/badpath")
 
 				_, err := configFile.WriteConfigToFile()
 
@@ -436,7 +483,7 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("should successfully write integration_config.json", func() {
-			configFile := configwriter.NewConfigFile("/tmp")
+			configFile, _ := configwriter.NewConfigFile("/tmp")
 
 			_, err := configFile.WriteConfigToFile()
 
@@ -477,7 +524,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("exports the location of the integration_config.json file", func() {
-				configFile := configwriter.NewConfigFile("/some/path")
+				configFile, _ := configwriter.NewConfigFile("/some/path")
 
 				configFile.ExportConfigFilePath()
 

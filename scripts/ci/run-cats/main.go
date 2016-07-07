@@ -23,7 +23,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	configWriter := configwriter.NewConfigFile(currentDir)
+	configWriter, err := configwriter.NewConfigFile(currentDir)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
 	configWriter.WriteConfigToFile()
 	configWriter.ExportConfigFilePath()
 

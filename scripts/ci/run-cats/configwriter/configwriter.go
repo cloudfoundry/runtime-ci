@@ -32,10 +32,10 @@ type config struct {
 	PersistentAppSpace     string `json:"persistent_app_space,omitempty"`
 	PersistentAppOrg       string `json:"persistent_app_org,omitempty"`
 	PersistentAppQuotaName string `json:"persistent_app_quota_name,omitempty"`
-	DefaultTimeout         int    `json:"default_timeout,omitempty"`
-	CfPushTimeout          int    `json:"cf_push_timeout,omitempty"`
-	LongCurlTimeout        int    `json:"long_curl_timeout,omitempty"`
-	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
+	DefaultTimeout         *int   `json:"default_timeout,omitempty"`
+	CfPushTimeout          *int   `json:"cf_push_timeout,omitempty"`
+	LongCurlTimeout        *int   `json:"long_curl_timeout,omitempty"`
+	BrokerStartTimeout     *int   `json:"broker_start_timeout,omitempty"`
 }
 
 type configFile struct {
@@ -43,17 +43,45 @@ type configFile struct {
 	DestinationDir string
 }
 
-func NewConfigFile(destinationDir string) configFile {
-	return configFile{generateConfigFromEnv(), filepath.Clean(destinationDir)}
+func NewConfigFile(destinationDir string) (configFile, error) {
+	config, err := generateConfigFromEnv()
+	return configFile{config, filepath.Clean(destinationDir)}, err
 }
 
-func generateConfigFromEnv() config {
+func getTimeoutIfPresent(envKey string) (*int, error) {
+	if os.Getenv(envKey) == "" {
+		return nil, nil
+	}
+	timeout, err := strconv.Atoi(os.Getenv(envKey))
+	if err != nil || timeout < 0 {
+		return nil, fmt.Errorf("Invalid env var '%s' only allows positive integers", envKey)
+	}
+	return &timeout, err
+}
+
+func generateConfigFromEnv() (config, error) {
 	skipSslValidation, _ := strconv.ParseBool(os.Getenv("SKIP_SSL_VALIDATION"))
 	useHttp, _ := strconv.ParseBool(os.Getenv("USE_HTTP"))
-	defaultTimeout, _ := strconv.Atoi(os.Getenv("DEFAULT_TIMEOUT_IN_SECONDS"))
-	cfPushTimeout, _ := strconv.Atoi(os.Getenv("CF_PUSH_TIMEOUT_IN_SECONDS"))
-	longCurlTimeout, _ := strconv.Atoi(os.Getenv("LONG_CURL_TIMEOUT_IN_SECONDS"))
-	brokerStartTimeout, _ := strconv.Atoi(os.Getenv("BROKER_START_TIMEOUT_IN_SECONDS"))
+	var (
+		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout *int
+		err                                                                error
+	)
+	defaultTimeout, err = getTimeoutIfPresent("DEFAULT_TIMEOUT_IN_SECONDS")
+	if err != nil {
+		return config{}, err
+	}
+	cfPushTimeout, err = getTimeoutIfPresent("CF_PUSH_TIMEOUT_IN_SECONDS")
+	if err != nil {
+		return config{}, err
+	}
+	longCurlTimeout, err = getTimeoutIfPresent("LONG_CURL_TIMEOUT_IN_SECONDS")
+	if err != nil {
+		return config{}, err
+	}
+	brokerStartTimeout, err = getTimeoutIfPresent("BROKER_START_TIMEOUT_IN_SECONDS")
+	if err != nil {
+		return config{}, err
+	}
 
 	return config{
 		Api:                  os.Getenv("CF_API"),
@@ -86,7 +114,7 @@ func generateConfigFromEnv() config {
 		CfPushTimeout:      cfPushTimeout,
 		LongCurlTimeout:    longCurlTimeout,
 		BrokerStartTimeout: brokerStartTimeout,
-	}
+	}, err
 }
 
 func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
