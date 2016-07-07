@@ -33,6 +33,7 @@ func main() {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 				fmt.Fprintf(os.Stderr, "ERR:"+err.Error())
+				fmt.Fprintf(os.Stderr, string(output))
 				os.Exit(status.ExitStatus())
 			}
 		} else {
