@@ -49,9 +49,11 @@ post_change_file() {
   set -e
 
   if [[ "$EXIT_STATUS" -ne 0 ]]; then
-    if ! grep "not found" <(echo "$OUTPUT"); then
+    if ! echo "$OUTPUT" | grep -q "not found"; then
       echo "$OUTPUT"
       exit 1
+    else
+      echo "Route already deleted. Proceeding..."
     fi
   fi
 }
