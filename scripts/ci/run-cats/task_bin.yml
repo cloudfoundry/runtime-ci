@@ -9,11 +9,9 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: cf-acceptance-tests
-  path: /go/src/github.com/cloudfoundry
-
 
 run:
-  path: run-cats
+  path: runtime-ci/scripts/ci/run-cats/task_bin
 
 params:
   BACKEND:

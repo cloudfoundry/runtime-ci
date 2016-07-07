@@ -1,0 +1,5 @@
+#!/bin/bash
+set -xeu
+
+cp -R cf-acceptance-tests /go/src/github.com/cloudfoundry/cf-acceptance-tests
+run-cats
