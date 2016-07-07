@@ -50,10 +50,10 @@ func NewConfigFile(destinationDir string) configFile {
 func generateConfigFromEnv() config {
 	skipSslValidation, _ := strconv.ParseBool(os.Getenv("SKIP_SSL_VALIDATION"))
 	useHttp, _ := strconv.ParseBool(os.Getenv("USE_HTTP"))
-	defaultTimeout, _ := strconv.Atoi(os.Getenv("DEFAULT_TIMEOUT"))
-	cfPushTimeout, _ := strconv.Atoi(os.Getenv("CF_PUSH_TIMEOUT"))
-	longCurlTimeout, _ := strconv.Atoi(os.Getenv("LONG_CURL_TIMEOUT"))
-	brokerStartTimeout, _ := strconv.Atoi(os.Getenv("BROKER_START_TIMEOUT"))
+	defaultTimeout, _ := strconv.Atoi(os.Getenv("DEFAULT_TIMEOUT_IN_SECONDS"))
+	cfPushTimeout, _ := strconv.Atoi(os.Getenv("CF_PUSH_TIMEOUT_IN_SECONDS"))
+	longCurlTimeout, _ := strconv.Atoi(os.Getenv("LONG_CURL_TIMEOUT_IN_SECONDS"))
+	brokerStartTimeout, _ := strconv.Atoi(os.Getenv("BROKER_START_TIMEOUT_IN_SECONDS"))
 
 	return config{
 		Api:                  os.Getenv("CF_API"),
