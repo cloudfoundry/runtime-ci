@@ -18,6 +18,13 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
+- name: hermione-bosh-director
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/runtime-ci-pools
+    branch: master
+    pool: hermione-bosh-director
+    private_key: {{hermione_pool_key}}
 - name: capi-release-repo
   type: git
   source:
@@ -71,6 +78,9 @@ jobs:
     - get: env-repo
       resource: hermione-env-repo
     - get: runtime-ci
+    - put: hermione-bosh-director
+      params:
+        claim: director
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
@@ -101,8 +111,10 @@ jobs:
     - get: routing-release-repo
     - get: hermione-env-repo
       trigger: true
-      passed: [ setup-infrastructure ]
     - get: runtime-ci
+    - get: hermione-bosh-director
+      passed: [ setup-infrastructure ]
+      trigger: true
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
