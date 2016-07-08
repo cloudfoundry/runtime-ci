@@ -160,9 +160,11 @@ var _ = Describe("Commandgenerator", func() {
 		BeforeEach(func() {
 			os.Setenv("GOPATH", "/go")
 		})
+
 		AfterEach(func() {
 			os.Unsetenv("GOPATH")
 		})
+
 		It("Should return a sane default command path for use in Concourse", func() {
 			cmd, _ := commandgenerator.GenerateCmd()
 			Expect(cmd).To(Equal("/go/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))

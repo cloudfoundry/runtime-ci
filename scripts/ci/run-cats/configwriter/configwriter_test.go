@@ -167,7 +167,8 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
-			configFile, _ := configwriter.NewConfigFile("/some/dir")
+			configFile, err := configwriter.NewConfigFile("/some/dir")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(configFile).NotTo(BeNil())
 			Expect(configFile.Config.Api).To(Equal(expectedApi))
 			Expect(configFile.Config.AdminUser).To(Equal(expectedAdminUser))
@@ -203,7 +204,8 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
-				configFile, _ := configwriter.NewConfigFile("/some/dir")
+				configFile, err := configwriter.NewConfigFile("/some/dir")
+				Expect(err).NotTo(HaveOccurred())
 				Expect(configFile.Config.UseExistingUser).To(Equal(true))
 				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(true))
 			})
@@ -215,7 +217,8 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
-				configFile, _ := configwriter.NewConfigFile("")
+				configFile, err := configwriter.NewConfigFile("")
+				Expect(err).NotTo(HaveOccurred())
 				Expect(configFile).NotTo(BeNil())
 				Expect(configFile.Config.UseExistingUser).To(Equal(false))
 				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(false))
@@ -300,8 +303,10 @@ var _ = Describe("Configwriter", func() {
 
 	Describe("marshaling the struct", func() {
 		It("does not render optional keys if their values are empty", func() {
-			configWriter, _ := configwriter.NewConfigFile("")
-			configJson, err := json.Marshal(configWriter.Config)
+			var configJson []byte
+			configWriter, err := configwriter.NewConfigFile("")
+			Expect(err).NotTo(HaveOccurred())
+			configJson, err = json.Marshal(configWriter.Config)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(configJson)).To(MatchJSON(`{
                                               "api": "",
@@ -375,8 +380,10 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("renders the variables in the integration_config", func() {
-				configWriter, _ := configwriter.NewConfigFile("")
-				configJson, err := json.Marshal(configWriter.Config)
+				var configJson []byte
+				configWriter, err := configwriter.NewConfigFile("")
+				Expect(err).NotTo(HaveOccurred())
+				configJson, err = json.Marshal(configWriter.Config)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(configJson)).To(MatchJSON(`{
 																							"api": "non-empty-value",
@@ -429,14 +436,18 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile, _ := configwriter.NewConfigFile(tempDir)
+				configFile, err := configwriter.NewConfigFile(tempDir)
+				Expect(err).NotTo(HaveOccurred())
 
-				file, _ := configFile.WriteConfigToFile()
+				var file *os.File
+				file, err = configFile.WriteConfigToFile()
+				Expect(err).NotTo(HaveOccurred())
 
 				Expect(tempDir + "/integration_config.json").To(BeARegularFile())
 				Expect(tempDir + "/integration_config.json").To(Equal(file.Name()))
 
-				contents, _ := ioutil.ReadFile(file.Name())
+				contents, err := ioutil.ReadFile(file.Name())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(contents).To(MatchJSON(`{
 																							"api": "",
 																							"admin_user": "",
@@ -472,7 +483,8 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile, _ := configwriter.NewConfigFile(tempDir)
+				configFile, err := configwriter.NewConfigFile(tempDir)
+				Expect(err).NotTo(HaveOccurred())
 
 				configFile.WriteConfigToFile()
 
@@ -497,9 +509,10 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when the destinationDir is invalid", func() {
 			It("fails with a nice error", func() {
-				configFile, _ := configwriter.NewConfigFile("/badpath")
+				configFile, err := configwriter.NewConfigFile("/badpath")
+				Expect(err).NotTo(HaveOccurred())
 
-				_, err := configFile.WriteConfigToFile()
+				_, err = configFile.WriteConfigToFile()
 
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Unable to write integration_config.json to /badpath"))
@@ -516,13 +529,16 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("should successfully write integration_config.json", func() {
-			configFile, _ := configwriter.NewConfigFile("/tmp")
-
-			_, err := configFile.WriteConfigToFile()
-
-			file, err := os.Open("/tmp/integration_config.json")
+			configFile, err := configwriter.NewConfigFile("/tmp")
 			Expect(err).NotTo(HaveOccurred())
-			contents, _ := ioutil.ReadFile(file.Name())
+
+			_, err = configFile.WriteConfigToFile()
+			Expect(err).NotTo(HaveOccurred())
+
+			var file *os.File
+			file, err = os.Open("/tmp/integration_config.json")
+			Expect(err).NotTo(HaveOccurred())
+			contents, err := ioutil.ReadFile(file.Name())
 
 			Expect(contents).To(MatchJSON(`{
                                     "api": "cf-api-value",
@@ -557,7 +573,8 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("exports the location of the integration_config.json file", func() {
-				configFile, _ := configwriter.NewConfigFile("/some/path")
+				configFile, err := configwriter.NewConfigFile("/some/path")
+				Expect(err).NotTo(HaveOccurred())
 
 				configFile.ExportConfigFilePath()
 
