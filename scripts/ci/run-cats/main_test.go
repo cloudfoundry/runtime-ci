@@ -23,7 +23,7 @@ var _ = Describe("Main", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Expect(session.Out).To(gbytes.Say(`Missing required environment variables:
+			Eventually(session.Out, 30).Should(gbytes.Say(`Missing required environment variables:
 CF_API
 CF_ADMIN_USER
 CF_ADMIN_PASSWORD
@@ -49,7 +49,7 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Expect(session.Out).To(gbytes.Say(`Missing required environment variables:
+			Eventually(session.Out, 30).Should(gbytes.Say(`Missing required environment variables:
 CF_ADMIN_USER
 CF_ADMIN_PASSWORD
 CF_APPS_DOMAIN`,
@@ -89,7 +89,7 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Expect(session.Err).To(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
+			Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
 			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 		})
 	})
@@ -121,7 +121,7 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Expect(session.Err).To(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
+			Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
 			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 		})
 	})
@@ -171,7 +171,7 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(0))
-			Expect(session.Out).To(gbytes.Say(
+			Eventually(session.Out, 30).Should(gbytes.Say(
 				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 4 -skipPackage=helpers -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing",
 			))
 		})
@@ -265,7 +265,7 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(0))
-			Expect(session.Out).To(gbytes.Say(
+			Eventually(session.Out, 30).Should(gbytes.Say(
 				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers -skip=NO_DIEGO_SUPPORT -keepGoing",
 			))
 		})
