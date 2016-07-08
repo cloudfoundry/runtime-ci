@@ -104,6 +104,11 @@ func generateConfigFromEnv() (config, error) {
 		return config{}, err
 	}
 
+	backend := os.Getenv("BACKEND")
+	if backend != "" && backend != "dea" && backend != "diego" {
+		return config{}, fmt.Errorf("Invalid env var 'BACKEND' only accepts 'dea' or 'diego'")
+	}
+
 	return config{
 		Api:                  os.Getenv("CF_API"),
 		AdminUser:            os.Getenv("CF_ADMIN_USER"),
@@ -115,7 +120,7 @@ func generateConfigFromEnv() (config, error) {
 		UseExistingUser:      os.Getenv("EXISTING_USER") != "",
 		KeepUserAtSuiteEnd:   os.Getenv("EXISTING_USER") != "",
 		ExistingUserPassword: os.Getenv("EXISTING_USER_PASSWORD"),
-		Backend:              os.Getenv("BACKEND"),
+		Backend:              backend,
 
 		StaticBuildpackName: os.Getenv("STATICFILE_BUILDPACK_NAME"),
 		JavaBuildpackName:   os.Getenv("JAVA_BUILDPACK_NAME"),

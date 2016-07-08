@@ -90,7 +90,7 @@ var _ = Describe("Configwriter", func() {
 			expectedUseHttp = randomBool()
 			expectedExistingUser = "existing_user" + "_" + time.Now().String()
 			expectedExistingUserPassword = "expected_existing_user_password" + "_" + time.Now().String()
-			expectedBackend = "expected_backend" + "_" + time.Now().String()
+			expectedBackend = "diego"
 			expectedPersistedAppHost = "PERSISTENT_APP_HOST" + "_" + time.Now().String()
 			expectedPersistedAppSpace = "PERSISTENT_APP_SPACE" + "_" + time.Now().String()
 			expectedPersistedAppOrg = "PERSISTENT_APP_ORG" + "_" + time.Now().String()
@@ -280,6 +280,22 @@ var _ = Describe("Configwriter", func() {
 				Entry("for USE_HTTP", "USE_HTTP"),
 			)
 		})
+
+		Context("when BACKEND is not 'diego' or 'dea'", func() {
+			BeforeEach(func() {
+				os.Setenv("BACKEND", "some-other-value")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("BACKEND")
+			})
+
+			It("fails fast with a reasonable error", func() {
+				_, err := configwriter.NewConfigFile("")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid env var 'BACKEND' only accepts 'dea' or 'diego'"))
+			})
+		})
 	})
 
 	Describe("marshaling the struct", func() {
@@ -311,7 +327,7 @@ var _ = Describe("Configwriter", func() {
 				os.Setenv("USE_HTTP", "true")
 				os.Setenv("EXISTING_USER", "non-empty-value")
 				os.Setenv("EXISTING_USER_PASSWORD", "non-empty-value")
-				os.Setenv("BACKEND", "non-empty-value")
+				os.Setenv("BACKEND", "diego")
 				os.Setenv("PERSISTENT_APP_HOST", "non-empty-value")
 				os.Setenv("PERSISTENT_APP_SPACE", "non-empty-value")
 				os.Setenv("PERSISTENT_APP_ORG", "non-empty-value")
@@ -373,7 +389,7 @@ var _ = Describe("Configwriter", func() {
 																							"use_existing_user": true,
 																							"keep_user_at_suite_end": true,
 																							"existing_user_password": "non-empty-value",
-																							"backend": "non-empty-value",
+																							"backend": "diego",
 																							"staticfile_buildpack_name": "non-empty-value",
 																							"java_buildpack_name": "non-empty-value",
 																							"ruby_buildpack_name": "non-empty-value",
