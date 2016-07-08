@@ -12,12 +12,20 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: hermione-env-repo
+- name: hermione-infrastructure-repo
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
+    paths: [ bbl-infrastructure/* ]
+- name: hermione-deployment-manifest
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths: [ cf-deployment.yml ]
 - name: hermione-bosh-director
   type: pool
   source:
@@ -48,7 +56,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-env-repo
+      resource: hermione-infrastructure-repo
     - get: runtime-ci
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
@@ -67,7 +75,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{bbl_lb_cert}}
       BBL_LB_KEY: {{bbl_lb_key}}
-  - put: hermione-env-repo
+  - put: hermione-infrastructure-repo
     params:
       repository: updated-env-repo
 - name: setup-infrastructure
@@ -76,7 +84,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-env-repo
+      resource: hermione-infrastructure-repo
     - get: runtime-ci
     - put: hermione-bosh-director
       params:
@@ -88,7 +96,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{bbl_lb_cert}}
       BBL_LB_KEY: {{bbl_lb_key}}
-  - put: hermione-env-repo
+  - put: hermione-infrastructure-repo
     params:
       repository: updated-env-repo
   - task: bind-elb-to-r53
@@ -101,6 +109,7 @@ jobs:
       BBL_LB_CERT: {{bbl_lb_cert}}
       BBL_LB_KEY: {{bbl_lb_key}}
       DOMAIN: hermione.cf-app.com
+
 - name: deploy-releases
   public: true
   serial_groups: [ hermione ]
@@ -109,7 +118,8 @@ jobs:
     - get: capi-release-repo
     - get: nats-release-repo
     - get: routing-release-repo
-    - get: hermione-env-repo
+    - get: hermione-infrastructure-repo
+    - get: hermione-deployment-manifest
       trigger: true
     - get: runtime-ci
     - get: hermione-bosh-director
@@ -120,7 +130,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
-      env-repo: hermione-env-repo
+      env-repo: hermione-infrastructure-repo
   - aggregate:
     - do:
       - task: create-nats-release
@@ -180,7 +190,7 @@ jobs:
   - task: set-bosh-uuid
     file: runtime-ci/scripts/ci/bosh-uuid/task.yml
     input_mapping:
-      manifest: hermione-env-repo
+      manifest: hermione-deployment-manifest
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
