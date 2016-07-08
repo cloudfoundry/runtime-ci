@@ -58,6 +58,7 @@ CF_APPS_DOMAIN`,
 
 		})
 	})
+
 	Context("When invalid TIMEOUT env vars are set", func() {
 		BeforeEach(func() {
 			os.Setenv("CATS_PATH", ".")
@@ -89,6 +90,38 @@ CF_APPS_DOMAIN`,
 
 			Eventually(session, 30).Should(gexec.Exit(1))
 			Expect(session.Err).To(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
+			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+		})
+	})
+
+	Context("When invalid boolean env vars are set", func() {
+		BeforeEach(func() {
+			os.Setenv("CATS_PATH", ".")
+			os.Setenv("CF_API", "non-empty-value")
+			os.Setenv("CF_ADMIN_USER", "non-empty-value")
+			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
+			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
+			os.Setenv("SKIP_SSL_VALIDATION", "true")
+			os.Setenv("USE_HTTP", "this is not a boolean this is only a tribute")
+		})
+
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+		})
+
+		It("Should exit with an appropriate error message and exit code", func() {
+			command := exec.Command(binPath)
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session, 30).Should(gexec.Exit(1))
+			Expect(session.Err).To(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
 			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 		})
 	})

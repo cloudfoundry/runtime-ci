@@ -59,13 +59,34 @@ func getTimeoutIfPresent(envKey string) (*int, error) {
 	return &timeout, err
 }
 
+func getBooleanEnvVarIfPresent(envKey string) (bool, error) {
+	if os.Getenv(envKey) == "" {
+		return false, nil
+	}
+	boolValue, err := strconv.ParseBool(os.Getenv(envKey))
+
+	if err != nil {
+		return false, fmt.Errorf("Invalid env var '%s' only accepts booleans", envKey)
+	}
+	return boolValue, nil
+}
+
 func generateConfigFromEnv() (config, error) {
-	skipSslValidation, _ := strconv.ParseBool(os.Getenv("SKIP_SSL_VALIDATION"))
-	useHttp, _ := strconv.ParseBool(os.Getenv("USE_HTTP"))
 	var (
-		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout *int
 		err                                                                error
+		skipSslValidation, useHttp                                         bool
+		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout *int
 	)
+
+	skipSslValidation, err = getBooleanEnvVarIfPresent("SKIP_SSL_VALIDATION")
+	if err != nil {
+		return config{}, err
+	}
+	useHttp, err = getBooleanEnvVarIfPresent("USE_HTTP")
+	if err != nil {
+		return config{}, err
+	}
+
 	defaultTimeout, err = getTimeoutIfPresent("DEFAULT_TIMEOUT_IN_SECONDS")
 	if err != nil {
 		return config{}, err

@@ -263,6 +263,23 @@ var _ = Describe("Configwriter", func() {
 				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS"),
 			)
 		})
+
+		Context("when SKIP_SSL_VALIDATION and USE_HTTP are not a valid boolean", func() {
+			AfterEach(func() {
+				os.Unsetenv("SKIP_SSL_VALIDATION")
+				os.Unsetenv("USE_HTTP")
+			})
+
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
+				os.Setenv(envVarKey, "not-a-boolean")
+				_, err := configwriter.NewConfigFile("")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only accepts booleans"))
+			},
+				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
+				Entry("for USE_HTTP", "USE_HTTP"),
+			)
+		})
 	})
 
 	Describe("marshaling the struct", func() {
