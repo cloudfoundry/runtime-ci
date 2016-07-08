@@ -53,7 +53,7 @@ func getTimeoutIfPresent(envKey string) (*int, error) {
 		return nil, nil
 	}
 	timeout, err := strconv.Atoi(os.Getenv(envKey))
-	if err != nil || timeout < 0 {
+	if err != nil || timeout <= 0 {
 		return nil, fmt.Errorf("Invalid env var '%s' only allows positive integers", envKey)
 	}
 	return &timeout, err
