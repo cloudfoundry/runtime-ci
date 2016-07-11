@@ -2,6 +2,7 @@ package configwriter_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -97,10 +98,10 @@ var _ = Describe("Configwriter", func() {
 			expectedPersistedAppQuotaName = "PERSISTENT_APP_QUOTA_NAME" + "_" + time.Now().String()
 
 			rand.Seed(time.Now().UTC().UnixNano())
-			expectedDefaultTimeout = rand.Intn(100)
-			expectedCfPushTimeout = rand.Intn(100)
-			expectedLongCurlTimeout = rand.Intn(100)
-			expectedBrokerStartTimeout = rand.Intn(100)
+			expectedDefaultTimeout = rand.Intn(100) + 1
+			expectedCfPushTimeout = rand.Intn(100) + 1
+			expectedLongCurlTimeout = rand.Intn(100) + 1
+			expectedBrokerStartTimeout = rand.Intn(100) + 1
 
 			expectedStaticBuildpackName = "STATICFILE_BUILDPACK_NAME" + "_" + time.Now().String()
 			expectedJavaBuildpackName = "JAVA_BUILDPACK_NAME" + "_" + time.Now().String()
@@ -225,7 +226,7 @@ var _ = Describe("Configwriter", func() {
 			})
 		})
 
-		Context("when timeouts are negative values", func() {
+		Context("when timeouts are not positive", func() {
 			AfterEach(func() {
 				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
 				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
@@ -233,16 +234,21 @@ var _ = Describe("Configwriter", func() {
 				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
 			})
 
-			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
-				os.Setenv(envVarKey, "-1")
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value int) {
+				os.Setenv(envVarKey, fmt.Sprintf("%d", value))
 				_, err := configwriter.NewConfigFile("")
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
 			},
-				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS"),
-				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS"),
-				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS"),
-				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS"),
+				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS", 0),
+				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS", 0),
+				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS", 0),
+				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS", 0),
+
+				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS", -1),
+				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS", -1),
+				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS", -1),
+				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS", -1),
 			)
 		})
 
