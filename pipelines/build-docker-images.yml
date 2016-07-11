@@ -43,7 +43,6 @@ groups:
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
   - build-create-iaas-settings-docker-image
-  - build-write-bosh-lite-api-target-file-docker-image
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
@@ -315,12 +314,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/check-deployment/Dockerfile]
-- name: runtime-ci-write-bosh-lite-api-target-file
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-bosh-lite-api-target-file/Dockerfile]
 - name: runtime-ci-bind-elb-to-r53
   type: git
   source:
@@ -650,13 +643,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/check-deployment
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: write-bosh-lite-api-target-file-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/write-bosh-lite-api-target-file
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1444,23 +1430,6 @@ jobs:
     - put: check-deployment-pipeline-image
       params:
         build: runtime-ci-check-deployment/scripts/ci/check-deployment
-        push: true
-- name: build-write-bosh-lite-api-target-file-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-bosh-lite-api-target-file
-        trigger: true
-    - put: write-bosh-lite-api-target-file-pipeline-image
-      params:
-        build: runtime-ci-write-bosh-lite-api-target-file/scripts/ci/write-bosh-lite-api-target-file
         push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
