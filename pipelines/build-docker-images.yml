@@ -47,7 +47,6 @@ groups:
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
-  - build-check-out-fixed-version-docker-image
   - build-bosh-uuid-docker-image
   - build-run-ginkgo-docker-image
 
@@ -340,12 +339,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/cats-from-cf-release/Dockerfile]
-- name: runtime-ci-check-out-fixed-version
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/check-out-fixed-version/Dockerfile]
 - name: runtime-ci-bosh-uuid
   type: git
   source:
@@ -685,13 +678,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cats-from-cf-release
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: check-out-fixed-version-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/check-out-fixed-version
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1526,23 +1512,6 @@ jobs:
     - put: cats-from-cf-release-pipeline-image
       params:
         build: runtime-ci-cats-from-cf-release/scripts/ci/cats-from-cf-release
-        push: true
-- name: build-check-out-fixed-version-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-check-out-fixed-version
-        trigger: true
-    - put: check-out-fixed-version-pipeline-image
-      params:
-        build: runtime-ci-check-out-fixed-version/scripts/ci/check-out-fixed-version
         push: true
 - name: build-bosh-uuid-docker-image
   public: true
