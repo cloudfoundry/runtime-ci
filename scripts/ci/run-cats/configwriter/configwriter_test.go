@@ -53,7 +53,7 @@ var _ = Describe("Configwriter", func() {
 		})
 	})
 
-	Context("When CF envvars are set", func() {
+	Context("When envvars are set", func() {
 		var (
 			expectedApi                   string
 			expectedAdminUser             string
@@ -273,20 +273,35 @@ var _ = Describe("Configwriter", func() {
 			)
 		})
 
-		Context("when SKIP_SSL_VALIDATION and USE_HTTP are not a valid boolean", func() {
+		Context("when SKIP_SSL_VALIDATION is not a valid boolean", func() {
 			AfterEach(func() {
 				os.Unsetenv("SKIP_SSL_VALIDATION")
-				os.Unsetenv("USE_HTTP")
 			})
 
-			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
-				os.Setenv(envVarKey, "not-a-boolean")
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value string) {
+				os.Setenv(envVarKey, value)
 				_, err := configwriter.NewConfigFile("")
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only accepts booleans"))
 			},
-				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
-				Entry("for USE_HTTP", "USE_HTTP"),
+				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION", "not-a-boolean"),
+				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION", "0"),
+			)
+		})
+
+		Context("when USE_HTTP is not a valid boolean", func() {
+			AfterEach(func() {
+				os.Unsetenv("USE_HTTP")
+			})
+
+			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value string) {
+				os.Setenv(envVarKey, value)
+				_, err := configwriter.NewConfigFile("")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only accepts booleans"))
+			},
+				Entry("for USE_HTTP", "USE_HTTP", "not-a-boolean"),
+				Entry("for USE_HTTP", "USE_HTTP", "1"),
 			)
 		})
 

@@ -60,14 +60,16 @@ func getTimeoutIfPresent(envKey string) (*int, error) {
 }
 
 func getBooleanEnvVarIfPresent(envKey string) (bool, error) {
-	if os.Getenv(envKey) == "" {
+	boolString := os.Getenv(envKey)
+	if boolString == "" {
 		return false, nil
 	}
-	boolValue, err := strconv.ParseBool(os.Getenv(envKey))
 
-	if err != nil {
+	if !(boolString == "true" || boolString == "false") {
 		return false, fmt.Errorf("Invalid env var '%s' only accepts booleans", envKey)
 	}
+
+	boolValue, _ := strconv.ParseBool(os.Getenv(envKey))
 	return boolValue, nil
 }
 
