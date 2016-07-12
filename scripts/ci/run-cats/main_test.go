@@ -128,6 +128,26 @@ CF_APPS_DOMAIN`,
 			})
 		})
 
+		Describe("when INCLUDE_* env vars are not proper booleans", func() {
+			BeforeEach(func() {
+				os.Setenv("INCLUDE_V3", "this is not a boolean this is only a tribute")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("INCLUDE_V3")
+			})
+
+			It("Should exit with an appropriate error message and exit code", func() {
+				command := exec.Command(binPath)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session, 30).Should(gexec.Exit(1))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false'`))
+			})
+
+		})
+
 		Context("When bin/test fails", func() {
 			BeforeEach(func() {
 				os.Setenv("CATS_PATH", "fixtures/fail")

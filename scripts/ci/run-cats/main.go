@@ -35,7 +35,12 @@ func main() {
 	configWriter.WriteConfigToFile()
 	configWriter.ExportConfigFilePath()
 
-	path, arguments := commandgenerator.GenerateCmd()
+	path, arguments, err := commandgenerator.GenerateCmd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERR:"+err.Error())
+		os.Exit(1)
+	}
+	fmt.Printf("path: %s\n", path)
 	command := exec.Command(path, arguments...)
 
 	stdOut, err := command.StdoutPipe()

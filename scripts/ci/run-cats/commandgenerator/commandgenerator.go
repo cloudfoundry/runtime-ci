@@ -4,9 +4,24 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 )
 
-func GenerateCmd() (string, []string) {
+var envVarToPackageMap = map[string]string{
+	"INCLUDE_DIEGO_SSH":             "ssh",
+	"INCLUDE_V3":                    "v3",
+	"INCLUDE_DIEGO_DOCKER":          "docker",
+	"INCLUDE_BACKEND_COMPATIBILITY": "backend_compatibility",
+	"INCLUDE_SECURITY_GROUPS":       "security_groups",
+	"INCLUDE_LOGGING":               "logging",
+	"INCLUDE_OPERATOR":              "operator",
+	"INCLUDE_INTERNET_DEPENDENT":    "internet_dependent",
+	"INCLUDE_SERVICES":              "services",
+	"INCLUDE_ROUTE_SERVICES":        "route_services",
+}
+
+func GenerateCmd() (string, []string, error) {
 	nodes := os.Getenv("NODES")
 	var testBinPath string
 
@@ -17,16 +32,21 @@ func GenerateCmd() (string, []string) {
 		testBinPath = os.Getenv("GOPATH") + "/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
 	}
 
+	skipPackages, err := generateSkipPackages()
+	if err != nil {
+		return "", nil, err
+	}
+
 	return testBinPath, []string{
 		"-r",
 		"-slowSpecThreshold=120",
 		"-randomizeAllSpecs",
 		"-nodes",
 		fmt.Sprintf("%s", nodes),
-		fmt.Sprintf("%s", generateSkipPackages()),
+		fmt.Sprintf("%s", skipPackages),
 		fmt.Sprintf("%s", generateSkips()),
 		"-keepGoing",
-	}
+	}, nil
 }
 
 func generateSkips() string {
@@ -50,32 +70,25 @@ func generateSkips() string {
 	return skip
 }
 
-func generateSkipPackages() string {
-	type envVarStruct struct {
-		envKey   string
-		envValue string
+func validateBool(envVarValue, envVarKey string) (bool, error) {
+	if !(envVarValue == "true" || envVarValue == "false" || envVarValue == "") {
+		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", envVarKey)
 	}
+	return envVarValue == "true", nil
+}
 
-	envVarMap := []envVarStruct{
-		{"INCLUDE_DIEGO_SSH", "ssh"},
-		{"INCLUDE_V3", "v3"},
-		{"INCLUDE_DIEGO_DOCKER", "docker"},
-		{"INCLUDE_BACKEND_COMPATIBILITY", "backend_compatibility"},
-		{"INCLUDE_SECURITY_GROUPS", "security_groups"},
-		{"INCLUDE_LOGGING", "logging"},
-		{"INCLUDE_OPERATOR", "operator"},
-		{"INCLUDE_INTERNET_DEPENDENT", "internet_dependent"},
-		{"INCLUDE_SERVICES", "services"},
-		{"INCLUDE_ROUTE_SERVICES", "route_services"},
-	}
-
-	skipPackages := "-skipPackage=helpers"
-
-	for _, envVar := range envVarMap {
-		envVarValue, envVarExists := os.LookupEnv(envVar.envKey)
-		if !envVarExists || envVarValue != "true" {
-			skipPackages += "," + envVar.envValue
+func generateSkipPackages() (string, error) {
+	skipPackages := []string{"helpers"}
+	for envVarName, packageName := range envVarToPackageMap {
+		envVarValue := os.Getenv(envVarName)
+		includePackage, err := validateBool(envVarValue, envVarName)
+		if err != nil {
+			return "", err
+		}
+		if !includePackage {
+			skipPackages = append(skipPackages, packageName)
 		}
 	}
-	return skipPackages
+	sort.Strings(skipPackages)
+	return "-skipPackage=" + strings.Join(skipPackages, ","), nil
 }

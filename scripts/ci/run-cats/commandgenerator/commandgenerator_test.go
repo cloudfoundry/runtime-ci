@@ -36,23 +36,19 @@ var _ = Describe("Commandgenerator", func() {
 			os.Unsetenv("CATS_PATH")
 		})
 
-		Context("When a different path to CATs is set", func() {
-			BeforeEach(func() {
-				os.Setenv("CATS_PATH", "/path/to/cats")
-			})
-			It("Should generate a command to run CATS", func() {
-				cmd, _ := commandgenerator.GenerateCmd()
-				Expect(cmd).To(Equal("/path/to/cats/bin/test"))
-			})
-
-		})
-
 		It("Should generate a command to run CATS", func() {
-			cmd, args := commandgenerator.GenerateCmd()
+			cmd, args, err := commandgenerator.GenerateCmd()
+			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("bin/test"))
 
 			Expect(strings.Join(args, " ")).To(Equal(
-				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %d -skipPackage=helpers,ssh,v3,docker,backend_compatibility,security_groups,logging,operator,internet_dependent,services,route_services -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes)))
+				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
+			))
+
+			os.Setenv("CATS_PATH", "/path/to/cats")
+			cmd, _, err = commandgenerator.GenerateCmd()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(cmd).To(Equal("/path/to/cats/bin/test"))
 		})
 
 		Context("when there are optional skipPackage env vars set", func() {
@@ -83,13 +79,57 @@ var _ = Describe("Commandgenerator", func() {
 			})
 
 			It("should generate a command with the correct list of skipPackage flags", func() {
-				cmd, args := commandgenerator.GenerateCmd()
+				cmd, args, err := commandgenerator.GenerateCmd()
+				Expect(err).NotTo(HaveOccurred())
 				Expect(cmd).To(Equal(
 					"bin/test",
 				))
 
 				Expect(strings.Join(args, " ")).To(Equal(
 					fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %d -skipPackage=helpers -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes)))
+			})
+
+			Context("and the env vars are set to non-boolean values", func() {
+				BeforeEach(func() {
+					os.Setenv("INCLUDE_V3", "not-a-boolean")
+				})
+
+				It("returns an error", func() {
+					_, _, err := commandgenerator.GenerateCmd()
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false'"))
+				})
+			})
+
+			Context("and the env vars are set to a non-boolean value that ParseBool would accept", func() {
+				BeforeEach(func() {
+					os.Setenv("INCLUDE_V3", "T")
+				})
+
+				It("returns an error", func() {
+					_, _, err := commandgenerator.GenerateCmd()
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false'"))
+				})
+
+			})
+
+			Context("and the env var is set to an empty string", func() {
+				BeforeEach(func() {
+					os.Setenv("INCLUDE_DIEGO_SSH", "")
+				})
+
+				It("skips the specified package", func() {
+					cmd, args, err := commandgenerator.GenerateCmd()
+					Expect(err).NotTo(HaveOccurred())
+					Expect(cmd).To(Equal(
+						"bin/test",
+					))
+
+					Expect(strings.Join(args, " ")).To(Equal(
+						fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %d -skipPackage=helpers,ssh -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
+					))
+				})
 			})
 		})
 
@@ -105,13 +145,14 @@ var _ = Describe("Commandgenerator", func() {
 			})
 
 			It("should generate a command with the correct list of skip flags", func() {
-				cmd, args := commandgenerator.GenerateCmd()
+				cmd, args, err := commandgenerator.GenerateCmd()
+				Expect(err).NotTo(HaveOccurred())
 				Expect(cmd).To(Equal(
 					"bin/test",
 				))
 
 				Expect(strings.Join(args, " ")).To(Equal(
-					"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers,ssh,v3,docker,backend_compatibility,security_groups,logging,operator,internet_dependent,services,route_services -skip=SSO|NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing"))
+					"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=SSO|NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing"))
 			})
 
 			Context("when the backend is set to diego", func() {
@@ -124,13 +165,14 @@ var _ = Describe("Commandgenerator", func() {
 				})
 
 				It("should generate a command with the correct list of skip flags", func() {
-					cmd, args := commandgenerator.GenerateCmd()
+					cmd, args, err := commandgenerator.GenerateCmd()
+					Expect(err).NotTo(HaveOccurred())
 					Expect(cmd).To(Equal(
 						"bin/test",
 					))
 
 					Expect(strings.Join(args, " ")).To(Equal(
-						"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers,ssh,v3,docker,backend_compatibility,security_groups,logging,operator,internet_dependent,services,route_services -skip=SSO|NO_DIEGO_SUPPORT -keepGoing"))
+						"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=SSO|NO_DIEGO_SUPPORT -keepGoing"))
 				})
 
 			})
@@ -145,12 +187,13 @@ var _ = Describe("Commandgenerator", func() {
 				})
 
 				It("should generate a command with the correct list of skip flags", func() {
-					cmd, args := commandgenerator.GenerateCmd()
+					cmd, args, err := commandgenerator.GenerateCmd()
+					Expect(err).NotTo(HaveOccurred())
 					Expect(cmd).To(Equal(
 						"bin/test",
 					))
 					Expect(strings.Join(args, " ")).To(Equal(
-						"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers,ssh,v3,docker,backend_compatibility,security_groups,logging,operator,internet_dependent,services,route_services -skip=SSO|NO_DEA_SUPPORT -keepGoing"))
+						"-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=SSO|NO_DEA_SUPPORT -keepGoing"))
 				})
 			})
 		})
@@ -166,9 +209,9 @@ var _ = Describe("Commandgenerator", func() {
 		})
 
 		It("Should return a sane default command path for use in Concourse", func() {
-			cmd, _ := commandgenerator.GenerateCmd()
+			cmd, _, err := commandgenerator.GenerateCmd()
+			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/go/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))
 		})
 	})
-
 })
