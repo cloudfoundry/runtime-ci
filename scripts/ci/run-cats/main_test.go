@@ -15,27 +15,7 @@ var _ = Describe("Main", func() {
 		os.Remove(os.Getenv("PWD") + "/integration_config.json")
 	})
 
-	Context("when no envvars are set", func() {
-
-		It("Exits 1 and prints an error regarding missing 'required' env vars", func() {
-			command := exec.Command(binPath)
-			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
-
-			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Out, 30).Should(gbytes.Say(`Missing required environment variables:
-CF_API
-CF_ADMIN_USER
-CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN`,
-			))
-
-			Expect(string(session.Out.Contents())).NotTo(ContainSubstring("CONFIG="))
-			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
-		})
-	})
-
-	Context("when some but not all required envvars are set", func() {
+	Context("when required envvars are not set", func() {
 		BeforeEach(func() {
 			os.Setenv("CF_API", "cf_api_value")
 		})
@@ -56,73 +36,6 @@ CF_APPS_DOMAIN`,
 			))
 			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 
-		})
-	})
-
-	Context("When invalid TIMEOUT env vars are set", func() {
-		BeforeEach(func() {
-			os.Setenv("CATS_PATH", ".")
-			os.Setenv("CF_API", "non-empty-value")
-			os.Setenv("CF_ADMIN_USER", "non-empty-value")
-			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
-			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
-			os.Setenv("SKIP_SSL_VALIDATION", "true")
-			os.Setenv("USE_HTTP", "true")
-
-			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "not a timeout")
-		})
-		AfterEach(func() {
-			os.Unsetenv("CATS_PATH")
-			os.Unsetenv("CF_API")
-			os.Unsetenv("CF_ADMIN_USER")
-			os.Unsetenv("CF_ADMIN_PASSWORD")
-			os.Unsetenv("CF_APPS_DOMAIN")
-			os.Unsetenv("SKIP_SSL_VALIDATION")
-			os.Unsetenv("USE_HTTP")
-
-			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
-		})
-
-		It("Should exit with an appropriate error message and exit code", func() {
-			command := exec.Command(binPath)
-			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
-
-			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
-			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
-		})
-	})
-
-	Context("When invalid boolean env vars are set", func() {
-		BeforeEach(func() {
-			os.Setenv("CATS_PATH", ".")
-			os.Setenv("CF_API", "non-empty-value")
-			os.Setenv("CF_ADMIN_USER", "non-empty-value")
-			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
-			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
-			os.Setenv("SKIP_SSL_VALIDATION", "true")
-			os.Setenv("USE_HTTP", "this is not a boolean this is only a tribute")
-		})
-
-		AfterEach(func() {
-			os.Unsetenv("CATS_PATH")
-			os.Unsetenv("CF_API")
-			os.Unsetenv("CF_ADMIN_USER")
-			os.Unsetenv("CF_ADMIN_PASSWORD")
-			os.Unsetenv("CF_APPS_DOMAIN")
-			os.Unsetenv("SKIP_SSL_VALIDATION")
-			os.Unsetenv("USE_HTTP")
-		})
-
-		It("Should exit with an appropriate error message and exit code", func() {
-			command := exec.Command(binPath)
-			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
-
-			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
-			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 		})
 	})
 
@@ -174,6 +87,63 @@ CF_APPS_DOMAIN`,
 			Eventually(session.Out, 30).Should(gbytes.Say(
 				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 4 -skipPackage=helpers -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing",
 			))
+		})
+
+		Context("When invalid TIMEOUT env vars are set", func() {
+			BeforeEach(func() {
+				os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "not a timeout")
+			})
+			AfterEach(func() {
+				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+			})
+
+			It("Should exit with an appropriate error message and exit code", func() {
+				command := exec.Command(binPath)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session, 30).Should(gexec.Exit(1))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
+				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+			})
+		})
+
+		Context("When invalid boolean env vars are set", func() {
+			BeforeEach(func() {
+				os.Setenv("USE_HTTP", "this is not a boolean this is only a tribute")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("USE_HTTP")
+			})
+
+			It("Should exit with an appropriate error message and exit code", func() {
+				command := exec.Command(binPath)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session, 30).Should(gexec.Exit(1))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
+				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+			})
+		})
+
+		Context("When bin/test fails", func() {
+			BeforeEach(func() {
+				os.Setenv("CATS_PATH", "fixtures/fail")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("CATS_PATH")
+			})
+
+			It("Returns the same error code as the failing bin/test", func() {
+				command := exec.Command(binPath)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session, 30).Should(gexec.Exit(1))
+			})
 		})
 	})
 
@@ -268,24 +238,6 @@ CF_APPS_DOMAIN`,
 			Eventually(session.Out, 30).Should(gbytes.Say(
 				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers -skip=NO_DIEGO_SUPPORT -keepGoing",
 			))
-		})
-
-		Context("When bin/test fails", func() {
-			BeforeEach(func() {
-				os.Setenv("CATS_PATH", "fixtures/fail")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("CATS_PATH")
-			})
-
-			It("Returns the same error code as the failing bin/test", func() {
-				command := exec.Command(binPath)
-				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-				Expect(err).NotTo(HaveOccurred())
-
-				Eventually(session, 30).Should(gexec.Exit(1))
-			})
 		})
 	})
 })
