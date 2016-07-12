@@ -48,6 +48,8 @@ groups:
   - build-cats-from-cf-release-docker-image
   - build-bosh-uuid-docker-image
   - build-run-ginkgo-docker-image
+  - build-recreate-datadog-dashboard-docker-image
+  - build-recreate-datadog-dashboard-unit-tests-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -344,6 +346,18 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-ginkgo/Dockerfile]
+- name: runtime-ci-recreate-datadog-dashboard
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/recreate-datadog-dashboard/Dockerfile]
+- name: runtime-ci-recreate-datadog-dashboard-unit-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/recreate-datadog-dashboard-unit-tests/Dockerfile]
 
 - name: fake-CATs
   type: git
@@ -678,6 +692,20 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-ginkgo
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: recreate-datadog-dashboard-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/recreate-datadog-dashboard
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: recreate-datadog-dashboard-unit-tests-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/recreate-datadog-dashboard-unit-tests
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1516,4 +1544,40 @@ jobs:
     - put: run-ginkgo-pipeline-image
       params:
         build: runtime-ci-run-ginkgo/scripts/ci/run-ginkgo
+        push: true
+
+- name: build-recreate-datadog-dashboard-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-recreate-datadog-dashboard
+        trigger: true
+    - put: recreate-datadog-dashboard-pipeline-image
+      params:
+        build: runtime-ci-recreate-datadog-dashboard/scripts/ci/recreate-datadog-dashboard
+        push: true
+
+- name: build-recreate-datadog-dashboard-unit-tests-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-recreate-datadog-dashboard-unit-tests
+        trigger: true
+    - put: recreate-datadog-dashboard-unit-tests-pipeline-image
+      params:
+        build: runtime-ci-recreate-datadog-dashboard-unit-tests/scripts/ci/recreate-datadog-dashboard-unit-tests
         push: true
