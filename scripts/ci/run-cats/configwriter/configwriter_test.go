@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter/configwriterfakes"
 	. "github.com/onsi/ginkgo/extensions/table"
 
 	. "github.com/onsi/ginkgo"
@@ -22,9 +23,14 @@ func randomBool() bool {
 }
 
 var _ = Describe("Configwriter", func() {
+	var env *configwriterfakes.FakeEnvironment
+	BeforeEach(func() {
+		env = &configwriterfakes.FakeEnvironment{}
+	})
+
 	Context("when env vars are not set", func() {
 		It("returns an empty config object", func() {
-			configFile, err := configwriter.NewConfigFile("/dir/name")
+			configFile, err := configwriter.NewConfigFile("/dir/name", env)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(configFile).NotTo(BeNil())
@@ -112,12 +118,21 @@ var _ = Describe("Configwriter", func() {
 			expectedPhpBuildpackName = "PHP_BUILDPACK_NAME" + "_" + time.Now().String()
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME" + "_" + time.Now().String()
 
+			env.GetBooleanStub = func(varName string) (bool, error) {
+				switch varName {
+				case "SKIP_SSL_VALIDATION":
+					return expectedSkipSslValidation, nil
+				case "USE_HTTP":
+					return expectedUseHttp, nil
+				default:
+					panic("unimplemented")
+				}
+			}
+
 			os.Setenv("CF_API", expectedApi)
 			os.Setenv("CF_ADMIN_USER", expectedAdminUser)
 			os.Setenv("CF_ADMIN_PASSWORD", expectedPassword)
 			os.Setenv("CF_APPS_DOMAIN", expectedAppsDomain)
-			os.Setenv("SKIP_SSL_VALIDATION", strconv.FormatBool(expectedSkipSslValidation))
-			os.Setenv("USE_HTTP", strconv.FormatBool(expectedUseHttp))
 			os.Setenv("EXISTING_USER", expectedExistingUser)
 			os.Setenv("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
 			os.Setenv("BACKEND", expectedBackend)
@@ -144,8 +159,6 @@ var _ = Describe("Configwriter", func() {
 			os.Unsetenv("CF_ADMIN_USER")
 			os.Unsetenv("CF_ADMIN_PASSWORD")
 			os.Unsetenv("CF_APPS_DOMAIN")
-			os.Unsetenv("SKIP_SSL_VALIDATION")
-			os.Unsetenv("USE_HTTP")
 			os.Unsetenv("EXISTING_USER")
 			os.Unsetenv("EXISTING_USER_PASSWORD")
 			os.Unsetenv("BACKEND")
@@ -168,7 +181,7 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
-			configFile, err := configwriter.NewConfigFile("/some/dir")
+			configFile, err := configwriter.NewConfigFile("/some/dir", env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(configFile).NotTo(BeNil())
 			Expect(configFile.Config.Api).To(Equal(expectedApi))
@@ -205,7 +218,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
-				configFile, err := configwriter.NewConfigFile("/some/dir")
+				configFile, err := configwriter.NewConfigFile("/some/dir", env)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(configFile.Config.UseExistingUser).To(Equal(true))
 				Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(true))
@@ -218,7 +231,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
-				configFile, err := configwriter.NewConfigFile("")
+				configFile, err := configwriter.NewConfigFile("", env)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(configFile).NotTo(BeNil())
 				Expect(configFile.Config.UseExistingUser).To(Equal(false))
@@ -236,7 +249,7 @@ var _ = Describe("Configwriter", func() {
 
 			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value int) {
 				os.Setenv(envVarKey, fmt.Sprintf("%d", value))
-				_, err := configwriter.NewConfigFile("")
+				_, err := configwriter.NewConfigFile("", env)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
 			},
@@ -262,7 +275,7 @@ var _ = Describe("Configwriter", func() {
 
 			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
 				os.Setenv(envVarKey, "not an int")
-				_, err := configwriter.NewConfigFile("")
+				_, err := configwriter.NewConfigFile("", env)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
 			},
@@ -274,35 +287,42 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		Context("when SKIP_SSL_VALIDATION is not a valid boolean", func() {
-			AfterEach(func() {
-				os.Unsetenv("SKIP_SSL_VALIDATION")
+			var expectedErr error
+			BeforeEach(func() {
+				expectedErr = fmt.Errorf("not a valid boolean")
+				env.GetBooleanReturns(false, expectedErr)
 			})
 
-			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value string) {
-				os.Setenv(envVarKey, value)
-				_, err := configwriter.NewConfigFile("")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only accepts booleans"))
-			},
-				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION", "not-a-boolean"),
-				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION", "0"),
-			)
+			It("returns the error", func() {
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(env.GetBooleanCallCount()).To(Equal(1))
+				Expect(env.GetBooleanArgsForCall(0)).To(Equal("SKIP_SSL_VALIDATION"))
+				Expect(err).To(Equal(expectedErr))
+			})
 		})
 
 		Context("when USE_HTTP is not a valid boolean", func() {
-			AfterEach(func() {
-				os.Unsetenv("USE_HTTP")
+			var expectedErr error
+			BeforeEach(func() {
+				expectedErr = fmt.Errorf("not a valid boolean")
+				env.GetBooleanStub = func(varName string) (bool, error) {
+					switch varName {
+					case "SKIP_SSL_VALIDATION":
+						return false, nil
+					case "USE_HTTP":
+						return false, expectedErr
+					default:
+						panic("unimplemented")
+					}
+				}
 			})
 
-			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value string) {
-				os.Setenv(envVarKey, value)
-				_, err := configwriter.NewConfigFile("")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only accepts booleans"))
-			},
-				Entry("for USE_HTTP", "USE_HTTP", "not-a-boolean"),
-				Entry("for USE_HTTP", "USE_HTTP", "1"),
-			)
+			It("returns the error", func() {
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(env.GetBooleanCallCount()).To(Equal(2))
+				Expect(env.GetBooleanArgsForCall(1)).To(Equal("USE_HTTP"))
+				Expect(err).To(Equal(expectedErr))
+			})
 		})
 
 		Context("when BACKEND is not 'diego' or 'dea'", func() {
@@ -315,7 +335,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("fails fast with a reasonable error", func() {
-				_, err := configwriter.NewConfigFile("")
+				_, err := configwriter.NewConfigFile("", env)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("Invalid env var 'BACKEND' only accepts 'dea' or 'diego'"))
 			})
@@ -325,7 +345,7 @@ var _ = Describe("Configwriter", func() {
 	Describe("marshaling the struct", func() {
 		It("does not render optional keys if their values are empty", func() {
 			var configJson []byte
-			configWriter, err := configwriter.NewConfigFile("")
+			configWriter, err := configwriter.NewConfigFile("", env)
 			Expect(err).NotTo(HaveOccurred())
 			configJson, err = json.Marshal(configWriter.Config)
 			Expect(err).NotTo(HaveOccurred())
@@ -345,12 +365,21 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when any env variables are provided", func() {
 			BeforeEach(func() {
+				env.GetBooleanStub = func(varName string) (bool, error) {
+					switch varName {
+					case "SKIP_SSL_VALIDATION":
+						return true, nil
+					case "USE_HTTP":
+						return true, nil
+					default:
+						panic("unimplemented")
+					}
+				}
+
 				os.Setenv("CF_API", "non-empty-value")
 				os.Setenv("CF_ADMIN_USER", "non-empty-value")
 				os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
 				os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
-				os.Setenv("SKIP_SSL_VALIDATION", "true")
-				os.Setenv("USE_HTTP", "true")
 				os.Setenv("EXISTING_USER", "non-empty-value")
 				os.Setenv("EXISTING_USER_PASSWORD", "non-empty-value")
 				os.Setenv("BACKEND", "diego")
@@ -377,8 +406,6 @@ var _ = Describe("Configwriter", func() {
 				os.Unsetenv("CF_ADMIN_USER")
 				os.Unsetenv("CF_ADMIN_PASSWORD")
 				os.Unsetenv("CF_APPS_DOMAIN")
-				os.Unsetenv("SKIP_SSL_VALIDATION")
-				os.Unsetenv("USE_HTTP")
 				os.Unsetenv("EXISTING_USER")
 				os.Unsetenv("EXISTING_USER_PASSWORD")
 				os.Unsetenv("BACKEND")
@@ -402,7 +429,7 @@ var _ = Describe("Configwriter", func() {
 
 			It("renders the variables in the integration_config", func() {
 				var configJson []byte
-				configWriter, err := configwriter.NewConfigFile("")
+				configWriter, err := configwriter.NewConfigFile("", env)
 				Expect(err).NotTo(HaveOccurred())
 				configJson, err = json.Marshal(configWriter.Config)
 				Expect(err).NotTo(HaveOccurred())
@@ -457,7 +484,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile, err := configwriter.NewConfigFile(tempDir)
+				configFile, err := configwriter.NewConfigFile(tempDir, env)
 				Expect(err).NotTo(HaveOccurred())
 
 				var file *os.File
@@ -504,7 +531,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("writes the config object to the destination file as json", func() {
-				configFile, err := configwriter.NewConfigFile(tempDir)
+				configFile, err := configwriter.NewConfigFile(tempDir, env)
 				Expect(err).NotTo(HaveOccurred())
 
 				configFile.WriteConfigToFile()
@@ -530,7 +557,7 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when the destinationDir is invalid", func() {
 			It("fails with a nice error", func() {
-				configFile, err := configwriter.NewConfigFile("/badpath")
+				configFile, err := configwriter.NewConfigFile("/badpath", env)
 				Expect(err).NotTo(HaveOccurred())
 
 				_, err = configFile.WriteConfigToFile()
@@ -550,7 +577,7 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		It("should successfully write integration_config.json", func() {
-			configFile, err := configwriter.NewConfigFile("/tmp")
+			configFile, err := configwriter.NewConfigFile("/tmp", env)
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = configFile.WriteConfigToFile()
@@ -594,7 +621,7 @@ var _ = Describe("Configwriter", func() {
 			})
 
 			It("exports the location of the integration_config.json file", func() {
-				configFile, err := configwriter.NewConfigFile("/some/path")
+				configFile, err := configwriter.NewConfigFile("/some/path", env)
 				Expect(err).NotTo(HaveOccurred())
 
 				configFile.ExportConfigFilePath()

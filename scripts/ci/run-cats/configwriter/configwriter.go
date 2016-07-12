@@ -43,8 +43,12 @@ type configFile struct {
 	DestinationDir string
 }
 
-func NewConfigFile(destinationDir string) (configFile, error) {
-	config, err := generateConfigFromEnv()
+type Environment interface {
+	GetBoolean(string) (bool, error)
+}
+
+func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
+	config, err := generateConfigFromEnv(env)
 	return configFile{config, filepath.Clean(destinationDir)}, err
 }
 
@@ -59,32 +63,18 @@ func getTimeoutIfPresent(envKey string) (*int, error) {
 	return &timeout, err
 }
 
-func getBooleanEnvVarIfPresent(envKey string) (bool, error) {
-	boolString := os.Getenv(envKey)
-	if boolString == "" {
-		return false, nil
-	}
-
-	if !(boolString == "true" || boolString == "false") {
-		return false, fmt.Errorf("Invalid env var '%s' only accepts booleans", envKey)
-	}
-
-	boolValue, _ := strconv.ParseBool(os.Getenv(envKey))
-	return boolValue, nil
-}
-
-func generateConfigFromEnv() (config, error) {
+func generateConfigFromEnv(env Environment) (config, error) {
 	var (
 		err                                                                error
 		skipSslValidation, useHttp                                         bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout *int
 	)
 
-	skipSslValidation, err = getBooleanEnvVarIfPresent("SKIP_SSL_VALIDATION")
+	skipSslValidation, err = env.GetBoolean("SKIP_SSL_VALIDATION")
 	if err != nil {
 		return config{}, err
 	}
-	useHttp, err = getBooleanEnvVarIfPresent("USE_HTTP")
+	useHttp, err = env.GetBoolean("USE_HTTP")
 	if err != nil {
 		return config{}, err
 	}

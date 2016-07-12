@@ -10,6 +10,7 @@ import (
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment"
 )
 
 func main() {
@@ -26,7 +27,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	configWriter, err := configwriter.NewConfigFile(currentDir)
+	env := environment.New()
+
+	configWriter, err := configwriter.NewConfigFile(currentDir, env)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -35,7 +38,7 @@ func main() {
 	configWriter.WriteConfigToFile()
 	configWriter.ExportConfigFilePath()
 
-	path, arguments, err := commandgenerator.GenerateCmd()
+	path, arguments, err := commandgenerator.GenerateCmd(env)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERR:"+err.Error())
 		os.Exit(1)

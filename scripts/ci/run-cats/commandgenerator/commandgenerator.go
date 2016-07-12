@@ -21,7 +21,11 @@ var envVarToPackageMap = map[string]string{
 	"INCLUDE_ROUTE_SERVICES":        "route_services",
 }
 
-func GenerateCmd() (string, []string, error) {
+type environment interface {
+	GetBoolean(string) (bool, error)
+}
+
+func GenerateCmd(env environment) (string, []string, error) {
 	nodes := os.Getenv("NODES")
 	var testBinPath string
 
@@ -32,7 +36,7 @@ func GenerateCmd() (string, []string, error) {
 		testBinPath = os.Getenv("GOPATH") + "/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
 	}
 
-	skipPackages, err := generateSkipPackages()
+	skipPackages, err := generateSkipPackages(env)
 	if err != nil {
 		return "", nil, err
 	}
@@ -70,18 +74,10 @@ func generateSkips() string {
 	return skip
 }
 
-func validateBool(envVarValue, envVarKey string) (bool, error) {
-	if !(envVarValue == "true" || envVarValue == "false" || envVarValue == "") {
-		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", envVarKey)
-	}
-	return envVarValue == "true", nil
-}
-
-func generateSkipPackages() (string, error) {
+func generateSkipPackages(env environment) (string, error) {
 	skipPackages := []string{"helpers"}
 	for envVarName, packageName := range envVarToPackageMap {
-		envVarValue := os.Getenv(envVarName)
-		includePackage, err := validateBool(envVarValue, envVarName)
+		includePackage, err := env.GetBoolean(envVarName)
 		if err != nil {
 			return "", err
 		}

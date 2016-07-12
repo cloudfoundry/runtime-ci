@@ -123,7 +123,7 @@ CF_APPS_DOMAIN`,
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session, 30).Should(gexec.Exit(1))
-				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'USE_HTTP' only accepts booleans`))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false'`))
 				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 			})
 		})
