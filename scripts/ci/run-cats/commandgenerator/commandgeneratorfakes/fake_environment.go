@@ -13,6 +13,14 @@ type FakeEnvironment struct {
 		result1 bool
 		result2 error
 	}
+	GetStringStub        func(string) string
+	getStringMutex       sync.RWMutex
+	getStringArgsForCall []struct {
+		arg1 string
+	}
+	getStringReturns struct {
+		result1 string
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -51,11 +59,46 @@ func (fake *FakeEnvironment) GetBooleanReturns(result1 bool, result2 error) {
 	}{result1, result2}
 }
 
+func (fake *FakeEnvironment) GetString(arg1 string) string {
+	fake.getStringMutex.Lock()
+	fake.getStringArgsForCall = append(fake.getStringArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("GetString", []interface{}{arg1})
+	fake.getStringMutex.Unlock()
+	if fake.GetStringStub != nil {
+		return fake.GetStringStub(arg1)
+	} else {
+		return fake.getStringReturns.result1
+	}
+}
+
+func (fake *FakeEnvironment) GetStringCallCount() int {
+	fake.getStringMutex.RLock()
+	defer fake.getStringMutex.RUnlock()
+	return len(fake.getStringArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetStringArgsForCall(i int) string {
+	fake.getStringMutex.RLock()
+	defer fake.getStringMutex.RUnlock()
+	return fake.getStringArgsForCall[i].arg1
+}
+
+func (fake *FakeEnvironment) GetStringReturns(result1 string) {
+	fake.GetStringStub = nil
+	fake.getStringReturns = struct {
+		result1 string
+	}{result1}
+}
+
 func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.getBooleanMutex.RLock()
 	defer fake.getBooleanMutex.RUnlock()
+	fake.getStringMutex.RLock()
+	defer fake.getStringMutex.RUnlock()
 	return fake.invocations
 }
 

@@ -23,6 +23,7 @@ var envVarToPackageMap = map[string]string{
 
 type environment interface {
 	GetBoolean(string) (bool, error)
+	GetString(string) string
 }
 
 func GenerateCmd(env environment) (string, []string, error) {
@@ -40,7 +41,10 @@ func GenerateCmd(env environment) (string, []string, error) {
 	if err != nil {
 		return "", nil, err
 	}
-
+	skips, err := generateSkips(env)
+	if err != nil {
+		return "", nil, err
+	}
 	return testBinPath, []string{
 		"-r",
 		"-slowSpecThreshold=120",
@@ -48,30 +52,37 @@ func GenerateCmd(env environment) (string, []string, error) {
 		"-nodes",
 		fmt.Sprintf("%s", nodes),
 		fmt.Sprintf("%s", skipPackages),
-		fmt.Sprintf("%s", generateSkips()),
+		fmt.Sprintf("%s", skips),
 		"-keepGoing",
 	}, nil
 }
 
-func generateSkips() string {
+func generateSkips(env environment) (string, error) {
 	skip := "-skip="
 
-	if os.Getenv("SKIP_SSO") != "" {
+	skipSso, err := env.GetBoolean("SKIP_SSO")
+	if err != nil {
+		return "", err
+	}
+
+	if skipSso {
 		skip += "SSO|"
 	}
 
-	switch os.Getenv("BACKEND") {
+	switch backend := env.GetString("BACKEND"); backend {
 	case "diego":
 		skip += "NO_DIEGO_SUPPORT"
 
 	case "dea":
 		skip += "NO_DEA_SUPPORT"
 
-	default:
+	case "":
 		skip += "NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"
+	default:
+		return "", fmt.Errorf("Invalid environment variable: 'BACKEND' was '%s', but must be 'diego', 'dea', or empty", backend)
 	}
 
-	return skip
+	return skip, nil
 }
 
 func generateSkipPackages(env environment) (string, error) {

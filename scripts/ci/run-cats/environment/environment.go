@@ -21,3 +21,7 @@ func (e *environment) GetBoolean(varName string) (bool, error) {
 		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
 	}
 }
+
+func (e *environment) GetString(varName string) string {
+	return os.Getenv(varName)
+}
