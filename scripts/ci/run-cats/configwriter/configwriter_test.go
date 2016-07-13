@@ -118,16 +118,8 @@ var _ = Describe("Configwriter", func() {
 			expectedPhpBuildpackName = "PHP_BUILDPACK_NAME" + "_" + time.Now().String()
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME" + "_" + time.Now().String()
 
-			env.GetBooleanStub = func(varName string) (bool, error) {
-				switch varName {
-				case "SKIP_SSL_VALIDATION":
-					return expectedSkipSslValidation, nil
-				case "USE_HTTP":
-					return expectedUseHttp, nil
-				default:
-					panic("unimplemented")
-				}
-			}
+			env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", expectedSkipSslValidation, nil)
+			env.GetBooleanReturnsFor("USE_HTTP", expectedUseHttp, nil)
 
 			os.Setenv("CF_API", expectedApi)
 			os.Setenv("CF_ADMIN_USER", expectedAdminUser)
@@ -290,13 +282,11 @@ var _ = Describe("Configwriter", func() {
 			var expectedErr error
 			BeforeEach(func() {
 				expectedErr = fmt.Errorf("not a valid boolean")
-				env.GetBooleanReturns(false, expectedErr)
+				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", false, expectedErr)
 			})
 
 			It("returns the error", func() {
 				_, err := configwriter.NewConfigFile("", env)
-				Expect(env.GetBooleanCallCount()).To(Equal(1))
-				Expect(env.GetBooleanArgsForCall(0)).To(Equal("SKIP_SSL_VALIDATION"))
 				Expect(err).To(Equal(expectedErr))
 			})
 		})
@@ -305,22 +295,11 @@ var _ = Describe("Configwriter", func() {
 			var expectedErr error
 			BeforeEach(func() {
 				expectedErr = fmt.Errorf("not a valid boolean")
-				env.GetBooleanStub = func(varName string) (bool, error) {
-					switch varName {
-					case "SKIP_SSL_VALIDATION":
-						return false, nil
-					case "USE_HTTP":
-						return false, expectedErr
-					default:
-						panic("unimplemented")
-					}
-				}
+				env.GetBooleanReturnsFor("USE_HTTP", false, expectedErr)
 			})
 
 			It("returns the error", func() {
 				_, err := configwriter.NewConfigFile("", env)
-				Expect(env.GetBooleanCallCount()).To(Equal(2))
-				Expect(env.GetBooleanArgsForCall(1)).To(Equal("USE_HTTP"))
 				Expect(err).To(Equal(expectedErr))
 			})
 		})
@@ -365,16 +344,8 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when any env variables are provided", func() {
 			BeforeEach(func() {
-				env.GetBooleanStub = func(varName string) (bool, error) {
-					switch varName {
-					case "SKIP_SSL_VALIDATION":
-						return true, nil
-					case "USE_HTTP":
-						return true, nil
-					default:
-						panic("unimplemented")
-					}
-				}
+				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", true, nil)
+				env.GetBooleanReturnsFor("USE_HTTP", true, nil)
 
 				os.Setenv("CF_API", "non-empty-value")
 				os.Setenv("CF_ADMIN_USER", "non-empty-value")

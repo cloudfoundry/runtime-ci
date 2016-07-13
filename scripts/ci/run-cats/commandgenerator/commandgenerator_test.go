@@ -19,7 +19,7 @@ var _ = Describe("Commandgenerator", func() {
 	BeforeEach(func() {
 		env = &commandgeneratorfakes.FakeEnvironment{}
 		nodes = 10
-		env.GetIntegerReturns(nodes, nil)
+		env.GetIntegerReturnsFor("NODES", nodes, nil)
 
 	})
 
@@ -51,7 +51,7 @@ var _ = Describe("Commandgenerator", func() {
 			var expectedError error
 			BeforeEach(func() {
 				expectedError = fmt.Errorf("some error")
-				env.GetIntegerReturns(0, expectedError)
+				env.GetIntegerReturnsFor("NODES", 0, expectedError)
 			})
 
 			It("propogates the error", func() {
@@ -62,7 +62,7 @@ var _ = Describe("Commandgenerator", func() {
 
 		Context("when the node count is unset", func() {
 			BeforeEach(func() {
-				env.GetIntegerReturns(0, nil)
+				env.GetIntegerReturnsFor("NODES", 0, nil)
 			})
 			It("sets the default node count", func() {
 				_, args, _ := commandgenerator.GenerateCmd(env)
@@ -73,7 +73,17 @@ var _ = Describe("Commandgenerator", func() {
 		Context("when there are optional skipPackage env vars set", func() {
 			Context("to true", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturns(true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SSO", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_LOGGING", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_OPERATOR", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_ROUTE_SERVICES", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SECURITY_GROUPS", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SERVICES", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_DIEGO_SSH", true, nil)
+					env.GetBooleanReturnsFor("INCLUDE_V3", true, nil)
 				})
 
 				It("should generate a command with the correct list of skipPackage flags", func() {
@@ -89,7 +99,17 @@ var _ = Describe("Commandgenerator", func() {
 
 			Context("to false", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturns(false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SSO", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_LOGGING", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_OPERATOR", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_ROUTE_SERVICES", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SECURITY_GROUPS", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_SERVICES", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_DIEGO_SSH", false, nil)
+					env.GetBooleanReturnsFor("INCLUDE_V3", false, nil)
 				})
 
 				It("should generate a command with the correct list of skipPackage flags", func() {
@@ -109,7 +129,7 @@ var _ = Describe("Commandgenerator", func() {
 				var expectedError error
 				BeforeEach(func() {
 					expectedError = fmt.Errorf("some error")
-					env.GetBooleanReturns(false, expectedError)
+					env.GetBooleanReturnsFor("INCLUDE_V3", false, expectedError)
 				})
 
 				It("propogates the error", func() {
@@ -122,7 +142,7 @@ var _ = Describe("Commandgenerator", func() {
 		Context("when there are optional skip env vars set", func() {
 			Context("to true", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturns(true, nil)
+					env.GetBooleanReturnsFor("SKIP_SSO", true, nil)
 				})
 
 				It("generates a command that skips tests with the given tag", func() {
@@ -138,7 +158,7 @@ var _ = Describe("Commandgenerator", func() {
 
 			Context("to false", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturns(false, nil)
+					env.GetBooleanReturnsFor("SKIP_SSO", false, nil)
 				})
 
 				It("generates a command that does not include the given tag in the skips", func() {
@@ -156,34 +176,19 @@ var _ = Describe("Commandgenerator", func() {
 				var expectedError error
 				BeforeEach(func() {
 					expectedError = fmt.Errorf("some error")
-					env.GetBooleanStub = func(varName string) (bool, error) {
-						switch varName {
-						case "SKIP_SSO":
-							return false, expectedError
-						default:
-							return false, nil
-						}
-					}
+					env.GetBooleanReturnsFor("SKIP_SSO", false, expectedError)
 				})
 
 				It("propogates the error", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
 					Expect(err).To(Equal(expectedError))
-
-					found := false
-					for i := 0; i < env.GetBooleanCallCount(); i++ {
-						varName := env.GetBooleanArgsForCall(i)
-						if varName == "SKIP_SSO" {
-							found = true
-						}
-					}
-					Expect(found).To(BeTrue())
+					Expect(env.GetBooleanCallCountFor("SKIP_SSO"))
 				})
 			})
 
 			Context("when the backend is set to diego", func() {
 				BeforeEach(func() {
-					env.GetStringReturns("diego")
+					env.GetStringReturnsFor("BACKEND", "diego")
 				})
 
 				It("should generate a command that skips NO_DIEGO_SUPPORT", func() {
@@ -194,14 +199,13 @@ var _ = Describe("Commandgenerator", func() {
 					))
 
 					Expect(args).To(ContainElement("-skip=NO_DIEGO_SUPPORT"))
-					Expect(env.GetStringArgsForCall(0)).To(Equal("BACKEND"))
 				})
 
 			})
 
 			Context("when the backend is set to dea", func() {
 				BeforeEach(func() {
-					env.GetStringReturns("dea")
+					env.GetStringReturnsFor("BACKEND", "dea")
 				})
 
 				It("should generate a command that skips NO_DEA_SUPPORT", func() {
@@ -211,7 +215,6 @@ var _ = Describe("Commandgenerator", func() {
 						"bin/test",
 					))
 					Expect(args).To(ContainElement("-skip=NO_DEA_SUPPORT"))
-					Expect(env.GetStringArgsForCall(0)).To(Equal("BACKEND"))
 				})
 			})
 
@@ -223,19 +226,17 @@ var _ = Describe("Commandgenerator", func() {
 						"bin/test",
 					))
 					Expect(args).To(ContainElement("-skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"))
-					Expect(env.GetStringArgsForCall(0)).To(Equal("BACKEND"))
 				})
 			})
 
 			Context("when the backend is not a valid value", func() {
 				BeforeEach(func() {
-					env.GetStringReturns("bogus")
+					env.GetStringReturnsFor("BACKEND", "bogus")
 				})
 				It("should generate a command that skips bosh NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
 					Expect(err).To(HaveOccurred())
 					Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'bogus', but must be 'diego', 'dea', or empty"))
-					Expect(env.GetStringArgsForCall(0)).To(Equal("BACKEND"))
 				})
 			})
 		})
