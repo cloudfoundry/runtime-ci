@@ -25,6 +25,10 @@ var _ = Describe("Environment", func() {
 				os.Setenv("MY_ENV_VAR", "")
 			})
 
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
 			It("returns false", func() {
 				env := environment.New()
 				boolValue, err := env.GetBoolean("MY_ENV_VAR")
@@ -36,6 +40,10 @@ var _ = Describe("Environment", func() {
 		Context("when the environment variable is set to the string 'true'", func() {
 			BeforeEach(func() {
 				os.Setenv("MY_ENV_VAR", "true")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
 			})
 
 			It("returns true", func() {
@@ -50,6 +58,10 @@ var _ = Describe("Environment", func() {
 				os.Setenv("MY_ENV_VAR", "not a boolean")
 			})
 
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
 			It("returns an error", func() {
 				env := environment.New()
 				_, err := env.GetBoolean("MY_ENV_VAR")
@@ -61,6 +73,10 @@ var _ = Describe("Environment", func() {
 		Context("when the environment variable is set to a non-boolean value that ParseBool would accept", func() {
 			BeforeEach(func() {
 				os.Setenv("MY_ENV_VAR", "T")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
 			})
 
 			It("returns an error", func() {
