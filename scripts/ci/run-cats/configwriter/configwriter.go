@@ -32,10 +32,10 @@ type config struct {
 	PersistentAppSpace     string `json:"persistent_app_space,omitempty"`
 	PersistentAppOrg       string `json:"persistent_app_org,omitempty"`
 	PersistentAppQuotaName string `json:"persistent_app_quota_name,omitempty"`
-	DefaultTimeout         *int   `json:"default_timeout,omitempty"`
-	CfPushTimeout          *int   `json:"cf_push_timeout,omitempty"`
-	LongCurlTimeout        *int   `json:"long_curl_timeout,omitempty"`
-	BrokerStartTimeout     *int   `json:"broker_start_timeout,omitempty"`
+	DefaultTimeout         int    `json:"default_timeout,omitempty"`
+	CfPushTimeout          int    `json:"cf_push_timeout,omitempty"`
+	LongCurlTimeout        int    `json:"long_curl_timeout,omitempty"`
+	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
 }
 
 type configFile struct {
@@ -52,22 +52,22 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 	return configFile{config, filepath.Clean(destinationDir)}, err
 }
 
-func getTimeoutIfPresent(envKey string) (*int, error) {
+func getTimeoutIfPresent(envKey string) (int, error) {
 	if os.Getenv(envKey) == "" {
-		return nil, nil
+		return 0, nil
 	}
 	timeout, err := strconv.Atoi(os.Getenv(envKey))
 	if err != nil || timeout <= 0 {
-		return nil, fmt.Errorf("Invalid env var '%s' only allows positive integers", envKey)
+		return 0, fmt.Errorf("Invalid env var '%s' only allows positive integers", envKey)
 	}
-	return &timeout, err
+	return timeout, err
 }
 
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
 		err                                                                error
 		skipSslValidation, useHttp                                         bool
-		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout *int
+		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout int
 	)
 
 	skipSslValidation, err = env.GetBoolean("SKIP_SSL_VALIDATION")
