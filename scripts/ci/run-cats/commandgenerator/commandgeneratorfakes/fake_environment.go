@@ -21,6 +21,15 @@ type FakeEnvironment struct {
 	getStringReturns struct {
 		result1 string
 	}
+	GetIntegerStub        func(string) (int, error)
+	getIntegerMutex       sync.RWMutex
+	getIntegerArgsForCall []struct {
+		arg1 string
+	}
+	getIntegerReturns struct {
+		result1 int
+		result2 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -92,6 +101,40 @@ func (fake *FakeEnvironment) GetStringReturns(result1 string) {
 	}{result1}
 }
 
+func (fake *FakeEnvironment) GetInteger(arg1 string) (int, error) {
+	fake.getIntegerMutex.Lock()
+	fake.getIntegerArgsForCall = append(fake.getIntegerArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("GetInteger", []interface{}{arg1})
+	fake.getIntegerMutex.Unlock()
+	if fake.GetIntegerStub != nil {
+		return fake.GetIntegerStub(arg1)
+	} else {
+		return fake.getIntegerReturns.result1, fake.getIntegerReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIntegerCallCount() int {
+	fake.getIntegerMutex.RLock()
+	defer fake.getIntegerMutex.RUnlock()
+	return len(fake.getIntegerArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIntegerArgsForCall(i int) string {
+	fake.getIntegerMutex.RLock()
+	defer fake.getIntegerMutex.RUnlock()
+	return fake.getIntegerArgsForCall[i].arg1
+}
+
+func (fake *FakeEnvironment) GetIntegerReturns(result1 int, result2 error) {
+	fake.GetIntegerStub = nil
+	fake.getIntegerReturns = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -99,6 +142,8 @@ func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	defer fake.getBooleanMutex.RUnlock()
 	fake.getStringMutex.RLock()
 	defer fake.getStringMutex.RUnlock()
+	fake.getIntegerMutex.RLock()
+	defer fake.getIntegerMutex.RUnlock()
 	return fake.invocations
 }
 

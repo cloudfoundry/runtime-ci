@@ -2,11 +2,8 @@ package commandgenerator_test
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator/commandgeneratorfakes"
@@ -20,15 +17,10 @@ var _ = Describe("Commandgenerator", func() {
 	var env *commandgeneratorfakes.FakeEnvironment
 
 	BeforeEach(func() {
-		rand.Seed(time.Now().UTC().UnixNano())
-		nodes = rand.Intn(100)
-		os.Setenv("NODES", strconv.Itoa(nodes))
-
 		env = &commandgeneratorfakes.FakeEnvironment{}
-	})
+		nodes = 10
+		env.GetIntegerReturns(nodes, nil)
 
-	AfterEach(func() {
-		os.Unsetenv("NODES")
 	})
 
 	Context("When the path to CATs is set", func() {
@@ -46,13 +38,36 @@ var _ = Describe("Commandgenerator", func() {
 			Expect(cmd).To(Equal("bin/test"))
 
 			Expect(strings.Join(args, " ")).To(Equal(
-				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes %d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
+				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
 			))
 
 			os.Setenv("CATS_PATH", "/path/to/cats")
 			cmd, _, err = commandgenerator.GenerateCmd(env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/path/to/cats/bin/test"))
+		})
+
+		Context("when the env returns an error fetching the number of nodes", func() {
+			var expectedError error
+			BeforeEach(func() {
+				expectedError = fmt.Errorf("some error")
+				env.GetIntegerReturns(0, expectedError)
+			})
+
+			It("propogates the error", func() {
+				_, _, err := commandgenerator.GenerateCmd(env)
+				Expect(err).To(Equal(expectedError))
+			})
+		})
+
+		Context("when the node count is unset", func() {
+			BeforeEach(func() {
+				env.GetIntegerReturns(0, nil)
+			})
+			It("sets the default node count", func() {
+				_, args, _ := commandgenerator.GenerateCmd(env)
+				Expect(args).To(ContainElement("-nodes=2"))
+			})
 		})
 
 		Context("when there are optional skipPackage env vars set", func() {

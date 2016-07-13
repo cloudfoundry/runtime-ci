@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const DEFAULT_NODES = 2
+
 var envVarToPackageMap = map[string]string{
 	"INCLUDE_DIEGO_SSH":             "ssh",
 	"INCLUDE_V3":                    "v3",
@@ -24,12 +26,20 @@ var envVarToPackageMap = map[string]string{
 type environment interface {
 	GetBoolean(string) (bool, error)
 	GetString(string) string
+	GetInteger(string) (int, error)
 }
 
 func GenerateCmd(env environment) (string, []string, error) {
-	nodes := os.Getenv("NODES")
-	var testBinPath string
+	nodes, err := env.GetInteger("NODES")
+	if err != nil {
+		return "", nil, err
+	}
 
+	if nodes == 0 {
+		nodes = DEFAULT_NODES
+	}
+
+	var testBinPath string
 	catsPath, keyExists := os.LookupEnv("CATS_PATH")
 	if keyExists {
 		testBinPath = filepath.Clean(catsPath + "/bin/test")
@@ -49,8 +59,7 @@ func GenerateCmd(env environment) (string, []string, error) {
 		"-r",
 		"-slowSpecThreshold=120",
 		"-randomizeAllSpecs",
-		"-nodes",
-		fmt.Sprintf("%s", nodes),
+		fmt.Sprintf("-nodes=%d", nodes),
 		fmt.Sprintf("%s", skipPackages),
 		fmt.Sprintf("%s", skips),
 		"-keepGoing",

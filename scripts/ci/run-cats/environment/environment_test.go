@@ -71,4 +71,67 @@ var _ = Describe("Environment", func() {
 			})
 		})
 	})
+
+	Describe("GetInteger", func() {
+		Context("when the variable is not set", func() {
+			It("returns 0 because it is the default value for integer", func() {
+				env := environment.New()
+				intValue, err := env.GetInteger("MY_ENV_VAR")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(intValue).To(Equal(0))
+			})
+		})
+
+		Context("when the variable is explicitly set to 0", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "0")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetInteger("MY_ENV_VAR")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
+			})
+		})
+
+		Context("when the variable is not an integer", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "not an integer")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetInteger("MY_ENV_VAR")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
+			})
+		})
+
+		Context("when the variable is set to a strictly positive integer", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "10")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns the integer value", func() {
+				env := environment.New()
+				intValue, err := env.GetInteger("MY_ENV_VAR")
+				Expect(intValue).To(Equal(10))
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+		})
+	})
 })

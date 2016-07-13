@@ -256,7 +256,7 @@ CF_APPS_DOMAIN`,
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 5 -skipPackage=helpers -skip=NO_DIEGO_SUPPORT -keepGoing",
+				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=5 -skipPackage=helpers -skip=NO_DIEGO_SUPPORT -keepGoing",
 			))
 		})
 	})
