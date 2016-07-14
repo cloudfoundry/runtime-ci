@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator/commandgeneratorfakes"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment/fake"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,10 +13,10 @@ import (
 
 var _ = Describe("Commandgenerator", func() {
 	var nodes int
-	var env *commandgeneratorfakes.FakeEnvironment
+	var env *fake.FakeEnvironment
 
 	BeforeEach(func() {
-		env = &commandgeneratorfakes.FakeEnvironment{}
+		env = &fake.FakeEnvironment{}
 		nodes = 10
 		env.GetIntegerReturnsFor("NODES", nodes, nil)
 

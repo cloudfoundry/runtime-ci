@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter/configwriterfakes"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment/fake"
 	. "github.com/onsi/ginkgo/extensions/table"
 
 	. "github.com/onsi/ginkgo"
@@ -15,9 +15,9 @@ import (
 )
 
 var _ = Describe("Configwriter", func() {
-	var env *configwriterfakes.FakeEnvironment
+	var env *fake.FakeEnvironment
 	BeforeEach(func() {
-		env = &configwriterfakes.FakeEnvironment{}
+		env = &fake.FakeEnvironment{}
 	})
 
 	Context("when env vars are not set", func() {

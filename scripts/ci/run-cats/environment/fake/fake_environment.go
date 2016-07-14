@@ -1,4 +1,4 @@
-package configwriterfakes
+package fake
 
 type FakeEnvironment struct {
 	GetBooleanStub    func(string) (bool, error)
