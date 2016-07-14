@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
@@ -121,55 +120,30 @@ var _ = Describe("Configwriter", func() {
 			env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", expectedSkipSslValidation, nil)
 			env.GetBooleanReturnsFor("USE_HTTP", expectedUseHttp, nil)
 
-			os.Setenv("CF_API", expectedApi)
-			os.Setenv("CF_ADMIN_USER", expectedAdminUser)
-			os.Setenv("CF_ADMIN_PASSWORD", expectedPassword)
-			os.Setenv("CF_APPS_DOMAIN", expectedAppsDomain)
-			os.Setenv("EXISTING_USER", expectedExistingUser)
-			os.Setenv("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
-			os.Setenv("BACKEND", expectedBackend)
-			os.Setenv("PERSISTENT_APP_HOST", expectedPersistedAppHost)
-			os.Setenv("PERSISTENT_APP_SPACE", expectedPersistedAppSpace)
-			os.Setenv("PERSISTENT_APP_ORG", expectedPersistedAppOrg)
-			os.Setenv("PERSISTENT_APP_QUOTA_NAME", expectedPersistedAppQuotaName)
-			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", strconv.Itoa(expectedDefaultTimeout))
-			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", strconv.Itoa(expectedCfPushTimeout))
-			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", strconv.Itoa(expectedLongCurlTimeout))
-			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", strconv.Itoa(expectedBrokerStartTimeout))
-			os.Setenv("STATICFILE_BUILDPACK_NAME", expectedStaticBuildpackName)
-			os.Setenv("JAVA_BUILDPACK_NAME", expectedJavaBuildpackName)
-			os.Setenv("RUBY_BUILDPACK_NAME", expectedRubyBuildpackName)
-			os.Setenv("NODEJS_BUILDPACK_NAME", expectedNodeJsBuildpackName)
-			os.Setenv("GO_BUILDPACK_NAME", expectedGoBuildpackName)
-			os.Setenv("PYTHON_BUILDPACK_NAME", expectedPythonBuildpackName)
-			os.Setenv("PHP_BUILDPACK_NAME", expectedPhpBuildpackName)
-			os.Setenv("BINARY_BUILDPACK_NAME", expectedBinaryBuildpackName)
-		})
+			env.GetStringReturnsFor("CF_API", expectedApi)
+			env.GetStringReturnsFor("CF_ADMIN_USER", expectedAdminUser)
+			env.GetStringReturnsFor("CF_ADMIN_PASSWORD", expectedPassword)
+			env.GetStringReturnsFor("CF_APPS_DOMAIN", expectedAppsDomain)
+			env.GetStringReturnsFor("EXISTING_USER", expectedExistingUser)
+			env.GetStringReturnsFor("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
+			env.GetStringReturnsFor("BACKEND", expectedBackend)
+			env.GetStringReturnsFor("PERSISTENT_APP_HOST", expectedPersistedAppHost)
+			env.GetStringReturnsFor("PERSISTENT_APP_SPACE", expectedPersistedAppSpace)
+			env.GetStringReturnsFor("PERSISTENT_APP_ORG", expectedPersistedAppOrg)
+			env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", expectedPersistedAppQuotaName)
+			env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", expectedStaticBuildpackName)
+			env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", expectedJavaBuildpackName)
+			env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", expectedRubyBuildpackName)
+			env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", expectedNodeJsBuildpackName)
+			env.GetStringReturnsFor("GO_BUILDPACK_NAME", expectedGoBuildpackName)
+			env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", expectedPythonBuildpackName)
+			env.GetStringReturnsFor("PHP_BUILDPACK_NAME", expectedPhpBuildpackName)
+			env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", expectedBinaryBuildpackName)
 
-		AfterEach(func() {
-			os.Unsetenv("CF_API")
-			os.Unsetenv("CF_ADMIN_USER")
-			os.Unsetenv("CF_ADMIN_PASSWORD")
-			os.Unsetenv("CF_APPS_DOMAIN")
-			os.Unsetenv("EXISTING_USER")
-			os.Unsetenv("EXISTING_USER_PASSWORD")
-			os.Unsetenv("BACKEND")
-			os.Unsetenv("PERSISTENT_APP_HOST")
-			os.Unsetenv("PERSISTENT_APP_SPACE")
-			os.Unsetenv("PERSISTENT_APP_ORG")
-			os.Unsetenv("PERSISTENT_APP_QUOTA_NAME")
-			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
-			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
-			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
-			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
-			os.Unsetenv("STATICFILE_BUILDPACK_NAME")
-			os.Unsetenv("JAVA_BUILDPACK_NAME")
-			os.Unsetenv("RUBY_BUILDPACK_NAME")
-			os.Unsetenv("NODEJS_BUILDPACK_NAME")
-			os.Unsetenv("GO_BUILDPACK_NAME")
-			os.Unsetenv("PYTHON_BUILDPACK_NAME")
-			os.Unsetenv("PHP_BUILDPACK_NAME")
-			os.Unsetenv("BINARY_BUILDPACK_NAME")
+			env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", expectedDefaultTimeout, nil)
+			env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", expectedCfPushTimeout, nil)
+			env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", expectedLongCurlTimeout, nil)
+			env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", expectedBrokerStartTimeout, nil)
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
@@ -205,10 +179,6 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		Context("when 'ExistingUser' is provided", func() {
-			BeforeEach(func() {
-				os.Setenv("EXISTING_USER", expectedExistingUser)
-			})
-
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to true if 'ExistingUser' is provided", func() {
 				configFile, err := configwriter.NewConfigFile("/some/dir", env)
 				Expect(err).NotTo(HaveOccurred())
@@ -219,7 +189,7 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when 'ExistingUser' is not provided", func() {
 			BeforeEach(func() {
-				os.Unsetenv("EXISTING_USER")
+				env.GetStringReturnsFor("EXISTING_USER", "")
 			})
 
 			It("Sets 'KeepUserAtSuiteEnd' and 'UseExistingUser' to false if 'ExistingUser' is not provided", func() {
@@ -231,45 +201,13 @@ var _ = Describe("Configwriter", func() {
 			})
 		})
 
-		Context("when timeouts are not positive", func() {
-			AfterEach(func() {
-				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
-			})
-
-			DescribeTable("fails fast with a reasonable error", func(envVarKey string, value int) {
-				os.Setenv(envVarKey, fmt.Sprintf("%d", value))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
-			},
-				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS", 0),
-				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS", 0),
-				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS", 0),
-				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS", 0),
-
-				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS", -1),
-				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS", -1),
-				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS", -1),
-				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS", -1),
-			)
-		})
-
-		Context("when timeouts are strings", func() {
-			AfterEach(func() {
-				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
-			})
-
+		Context("when timeouts are not valid integers", func() {
 			DescribeTable("fails fast with a reasonable error", func(envVarKey string) {
-				os.Setenv(envVarKey, "not an int")
+				env.GetIntegerReturnsFor(envVarKey, 0, fmt.Errorf("some error"))
 				_, err := configwriter.NewConfigFile("", env)
+
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid env var '" + envVarKey + "' only allows positive integers"))
+				Expect(err.Error()).To(Equal("some error"))
 			},
 				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS"),
 				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS"),
@@ -306,11 +244,7 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when BACKEND is not 'diego' or 'dea'", func() {
 			BeforeEach(func() {
-				os.Setenv("BACKEND", "some-other-value")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("BACKEND")
+				env.GetStringReturnsFor("BACKEND", "some-other-value")
 			})
 
 			It("fails fast with a reasonable error", func() {
@@ -347,55 +281,29 @@ var _ = Describe("Configwriter", func() {
 				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", true, nil)
 				env.GetBooleanReturnsFor("USE_HTTP", true, nil)
 
-				os.Setenv("CF_API", "non-empty-value")
-				os.Setenv("CF_ADMIN_USER", "non-empty-value")
-				os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
-				os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
-				os.Setenv("EXISTING_USER", "non-empty-value")
-				os.Setenv("EXISTING_USER_PASSWORD", "non-empty-value")
-				os.Setenv("BACKEND", "diego")
-				os.Setenv("PERSISTENT_APP_HOST", "non-empty-value")
-				os.Setenv("PERSISTENT_APP_SPACE", "non-empty-value")
-				os.Setenv("PERSISTENT_APP_ORG", "non-empty-value")
-				os.Setenv("PERSISTENT_APP_QUOTA_NAME", "non-empty-value")
-				os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "1")
-				os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "1")
-				os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "1")
-				os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "1")
-				os.Setenv("STATICFILE_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("JAVA_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("RUBY_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("NODEJS_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("GO_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("PYTHON_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("PHP_BUILDPACK_NAME", "non-empty-value")
-				os.Setenv("BINARY_BUILDPACK_NAME", "non-empty-value")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("CF_API")
-				os.Unsetenv("CF_ADMIN_USER")
-				os.Unsetenv("CF_ADMIN_PASSWORD")
-				os.Unsetenv("CF_APPS_DOMAIN")
-				os.Unsetenv("EXISTING_USER")
-				os.Unsetenv("EXISTING_USER_PASSWORD")
-				os.Unsetenv("BACKEND")
-				os.Unsetenv("PERSISTENT_APP_HOST")
-				os.Unsetenv("PERSISTENT_APP_SPACE")
-				os.Unsetenv("PERSISTENT_APP_ORG")
-				os.Unsetenv("PERSISTENT_APP_QUOTA_NAME")
-				os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
-				os.Unsetenv("STATICFILE_BUILDPACK_NAME")
-				os.Unsetenv("JAVA_BUILDPACK_NAME")
-				os.Unsetenv("RUBY_BUILDPACK_NAME")
-				os.Unsetenv("NODEJS_BUILDPACK_NAME")
-				os.Unsetenv("GO_BUILDPACK_NAME")
-				os.Unsetenv("PYTHON_BUILDPACK_NAME")
-				os.Unsetenv("PHP_BUILDPACK_NAME")
-				os.Unsetenv("BINARY_BUILDPACK_NAME")
+				env.GetStringReturnsFor("CF_API", "non-empty-value")
+				env.GetStringReturnsFor("CF_ADMIN_USER", "non-empty-value")
+				env.GetStringReturnsFor("CF_ADMIN_PASSWORD", "non-empty-value")
+				env.GetStringReturnsFor("CF_APPS_DOMAIN", "non-empty-value")
+				env.GetStringReturnsFor("EXISTING_USER", "non-empty-value")
+				env.GetStringReturnsFor("EXISTING_USER_PASSWORD", "non-empty-value")
+				env.GetStringReturnsFor("BACKEND", "diego")
+				env.GetStringReturnsFor("PERSISTENT_APP_HOST", "non-empty-value")
+				env.GetStringReturnsFor("PERSISTENT_APP_SPACE", "non-empty-value")
+				env.GetStringReturnsFor("PERSISTENT_APP_ORG", "non-empty-value")
+				env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", "non-empty-value")
+				env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", 1, nil)
+				env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", 1, nil)
+				env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", 1, nil)
+				env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", 1, nil)
+				env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("GO_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("PHP_BUILDPACK_NAME", "non-empty-value")
+				env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", "non-empty-value")
 			})
 
 			It("renders the variables in the integration_config", func() {
@@ -490,7 +398,7 @@ var _ = Describe("Configwriter", func() {
 				tempDir, err = ioutil.TempDir("", "")
 				Expect(err).NotTo(HaveOccurred())
 
-				os.Setenv("CF_API", "cf-api-value")
+				env.GetStringReturnsFor("CF_API", "cf-api-value")
 			})
 
 			AfterEach(func() {
@@ -498,7 +406,6 @@ var _ = Describe("Configwriter", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				err = os.Unsetenv("CONFIG")
-				err = os.Unsetenv("CF_API")
 			})
 
 			It("writes the config object to the destination file as json", func() {
@@ -541,10 +448,7 @@ var _ = Describe("Configwriter", func() {
 
 	Context("when the destinationDir doesn't end with a trailing slash", func() {
 		BeforeEach(func() {
-			os.Setenv("CF_API", "cf-api-value")
-		})
-		AfterEach(func() {
-			os.Unsetenv("CF_API")
+			env.GetStringReturnsFor("CF_API", "cf-api-value")
 		})
 
 		It("should successfully write integration_config.json", func() {

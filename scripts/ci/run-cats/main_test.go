@@ -103,7 +103,7 @@ CF_APPS_DOMAIN`,
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session, 30).Should(gexec.Exit(1))
-				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid env var 'DEFAULT_TIMEOUT_IN_SECONDS' only allows positive integers`))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0`))
 				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
 			})
 		})
