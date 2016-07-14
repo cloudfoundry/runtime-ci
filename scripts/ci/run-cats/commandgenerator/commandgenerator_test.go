@@ -2,7 +2,6 @@ package commandgenerator_test
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
@@ -25,11 +24,7 @@ var _ = Describe("Commandgenerator", func() {
 
 	Context("When the path to CATs is set", func() {
 		BeforeEach(func() {
-			os.Setenv("CATS_PATH", ".")
-		})
-
-		AfterEach(func() {
-			os.Unsetenv("CATS_PATH")
+			env.GetStringReturnsFor("CATS_PATH", ".")
 		})
 
 		It("Should generate a command to run CATS", func() {
@@ -41,7 +36,7 @@ var _ = Describe("Commandgenerator", func() {
 				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
 			))
 
-			os.Setenv("CATS_PATH", "/path/to/cats")
+			env.GetStringReturnsFor("CATS_PATH", "/path/to/cats")
 			cmd, _, err = commandgenerator.GenerateCmd(env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/path/to/cats/bin/test"))
@@ -244,11 +239,7 @@ var _ = Describe("Commandgenerator", func() {
 
 	Context("When the path to CATS isn't explicitly provided", func() {
 		BeforeEach(func() {
-			os.Setenv("GOPATH", "/go")
-		})
-
-		AfterEach(func() {
-			os.Unsetenv("GOPATH")
+			env.GetStringReturnsFor("GOPATH", "/go")
 		})
 
 		It("Should return a sane default command path for use in Concourse", func() {

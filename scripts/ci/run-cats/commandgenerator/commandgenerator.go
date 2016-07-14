@@ -2,7 +2,6 @@ package commandgenerator
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -40,11 +39,11 @@ func GenerateCmd(env environment) (string, []string, error) {
 	}
 
 	var testBinPath string
-	catsPath, keyExists := os.LookupEnv("CATS_PATH")
-	if keyExists {
+	catsPath := env.GetString("CATS_PATH")
+	if catsPath != "" {
 		testBinPath = filepath.Clean(catsPath + "/bin/test")
 	} else {
-		testBinPath = os.Getenv("GOPATH") + "/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
+		testBinPath = env.GetString("GOPATH") + "/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"
 	}
 
 	skipPackages, err := generateSkipPackages(env)
