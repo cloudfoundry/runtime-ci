@@ -41,7 +41,7 @@ CF_APPS_DOMAIN`,
 
 	Context("When all required env vars are set", func() {
 		BeforeEach(func() {
-			os.Setenv("CATS_PATH", ".")
+			os.Setenv("CATS_PATH", "fixtures/pass")
 			os.Setenv("CF_API", "non-empty-value")
 			os.Setenv("CF_ADMIN_USER", "non-empty-value")
 			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
@@ -169,7 +169,7 @@ CF_APPS_DOMAIN`,
 
 	Context("When all supported env vars are set", func() {
 		BeforeEach(func() {
-			os.Setenv("CATS_PATH", ".")
+			os.Setenv("CATS_PATH", "fixtures/pass")
 			os.Setenv("CF_API", "api.example.com")
 			os.Setenv("CF_ADMIN_USER", "admin-username")
 			os.Setenv("CF_ADMIN_PASSWORD", "admin-password")

@@ -1,3 +1,5 @@
 #!/bin/bash
 
+env
+echo "$0 $@"
 echo "pass"
