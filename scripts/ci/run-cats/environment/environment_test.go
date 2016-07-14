@@ -131,6 +131,22 @@ var _ = Describe("Environment", func() {
 				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
 			})
 		})
+		Context("when the variable is set to a negative integer", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "-1")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetInteger("MY_ENV_VAR")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
+			})
+		})
 
 		Context("when the variable is set to a strictly positive integer", func() {
 			BeforeEach(func() {

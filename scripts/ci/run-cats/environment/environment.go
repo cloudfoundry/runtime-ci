@@ -33,12 +33,8 @@ func (e *environment) GetInteger(varName string) (int, error) {
 		return 0, nil
 	}
 
-	if value == "0" {
-		return 0, fmt.Errorf("Invalid environment variable: '%s' must be an integer greater than 0", varName)
-	}
-
 	intValue, err := strconv.Atoi(value)
-	if err != nil {
+	if err != nil || intValue <= 0 {
 		return 0, fmt.Errorf("Invalid environment variable: '%s' must be an integer greater than 0", varName)
 	}
 
