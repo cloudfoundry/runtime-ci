@@ -12,6 +12,8 @@ type FakeEnvironment struct {
 	GetIntegerStub    func(string) (bool, error)
 	getIntegerStubMap map[string]getIntegerReturnType
 	getIntegerCallMap map[string]int
+
+	getBackendReturns getBackendReturnType
 }
 
 type getBoolReturnType struct {
@@ -21,6 +23,11 @@ type getBoolReturnType struct {
 
 type getIntegerReturnType struct {
 	i int
+	e error
+}
+
+type getBackendReturnType struct {
+	s string
 	e error
 }
 
@@ -85,4 +92,13 @@ func (fake *FakeEnvironment) GetIntegerReturnsFor(varName string, returnInt int,
 
 func (fake *FakeEnvironment) GetIntegerCallCountFor(varName string) int {
 	return fake.getIntegerCallMap[varName]
+}
+
+func (fake *FakeEnvironment) GetBackend() (string, error) {
+	stub := fake.getBackendReturns
+	return stub.s, stub.e
+}
+
+func (fake *FakeEnvironment) GetBackendReturns(s string, e error) {
+	fake.getBackendReturns = getBackendReturnType{s: s, e: e}
 }

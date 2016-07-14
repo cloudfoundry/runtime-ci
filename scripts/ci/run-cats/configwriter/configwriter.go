@@ -46,6 +46,7 @@ type Environment interface {
 	GetBoolean(string) (bool, error)
 	GetString(string) string
 	GetInteger(string) (int, error)
+	GetBackend() (string, error)
 }
 
 func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
@@ -85,10 +86,9 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	if err != nil {
 		return config{}, err
 	}
-
-	backend := env.GetString("BACKEND")
-	if backend != "" && backend != "dea" && backend != "diego" {
-		return config{}, fmt.Errorf("Invalid env var 'BACKEND' only accepts 'dea' or 'diego'")
+	backend, err := env.GetBackend()
+	if err != nil {
+		return config{}, err
 	}
 
 	return config{

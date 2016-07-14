@@ -180,10 +180,12 @@ var _ = Describe("Commandgenerator", func() {
 					Expect(env.GetBooleanCallCountFor("SKIP_SSO"))
 				})
 			})
+		})
 
-			Context("when the backend is set to diego", func() {
+		Describe("the BACKEND parameter", func() {
+			Context("is set to diego", func() {
 				BeforeEach(func() {
-					env.GetStringReturnsFor("BACKEND", "diego")
+					env.GetBackendReturns("diego", nil)
 				})
 
 				It("should generate a command that skips NO_DIEGO_SUPPORT", func() {
@@ -198,9 +200,9 @@ var _ = Describe("Commandgenerator", func() {
 
 			})
 
-			Context("when the backend is set to dea", func() {
+			Context("is set to dea", func() {
 				BeforeEach(func() {
-					env.GetStringReturnsFor("BACKEND", "dea")
+					env.GetBackendReturns("dea", nil)
 				})
 
 				It("should generate a command that skips NO_DEA_SUPPORT", func() {
@@ -213,7 +215,10 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("when the backend isn't set", func() {
+			Context("isn't set", func() {
+				BeforeEach(func() {
+					env.GetBackendReturns("", nil)
+				})
 				It("should generate a command that skips bosh NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
 					cmd, args, err := commandgenerator.GenerateCmd(env)
 					Expect(err).NotTo(HaveOccurred())
@@ -224,14 +229,14 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("when the backend is not a valid value", func() {
+			Context("is not a valid value", func() {
 				BeforeEach(func() {
-					env.GetStringReturnsFor("BACKEND", "bogus")
+					env.GetBackendReturns("", fmt.Errorf("some error"))
 				})
-				It("should generate a command that skips bosh NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
+				It("returns an error", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
 					Expect(err).To(HaveOccurred())
-					Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'bogus', but must be 'diego', 'dea', or empty"))
+					Expect(err.Error()).To(Equal("some error"))
 				})
 			})
 		})

@@ -126,7 +126,6 @@ var _ = Describe("Configwriter", func() {
 			env.GetStringReturnsFor("CF_APPS_DOMAIN", expectedAppsDomain)
 			env.GetStringReturnsFor("EXISTING_USER", expectedExistingUser)
 			env.GetStringReturnsFor("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
-			env.GetStringReturnsFor("BACKEND", expectedBackend)
 			env.GetStringReturnsFor("PERSISTENT_APP_HOST", expectedPersistedAppHost)
 			env.GetStringReturnsFor("PERSISTENT_APP_SPACE", expectedPersistedAppSpace)
 			env.GetStringReturnsFor("PERSISTENT_APP_ORG", expectedPersistedAppOrg)
@@ -144,6 +143,8 @@ var _ = Describe("Configwriter", func() {
 			env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", expectedCfPushTimeout, nil)
 			env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", expectedLongCurlTimeout, nil)
 			env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", expectedBrokerStartTimeout, nil)
+
+			env.GetBackendReturns(expectedBackend, nil)
 		})
 
 		It("Generates a config object with the correct CF env variables set", func() {
@@ -213,27 +214,17 @@ var _ = Describe("Configwriter", func() {
 			)
 		})
 
-		Context("when BACKEND is 'dea'", func() {
+		Context("when GetBackend returns an error", func() {
+			var expectedError error
 			BeforeEach(func() {
-				env.GetStringReturnsFor("BACKEND", "dea")
+				expectedError = fmt.Errorf("some backend error")
+				env.GetBackendReturns("", expectedError)
 			})
 
-			It("sets the backend to dea", func() {
-				configFile, err := configwriter.NewConfigFile("", env)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(configFile.Config.Backend).To(Equal("dea"))
-			})
-		})
-
-		Context("when BACKEND is not 'diego' or 'dea'", func() {
-			BeforeEach(func() {
-				env.GetStringReturnsFor("BACKEND", "some-other-value")
-			})
-
-			It("fails fast with a reasonable error", func() {
+			It("propogates the error", func() {
 				_, err := configwriter.NewConfigFile("", env)
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid env var 'BACKEND' only accepts 'dea' or 'diego'"))
+				Expect(err.Error()).To(Equal("some backend error"))
 			})
 		})
 	})
@@ -264,13 +255,14 @@ var _ = Describe("Configwriter", func() {
 				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", true, nil)
 				env.GetBooleanReturnsFor("USE_HTTP", true, nil)
 
+				env.GetBackendReturns("diego", nil)
+
 				env.GetStringReturnsFor("CF_API", "non-empty-value")
 				env.GetStringReturnsFor("CF_ADMIN_USER", "non-empty-value")
 				env.GetStringReturnsFor("CF_ADMIN_PASSWORD", "non-empty-value")
 				env.GetStringReturnsFor("CF_APPS_DOMAIN", "non-empty-value")
 				env.GetStringReturnsFor("EXISTING_USER", "non-empty-value")
 				env.GetStringReturnsFor("EXISTING_USER_PASSWORD", "non-empty-value")
-				env.GetStringReturnsFor("BACKEND", "diego")
 				env.GetStringReturnsFor("PERSISTENT_APP_HOST", "non-empty-value")
 				env.GetStringReturnsFor("PERSISTENT_APP_SPACE", "non-empty-value")
 				env.GetStringReturnsFor("PERSISTENT_APP_ORG", "non-empty-value")

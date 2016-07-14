@@ -166,4 +166,55 @@ var _ = Describe("Environment", func() {
 
 		})
 	})
+
+	Describe("GetBackend", func() {
+		Context("when the value is empty", func() {
+			It("returns the empty string", func() {
+				env := environment.New()
+				backend, err := env.GetBackend()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(backend).To(Equal(""))
+			})
+		})
+
+		Context("when the value is 'diego'", func() {
+			BeforeEach(func() {
+				os.Setenv("BACKEND", "diego")
+			})
+
+			It("returns 'diego'", func() {
+				env := environment.New()
+				backend, err := env.GetBackend()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(backend).To(Equal("diego"))
+			})
+		})
+
+		Context("when the value is 'dea'", func() {
+			BeforeEach(func() {
+				os.Setenv("BACKEND", "dea")
+			})
+
+			It("returns 'dea'", func() {
+				env := environment.New()
+				backend, err := env.GetBackend()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(backend).To(Equal("dea"))
+			})
+		})
+
+		Context("when the value is anything else", func() {
+			BeforeEach(func() {
+				os.Setenv("BACKEND", "some other backend")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetBackend()
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'some other backend', but must be 'diego', 'dea', or empty"))
+			})
+
+		})
+	})
 })

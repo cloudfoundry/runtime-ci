@@ -23,6 +23,16 @@ func (e *environment) GetBoolean(varName string) (bool, error) {
 	}
 }
 
+func (e *environment) GetBackend() (string, error) {
+	value := os.Getenv("BACKEND")
+	switch value {
+	case "dea", "diego", "":
+		return value, nil
+	default:
+		return "", fmt.Errorf("Invalid environment variable: 'BACKEND' was '%s', but must be 'diego', 'dea', or empty", value)
+	}
+}
+
 func (e *environment) GetString(varName string) string {
 	return os.Getenv(varName)
 }

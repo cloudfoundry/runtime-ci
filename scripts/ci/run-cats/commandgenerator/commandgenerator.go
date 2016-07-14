@@ -26,6 +26,7 @@ type environment interface {
 	GetBoolean(string) (bool, error)
 	GetString(string) string
 	GetInteger(string) (int, error)
+	GetBackend() (string, error)
 }
 
 func GenerateCmd(env environment) (string, []string, error) {
@@ -77,17 +78,18 @@ func generateSkips(env environment) (string, error) {
 		skip += "SSO|"
 	}
 
-	switch backend := env.GetString("BACKEND"); backend {
+	backend, err := env.GetBackend()
+	if err != nil {
+		return "", err
+	}
+
+	switch backend {
 	case "diego":
 		skip += "NO_DIEGO_SUPPORT"
-
 	case "dea":
 		skip += "NO_DEA_SUPPORT"
-
 	case "":
 		skip += "NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"
-	default:
-		return "", fmt.Errorf("Invalid environment variable: 'BACKEND' was '%s', but must be 'diego', 'dea', or empty", backend)
 	}
 
 	return skip, nil
