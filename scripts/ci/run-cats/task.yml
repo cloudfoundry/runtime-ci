@@ -7,7 +7,8 @@ image_resource:
     repository: relintdockerhubpushbot/run-cats
 
 inputs:
-- name: runtime-ci
+- name: runtime-ci # for the task script only
+- name: runtime-ci-run-cats
 - name: cf-acceptance-tests
 
 run:
