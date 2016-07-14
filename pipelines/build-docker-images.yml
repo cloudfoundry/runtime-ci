@@ -1224,15 +1224,15 @@ jobs:
   public: true
   plan:
     - do:
-      - get: runtime-ci # only for scripts
-      - get: runtime-ci-run-cats # the actual input to the run-cats-unit-tests build
+      - get: runtime-ci
+      - get: runtime-ci-run-cats # used only for control -- trigger this job and the subsequent build-run-cats-docker-image build
         trigger: true
       - task: run-cats-unit-tests
         file: runtime-ci/scripts/ci/run-ginkgo/task.yml
         input_mapping:
-          project: runtime-ci-run-cats
+          project: runtime-ci
         params:
-          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci-run-cats/scripts/ci/run-cats/
+          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/
           TEST_PATH: project/scripts/ci/run-cats/
           GINKGO_PARAMS: -r
 
