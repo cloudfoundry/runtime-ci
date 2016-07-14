@@ -54,7 +54,6 @@ groups:
 - name: run-cats-tests
   jobs:
   - test-cats-golang
-  - fake-run-cats
   - build-run-cats-docker-image
 
 resources:
@@ -358,13 +357,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/recreate-datadog-dashboard-unit-tests/Dockerfile]
-
-- name: fake-CATs
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-cats/]
 
 - name: runtime-ci
   type: git
@@ -1232,43 +1224,17 @@ jobs:
   public: true
   plan:
     - do:
-      - get: runtime-ci
+      - get: runtime-ci # only for scripts
+      - get: runtime-ci-run-cats # the actual input to the run-cats-unit-tests build
         trigger: true
-      - get: fake-CATs
-      - get: runtime-ci-run-cats
       - task: run-cats-unit-tests
         file: runtime-ci/scripts/ci/run-ginkgo/task.yml
         input_mapping:
-          project: runtime-ci
+          project: runtime-ci-run-cats
         params:
-          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/
+          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci-run-cats/scripts/ci/run-cats/
           TEST_PATH: project/scripts/ci/run-cats/
-          GINKGO_PARAMS: -r .
-
-- name: fake-run-cats
-  public: true
-  plan:
-    - do:
-      - get: runtime-ci
-        trigger: true
-        passed:
-        - test-cats-golang
-      - get: fake-CATs
-        passed: [test-cats-golang]
-      - get: runtime-ci-run-cats
-      - task: run-cats
-        file: runtime-ci/scripts/ci/run-cats/task_caat.yml
-        input_mapping:
-          caat-golang: fake-CATs
-        params:
-          CATS_PATH: ./fixtures/pass/
-          CF_API: api.example.com
-          CF_ADMIN_USER: cf-admin-user
-          CF_ADMIN_PASSWORD: cf-admin-password
-          CF_APPS_DOMAIN: apps.example.com
-          EXISTING_USER: existing-user
-          EXISTING_USER_PASSWORD: existing-user-password
-
+          GINKGO_PARAMS: -r
 
 - name: build-run-cats-docker-image
   public: true
@@ -1283,7 +1249,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cats
         trigger: true
-        passed: [fake-run-cats]
+        passed: [test-cats-golang]
     - put: run-cats-pipeline-image
       params:
         build: runtime-ci-run-cats/scripts/ci/run-cats

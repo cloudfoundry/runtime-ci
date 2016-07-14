@@ -1,8 +1,0 @@
-#!/bin/bash
-set -xeu
-
-GOPATH=${PWD}/gopath
-
-pushd $GOPATH/src/github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats > /dev/null
-  go run main.go
-popd > /dev/null
