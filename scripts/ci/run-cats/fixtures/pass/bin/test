@@ -3,3 +3,4 @@
 env
 echo "$0 $@"
 echo "pass"
+sleep 0.1
