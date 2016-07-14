@@ -3,5 +3,5 @@
 set -xeu
 
 cp -R \
-  cf-release/src/github.com/cloudfoundry/cf-acceptance-tests/ \
+  cf-release/src/github.com/cloudfoundry/cf-acceptance-tests/* \
   cf-acceptance-tests/
