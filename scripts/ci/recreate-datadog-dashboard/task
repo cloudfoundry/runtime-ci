@@ -1,6 +1,5 @@
 #!/bin/bash
 set -exu
 
-pushd runtime-ci > /dev/null
-  bundle exec ruby scripts/ci/recreate-datadog-dashboard/recreate_datadog_dashboard.rb
-popd > /dev/null
+BUNDLE_GEMFILE=runtime-ci/scripts/ci/recreate-datadog-dashboard/Gemfile \
+  bundle exec ruby runtime-ci/scripts/ci/recreate-datadog-dashboard/recreate_datadog_dashboard.rb
