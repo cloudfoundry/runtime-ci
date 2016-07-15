@@ -46,5 +46,12 @@ jobs:
     - task: create-datadog-dashboards
       file: runtime-ci/scripts/ci/recreate-datadog-dashboard/task.yml
       params:
+        ENVIRONMENT_DISPLAY_NAME: "a1"
+        CF_DEPLOYMENT_NAME: "cf-a1"
+        DIEGO_DEPLOYMENT_NAME: "cf-a1-diego"
+        METRON_AGENT_DIEGO_DEPLOYMENT_TAG: "cf-a1-diego"
+        METRON_AGENT_CF_DEPLOYMENT_TAG: "cf-a1"
         DATADOG_API_KEY: {{a1_datadog_api_key}}
         APP_KEY: {{a1_datadog_app_key}}
+        DIEGO_HEALTH_TEMPLATE_PATH: "diego_health_screen.json.erb"
+        LOGGREGATOR_ALERT_TEMPLATE_PATH: "alert_templates/shared/loggregator/loggregator_message_reliability_from_metron_to_doppler_below_threshold.json.erb"

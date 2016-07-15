@@ -19,12 +19,7 @@ timeboards.each do |board|
   dog.delete_dashboard(board.fetch('id'))
 end
 
-environment = 'A1'
-deployment = 'cf-a1'
-diego_deployment = 'cf-a1-diego'
-metron_agent_diego_deployment = diego_deployment
-diego_template_path = "datadog-diego-health-template/#{ENV.fetch('DIEGO_HEALTH_TEMPLATE_PATH')}"
-diego_dashboard_config = JSON.parse(ERB.new(File.read(diego_template_path)).result(binding))
+diego_dashboard_config = DiegoHealthDashboard.new().generate_config()
 
 puts "Creating dashboard #{diego_dashboard_config['title']}"
 response = dog.create_dashboard(diego_dashboard_config['title'],
@@ -40,10 +35,7 @@ monitors.each do |monitor|
   dog.delete_monitor(monitor.fetch('id'))
 end
 
-metron_agent_deployment = deployment
-monitoringAndMetrics_pagerduty = 'not production deployment'
-loggregator_template_path = "datadog-loggregator-alert-template/#{ENV.fetch('LOGGREGATOR_ALERT_TEMPLATE_PATH')}"
-loggregator_alert_config = JSON.parse(ERB.new(File.read(loggregator_template_path)).result(binding))
+loggregator_alert_config = LoggregatorMonitor.new().generate_config
 
 puts "Creating monitor #{loggregator_alert_config['name']}"
 response = dog.monitor('metric alert',
@@ -56,4 +48,50 @@ response = dog.monitor('metric alert',
             })
 if response.first != '200'
   raise "Failed to create dashboard. API response: #{response}"
+end
+
+class DiegoHealthDashboard
+  def environment
+    ENV.fetch("ENVIRONMENT_DISPLAY_NAME")
+  end
+
+  def deployment
+    ENV.fetch("CF_DEPLOYMENT_NAME")
+  end
+
+  def diego_deployment
+    ENV.fetch("DIEGO_DEPLOYMENT_NAME")
+  end
+
+  def metron_agent_diego_deployment
+    ENV.fetch("METRON_AGENT_DIEGO_DEPLOYMENT_TAG")
+  end
+
+  def generate_config
+    diego_template_path = "datadog-diego-health-template/#{ENV.fetch('DIEGO_HEALTH_TEMPLATE_PATH')}"
+    JSON.parse(ERB.new(File.read(diego_template_path)).result(binding))
+  end
+end
+
+class LoggregatorMonitor
+  def environment
+    ENV.fetch("ENVIRONMENT_DISPLAY_NAME")
+  end
+
+  def metron_agent_diego_deployment
+    ENV.fetch("METRON_AGENT_DIEGO_DEPLOYMENT_TAG")
+  end
+
+  def metron_agent_deployment
+    ENV.fetch("METRON_AGENT_CF_DEPLOYMENT_TAG")
+  end
+
+  def monitoringAndMetrics_pagerduty
+    'not production deployment'
+  end
+
+  def generate_config
+    loggregator_template_path = "datadog-loggregator-alert-template/#{ENV.fetch('LOGGREGATOR_ALERT_TEMPLATE_PATH')}"
+    JSON.parse(ERB.new(File.read(loggregator_template_path)).result(binding))
+  end
 end
