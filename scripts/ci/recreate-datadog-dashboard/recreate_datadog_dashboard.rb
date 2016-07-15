@@ -5,8 +5,8 @@ require 'json'
 api_key=ENV.fetch('DATADOG_API_KEY')
 app_key=ENV.fetch('APP_KEY')
 
-diego_template_path = "/Users/pivotal/workspace/datadog-config-oss/diego-datadog-templates/#{ENV.fetch("DIEGO_HEALTH_TEMPLATE_PATH")}"
-loggregator_template_path="/Users/pivotal/workspace/datadog-config-oss/#{ENV.fetch("LOGGREGATOR_ALERT_TEMPLATE_PATH")}"
+diego_template_path = "datadog-diego-health-template/#{ENV.fetch("DIEGO_HEALTH_TEMPLATE_PATH")}"
+loggregator_template_path="datadog-loggregator-alert-template/#{ENV.fetch("LOGGREGATOR_ALERT_TEMPLATE_PATH")}"
 
 dog = Dogapi::Client.new(api_key, app_key)
 
@@ -55,5 +55,5 @@ response = dog.monitor("metric alert",
               no_data_timeframe: loggregator_alert_config["no_data_timeframe"],
             })
 if response.first != "200"
-  raise "Failed to create alert. API response: #{response}"
+  raise "Failed to create dashboard. API response: #{response}"
 end
