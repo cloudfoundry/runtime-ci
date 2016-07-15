@@ -5,6 +5,7 @@ groups:
   - destroy-infrastructure
   - setup-infrastructure
   - deploy-releases
+  - hermione-diego-cats
 
 resources:
 - name: runtime-ci
@@ -48,6 +49,11 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/routing-release.git
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
 
 jobs:
 - name: destroy-infrastructure
@@ -205,3 +211,54 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       MANIFEST_FILE: cf-deployment.yml
+
+- name: hermione-diego-cats
+  public: true
+  serial_groups:
+  - diego-deploy-and-diego-cats-lock
+  - cf-deploy-and-diego-cats-lock
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: hermione-deployment-manifest
+        trigger: true
+        passed: [ deploy-releases ]
+      - get: hermione-bosh-director
+        trigger: true
+        passed: [ deploy-releases ]
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+    - task: write-api-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.hermione.cf-app.com
+    - task: enable-docker
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{hermione_admin_username}}
+        CF_PASSWORD: {{hermione_admin_password}}
+    - task: cf-acceptance-tests
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+      params:
+        INCLUDE_BACKEND_COMPATIBILITY: false
+        INCLUDE_INTERNET_DEPENDENT: true
+        INCLUDE_DIEGO_DOCKER: true
+        INCLUDE_DIEGO_SSH: true
+        INCLUDE_LOGGING: true
+        INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_SECURITY_GROUPS: true
+        INCLUDE_SERVICES: true
+        INCLUDE_V3: false
+        INCLUDE_OPERATOR: false
+        SKIP_SSO: false
+        BACKEND: diego
+        CF_API: "api.hermione.cf-app.com"
+        CF_ADMIN_USER: {{hermione_admin_username}}
+        CF_ADMIN_PASSWORD: {{hermione_admin_password}}
+        CF_APPS_DOMAIN: hermione.cf-app.com
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "true"
+        NODES: 6
