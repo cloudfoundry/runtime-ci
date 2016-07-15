@@ -1,0 +1,6 @@
+#!/bin/bash
+set -exu
+
+pushd runtime-ci > /dev/null
+  bundle exec ruby scripts/ci/recreate-datadog-dashboard/recreate-datadog-dashboard.rb
+popd > /dev/null

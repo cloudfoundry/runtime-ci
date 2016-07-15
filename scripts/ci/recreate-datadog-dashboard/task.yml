@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/recreate-datadog-dashboard
+
+inputs:
+- name: runtime-ci
+- name: datadog-diego-health-template
+- name: datadog-loggregator-alert-template
+
+run:
+  path: runtime-ci/scripts/ci/recreate-datadog-dashboard/task
+
+params:
+  DATADOG_API_KEY:
+  APP_KEY:
+  DIEGO_HEALTH_TEMPLATE_PATH: "diego_health_screen.json.erb"
+  LOGGREGATOR_ALERT_TEMPLATE_PATH: "alert_templates/shared/loggregator/loggregator_message_reliability_from_metron_to_doppler_below_threshold.json.erb"
