@@ -47,4 +47,10 @@ pushd env-repo
     --cert=/tmp/bbl-cert \
     --key=/tmp/bbl-key \
     --skip-if-exists
+
+  bbl \
+    --state-dir bbl-infrastructure \
+    unsupported-update-lbs \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key
 popd
