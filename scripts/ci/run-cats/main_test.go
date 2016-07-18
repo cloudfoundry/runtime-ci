@@ -78,7 +78,7 @@ CF_APPS_DOMAIN`,
 			Expect(os.Getenv("PWD") + "/integration_config.json").To(BeARegularFile())
 		})
 
-		It("Executes the command to run CATs", func() {
+		It("Executes the command to run CATs, excluding configarable suites", func() {
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
