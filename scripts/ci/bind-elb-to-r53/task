@@ -1,13 +1,10 @@
 #!/bin/bash
 
-set -eu
+set -eux
 
 cf_router_load_balancer_url() {
   bbl \
     --state-dir bbl-infrastructure \
-    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-    --aws-region us-east-1 \
     lbs \
     | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
@@ -15,9 +12,6 @@ cf_router_load_balancer_url() {
 cf_ssh_proxy_load_balancer_url() {
   bbl \
     --state-dir bbl-infrastructure \
-    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-    --aws-region us-east-1 \
     lbs \
     | grep "SSH Proxy" | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }

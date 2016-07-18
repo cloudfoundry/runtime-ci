@@ -5,7 +5,6 @@ DIR="$(pwd)"
 
 function commit_bbl_state_file {
   pushd "${DIR}/env-repo"
-    set -x
     if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
@@ -37,30 +36,15 @@ pushd env-repo
     --aws-region us-east-1 \
     unsupported-deploy-bosh-on-aws-for-concourse
 
-  if [[ -n "$BBL_LB_CERT" && -n "$BBL_LB_KEY" ]]; then
-    echo "$BBL_LB_CERT" > /tmp/bbl-cert
-    echo "$BBL_LB_KEY" > /tmp/bbl-key
+  echo "$BBL_LB_CERT" > /tmp/bbl-cert
+  echo "$BBL_LB_KEY" > /tmp/bbl-key
+  set -x
 
-    echo "bbl \
-      --state-dir bbl-infrastructure \
-      --aws-access-key-id [REDACTED] \
-      --aws-secret-access-key [REDACTED] \
-      --aws-region us-east-1 \
-      unsupported-create-lbs \
-      --type=cf \
-      --cert=/tmp/bbl-cert \
-      --key=/tmp/bbl-key \
-      --skip-if-exists"
-
-    bbl \
-      --state-dir bbl-infrastructure \
-      --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-      --aws-region us-east-1 \
-      unsupported-create-lbs \
-      --type=cf \
-      --cert=/tmp/bbl-cert \
-      --key=/tmp/bbl-key \
-      --skip-if-exists
-  fi
+  bbl \
+    --state-dir bbl-infrastructure \
+    unsupported-create-lbs \
+    --type=cf \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key \
+    --skip-if-exists
 popd

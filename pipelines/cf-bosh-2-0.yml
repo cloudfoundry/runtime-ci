@@ -27,13 +27,6 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths: [ cf-deployment.yml ]
-- name: hermione-bosh-director
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/runtime-ci-pools
-    branch: master
-    pool: hermione-bosh-director
-    private_key: {{hermione_pool_key}}
 - name: capi-release-repo
   type: git
   source:
@@ -69,18 +62,9 @@ jobs:
     input_mapping:
       env-repo: env-repo
     params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{bbl_lb_cert}}
-      BBL_LB_KEY: {{bbl_lb_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
-    params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{bbl_lb_cert}}
-      BBL_LB_KEY: {{bbl_lb_key}}
   - put: hermione-infrastructure-repo
     params:
       repository: updated-env-repo
@@ -92,16 +76,13 @@ jobs:
     - get: env-repo
       resource: hermione-infrastructure-repo
     - get: runtime-ci
-    - put: hermione-bosh-director
-      params:
-        claim: director
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{bbl_lb_cert}}
-      BBL_LB_KEY: {{bbl_lb_key}}
+      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
   - put: hermione-infrastructure-repo
     params:
       repository: updated-env-repo
@@ -110,15 +91,11 @@ jobs:
     input_mapping:
       env-repo: updated-env-repo
     params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{bbl_lb_cert}}
-      BBL_LB_KEY: {{bbl_lb_key}}
       DOMAIN: hermione.cf-app.com
 
 - name: deploy-releases
   public: true
-  serial_groups: [ hermione ]
+  serial_groups: [hermione]
   plan:
   - aggregate:
     - get: capi-release-repo
@@ -128,9 +105,6 @@ jobs:
     - get: hermione-deployment-manifest
       trigger: true
     - get: runtime-ci
-    - get: hermione-bosh-director
-      passed: [ setup-infrastructure ]
-      trigger: true
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -214,17 +188,12 @@ jobs:
 
 - name: hermione-diego-cats
   public: true
-  serial_groups:
-  - diego-deploy-and-diego-cats-lock
-  - cf-deploy-and-diego-cats-lock
+  serial_groups: [hermione]
   plan:
   - timeout: 4h
     do:
     - aggregate:
       - get: hermione-deployment-manifest
-        trigger: true
-        passed: [ deploy-releases ]
-      - get: hermione-bosh-director
         trigger: true
         passed: [ deploy-releases ]
       - get: runtime-ci

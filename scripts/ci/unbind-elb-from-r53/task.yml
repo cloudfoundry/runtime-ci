@@ -14,8 +14,4 @@ run:
   path: runtime-ci/scripts/ci/unbind-elb-from-r53/task
 
 params:
-  AWS_ACCESS_KEY_ID:
-  AWS_SECRET_ACCESS_KEY:
-  BBL_LB_CERT:
-  BBL_LB_KEY:
   DOMAIN:

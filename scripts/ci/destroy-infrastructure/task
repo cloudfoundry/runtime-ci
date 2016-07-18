@@ -3,22 +3,10 @@
 set -xeu
 
 pushd env-repo
-  set +x
-  echo "bbl \
-    --state-dir bbl-infrastructure \
-    --aws-access-key-id [REDACTED] \
-    --aws-secret-access-key [REDACTED] \
-    --aws-region us-east-1 \
-    destroy \
-    --no-confirm"
   bbl \
     --state-dir bbl-infrastructure \
-    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-    --aws-region us-east-1 \
     destroy \
     --no-confirm
-  set -x
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
