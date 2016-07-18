@@ -13,13 +13,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: hermione-infrastructure-repo
+- name: hermione-env-repo
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ bbl-infrastructure/* ]
 - name: hermione-deployment-manifest
   type: git
   source:
@@ -55,7 +54,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-infrastructure-repo
+      resource: hermione-env-repo
     - get: runtime-ci
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
@@ -65,7 +64,7 @@ jobs:
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
-  - put: hermione-infrastructure-repo
+  - put: hermione-env-repo
     params:
       repository: updated-env-repo
 - name: setup-infrastructure
@@ -74,7 +73,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-infrastructure-repo
+      resource: hermione-env-repo
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -83,7 +82,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-  - put: hermione-infrastructure-repo
+  - put: hermione-env-repo
     params:
       repository: updated-env-repo
   - task: bind-elb-to-r53
@@ -101,7 +100,7 @@ jobs:
     - get: capi-release-repo
     - get: nats-release-repo
     - get: routing-release-repo
-    - get: hermione-infrastructure-repo
+    - get: hermione-env-repo
     - get: hermione-deployment-manifest
       trigger: true
     - get: runtime-ci
@@ -110,7 +109,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
-      env-repo: hermione-infrastructure-repo
+      env-repo: hermione-env-repo
   - aggregate:
     - do:
       - task: create-nats-release
