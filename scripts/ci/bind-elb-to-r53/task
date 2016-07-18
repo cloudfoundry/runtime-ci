@@ -12,6 +12,16 @@ cf_router_load_balancer_url() {
     | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
 
+cf_ssh_proxy_load_balancer_url() {
+  bbl \
+    --state-dir bbl-infrastructure \
+    --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
+    --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+    --aws-region us-east-1 \
+    lbs \
+    | grep "SSH Proxy" | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
+}
+
 aws_hosted_zone_id_from_partial_name() {
   aws route53 list-hosted-zones \
     | jq -r ".HostedZones[] | select(.Name | contains(\"${1}\")) | .Id"
@@ -20,7 +30,7 @@ aws_hosted_zone_id_from_partial_name() {
 write_change_file() {
   cat << EOF > "$1"
 {
-    "Comment": "Update *.$2 to point to ELB",
+    "Comment": "Update *.$2 and ssh.$2 to point to ELBs",
     "Changes": [
         {
             "Action": "UPSERT",
@@ -31,6 +41,19 @@ write_change_file() {
                 "ResourceRecords": [
                     {
                         "Value": "${3}"
+                    }
+                ]
+            }
+        },
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "ssh.$2.",
+                "Type": "CNAME",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "${4}"
                     }
                 ]
             }
@@ -48,15 +71,15 @@ post_change_file() {
 
 main() {
   pushd env-repo
-    stack_name=$(jq -r '.stack.name' < bbl-infrastructure/state.json)
+    cf_router_lb_url=$(cf_router_load_balancer_url)
 
-    cf_router_lb_url=$(cf_router_load_balancer_url "${stack_name}")
+    cf_ssh_proxy_lb_url=$(cf_ssh_proxy_load_balancer_url)
 
     aws_hosted_zone_id=$(aws_hosted_zone_id_from_partial_name "${DOMAIN}")
 
     change_file=/tmp/change_file
 
-    write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}"
+    write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}" "${cf_ssh_proxy_lb_url}"
 
     post_change_file "${change_file}" "${aws_hosted_zone_id}"
   popd
