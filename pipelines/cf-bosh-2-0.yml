@@ -61,6 +61,8 @@ jobs:
     input_mapping:
       env-repo: env-repo
     params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
@@ -90,6 +92,8 @@ jobs:
     input_mapping:
       env-repo: updated-env-repo
     params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
 
 - name: deploy-releases
