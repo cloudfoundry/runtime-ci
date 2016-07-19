@@ -35,6 +35,7 @@ type config struct {
 	CfPushTimeout          int    `json:"cf_push_timeout,omitempty"`
 	LongCurlTimeout        int    `json:"long_curl_timeout,omitempty"`
 	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
+	IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support,omitempty"`
 }
 
 type configFile struct {
@@ -65,7 +66,13 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	if err != nil {
 		return config{}, err
 	}
+
 	useHttp, err = env.GetBoolean("USE_HTTP")
+	if err != nil {
+		return config{}, err
+	}
+
+	includePrivilegedContainerSupport, err := env.GetBoolean("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 	if err != nil {
 		return config{}, err
 	}
@@ -74,18 +81,22 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	if err != nil {
 		return config{}, err
 	}
+
 	cfPushTimeout, err = env.GetInteger("CF_PUSH_TIMEOUT_IN_SECONDS")
 	if err != nil {
 		return config{}, err
 	}
+
 	longCurlTimeout, err = env.GetInteger("LONG_CURL_TIMEOUT_IN_SECONDS")
 	if err != nil {
 		return config{}, err
 	}
+
 	brokerStartTimeout, err = env.GetInteger("BROKER_START_TIMEOUT_IN_SECONDS")
 	if err != nil {
 		return config{}, err
 	}
+
 	backend, err := env.GetBackend()
 	if err != nil {
 		return config{}, err
@@ -122,6 +133,9 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		CfPushTimeout:      cfPushTimeout,
 		LongCurlTimeout:    longCurlTimeout,
 		BrokerStartTimeout: brokerStartTimeout,
+
+		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
+
 	}, err
 }
 

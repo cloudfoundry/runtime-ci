@@ -220,7 +220,8 @@ CF_APPS_DOMAIN`,
 			os.Setenv("GO_BUILDPACK_NAME", "go-buildpack")
 			os.Setenv("PYTHON_BUILDPACK_NAME", "python-buildpack")
 			os.Setenv("PHP_BUILDPACK_NAME", "php-buildpack")
-			os.Setenv("BINARY_BUILDPACK_NAME", "binary-builpack")
+			os.Setenv("BINARY_BUILDPACK_NAME", "binary-buildpack")
+			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true")
 
 			os.Setenv("NODES", "5")
 			os.Setenv("INCLUDE_DIEGO_SSH", "true")
@@ -274,6 +275,7 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 		})
 		It("Executes the command to run CATs", func() {
 			command := exec.Command(binPath)
@@ -317,6 +319,8 @@ CF_APPS_DOMAIN`,
 				PythonBuildpackName string `json:"python_buildpack_name"`
 				PHPBuildpackName string `json:"php_buildpack_name"`
 				BinaryBuildpackName string `json:"binary_buildpack_name"`
+
+				IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support"`
 			}
 			err = json.Unmarshal(configBytes, &config)
 			Expect(err).NotTo(HaveOccurred())
@@ -335,10 +339,12 @@ CF_APPS_DOMAIN`,
 			Expect(config.PersistentAppSpace).To(Equal("cats-app-space"))
 			Expect(config.PersistentAppOrg).To(Equal("cats-app-org"))
 			Expect(config.PersistentAppQuotaName).To(Equal("cats-app-quota"))
+
 			Expect(config.DefaultTimeout).To(Equal(60))
 			Expect(config.CFPushTimeout).To(Equal(120))
 			Expect(config.LongCurlTimeout).To(Equal(180))
 			Expect(config.BrokerStartTimeout).To(Equal(240))
+
 			Expect(config.StaticfileBuildpackName).To(Equal("static-buildpack"))
 			Expect(config.JavaBuildpackName).To(Equal("java-buildpack"))
 			Expect(config.RubyBuildpackName).To(Equal("ruby-buildpack"))
@@ -346,7 +352,9 @@ CF_APPS_DOMAIN`,
 			Expect(config.GoBuildpackName).To(Equal("go-buildpack"))
 			Expect(config.PythonBuildpackName).To(Equal("python-buildpack"))
 			Expect(config.PHPBuildpackName).To(Equal("php-buildpack"))
-			Expect(config.BinaryBuildpackName).To(Equal("binary-builpack"))
+			Expect(config.BinaryBuildpackName).To(Equal("binary-buildpack"))
+
+			Expect(config.IncludePrivilegedContainerSupport).To(Equal(true))
 		})
 	})
 })

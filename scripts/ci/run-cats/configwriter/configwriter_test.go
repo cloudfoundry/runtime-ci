@@ -67,6 +67,7 @@ var _ = Describe("Configwriter", func() {
 			expectedAppsDomain            string
 			expectedSkipSslValidation     bool
 			expectedUseHttp               bool
+			expectedIncludePrivilegedContainerSupport bool
 			expectedExistingUser          string
 			expectedExistingUserPassword  string
 			expectedBackend               string
@@ -95,6 +96,7 @@ var _ = Describe("Configwriter", func() {
 			expectedAppsDomain = "apps_domain"
 			expectedSkipSslValidation = true
 			expectedUseHttp = true
+			expectedIncludePrivilegedContainerSupport = true
 			expectedExistingUser = "existing_user"
 			expectedExistingUserPassword = "expected_existing_user_password"
 			expectedBackend = "diego"
@@ -119,6 +121,7 @@ var _ = Describe("Configwriter", func() {
 
 			env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", expectedSkipSslValidation, nil)
 			env.GetBooleanReturnsFor("USE_HTTP", expectedUseHttp, nil)
+			env.GetBooleanReturnsFor("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", expectedIncludePrivilegedContainerSupport, nil)
 
 			env.GetStringReturnsFor("CF_API", expectedApi)
 			env.GetStringReturnsFor("CF_ADMIN_USER", expectedAdminUser)
@@ -157,6 +160,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.AppsDomain).To(Equal(expectedAppsDomain))
 			Expect(configFile.Config.SkipSslValidation).To(Equal(expectedSkipSslValidation))
 			Expect(configFile.Config.UseHttp).To(Equal(expectedUseHttp))
+			Expect(configFile.Config.IncludePrivilegedContainerSupport).To(Equal(expectedIncludePrivilegedContainerSupport))
 			Expect(configFile.Config.ExistingUser).To(Equal(expectedExistingUser))
 			Expect(configFile.Config.ExistingUserPassword).To(Equal(expectedExistingUserPassword))
 			Expect(configFile.Config.Backend).To(Equal(expectedBackend))
@@ -211,6 +215,7 @@ var _ = Describe("Configwriter", func() {
 			},
 				Entry("SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
 				Entry("USE_HTTP", "USE_HTTP"),
+				Entry("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
 			)
 		})
 
