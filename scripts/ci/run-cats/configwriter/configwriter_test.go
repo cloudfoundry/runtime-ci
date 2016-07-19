@@ -323,6 +323,56 @@ var _ = Describe("Configwriter", func() {
 			})
 		})
 
+		Context("when only required env variables are provided", func() {
+			BeforeEach(func() {
+				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", false, nil)
+				env.GetBooleanReturnsFor("USE_HTTP", false, nil)
+
+				env.GetBackendReturns("", nil)
+
+				env.GetStringReturnsFor("CF_API", "non-empty-value")
+				env.GetStringReturnsFor("CF_ADMIN_USER", "non-empty-value")
+				env.GetStringReturnsFor("CF_ADMIN_PASSWORD", "non-empty-value")
+				env.GetStringReturnsFor("CF_APPS_DOMAIN", "non-empty-value")
+				env.GetStringReturnsFor("EXISTING_USER", "")
+				env.GetStringReturnsFor("EXISTING_USER_PASSWORD", "")
+				env.GetStringReturnsFor("PERSISTENT_APP_HOST", "")
+				env.GetStringReturnsFor("PERSISTENT_APP_SPACE", "")
+				env.GetStringReturnsFor("PERSISTENT_APP_ORG", "")
+				env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", "")
+				env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", 0, nil)
+				env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", 0, nil)
+				env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", 0, nil)
+				env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", 0, nil)
+				env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("GO_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("PHP_BUILDPACK_NAME", "")
+				env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", "")
+			})
+
+			It("renders the default variables in the integration_config", func() {
+				var configJson []byte
+				configFile, err := configwriter.NewConfigFile("", env)
+				Expect(err).NotTo(HaveOccurred())
+				configJson, err = json.Marshal(configFile.Config)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(string(configJson)).To(MatchJSON(`{
+																							"api": "non-empty-value",
+																							"admin_user": "non-empty-value",
+																							"admin_password": "non-empty-value",
+																							"apps_domain": "non-empty-value",
+																							"skip_ssl_validation": false,
+																							"use_http": false,
+																							"use_existing_user": false,
+																							"keep_user_at_suite_end": false
+																							}`))
+			})
+		})
+
 	})
 
 	Describe("writing the integration_config.json file", func() {
