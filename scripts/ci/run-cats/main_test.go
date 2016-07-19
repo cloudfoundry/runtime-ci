@@ -3,6 +3,8 @@ package main_test
 import (
 	"os"
 	"os/exec"
+	"io/ioutil"
+	"encoding/json"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,8 +13,10 @@ import (
 )
 
 var _ = Describe("Main", func() {
+	configJsonPath := os.Getenv("PWD") + "/integration_config.json"
+
 	AfterEach(func() {
-		os.Remove(os.Getenv("PWD") + "/integration_config.json")
+		os.Remove(configJsonPath)
 	})
 
 	Context("when required envvars are not set", func() {
@@ -34,7 +38,7 @@ CF_ADMIN_USER
 CF_ADMIN_PASSWORD
 CF_APPS_DOMAIN`,
 			))
-			Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+			Expect(configJsonPath).NotTo(BeARegularFile())
 
 		})
 	})
@@ -66,7 +70,7 @@ CF_APPS_DOMAIN`,
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 
-			Expect(string(session.Out.Contents())).To(ContainSubstring("CONFIG=" + os.Getenv("PWD") + "/integration_config.json"))
+			Expect(string(session.Out.Contents())).To(ContainSubstring("CONFIG=" + configJsonPath))
 		})
 
 		It("Writes a config file for CATs to use", func() {
@@ -75,7 +79,28 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(0))
-			Expect(os.Getenv("PWD") + "/integration_config.json").To(BeARegularFile())
+			Expect(configJsonPath).To(BeARegularFile())
+
+			configBytes, err := ioutil.ReadFile(configJsonPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			var config struct {
+				Api string `json:"api"`
+				AdminUser string `json:"admin_user"`
+				AdminPassword string `json:"admin_password"`
+				AppsDomain string `json:"apps_domain"`
+				SkipSSLValidation bool `json:"skip_ssl_validation"`
+				UseHTTP bool `json:"use_http"`
+			}
+			err = json.Unmarshal(configBytes, &config)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(config.Api).To(Equal("non-empty-value"))
+			Expect(config.AdminUser).To(Equal("non-empty-value"))
+			Expect(config.AdminPassword).To(Equal("non-empty-value"))
+			Expect(config.AppsDomain).To(Equal("non-empty-value"))
+			Expect(config.SkipSSLValidation).To(BeTrue())
+			Expect(config.UseHTTP).To(BeTrue())
 		})
 
 		It("Executes the command to run CATs, excluding configarable suites", func() {
@@ -104,7 +129,7 @@ CF_APPS_DOMAIN`,
 
 				Eventually(session, 30).Should(gexec.Exit(1))
 				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0`))
-				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+				Expect(configJsonPath).NotTo(BeARegularFile())
 			})
 		})
 
@@ -124,7 +149,7 @@ CF_APPS_DOMAIN`,
 
 				Eventually(session, 30).Should(gexec.Exit(1))
 				Eventually(session.Err, 30).Should(gbytes.Say(`Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false'`))
-				Expect(os.Getenv("PWD") + "/integration_config.json").NotTo(BeARegularFile())
+				Expect(configJsonPath).NotTo(BeARegularFile())
 			})
 		})
 
@@ -170,6 +195,7 @@ CF_APPS_DOMAIN`,
 	Context("When all supported env vars are set", func() {
 		BeforeEach(func() {
 			os.Setenv("CATS_PATH", "fixtures/pass")
+
 			os.Setenv("CF_API", "api.example.com")
 			os.Setenv("CF_ADMIN_USER", "admin-username")
 			os.Setenv("CF_ADMIN_PASSWORD", "admin-password")
@@ -258,6 +284,69 @@ CF_APPS_DOMAIN`,
 			Eventually(session.Out, 30).Should(gbytes.Say(
 				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=5 -skipPackage=helpers -skip=NO_DIEGO_SUPPORT -keepGoing",
 			))
+
+			configBytes, err := ioutil.ReadFile(configJsonPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			var config struct {
+				Api string `json:"api"`
+				AdminUser string `json:"admin_user"`
+				AdminPassword string `json:"admin_password"`
+				AppsDomain string `json:"apps_domain"`
+				SkipSSLValidation bool `json:"skip_ssl_validation"`
+				UseHTTP bool `json:"use_http"`
+				ExistingUser string `json:"existing_user"`
+				ExistingUserPassword string `json:"existing_user_password"`
+				Backend string `json:"backend"`
+
+				PersistentAppHost string `json:"persistent_app_host"`
+				PersistentAppSpace string `json:"persistent_app_space"`
+				PersistentAppOrg string `json:"persistent_app_org"`
+				PersistentAppQuotaName string `json:"persistent_app_quota_name"`
+
+				DefaultTimeout int `json:"default_timeout"`
+				CFPushTimeout int `json:"cf_push_timeout"`
+				LongCurlTimeout int `json:"long_curl_timeout"`
+				BrokerStartTimeout int `json:"broker_start_timeout"`
+
+				StaticfileBuildpackName string `json:"staticfile_buildpack_name"`
+				JavaBuildpackName string `json:"java_buildpack_name"`
+				RubyBuildpackName string `json:"ruby_buildpack_name"`
+				NodeJSBuilpackName string `json:"nodejs_buildpack_name"`
+				GoBuildpackName string `json:"go_buildpack_name"`
+				PythonBuildpackName string `json:"python_buildpack_name"`
+				PHPBuildpackName string `json:"php_buildpack_name"`
+				BinaryBuildpackName string `json:"binary_buildpack_name"`
+			}
+			err = json.Unmarshal(configBytes, &config)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(config.Api).To(Equal("api.example.com"))
+			Expect(config.AdminUser).To(Equal("admin-username"))
+			Expect(config.AdminPassword).To(Equal("admin-password"))
+			Expect(config.AppsDomain).To(Equal("apps.example.com"))
+			Expect(config.SkipSSLValidation).To(BeTrue())
+			Expect(config.UseHTTP).To(BeFalse())
+
+			Expect(config.ExistingUser).To(Equal("existing-cats-user"))
+			Expect(config.ExistingUserPassword).To(Equal("existing-cats-user-password"))
+			Expect(config.Backend).To(Equal("diego"))
+			Expect(config.PersistentAppHost).To(Equal("cats-app-host"))
+			Expect(config.PersistentAppSpace).To(Equal("cats-app-space"))
+			Expect(config.PersistentAppOrg).To(Equal("cats-app-org"))
+			Expect(config.PersistentAppQuotaName).To(Equal("cats-app-quota"))
+			Expect(config.DefaultTimeout).To(Equal(60))
+			Expect(config.CFPushTimeout).To(Equal(120))
+			Expect(config.LongCurlTimeout).To(Equal(180))
+			Expect(config.BrokerStartTimeout).To(Equal(240))
+			Expect(config.StaticfileBuildpackName).To(Equal("static-buildpack"))
+			Expect(config.JavaBuildpackName).To(Equal("java-buildpack"))
+			Expect(config.RubyBuildpackName).To(Equal("ruby-buildpack"))
+			Expect(config.NodeJSBuilpackName).To(Equal("node-buildpack"))
+			Expect(config.GoBuildpackName).To(Equal("go-buildpack"))
+			Expect(config.PythonBuildpackName).To(Equal("python-buildpack"))
+			Expect(config.PHPBuildpackName).To(Equal("php-buildpack"))
+			Expect(config.BinaryBuildpackName).To(Equal("binary-builpack"))
 		})
 	})
 })
