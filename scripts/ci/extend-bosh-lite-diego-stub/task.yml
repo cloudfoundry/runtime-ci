@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/extend-bosh-lite-diego-stub
+
+inputs:
+- name: runtime-ci
+- name: bosh-lite-stub
+
+output:
+- name: extended-bosh-lite-stub
+
+params:
+  BOSH_LITE_STUB_PATH:
+  EXTENDED_BOSH_LITE_STUB_PATH:
+
+run:
+  path: runtime-ci/scripts/ci/extend-bosh-lite-diego-stub/task.rb

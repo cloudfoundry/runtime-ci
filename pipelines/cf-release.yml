@@ -1251,12 +1251,19 @@ jobs:
     params:
       INFRASTRUCTURE: bosh-lite
       STUBS_PATH: stub.yml
+  - task: extend-diego-stub
+    file: runtime-ci/scripts/ci/extend-bosh-lite-diego-stub/task.yml
+    input_mapping:
+      bosh-lite-stub: diego-release-master
+    params:
+      BOSH_LITE_STUB_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
+      EXTENDED_BOSH_LITE_STUB_PATH: property-overrides.yml
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
       diego-release: diego-release-master
       cf-manifest: manifest
-      property-overrides: diego-release-master
+      property-overrides: extended-bosh-lite-stub
       instance-count-overrides: diego-release-master
       release-versions: diego-release-master
       iaas-settings: diego-release-master
@@ -1264,7 +1271,7 @@ jobs:
       BOSH_USER: admin
       BOSH_PASSWORD: admin
       BOSH_TARGET: {{bosh_lite_elastic_ip}}
-      PROPERTY_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
+      PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
       IAAS_SETTINGS_PATH: manifest-generation/bosh-lite-stubs/iaas-settings.yml
