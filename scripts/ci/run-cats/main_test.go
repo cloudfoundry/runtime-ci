@@ -222,6 +222,7 @@ CF_APPS_DOMAIN`,
 			os.Setenv("PHP_BUILDPACK_NAME", "php-buildpack")
 			os.Setenv("BINARY_BUILDPACK_NAME", "binary-buildpack")
 			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true")
+			os.Setenv("SKIP_SSO", "false")
 
 			os.Setenv("NODES", "5")
 			os.Setenv("INCLUDE_DIEGO_SSH", "true")
@@ -263,6 +264,8 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("PYTHON_BUILDPACK_NAME")
 			os.Unsetenv("PHP_BUILDPACK_NAME")
 			os.Unsetenv("BINARY_BUILDPACK_NAME")
+			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
+			os.Unsetenv("SKIP_SSO")
 
 			os.Unsetenv("NODES")
 			os.Unsetenv("INCLUDE_DIEGO_SSH")
@@ -275,7 +278,6 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
-			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 		})
 		It("Executes the command to run CATs", func() {
 			command := exec.Command(binPath)
