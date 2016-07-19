@@ -103,14 +103,14 @@ CF_APPS_DOMAIN`,
 			Expect(config.UseHTTP).To(BeTrue())
 		})
 
-		It("Executes the command to run CATs, excluding configarable suites", func() {
+		It("Executes the command to run CATs, excluding configarable suites and SSO", func() {
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT\|NO_DIEGO_SUPPORT -keepGoing`,
+				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=SSO\|NO_DEA_SUPPORT\|NO_DIEGO_SUPPORT -keepGoing`,
 			))
 		})
 

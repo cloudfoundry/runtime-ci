@@ -24,6 +24,7 @@ var envVarToPackageMap = map[string]string{
 
 type environment interface {
 	GetBoolean(string) (bool, error)
+	GetBooleanDefaultToTrue(string) (bool, error)
 	GetString(string) string
 	GetInteger(string) (int, error)
 	GetBackend() (string, error)
@@ -69,7 +70,7 @@ func GenerateCmd(env environment) (string, []string, error) {
 func generateSkips(env environment) (string, error) {
 	skip := "-skip="
 
-	skipSso, err := env.GetBoolean("SKIP_SSO")
+	skipSso, err := env.GetBooleanDefaultToTrue("SKIP_SSO")
 	if err != nil {
 		return "", err
 	}

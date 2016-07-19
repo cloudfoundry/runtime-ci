@@ -1,15 +1,15 @@
 package fake
 
 type FakeEnvironment struct {
-	GetBooleanStub    func(string) (bool, error)
 	getBooleanStubMap map[string]getBoolReturnType
 	getBooleanCallMap map[string]int
 
-	GetStringStub    func(string) string
+	getBooleanDefaultToTrueStubMap map[string]getBoolReturnType
+	getBooleanDefaultToTrueCallMap map[string]int
+
 	getStringStubMap map[string]string
 	getStringCallMap map[string]int
 
-	GetIntegerStub    func(string) (bool, error)
 	getIntegerStubMap map[string]getIntegerReturnType
 	getIntegerCallMap map[string]int
 
@@ -50,6 +50,27 @@ func (fake *FakeEnvironment) GetBooleanReturnsFor(varName string, returnBool boo
 
 func (fake *FakeEnvironment) GetBooleanCallCountFor(varName string) int {
 	return fake.getBooleanCallMap[varName]
+}
+
+func (fake *FakeEnvironment) GetBooleanDefaultToTrue(arg1 string) (bool, error) {
+	if fake.getBooleanDefaultToTrueCallMap == nil {
+		fake.getBooleanDefaultToTrueCallMap = map[string]int{}
+	}
+	fake.getBooleanDefaultToTrueCallMap[arg1] += 1
+
+	stub := fake.getBooleanDefaultToTrueStubMap[arg1]
+	return stub.b, stub.e
+}
+
+func (fake *FakeEnvironment) GetBooleanDefaultToTrueReturnsFor(varName string, returnBool bool, returnError error) {
+	if fake.getBooleanDefaultToTrueStubMap == nil {
+		fake.getBooleanDefaultToTrueStubMap = map[string]getBoolReturnType{}
+	}
+	fake.getBooleanDefaultToTrueStubMap[varName] = getBoolReturnType{b: returnBool, e: returnError}
+}
+
+func (fake *FakeEnvironment) GetBooleanDefaultToTrueCallCountFor(varName string) int {
+	return fake.getBooleanDefaultToTrueCallMap[varName]
 }
 
 func (fake *FakeEnvironment) GetString(arg1 string) string {

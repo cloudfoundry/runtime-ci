@@ -135,7 +135,7 @@ var _ = Describe("Commandgenerator", func() {
 		Context("when there are optional skip env vars set", func() {
 			Context("to true", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("SKIP_SSO", true, nil)
+					env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", true, nil)
 				})
 
 				It("generates a command that skips tests with the given tag", func() {
@@ -169,7 +169,7 @@ var _ = Describe("Commandgenerator", func() {
 				var expectedError error
 				BeforeEach(func() {
 					expectedError = fmt.Errorf("some error")
-					env.GetBooleanReturnsFor("SKIP_SSO", false, expectedError)
+					env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", false, expectedError)
 				})
 
 				It("propogates the error", func() {
@@ -177,6 +177,22 @@ var _ = Describe("Commandgenerator", func() {
 					Expect(err).To(Equal(expectedError))
 					Expect(env.GetBooleanCallCountFor("SKIP_SSO"))
 				})
+			})
+		})
+
+		Context("when the optional skip env var SKIP_SSO is not set", func() {
+			BeforeEach(func() {
+				env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", true, nil)
+			})
+
+			It("generates a command that skips SSO", func() {
+				cmd, args, err := commandgenerator.GenerateCmd(env)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(cmd).To(Equal(
+					"bin/test",
+				))
+
+				Expect(args).To(ContainElement(ContainSubstring("-skip=SSO|")))
 			})
 		})
 

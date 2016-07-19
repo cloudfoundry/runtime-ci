@@ -88,6 +88,84 @@ var _ = Describe("Environment", func() {
 		})
 	})
 
+	Describe("GetBooleanDefaultToTrue", func() {
+		Context("when the variable is not set", func() {
+			It("returns true", func() {
+				env := environment.New()
+				boolValue, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
+				Expect(boolValue).To(BeTrue())
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("when the environment variable is set to the empty string", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns true", func() {
+				env := environment.New()
+				boolValue, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
+				Expect(boolValue).To(BeTrue())
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("when the environment variable is set to the string 'true'", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "true")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns true", func() {
+				env := environment.New()
+				boolValue, _ := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
+				Expect(boolValue).To(BeTrue())
+			})
+		})
+
+		Context("when the environment variable is set to a non-boolean", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "not a boolean")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
+			})
+		})
+
+		Context("when the environment variable is set to a non-boolean value that ParseBool would accept", func() {
+			BeforeEach(func() {
+				os.Setenv("MY_ENV_VAR", "T")
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("MY_ENV_VAR")
+			})
+
+			It("returns an error", func() {
+				env := environment.New()
+				_, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
+			})
+		})
+	})
+
 	Describe("GetInteger", func() {
 		Context("when the variable is not set", func() {
 			It("returns 0 because it is the default value for integer", func() {
