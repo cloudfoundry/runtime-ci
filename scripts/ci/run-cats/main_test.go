@@ -1,10 +1,10 @@
 package main_test
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"os/exec"
-	"io/ioutil"
-	"encoding/json"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -85,12 +85,12 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			var config struct {
-				Api string `json:"api"`
-				AdminUser string `json:"admin_user"`
-				AdminPassword string `json:"admin_password"`
-				AppsDomain string `json:"apps_domain"`
-				SkipSSLValidation bool `json:"skip_ssl_validation"`
-				UseHTTP bool `json:"use_http"`
+				Api               string `json:"api"`
+				AdminUser         string `json:"admin_user"`
+				AdminPassword     string `json:"admin_password"`
+				AppsDomain        string `json:"apps_domain"`
+				SkipSSLValidation bool   `json:"skip_ssl_validation"`
+				UseHTTP           bool   `json:"use_http"`
 			}
 			err = json.Unmarshal(configBytes, &config)
 			Expect(err).NotTo(HaveOccurred())
@@ -291,34 +291,34 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			var config struct {
-				Api string `json:"api"`
-				AdminUser string `json:"admin_user"`
-				AdminPassword string `json:"admin_password"`
-				AppsDomain string `json:"apps_domain"`
-				SkipSSLValidation bool `json:"skip_ssl_validation"`
-				UseHTTP bool `json:"use_http"`
-				ExistingUser string `json:"existing_user"`
+				Api                  string `json:"api"`
+				AdminUser            string `json:"admin_user"`
+				AdminPassword        string `json:"admin_password"`
+				AppsDomain           string `json:"apps_domain"`
+				SkipSSLValidation    bool   `json:"skip_ssl_validation"`
+				UseHTTP              bool   `json:"use_http"`
+				ExistingUser         string `json:"existing_user"`
 				ExistingUserPassword string `json:"existing_user_password"`
-				Backend string `json:"backend"`
+				Backend              string `json:"backend"`
 
-				PersistentAppHost string `json:"persistent_app_host"`
-				PersistentAppSpace string `json:"persistent_app_space"`
-				PersistentAppOrg string `json:"persistent_app_org"`
+				PersistentAppHost      string `json:"persistent_app_host"`
+				PersistentAppSpace     string `json:"persistent_app_space"`
+				PersistentAppOrg       string `json:"persistent_app_org"`
 				PersistentAppQuotaName string `json:"persistent_app_quota_name"`
 
-				DefaultTimeout int `json:"default_timeout"`
-				CFPushTimeout int `json:"cf_push_timeout"`
-				LongCurlTimeout int `json:"long_curl_timeout"`
+				DefaultTimeout     int `json:"default_timeout"`
+				CFPushTimeout      int `json:"cf_push_timeout"`
+				LongCurlTimeout    int `json:"long_curl_timeout"`
 				BrokerStartTimeout int `json:"broker_start_timeout"`
 
 				StaticfileBuildpackName string `json:"staticfile_buildpack_name"`
-				JavaBuildpackName string `json:"java_buildpack_name"`
-				RubyBuildpackName string `json:"ruby_buildpack_name"`
-				NodeJSBuilpackName string `json:"nodejs_buildpack_name"`
-				GoBuildpackName string `json:"go_buildpack_name"`
-				PythonBuildpackName string `json:"python_buildpack_name"`
-				PHPBuildpackName string `json:"php_buildpack_name"`
-				BinaryBuildpackName string `json:"binary_buildpack_name"`
+				JavaBuildpackName       string `json:"java_buildpack_name"`
+				RubyBuildpackName       string `json:"ruby_buildpack_name"`
+				NodeJSBuilpackName      string `json:"nodejs_buildpack_name"`
+				GoBuildpackName         string `json:"go_buildpack_name"`
+				PythonBuildpackName     string `json:"python_buildpack_name"`
+				PHPBuildpackName        string `json:"php_buildpack_name"`
+				BinaryBuildpackName     string `json:"binary_buildpack_name"`
 
 				IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support"`
 			}
