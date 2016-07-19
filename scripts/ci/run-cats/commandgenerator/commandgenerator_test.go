@@ -68,7 +68,6 @@ var _ = Describe("Commandgenerator", func() {
 		Context("when there are optional skipPackage env vars set", func() {
 			Context("to true", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("INCLUDE_SSO", true, nil)
 					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", true, nil)
 					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", true, nil)
 					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", true, nil)
@@ -94,7 +93,6 @@ var _ = Describe("Commandgenerator", func() {
 
 			Context("to false", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("INCLUDE_SSO", false, nil)
 					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", false, nil)
 					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", false, nil)
 					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", false, nil)
