@@ -41,7 +41,6 @@ jobs:
   plan:
   - get: env-repo
     resource: hagrid-env
-    trigger: true
   - get: runtime-ci
   - task: run-bbl
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
