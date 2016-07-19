@@ -85,7 +85,7 @@ CF_APPS_DOMAIN`,
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes 4 -skipPackage=helpers -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing",
+				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT\|NO_DIEGO_SUPPORT -keepGoing`,
 			))
 		})
 
