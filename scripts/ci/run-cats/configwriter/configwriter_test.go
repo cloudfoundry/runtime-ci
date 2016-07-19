@@ -61,32 +61,32 @@ var _ = Describe("Configwriter", func() {
 
 	Context("When envvars are set", func() {
 		var (
-			expectedApi                   string
-			expectedAdminUser             string
-			expectedPassword              string
-			expectedAppsDomain            string
-			expectedSkipSslValidation     bool
-			expectedUseHttp               bool
+			expectedApi                               string
+			expectedAdminUser                         string
+			expectedPassword                          string
+			expectedAppsDomain                        string
+			expectedSkipSslValidation                 bool
+			expectedUseHttp                           bool
 			expectedIncludePrivilegedContainerSupport bool
-			expectedExistingUser          string
-			expectedExistingUserPassword  string
-			expectedBackend               string
-			expectedPersistedAppHost      string
-			expectedPersistedAppSpace     string
-			expectedPersistedAppOrg       string
-			expectedPersistedAppQuotaName string
-			expectedDefaultTimeout        int
-			expectedCfPushTimeout         int
-			expectedLongCurlTimeout       int
-			expectedBrokerStartTimeout    int
-			expectedStaticBuildpackName   string
-			expectedJavaBuildpackName     string
-			expectedRubyBuildpackName     string
-			expectedNodeJsBuildpackName   string
-			expectedGoBuildpackName       string
-			expectedPythonBuildpackName   string
-			expectedPhpBuildpackName      string
-			expectedBinaryBuildpackName   string
+			expectedExistingUser                      string
+			expectedExistingUserPassword              string
+			expectedBackend                           string
+			expectedPersistedAppHost                  string
+			expectedPersistedAppSpace                 string
+			expectedPersistedAppOrg                   string
+			expectedPersistedAppQuotaName             string
+			expectedDefaultTimeout                    int
+			expectedCfPushTimeout                     int
+			expectedLongCurlTimeout                   int
+			expectedBrokerStartTimeout                int
+			expectedStaticBuildpackName               string
+			expectedJavaBuildpackName                 string
+			expectedRubyBuildpackName                 string
+			expectedNodeJsBuildpackName               string
+			expectedGoBuildpackName                   string
+			expectedPythonBuildpackName               string
+			expectedPhpBuildpackName                  string
+			expectedBinaryBuildpackName               string
 		)
 
 		BeforeEach(func() {
@@ -213,9 +213,9 @@ var _ = Describe("Configwriter", func() {
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("some boolean error"))
 			},
-				Entry("SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
-				Entry("USE_HTTP", "USE_HTTP"),
-				Entry("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
+				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
+				Entry("for USE_HTTP", "USE_HTTP"),
+				Entry("for INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
 			)
 		})
 
