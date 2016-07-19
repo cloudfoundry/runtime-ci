@@ -8,34 +8,34 @@ import (
 )
 
 type config struct {
-	Api                    string `json:"api"`
-	AdminUser              string `json:"admin_user"`
-	AdminPassword          string `json:"admin_password"`
-	AppsDomain             string `json:"apps_domain"`
-	SkipSslValidation      bool   `json:"skip_ssl_validation"`
-	UseHttp                bool   `json:"use_http"`
-	ExistingUser           string `json:"existing_user"`
-	UseExistingUser        bool   `json:"use_existing_user"`
-	KeepUserAtSuiteEnd     bool   `json:"keep_user_at_suite_end"`
-	ExistingUserPassword   string `json:"existing_user_password"`
-	Backend                string `json:"backend,omitempty"`
-	StaticBuildpackName    string `json:"staticfile_buildpack_name,omitempty"`
-	JavaBuildpackName      string `json:"java_buildpack_name,omitempty"`
-	RubyBuildpackName      string `json:"ruby_buildpack_name,omitempty"`
-	NodeJsBuildpackName    string `json:"nodejs_buildpack_name,omitempty"`
-	GoBuildpackName        string `json:"go_buildpack_name,omitempty"`
-	PythonBuildpackName    string `json:"python_buildpack_name,omitempty"`
-	PhpBuildpackName       string `json:"php_buildpack_name,omitempty"`
-	BinaryBuildpackName    string `json:"binary_buildpack_name,omitempty"`
-	PersistentAppHost      string `json:"persistent_app_host,omitempty"`
-	PersistentAppSpace     string `json:"persistent_app_space,omitempty"`
-	PersistentAppOrg       string `json:"persistent_app_org,omitempty"`
-	PersistentAppQuotaName string `json:"persistent_app_quota_name,omitempty"`
-	DefaultTimeout         int    `json:"default_timeout,omitempty"`
-	CfPushTimeout          int    `json:"cf_push_timeout,omitempty"`
-	LongCurlTimeout        int    `json:"long_curl_timeout,omitempty"`
-	BrokerStartTimeout     int    `json:"broker_start_timeout,omitempty"`
-	IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support,omitempty"`
+	Api                               string `json:"api"`
+	AdminUser                         string `json:"admin_user"`
+	AdminPassword                     string `json:"admin_password"`
+	AppsDomain                        string `json:"apps_domain"`
+	SkipSslValidation                 bool   `json:"skip_ssl_validation"`
+	UseHttp                           bool   `json:"use_http"`
+	ExistingUser                      string `json:"existing_user,omitempty"`
+	ExistingUserPassword              string `json:"existing_user_password,omitempty"`
+	UseExistingUser                   bool   `json:"use_existing_user"`
+	KeepUserAtSuiteEnd                bool   `json:"keep_user_at_suite_end"`
+	Backend                           string `json:"backend,omitempty"`
+	StaticBuildpackName               string `json:"staticfile_buildpack_name,omitempty"`
+	JavaBuildpackName                 string `json:"java_buildpack_name,omitempty"`
+	RubyBuildpackName                 string `json:"ruby_buildpack_name,omitempty"`
+	NodeJsBuildpackName               string `json:"nodejs_buildpack_name,omitempty"`
+	GoBuildpackName                   string `json:"go_buildpack_name,omitempty"`
+	PythonBuildpackName               string `json:"python_buildpack_name,omitempty"`
+	PhpBuildpackName                  string `json:"php_buildpack_name,omitempty"`
+	BinaryBuildpackName               string `json:"binary_buildpack_name,omitempty"`
+	PersistentAppHost                 string `json:"persistent_app_host,omitempty"`
+	PersistentAppSpace                string `json:"persistent_app_space,omitempty"`
+	PersistentAppOrg                  string `json:"persistent_app_org,omitempty"`
+	PersistentAppQuotaName            string `json:"persistent_app_quota_name,omitempty"`
+	DefaultTimeout                    int    `json:"default_timeout,omitempty"`
+	CfPushTimeout                     int    `json:"cf_push_timeout,omitempty"`
+	LongCurlTimeout                   int    `json:"long_curl_timeout,omitempty"`
+	BrokerStartTimeout                int    `json:"broker_start_timeout,omitempty"`
+	IncludePrivilegedContainerSupport bool   `json:"include_privileged_container_support,omitempty"`
 }
 
 type configFile struct {
@@ -135,7 +135,6 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		BrokerStartTimeout: brokerStartTimeout,
 
 		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
-
 	}, err
 }
 
