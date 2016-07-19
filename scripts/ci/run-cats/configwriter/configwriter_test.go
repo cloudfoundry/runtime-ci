@@ -248,10 +248,8 @@ var _ = Describe("Configwriter", func() {
                                               "apps_domain": "",
                                               "skip_ssl_validation": false,
                                               "use_http": false,
-                                              "existing_user": "",
                                               "use_existing_user": false,
-                                              "keep_user_at_suite_end": false,
-                                              "existing_user_password": ""
+                                              "keep_user_at_suite_end": false
                                               }`))
 		})
 
@@ -362,10 +360,8 @@ var _ = Describe("Configwriter", func() {
 																							"apps_domain": "",
 																							"skip_ssl_validation": false,
 																							"use_http": false,
-																							"existing_user": "",
 																							"use_existing_user": false,
-																							"keep_user_at_suite_end": false,
-																							"existing_user_password": ""
+																							"keep_user_at_suite_end": false
 																							}`))
 		})
 
@@ -406,10 +402,8 @@ var _ = Describe("Configwriter", func() {
                                     "apps_domain": "",
                                     "skip_ssl_validation": false,
                                     "use_http": false,
-                                    "existing_user": "",
                                     "use_existing_user": false,
-                                    "keep_user_at_suite_end": false,
-                                    "existing_user_password": ""
+                                    "keep_user_at_suite_end": false
                                     }`))
 		})
 	})
