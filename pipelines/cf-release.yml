@@ -786,6 +786,7 @@ jobs:
         INCLUDE_INTERNET_DEPENDENT: true
         INCLUDE_SERVICES: true
         INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
         SKIP_SSO: false
 - name: vsphere-cf-deploy
   public: true
@@ -1035,6 +1036,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_OPERATOR: false
+        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
         SKIP_SSO: false
         BACKEND: diego
         CF_API: "api.cat.wild.cf-app.com"
@@ -1421,6 +1423,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_OPERATOR: false
+        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
         SKIP_SSO: false
         BACKEND: diego
         CF_API: "api.a1.cf-app.com"
