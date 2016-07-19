@@ -1086,46 +1086,20 @@ jobs:
         trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
-    - task: emit-datadog-deploy-start
-      privileged: true
-      file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      params:
-        STATE: started
-        EVENT_TAG_DEPLOYMENT: cf-a1
-        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-deployment
       params:
         manifest: cf-a1-manifest/deployment.yml
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-    - task: emit-datadog-deploy-end
-      privileged: true
-      file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      params:
-        STATE: finished
-        EVENT_TAG_DEPLOYMENT: cf-a1
-        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: cf-release-acceptance-deployed
       params:
         repository: cf-release
-    - task: emit-diego-datadog-started
-      file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      params:
-        STATE: started
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{a1_datadog_api_key}}
     - put: a1-diego-deployment
       params:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
         releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
         stemcells: [aws-stemcell/*.tgz]
-    - task: emit-datadog-finished
-      file: runtime-ci/scripts/ci/emit-datadog-event/task.yml
-      params:
-        STATE: finished
-        EVENT_TAG_DEPLOYMENT: cf-a1-diego
-        DATADOG_API_KEY: {{a1_datadog_api_key}}
 
 
 - name: a1-smoke-tests
@@ -1635,20 +1609,6 @@ jobs:
         params:
           <<: *a1-smoke-params
           SPACE: concourse-runtime-smoke-tests-15
-      on_success:
-        task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params: &a1-smoke-datadog-params
-          METRIC: smoke.status
-          TAGS: '"deployment:cf-a1","loggregator_enabled:0"'
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
-          VALUE: 1
-      on_failure:
-        task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params:
-          <<: *a1-smoke-datadog-params
-          VALUE: 0
 
 
 - name: a1-loggregator-smokes
@@ -1675,17 +1635,3 @@ jobs:
         SPACE: concourse-loggregator-smoke-tests
         USE_EXISTING_ORG: true
         ARGS: '--focus=Loggregator:'
-      on_success:
-        task: emit_datadog_success
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params: &a1-smoke-datadog-params
-          METRIC: smoke.status
-          TAGS: '"deployment:cf-a1","loggregator_enabled:1"'
-          DATADOG_API_KEY: {{a1_datadog_api_key}}
-          VALUE: 1
-      on_failure:
-        task: emit_datadog_failure
-        file: runtime-ci/scripts/ci/emit-datadog-metric/task.yml
-        params:
-          <<: *a1-smoke-datadog-params
-          VALUE: 0

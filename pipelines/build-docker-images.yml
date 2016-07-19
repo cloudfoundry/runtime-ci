@@ -12,8 +12,6 @@ groups:
   - build-create-release-notes-template-docker-image
   - build-delete-deployment-docker-image
   - build-deprovision-bosh-lite-docker-image
-  - build-emit-datadog-event-docker-image
-  - build-emit-datadog-metric-docker-image
   - build-enable-docker-diego-docker-image
   - build-merge-master-into-develop-docker-image
   - build-provision-bosh-lite-docker-image
@@ -200,18 +198,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/deprovision-bosh-lite/Dockerfile]
-- name: runtime-ci-emit-datadog-event
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/emit-datadog-event/Dockerfile]
-- name: runtime-ci-emit-datadog-metric
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/emit-datadog-metric/Dockerfile]
 - name: runtime-ci-enable-docker-diego
   type: git
   source:
@@ -509,20 +495,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/deprovision-bosh-lite
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: emit-datadog-event-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/emit-datadog-event
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: emit-datadog-metric-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/emit-datadog-metric
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1068,40 +1040,6 @@ jobs:
     - put: deprovision-bosh-lite-pipeline-image
       params:
         build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
-        push: true
-- name: build-emit-datadog-event-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-emit-datadog-event
-        trigger: true
-    - put: emit-datadog-event-pipeline-image
-      params:
-        build: runtime-ci-emit-datadog-event/scripts/ci/emit-datadog-event
-        push: true
-- name: build-emit-datadog-metric-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-emit-datadog-metric
-        trigger: true
-    - put: emit-datadog-metric-pipeline-image
-      params:
-        build: runtime-ci-emit-datadog-metric/scripts/ci/emit-datadog-metric
         push: true
 - name: build-enable-docker-diego-docker-image
   public: true
