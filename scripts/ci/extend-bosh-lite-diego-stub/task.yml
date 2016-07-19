@@ -10,7 +10,7 @@ inputs:
 - name: runtime-ci
 - name: bosh-lite-stub
 
-output:
+outputs:
 - name: extended-bosh-lite-stub
 
 params:
