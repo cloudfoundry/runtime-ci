@@ -45,13 +45,13 @@ CF_APPS_DOMAIN`,
 
 	Context("When all required env vars are set", func() {
 		BeforeEach(func() {
+			//CATS_PATH isn't required, but we need it for test setup
 			os.Setenv("CATS_PATH", "fixtures/pass")
+
 			os.Setenv("CF_API", "non-empty-value")
 			os.Setenv("CF_ADMIN_USER", "non-empty-value")
 			os.Setenv("CF_ADMIN_PASSWORD", "non-empty-value")
 			os.Setenv("CF_APPS_DOMAIN", "non-empty-value")
-			os.Setenv("SKIP_SSL_VALIDATION", "true")
-			os.Setenv("USE_HTTP", "true")
 		})
 		AfterEach(func() {
 			os.Unsetenv("CATS_PATH")
@@ -59,8 +59,6 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("CF_ADMIN_USER")
 			os.Unsetenv("CF_ADMIN_PASSWORD")
 			os.Unsetenv("CF_APPS_DOMAIN")
-			os.Unsetenv("SKIP_SSL_VALIDATION")
-			os.Unsetenv("USE_HTTP")
 		})
 
 		It("Sets CONFIG envvar to the path for the generated config file", func() {
@@ -92,6 +90,7 @@ CF_APPS_DOMAIN`,
 				SkipSSLValidation bool   `json:"skip_ssl_validation"`
 				UseHTTP           bool   `json:"use_http"`
 			}
+
 			err = json.Unmarshal(configBytes, &config)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -99,8 +98,8 @@ CF_APPS_DOMAIN`,
 			Expect(config.AdminUser).To(Equal("non-empty-value"))
 			Expect(config.AdminPassword).To(Equal("non-empty-value"))
 			Expect(config.AppsDomain).To(Equal("non-empty-value"))
-			Expect(config.SkipSSLValidation).To(BeTrue())
-			Expect(config.UseHTTP).To(BeTrue())
+			Expect(config.SkipSSLValidation).To(BeFalse())
+			Expect(config.UseHTTP).To(BeFalse())
 		})
 
 		It("Executes the command to run CATs, excluding configarable suites and SSO", func() {
