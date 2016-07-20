@@ -86,7 +86,7 @@ properties:
     include_services: true
     include_v3: false
     include_sso: true
-    include_operator: false
+    include_operator: true
     include_privileged_container_support: true
     nodes: 4
     skip_diego_unsupported_tests: false
