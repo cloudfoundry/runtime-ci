@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	errors := []error{}
 	currentDir, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -22,16 +23,21 @@ func main() {
 	missingEnvKeys := buildMissingKeyList()
 
 	if missingEnvKeys != "" {
-		fmt.Fprintf(os.Stderr, `Missing required environment variables:
-%s`, missingEnvKeys)
-		os.Exit(1)
+		errors = append(errors, fmt.Errorf(`Missing required environment variables:
+%s`, missingEnvKeys))
 	}
 
 	env := environment.New()
 
 	configWriter, err := configwriter.NewConfigFile(currentDir, env)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
+		errors = append(errors, err)
+	}
+
+	if len(errors) != 0 {
+		for i, e := range errors {
+			fmt.Fprintf(os.Stderr, "%d. %s\n", i+1, e.Error())
+		}
 		os.Exit(1)
 	}
 

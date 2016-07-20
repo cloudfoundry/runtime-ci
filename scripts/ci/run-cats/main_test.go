@@ -240,6 +240,31 @@ CF_APPS_DOMAIN`,
 				`bin/test`,
 			))
 		})
+		Context("and an optional env var is set to an invalid value", func() {
+			BeforeEach(func() {
+				os.Setenv("SKIP_SSL_VALIDATION", "yes, I would like that please.")
+			})
+			AfterEach(func() {
+				os.Unsetenv("SKIP_SSL_VALIDATION")
+			})
+
+			It("displays both the list of missing required vars and the error for the invalid var", func() {
+				command := exec.Command(binPath)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session, 30).Should(gexec.Exit(1))
+				Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
+CF_API
+CF_ADMIN_USER
+CF_ADMIN_PASSWORD
+CF_APPS_DOMAIN`,
+				))
+				Eventually(session.Err, 3).Should(gbytes.Say(`Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false'`))
+
+				Expect(configJsonPath).NotTo(BeARegularFile())
+			})
+		})
 	})
 
 	Context("When all supported env vars are set", func() {
