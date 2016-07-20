@@ -19,7 +19,7 @@ var _ = Describe("Main", func() {
 		os.Remove(configJsonPath)
 	})
 
-	Context("when required envvars are not set", func() {
+	Context("when only some required envvars are set", func() {
 		BeforeEach(func() {
 			os.Setenv("CF_API", "cf_api_value")
 		})
@@ -188,6 +188,57 @@ CF_APPS_DOMAIN`,
 
 				Eventually(session, 30).Should(gexec.Exit(1))
 			})
+		})
+	})
+
+	Context("When no required env vars are set", func() {
+		BeforeEach(func() {
+			//CATS_PATH isn't required, but we need it for test setup
+			os.Setenv("CATS_PATH", "fixtures/pass")
+
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+		})
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+		})
+
+		It("Exits 1 and prints a list of all 'required' env vars", func() {
+			command := exec.Command(binPath)
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session, 30).Should(gexec.Exit(1))
+			Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
+CF_API
+CF_ADMIN_USER
+CF_ADMIN_PASSWORD
+CF_APPS_DOMAIN`,
+			))
+
+			Expect(configJsonPath).NotTo(BeARegularFile())
+		})
+
+		It("Doesn't write a config file for CATs to use", func() {
+			command := exec.Command(binPath)
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session, 3).Should(gexec.Exit(1))
+			Expect(configJsonPath).NotTo(BeARegularFile())
+		})
+
+		It("Doesn't execute the command to run CATs, excluding configurable suites and SSO", func() {
+			command := exec.Command(binPath)
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session, 3).Should(gexec.Exit(1))
+			Eventually(session.Out, 3).ShouldNot(gbytes.Say(
+				`bin/test`,
+			))
 		})
 	})
 
