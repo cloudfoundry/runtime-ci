@@ -33,7 +33,7 @@ var _ = Describe("Main", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Out, 30).Should(gbytes.Say(`Missing required environment variables:
+			Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
 CF_ADMIN_USER
 CF_ADMIN_PASSWORD
 CF_APPS_DOMAIN`,

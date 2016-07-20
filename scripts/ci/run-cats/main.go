@@ -22,7 +22,7 @@ func main() {
 	missingEnvKeys := buildMissingKeyList()
 
 	if missingEnvKeys != "" {
-		fmt.Printf(`Missing required environment variables:
+		fmt.Fprintf(os.Stderr, `Missing required environment variables:
 %s`, missingEnvKeys)
 		os.Exit(1)
 	}
