@@ -217,6 +217,22 @@ var _ = Describe("Configwriter", func() {
 				Entry("for USE_HTTP", "USE_HTTP"),
 				Entry("for INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
 			)
+
+			Context("and more than one of them is invalid", func() {
+				BeforeEach(func() {
+					env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", false, fmt.Errorf("nothing is real"))
+					env.GetBooleanReturnsFor("USE_HTTP", false, fmt.Errorf("everything is real"))
+				})
+
+				It("fails fast with an error describing all invalid booleans concerned", func() {
+					_, err := configwriter.NewConfigFile("", env)
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(And(
+						ContainSubstring("nothing is real"),
+						ContainSubstring("everything is real"),
+					))
+				})
+			})
 		})
 
 		Context("when GetBackend returns an error", func() {

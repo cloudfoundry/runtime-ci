@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 type config struct {
@@ -58,48 +60,54 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
 		err                                                                error
+		errs                                                               validationerrors.Errors
 		skipSslValidation, useHttp                                         bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout int
 	)
+	errs = validationerrors.Errors{}
 
 	skipSslValidation, err = env.GetBoolean("SKIP_SSL_VALIDATION")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	useHttp, err = env.GetBoolean("USE_HTTP")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	includePrivilegedContainerSupport, err := env.GetBoolean("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	defaultTimeout, err = env.GetInteger("DEFAULT_TIMEOUT_IN_SECONDS")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	cfPushTimeout, err = env.GetInteger("CF_PUSH_TIMEOUT_IN_SECONDS")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	longCurlTimeout, err = env.GetInteger("LONG_CURL_TIMEOUT_IN_SECONDS")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	brokerStartTimeout, err = env.GetInteger("BROKER_START_TIMEOUT_IN_SECONDS")
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
 	}
 
 	backend, err := env.GetBackend()
 	if err != nil {
-		return config{}, err
+		errs.Add(err)
+	}
+
+	if !errs.Empty() {
+		return config{}, errs
 	}
 
 	return config{

@@ -240,9 +240,10 @@ CF_APPS_DOMAIN`,
 				`bin/test`,
 			))
 		})
-		Context("and an optional env var is set to an invalid value", func() {
+		Context("and some optional env vars are set to an invalid value", func() {
 			BeforeEach(func() {
 				os.Setenv("SKIP_SSL_VALIDATION", "yes, I would like that please.")
+				os.Setenv("USE_HTTP", "no way!")
 			})
 			AfterEach(func() {
 				os.Unsetenv("SKIP_SSL_VALIDATION")
@@ -261,6 +262,7 @@ CF_ADMIN_PASSWORD
 CF_APPS_DOMAIN`,
 				))
 				Eventually(session.Err, 3).Should(gbytes.Say(`Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false'`))
+				Eventually(session.Err, 3).Should(gbytes.Say(`Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false'`))
 
 				Expect(configJsonPath).NotTo(BeARegularFile())
 			})
