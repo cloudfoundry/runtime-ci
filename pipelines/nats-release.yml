@@ -54,6 +54,14 @@ jobs:
       put: hagrid-env-updated
       params:
         repository: updated-env-repo
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+      DOMAIN: hagrid.cf-app.com
 
 - name: deploy-nats
   public: true
