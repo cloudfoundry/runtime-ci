@@ -7,17 +7,16 @@ import (
 	"os"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment/fake"
-	. "github.com/onsi/ginkgo/extensions/table"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter/configwriterfakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Configwriter", func() {
-	var env *fake.FakeEnvironment
+	var env *configwriterfakes.FakeEnvironment
 	BeforeEach(func() {
-		env = &fake.FakeEnvironment{}
+		env = &configwriterfakes.FakeEnvironment{}
 	})
 
 	Context("when env vars are not set", func() {
@@ -69,6 +68,8 @@ var _ = Describe("Configwriter", func() {
 			expectedUseHttp                           bool
 			expectedIncludePrivilegedContainerSupport bool
 			expectedExistingUser                      string
+			expectedKeepUserAtSuiteEnd                bool
+			expectedUseExistingUser                   bool
 			expectedExistingUserPassword              string
 			expectedBackend                           string
 			expectedPersistedAppHost                  string
@@ -98,6 +99,8 @@ var _ = Describe("Configwriter", func() {
 			expectedUseHttp = true
 			expectedIncludePrivilegedContainerSupport = true
 			expectedExistingUser = "existing_user"
+			expectedKeepUserAtSuiteEnd = true
+			expectedUseExistingUser = true
 			expectedExistingUserPassword = "expected_existing_user_password"
 			expectedBackend = "diego"
 			expectedPersistedAppHost = "PERSISTENT_APP_HOST"
@@ -119,33 +122,35 @@ var _ = Describe("Configwriter", func() {
 			expectedPhpBuildpackName = "PHP_BUILDPACK_NAME"
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME"
 
-			env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", expectedSkipSslValidation, nil)
-			env.GetBooleanReturnsFor("USE_HTTP", expectedUseHttp, nil)
-			env.GetBooleanReturnsFor("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", expectedIncludePrivilegedContainerSupport, nil)
+			env.GetSkipSSLValidationReturns(expectedSkipSslValidation, nil)
+			env.GetUseHTTPReturns(expectedSkipSslValidation, nil)
+			env.GetIncludePrivilegedContainerSupportReturns(expectedIncludePrivilegedContainerSupport, nil)
 
-			env.GetStringReturnsFor("CF_API", expectedApi)
-			env.GetStringReturnsFor("CF_ADMIN_USER", expectedAdminUser)
-			env.GetStringReturnsFor("CF_ADMIN_PASSWORD", expectedPassword)
-			env.GetStringReturnsFor("CF_APPS_DOMAIN", expectedAppsDomain)
-			env.GetStringReturnsFor("EXISTING_USER", expectedExistingUser)
-			env.GetStringReturnsFor("EXISTING_USER_PASSWORD", expectedExistingUserPassword)
-			env.GetStringReturnsFor("PERSISTENT_APP_HOST", expectedPersistedAppHost)
-			env.GetStringReturnsFor("PERSISTENT_APP_SPACE", expectedPersistedAppSpace)
-			env.GetStringReturnsFor("PERSISTENT_APP_ORG", expectedPersistedAppOrg)
-			env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", expectedPersistedAppQuotaName)
-			env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", expectedStaticBuildpackName)
-			env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", expectedJavaBuildpackName)
-			env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", expectedRubyBuildpackName)
-			env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", expectedNodeJsBuildpackName)
-			env.GetStringReturnsFor("GO_BUILDPACK_NAME", expectedGoBuildpackName)
-			env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", expectedPythonBuildpackName)
-			env.GetStringReturnsFor("PHP_BUILDPACK_NAME", expectedPhpBuildpackName)
-			env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", expectedBinaryBuildpackName)
+			env.GetCFAPIReturns(expectedApi)
+			env.GetCFAdminUserReturns(expectedAdminUser)
+			env.GetCFAdminPasswordReturns(expectedPassword)
+			env.GetCFAppsDomainReturns(expectedAppsDomain)
+			env.GetExistingUserReturns(expectedExistingUser)
+			env.GetExistingUserPasswordReturns(expectedExistingUserPassword)
+			env.UseExistingUserReturns(expectedUseExistingUser)
+			env.KeepUserAtSuiteEndReturns(expectedKeepUserAtSuiteEnd)
+			env.GetPersistentAppHostReturns(expectedPersistedAppHost)
+			env.GetPersistentAppSpaceReturns(expectedPersistedAppSpace)
+			env.GetPersistentAppOrgReturns(expectedPersistedAppOrg)
+			env.GetPersistentAppQuotaNameReturns(expectedPersistedAppQuotaName)
+			env.GetStaticBuildpackNameReturns(expectedStaticBuildpackName)
+			env.GetJavaBuildpackNameReturns(expectedJavaBuildpackName)
+			env.GetRubyBuildpackNameReturns(expectedRubyBuildpackName)
+			env.GetNodeJSBuildpackNameReturns(expectedNodeJsBuildpackName)
+			env.GetGoBuildpackNameReturns(expectedGoBuildpackName)
+			env.GetPythonBuildpackNameReturns(expectedPythonBuildpackName)
+			env.GetPHPBuildpackNameReturns(expectedPhpBuildpackName)
+			env.GetBinaryBuildpackNameReturns(expectedBinaryBuildpackName)
 
-			env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", expectedDefaultTimeout, nil)
-			env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", expectedCfPushTimeout, nil)
-			env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", expectedLongCurlTimeout, nil)
-			env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", expectedBrokerStartTimeout, nil)
+			env.GetDefaultTimeoutInSecondsReturns(expectedDefaultTimeout, nil)
+			env.GetCFPushTimeoutInSecondsReturns(expectedCfPushTimeout, nil)
+			env.GetLongCurlTimeoutInSecondsReturns(expectedLongCurlTimeout, nil)
+			env.GetBrokerStartTimeoutInSecondsReturns(expectedBrokerStartTimeout, nil)
 
 			env.GetBackendReturns(expectedBackend, nil)
 		})
@@ -191,37 +196,58 @@ var _ = Describe("Configwriter", func() {
 		})
 
 		Context("when timeouts are not valid integers", func() {
-			DescribeTable("fails fast with the provided error", func(envVarKey string) {
-				env.GetIntegerReturnsFor(envVarKey, 0, fmt.Errorf("some error"))
+			It("fails fast with the provided error for Default timeout", func() {
+				env.GetDefaultTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
 				_, err := configwriter.NewConfigFile("", env)
-
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("some error"))
-			},
-				Entry("for DEFAULT_TIMEOUT_IN_SECONDS", "DEFAULT_TIMEOUT_IN_SECONDS"),
-				Entry("for CF_PUSH_TIMEOUT_IN_SECONDS", "CF_PUSH_TIMEOUT_IN_SECONDS"),
-				Entry("for LONG_CURL_TIMEOUT_IN_SECONDS", "LONG_CURL_TIMEOUT_IN_SECONDS"),
-				Entry("for BROKER_START_TIMEOUT_IN_SECONDS", "BROKER_START_TIMEOUT_IN_SECONDS"),
-			)
+			})
+			It("fails fast with the provided error for CF Push timeout", func() {
+				env.GetCFPushTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("some error"))
+			})
+			It("fails fast with the provided error for Long Curl timeout", func() {
+				env.GetLongCurlTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("some error"))
+			})
+			It("fails fast with the provided error for Broker Start timeout", func() {
+				env.GetBrokerStartTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("some error"))
+			})
 		})
 
 		Context("when boolean environment variables are not valid booleans", func() {
-			DescribeTable("fails fast with the provided error", func(varName string) {
-				env.GetBooleanReturnsFor(varName, false, fmt.Errorf("some boolean error"))
+			It("fails fast with the provided error for Skip SSL Validation", func() {
+				env.GetSkipSSLValidationReturns(false, fmt.Errorf("some error"))
 				_, err := configwriter.NewConfigFile("", env)
-
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some boolean error"))
-			},
-				Entry("for SKIP_SSL_VALIDATION", "SKIP_SSL_VALIDATION"),
-				Entry("for USE_HTTP", "USE_HTTP"),
-				Entry("for INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
-			)
+				Expect(err.Error()).To(Equal("some error"))
+			})
+
+			It("fails fast with the provided error for Use HTTP", func() {
+				env.GetUseHTTPReturns(false, fmt.Errorf("some error"))
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("some error"))
+			})
+
+			It("fails fast with the provided error for Include Privileged Container Support", func() {
+				env.GetIncludePrivilegedContainerSupportReturns(false, fmt.Errorf("some error"))
+				_, err := configwriter.NewConfigFile("", env)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("some error"))
+			})
 
 			Context("and more than one of them is invalid", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", false, fmt.Errorf("nothing is real"))
-					env.GetBooleanReturnsFor("USE_HTTP", false, fmt.Errorf("everything is real"))
+					env.GetSkipSSLValidationReturns(false, fmt.Errorf("nothing is real"))
+					env.GetUseHTTPReturns(false, fmt.Errorf("everything is real"))
 				})
 
 				It("fails fast with an error describing all invalid booleans concerned", func() {
@@ -271,33 +297,35 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when any env variables are provided", func() {
 			BeforeEach(func() {
-				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", true, nil)
-				env.GetBooleanReturnsFor("USE_HTTP", true, nil)
+				env.GetSkipSSLValidationReturns(true, nil)
+				env.GetUseHTTPReturns(true, nil)
 
 				env.GetBackendReturns("diego", nil)
 
-				env.GetStringReturnsFor("CF_API", "non-empty-value")
-				env.GetStringReturnsFor("CF_ADMIN_USER", "non-empty-value")
-				env.GetStringReturnsFor("CF_ADMIN_PASSWORD", "non-empty-value")
-				env.GetStringReturnsFor("CF_APPS_DOMAIN", "non-empty-value")
-				env.GetStringReturnsFor("EXISTING_USER", "non-empty-value")
-				env.GetStringReturnsFor("EXISTING_USER_PASSWORD", "non-empty-value")
-				env.GetStringReturnsFor("PERSISTENT_APP_HOST", "non-empty-value")
-				env.GetStringReturnsFor("PERSISTENT_APP_SPACE", "non-empty-value")
-				env.GetStringReturnsFor("PERSISTENT_APP_ORG", "non-empty-value")
-				env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", "non-empty-value")
-				env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", 1, nil)
-				env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", 1, nil)
-				env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", 1, nil)
-				env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", 1, nil)
-				env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("GO_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("PHP_BUILDPACK_NAME", "non-empty-value")
-				env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", "non-empty-value")
+				env.GetCFAPIReturns("non-empty-value")
+				env.GetCFAdminUserReturns("non-empty-value")
+				env.GetCFAdminPasswordReturns("non-empty-value")
+				env.GetCFAppsDomainReturns("non-empty-value")
+				env.GetExistingUserReturns("non-empty-value")
+				env.UseExistingUserReturns(true)
+				env.KeepUserAtSuiteEndReturns(true)
+				env.GetExistingUserPasswordReturns("non-empty-value")
+				env.GetPersistentAppHostReturns("non-empty-value")
+				env.GetPersistentAppSpaceReturns("non-empty-value")
+				env.GetPersistentAppOrgReturns("non-empty-value")
+				env.GetPersistentAppQuotaNameReturns("non-empty-value")
+				env.GetDefaultTimeoutInSecondsReturns(1, nil)
+				env.GetCFPushTimeoutInSecondsReturns(1, nil)
+				env.GetLongCurlTimeoutInSecondsReturns(1, nil)
+				env.GetBrokerStartTimeoutInSecondsReturns(1, nil)
+				env.GetStaticBuildpackNameReturns("non-empty-value")
+				env.GetJavaBuildpackNameReturns("non-empty-value")
+				env.GetRubyBuildpackNameReturns("non-empty-value")
+				env.GetNodeJSBuildpackNameReturns("non-empty-value")
+				env.GetGoBuildpackNameReturns("non-empty-value")
+				env.GetPythonBuildpackNameReturns("non-empty-value")
+				env.GetPHPBuildpackNameReturns("non-empty-value")
+				env.GetBinaryBuildpackNameReturns("non-empty-value")
 			})
 
 			It("renders the variables in the integration_config", func() {
@@ -341,33 +369,33 @@ var _ = Describe("Configwriter", func() {
 
 		Context("when only required env variables are provided", func() {
 			BeforeEach(func() {
-				env.GetBooleanReturnsFor("SKIP_SSL_VALIDATION", false, nil)
-				env.GetBooleanReturnsFor("USE_HTTP", false, nil)
+				env.GetSkipSSLValidationReturns(false, nil)
+				env.GetUseHTTPReturns(false, nil)
 
 				env.GetBackendReturns("", nil)
 
-				env.GetStringReturnsFor("CF_API", "non-empty-value")
-				env.GetStringReturnsFor("CF_ADMIN_USER", "non-empty-value")
-				env.GetStringReturnsFor("CF_ADMIN_PASSWORD", "non-empty-value")
-				env.GetStringReturnsFor("CF_APPS_DOMAIN", "non-empty-value")
-				env.GetStringReturnsFor("EXISTING_USER", "")
-				env.GetStringReturnsFor("EXISTING_USER_PASSWORD", "")
-				env.GetStringReturnsFor("PERSISTENT_APP_HOST", "")
-				env.GetStringReturnsFor("PERSISTENT_APP_SPACE", "")
-				env.GetStringReturnsFor("PERSISTENT_APP_ORG", "")
-				env.GetStringReturnsFor("PERSISTENT_APP_QUOTA_NAME", "")
-				env.GetIntegerReturnsFor("DEFAULT_TIMEOUT_IN_SECONDS", 0, nil)
-				env.GetIntegerReturnsFor("CF_PUSH_TIMEOUT_IN_SECONDS", 0, nil)
-				env.GetIntegerReturnsFor("LONG_CURL_TIMEOUT_IN_SECONDS", 0, nil)
-				env.GetIntegerReturnsFor("BROKER_START_TIMEOUT_IN_SECONDS", 0, nil)
-				env.GetStringReturnsFor("STATICFILE_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("JAVA_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("RUBY_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("NODEJS_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("GO_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("PYTHON_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("PHP_BUILDPACK_NAME", "")
-				env.GetStringReturnsFor("BINARY_BUILDPACK_NAME", "")
+				env.GetCFAPIReturns("non-empty-value")
+				env.GetCFAdminUserReturns("non-empty-value")
+				env.GetCFAdminPasswordReturns("non-empty-value")
+				env.GetCFAppsDomainReturns("non-empty-value")
+				env.GetExistingUserReturns("")
+				env.GetExistingUserPasswordReturns("")
+				env.GetPersistentAppHostReturns("")
+				env.GetPersistentAppSpaceReturns("")
+				env.GetPersistentAppOrgReturns("")
+				env.GetPersistentAppQuotaNameReturns("")
+				env.GetDefaultTimeoutInSecondsReturns(0, nil)
+				env.GetCFPushTimeoutInSecondsReturns(0, nil)
+				env.GetLongCurlTimeoutInSecondsReturns(0, nil)
+				env.GetBrokerStartTimeoutInSecondsReturns(0, nil)
+				env.GetStaticBuildpackNameReturns("")
+				env.GetJavaBuildpackNameReturns("")
+				env.GetRubyBuildpackNameReturns("")
+				env.GetNodeJSBuildpackNameReturns("")
+				env.GetGoBuildpackNameReturns("")
+				env.GetPythonBuildpackNameReturns("")
+				env.GetPHPBuildpackNameReturns("")
+				env.GetBinaryBuildpackNameReturns("")
 			})
 
 			It("renders the default variables in the integration_config", func() {
@@ -398,7 +426,7 @@ var _ = Describe("Configwriter", func() {
 		BeforeEach(func() {
 			tempDir, err = ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			env.GetStringReturnsFor("CF_API", "cf-api-value")
+			env.GetCFAPIReturns("cf-api-value")
 		})
 
 		AfterEach(func() {
@@ -446,7 +474,7 @@ var _ = Describe("Configwriter", func() {
 
 	Context("when the destinationDir doesn't end with a trailing slash", func() {
 		BeforeEach(func() {
-			env.GetStringReturnsFor("CF_API", "cf-api-value")
+			env.GetCFAPIReturns("cf-api-value")
 		})
 
 		It("should successfully write integration_config.json", func() {

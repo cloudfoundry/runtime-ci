@@ -356,6 +356,7 @@ CF_APPS_DOMAIN`,
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
 		})
+
 		It("Executes the command to run CATs", func() {
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)

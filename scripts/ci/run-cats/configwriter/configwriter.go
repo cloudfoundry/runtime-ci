@@ -46,9 +46,33 @@ type configFile struct {
 }
 
 type Environment interface {
-	GetBoolean(string) (bool, error)
-	GetString(string) string
-	GetInteger(string) (int, error)
+	GetSkipSSLValidation() (bool, error)
+	GetUseHTTP() (bool, error)
+	GetIncludePrivilegedContainerSupport() (bool, error)
+	GetDefaultTimeoutInSeconds() (int, error)
+	GetCFPushTimeoutInSeconds() (int, error)
+	GetLongCurlTimeoutInSeconds() (int, error)
+	GetBrokerStartTimeoutInSeconds() (int, error)
+	GetCFAPI() string
+	GetCFAdminUser() string
+	GetCFAdminPassword() string
+	GetCFAppsDomain() string
+	GetExistingUser() string
+	UseExistingUser() bool
+	KeepUserAtSuiteEnd() bool
+	GetExistingUserPassword() string
+	GetStaticBuildpackName() string
+	GetJavaBuildpackName() string
+	GetRubyBuildpackName() string
+	GetNodeJSBuildpackName() string
+	GetGoBuildpackName() string
+	GetPythonBuildpackName() string
+	GetPHPBuildpackName() string
+	GetBinaryBuildpackName() string
+	GetPersistentAppHost() string
+	GetPersistentAppSpace() string
+	GetPersistentAppOrg() string
+	GetPersistentAppQuotaName() string
 	GetBackend() (string, error)
 }
 
@@ -66,37 +90,37 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	)
 	errs = validationerrors.Errors{}
 
-	skipSslValidation, err = env.GetBoolean("SKIP_SSL_VALIDATION")
+	skipSslValidation, err = env.GetSkipSSLValidation()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	useHttp, err = env.GetBoolean("USE_HTTP")
+	useHttp, err = env.GetUseHTTP()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	includePrivilegedContainerSupport, err := env.GetBoolean("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
+	includePrivilegedContainerSupport, err := env.GetIncludePrivilegedContainerSupport()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	defaultTimeout, err = env.GetInteger("DEFAULT_TIMEOUT_IN_SECONDS")
+	defaultTimeout, err = env.GetDefaultTimeoutInSeconds()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	cfPushTimeout, err = env.GetInteger("CF_PUSH_TIMEOUT_IN_SECONDS")
+	cfPushTimeout, err = env.GetCFPushTimeoutInSeconds()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	longCurlTimeout, err = env.GetInteger("LONG_CURL_TIMEOUT_IN_SECONDS")
+	longCurlTimeout, err = env.GetLongCurlTimeoutInSeconds()
 	if err != nil {
 		errs.Add(err)
 	}
 
-	brokerStartTimeout, err = env.GetInteger("BROKER_START_TIMEOUT_IN_SECONDS")
+	brokerStartTimeout, err = env.GetBrokerStartTimeoutInSeconds()
 	if err != nil {
 		errs.Add(err)
 	}
@@ -111,31 +135,31 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	}
 
 	return config{
-		Api:                  env.GetString("CF_API"),
-		AdminUser:            env.GetString("CF_ADMIN_USER"),
-		AdminPassword:        env.GetString("CF_ADMIN_PASSWORD"),
-		AppsDomain:           env.GetString("CF_APPS_DOMAIN"),
+		Api:                  env.GetCFAPI(),
+		AdminUser:            env.GetCFAdminUser(),
+		AdminPassword:        env.GetCFAdminPassword(),
+		AppsDomain:           env.GetCFAppsDomain(),
 		SkipSslValidation:    skipSslValidation,
 		UseHttp:              useHttp,
-		ExistingUser:         env.GetString("EXISTING_USER"),
-		UseExistingUser:      env.GetString("EXISTING_USER") != "",
-		KeepUserAtSuiteEnd:   env.GetString("EXISTING_USER") != "",
-		ExistingUserPassword: env.GetString("EXISTING_USER_PASSWORD"),
+		ExistingUser:         env.GetExistingUser(),
+		UseExistingUser:      env.UseExistingUser(),
+		KeepUserAtSuiteEnd:   env.KeepUserAtSuiteEnd(),
+		ExistingUserPassword: env.GetExistingUserPassword(),
 		Backend:              backend,
 
-		StaticBuildpackName: env.GetString("STATICFILE_BUILDPACK_NAME"),
-		JavaBuildpackName:   env.GetString("JAVA_BUILDPACK_NAME"),
-		RubyBuildpackName:   env.GetString("RUBY_BUILDPACK_NAME"),
-		NodeJsBuildpackName: env.GetString("NODEJS_BUILDPACK_NAME"),
-		GoBuildpackName:     env.GetString("GO_BUILDPACK_NAME"),
-		PythonBuildpackName: env.GetString("PYTHON_BUILDPACK_NAME"),
-		PhpBuildpackName:    env.GetString("PHP_BUILDPACK_NAME"),
-		BinaryBuildpackName: env.GetString("BINARY_BUILDPACK_NAME"),
+		StaticBuildpackName: env.GetStaticBuildpackName(),
+		JavaBuildpackName:   env.GetJavaBuildpackName(),
+		RubyBuildpackName:   env.GetRubyBuildpackName(),
+		NodeJsBuildpackName: env.GetNodeJSBuildpackName(),
+		GoBuildpackName:     env.GetGoBuildpackName(),
+		PythonBuildpackName: env.GetPythonBuildpackName(),
+		PhpBuildpackName:    env.GetPHPBuildpackName(),
+		BinaryBuildpackName: env.GetBinaryBuildpackName(),
 
-		PersistentAppHost:      env.GetString("PERSISTENT_APP_HOST"),
-		PersistentAppSpace:     env.GetString("PERSISTENT_APP_SPACE"),
-		PersistentAppOrg:       env.GetString("PERSISTENT_APP_ORG"),
-		PersistentAppQuotaName: env.GetString("PERSISTENT_APP_QUOTA_NAME"),
+		PersistentAppHost:      env.GetPersistentAppHost(),
+		PersistentAppSpace:     env.GetPersistentAppSpace(),
+		PersistentAppOrg:       env.GetPersistentAppOrg(),
+		PersistentAppQuotaName: env.GetPersistentAppQuotaName(),
 
 		DefaultTimeout:     defaultTimeout,
 		CfPushTimeout:      cfPushTimeout,
