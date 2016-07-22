@@ -41,11 +41,10 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/nats-release.git
-- name: routing-release-repo
-  type: git
+- name: routing-release
+  type: bosh-io-release-updated
   source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-release.git
+    repository: cloudfoundry-incubator/routing-release
 - name: cf-acceptance-tests
   type: git
   source:
@@ -152,8 +151,10 @@ jobs:
       trigger: true
     - get: nats-release-repo
       trigger: true
-    - get: routing-release-repo
+    - get: routing-release
       trigger: true
+      params:
+        tarball: false
     - get: consul-release
       trigger: true
       params:
@@ -216,25 +217,6 @@ jobs:
           PASSWORD_FILE: password
           RELEASE_NAME: nats-*.tgz
     - do:
-      - task: create-routing-release
-        file: runtime-ci/scripts/ci/create-release/task.yml
-        input_mapping:
-          release-repo: routing-release-repo
-        output_mapping:
-          release-tarball: routing-release-tarball
-        params:
-          RELEASE_DIR: routing-release
-          RELEASE_NAME: routing
-      - task: upload-routing-release
-        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-        input_mapping:
-          release: routing-release-tarball
-        params:
-          TARGET_FILE: target
-          USERNAME_FILE: username
-          PASSWORD_FILE: password
-          RELEASE_NAME: routing-*.tgz
-    - do:
       - task: create-capi-release
         file: runtime-ci/scripts/ci/create-release/task.yml
         input_mapping:
@@ -295,11 +277,11 @@ jobs:
         passed: [ deploy-releases ]
         params:
           submodules: none
-      - get: routing-release-repo
+      - get: routing-release
         trigger: true
         passed: [ deploy-releases ]
         params:
-          submodules: none
+          tarball: false
       - get: consul-release
         trigger: true
         passed: [ deploy-releases ]

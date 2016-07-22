@@ -11,6 +11,7 @@ release_names=[
   'uaa',
   'garden-linux',
   'cflinuxfs2-rootfs',
+  'routing-release',
   'cf',
 ]
 
