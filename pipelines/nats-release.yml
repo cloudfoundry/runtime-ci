@@ -38,7 +38,11 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
-
+- name: diego-release-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/diego-release
 
 jobs:
 - name: setup-infrastructure
@@ -104,6 +108,27 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: cf/*.yml
+  - task: create-diego-iaas-settings
+    file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
+    input_mapping:
+      deployments: hagrid-env
+      diego-release: diego-release-master
+    params:
+      INFRASTRUCTURE: aws
+      IAAS_SETTINGS_TEMPLATE_PATH: deployments/diego/iaas-settings-internal.yml
+      IAAS_SETTINGS_STUB_PATH: deployments/diego/iaas-settings.yml
+  - task: create-diego-manifest
+    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+    input_mapping:
+      diego-release: diego-release-master
+      cf-manifest: manifest
+      property-overrides: hagrid-env
+      instance-count-overrides: hagrid-env
+      release-versions: hagrid-env
+    params:
+      PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
+      INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
+      RELEASE_VERSIONS_PATH: diego/release-versions.yml
 
 #  - task: upload-release
 #    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
