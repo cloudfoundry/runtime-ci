@@ -49,6 +49,7 @@ groups:
   - build-recreate-datadog-dashboard-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-releases-manifest-section-docker-image
+  - build-extract-security-groups-from-bbl-stack-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -344,12 +345,20 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extend-bosh-lite-diego-stub/Dockerfile]
+
 - name: runtime-ci-create-releases-manifest-section
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-releases-manifest-section/Dockerfile]
+
+- name: runtime-ci-extract-security-groups-from-bbl-stack
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/extract-security-groups-from-bbl-stack/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -680,10 +689,19 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
 - name: create-releases-manifest-section-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-releases-manifest-section
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: extract-security-groups-from-bbl-stack-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/extract-security-groups-from-bbl-stack
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1499,6 +1517,7 @@ jobs:
       params:
         build: runtime-ci-extend-bosh-lite-diego-stub/scripts/ci/extend-bosh-lite-diego-stub
         push: true
+
 - name: build-create-releases-manifest-section-docker-image
   public: true
   plan:
@@ -1515,4 +1534,22 @@ jobs:
     - put: create-releases-manifest-section-pipeline-image
       params:
         build: runtime-ci-create-releases-manifest-section/scripts/ci/create-releases-manifest-section
+        push: true
+
+- name: build-extract-security-groups-from-bbl-stack-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-extract-security-groups-from-bbl-stack
+        trigger: true
+    - put: extract-security-groups-from-bbl-stack-pipeline-image
+      params:
+        build: runtime-ci-extract-security-groups-from-bbl-stack/scripts/ci/extract-security-groups-from-bbl-stack
         push: true
