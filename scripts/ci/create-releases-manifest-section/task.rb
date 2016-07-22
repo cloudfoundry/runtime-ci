@@ -14,12 +14,14 @@ release_names=[
   'cf',
 ]
 
+deployment_configuration_path = ENV.fetch('DEPLOYMENT_CONFIGURATION_PATH')
+
 releases_metadata = release_names.map do |release_name|
   release_resource = "#{release_name}-release"
 
-  url = File.read("#{release_resource}/url")
-  version = File.read("#{release_resource}/version")
-  sha1 = File.read("#{release_resource}/sha1")
+  url = File.read("#{release_resource}/url").strip
+  version = File.read("#{release_resource}/version").strip
+  sha1 = File.read("#{release_resource}/sha1").strip
 
   {
     'name' => release_name,
@@ -29,4 +31,11 @@ releases_metadata = release_names.map do |release_name|
   }
 end
 
-puts YAML.dump(releases_metadata)
+puts "Updated releases"
+releases = YAML.dump(releases_metadata).gsub("---\n", '')
+
+deployment_configuration = File.read("deployment-manifest/#{deployment_configuration_path}")
+updated_deployment_manifest = "#{deployment_configuration}\n#{releases}"
+
+puts updated_deployment_manifest
+
