@@ -15,6 +15,7 @@ release_names=[
 ]
 
 deployment_configuration_path = ENV.fetch('DEPLOYMENT_CONFIGURATION_PATH')
+deployment_manifest_path = ENV.fetch("DEPLOYMENT_MANIFEST_PATH")
 
 releases_metadata = release_names.map do |release_name|
   release_resource = "#{release_name}-release"
@@ -37,5 +38,6 @@ releases = YAML.dump(releases_metadata).gsub("---\n", '')
 deployment_configuration = File.read("deployment-configuration/#{deployment_configuration_path}")
 updated_deployment_manifest = "#{deployment_configuration}\n#{releases}"
 
-puts updated_deployment_manifest
-
+File.open("deployment-manifest/#{deployment_manifest_path}", 'w') do |f|
+  f.write(updated_deployment_manifest)
+end
