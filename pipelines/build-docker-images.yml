@@ -1570,7 +1570,7 @@ jobs:
         build: runtime-ci-extract-elb-and-security-groups-from-bbl-stack/scripts/ci/extract-elb-and-security-groups-from-bbl-stack
         push: true
 
-- name: build-extend-cf-router-resources-pool-cf-deployment-manifest-image
+- name: build-extend-cf-router-resources-pool-cf-deployment-manifest-docker-image
   public: true
   plan:
   - timeout: 4h
