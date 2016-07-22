@@ -23,7 +23,7 @@ outputs:
 - name: updated-deployment-manifest
 
 run:
-  path: runtime-ci/scripts/ci/create-releases-manifest-template/task.rb
+  path: runtime-ci/scripts/ci/create-releases-manifest-sections/task.rb
 
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
