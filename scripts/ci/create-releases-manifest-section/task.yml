@@ -1,0 +1,30 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-releases-manifest-section
+
+inputs:
+- name: runtime-ci
+- name: deployment-manifest
+- name: consul-release
+- name: etcd-release
+- name: diego-release
+- name: loggregator-release
+- name: cf-mysql-release
+- name: uaa-release
+- name: garden-linux-release
+- name: cflinuxfs2-rootfs-release
+- name: cf-release # for residual jobs that have not been moved into other releases yet
+
+outputs:
+- name: updated-deployment-manifest
+
+run:
+  path: runtime-ci/scripts/ci/create-releases-manifest-template/task.rb
+
+params:
+  DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  DEPLOYMENT_CONFIGURATION_PATH: deployment-parts/cf-deployment-configuration.yml
