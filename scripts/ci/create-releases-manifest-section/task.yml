@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: deployment-manifest
+- name: deployment-configuration
 - name: consul-release
 - name: etcd-release
 - name: diego-release
@@ -20,7 +20,7 @@ inputs:
 - name: cf-release # for residual jobs that have not been moved into other releases yet
 
 outputs:
-- name: updated-deployment-manifest
+- name: deployment-manifest
 
 run:
   path: runtime-ci/scripts/ci/create-releases-manifest-section/task.rb

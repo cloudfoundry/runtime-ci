@@ -34,7 +34,7 @@ end
 puts "Updated releases"
 releases = YAML.dump(releases_metadata).gsub("---\n", '')
 
-deployment_configuration = File.read("deployment-manifest/#{deployment_configuration_path}")
+deployment_configuration = File.read("deployment-configuration/#{deployment_configuration_path}")
 updated_deployment_manifest = "#{deployment_configuration}\n#{releases}"
 
 puts updated_deployment_manifest
