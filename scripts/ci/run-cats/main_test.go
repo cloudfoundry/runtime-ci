@@ -103,6 +103,7 @@ CF_APPS_DOMAIN`,
 		})
 
 		It("Executes the command to run CATs, excluding configarable suites and SSO", func() {
+			os.Unsetenv("SKIP_SSO")
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())

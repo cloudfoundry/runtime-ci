@@ -10,240 +10,6 @@ import (
 )
 
 var _ = Describe("Environment", func() {
-	Describe("GetBoolean", func() {
-		Context("when the variable is not set", func() {
-			It("returns false", func() {
-				env := environment.New()
-				boolValue, err := env.GetBoolean("MY_ENV_VAR")
-				Expect(boolValue).To(BeFalse())
-				Expect(err).ToNot(HaveOccurred())
-			})
-		})
-
-		Context("when the environment variable is set to the empty string", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns false", func() {
-				env := environment.New()
-				boolValue, err := env.GetBoolean("MY_ENV_VAR")
-				Expect(boolValue).To(BeFalse())
-				Expect(err).ToNot(HaveOccurred())
-			})
-		})
-
-		Context("when the environment variable is set to the string 'true'", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "true")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns true", func() {
-				env := environment.New()
-				boolValue, _ := env.GetBoolean("MY_ENV_VAR")
-				Expect(boolValue).To(BeTrue())
-			})
-		})
-
-		Context("when the environment variable is set to a non-boolean", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "not a boolean")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetBoolean("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
-			})
-		})
-
-		Context("when the environment variable is set to a non-boolean value that ParseBool would accept", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "T")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetBoolean("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
-			})
-		})
-	})
-
-	Describe("GetBooleanDefaultToTrue", func() {
-		Context("when the variable is not set", func() {
-			It("returns true", func() {
-				env := environment.New()
-				boolValue, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
-				Expect(boolValue).To(BeTrue())
-				Expect(err).ToNot(HaveOccurred())
-			})
-		})
-
-		Context("when the environment variable is set to the empty string", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns true", func() {
-				env := environment.New()
-				boolValue, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
-				Expect(boolValue).To(BeTrue())
-				Expect(err).ToNot(HaveOccurred())
-			})
-		})
-
-		Context("when the environment variable is set to the string 'true'", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "true")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns true", func() {
-				env := environment.New()
-				boolValue, _ := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
-				Expect(boolValue).To(BeTrue())
-			})
-		})
-
-		Context("when the environment variable is set to a non-boolean", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "not a boolean")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
-			})
-		})
-
-		Context("when the environment variable is set to a non-boolean value that ParseBool would accept", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "T")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetBooleanDefaultToTrue("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be a boolean 'true' or 'false'"))
-			})
-		})
-	})
-
-	Describe("GetInteger", func() {
-		Context("when the variable is not set", func() {
-			It("returns 0 because it is the default value for integer", func() {
-				env := environment.New()
-				intValue, err := env.GetInteger("MY_ENV_VAR")
-				Expect(err).NotTo(HaveOccurred())
-				Expect(intValue).To(Equal(0))
-			})
-		})
-
-		Context("when the variable is explicitly set to 0", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "0")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetInteger("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
-			})
-		})
-
-		Context("when the variable is not an integer", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "not an integer")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetInteger("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
-			})
-		})
-		Context("when the variable is set to a negative integer", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "-1")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns an error", func() {
-				env := environment.New()
-				_, err := env.GetInteger("MY_ENV_VAR")
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'MY_ENV_VAR' must be an integer greater than 0"))
-			})
-		})
-
-		Context("when the variable is set to a strictly positive integer", func() {
-			BeforeEach(func() {
-				os.Setenv("MY_ENV_VAR", "10")
-			})
-
-			AfterEach(func() {
-				os.Unsetenv("MY_ENV_VAR")
-			})
-
-			It("returns the integer value", func() {
-				env := environment.New()
-				intValue, err := env.GetInteger("MY_ENV_VAR")
-				Expect(intValue).To(Equal(10))
-				Expect(err).NotTo(HaveOccurred())
-			})
-
-		})
-	})
 
 	Describe("GetSkipSSLValidation", func() {
 		AfterEach(func() {
@@ -771,6 +537,508 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			result := env.GetPersistentAppQuotaName()
 			Expect(result).To(Equal(expectedResult))
+		})
+	})
+
+	Describe("GetSkipDiegoSSH", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_DIEGO_SSH")
+		})
+
+		It("Returns the string 'ssh' if it should be skipped", func() {
+			os.Setenv("INCLUDE_DIEGO_SSH", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoSSH()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("ssh"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_DIEGO_SSH", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoSSH()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_DIEGO_SSH")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoSSH()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("ssh"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_DIEGO_SSH", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipDiegoSSH()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipV3", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_V3")
+		})
+
+		It("Returns the string 'v3' if it should be skipped", func() {
+			os.Setenv("INCLUDE_V3", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipV3()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("v3"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_V3", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipV3()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_V3")
+			env := environment.New()
+			skipFlag, err := env.GetSkipV3()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("v3"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_V3", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipV3()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipSSO", func() {
+		AfterEach(func() {
+			os.Unsetenv("SKIP_SSO")
+		})
+
+		It("Returns the string 'SSO' if it should be skipped", func() {
+			os.Setenv("SKIP_SSO", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSSO()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("SSO"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("SKIP_SSO", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSSO()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("SKIP_SSO")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSSO()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("SSO"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("SKIP_SSO", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipSSO()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipDiegoDocker", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
+		})
+
+		It("Returns the string 'docker' if it should be skipped", func() {
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoDocker()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("docker"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoDocker()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
+			env := environment.New()
+			skipFlag, err := env.GetSkipDiegoDocker()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("docker"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipDiegoDocker()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipBackendCompatibility", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
+		})
+
+		It("Returns the string 'backend_compatibility' if it should be skipped", func() {
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipBackendCompatibility()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("backend_compatibility"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipBackendCompatibility()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
+			env := environment.New()
+			skipFlag, err := env.GetSkipBackendCompatibility()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("backend_compatibility"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipBackendCompatibility()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipSecurityGroups", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
+		})
+
+		It("Returns the string 'security_groups' if it should be skipped", func() {
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSecurityGroups()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("security_groups"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSecurityGroups()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
+			env := environment.New()
+			skipFlag, err := env.GetSkipSecurityGroups()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("security_groups"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipSecurityGroups()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipLogging", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_LOGGING")
+		})
+
+		It("Returns the string 'logging' if it should be skipped", func() {
+			os.Setenv("INCLUDE_LOGGING", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipLogging()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("logging"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_LOGGING", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipLogging()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_LOGGING")
+			env := environment.New()
+			skipFlag, err := env.GetSkipLogging()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("logging"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_LOGGING", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipLogging()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipOperator", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_OPERATOR")
+		})
+
+		It("Returns the string 'operator' if it should be skipped", func() {
+			os.Setenv("INCLUDE_OPERATOR", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipOperator()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("operator"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_OPERATOR", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipOperator()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_OPERATOR")
+			env := environment.New()
+			skipFlag, err := env.GetSkipOperator()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("operator"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_OPERATOR", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipOperator()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipInternetDependent", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
+		})
+
+		It("Returns the string 'internet_dependent' if it should be skipped", func() {
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipInternetDependent()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("internet_dependent"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipInternetDependent()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
+			env := environment.New()
+			skipFlag, err := env.GetSkipInternetDependent()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("internet_dependent"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipInternetDependent()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipservices", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_SERVICES")
+		})
+
+		It("Returns the string 'services' if it should be skipped", func() {
+			os.Setenv("INCLUDE_SERVICES", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("services"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_SERVICES", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_SERVICES")
+			env := environment.New()
+			skipFlag, err := env.GetSkipServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("services"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_SERVICES", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipServices()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetSkipRouteServices", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+		})
+
+		It("Returns the string 'route_services' if it should be skipped", func() {
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "false")
+			env := environment.New()
+			skipFlag, err := env.GetSkipRouteServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("route_services"))
+		})
+
+		It("Returns an empty string if it should not be skipped", func() {
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "true")
+			env := environment.New()
+			skipFlag, err := env.GetSkipRouteServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal(""))
+		})
+
+		It("Defaults to skip", func() {
+			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			env := environment.New()
+			skipFlag, err := env.GetSkipRouteServices()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(skipFlag).To(Equal("route_services"))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "falsey")
+			env := environment.New()
+			_, err := env.GetSkipRouteServices()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false'"))
+		})
+	})
+
+	Describe("GetBackend", func() {
+		AfterEach(func() {
+			os.Unsetenv("BACKEND")
+		})
+
+		It("Returns the string 'diego' if it set to diego", func() {
+			os.Setenv("BACKEND", "diego")
+			env := environment.New()
+			backend, err := env.GetBackend()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(backend).To(Equal("diego"))
+		})
+
+		It("Returns the string 'dea' if it set to dea", func() {
+			os.Setenv("BACKEND", "dea")
+			env := environment.New()
+			backend, err := env.GetBackend()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(backend).To(Equal("dea"))
+		})
+
+		It("Returns an empty string if it is unset", func() {
+			env := environment.New()
+			backend, err := env.GetBackend()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(backend).To(Equal(""))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("BACKEND", "what-is-backend?")
+			env := environment.New()
+			_, err := env.GetBackend()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'what-is-backend?', but must be 'diego', 'dea', or empty"))
+		})
+	})
+
+	Describe("GetCatsPath", func() {
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+		})
+
+		It("Returns the value of CATS_PATH ", func() {
+			expectedCatsPath := "abcd"
+			os.Setenv("CATS_PATH", expectedCatsPath)
+			env := environment.New()
+			Expect(env.GetCatsPath()).To(Equal(expectedCatsPath))
+		})
+
+		It("Has a reasonable default CATS_PATH", func() {
+			env := environment.New()
+			Expect(env.GetCatsPath()).To(Equal(env.GetGoPath() + "/src/github.com/cloudfoundry/cf-acceptance-tests"))
+		})
+	})
+
+	Describe("GetNodes", func() {
+		AfterEach(func() {
+			os.Unsetenv("NODES")
+		})
+
+		It("Returns the integer node count", func() {
+			os.Setenv("NODES", "3")
+			env := environment.New()
+			nodes, err := env.GetNodes()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(nodes).To(Equal(3))
+		})
+
+		It("Returns an error if there was an invalid value", func() {
+			os.Setenv("NODES", "bogus")
+			env := environment.New()
+			_, err := env.GetNodes()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Invalid environment variable: 'NODES' must be an integer greater than 0"))
+		})
+	})
+
+	Describe("GetGoPath", func() {
+		It("Returns the GOPATH", func() {
+			env := environment.New()
+			Expect(env.GetGoPath()).To(Equal(os.Getenv("GOPATH")))
 		})
 	})
 })

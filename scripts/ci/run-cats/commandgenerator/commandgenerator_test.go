@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment/fake"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator/commandgeneratorfakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,18 +13,28 @@ import (
 
 var _ = Describe("Commandgenerator", func() {
 	var nodes int
-	var env *fake.FakeEnvironment
+	var env *commandgeneratorfakes.FakeEnvironment
 
 	BeforeEach(func() {
-		env = &fake.FakeEnvironment{}
+		env = &commandgeneratorfakes.FakeEnvironment{}
 		nodes = 10
-		env.GetIntegerReturnsFor("NODES", nodes, nil)
-
+		env.GetNodesReturns(nodes, nil)
+		env.GetSkipBackendCompatibilityReturns("backend_compatibility", nil)
+		env.GetSkipDiegoDockerReturns("docker", nil)
+		env.GetSkipInternetDependentReturns("internet_dependent", nil)
+		env.GetSkipLoggingReturns("logging", nil)
+		env.GetSkipOperatorReturns("operator", nil)
+		env.GetSkipRouteServicesReturns("route_services", nil)
+		env.GetSkipSecurityGroupsReturns("security_groups", nil)
+		env.GetSkipRouteServicesReturns("route_services", nil)
+		env.GetSkipServicesReturns("services", nil)
+		env.GetSkipDiegoSSHReturns("ssh", nil)
+		env.GetSkipV3Returns("v3", nil)
 	})
 
 	Context("When the path to CATs is set", func() {
 		BeforeEach(func() {
-			env.GetStringReturnsFor("CATS_PATH", ".")
+			env.GetCatsPathReturns(".")
 		})
 
 		It("Should generate a command to run CATS", func() {
@@ -36,7 +46,7 @@ var _ = Describe("Commandgenerator", func() {
 				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
 			))
 
-			env.GetStringReturnsFor("CATS_PATH", "/path/to/cats")
+			env.GetCatsPathReturns("/path/to/cats")
 			cmd, _, err = commandgenerator.GenerateCmd(env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/path/to/cats/bin/test"))
@@ -46,7 +56,7 @@ var _ = Describe("Commandgenerator", func() {
 			var expectedError error
 			BeforeEach(func() {
 				expectedError = fmt.Errorf("some error")
-				env.GetIntegerReturnsFor("NODES", 0, expectedError)
+				env.GetNodesReturns(0, expectedError)
 			})
 
 			It("propogates the error", func() {
@@ -57,7 +67,7 @@ var _ = Describe("Commandgenerator", func() {
 
 		Context("when the node count is unset", func() {
 			BeforeEach(func() {
-				env.GetIntegerReturnsFor("NODES", 0, nil)
+				env.GetNodesReturns(0, nil)
 			})
 			It("sets the default node count", func() {
 				_, args, _ := commandgenerator.GenerateCmd(env)
@@ -66,18 +76,19 @@ var _ = Describe("Commandgenerator", func() {
 		})
 
 		Context("when there are optional skipPackage env vars set", func() {
-			Context("to true", func() {
+			Context("to not skip", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_LOGGING", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_OPERATOR", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_ROUTE_SERVICES", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_SECURITY_GROUPS", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_SERVICES", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_DIEGO_SSH", true, nil)
-					env.GetBooleanReturnsFor("INCLUDE_V3", true, nil)
+					env.GetSkipBackendCompatibilityReturns("", nil)
+					env.GetSkipDiegoDockerReturns("", nil)
+					env.GetSkipInternetDependentReturns("", nil)
+					env.GetSkipLoggingReturns("", nil)
+					env.GetSkipOperatorReturns("", nil)
+					env.GetSkipRouteServicesReturns("", nil)
+					env.GetSkipSecurityGroupsReturns("", nil)
+					env.GetSkipRouteServicesReturns("", nil)
+					env.GetSkipServicesReturns("", nil)
+					env.GetSkipDiegoSSHReturns("", nil)
+					env.GetSkipV3Returns("", nil)
 				})
 
 				It("should generate a command with the correct list of skipPackage flags", func() {
@@ -91,20 +102,7 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("to false", func() {
-				BeforeEach(func() {
-					env.GetBooleanReturnsFor("INCLUDE_BACKEND_COMPATIBILITY", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_DIEGO_DOCKER", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_INTERNET_DEPENDENT", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_LOGGING", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_OPERATOR", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_ROUTE_SERVICES", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_SECURITY_GROUPS", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_SERVICES", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_DIEGO_SSH", false, nil)
-					env.GetBooleanReturnsFor("INCLUDE_V3", false, nil)
-				})
-
+			Context("to skip", func() {
 				It("should generate a command with the correct list of skipPackage flags", func() {
 					cmd, args, err := commandgenerator.GenerateCmd(env)
 					Expect(err).NotTo(HaveOccurred())
@@ -122,7 +120,7 @@ var _ = Describe("Commandgenerator", func() {
 				var expectedError error
 				BeforeEach(func() {
 					expectedError = fmt.Errorf("some error")
-					env.GetBooleanReturnsFor("INCLUDE_V3", false, expectedError)
+					env.GetSkipV3Returns("", expectedError)
 				})
 
 				It("propogates the error", func() {
@@ -133,9 +131,9 @@ var _ = Describe("Commandgenerator", func() {
 		})
 
 		Context("when there are optional skip env vars set", func() {
-			Context("to true", func() {
+			Context("to skip SSO", func() {
 				BeforeEach(func() {
-					env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", true, nil)
+					env.GetSkipSSOReturns("SSO", nil)
 				})
 
 				It("generates a command that skips tests with the given tag", func() {
@@ -149,9 +147,9 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("to false", func() {
+			Context("to not skip SSO", func() {
 				BeforeEach(func() {
-					env.GetBooleanReturnsFor("SKIP_SSO", false, nil)
+					env.GetSkipSSOReturns("", nil)
 				})
 
 				It("generates a command that does not include the given tag in the skips", func() {
@@ -169,30 +167,14 @@ var _ = Describe("Commandgenerator", func() {
 				var expectedError error
 				BeforeEach(func() {
 					expectedError = fmt.Errorf("some error")
-					env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", false, expectedError)
+					env.GetSkipSSOReturns("", expectedError)
 				})
 
 				It("propogates the error", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
 					Expect(err).To(Equal(expectedError))
-					Expect(env.GetBooleanCallCountFor("SKIP_SSO"))
+					Expect(env.GetSkipSSOCallCount())
 				})
-			})
-		})
-
-		Context("when the optional skip env var SKIP_SSO is not set", func() {
-			BeforeEach(func() {
-				env.GetBooleanDefaultToTrueReturnsFor("SKIP_SSO", true, nil)
-			})
-
-			It("generates a command that skips SSO", func() {
-				cmd, args, err := commandgenerator.GenerateCmd(env)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(cmd).To(Equal(
-					"bin/test",
-				))
-
-				Expect(args).To(ContainElement(ContainSubstring("-skip=SSO|")))
 			})
 		})
 
@@ -233,7 +215,7 @@ var _ = Describe("Commandgenerator", func() {
 				BeforeEach(func() {
 					env.GetBackendReturns("", nil)
 				})
-				It("should generate a command that skips bosh NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
+				It("should generate a command that skips both NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
 					cmd, args, err := commandgenerator.GenerateCmd(env)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(cmd).To(Equal(
@@ -258,7 +240,7 @@ var _ = Describe("Commandgenerator", func() {
 
 	Context("When the path to CATS isn't explicitly provided", func() {
 		BeforeEach(func() {
-			env.GetStringReturnsFor("GOPATH", "/go")
+			env.GetGoPathReturns("/go")
 		})
 
 		It("Should return a sane default command path for use in Concourse", func() {

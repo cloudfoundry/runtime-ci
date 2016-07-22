@@ -13,133 +13,111 @@ func New() *environment {
 }
 
 func (e *environment) GetSkipSSLValidation() (bool, error) {
-	return e.GetBoolean("SKIP_SSL_VALIDATION")
+	return e.getBooleanDefaultToFalse("SKIP_SSL_VALIDATION")
 }
 
 func (e *environment) GetUseHTTP() (bool, error) {
-	return e.GetBoolean("USE_HTTP")
+	return e.getBooleanDefaultToFalse("USE_HTTP")
 }
 
 func (e *environment) GetIncludePrivilegedContainerSupport() (bool, error) {
-	return e.GetBoolean("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
+	return e.getBooleanDefaultToFalse("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 }
 
 func (e *environment) GetDefaultTimeoutInSeconds() (int, error) {
-	return e.GetInteger("DEFAULT_TIMEOUT_IN_SECONDS")
+	return e.getInteger("DEFAULT_TIMEOUT_IN_SECONDS")
 }
 
 func (e *environment) GetCFPushTimeoutInSeconds() (int, error) {
-	return e.GetInteger("CF_PUSH_TIMEOUT_IN_SECONDS")
+	return e.getInteger("CF_PUSH_TIMEOUT_IN_SECONDS")
 }
 
 func (e *environment) GetLongCurlTimeoutInSeconds() (int, error) {
-	return e.GetInteger("LONG_CURL_TIMEOUT_IN_SECONDS")
+	return e.getInteger("LONG_CURL_TIMEOUT_IN_SECONDS")
 }
 
 func (e *environment) GetBrokerStartTimeoutInSeconds() (int, error) {
-	return e.GetInteger("BROKER_START_TIMEOUT_IN_SECONDS")
+	return e.getInteger("BROKER_START_TIMEOUT_IN_SECONDS")
 }
 
 func (e *environment) GetCFAPI() string {
-	return e.GetString("CF_API")
+	return e.getString("CF_API")
 }
 
 func (e *environment) GetCFAdminUser() string {
-	return e.GetString("CF_ADMIN_USER")
+	return e.getString("CF_ADMIN_USER")
 }
 
 func (e *environment) GetCFAdminPassword() string {
-	return e.GetString("CF_ADMIN_PASSWORD")
+	return e.getString("CF_ADMIN_PASSWORD")
 }
 
 func (e *environment) GetCFAppsDomain() string {
-	return e.GetString("CF_APPS_DOMAIN")
+	return e.getString("CF_APPS_DOMAIN")
 }
 
 func (e *environment) GetExistingUser() string {
-	return e.GetString("EXISTING_USER")
+	return e.getString("EXISTING_USER")
 }
 
 func (e *environment) UseExistingUser() bool {
-	return e.GetString("EXISTING_USER") != ""
+	return e.getString("EXISTING_USER") != ""
 }
 
 func (e *environment) KeepUserAtSuiteEnd() bool {
-	return e.GetString("EXISTING_USER") != ""
+	return e.getString("EXISTING_USER") != ""
 }
 
 func (e *environment) GetExistingUserPassword() string {
-	return e.GetString("EXISTING_USER_PASSWORD")
+	return e.getString("EXISTING_USER_PASSWORD")
 }
 
 func (e *environment) GetStaticBuildpackName() string {
-	return e.GetString("STATICFILE_BUILDPACK_NAME")
+	return e.getString("STATICFILE_BUILDPACK_NAME")
 }
 
 func (e *environment) GetJavaBuildpackName() string {
-	return e.GetString("JAVA_BUILDPACK_NAME")
+	return e.getString("JAVA_BUILDPACK_NAME")
 }
 
 func (e *environment) GetRubyBuildpackName() string {
-	return e.GetString("RUBY_BUILDPACK_NAME")
+	return e.getString("RUBY_BUILDPACK_NAME")
 }
 
 func (e *environment) GetNodeJSBuildpackName() string {
-	return e.GetString("NODEJS_BUILDPACK_NAME")
+	return e.getString("NODEJS_BUILDPACK_NAME")
 }
 
 func (e *environment) GetGoBuildpackName() string {
-	return e.GetString("GO_BUILDPACK_NAME")
+	return e.getString("GO_BUILDPACK_NAME")
 }
 
 func (e *environment) GetPythonBuildpackName() string {
-	return e.GetString("PYTHON_BUILDPACK_NAME")
+	return e.getString("PYTHON_BUILDPACK_NAME")
 }
 
 func (e *environment) GetPHPBuildpackName() string {
-	return e.GetString("PHP_BUILDPACK_NAME")
+	return e.getString("PHP_BUILDPACK_NAME")
 }
 
 func (e *environment) GetBinaryBuildpackName() string {
-	return e.GetString("BINARY_BUILDPACK_NAME")
+	return e.getString("BINARY_BUILDPACK_NAME")
 }
 
 func (e *environment) GetPersistentAppHost() string {
-	return e.GetString("PERSISTENT_APP_HOST")
+	return e.getString("PERSISTENT_APP_HOST")
 }
 
 func (e *environment) GetPersistentAppSpace() string {
-	return e.GetString("PERSISTENT_APP_SPACE")
+	return e.getString("PERSISTENT_APP_SPACE")
 }
 
 func (e *environment) GetPersistentAppOrg() string {
-	return e.GetString("PERSISTENT_APP_ORG")
+	return e.getString("PERSISTENT_APP_ORG")
 }
 
 func (e *environment) GetPersistentAppQuotaName() string {
-	return e.GetString("PERSISTENT_APP_QUOTA_NAME")
-}
-
-func (e *environment) GetBoolean(varName string) (bool, error) {
-	switch os.Getenv(varName) {
-	case "true":
-		return true, nil
-	case "false", "":
-		return false, nil
-	default:
-		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
-	}
-}
-
-func (e *environment) GetBooleanDefaultToTrue(varName string) (bool, error) {
-	switch os.Getenv(varName) {
-	case "true", "":
-		return true, nil
-	case "false":
-		return false, nil
-	default:
-		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
-	}
+	return e.getString("PERSISTENT_APP_QUOTA_NAME")
 }
 
 func (e *environment) GetBackend() (string, error) {
@@ -152,11 +130,93 @@ func (e *environment) GetBackend() (string, error) {
 	}
 }
 
-func (e *environment) GetString(varName string) string {
+func (e *environment) GetSkipDiegoSSH() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_DIEGO_SSH", "ssh", false)
+}
+
+func (e *environment) GetSkipV3() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_V3", "v3", false)
+}
+
+func (e *environment) GetSkipDiegoDocker() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_DIEGO_DOCKER", "docker", false)
+}
+
+func (e *environment) GetSkipSSO() (string, error) {
+	return e.returnsSkipFlag("SKIP_SSO", "SSO", true)
+}
+
+func (e *environment) GetSkipSecurityGroups() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_SECURITY_GROUPS", "security_groups", false)
+}
+
+func (e *environment) GetSkipBackendCompatibility() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_BACKEND_COMPATIBILITY", "backend_compatibility", false)
+}
+
+func (e *environment) GetSkipOperator() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_OPERATOR", "operator", false)
+}
+
+func (e *environment) GetSkipInternetDependent() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_INTERNET_DEPENDENT", "internet_dependent", false)
+}
+
+func (e *environment) GetSkipServices() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_SERVICES", "services", false)
+}
+
+func (e *environment) GetSkipRouteServices() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_ROUTE_SERVICES", "route_services", false)
+}
+
+func (e *environment) GetSkipLogging() (string, error) {
+	return e.returnsSkipFlag("INCLUDE_LOGGING", "logging", false)
+}
+
+func (e *environment) GetCatsPath() string {
+	catsPath := os.Getenv("CATS_PATH")
+	if catsPath == "" {
+		catsPath = e.GetGoPath() + "/src/github.com/cloudfoundry/cf-acceptance-tests"
+	}
+	return catsPath
+}
+
+func (e *environment) GetGoPath() string {
+	return os.Getenv("GOPATH")
+}
+
+func (e *environment) GetNodes() (int, error) {
+	return e.getInteger("NODES")
+}
+
+func (e *environment) getBooleanDefaultToFalse(varName string) (bool, error) {
+	switch os.Getenv(varName) {
+	case "true":
+		return true, nil
+	case "false", "":
+		return false, nil
+	default:
+		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
+	}
+}
+
+func (e *environment) getBooleanDefaultToTrue(varName string) (bool, error) {
+	switch os.Getenv(varName) {
+	case "true", "":
+		return true, nil
+	case "false":
+		return false, nil
+	default:
+		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
+	}
+}
+
+func (e *environment) getString(varName string) string {
 	return os.Getenv(varName)
 }
 
-func (e *environment) GetInteger(varName string) (int, error) {
+func (e *environment) getInteger(varName string) (int, error) {
 	value := os.Getenv(varName)
 	if value == "" {
 		return 0, nil
@@ -168,4 +228,25 @@ func (e *environment) GetInteger(varName string) (int, error) {
 	}
 
 	return intValue, nil
+}
+
+func (e *environment) returnsSkipFlag(envVarName, skipFlag string, isSkipVariable bool) (string, error) {
+	if isSkipVariable {
+		value, err := e.getBooleanDefaultToTrue(envVarName)
+		if err != nil {
+			return "", err
+		}
+		if value {
+			return skipFlag, nil
+		}
+	} else {
+		value, err := e.getBooleanDefaultToFalse(envVarName)
+		if err != nil {
+			return "", err
+		}
+		if !value {
+			return skipFlag, nil
+		}
+	}
+	return "", nil
 }
