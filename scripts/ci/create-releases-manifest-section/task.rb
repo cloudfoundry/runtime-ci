@@ -22,10 +22,10 @@ releases_metadata = release_names.map do |release_name|
   sha1 = File.read("#{release_resource}/sha1")
 
   {
-    name: release_name,
-    url: url,
-    version: version,
-    sha1: sha1
+    'name' => release_name,
+    'url' => url,
+    'version' => version,
+    'sha1' => sha1
   }
 end
 
