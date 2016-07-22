@@ -89,6 +89,7 @@ jobs:
     - get: runtime-ci
     - get: hagrid-env
     - get: cf-release-develop
+    - get: diego-release-master
       params:
         submodules: none
   - task: extract-creds
