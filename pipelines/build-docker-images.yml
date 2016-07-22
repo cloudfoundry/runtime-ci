@@ -50,6 +50,7 @@ groups:
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-releases-manifest-section-docker-image
   - build-extract-elb-and-security-groups-from-bbl-stack-docker-image
+  - build-extend-cf-router-resources-pool-cf-deployment-manifest-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -359,6 +360,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extract-elb-and-security-groups-from-bbl-stack/Dockerfile]
+
+- name: runtime-ci-extend-cf-router-resources-pool-cf-deployment-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -702,6 +710,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/extract-elb-and-security-groups-from-bbl-stack
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: extend-cf-router-resources-pool-cf-deployment-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/extend-cf-router-resources-pool-cf-deployment-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1553,3 +1569,22 @@ jobs:
       params:
         build: runtime-ci-extract-elb-and-security-groups-from-bbl-stack/scripts/ci/extract-elb-and-security-groups-from-bbl-stack
         push: true
+
+- name: build-extend-cf-router-resources-pool-cf-deployment-manifest-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-extend-cf-router-resources-pool-cf-deployment-manifest
+        trigger: true
+    - put: extend-cf-router-resources-pool-cf-deployment-manifest-pipeline-image
+      params:
+        build: runtime-ci-extend-cf-router-resources-pool-cf-deployment-manifest/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest
+        push: true
+
