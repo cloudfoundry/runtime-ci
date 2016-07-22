@@ -1,0 +1,14 @@
+#!/bin/bash
+set -exu
+
+STATE_DIR_PATH=${STATE_DIR_PATH:?"\${STATE_DIR_PATH} is not set"}
+
+stack_name=$(cat "${STATE_DIR_PATH}"  | jq --raw-output .stack.name)
+
+internal_security_group=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id InternalSecurityGroup | jq --raw-output .StackResourceDetail.PhysicalResourceId)
+cf_router_internal_security_group=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id CFRouterInternalSecurityGroup | jq --raw-output .StackResourceDetail.PhysicalResourceId)
+
+cat <<EOF >./security-groups/security-groups
+$internal_security_group
+$cf_router_internal_security_group
+EOF

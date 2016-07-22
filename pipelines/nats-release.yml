@@ -109,6 +109,12 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: cf/*.yml
+  - task: extract-security-groups-from-bbl-stack
+    file: scripts/ci/extract-security-groups-from-bbl-stack/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure/state.json
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
