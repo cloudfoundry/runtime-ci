@@ -109,8 +109,8 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: cf/*.yml
-  - task: extract-security-groups-from-bbl-stack
-    file: runtime-ci/scripts/ci/extract-security-groups-from-bbl-stack/task.yml
+  - task: extract-elb-and-security-groups-from-bbl-stack
+    file: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure/state.json
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
