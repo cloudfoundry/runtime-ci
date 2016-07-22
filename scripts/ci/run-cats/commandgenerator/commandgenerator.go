@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 const DEFAULT_NODES = 2
@@ -41,9 +43,11 @@ type Environment interface {
 }
 
 func GenerateCmd(env Environment) (string, []string, error) {
+	var errs validationerrors.Errors
+
 	nodes, err := env.GetNodes()
 	if err != nil {
-		return "", nil, err
+		errs.Add(err)
 	}
 
 	if nodes == 0 {
@@ -60,11 +64,15 @@ func GenerateCmd(env Environment) (string, []string, error) {
 
 	skipPackages, err := generateSkipPackages(env)
 	if err != nil {
-		return "", nil, err
+		errs.Add(err)
 	}
 	skips, err := generateSkips(env)
 	if err != nil {
-		return "", nil, err
+		errs.Add(err)
+	}
+
+	if !errs.Empty() {
+		return "", nil, errs
 	}
 	return testBinPath, []string{
 		"-r",
@@ -110,75 +118,80 @@ func generateSkipPackages(env Environment) (string, error) {
 	skipPackages := []string{"helpers"}
 	var skipPackage string
 	var err error
+	errs := validationerrors.Errors{}
 
 	if skipPackage, err = env.GetSkipDiegoSSH(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipV3(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipDiegoDocker(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipBackendCompatibility(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipSecurityGroups(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipLogging(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipOperator(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipInternetDependent(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipServices(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
 
 	if skipPackage, err = env.GetSkipRouteServices(); err != nil {
-		return "", err
+		errs.Add(err)
 	}
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
+	}
+
+	if !errs.Empty() {
+		return "", errs
 	}
 
 	sort.Strings(skipPackages)

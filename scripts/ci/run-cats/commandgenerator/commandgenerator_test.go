@@ -26,7 +26,6 @@ var _ = Describe("Commandgenerator", func() {
 		env.GetSkipOperatorReturns("operator", nil)
 		env.GetSkipRouteServicesReturns("route_services", nil)
 		env.GetSkipSecurityGroupsReturns("security_groups", nil)
-		env.GetSkipRouteServicesReturns("route_services", nil)
 		env.GetSkipServicesReturns("services", nil)
 		env.GetSkipDiegoSSHReturns("ssh", nil)
 		env.GetSkipV3Returns("v3", nil)
@@ -61,7 +60,7 @@ var _ = Describe("Commandgenerator", func() {
 
 			It("propogates the error", func() {
 				_, _, err := commandgenerator.GenerateCmd(env)
-				Expect(err).To(Equal(expectedError))
+				Expect(err.Error()).To(Equal(expectedError.Error()))
 			})
 		})
 
@@ -85,7 +84,6 @@ var _ = Describe("Commandgenerator", func() {
 					env.GetSkipOperatorReturns("", nil)
 					env.GetSkipRouteServicesReturns("", nil)
 					env.GetSkipSecurityGroupsReturns("", nil)
-					env.GetSkipRouteServicesReturns("", nil)
 					env.GetSkipServicesReturns("", nil)
 					env.GetSkipDiegoSSHReturns("", nil)
 					env.GetSkipV3Returns("", nil)
@@ -125,7 +123,7 @@ var _ = Describe("Commandgenerator", func() {
 
 				It("propogates the error", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
-					Expect(err).To(Equal(expectedError))
+					Expect(err.Error()).To(Equal(expectedError.Error()))
 				})
 			})
 		})
@@ -172,7 +170,7 @@ var _ = Describe("Commandgenerator", func() {
 
 				It("propogates the error", func() {
 					_, _, err := commandgenerator.GenerateCmd(env)
-					Expect(err).To(Equal(expectedError))
+					Expect(err.Error()).To(Equal(expectedError.Error()))
 					Expect(env.GetSkipSSOCallCount())
 				})
 			})
@@ -247,6 +245,41 @@ var _ = Describe("Commandgenerator", func() {
 			cmd, _, err := commandgenerator.GenerateCmd(env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/go/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))
+		})
+	})
+
+	Context("When everything is returning an error", func() {
+		BeforeEach(func() {
+			env.GetNodesReturns(0, fmt.Errorf("NODES"))
+			env.GetSkipBackendCompatibilityReturns("", fmt.Errorf("INCLUDE_BACKEND_COMPATIBILITY"))
+			env.GetSkipDiegoDockerReturns("", fmt.Errorf("INCLUDE_DIEGO_DOCKER"))
+			env.GetSkipInternetDependentReturns("", fmt.Errorf("INCLUDE_INTERNET_DEPENDENT"))
+			env.GetSkipLoggingReturns("", fmt.Errorf("INCLUDE_LOGGING"))
+			env.GetSkipOperatorReturns("", fmt.Errorf("INCLUDE_OPERATOR"))
+			env.GetSkipRouteServicesReturns("", fmt.Errorf("INCLUDE_ROUTE_SERVICES"))
+			env.GetSkipSecurityGroupsReturns("", fmt.Errorf("INCLUDE_SECURITY_GROUPS"))
+			env.GetSkipServicesReturns("", fmt.Errorf("INCLUDE_SERVICES"))
+			env.GetSkipDiegoSSHReturns("", fmt.Errorf("INCLUDE_DIEGO_SSH"))
+			env.GetSkipV3Returns("", fmt.Errorf("INCLUDE_V3"))
+		})
+		It("Aggregates all the errors", func() {
+			_, _, err := commandgenerator.GenerateCmd(env)
+			errorStr := err.Error()
+			Expect(errorStr).To(
+				And(
+					ContainSubstring("NODES"),
+					ContainSubstring("INCLUDE_BACKEND_COMPATIBILITY"),
+					ContainSubstring("INCLUDE_DIEGO_DOCKER"),
+					ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
+					ContainSubstring("INCLUDE_LOGGING"),
+					ContainSubstring("INCLUDE_OPERATOR"),
+					ContainSubstring("INCLUDE_ROUTE_SERVICES"),
+					ContainSubstring("INCLUDE_SECURITY_GROUPS"),
+					ContainSubstring("INCLUDE_SERVICES"),
+					ContainSubstring("INCLUDE_DIEGO_SSH"),
+					ContainSubstring("INCLUDE_V3"),
+				),
+			)
 		})
 	})
 })

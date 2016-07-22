@@ -11,10 +11,11 @@ import (
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 func main() {
-	errors := []error{}
+	errors := validationerrors.Errors{}
 	currentDir, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -23,7 +24,7 @@ func main() {
 	missingEnvKeys := buildMissingKeyList()
 
 	if missingEnvKeys != "" {
-		errors = append(errors, fmt.Errorf(`Missing required environment variables:
+		errors.Add(fmt.Errorf(`Missing required environment variables:
 %s`, missingEnvKeys))
 	}
 
@@ -31,25 +32,22 @@ func main() {
 
 	configWriter, err := configwriter.NewConfigFile(currentDir, env)
 	if err != nil {
-		errors = append(errors, err)
+		errors.Add(err)
 	}
-
-	if len(errors) != 0 {
-		for i, e := range errors {
-			fmt.Fprintf(os.Stderr, "%d. %s\n", i+1, e.Error())
-		}
-		os.Exit(1)
-	}
-
-	configWriter.WriteConfigToFile()
-	configWriter.ExportConfigFilePath()
 
 	path, arguments, err := commandgenerator.GenerateCmd(env)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERR:"+err.Error())
+		errors.Add(err)
+	}
+
+	if !errors.Empty() {
+		fmt.Fprintf(os.Stderr, errors.Error()+"\n")
 		os.Exit(1)
 	}
+
 	fmt.Printf("path: %s\n", path)
+	configWriter.WriteConfigToFile()
+	configWriter.ExportConfigFilePath()
 	command := exec.Command(path, arguments...)
 
 	stdOut, err := command.StdoutPipe()

@@ -438,4 +438,107 @@ CF_APPS_DOMAIN`,
 			Expect(config.IncludePrivilegedContainerSupport).To(Equal(true))
 		})
 	})
+
+	Context("When all validated env vars are set to horrifyingly invalid values", func() {
+		BeforeEach(func() {
+			os.Setenv("CATS_PATH", "fixtures/pass")
+
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Setenv("SKIP_SSL_VALIDATION", "Righteous")
+			os.Setenv("USE_HTTP", "False")
+			os.Setenv("BACKEND", "kubernetes")
+			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "60s")
+			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120 years")
+			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
+			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
+			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
+			os.Setenv("SKIP_SSO", "falsey")
+
+			os.Setenv("NODES", "five")
+			os.Setenv("INCLUDE_DIEGO_SSH", "1")
+			os.Setenv("INCLUDE_V3", "0")
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "no")
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "yes")
+			os.Setenv("INCLUDE_LOGGING", "T")
+			os.Setenv("INCLUDE_OPERATOR", "F")
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
+			os.Setenv("INCLUDE_SERVICES", "troo")
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
+			Expect(configJsonPath).NotTo(BeAnExistingFile())
+		})
+
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+			os.Unsetenv("BACKEND")
+			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
+			os.Unsetenv("SKIP_SSO")
+
+			os.Unsetenv("NODES")
+			os.Unsetenv("INCLUDE_DIEGO_SSH")
+			os.Unsetenv("INCLUDE_V3")
+			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
+			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
+			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
+			os.Unsetenv("INCLUDE_LOGGING")
+			os.Unsetenv("INCLUDE_OPERATOR")
+			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
+			os.Unsetenv("INCLUDE_SERVICES")
+			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+		})
+
+		It("Shows all the errors and doesn't write the config or run the CATs command", func() {
+			command := exec.Command(binPath)
+
+			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(configJsonPath).NotTo(BeARegularFile())
+
+			Eventually(session, 1).Should(gexec.Exit(1))
+			commandOutput := string(session.Wait(1).Err.Contents()[:])
+
+			Expect(commandOutput).To(And(
+				ContainSubstring("CF_ADMIN_USER"),
+				ContainSubstring("CF_ADMIN_PASSWORD"),
+				ContainSubstring("CF_APPS_DOMAIN"),
+				ContainSubstring("CF_API"),
+				ContainSubstring("SKIP_SSL_VALIDATION"),
+				ContainSubstring("USE_HTTP"),
+				ContainSubstring("BACKEND"),
+				ContainSubstring("DEFAULT_TIMEOUT_IN_SECONDS"),
+				ContainSubstring("CF_PUSH_TIMEOUT_IN_SECONDS"),
+				ContainSubstring("LONG_CURL_TIMEOUT_IN_SECONDS"),
+				ContainSubstring("BROKER_START_TIMEOUT_IN_SECONDS"),
+				ContainSubstring("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
+				ContainSubstring("SKIP_SSO"),
+				ContainSubstring("NODES"),
+				ContainSubstring("INCLUDE_DIEGO_SSH"),
+				ContainSubstring("INCLUDE_V3"),
+				ContainSubstring("INCLUDE_DIEGO_DOCKER"),
+				ContainSubstring("INCLUDE_BACKEND_COMPATIBILITY"),
+				ContainSubstring("INCLUDE_SECURITY_GROUPS"),
+				ContainSubstring("INCLUDE_LOGGING"),
+				ContainSubstring("INCLUDE_OPERATOR"),
+				ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
+				ContainSubstring("INCLUDE_SERVICES"),
+				ContainSubstring("INCLUDE_ROUTE_SERVICES"),
+			))
+
+			Expect(commandOutput).ToNot(ContainSubstring("bin/test -r"))
+		})
+	})
 })
