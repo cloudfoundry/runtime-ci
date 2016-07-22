@@ -1,11 +1,9 @@
 ---
-groups:
-- name: bosh-2.0
-  jobs:
-  - destroy-infrastructure
-  - setup-infrastructure
-  - deploy-releases
-  - hermione-diego-cats
+resource_types:
+- name: bosh-io-release-updated
+  type: docker-image
+  source:
+    repository: concourse/bosh-io-release-resource
 
 resources:
 - name: runtime-ci
@@ -26,10 +24,17 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths: [ cf-deployment.yml ]
-- name: capi-release-repo
+- name: hermione-deployment-configuration
   type: git
   source:
     branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+- name: capi-release-repo-ci-passed
+  type: git
+  source:
+    branch: ci-passed
     uri: https://github.com/cloudfoundry/capi-release.git
 - name: nats-release-repo
   type: git
@@ -46,8 +51,45 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: consul-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry-incubator/consul-release
+- name: etcd-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+- name: diego-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/diego-release
+- name: loggregator-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/loggregator
+- name: cf-mysql-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/cf-mysql-release
+- name: uaa-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/uaa-release
+- name: garden-linux-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/garden-linux-release
+- name: cflinuxfs2-rootfs-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
+- name: cf-release
+  type: bosh-io-release-updated
+  source:
+    repository: cloudfoundry/cf-release
 
 jobs:
+
 - name: destroy-infrastructure
   public: true
   serial_groups: [hermione]
@@ -96,18 +138,58 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
 
+
 - name: deploy-releases
   public: true
   serial_groups: [hermione]
   plan:
   - aggregate:
-    - get: capi-release-repo
-    - get: nats-release-repo
-    - get: routing-release-repo
-    - get: hermione-env-repo
-    - get: hermione-deployment-manifest
-      trigger: true
     - get: runtime-ci
+    - get: hermione-env-repo
+    - get: hermione-deployment-configuration
+      trigger: true
+    - get: capi-release-repo-ci-passed
+      trigger: true
+    - get: nats-release-repo
+      trigger: true
+    - get: routing-release-repo
+      trigger: true
+    - get: consul-release
+      trigger: true
+      params:
+        tarball: false
+    - get: etcd-release
+      trigger: true
+      params:
+        tarball: false
+    - get: diego-release
+      trigger: true
+      params:
+        tarball: false
+    - get: loggregator-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cf-mysql-release
+      trigger: true
+      params:
+        tarball: false
+    - get: uaa-release
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-linux-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cflinuxfs2-rootfs-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cf-release
+      trigger: true
+      params:
+        tarball: false
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -156,7 +238,7 @@ jobs:
       - task: create-capi-release
         file: runtime-ci/scripts/ci/create-release/task.yml
         input_mapping:
-          release-repo: capi-release-repo
+          release-repo: capi-release-repo-ci-passed
         output_mapping:
           release-tarball: capi-release-tarball
         params:
@@ -170,10 +252,14 @@ jobs:
           USERNAME_FILE: username
           PASSWORD_FILE: password
           RELEASE_NAME: capi-*.tgz
+  - task: build-releases-section
+    file: runtime-ci/scripts/ci/create-releases-manifest-section/task.yml
+    input_mapping:
+      deployment-configuration: hermione-deployment-configuration
   - task: set-bosh-uuid
     file: runtime-ci/scripts/ci/bosh-uuid/task.yml
     input_mapping:
-      manifest: hermione-deployment-manifest
+      manifest: deployment-manifest
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
@@ -196,9 +282,69 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: hermione-deployment-manifest
+      - get: hermione-deployment-configuration
         trigger: true
         passed: [ deploy-releases ]
+      - get: capi-release-repo-ci-passed
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          submodules: none
+      - get: nats-release-repo
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          submodules: none
+      - get: routing-release-repo
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          submodules: none
+      - get: consul-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: etcd-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: diego-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: loggregator-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: cf-mysql-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: uaa-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: garden-linux-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: cflinuxfs2-rootfs-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
+      - get: cf-release
+        trigger: true
+        passed: [ deploy-releases ]
+        params:
+          tarball: false
       - get: runtime-ci
       - get: cf-acceptance-tests
     - task: write-api-target-file
