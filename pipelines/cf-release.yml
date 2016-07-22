@@ -1207,9 +1207,6 @@ jobs:
       instance-count-overrides: a1-env
       release-versions: a1-env
     params:
-      BOSH_USER: {{a1_bosh_username}}
-      BOSH_PASSWORD: {{a1_bosh_password}}
-      BOSH_TARGET: bosh.a1.cf-app.com
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
@@ -1270,9 +1267,6 @@ jobs:
       release-versions: diego-release-master
       iaas-settings: diego-release-master
     params:
-      BOSH_USER: admin
-      BOSH_PASSWORD: admin
-      BOSH_TARGET: {{bosh_lite_elastic_ip}}
       PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
@@ -1327,9 +1321,6 @@ jobs:
       instance-count-overrides: cat-env
       release-versions: cat-env
     params:
-      BOSH_USER: {{vsphere_bosh_username}}
-      BOSH_PASSWORD: {{vsphere_bosh_password}}
-      BOSH_TARGET: bosh.cat.wild.cf-app.com
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml

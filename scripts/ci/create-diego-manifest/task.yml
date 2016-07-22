@@ -19,9 +19,6 @@ outputs:
 - name: generated-diego-manifest
 
 params:
-  BOSH_PASSWORD: ~
-  BOSH_TARGET: ~
-  BOSH_USER: ~
   DIEGO_RELEASE_DIR: diego-release
   GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
   CF_MANIFEST_PATH: deployment.yml
