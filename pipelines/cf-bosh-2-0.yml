@@ -44,7 +44,7 @@ resources:
 - name: routing-release
   type: bosh-io-release-updated
   source:
-    repository: cloudfoundry-incubator/routing-release
+    repository: cloudfoundry-incubator/cf-routing-release
 - name: cf-acceptance-tests
   type: git
   source:
