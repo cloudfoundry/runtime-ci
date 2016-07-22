@@ -24,7 +24,7 @@ func main() {
 	missingEnvKeys := buildMissingKeyList()
 
 	if missingEnvKeys != "" {
-		errors.Add(fmt.Errorf(`Missing required environment variables:
+		errors.Add(fmt.Errorf(`* Missing required environment variables:
 %s`, missingEnvKeys))
 	}
 
@@ -41,7 +41,7 @@ func main() {
 	}
 
 	if !errors.Empty() {
-		fmt.Fprintf(os.Stderr, errors.Error()+"\n")
+		fmt.Fprintf(os.Stderr, "Your CATS input failed validation:\n%s\n", errors.Error())
 		os.Exit(1)
 	}
 
@@ -111,7 +111,7 @@ func buildMissingKeyList() string {
 
 	for _, key := range requiredEnvKeys {
 		if os.Getenv(key) == "" {
-			missingKeys += key + "\n"
+			missingKeys += "    " + key + "\n"
 		}
 	}
 

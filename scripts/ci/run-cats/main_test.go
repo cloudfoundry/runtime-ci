@@ -33,10 +33,10 @@ var _ = Describe("Main", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
-CF_ADMIN_USER
-CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN`,
+			Eventually(session.Err, 30).Should(gbytes.Say(`\* Missing required environment variables:
+    CF_ADMIN_USER
+    CF_ADMIN_PASSWORD
+    CF_APPS_DOMAIN`,
 			))
 			Expect(configJsonPath).NotTo(BeARegularFile())
 
@@ -212,11 +212,11 @@ CF_APPS_DOMAIN`,
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session, 30).Should(gexec.Exit(1))
-			Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
-CF_API
-CF_ADMIN_USER
-CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN`,
+			Eventually(session.Err, 30).Should(gbytes.Say(`\* Missing required environment variables:
+    CF_API
+    CF_ADMIN_USER
+    CF_ADMIN_PASSWORD
+    CF_APPS_DOMAIN`,
 			))
 
 			Expect(configJsonPath).NotTo(BeARegularFile())
@@ -256,11 +256,11 @@ CF_APPS_DOMAIN`,
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session, 30).Should(gexec.Exit(1))
-				Eventually(session.Err, 30).Should(gbytes.Say(`Missing required environment variables:
-CF_API
-CF_ADMIN_USER
-CF_ADMIN_PASSWORD
-CF_APPS_DOMAIN`,
+				Eventually(session.Err, 30).Should(gbytes.Say(`\* Missing required environment variables:
+    CF_API
+    CF_ADMIN_USER
+    CF_ADMIN_PASSWORD
+    CF_APPS_DOMAIN`,
 				))
 				Eventually(session.Err, 3).Should(gbytes.Say(`Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false'`))
 				Eventually(session.Err, 3).Should(gbytes.Say(`Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false'`))

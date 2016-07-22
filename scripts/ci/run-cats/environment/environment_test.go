@@ -34,7 +34,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("SKIP_SSL_VALIDATION", "blah blah blah")
 			_, err := env.GetSkipSSLValidation()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -61,7 +61,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("USE_HTTP", "blah blah blah")
 			_, err := env.GetUseHTTP()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -88,7 +88,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "blah blah blah")
 			_, err := env.GetIncludePrivilegedContainerSupport()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -115,7 +115,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "blah blah blah")
 			_, err := env.GetDefaultTimeoutInSeconds()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -142,7 +142,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "blah blah blah")
 			_, err := env.GetCFPushTimeoutInSeconds()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'CF_PUSH_TIMEOUT_IN_SECONDS' must be an integer greater than 0"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'CF_PUSH_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -169,7 +169,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "blah blah blah")
 			_, err := env.GetLongCurlTimeoutInSeconds()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'LONG_CURL_TIMEOUT_IN_SECONDS' must be an integer greater than 0"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'LONG_CURL_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -196,7 +196,7 @@ var _ = Describe("Environment", func() {
 			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "blah blah blah")
 			_, err := env.GetBrokerStartTimeoutInSeconds()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
 		})
 	})
 
@@ -245,7 +245,7 @@ var _ = Describe("Environment", func() {
 				env := environment.New()
 				_, err := env.GetBackend()
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'some other backend', but must be 'diego', 'dea', or empty"))
+				Expect(err.Error()).To(Equal("* Invalid environment variable: 'BACKEND' must be 'diego', 'dea', or empty but was set to 'some other backend'"))
 			})
 		})
 	})
@@ -574,7 +574,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipDiegoSSH()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -612,7 +612,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipV3()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -650,7 +650,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipSSO()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -688,7 +688,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipDiegoDocker()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -726,7 +726,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipBackendCompatibility()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -764,7 +764,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipSecurityGroups()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -802,7 +802,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipLogging()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -840,7 +840,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipOperator()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -878,7 +878,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipInternetDependent()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -916,7 +916,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipServices()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -954,7 +954,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetSkipRouteServices()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 
@@ -991,7 +991,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetBackend()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'BACKEND' was 'what-is-backend?', but must be 'diego', 'dea', or empty"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'BACKEND' must be 'diego', 'dea', or empty but was set to 'what-is-backend?'"))
 		})
 	})
 
@@ -1031,7 +1031,7 @@ var _ = Describe("Environment", func() {
 			env := environment.New()
 			_, err := env.GetNodes()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Invalid environment variable: 'NODES' must be an integer greater than 0"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'NODES' must be an integer greater than 0 but was set to 'bogus'"))
 		})
 	})
 

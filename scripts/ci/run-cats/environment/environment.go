@@ -126,7 +126,7 @@ func (e *environment) GetBackend() (string, error) {
 	case "dea", "diego", "":
 		return value, nil
 	default:
-		return "", fmt.Errorf("Invalid environment variable: 'BACKEND' was '%s', but must be 'diego', 'dea', or empty", value)
+		return "", fmt.Errorf("* Invalid environment variable: 'BACKEND' must be 'diego', 'dea', or empty but was set to '%s'", value)
 	}
 }
 
@@ -191,24 +191,26 @@ func (e *environment) GetNodes() (int, error) {
 }
 
 func (e *environment) getBooleanDefaultToFalse(varName string) (bool, error) {
-	switch os.Getenv(varName) {
+	value := os.Getenv(varName)
+	switch value {
 	case "true":
 		return true, nil
 	case "false", "":
 		return false, nil
 	default:
-		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
+		return false, fmt.Errorf("* Invalid environment variable: '%s' must be a boolean 'true' or 'false' but was set to '%s'", varName, value)
 	}
 }
 
 func (e *environment) getBooleanDefaultToTrue(varName string) (bool, error) {
-	switch os.Getenv(varName) {
+	value := os.Getenv(varName)
+	switch value {
 	case "true", "":
 		return true, nil
 	case "false":
 		return false, nil
 	default:
-		return false, fmt.Errorf("Invalid environment variable: '%s' must be a boolean 'true' or 'false'", varName)
+		return false, fmt.Errorf("* Invalid environment variable: '%s' must be a boolean 'true' or 'false' but was set to '%s'", varName, value)
 	}
 }
 
@@ -224,7 +226,7 @@ func (e *environment) getInteger(varName string) (int, error) {
 
 	intValue, err := strconv.Atoi(value)
 	if err != nil || intValue <= 0 {
-		return 0, fmt.Errorf("Invalid environment variable: '%s' must be an integer greater than 0", varName)
+		return 0, fmt.Errorf("* Invalid environment variable: '%s' must be an integer greater than 0 but was set to '%s'", varName, value)
 	}
 
 	return intValue, nil
