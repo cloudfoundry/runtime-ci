@@ -11,8 +11,8 @@ inputs:
 - name: env-repo
 
 outputs:
-- name: security-groups
-- name: elbs
+- name: bbl-security-groups
+- name: bbl-elbs
 
 run:
   path: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task

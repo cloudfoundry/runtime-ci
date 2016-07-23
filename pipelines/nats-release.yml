@@ -115,6 +115,15 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure/state.json
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+  - task: extend-cf-manifest
+    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest
+    input_mapping:
+      generated-deployment-manifest: manifest
+    params:
+      CF_DEPLOYMENT_MANIFEST: deployment.yml
+      EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
+      BBL_SECURITY_GROUPS_FILE: bbl-security-groups
+      BBL_ELBS_FILE: bbl-elbs
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:

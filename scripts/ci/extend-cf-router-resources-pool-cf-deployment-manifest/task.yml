@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: generated-cf-deployment
+- name: generated-deployment-manifest
 - name: bbl-security-groups
 - name: bbl-elbs
 
