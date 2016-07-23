@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment"
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,6 +12,119 @@ import (
 
 var _ = Describe("Environment", func() {
 
+	Describe("Validation", func() {
+		var errorMessages string
+		var errors validationerrors.Errors
+		JustBeforeEach(func() {
+			env := environment.New()
+			errors = env.Validate()
+			errorMessages = errors.Error()
+		})
+
+		AfterEach(func() {
+			os.Unsetenv("CATS_PATH")
+			os.Unsetenv("CF_API")
+			os.Unsetenv("CF_ADMIN_USER")
+			os.Unsetenv("CF_ADMIN_PASSWORD")
+			os.Unsetenv("CF_APPS_DOMAIN")
+			os.Unsetenv("SKIP_SSL_VALIDATION")
+			os.Unsetenv("USE_HTTP")
+			os.Unsetenv("BACKEND")
+			os.Unsetenv("DEFAULT_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
+			os.Unsetenv("SKIP_SSO")
+
+			os.Unsetenv("NODES")
+			os.Unsetenv("INCLUDE_DIEGO_SSH")
+			os.Unsetenv("INCLUDE_V3")
+			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
+			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
+			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
+			os.Unsetenv("INCLUDE_LOGGING")
+			os.Unsetenv("INCLUDE_OPERATOR")
+			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
+			os.Unsetenv("INCLUDE_SERVICES")
+			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+		})
+
+		Context("when there are errors", func() {
+			BeforeEach(func() {
+				os.Setenv("CATS_PATH", "fixtures/pass")
+
+				os.Unsetenv("CF_API")
+				os.Unsetenv("CF_ADMIN_USER")
+				os.Unsetenv("CF_ADMIN_PASSWORD")
+				os.Unsetenv("CF_APPS_DOMAIN")
+				os.Setenv("SKIP_SSL_VALIDATION", "Righteous")
+				os.Setenv("USE_HTTP", "False")
+				os.Setenv("BACKEND", "kubernetes")
+				os.Setenv("DEFAULT_TIMEOUT_IN_SECONDS", "60s")
+				os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120 years")
+				os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
+				os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
+				os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
+				os.Setenv("SKIP_SSO", "falsey")
+
+				os.Setenv("NODES", "five")
+				os.Setenv("INCLUDE_DIEGO_SSH", "1")
+				os.Setenv("INCLUDE_V3", "0")
+				os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
+				os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "no")
+				os.Setenv("INCLUDE_SECURITY_GROUPS", "yes")
+				os.Setenv("INCLUDE_LOGGING", "T")
+				os.Setenv("INCLUDE_OPERATOR", "F")
+				os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
+				os.Setenv("INCLUDE_SERVICES", "troo")
+				os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
+			})
+
+			It("contains all the error messages", func() {
+				Expect(errorMessages).To(And(
+					ContainSubstring(`* Missing required environment variables:
+    CF_API
+    CF_ADMIN_USER
+    CF_ADMIN_PASSWORD
+    CF_APPS_DOMAIN`),
+					ContainSubstring("* Invalid environment variable: 'SKIP_SSL_VALIDATION' must be a boolean 'true' or 'false' but was set to 'Righteous'"),
+					ContainSubstring("* Invalid environment variable: 'USE_HTTP' must be a boolean 'true' or 'false' but was set to 'False'"),
+					ContainSubstring("* Invalid environment variable: 'BACKEND' must be 'diego', 'dea', or empty but was set to 'kubernetes'"),
+					ContainSubstring("* Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '60s'"),
+					ContainSubstring("* Invalid environment variable: 'CF_PUSH_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '120 years'"),
+					ContainSubstring("* Invalid environment variable: 'LONG_CURL_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '180 days'"),
+					ContainSubstring("* Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '240 mins'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false' but was set to 'true\n'"),
+					ContainSubstring("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"),
+					ContainSubstring("* Invalid environment variable: 'NODES' must be an integer greater than 0 but was set to 'five'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false' but was set to '1'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false' but was set to '0'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'diego'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false' but was set to 'no'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'yes'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false' but was set to 'T'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false' but was set to 'F'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'Falz'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'troo'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'truce'"),
+				))
+			})
+		})
+
+		Context("when there are no errors", func() {
+			BeforeEach(func() {
+				os.Setenv("CF_API", "blah")
+				os.Setenv("CF_ADMIN_USER", "blah2")
+				os.Setenv("CF_ADMIN_PASSWORD", "oogieboogie")
+				os.Setenv("CF_APPS_DOMAIN", "example.com")
+			})
+
+			It("should be empty", func() {
+				Expect(errors.Empty()).To(BeTrue())
+			})
+		})
+	})
 	Describe("GetSkipSSLValidation", func() {
 		AfterEach(func() {
 			os.Unsetenv("SKIP_SSL_VALIDATION")

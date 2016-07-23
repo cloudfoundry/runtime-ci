@@ -2,7 +2,6 @@ package configwriter_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -194,86 +193,6 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.UseExistingUser).To(Equal(true))
 			Expect(configFile.Config.KeepUserAtSuiteEnd).To(Equal(true))
 		})
-
-		Context("when timeouts are not valid integers", func() {
-			It("fails fast with the provided error for Default timeout", func() {
-				env.GetDefaultTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-			It("fails fast with the provided error for CF Push timeout", func() {
-				env.GetCFPushTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-			It("fails fast with the provided error for Long Curl timeout", func() {
-				env.GetLongCurlTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-			It("fails fast with the provided error for Broker Start timeout", func() {
-				env.GetBrokerStartTimeoutInSecondsReturns(0, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-		})
-
-		Context("when boolean environment variables are not valid booleans", func() {
-			It("fails fast with the provided error for Skip SSL Validation", func() {
-				env.GetSkipSSLValidationReturns(false, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-
-			It("fails fast with the provided error for Use HTTP", func() {
-				env.GetUseHTTPReturns(false, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-
-			It("fails fast with the provided error for Include Privileged Container Support", func() {
-				env.GetIncludePrivilegedContainerSupportReturns(false, fmt.Errorf("some error"))
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some error"))
-			})
-
-			Context("and more than one of them is invalid", func() {
-				BeforeEach(func() {
-					env.GetSkipSSLValidationReturns(false, fmt.Errorf("nothing is real"))
-					env.GetUseHTTPReturns(false, fmt.Errorf("everything is real"))
-				})
-
-				It("fails fast with an error describing all invalid booleans concerned", func() {
-					_, err := configwriter.NewConfigFile("", env)
-					Expect(err).To(HaveOccurred())
-					Expect(err.Error()).To(And(
-						ContainSubstring("nothing is real"),
-						ContainSubstring("everything is real"),
-					))
-				})
-			})
-		})
-
-		Context("when GetBackend returns an error", func() {
-			var expectedError error
-			BeforeEach(func() {
-				expectedError = fmt.Errorf("some backend error")
-				env.GetBackendReturns("", expectedError)
-			})
-
-			It("propogates the error", func() {
-				_, err := configwriter.NewConfigFile("", env)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("some backend error"))
-			})
-		})
 	})
 
 	Describe("marshaling the struct", func() {
@@ -457,18 +376,6 @@ var _ = Describe("Configwriter", func() {
 																							"use_existing_user": false,
 																							"keep_user_at_suite_end": false
 																							}`))
-		})
-
-		Context("when the destinationDir is invalid", func() {
-			It("fails with a nice error", func() {
-				configFile, err := configwriter.NewConfigFile("/badpath", env)
-				Expect(err).NotTo(HaveOccurred())
-
-				_, err = configFile.WriteConfigToFile()
-
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("Unable to write integration_config.json to /badpath"))
-			})
 		})
 	})
 

@@ -4,12 +4,112 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 type environment struct{}
 
 func New() *environment {
 	return &environment{}
+}
+
+func (env *environment) Validate() validationerrors.Errors {
+	var err error
+	errs := validationerrors.Errors{}
+
+	missingEnvKeys := buildMissingKeyList()
+
+	if missingEnvKeys != "" {
+		errs.Add(fmt.Errorf(`* Missing required environment variables:
+%s`, missingEnvKeys))
+	}
+
+	if _, err = env.GetSkipDiegoSSH(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipV3(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipDiegoDocker(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipBackendCompatibility(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipSecurityGroups(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipLogging(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipOperator(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipInternetDependent(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipServices(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipRouteServices(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err := env.GetNodes(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err := env.GetSkipSSO(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err := env.GetBackend(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetSkipSSLValidation(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetUseHTTP(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err := env.GetIncludePrivilegedContainerSupport(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetDefaultTimeoutInSeconds(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetCFPushTimeoutInSeconds(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetLongCurlTimeoutInSeconds(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetBrokerStartTimeoutInSeconds(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err := env.GetBackend(); err != nil {
+		errs.Add(err)
+	}
+
+	return errs
 }
 
 func (e *environment) GetSkipSSLValidation() (bool, error) {
@@ -251,4 +351,22 @@ func (e *environment) returnsSkipFlag(envVarName, skipFlag string, isSkipVariabl
 		}
 	}
 	return "", nil
+}
+
+func buildMissingKeyList() string {
+	var missingKeys string
+	requiredEnvKeys := []string{
+		"CF_API",
+		"CF_ADMIN_USER",
+		"CF_ADMIN_PASSWORD",
+		"CF_APPS_DOMAIN",
+	}
+
+	for _, key := range requiredEnvKeys {
+		if os.Getenv(key) == "" {
+			missingKeys += "    " + key + "\n"
+		}
+	}
+
+	return missingKeys
 }

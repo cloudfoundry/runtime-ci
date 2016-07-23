@@ -51,19 +51,6 @@ var _ = Describe("Commandgenerator", func() {
 			Expect(cmd).To(Equal("/path/to/cats/bin/test"))
 		})
 
-		Context("when the env returns an error fetching the number of nodes", func() {
-			var expectedError error
-			BeforeEach(func() {
-				expectedError = fmt.Errorf("some error")
-				env.GetNodesReturns(0, expectedError)
-			})
-
-			It("propogates the error", func() {
-				_, _, err := commandgenerator.GenerateCmd(env)
-				Expect(err.Error()).To(Equal(expectedError.Error()))
-			})
-		})
-
 		Context("when the node count is unset", func() {
 			BeforeEach(func() {
 				env.GetNodesReturns(0, nil)
@@ -114,18 +101,6 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("when the env returns an error", func() {
-				var expectedError error
-				BeforeEach(func() {
-					expectedError = fmt.Errorf("some error")
-					env.GetSkipV3Returns("", expectedError)
-				})
-
-				It("propogates the error", func() {
-					_, _, err := commandgenerator.GenerateCmd(env)
-					Expect(err.Error()).To(Equal(expectedError.Error()))
-				})
-			})
 		})
 
 		Context("when there are optional skip env vars set", func() {
@@ -161,19 +136,6 @@ var _ = Describe("Commandgenerator", func() {
 				})
 			})
 
-			Context("and the env returns an error", func() {
-				var expectedError error
-				BeforeEach(func() {
-					expectedError = fmt.Errorf("some error")
-					env.GetSkipSSOReturns("", expectedError)
-				})
-
-				It("propogates the error", func() {
-					_, _, err := commandgenerator.GenerateCmd(env)
-					Expect(err.Error()).To(Equal(expectedError.Error()))
-					Expect(env.GetSkipSSOCallCount())
-				})
-			})
 		})
 
 		Describe("the BACKEND parameter", func() {
@@ -222,17 +184,6 @@ var _ = Describe("Commandgenerator", func() {
 					Expect(args).To(ContainElement("-skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"))
 				})
 			})
-
-			Context("is not a valid value", func() {
-				BeforeEach(func() {
-					env.GetBackendReturns("", fmt.Errorf("some error"))
-				})
-				It("returns an error", func() {
-					_, _, err := commandgenerator.GenerateCmd(env)
-					Expect(err).To(HaveOccurred())
-					Expect(err.Error()).To(Equal("some error"))
-				})
-			})
 		})
 	})
 
@@ -245,41 +196,6 @@ var _ = Describe("Commandgenerator", func() {
 			cmd, _, err := commandgenerator.GenerateCmd(env)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cmd).To(Equal("/go/src/github.com/cloudfoundry/cf-acceptance-tests/bin/test"))
-		})
-	})
-
-	Context("When everything is returning an error", func() {
-		BeforeEach(func() {
-			env.GetNodesReturns(0, fmt.Errorf("NODES"))
-			env.GetSkipBackendCompatibilityReturns("", fmt.Errorf("INCLUDE_BACKEND_COMPATIBILITY"))
-			env.GetSkipDiegoDockerReturns("", fmt.Errorf("INCLUDE_DIEGO_DOCKER"))
-			env.GetSkipInternetDependentReturns("", fmt.Errorf("INCLUDE_INTERNET_DEPENDENT"))
-			env.GetSkipLoggingReturns("", fmt.Errorf("INCLUDE_LOGGING"))
-			env.GetSkipOperatorReturns("", fmt.Errorf("INCLUDE_OPERATOR"))
-			env.GetSkipRouteServicesReturns("", fmt.Errorf("INCLUDE_ROUTE_SERVICES"))
-			env.GetSkipSecurityGroupsReturns("", fmt.Errorf("INCLUDE_SECURITY_GROUPS"))
-			env.GetSkipServicesReturns("", fmt.Errorf("INCLUDE_SERVICES"))
-			env.GetSkipDiegoSSHReturns("", fmt.Errorf("INCLUDE_DIEGO_SSH"))
-			env.GetSkipV3Returns("", fmt.Errorf("INCLUDE_V3"))
-		})
-		It("Aggregates all the errors", func() {
-			_, _, err := commandgenerator.GenerateCmd(env)
-			errorStr := err.Error()
-			Expect(errorStr).To(
-				And(
-					ContainSubstring("NODES"),
-					ContainSubstring("INCLUDE_BACKEND_COMPATIBILITY"),
-					ContainSubstring("INCLUDE_DIEGO_DOCKER"),
-					ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
-					ContainSubstring("INCLUDE_LOGGING"),
-					ContainSubstring("INCLUDE_OPERATOR"),
-					ContainSubstring("INCLUDE_ROUTE_SERVICES"),
-					ContainSubstring("INCLUDE_SECURITY_GROUPS"),
-					ContainSubstring("INCLUDE_SERVICES"),
-					ContainSubstring("INCLUDE_DIEGO_SSH"),
-					ContainSubstring("INCLUDE_V3"),
-				),
-			)
 		})
 	})
 })

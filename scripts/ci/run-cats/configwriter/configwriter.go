@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 type config struct {
@@ -83,56 +81,25 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
-		err                                                                error
-		errs                                                               validationerrors.Errors
 		skipSslValidation, useHttp                                         bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout int
 	)
-	errs = validationerrors.Errors{}
 
-	skipSslValidation, err = env.GetSkipSSLValidation()
-	if err != nil {
-		errs.Add(err)
-	}
+	skipSslValidation, _ = env.GetSkipSSLValidation()
 
-	useHttp, err = env.GetUseHTTP()
-	if err != nil {
-		errs.Add(err)
-	}
+	useHttp, _ = env.GetUseHTTP()
 
-	includePrivilegedContainerSupport, err := env.GetIncludePrivilegedContainerSupport()
-	if err != nil {
-		errs.Add(err)
-	}
+	includePrivilegedContainerSupport, _ := env.GetIncludePrivilegedContainerSupport()
 
-	defaultTimeout, err = env.GetDefaultTimeoutInSeconds()
-	if err != nil {
-		errs.Add(err)
-	}
+	defaultTimeout, _ = env.GetDefaultTimeoutInSeconds()
 
-	cfPushTimeout, err = env.GetCFPushTimeoutInSeconds()
-	if err != nil {
-		errs.Add(err)
-	}
+	cfPushTimeout, _ = env.GetCFPushTimeoutInSeconds()
 
-	longCurlTimeout, err = env.GetLongCurlTimeoutInSeconds()
-	if err != nil {
-		errs.Add(err)
-	}
+	longCurlTimeout, _ = env.GetLongCurlTimeoutInSeconds()
 
-	brokerStartTimeout, err = env.GetBrokerStartTimeoutInSeconds()
-	if err != nil {
-		errs.Add(err)
-	}
+	brokerStartTimeout, _ = env.GetBrokerStartTimeoutInSeconds()
 
-	backend, err := env.GetBackend()
-	if err != nil {
-		errs.Add(err)
-	}
-
-	if !errs.Empty() {
-		return config{}, errs
-	}
+	backend, _ := env.GetBackend()
 
 	return config{
 		Api:                  env.GetCFAPI(),
@@ -167,25 +134,26 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		BrokerStartTimeout: brokerStartTimeout,
 
 		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
-	}, err
+	}, nil
 }
 
 func (configFile *configFile) WriteConfigToFile() (*os.File, error) {
-	integrationConfigFile, err := os.Create(configFile.DestinationDir + "/integration_config.json")
+	integrationFilePath := configFile.DestinationDir + "/integration_config.json"
+	integrationConfigFile, err := os.Create(integrationFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to write integration_config.json to %s", configFile.DestinationDir)
+		panic("Unable to create file:" + integrationFilePath)
 	}
 
 	configJson, err := json.MarshalIndent(configFile.Config, "", "\t")
 	if err != nil {
-		return nil, err
+		panic("Unable to marshal json to " + integrationFilePath)
 	}
 
 	contents := []byte(configJson)
 
 	_, err = integrationConfigFile.Write(contents)
 	if err != nil {
-		return nil, err
+		panic("Unable to write contents to file" + integrationFilePath)
 	}
 
 	return integrationConfigFile, nil

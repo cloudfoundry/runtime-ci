@@ -11,39 +11,23 @@ import (
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/commandgenerator"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/configwriter"
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/environment"
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/validationerrors"
 )
 
 func main() {
-	errors := validationerrors.Errors{}
 	currentDir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
-	missingEnvKeys := buildMissingKeyList()
-
-	if missingEnvKeys != "" {
-		errors.Add(fmt.Errorf(`* Missing required environment variables:
-%s`, missingEnvKeys))
-	}
-
 	env := environment.New()
-
-	configWriter, err := configwriter.NewConfigFile(currentDir, env)
-	if err != nil {
-		errors.Add(err)
-	}
-
-	path, arguments, err := commandgenerator.GenerateCmd(env)
-	if err != nil {
-		errors.Add(err)
-	}
-
+	errors := env.Validate()
 	if !errors.Empty() {
 		fmt.Fprintf(os.Stderr, "Your CATS input failed validation:\n%s\n", errors.Error())
 		os.Exit(1)
 	}
+
+	configWriter, _ := configwriter.NewConfigFile(currentDir, env)
+	path, arguments, _ := commandgenerator.GenerateCmd(env)
 
 	fmt.Printf("path: %s\n", path)
 	configWriter.WriteConfigToFile()
@@ -98,22 +82,4 @@ func main() {
 
 	stdOut.Close()
 	stdErr.Close()
-}
-
-func buildMissingKeyList() string {
-	var missingKeys string
-	requiredEnvKeys := []string{
-		"CF_API",
-		"CF_ADMIN_USER",
-		"CF_ADMIN_PASSWORD",
-		"CF_APPS_DOMAIN",
-	}
-
-	for _, key := range requiredEnvKeys {
-		if os.Getenv(key) == "" {
-			missingKeys += "    " + key + "\n"
-		}
-	}
-
-	return missingKeys
 }
