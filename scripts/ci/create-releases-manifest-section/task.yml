@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: deployment-configuration
+- name: stemcell
 - name: consul-release
 - name: etcd-release
 - name: diego-release
@@ -29,3 +30,4 @@ run:
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   DEPLOYMENT_CONFIGURATION_PATH: deployment-parts/cf-deployment-configuration.yml
+  STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent

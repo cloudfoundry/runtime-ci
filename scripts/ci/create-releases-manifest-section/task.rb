@@ -17,6 +17,7 @@ release_names=[
 
 deployment_configuration_path = ENV.fetch('DEPLOYMENT_CONFIGURATION_PATH')
 deployment_manifest_path = ENV.fetch("DEPLOYMENT_MANIFEST_PATH")
+stemcell_name = ENV.fetch("STEMCELL_NAME")
 
 releases_metadata = release_names.map do |release_name|
   release_resource = "#{release_name}-release"
@@ -33,11 +34,26 @@ releases_metadata = release_names.map do |release_name|
   }
 end
 
-puts "Updated releases"
+stemcell_url = File.read("stemcell/url")
+stemcell_version = File.read("stemcell/version")
+stemcell_sha1 = File.read("stemcell/sha1")
+
+stemcell_metadata = {
+  'stemcells' => [
+    {
+      'name' => stemcell_name,
+      'url' => stemcell_url,
+      'version' => stemcell_version,
+      'sha1' => stemcell_sha1
+    }
+  ]
+}
+
 releases = YAML.dump(releases_metadata).gsub("---\n", '')
+stemcells = YAML.dump(stemcell_metadata).gsub("---\n", '')
 
 deployment_configuration = File.read("deployment-configuration/#{deployment_configuration_path}")
-updated_deployment_manifest = "#{deployment_configuration}\n#{releases}"
+updated_deployment_manifest = "#{deployment_configuration}\n#{releases}\n#{stemcells}"
 
 File.open("deployment-manifest/#{deployment_manifest_path}", 'w') do |f|
   f.write(updated_deployment_manifest)
