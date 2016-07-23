@@ -116,7 +116,7 @@ jobs:
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
   - task: extend-cf-manifest
-    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest
+    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.yml
     input_mapping:
       generated-deployment-manifest: manifest
     params:
