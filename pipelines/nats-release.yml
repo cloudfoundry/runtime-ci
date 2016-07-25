@@ -116,7 +116,7 @@ jobs:
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
   - task: extend-cf-manifest
-    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.yml
+    file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
     input_mapping:
       generated-deployment-manifest: manifest
       env-repo: hagrid-env
@@ -148,7 +148,7 @@ jobs:
       INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: diego/release-versions.yml
   - task: extend-diego-manifest
-    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.yml
+    file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
     input_mapping:
       generated-deployment-manifest: generated-diego-manifest
       env-repo: hagrid-env

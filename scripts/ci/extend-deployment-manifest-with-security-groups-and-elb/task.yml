@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/extend-cf-router-resources-pool-cf-deployment-manifest
+    repository: relintdockerhubpushbot/extend-deployment-manifest-with-security-groups-and-elb
 
 inputs:
   - name: runtime-ci
@@ -24,4 +24,4 @@ params:
   BBL_STATE_DIRECTORY:
 
 run:
-  path: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.rb
+  path: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.rb
