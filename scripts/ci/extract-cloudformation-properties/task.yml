@@ -11,12 +11,14 @@ inputs:
   - name: env-repo
 
 outputs:
-  - name: bbl-security-groups
+  - name: logical-physical-id
 
 run:
   path: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task
 
 params:
+  MAPPING_OUTPUT_FILE:
+  LOGICAL_RESOURCE_IDS:
   STATE_DIR_PATH:
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:

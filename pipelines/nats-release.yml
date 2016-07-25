@@ -109,9 +109,11 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: cf/*.yml
-  - task: extract-elb-and-security-groups-from-bbl-stack
-    file: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task.yml
+  - task: extract-cloudformation-properties
+    file: runtime-ci/scripts/ci/extract-cloudformation-properties/task.yml
     params:
+      MAPPING_OUTPUT_FILE: security-groups-mapping
+      LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup InternalSecurityGroup
       STATE_DIR_PATH: bbl-infrastructure/state.json
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
@@ -123,8 +125,7 @@ jobs:
     params:
       CF_DEPLOYMENT_MANIFEST: deployment.yml
       EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
-      BBL_SECURITY_GROUPS_FILE: bbl-security-groups
-      BBL_ELBS_FILE: bbl-elbs
+      CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
       BBL_STATE_DIRECTORY: bbl-infrastructure
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
@@ -157,8 +158,7 @@ jobs:
     params:
       CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
       EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
-      BBL_SECURITY_GROUPS_FILE: bbl-security-groups
-      BBL_ELBS_FILE: bbl-elbs
+      CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
       BBL_STATE_DIRECTORY: bbl-infrastructure
 
 #  - task: upload-release

@@ -9,8 +9,7 @@ image_resource:
 inputs:
   - name: runtime-ci
   - name: generated-deployment-manifest
-  - name: bbl-security-groups
-  - name: bbl-elbs
+  - name: logical-physical-id
   - name: env-repo
 
 outputs:
@@ -19,8 +18,7 @@ outputs:
 params:
   CF_DEPLOYMENT_MANIFEST:
   EXTENDED_CF_DEPLOYMENT_MANIFEST:
-  BBL_SECURITY_GROUPS_FILE:
-  BBL_ELBS_FILE:
+  CLOUDFORMATION_MAPPING_FILE:
   BBL_STATE_DIRECTORY:
 
 run:

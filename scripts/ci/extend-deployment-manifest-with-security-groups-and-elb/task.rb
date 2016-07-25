@@ -6,7 +6,7 @@ input_filename = './generated-deployment-manifest/' + ENV.fetch('CF_DEPLOYMENT_M
 output_filename = './extended-cf-deployment-manifest/' + ENV.fetch('EXTENDED_CF_DEPLOYMENT_MANIFEST')
 
 def get_security_groups
-  File.open('bbl-security-groups/' + ENV.fetch('BBL_SECURITY_GROUPS_FILE'), "r") do |f|
+  File.open('logical-physical-id/' + ENV.fetch('CLOUDFORMATION_MAPPING_FILE'), "r") do |f|
     f.map do |line|
        line.split(" ")[1]
      end
