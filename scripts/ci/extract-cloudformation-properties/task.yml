@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/extract-elb-and-security-groups-from-bbl-stack
+    repository: relintdockerhubpushbot/extract-cloudformation-properties
 
 inputs:
   - name: runtime-ci
@@ -14,7 +14,7 @@ outputs:
   - name: logical-physical-id
 
 run:
-  path: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task
+  path: runtime-ci/scripts/ci/extract-cloudformation-properties/task
 
 params:
   MAPPING_OUTPUT_FILE:
