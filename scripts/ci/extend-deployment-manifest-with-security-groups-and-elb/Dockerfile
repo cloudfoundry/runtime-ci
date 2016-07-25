@@ -33,3 +33,20 @@ RUN \
   gem install bundler --no-rdoc --no-ri && \
   gem install activesupport
 
+ENV GOPATH $HOME/go
+ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
+RUN \
+  wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz -P /tmp && \
+  tar xzvf /tmp/go1.6.2.linux-amd64.tar.gz -C /usr/local && \
+  mkdir $GOPATH && \
+  rm -rf /tmp/*
+
+RUN \
+  go get github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
+  go install github.com/pivotal-cf-experimental/bosh-bootloader/bbl
+
+RUN \
+  wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.91-linux-amd64 -P /tmp && \
+  mv /tmp/bosh-init-0.0.91-linux-amd64 /usr/local/bin/bosh-init && \
+  chmod +x /usr/local/bin/bosh-init && \
+  rm -rf /tmp/*
