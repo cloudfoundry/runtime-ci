@@ -109,7 +109,7 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: cf/*.yml
-  - task: extract-cloudformation-properties
+  - task: extract-security-groups
     file: runtime-ci/scripts/ci/extract-cloudformation-properties/task.yml
     params:
       MAPPING_OUTPUT_FILE: security-groups-mapping
