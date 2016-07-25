@@ -1616,6 +1616,6 @@ jobs:
         trigger: true
     - put: extend-deployment-manifest-with-security-groups-and-elb-pipeline-image
       params:
-        build: runtime-ci-extend-deployment-manifest-with-security-groups-and-elb/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest
+        build: runtime-ci-extend-deployment-manifest-with-security-groups-and-elb/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb
         push: true
 
