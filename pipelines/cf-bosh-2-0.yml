@@ -50,6 +50,10 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 - name: consul-release
   type: bosh-io-release-updated
   source:
@@ -88,7 +92,6 @@ resources:
     repository: cloudfoundry/cf-release
 
 jobs:
-
 - name: destroy-infrastructure
   public: true
   serial_groups: [hermione]
@@ -151,6 +154,10 @@ jobs:
       trigger: true
     - get: nats-release-repo
       trigger: true
+    - get: stemcell
+      trigger: true
+      params:
+        tarball: false
     - get: routing-release
       trigger: true
       params:
@@ -234,6 +241,13 @@ jobs:
           USERNAME_FILE: username
           PASSWORD_FILE: password
           RELEASE_NAME: capi-*.tgz
+    - task: upload-stemcell
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      params:
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+        STEMCELL_NAME: "*.tgz"
   - task: build-releases-section
     file: runtime-ci/scripts/ci/create-releases-manifest-section/task.yml
     input_mapping:
