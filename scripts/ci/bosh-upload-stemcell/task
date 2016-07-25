@@ -14,5 +14,6 @@ bosh \
   -u "${BOSH_USER}" \
   -p "${BOSH_PASSWORD}" \
   upload stemcell \
-  stemcell/${STEMCELL_NAME}
+  stemcell/${STEMCELL_NAME} \
+  --skip-if-exists
 set -x
