@@ -7,12 +7,11 @@ image_resource:
     repository: relintdockerhubpushbot/extract-elb-and-security-groups-from-bbl-stack
 
 inputs:
-- name: runtime-ci
-- name: env-repo
+  - name: runtime-ci
+  - name: env-repo
 
 outputs:
-- name: bbl-security-groups
-- name: bbl-elbs
+  - name: bbl-security-groups
 
 run:
   path: runtime-ci/scripts/ci/extract-elb-and-security-groups-from-bbl-stack/task

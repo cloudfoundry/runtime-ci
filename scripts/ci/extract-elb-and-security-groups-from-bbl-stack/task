@@ -15,13 +15,8 @@ fi
 
 internal_security_group=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id InternalSecurityGroup | jq --raw-output .StackResourceDetail.PhysicalResourceId)
 cf_router_internal_security_group=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id CFRouterInternalSecurityGroup | jq --raw-output .StackResourceDetail.PhysicalResourceId)
-cf_router_load_balancer=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id CFRouterLoadBalancer | jq --raw-output .StackResourceDetail.PhysicalResourceId)
 
 cat <<EOF >./bbl-security-groups/bbl-security-groups
 INTERNAL_SECURITY_GROUP $internal_security_group
 CF_ROUTER_INTERNAL_SECURITY_GROUP $cf_router_internal_security_group
-EOF
-
-cat <<EOF >./bbl-elbs/bbl-elbs
-CF_ROUTER_LOAD_BALANCER $cf_router_load_balancer
 EOF

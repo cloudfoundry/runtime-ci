@@ -7,19 +7,21 @@ image_resource:
     repository: relintdockerhubpushbot/extend-cf-router-resources-pool-cf-deployment-manifest
 
 inputs:
-- name: runtime-ci
-- name: generated-deployment-manifest
-- name: bbl-security-groups
-- name: bbl-elbs
+  - name: runtime-ci
+  - name: generated-deployment-manifest
+  - name: bbl-security-groups
+  - name: bbl-elbs
+  - name: env-repo
 
 outputs:
-- name: extended-cf-deployment-manifest
+  - name: extended-cf-deployment-manifest
 
 params:
   CF_DEPLOYMENT_MANIFEST:
   EXTENDED_CF_DEPLOYMENT_MANIFEST:
   BBL_SECURITY_GROUPS_FILE:
   BBL_ELBS_FILE:
+  BBL_STATE_DIRECTORY:
 
 run:
   path: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.rb
