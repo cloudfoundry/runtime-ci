@@ -34,17 +34,14 @@ releases_metadata = release_names.map do |release_name|
   }
 end
 
-stemcell_url = File.read("stemcell/url")
 stemcell_version = File.read("stemcell/version")
-stemcell_sha1 = File.read("stemcell/sha1")
 
 stemcell_metadata = {
   'stemcells' => [
     {
-      'name' => stemcell_name,
-      'url' => stemcell_url,
-      'version' => stemcell_version,
-      'sha1' => stemcell_sha1
+      'alias' => "default",
+      'os' => "ubuntu-trusty",
+      'version' => stemcell_version
     }
   ]
 }
