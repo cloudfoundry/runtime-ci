@@ -306,6 +306,7 @@ resources:
 jobs:
 - name: cf-release-unit-tests
   public: true
+  serial: true
   plan:
   - timeout: &timeout 4h
     do:
@@ -351,6 +352,7 @@ jobs:
 
 - name: create-release
   public: true
+  serial: true
   plan:
   - timeout: *timeout
     do:
@@ -1168,6 +1170,7 @@ jobs:
 
 - name: generate-a1-manifests
   public: true
+  serial: true
   plan:
   - aggregate:
     - get: a1-env
