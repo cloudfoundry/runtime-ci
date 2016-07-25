@@ -37,6 +37,7 @@ groups:
   - build-write-target-file-docker-image
   - build-bosh-deploy-docker-image
   - build-bosh-upload-release-docker-image
+  - build-bosh-upload-stemcell-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
@@ -142,6 +143,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-upload-release/Dockerfile]
+- name: runtime-ci-bosh-upload-stemcell
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-upload-stemcell/Dockerfile]
 - name: runtime-ci-announce-rc
   type: git
   source:
@@ -459,6 +466,13 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-upload-stemcell-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-upload-stemcell
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-stemcell-integration+dockerhub-push-bot@pivotal.io
 - name: announce-rc-pipeline-image
   type: docker-image
   source:
@@ -830,6 +844,23 @@ jobs:
     - put: bosh-upload-release-pipeline-image
       params:
         build: runtime-ci-bosh-upload-release/scripts/ci/bosh-upload-release
+        push: true
+- name: build-bosh-upload-stemcell-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bosh-upload-stemcell
+        trigger: true
+    - put: bosh-upload-stemcell-pipeline-image
+      params:
+        build: runtime-ci-bosh-upload-stemcell/scripts/ci/bosh-upload-stemcell
         push: true
 - name: build-write-target-file-docker-image
   public: true
