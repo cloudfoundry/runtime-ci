@@ -119,11 +119,13 @@ jobs:
     file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.yml
     input_mapping:
       generated-deployment-manifest: manifest
+      env-repo: hagrid-env
     params:
       CF_DEPLOYMENT_MANIFEST: deployment.yml
       EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
       BBL_SECURITY_GROUPS_FILE: bbl-security-groups
       BBL_ELBS_FILE: bbl-elbs
+      BBL_STATE_DIRECTORY: bbl-infrastructure
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
@@ -145,6 +147,19 @@ jobs:
       PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: diego/release-versions.yml
+  - task: extend-diego-manifest
+    file: runtime-ci/scripts/ci/extend-cf-router-resources-pool-cf-deployment-manifest/task.yml
+    input_mapping:
+      generated-deployment-manifest: generated-diego-manifest
+      env-repo: hagrid-env
+    output_mapping:
+      extended-cf-deployment-manifest: extended-diego-deployment-manifest
+    params:
+      CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
+      EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
+      BBL_SECURITY_GROUPS_FILE: bbl-security-groups
+      BBL_ELBS_FILE: bbl-elbs
+      BBL_STATE_DIRECTORY: bbl-infrastructure
 
 #  - task: upload-release
 #    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
@@ -155,14 +170,27 @@ jobs:
 #      USERNAME_FILE: username
 #      PASSWORD_FILE: password
 #      RELEASE_NAME: nats-*.tgz
-#  - task: bosh-deploy
-#    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
-#    params:
-#      TARGET_FILE:   target
-#      USERNAME_FILE: username
-#      PASSWORD_FILE: password
-#      MANIFEST_FILE: nats.yml
-#
+  - aggregate:
+    - task: cf-bosh-deploy
+      file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+      input_mapping:
+        manifest: extended-cf-deployment-manifest
+      params:
+        TARGET_FILE:   target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+        MANIFEST_FILE: extended_deployment.yml
+    - task: diego-bosh-deploy
+      file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+      input_mapping:
+        manifest: extended-diego-deployment-manifest
+      params:
+        TARGET_FILE:   target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+        MANIFEST_FILE: diego-deployment.yml
+
+
 
 - name: run-smoke-tests
   public: true
