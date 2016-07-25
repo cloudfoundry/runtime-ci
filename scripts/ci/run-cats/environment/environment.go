@@ -105,10 +105,6 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
-	if _, err := env.GetBackend(); err != nil {
-		errs.Add(err)
-	}
-
 	return errs
 }
 
