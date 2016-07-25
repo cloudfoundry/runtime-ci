@@ -24,7 +24,7 @@ end
 properties = YAML.load_file(input_filename)
 
 def add_security_group_to_router(resource_pool)
-  if ["router_z1", "router_z2"].include? resource_pool["name"]
+  if ["access_z1", "access_z2", "router_z1", "router_z2"].include? resource_pool["name"]
     resource_pool.deep_merge!('cloud_properties' => {'security_groups' => get_security_groups })
     resource_pool.deep_merge!('cloud_properties' => {'elbs' => get_elbs })
   end
