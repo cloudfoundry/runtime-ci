@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-releases-manifest-section
+    repository: relintdockerhubpushbot/create-binaries-manifest-section
 
 inputs:
 - name: runtime-ci
@@ -25,7 +25,7 @@ outputs:
 - name: deployment-manifest
 
 run:
-  path: runtime-ci/scripts/ci/create-releases-manifest-section/task.rb
+  path: runtime-ci/scripts/ci/create-binaries-manifest-section/task.rb
 
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml

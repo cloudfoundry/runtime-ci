@@ -49,8 +49,8 @@ groups:
   - build-run-ginkgo-docker-image
   - build-recreate-datadog-dashboard-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
-  - build-create-releases-manifest-section-docker-image
   - build-extract-cloudformation-properties-docker-image
+  - build-create-binaries-manifest-section-docker-image
   - build-extend-deployment-manifest-with-security-groups-and-elb-docker-image
 
 - name: run-cats-tests
@@ -354,12 +354,12 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extend-bosh-lite-diego-stub/Dockerfile]
 
-- name: runtime-ci-create-releases-manifest-section
+- name: runtime-ci-create-binaries-manifest-section
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-releases-manifest-section/Dockerfile]
+    paths: [scripts/ci/create-binaries-manifest-section/Dockerfile]
 
 - name: runtime-ci-extract-cloudformation-properties
   type: git
@@ -712,10 +712,10 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: create-releases-manifest-section-pipeline-image
+- name: create-binaries-manifest-section-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-releases-manifest-section
+    repository: relintdockerhubpushbot/create-binaries-manifest-section
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1565,7 +1565,7 @@ jobs:
         build: runtime-ci-extend-bosh-lite-diego-stub/scripts/ci/extend-bosh-lite-diego-stub
         push: true
 
-- name: build-create-releases-manifest-section-docker-image
+- name: build-create-binaries-manifest-section-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -1576,11 +1576,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-releases-manifest-section
+      - get: runtime-ci-create-binaries-manifest-section
         trigger: true
-    - put: create-releases-manifest-section-pipeline-image
+    - put: create-binaries-manifest-section-pipeline-image
       params:
-        build: runtime-ci-create-releases-manifest-section/scripts/ci/create-releases-manifest-section
+        build: runtime-ci-create-binaries-manifest-section/scripts/ci/create-binaries-manifest-section
         push: true
 
 - name: build-extract-cloudformation-properties-docker-image
