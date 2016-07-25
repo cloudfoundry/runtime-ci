@@ -13,7 +13,11 @@ import (
 )
 
 var _ = Describe("Main", func() {
-	configJsonPath := os.Getenv("PWD") + "/integration_config.json"
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	configJsonPath := wd + "/integration_config.json"
 
 	AfterEach(func() {
 		os.Remove(configJsonPath)
