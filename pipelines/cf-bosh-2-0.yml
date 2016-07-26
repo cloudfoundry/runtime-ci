@@ -150,8 +150,6 @@ jobs:
       trigger: true
     - get: stemcell
       trigger: true
-      params:
-        tarball: false
     - get: routing-release
       trigger: true
       params:
