@@ -8,8 +8,8 @@ output_filename = './extended-cf-deployment-manifest/' + ENV.fetch('EXTENDED_CF_
 def get_security_groups
   File.open('logical-physical-id/' + ENV.fetch('CLOUDFORMATION_MAPPING_FILE'), "r") do |f|
     f.map do |line|
-       line.split(" ")[1]
-     end
+      line.split(" ")[1]
+    end
   end
 end
 
@@ -21,7 +21,7 @@ end
 
 def merge_resource_pool!(lb_name, resource_pool)
   resource_pool.deep_merge!('cloud_properties' => {'security_groups' => get_security_groups })
-  resource_pool.deep_merge!('cloud_properties' => {'elbs' => get_elb(lb_name)})
+  resource_pool.deep_merge!('cloud_properties' => {'elbs' => [get_elb(lb_name)]})
 end
 
 properties = YAML.load_file(input_filename)
