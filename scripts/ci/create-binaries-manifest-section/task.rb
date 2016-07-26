@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
+require 'active_support'
+
 
 release_names=[
   'consul',
