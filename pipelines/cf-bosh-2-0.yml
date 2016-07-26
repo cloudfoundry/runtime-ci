@@ -240,8 +240,8 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         STEMCELL_NAME: "*.tgz"
-  - task: build-releases-section
-    file: runtime-ci/scripts/ci/create-releases-manifest-section/task.yml
+  - task: build-binaries-section
+    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
       deployment-configuration: hermione-deployment-configuration
   - task: set-bosh-uuid
