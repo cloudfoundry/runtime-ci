@@ -16,8 +16,8 @@ outputs:
 
 params:
   INFRASTRUCTURE: ~
-  IAAS_SETTINGS_TEMPLATE_PATH: deployments/templates/diego/iaas-settings-internal.yml
-  IAAS_SETTINGS_STUB_PATH: deployments/stubs/diego/iaas-settings.yml
+  IAAS_SETTINGS_TEMPLATE_PATH: templates/diego/iaas-settings-internal.yml
+  IAAS_SETTINGS_STUB_PATH: stubs/diego/iaas-settings.yml
 
 run:
   path: runtime-ci/scripts/ci/create-iaas-settings/task

@@ -136,8 +136,8 @@ jobs:
       diego-release: diego-release-master
     params:
       INFRASTRUCTURE: aws
-      IAAS_SETTINGS_TEMPLATE_PATH: deployments/diego/iaas-settings-internal.yml
-      IAAS_SETTINGS_STUB_PATH: deployments/diego/iaas-settings.yml
+      IAAS_SETTINGS_TEMPLATE_PATH: diego/iaas-settings-internal.yml
+      IAAS_SETTINGS_STUB_PATH: diego/iaas-settings.yml
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
