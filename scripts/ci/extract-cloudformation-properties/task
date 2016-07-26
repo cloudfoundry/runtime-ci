@@ -15,6 +15,6 @@ fi
 
 logical_physical_mapping=""
 for logical_resource_id in $LOGICAL_RESOURCE_IDS; do
-  logical_physical_mapping=$(aws cloudformation describe-stack-resource --stack-name "$stack_name" --logical-resource-id "$logical_resource_id" | jq --raw-output .StackResourceDetail.PhysicalResourceId)
+  logical_physical_mapping=$(aws cloudformation describe-stacks --stack-name "$stack_name" | jq -r ".Stacks[0].Outputs[] | select(.OutputKey == \"$logical_resource_id\") | .OutputValue")
   echo "$logical_resource_id $logical_physical_mapping" >> logical-physical-id/"$MAPPING_OUTPUT_FILE"
 done
