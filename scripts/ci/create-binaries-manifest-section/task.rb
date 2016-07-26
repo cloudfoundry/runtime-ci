@@ -37,6 +37,17 @@ release_array = release_names.map do |release_name|
   }
 end
 
+release_array <<  {
+  'name' => 'capi',
+  'version' => 'latest'
+}
+
+release_array << {
+    'name' => 'nats',
+    'version' => 'latest'
+}
+
+
 deployment_manifest.deep_merge!('releases' => release_array)
 
 stemcell_version = File.read("stemcell/version").strip
