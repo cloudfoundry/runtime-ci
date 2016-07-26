@@ -127,6 +127,8 @@ jobs:
       EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
       CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
       BBL_STATE_DIRECTORY: bbl-infrastructure
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
@@ -160,6 +162,8 @@ jobs:
       EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
       CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
       BBL_STATE_DIRECTORY: bbl-infrastructure
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
 
 #  - task: upload-release
 #    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml

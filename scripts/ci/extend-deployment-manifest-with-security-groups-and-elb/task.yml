@@ -20,6 +20,8 @@ params:
   EXTENDED_CF_DEPLOYMENT_MANIFEST:
   CLOUDFORMATION_MAPPING_FILE:
   BBL_STATE_DIRECTORY:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
 
 run:
   path: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.rb

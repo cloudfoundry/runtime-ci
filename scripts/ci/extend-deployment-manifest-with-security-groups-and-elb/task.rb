@@ -26,6 +26,15 @@ end
 
 properties = YAML.load_file(input_filename)
 
+properties.deep_merge!('properties' => {
+  'template_only' => {
+    'aws' => {
+      'access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID'),
+      'secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY')
+    }
+  }
+})
+
 def add_security_group_to_router(resource_pool)
   if ["router_z1", "router_z2"].include? resource_pool["name"]
     merge_resource_pool!("CF Router LB", resource_pool)
