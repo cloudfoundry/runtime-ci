@@ -14,7 +14,7 @@ def get_security_groups
 end
 
 def get_elb(name)
-  IO.popen(%(bbl --state-dir ./env-repo/#{ENV.fetch('BBL_STATE_DIRECTORY')} lbs | grep "#{name}" | cut -d: -f2 | cut -d\  -f2), "r") do |cmd|
+  IO.popen(%(bbl --state-dir ./env-repo/#{ENV.fetch('BBL_STATE_DIRECTORY')} lbs | grep "#{name}" | cut -d: -f2 | cut -d\\  -f2), "r") do |cmd|
     return cmd.read.chomp
   end
 end
