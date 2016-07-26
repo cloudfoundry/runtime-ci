@@ -34,7 +34,7 @@ releases_metadata = release_names.map do |release_name|
   }
 end
 
-stemcell_version = File.read("stemcell/version")
+stemcell_version = File.read("stemcell/version").strip
 
 stemcell_metadata = {
   'stemcells' => [
