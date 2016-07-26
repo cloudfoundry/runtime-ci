@@ -22,23 +22,22 @@ deployment_manifest_path = ENV.fetch("DEPLOYMENT_MANIFEST_PATH")
 
 deployment_manifest = YAML.load_file("deployment-configuration/#{deployment_configuration_path}")
 
-release_names.each do |release_name|
+release_array = release_names.map do |release_name|
   release_resource = "#{release_name}-release"
 
   url = File.read("#{release_resource}/url").strip
   version = File.read("#{release_resource}/version").strip
   sha1 = File.read("#{release_resource}/sha1").strip
 
-  deployment_manifest.deep_merge!('releases' => {
-    release_resource =>
-    {
-      'name' => release_name,
-      'url' => url,
-      'version' => version,
-      'sha1' => sha1
-    }
-  })
+  {
+    'name' => release_name,
+    'url' => url,
+    'version' => version,
+    'sha1' => sha1
+  }
 end
+
+deployment_manifest.deep_merge!('releases' => release_array)
 
 stemcell_version = File.read("stemcell/version").strip
 
