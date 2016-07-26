@@ -17,41 +17,37 @@ release_names=[
 
 deployment_configuration_path = ENV.fetch('DEPLOYMENT_CONFIGURATION_PATH')
 deployment_manifest_path = ENV.fetch("DEPLOYMENT_MANIFEST_PATH")
-stemcell_name = ENV.fetch("STEMCELL_NAME")
 
-releases_metadata = release_names.map do |release_name|
+deployment_manifest = YAML.load_file("deployment-configuration/#{deployment_configuration_path}")
+
+release_names.each do |release_name|
   release_resource = "#{release_name}-release"
 
   url = File.read("#{release_resource}/url").strip
   version = File.read("#{release_resource}/version").strip
   sha1 = File.read("#{release_resource}/sha1").strip
 
-  {
-    'name' => release_name,
-    'url' => url,
-    'version' => version,
-    'sha1' => sha1
-  }
+  deployment_manifest.deep_merge!('releases' => {
+    release_resource =>
+    {
+      'name' => release_name,
+      'url' => url,
+      'version' => version,
+      'sha1' => sha1
+    }
+  })
 end
 
 stemcell_version = File.read("stemcell/version").strip
 
-stemcell_metadata = {
-  'stemcells' => [
-    {
-      'alias' => "default",
-      'os' => "ubuntu-trusty",
-      'version' => stemcell_version
-    }
-  ]
-}
+deployment_manifest.deep_merge!('stemcells' => [
+  {
+    'alias' => "default",
+    'os' => "ubuntu-trusty",
+    'version' => stemcell_version
+  }
+])
 
-releases = YAML.dump(releases_metadata).gsub("---\n", '')
-stemcells = YAML.dump(stemcell_metadata).gsub("---\n", '')
-
-deployment_configuration = File.read("deployment-configuration/#{deployment_configuration_path}")
-updated_deployment_manifest = "#{deployment_configuration}\n#{releases}\n#{stemcells}"
-
-File.open("deployment-manifest/#{deployment_manifest_path}", 'w') do |f|
-  f.write(updated_deployment_manifest)
+File.open("deployment-manifest/#{deployment_manifest_path}", 'w') do |file|
+  YAML.dump(deployment_manifest, file)
 end
