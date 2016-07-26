@@ -50,12 +50,13 @@ jobs:
   public: true
   serial_groups: [nats-deploy]
   plan:
-  - get: env-repo
-    resource: hagrid-env-stubs
+  - get: hagrid-env-stubs
   - get: runtime-ci
   - task: run-bbl
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     privileged: false
+    input_mapping:
+      env-repo: hagrid-env-stubs
     params:
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
@@ -130,14 +131,15 @@ jobs:
       trigger: true
       passed: [deploy-nats-standalone]
     - get: runtime-ci
-    - get: env-repo
-      resource: hagrid-env-infrastructure
+    - get: hagrid-env-infrastructure
       passed: [deploy-nats-standalone]
       trigger: true
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
   - task: run-smoke-tests
     file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
     input_mapping:
@@ -156,14 +158,12 @@ jobs:
   serial_groups: [nats-deploy]
   plan:
   - aggregate:
-    - get: release-repo
-      resource: nats-release
+    - get: nats-release
       trigger: true
       passed:  [smoke-tests]
-    - get: env-repo
+    - get: hagrid-env-infrastructure
       trigger: true
       passed: [ smoke-tests ]
-      resource: hagrid-env-infrastructure
     - get: aws-stemcell
     - get: runtime-ci
     - get: hagrid-env-stubs
@@ -176,11 +176,15 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
   - task: create-release
     file: runtime-ci/scripts/ci/create-release/task.yml
     privileged: true
     params:
       RELEASE_NAME: nats
+    input_mapping:
+      release-repo: nats-release
   - task: create-cf-manifest
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
@@ -197,6 +201,8 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure/state.json
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+    input_mapping:
+      env-repo: hagrid-env-stubs
   - task: extend-cf-manifest
     file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
     input_mapping:
