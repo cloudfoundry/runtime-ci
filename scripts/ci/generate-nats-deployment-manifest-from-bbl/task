@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -x
+set -e
+set -u
+
+DIRECTOR_URL=$(bbl --state-dir env-repo/bbl-infrastructure director-address)
+DIRECTOR_UUID=$(bosh -t $DIRECTOR_URL status --uuid)
+
+cat <<EOF > manifest/nats.yml
+---
+name: nats
+director_uuid: $DIRECTOR_UUID
+releases:
+- name: nats
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+instance_groups:
+- name: nats-server
+  azs: [z1, z2, z3, z4]
+  instances: 3
+  jobs:
+  - name: nats
+    release: nats
+    properties:
+      nats:
+        port: 6363
+        user: nats
+        password: nats
+        machines:
+        - 10.0.31.190
+        - 10.0.47.190
+        - 10.0.63.190
+  networks:
+  - name: private
+    static_ips:
+      - 10.0.31.190
+      - 10.0.47.190
+      - 10.0.63.190
+  vm_type: m3.medium
+  stemcell: default
+- name: smoke-tests
+  azs: [z1]
+  vm_type: m3.medium
+  stemcell: default
+  instances: 1
+  lifecycle: errand
+  jobs:
+  - name: smoke-tests
+    release: nats
+    properties:
+      nats:
+        port: 6363
+        user: nats
+        password: nats
+        machines:
+        - 10.0.31.190
+        - 10.0.47.190
+        - 10.0.63.190
+  networks:
+  - name: private
+EOF
