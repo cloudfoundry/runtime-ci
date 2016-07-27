@@ -403,3 +403,79 @@ jobs:
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
         NODES: 6
+
+- name: bless-manifest
+  public: true
+  serial: false
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: build-binaries-section-script
+      trigger: true
+      passed: [ hermione-diego-cats ]
+    - get: hermione-bbl-configuration
+    - get: hermione-deployment-configuration-develop
+      trigger: true
+      passed: [ hermione-diego-cats ]
+    - get: capi-release-repo-ci-passed
+      trigger: true
+      passed: [ hermione-diego-cats ]
+    - get: nats-release-repo
+      trigger: true
+      passed: [ hermione-diego-cats ]
+    - get: stemcell
+      trigger: true
+      passed: [ hermione-diego-cats ]
+    - get: routing-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: consul-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: etcd-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: diego-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: loggregator-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: cf-mysql-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: uaa-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: garden-linux-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: cflinuxfs2-rootfs-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: cf-release
+      trigger: true
+      params:
+        tarball: false
+      passed: [ hermione-diego-cats ]
+    - get: cf-hermione-generated-manifest
+      trigger: true
+      passed: [ hermione-diego-cats ]
