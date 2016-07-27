@@ -9,7 +9,11 @@ pushd release-repo > /dev/null
   git config user.email "cf-mega@pivotal.io"
 
   git remote add -f master-repo ../release-repo-master
-  git merge --no-edit "master-repo/${MASTER_BRANCH}"
+  if (env | grep -e '^MERGE_MESSAGE=' >/dev/null); then
+    git merge --no-edit -m "${MERGE_MESSAGE}" "master-repo/${MASTER_BRANCH}"
+  else
+    git merge --no-edit "master-repo/${MASTER_BRANCH}"
+  fi
 
   git status
   git show --color | cat
