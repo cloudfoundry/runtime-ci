@@ -11,10 +11,10 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [ scripts/ci/create-binaries-manifest-section/* ]
-- name: hermione-env-repo
+- name: hermione-bbl-configuration
   type: git
   source:
-    branch: master
+    branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
 - name: hermione-deployment-manifest
@@ -98,7 +98,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-env-repo
+      resource: hermione-bbl-configuration
     - get: runtime-ci
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
@@ -110,7 +110,7 @@ jobs:
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
-  - put: hermione-env-repo
+  - put: hermione-bbl-configuration
     params:
       repository: updated-env-repo
 - name: setup-infrastructure
@@ -119,7 +119,7 @@ jobs:
   plan:
   - aggregate:
     - get: env-repo
-      resource: hermione-env-repo
+      resource: hermione-bbl-configuration
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -128,7 +128,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-  - put: hermione-env-repo
+  - put: hermione-bbl-configuration
     params:
       repository: updated-env-repo
   - task: bind-elb-to-r53
@@ -149,7 +149,7 @@ jobs:
     - get: runtime-ci
     - get: build-binaries-section-script
       trigger: true
-    - get: hermione-env-repo
+    - get: hermione-bbl-configuration
     - get: hermione-deployment-configuration
       trigger: true
     - get: capi-release-repo-ci-passed
@@ -203,7 +203,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
-      env-repo: hermione-env-repo
+      env-repo: hermione-bbl-configuration
   - aggregate:
     - do:
       - task: create-nats-release
