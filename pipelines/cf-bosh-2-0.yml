@@ -17,14 +17,21 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-- name: hermione-deployment-manifest
+- name: hermione-deployment-configuration-develop
   type: git
   source:
-    branch: master
+    branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ cf-deployment.yml ]
-- name: hermione-deployment-configuration
+    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+- name: hermione-deployment-configuration-merge-master-to-develop
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+- name: hermione-deployment-configuration-master
   type: git
   source:
     branch: master
@@ -150,7 +157,7 @@ jobs:
     - get: build-binaries-section-script
       trigger: true
     - get: hermione-bbl-configuration
-    - get: hermione-deployment-configuration
+    - get: hermione-deployment-configuration-develop
       trigger: true
     - get: capi-release-repo-ci-passed
       trigger: true
@@ -251,7 +258,7 @@ jobs:
   - task: build-binaries-section
     file: build-binaries-section-script/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
-      deployment-configuration: hermione-deployment-configuration
+      deployment-configuration: hermione-deployment-configuration-develop
   - task: set-bosh-uuid
     file: runtime-ci/scripts/ci/bosh-uuid/task.yml
     input_mapping:
@@ -284,7 +291,7 @@ jobs:
       - get: stemcell
         trigger: true
         passed: [ deploy-releases ]
-      - get: hermione-deployment-configuration
+      - get: hermione-deployment-configuration-develop
         trigger: true
         passed: [ deploy-releases ]
       - get: capi-release-repo-ci-passed
