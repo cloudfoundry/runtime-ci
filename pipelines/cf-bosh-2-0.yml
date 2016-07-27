@@ -5,6 +5,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: build-binaries-section-script
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [ scripts/ci/create-binaries-manifest-section/* ]
 - name: hermione-env-repo
   type: git
   source:
@@ -141,6 +147,8 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: build-binaries-section-script
+      trigger: true
     - get: hermione-env-repo
     - get: hermione-deployment-configuration
       trigger: true
@@ -241,7 +249,7 @@ jobs:
         PASSWORD_FILE: password
         STEMCELL_NAME: "*.tgz"
   - task: build-binaries-section
-    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+    file: build-binaries-section-script/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
       deployment-configuration: hermione-deployment-configuration
   - task: set-bosh-uuid
@@ -270,6 +278,12 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
+      - get: build-binaries-section-script
+        trigger: true
+        passed: [ deploy-releases ]
+      - get: stemcell
+        trigger: true
+        passed: [ deploy-releases ]
       - get: hermione-deployment-configuration
         trigger: true
         passed: [ deploy-releases ]
