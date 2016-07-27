@@ -57,6 +57,13 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: cf-hermione-generated-manifest
+  type: s3
+  source:
+    bucket: cf-hermione-manifest
+    versioned_file: cf-deployment.yml
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
 - name: stemcell
   type: bosh-io-stemcell
   source:
@@ -277,6 +284,9 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       MANIFEST_FILE: cf-deployment.yml
+  - put: cf-hermione-generated-manifest
+    params:
+      file: deployment-manifest/cf-deployment.yml
 
 - name: hermione-diego-cats
   public: true
@@ -356,6 +366,9 @@ jobs:
           tarball: false
       - get: runtime-ci
       - get: cf-acceptance-tests
+      - get: cf-hermione-generated-manifest
+        trigger: true
+        passed: [ deploy-releases ]
     - task: write-api-target-file
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
