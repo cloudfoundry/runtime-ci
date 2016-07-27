@@ -36,15 +36,15 @@ instance_groups:
         user: nats
         password: nats
         machines:
-        - 10.0.31.190
-        - 10.0.47.190
-        - 10.0.63.190
+        - 10.0.31.241
+        - 10.0.63.241
+        - 10.0.79.241
   networks:
   - name: private
     static_ips:
-      - 10.0.31.190
-      - 10.0.47.190
-      - 10.0.63.190
+      - 10.0.31.241
+      - 10.0.63.241
+      - 10.0.79.241
   vm_type: m3.medium
   stemcell: default
 - name: smoke-tests
@@ -62,9 +62,9 @@ instance_groups:
         user: nats
         password: nats
         machines:
-        - 10.0.31.190
-        - 10.0.47.190
-        - 10.0.63.190
+        - 10.0.31.241
+        - 10.0.63.241
+        - 10.0.79.241
   networks:
   - name: private
 EOF
