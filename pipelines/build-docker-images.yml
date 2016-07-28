@@ -35,6 +35,7 @@ groups:
   - build-create-bosh-lite-diego-cats-manifest-docker-image
   - build-run-errand-bbl-docker-image
   - build-write-target-file-docker-image
+  - build-write-creds-docker-image
   - build-bosh-deploy-docker-image
   - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
@@ -132,6 +133,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-target-file/Dockerfile]
+- name: runtime-ci-write-creds
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/write-creds/Dockerfile]
 - name: runtime-ci-bosh-deploy
   type: git
   source:
@@ -457,6 +464,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-target-file
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: write-creds-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-creds
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -894,6 +908,23 @@ jobs:
     - put: write-target-file-pipeline-image
       params:
         build: runtime-ci-write-target-file/scripts/ci/write-target-file
+        push: true
+- name: build-write-creds-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-write-creds
+        trigger: true
+    - put: write-creds-pipeline-image
+      params:
+        build: runtime-ci-write-creds/scripts/ci/write-creds
         push: true
 - name: build-run-errand-bbl-docker-image
   public: true
