@@ -8,12 +8,15 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: target
+- name: username
+- name: password
 
 run:
   path: runtime-ci/scripts/ci/delete-deployment/task
 
 params:
-  BOSH_DIRECTOR:
-  BOSH_USER:
-  BOSH_PASSWORD:
+  TARGET_FILE: target
+  USERNAME_FILE: username
+  PASSWORD_FILE: password
   DEPLOYMENT_NAME:
