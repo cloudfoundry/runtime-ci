@@ -482,6 +482,18 @@ jobs:
           passed: [ hermione-diego-cats ]
         - get: hermione-deployment-configuration-merge-master-to-develop
         - get: hermione-deployment-configuration-master
+    - task: commit-generated-manifest-to-master
+      file: runtime-ci/scripts/ci/commit-generated-manifest-to-master/task.yml
+      input_mapping:
+        master-repo: hermione-deployment-configuration-master
+        manifest: cf-hermione-generated-manifest
+      params:
+        MANIFEST_NAME: cf-deployment.yml
+        MANIFEST_DESTINATION: deployment-parts/cf-deployment-configuration.yml
+        COMMIT_MESSAGE: Bless deployment manifest.
+    - put: hermione-deployment-configuration-master
+      params:
+        repository: committed-master-repo
     - task: merge-master-into-develop
       file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
       params:

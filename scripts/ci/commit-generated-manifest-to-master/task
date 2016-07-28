@@ -1,0 +1,17 @@
+#!/bin/bash
+set -exu
+
+cp ./manifest/"${MANIFEST_NAME}" ./master-repo/"${MANIFEST_DESTINATION}"
+pushd master-repo > /dev/null
+  git config user.name "CF MEGA BOT"
+  git config user.email "cf-mega@pivotal.io"
+
+  git add ./"${MANIFEST_DESTINATION}"
+  git commit -m "${COMMIT_MESSAGE}"
+
+  git status
+  git show --color | cat
+popd > /dev/null
+
+shopt -s dotglob
+cp -R master-repo/* committed-master-repo
