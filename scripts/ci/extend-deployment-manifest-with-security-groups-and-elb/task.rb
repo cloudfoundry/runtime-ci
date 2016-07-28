@@ -23,15 +23,6 @@ input_filename = './generated-deployment-manifest/' + ENV.fetch('CF_DEPLOYMENT_M
 output_filename = './extended-cf-deployment-manifest/' + ENV.fetch('EXTENDED_CF_DEPLOYMENT_MANIFEST')
 properties = YAML.load_file(input_filename)
 
-properties.deep_merge!('properties' => {
-  'template_only' => {
-    'aws' => {
-      'access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID'),
-      'secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY'),
-    }
-  }
-})
-
 access_pools = %w[access_z1 access_z2]
 access_resource_pools = properties['resource_pools'].select do |resource_pool|
   access_pools.include?(resource_pool['name'])
