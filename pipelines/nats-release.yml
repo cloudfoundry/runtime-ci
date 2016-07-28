@@ -8,6 +8,7 @@ groups:
     - setup-infrastructure
     - upload-stemcell
     - cats-tests
+    - delete-deployment
 
 resources:
 - name: runtime-ci
@@ -398,3 +399,40 @@ jobs:
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
         NODES: 6
+- name: delete-deployment
+  public: true
+  serial_groups: [nats-deploy]
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: nats-release
+        trigger: true
+        passed:  [ cats-tests ]
+      - get: hagrid-env-infrastructure
+        trigger: true
+        passed: [ cats-tests ]
+      - get: aws-stemcell
+        trigger: true
+        passed: [ cats-tests ]
+        params:
+          tarball: false
+      - get: hagrid-env-stubs
+        trigger: true
+        passed: [ cats-tests ]
+    - task: extract-creds
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      input_mapping:
+        env-repo: hagrid-env-infrastructure
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
+    - aggregate:
+      - task: delete-cf
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf-hagrid
+      - task: delete-diego
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf-hagrid-diego
