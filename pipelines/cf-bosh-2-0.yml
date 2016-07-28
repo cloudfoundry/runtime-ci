@@ -490,7 +490,7 @@ jobs:
       params:
         MANIFEST_NAME: cf-deployment.yml
         MANIFEST_DESTINATION: deployment-parts/cf-deployment-configuration.yml
-        COMMIT_MESSAGE: Bless deployment manifest.
+        COMMIT_MESSAGE: '[ci skip] Bless deployment manifest.'
     - put: hermione-deployment-configuration-master
       params:
         repository: committed-master-repo
