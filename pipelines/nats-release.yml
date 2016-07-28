@@ -6,6 +6,8 @@ groups:
     - deploy-cf-with-updated-nats
     - smoke-tests
     - setup-infrastructure
+    - upload-stemcell
+    - cats-tests
 
 resources:
 - name: runtime-ci
@@ -24,12 +26,16 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
+    paths:
+    - cf/*
+    - diego/*
 - name: hagrid-env-infrastructure
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
+    paths: [ bbl-infrastructure ]
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -44,19 +50,34 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/diego-release
+- name: diego-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/diego-release
+- name: cf-release-tarball
+  type: s3
+  source:
+    bucket: cf-runtime-releases
+    regexp: cf-(\d+)-.*.tgz
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
 
 jobs:
 - name: setup-infrastructure
   public: true
   serial_groups: [nats-deploy]
   plan:
-  - get: hagrid-env-stubs
+  - get: hagrid-env-infrastructure
   - get: runtime-ci
   - task: run-bbl
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
-    privileged: false
     input_mapping:
-      env-repo: hagrid-env-stubs
+      env-repo: hagrid-env-infrastructure
     params:
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
@@ -75,6 +96,32 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
       DOMAIN: hagrid.cf-app.com
 
+- name: upload-stemcell
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: hagrid-env-infrastructure
+      passed: [ setup-infrastructure ]
+      trigger: true
+    - get: aws-stemcell
+      trigger: true
+  - task: extract-creds
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+  - task: upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: aws-stemcell
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      STEMCELL_NAME: '*.tgz'
+
 - name: deploy-nats-standalone
   public: true
   serial_groups: [nats-deploy]
@@ -84,9 +131,12 @@ jobs:
       trigger: true
     - get: hagrid-env-infrastructure
       trigger: true
-      passed: [ setup-infrastructure ]
+      passed: [ upload-stemcell ]
     - get: aws-stemcell
       trigger: true
+      passed: [ upload-stemcell ]
+      params:
+        tarball: false
     - get: runtime-ci
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
@@ -134,6 +184,11 @@ jobs:
     - get: hagrid-env-infrastructure
       passed: [deploy-nats-standalone]
       trigger: true
+    - get: aws-stemcell
+      trigger: true
+      passed: [ deploy-nats-standalone ]
+      params:
+        tarball: false
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -165,91 +220,108 @@ jobs:
       trigger: true
       passed: [ smoke-tests ]
     - get: aws-stemcell
+      trigger: true
+      passed: [ smoke-tests ]
+      params:
+        tarball: false
     - get: runtime-ci
     - get: hagrid-env-stubs
       trigger: true
     - get: cf-release-develop
+      params:
+        submodules: none
+    - get: cf-release-tarball
     - get: diego-release-master
       params:
         submodules: none
+    - get: diego-release-tarball
   - task: extract-creds
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hagrid-env-infrastructure
-  - task: create-release
-    file: runtime-ci/scripts/ci/create-release/task.yml
-    privileged: true
-    params:
-      RELEASE_NAME: nats
-    input_mapping:
-      release-repo: nats-release
-  - task: create-cf-manifest
-    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-    input_mapping:
-      cf-release: cf-release-develop
-      cf-stubs: hagrid-env-stubs
-    params:
-      INFRASTRUCTURE: aws
-      STUBS_PATH: cf/*.yml
-  - task: extract-security-groups
+  - task: extract-cloudformation-properties
     file: runtime-ci/scripts/ci/extract-cloudformation-properties/task.yml
     params:
       MAPPING_OUTPUT_FILE: security-groups-mapping
-      LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup InternalSecurityGroup
+      LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup CFSSHProxyInternalSecurityGroup InternalSecurityGroup
       STATE_DIR_PATH: bbl-infrastructure/state.json
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
     input_mapping:
       env-repo: hagrid-env-stubs
-  - task: extend-cf-manifest
-    file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
-    input_mapping:
-      generated-deployment-manifest: manifest
-      env-repo: hagrid-env-stubs
-    params:
-      CF_DEPLOYMENT_MANIFEST: deployment.yml
-      EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
-      CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-      BBL_STATE_DIRECTORY: bbl-infrastructure
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
-  - task: create-diego-iaas-settings
-    file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
-    input_mapping:
-      deployments: hagrid-env-stubs
-      diego-release: diego-release-master
-    params:
-      INFRASTRUCTURE: aws
-      IAAS_SETTINGS_TEMPLATE_PATH: diego/iaas-settings-internal.yml
-      IAAS_SETTINGS_STUB_PATH: diego/iaas-settings.yml
-  - task: create-diego-manifest
-    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-    input_mapping:
-      diego-release: diego-release-master
-      cf-manifest: manifest
-      property-overrides: hagrid-env-stubs
-      instance-count-overrides: hagrid-env-stubs
-      release-versions: hagrid-env-stubs
-    params:
-      PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
-      INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
-      RELEASE_VERSIONS_PATH: diego/release-versions.yml
-  - task: extend-diego-manifest
-    file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
-    input_mapping:
-      generated-deployment-manifest: generated-diego-manifest
-      env-repo: hagrid-env-stubs
-    output_mapping:
-      extended-cf-deployment-manifest: extended-diego-deployment-manifest
-    params:
-      CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
-      EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
-      CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-      BBL_STATE_DIRECTORY: bbl-infrastructure
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+  - aggregate: # prepare the deploy
+    - do: # generate manifests
+      - task: create-cf-manifest
+        file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+        input_mapping:
+          cf-release: cf-release-develop
+          cf-stubs: hagrid-env-stubs
+        params:
+          INFRASTRUCTURE: aws
+          STUBS_PATH: cf/*.yml
+      - task: extend-cf-manifest
+        file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
+        input_mapping:
+          generated-deployment-manifest: manifest
+          env-repo: hagrid-env-stubs
+        params:
+          CF_DEPLOYMENT_MANIFEST: deployment.yml
+          EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
+          CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
+          BBL_STATE_DIRECTORY: bbl-infrastructure
+      - task: create-diego-iaas-settings
+        file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
+        input_mapping:
+          deployments: hagrid-env-stubs
+          diego-release: diego-release-master
+        params:
+          INFRASTRUCTURE: aws
+          IAAS_SETTINGS_TEMPLATE_PATH: diego/iaas-settings-internal.yml
+          IAAS_SETTINGS_STUB_PATH: diego/iaas-settings.yml
+      - task: create-diego-manifest
+        file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+        input_mapping:
+          diego-release: diego-release-master
+          cf-manifest: manifest
+          property-overrides: hagrid-env-stubs
+          instance-count-overrides: hagrid-env-stubs
+          release-versions: hagrid-env-stubs
+        params:
+          PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
+          INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
+          RELEASE_VERSIONS_PATH: diego/release-versions.yml
+      - task: extend-diego-manifest
+        file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
+        input_mapping:
+          generated-deployment-manifest: generated-diego-manifest
+          env-repo: hagrid-env-stubs
+        output_mapping:
+          extended-cf-deployment-manifest: extended-diego-deployment-manifest
+        params:
+          CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
+          EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
+          CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
+          BBL_STATE_DIRECTORY: bbl-infrastructure
+    - task: upload-cf-release
+      file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+      input_mapping:
+        release: cf-release-tarball
+      params:
+        RELEASE_NAME: cf-*.tgz
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+    - task: upload-diego-release
+      file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+      input_mapping:
+        release: diego-release-tarball
+      params:
+        RELEASE_NAME: release.tgz
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
   - aggregate:
     - task: cf-bosh-deploy
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
@@ -269,3 +341,60 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         MANIFEST_FILE: diego-deployment.yml
+- name: cats-tests
+  public: true
+  serial_groups: [nats-deploy]
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+      - get: nats-release
+        trigger: true
+        passed:  [ deploy-cf-with-updated-nats ]
+      - get: hagrid-env-infrastructure
+        trigger: true
+        passed: [ deploy-cf-with-updated-nats ]
+      - get: aws-stemcell
+        trigger: true
+        passed: [ deploy-cf-with-updated-nats ]
+        params:
+          tarball: false
+      - get: hagrid-env-stubs
+        trigger: true
+        passed: [ deploy-cf-with-updated-nats ]
+    - task: write-api-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.hagrid.cf-app.com
+    - task: enable-docker
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{hagrid_cf_admin_username}}
+        CF_PASSWORD: {{hagrid_cf_admin_password}}
+    - task: cf-acceptance-tests
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+      params:
+        INCLUDE_BACKEND_COMPATIBILITY: false
+        INCLUDE_INTERNET_DEPENDENT: true
+        INCLUDE_DIEGO_DOCKER: true
+        INCLUDE_DIEGO_SSH: true
+        INCLUDE_LOGGING: true
+        INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_SECURITY_GROUPS: true
+        INCLUDE_SERVICES: true
+        INCLUDE_V3: false
+        INCLUDE_OPERATOR: true
+        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
+        SKIP_SSO: false
+        BACKEND: diego
+        CF_API: "api.hagrid.cf-app.com"
+        CF_ADMIN_USER: {{hagrid_cf_admin_username}}
+        CF_ADMIN_PASSWORD: {{hagrid_cf_admin_password}}
+        CF_APPS_DOMAIN: hagrid.cf-app.com
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "true"
+        NODES: 6
