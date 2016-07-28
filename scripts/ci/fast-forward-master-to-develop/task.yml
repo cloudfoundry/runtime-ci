@@ -15,4 +15,4 @@ outputs:
 - name: fast-forwarded-master-repo
 
 run:
-  path: runtime-ci/scripts/ci/fast-forwarded-master-repo/task
+  path: runtime-ci/scripts/ci/fast-forward-master-to-develop/task
