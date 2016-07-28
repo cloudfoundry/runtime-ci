@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eu
+
+echo "${USERNAME//\"}"  > "username/$USERNAME_FILE"
+
+set +x
+echo "${PASSWORD//\"}"  > "username/$PASSWORD_FILE"
+
+echo 'echo "REDACTED"  > "username/$PASSWORD_FILE"'

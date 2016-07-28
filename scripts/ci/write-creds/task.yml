@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-creds
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: username
+- name: password
+
+run:
+  path: runtime-ci/scripts/ci/write-creds/task
+
+params:
+  USERNAME:
+  USERNAME_FILE: username
+  PASSWORD:
+  PASSWORD_FILE: password
