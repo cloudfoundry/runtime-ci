@@ -481,15 +481,22 @@ jobs:
           passed: [ hermione-diego-cats ]
         - get: hermione-deployment-configuration-merge-master-to-develop
         - get: hermione-deployment-configuration-master
+    - task: fast-forward-master-to-develop
+      file: runtime-ci/scripts/ci/fast-forward-master-to-develop/task.yml
+      input_mapping:
+        master-repo: hermione-deployment-configuration-master
+        develop-repo: hermione-deployment-configuration-develop
+      output_mapping:
+        fast-forwarded-master-repo: ff-hermione-deployment-configuration-master
     - task: commit-generated-manifest-to-master
       file: runtime-ci/scripts/ci/commit-generated-manifest-to-master/task.yml
       input_mapping:
-        master-repo: hermione-deployment-configuration-master
+        master-repo: ff-hermione-deployment-configuration-master
         manifest: cf-hermione-generated-manifest
       params:
         MANIFEST_NAME: cf-deployment.yml
         MANIFEST_DESTINATION: cf-deployment.yml
-        COMMIT_MESSAGE: '[ci skip] Bless deployment manifest.'
+        COMMIT_MESSAGE: 'Bless deployment manifest.'
     - put: hermione-deployment-configuration-master
       params:
         repository: committed-master-repo

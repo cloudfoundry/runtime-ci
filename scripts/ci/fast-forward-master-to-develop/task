@@ -1,0 +1,16 @@
+#!/bin/bash
+set -exu
+
+pushd master-repo > /dev/null
+  git config user.name "CF MEGA BOT"
+  git config user.email "cf-mega@pivotal.io"
+  git remote add -f develop-repo ../develop-repo
+
+  git rebase develop-repo
+
+  git status
+  git show --color | cat
+popd > /dev/null
+
+shopt -s dotglob
+cp -R master-repo/* fast-forwarded-master-repo

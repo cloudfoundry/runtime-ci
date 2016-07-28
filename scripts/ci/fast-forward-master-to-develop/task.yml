@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/fast-forwarded-master-repo
+
+inputs:
+- name: runtime-ci
+- name: master-repo
+- name: develop-repo
+
+outputs:
+- name: fast-forwarded-master-repo
+
+run:
+  path: runtime-ci/scripts/ci/fast-forwarded-master-repo/task
