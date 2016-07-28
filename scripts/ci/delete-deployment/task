@@ -3,9 +3,12 @@ set -exu
 
 # Inputs
 BOSH_DIRECTOR="$(cat "target/$TARGET_FILE")"
+
+export BOSH_USER
 BOSH_USER="$(cat "username/$USERNAME_FILE")"
 
 set +x
+export BOSH_PASSWORD
 BOSH_PASSWORD="$(cat "password/$PASSWORD_FILE")"
 set -x
 
