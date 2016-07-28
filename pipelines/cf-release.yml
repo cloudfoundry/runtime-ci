@@ -841,6 +841,18 @@ jobs:
         trigger: true
         tags: [vsphere]
     - aggregate:
+      - task: write-bosh-director
+        file: runtime-ci/scripts/ci/write-target-file/task.yml
+        output_mapping:
+          target-file-dir: target
+        params:
+          TARGET: https://bosh.cat.wild.cf-app.com
+      - task: write-bosh-creds
+        file: runtime-ci/scripts/ci/write-creds/task.yml
+        params:
+          USERNAME: {{vsphere_bosh_username}}
+          PASSWORD: {{vsphere_bosh_password}}
+    - aggregate:
       - task: delete-cf
         privileged: true
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
