@@ -23,21 +23,21 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+    paths: [ cf-deployment.yml ]
 - name: hermione-deployment-configuration-merge-master-to-develop
   type: git
   source:
     branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+    paths: [ cf-deployment.yml ]
 - name: hermione-deployment-configuration-master
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ deployment-parts/cf-deployment-configuration.yml ]
+    paths: [ cf-deployment.yml ]
 - name: capi-release-repo-ci-passed
   type: git
   source:
@@ -488,7 +488,7 @@ jobs:
         manifest: cf-hermione-generated-manifest
       params:
         MANIFEST_NAME: cf-deployment.yml
-        MANIFEST_DESTINATION: deployment-parts/cf-deployment-configuration.yml
+        MANIFEST_DESTINATION: cf-deployment.yml
         COMMIT_MESSAGE: '[ci skip] Bless deployment manifest.'
     - put: hermione-deployment-configuration-master
       params:

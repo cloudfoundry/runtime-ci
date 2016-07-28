@@ -29,4 +29,4 @@ run:
 
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
-  DEPLOYMENT_CONFIGURATION_PATH: deployment-parts/cf-deployment-configuration.yml
+  DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
