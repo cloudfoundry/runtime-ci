@@ -414,7 +414,6 @@ jobs:
         - get: build-binaries-section-script
           trigger: true
           passed: [ hermione-diego-cats ]
-        - get: hermione-bbl-configuration
         - get: hermione-deployment-configuration-develop
           trigger: true
           passed: [ hermione-diego-cats ]
