@@ -37,11 +37,10 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-- name: capi-release-repo-ci-passed
-  type: git
+- name: capi-release
+  type: bosh-io-release
   source:
-    branch: ci-passed
-    uri: https://github.com/cloudfoundry/capi-release.git
+    repository: cloudfoundry-incubator/capi-release
 - name: nats-release-repo
   type: git
   source:
@@ -165,7 +164,7 @@ jobs:
     - get: hermione-bbl-configuration
     - get: hermione-deployment-configuration-develop
       trigger: true
-    - get: capi-release-repo-ci-passed
+    - get: capi-release
       trigger: true
     - get: nats-release-repo
       trigger: true
@@ -236,24 +235,6 @@ jobs:
           USERNAME_FILE: username
           PASSWORD_FILE: password
           RELEASE_NAME: nats-*.tgz
-    - do:
-      - task: create-capi-release
-        file: runtime-ci/scripts/ci/create-release/task.yml
-        input_mapping:
-          release-repo: capi-release-repo-ci-passed
-        output_mapping:
-          release-tarball: capi-release-tarball
-        params:
-          RELEASE_NAME: capi
-      - task: upload-capi-release
-        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-        input_mapping:
-          release: capi-release-tarball
-        params:
-          TARGET_FILE: target
-          USERNAME_FILE: username
-          PASSWORD_FILE: password
-          RELEASE_NAME: capi-*.tgz
     - task: upload-stemcell
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       params:
@@ -303,7 +284,7 @@ jobs:
       - get: hermione-deployment-configuration-develop
         trigger: true
         passed: [ deploy-releases ]
-      - get: capi-release-repo-ci-passed
+      - get: capi-release
         trigger: true
         passed: [ deploy-releases ]
         params:
@@ -416,7 +397,7 @@ jobs:
         - get: hermione-deployment-configuration-develop
           trigger: true
           passed: [ hermione-diego-cats ]
-        - get: capi-release-repo-ci-passed
+        - get: capi-release
           trigger: true
           passed: [ hermione-diego-cats ]
         - get: nats-release-repo
