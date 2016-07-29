@@ -40,7 +40,7 @@ resources:
 - name: capi-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/capi-release
+    repository: cloudfoundry/capi-release
 - name: nats-release-repo
   type: git
   source:
