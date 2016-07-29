@@ -6,7 +6,7 @@ pushd master-repo > /dev/null
   git config user.email "cf-mega@pivotal.io"
   git remote add -f develop-repo ../develop-repo
 
-  git rebase develop-repo/develop
+  git merge --ff-only develop-repo/develop
 
   git status
   git show --color | cat
