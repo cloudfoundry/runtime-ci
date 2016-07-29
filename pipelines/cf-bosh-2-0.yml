@@ -37,7 +37,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ cf-deployment.yml ]
 - name: capi-release-repo-ci-passed
   type: git
   source:
