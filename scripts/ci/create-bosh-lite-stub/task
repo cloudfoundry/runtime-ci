@@ -14,7 +14,7 @@ properties:
   acceptance_tests:
     nodes: 4
     include_sso: true
-    include_operator: false
+    include_operator: true
     include_logging: true
     include_security_groups: true
     include_internet_dependent: true
