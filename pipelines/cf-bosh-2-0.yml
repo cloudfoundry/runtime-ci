@@ -386,7 +386,7 @@ jobs:
 
 - name: bless-manifest
   public: true
-  serial: false
+  serial: true
   plan:
     - do:
       - aggregate:
