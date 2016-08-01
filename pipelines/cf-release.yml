@@ -307,6 +307,7 @@ jobs:
 - name: cf-release-unit-tests
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - timeout: &timeout 4h
     do:
@@ -336,6 +337,7 @@ jobs:
 
 - name: cf-release-branch-freshness
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -353,6 +355,7 @@ jobs:
 - name: create-release
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -383,6 +386,7 @@ jobs:
 
 - name: clean-all-the-boshes
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -424,6 +428,7 @@ jobs:
 - name: deploy-and-test-openstack
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -470,6 +475,7 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -552,6 +558,7 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -609,6 +616,7 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -725,6 +733,7 @@ jobs:
   serial: true
   serial_groups:
   - deploy-minimal
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -754,6 +763,7 @@ jobs:
   public: true
   serial_groups:
   - deploy-minimal
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -794,6 +804,7 @@ jobs:
   public: true
   serial_groups:
   - vsphere-deploy
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -889,6 +900,7 @@ jobs:
   public: true
   serial_groups:
   - vsphere-deploy
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -962,6 +974,7 @@ jobs:
   public: true
   serial_groups:
   - vsphere-deploy
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -1068,6 +1081,7 @@ jobs:
   - cf-a1-bosh-deployment-lock
   - cf-deploy-and-diego-cats-lock
   - diego-deploy-and-diego-cats-lock
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -1123,6 +1137,7 @@ jobs:
   serial: true
   serial_groups:
   - cf-a1-bosh-deployment-lock
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -1183,6 +1198,7 @@ jobs:
 - name: generate-a1-manifests
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: a1-env
@@ -1237,6 +1253,7 @@ jobs:
   public: true
   serial_groups:
   - bosh-lite
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: diego-release-master
@@ -1296,6 +1313,7 @@ jobs:
 
 - name: generate-vsphere-manifests
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: cat-env
@@ -1355,6 +1373,7 @@ jobs:
   serial_groups:
   - diego-deploy-and-diego-cats-lock
   - cf-deploy-and-diego-cats-lock
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -1443,6 +1462,7 @@ jobs:
 - name: rc
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -1533,6 +1553,7 @@ jobs:
 - name: a1-runtime-smokes
   public: true
   serial: true
+  build_logs_to_retain: 1000
   plan:
   - timeout: *timeout
     do:
@@ -1630,6 +1651,7 @@ jobs:
 - name: a1-loggregator-smokes
   public: true
   serial: true
+  build_logs_to_retain: 1000
   plan:
   - timeout: *timeout
     do:

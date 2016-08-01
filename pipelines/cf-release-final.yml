@@ -53,6 +53,7 @@ jobs:
 - name: create-final-release
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -75,6 +76,7 @@ jobs:
 - name: merge-master-into-develop
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -91,6 +93,7 @@ jobs:
 
 - name: announce-rc
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -103,6 +106,7 @@ jobs:
 
 - name: create-release-notes
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: cf-final-bosh-release

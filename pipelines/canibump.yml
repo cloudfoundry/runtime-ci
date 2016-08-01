@@ -28,6 +28,7 @@ resources:
 jobs:
 - name: push-canibump
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: &timeout 4h
     do:
@@ -43,6 +44,7 @@ jobs:
 
 - name: set-canibump-no
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:
@@ -56,6 +58,7 @@ jobs:
 
 - name: set-canibump-yes
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: *timeout
     do:

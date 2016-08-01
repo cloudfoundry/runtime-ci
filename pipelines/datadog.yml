@@ -30,6 +30,7 @@ resources:
 jobs:
 - name: recreate-datadog-dashboards
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: &timeout 4h
     do:

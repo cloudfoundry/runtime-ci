@@ -19,6 +19,7 @@ resources:
 jobs:
 - name: green-means-nothing-deployed-on-runtime1
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: every-15-minutes
@@ -34,6 +35,7 @@ jobs:
 
 - name: green-means-nothing-deployed-on-runtime2
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: every-15-minutes

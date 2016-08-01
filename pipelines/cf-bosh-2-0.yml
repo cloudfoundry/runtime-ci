@@ -107,6 +107,7 @@ jobs:
 - name: destroy-infrastructure
   public: true
   serial_groups: [hermione]
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: env-repo
@@ -128,6 +129,7 @@ jobs:
 - name: setup-infrastructure
   public: true
   serial_groups: [hermione]
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: env-repo
@@ -156,6 +158,7 @@ jobs:
 - name: deploy-releases
   public: true
   serial_groups: [hermione]
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -271,6 +274,7 @@ jobs:
 - name: hermione-diego-cats
   public: true
   serial_groups: [hermione]
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -387,6 +391,7 @@ jobs:
 - name: bless-manifest
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
     - do:
       - aggregate:

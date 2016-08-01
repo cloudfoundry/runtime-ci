@@ -802,11 +802,13 @@ jobs:
 - name: trigger-all-image-builds
   public: true
   serial: true
+  build_logs_to_retain: 100
   plan:
   - get: trigger-resource
 
 - name: build-create-iaas-settings-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -824,6 +826,7 @@ jobs:
         push: true
 - name: build-verify-every-task-has-docker-build-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -841,6 +844,7 @@ jobs:
         push: true
 - name: build-verify-every-task-is-used-in-a-pipeline-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -858,6 +862,7 @@ jobs:
         push: true
 - name: build-verify-every-task-has-correct-docker-image-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -875,6 +880,7 @@ jobs:
         push: true
 - name: build-bosh-deploy-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -892,6 +898,7 @@ jobs:
         push: true
 - name: build-bosh-upload-release-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -909,6 +916,7 @@ jobs:
         push: true
 - name: build-bosh-upload-stemcell-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -926,6 +934,7 @@ jobs:
         push: true
 - name: build-write-target-file-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -943,6 +952,7 @@ jobs:
         push: true
 - name: build-write-creds-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -960,6 +970,7 @@ jobs:
         push: true
 - name: build-run-errand-bbl-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -977,6 +988,7 @@ jobs:
         push: true
 - name: build-create-diego-manifest-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -994,6 +1006,7 @@ jobs:
         push: true
 - name: build-create-bosh-lite-diego-cats-manifest-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1011,6 +1024,7 @@ jobs:
         push: true
 - name: build-create-bosh-lite-stub-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1028,6 +1042,7 @@ jobs:
         push: true
 - name: build-create-bosh-lite-creds-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1045,6 +1060,7 @@ jobs:
         push: true
 - name: build-announce-rc-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1062,6 +1078,7 @@ jobs:
         push: true
 - name: build-can-bump-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1079,6 +1096,7 @@ jobs:
         push: true
 - name: build-cannot-bump-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1096,6 +1114,7 @@ jobs:
         push: true
 - name: build-create-cf-release-manifest-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1113,6 +1132,7 @@ jobs:
         push: true
 - name: build-create-final-release-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1130,6 +1150,7 @@ jobs:
         push: true
 - name: build-create-minimal-cf-release-manifest-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1147,6 +1168,7 @@ jobs:
         push: true
 - name: build-create-release-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1164,6 +1186,7 @@ jobs:
         push: true
 - name: build-create-release-notes-template-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1181,6 +1204,7 @@ jobs:
         push: true
 - name: build-delete-deployment-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1198,6 +1222,7 @@ jobs:
         push: true
 - name: build-deprovision-bosh-lite-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1215,6 +1240,7 @@ jobs:
         push: true
 - name: build-enable-docker-diego-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1232,6 +1258,7 @@ jobs:
         push: true
 - name: build-merge-master-into-develop-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1249,6 +1276,7 @@ jobs:
         push: true
 - name: build-provision-bosh-lite-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1266,6 +1294,7 @@ jobs:
         push: true
 - name: build-record-compatible-versions-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1283,6 +1312,7 @@ jobs:
         push: true
 - name: build-request-pm-input-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1300,6 +1330,7 @@ jobs:
         push: true
 - name: build-run-bosh-cleanup-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1318,6 +1349,7 @@ jobs:
 
 - name: test-cats-golang
   public: true
+  build_logs_to_retain: 100
   plan:
     - do:
       - get: runtime-ci
@@ -1334,6 +1366,7 @@ jobs:
 
 - name: build-run-cats-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1353,6 +1386,7 @@ jobs:
 
 - name: build-run-cf-release-unit-tests-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1370,6 +1404,7 @@ jobs:
         push: true
 - name: build-run-errand-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1387,6 +1422,7 @@ jobs:
         push: true
 - name: build-run-smoketests-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1404,6 +1440,7 @@ jobs:
         push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1421,6 +1458,7 @@ jobs:
         push: true
 - name: build-validate-branch-freshness-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1438,6 +1476,7 @@ jobs:
         push: true
 - name: build-generate-nats-deployment-manifest-from-bbl-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1455,6 +1494,7 @@ jobs:
         push: true
 - name: build-setup-infrastructure-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1472,6 +1512,7 @@ jobs:
         push: true
 - name: build-extract-director-creds-from-bbl-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1489,6 +1530,7 @@ jobs:
         push: true
 - name: build-destroy-infrastructure-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1506,6 +1548,7 @@ jobs:
         push: true
 - name: build-check-deployment-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1523,6 +1566,7 @@ jobs:
         push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1540,6 +1584,7 @@ jobs:
         push: true
 - name: build-unbind-elb-from-r53-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1557,6 +1602,7 @@ jobs:
         push: true
 - name: build-cats-from-cf-release-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1574,6 +1620,7 @@ jobs:
         push: true
 - name: build-bosh-uuid-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1592,6 +1639,7 @@ jobs:
 
 - name: build-run-ginkgo-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1610,6 +1658,7 @@ jobs:
 
 - name: build-recreate-datadog-dashboard-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1628,6 +1677,7 @@ jobs:
 
 - name: build-extend-bosh-lite-diego-stub-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1646,6 +1696,7 @@ jobs:
 
 - name: build-create-binaries-manifest-section-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1664,6 +1715,7 @@ jobs:
 
 - name: build-extract-cloudformation-properties-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1682,6 +1734,7 @@ jobs:
 
 - name: build-extend-deployment-manifest-with-security-groups-and-elb-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1700,6 +1753,7 @@ jobs:
 
 - name: build-commit-generated-manifest-to-master-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -1718,6 +1772,7 @@ jobs:
 
 - name: build-fast-forward-master-to-develop-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
