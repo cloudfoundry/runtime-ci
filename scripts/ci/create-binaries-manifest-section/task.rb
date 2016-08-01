@@ -5,6 +5,7 @@ require 'active_support'
 
 
 release_names=[
+  'capi',
   'consul',
   'diego',
   'etcd',
@@ -36,11 +37,6 @@ release_array = release_names.map do |release_name|
     'sha1' => sha1
   }
 end
-
-release_array <<  {
-  'name' => 'capi',
-  'version' => 'latest'
-}
 
 release_array << {
     'name' => 'nats',

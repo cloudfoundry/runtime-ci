@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: deployment-configuration
 - name: stemcell
+- name: capi-release
 - name: consul-release
 - name: etcd-release
 - name: diego-release
