@@ -24,6 +24,15 @@
         "UserName": { "Ref": "BlobstoreUser" }
       }
     },
+    "OldReleaseBlobsBucket": {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "BucketName" : "nats-blobs"
+      },
+      "Metadata" : {
+        "Timestamp": { "Ref": "CurrentTimestamp" }
+      }
+    },
     "ReleaseBlobsBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
@@ -31,6 +40,49 @@
       },
       "Metadata" : {
         "Timestamp": { "Ref": "CurrentTimestamp" }
+      }
+    },
+    "OldReleaseBlobsBucketPolicy": {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "PolicyDocument" : {
+          "Statement" : [ {
+            "Sid" : "AllowReadForEveryone",
+            "Action" : [
+              "s3:GetObject"
+            ],
+            "Effect" : "Allow",
+            "Principal" : "*",
+            "Resource" : { "Fn::Join" : [
+              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } , "/*" ]
+            ] }
+          },
+          {
+            "Sid" : "AllowList",
+            "Action" : [
+              "s3:ListBucket"
+            ],
+            "Effect" : "Allow",
+            "Principal" : "*",
+            "Resource" : { "Fn::Join" : [
+              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } ]
+            ] }
+          },
+          {
+            "Sid" : "AllowWrite",
+            "Action" : [
+              "s3:PutObject"
+            ],
+            "Effect" : "Allow",
+            "Principal" : {
+              "AWS" : { "Fn::GetAtt" : [ "BlobstoreUser", "Arn" ] }
+            },
+            "Resource" : { "Fn::Join" : [
+              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } , "/*" ]
+            ] }
+          } ]
+        },
+        "Bucket" : { "Ref" : "OldReleaseBlobsBucket" }
       }
     },
     "ReleaseBlobsBucketPolicy": {
