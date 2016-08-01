@@ -55,6 +55,7 @@ groups:
   - build-extend-deployment-manifest-with-security-groups-and-elb-docker-image
   - build-commit-generated-manifest-to-master-docker-image
   - build-fast-forward-master-to-develop-docker-image
+  - build-create-final-release-bucket-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -397,6 +398,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/fast-forward-master-to-develop/Dockerfile]
+
+- name: runtime-ci-create-final-release-bucket
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-final-release-bucket/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -778,6 +786,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/fast-forward-master-to-develop
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: create-final-release-bucket
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-final-release-bucket
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1718,3 +1734,20 @@ jobs:
         build: runtime-ci-fast-forward-master-to-develop/scripts/ci/fast-forward-master-to-develop
         push: true
 
+- name: build-create-final-release-bucket-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-create-final-release-bucket
+        trigger: true
+    - put: create-final-release-bucket
+      params:
+        build: runtime-ci-create-final-release-bucket/scripts/ci/create-final-release-bucket
+        push: true
