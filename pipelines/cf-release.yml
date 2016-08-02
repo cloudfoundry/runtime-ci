@@ -1,23 +1,23 @@
 groups:
 - name: cf-release
   jobs:
-  - cf-release-unit-tests
-  - cf-release-branch-freshness
+  - unit-tests
+  - branch-freshness
   - create-release
-  - bosh-lite-provision-cf-deploy
+  - deploy-bosh-lite
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
-  - deploy-minimal
+  - generate-minimal-manifest-and-deploy
   - minimal-acceptance-tests
-  - generate-a1-manifests
+  - generate-aws-manifests
   - generate-bosh-lite-manifests
   - generate-vsphere-manifests
-  - a1-cf-deploy
-  - a1-smoke-tests
-  - a1-diego-cats
-  - vsphere-cf-deploy
+  - deploy-aws
+  - aws-smoke-tests
+  - aws-acceptance-tests
+  - deploy-vsphere
   - vsphere-smoke-tests
-  - vsphere-cf-cats
+  - vsphere-acceptance-tests
   - rc
 - name: bosh
   jobs:
@@ -282,7 +282,7 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 jobs:
-- name: cf-release-unit-tests
+- name: unit-tests
   public: true
   serial: true
   build_logs_to_retain: 100
@@ -313,7 +313,7 @@ jobs:
           TOKEN: {{canibump_token}}
           REASON: "cf-release unit tests failed"
 
-- name: cf-release-branch-freshness
+- name: branch-freshness
   public: true
   build_logs_to_retain: 100
   plan:
@@ -339,7 +339,7 @@ jobs:
     do:
     - aggregate:
       - get: release-repo
-        passed: [cf-release-unit-tests]
+        passed: [unit-tests]
         trigger: true
         resource: cf-release-develop
       - get: runtime-ci
@@ -403,7 +403,7 @@ jobs:
           BOSH_USER: {{a1_bosh_username}}
           BOSH_PASSWORD: {{a1_bosh_password}}
 
-- name: bosh-lite-provision-cf-deploy
+- name: deploy-bosh-lite
   public: true
   serial_groups:
   - bosh-lite
@@ -496,41 +496,41 @@ jobs:
     do:
     - aggregate:
       - get: bosh-lite-stemcell
-        passed: [bosh-lite-provision-cf-deploy]
+        passed: [deploy-bosh-lite]
         params:
           tarball: false
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [bosh-lite-provision-cf-deploy]
+        passed: [deploy-bosh-lite]
         params:
           submodules: none
       - get: diego-release-master
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         params:
           submodules: none
       - get: runtime-ci
       - get: cf-release-tarball
-        passed: [bosh-lite-provision-cf-deploy]
+        passed: [deploy-bosh-lite]
         trigger: true
       - get: diego-final-releases
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         trigger: true
       - get: garden-linux-release-tarball
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         trigger: true
       - get: etcd-release-tarball
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         trigger: true
       - get: cf-bosh-lite-manifest
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
         trigger: true
       - get: cf-bosh-lite-diego-manifest
         trigger: true
-        passed: [ bosh-lite-provision-cf-deploy ]
+        passed: [ deploy-bosh-lite ]
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
     - task: write-target-file
@@ -660,11 +660,11 @@ jobs:
             ERRAND_NAME: diego-cats
           input_mapping:
             target-file-dir: bosh-lite-target-file
-- name: deploy-minimal
+- name: generate-minimal-manifest-and-deploy
   public: true
   serial: true
   serial_groups:
-  - deploy-minimal
+  - generate-minimal-manifest-and-deploy
   build_logs_to_retain: 100
   plan:
   - timeout: *timeout
@@ -694,7 +694,7 @@ jobs:
 - name: minimal-acceptance-tests
   public: true
   serial_groups:
-  - deploy-minimal
+  - generate-minimal-manifest-and-deploy
   build_logs_to_retain: 100
   plan:
   - timeout: *timeout
@@ -704,7 +704,7 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         trigger: true
-        passed: [ deploy-minimal ]
+        passed: [ generate-minimal-manifest-and-deploy ]
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
     - task: cats-from-cf-release
@@ -732,7 +732,7 @@ jobs:
         INCLUDE_ROUTE_SERVICES: true
         INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
         SKIP_SSO: false
-- name: vsphere-cf-deploy
+- name: deploy-vsphere
   public: true
   serial_groups:
   - vsphere-deploy
@@ -842,55 +842,55 @@ jobs:
         resource: cf-vsphere-manifest
         trigger: true
         passed:
-        - vsphere-cf-deploy
+        - deploy-vsphere
       - get: cf-vsphere-diego-manifest
-        passed: [ vsphere-cf-deploy ]
+        passed: [ deploy-vsphere ]
         trigger: true
         tags: [vsphere]
       - get: cf-release
         resource: cf-release-develop
         params:
           submodules: none
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         trigger: true
         tags: [vsphere]
       - get: cf-release-tarball
         trigger: true
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
         params:
           tarball: false
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         trigger: true
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
       - get: diego-final-releases
         trigger: true
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         params:
           tarball: false
       - get: garden-linux-release-tarball
         trigger: true
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         params:
           tarball: false
       - get: etcd-release-tarball
         trigger: true
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
-        passed: [vsphere-cf-deploy]
+        passed: [deploy-vsphere]
         params:
           tarball: false
     - task: smoke-tests
@@ -902,7 +902,7 @@ jobs:
         DEPLOYMENT_NAME: cf-cat
         ERRAND_NAME: smoke_tests
 
-- name: vsphere-cf-cats
+- name: vsphere-acceptance-tests
   public: true
   serial_groups:
   - vsphere-deploy
@@ -1006,7 +1006,7 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
 
-- name: a1-cf-deploy
+- name: deploy-aws
   public: true
   serial: true
   serial_groups:
@@ -1019,11 +1019,11 @@ jobs:
     do:
     - aggregate:
       - get: cf-release-tarball
-        passed: [generate-a1-manifests]
+        passed: [generate-aws-manifests]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [generate-a1-manifests]
+        passed: [generate-aws-manifests]
         params:
           submodules: none
       - get: runtime-ci
@@ -1032,15 +1032,15 @@ jobs:
       - get: aws-stemcell
       - get: cf-a1-manifest
         trigger: true
-        passed: [ generate-a1-manifests ]
+        passed: [ generate-aws-manifests ]
       - get: cf-a1-diego-manifest
-        passed: [ generate-a1-manifests ]
+        passed: [ generate-aws-manifests ]
         trigger: true
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
         trigger: true
-        passed: [ generate-a1-manifests ]
+        passed: [ generate-aws-manifests ]
       - get: diego-final-releases
       - get: garden-linux-release-tarball
         trigger: true
@@ -1064,7 +1064,7 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
 
 
-- name: a1-smoke-tests
+- name: aws-smoke-tests
   public: true
   serial: true
   serial_groups:
@@ -1076,47 +1076,47 @@ jobs:
     - aggregate:
       - get: manifest
         resource: cf-a1-manifest
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         trigger: true
       - get: cf-a1-diego-manifest
-        passed: [a1-cf-deploy]
+        passed: [deploy-aws]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [a1-cf-deploy]
+        passed: [deploy-aws]
         params:
           submodules: none
       - get: cf-release-tarball
-        passed: [a1-cf-deploy]
+        passed: [deploy-aws]
         trigger: true
       - get: runtime-ci
       - get: aws-stemcell
-        passed: [ a1-cf-deploy]
+        passed: [ deploy-aws]
         params:
           tarball: false
         trigger: true
       - get: diego-final-releases
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         trigger: true
       - get: diego-release-master
         resource: diego-release-master
         trigger: true
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         params:
           submodules: none
       - get: garden-linux-release-tarball
         trigger: true
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         params:
           tarball: false
       - get: etcd-release-tarball
         trigger: true
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
-        passed: [ a1-cf-deploy ]
+        passed: [ deploy-aws ]
         params:
           tarball: false
     - task: smoke-tests
@@ -1127,7 +1127,7 @@ jobs:
         DEPLOYMENT_NAME: cf-a1
         ERRAND_NAME: smoke_tests
 
-- name: generate-a1-manifests
+- name: generate-aws-manifests
   public: true
   serial: true
   build_logs_to_retain: 100
@@ -1300,7 +1300,7 @@ jobs:
       params:
         file: generated-diego-manifest/diego-deployment.yml
 
-- name: a1-diego-cats
+- name: aws-acceptance-tests
   public: true
   serial_groups:
   - diego-deploy-and-diego-cats-lock
@@ -1312,46 +1312,46 @@ jobs:
     - aggregate:
       - get: cf-a1-manifest
         trigger: true
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
       - get: cf-a1-diego-manifest
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         trigger: true
       - get: cf-release
         resource: cf-release-develop
-        passed: [a1-smoke-tests]
+        passed: [aws-smoke-tests]
         params:
           submodules: [ 'src/github.com/cloudfoundry/cf-acceptance-tests' ]
       - get: cf-release-tarball
-        passed: [a1-smoke-tests]
+        passed: [aws-smoke-tests]
         trigger: true
       - get: runtime-ci
       - get: aws-stemcell
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         params:
           tarball: false
         trigger: true
       - get: diego-final-releases
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         trigger: true
       - get: diego-release-master
         resource: diego-release-master
         trigger: true
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         params:
           submodules: none
       - get: garden-linux-release-tarball
         trigger: true
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         params:
           tarball: false
       - get: etcd-release-tarball
         trigger: true
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
-        passed: [ a1-smoke-tests ]
+        passed: [ aws-smoke-tests ]
         params:
           tarball: false
     - task: write-api-target-file
@@ -1405,8 +1405,8 @@ jobs:
         resource: cf-release-develop
         passed:
         - bosh-lite-acceptance-tests
-        - a1-diego-cats
-        - vsphere-cf-cats
+        - aws-acceptance-tests
+        - vsphere-acceptance-tests
         trigger: true
         params:
           submodules: none
@@ -1418,53 +1418,53 @@ jobs:
         trigger: true
       - get: vsphere-stemcell
         passed:
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         params:
           tarball: false
         trigger: true
       - get: stemcell
         resource: aws-stemcell
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         trigger: true
         params:
           tarball: true
       - get: diego-final-releases
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         trigger: true
         params:
           tarball: false
       - get: diego-release-master
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         trigger: true
       - get: garden-linux-release-tarball
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         trigger: true
         params:
           tarball: false
       - get: etcd-release-tarball
         trigger: true
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed:
-        - a1-diego-cats
+        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
-        - vsphere-cf-cats
+        - vsphere-acceptance-tests
         params:
           tarball: false
     - aggregate:
@@ -1497,7 +1497,7 @@ jobs:
     - aggregate:
       - task: run1
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
-        params: &a1-smoke-params
+        params: &aws-smoke-params
           SUITE_NAME: RUNTIME-SMOKE
           API: https://api.a1.cf-app.com
           APPS_DOMAIN: a1-app.cf-app.com
@@ -1511,72 +1511,72 @@ jobs:
       - task: run2
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-2
       - task: run3
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-3
       - task: run4
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-4
       - task: run5
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-5
       - task: run6
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-6
       - task: run7
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-7
       - task: run8
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-8
       - task: run9
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-9
       - task: run10
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-10
       - task: run11
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests11
       - task: run12
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-12
       - task: run13
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-13
       - task: run14
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-14
       - task: run15
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
-          <<: *a1-smoke-params
+          <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-15
 
 
