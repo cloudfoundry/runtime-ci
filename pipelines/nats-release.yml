@@ -9,6 +9,9 @@ groups:
     - upload-stemcell
     - cats-tests
     - delete-deployment
+- name: buckets
+  jobs:
+    - create-nats-release-bucket
 
 resources:
 - name: runtime-ci
@@ -67,8 +70,42 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: oss-s3-buckets-stack
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/oss-s3-buckets-stack.git
+    private_key: {{oss_s3_buckets_stack_private_key}}
 
 jobs:
+- name: create-nats-release-bucket
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: oss-s3-buckets-stack
+  - task: create-bucket
+    file: runtime-ci/scripts/ci/create-final-release-bucket/task.yml
+    params:
+      RELEASE_NAME: nats
+    input_mapping:
+      oss-s3-buckets-creds: oss-s3-buckets-stack
+
+# This job exists just so that we can reap the logs. Remove this Aug 8
+- name: create-nats-release-blobs-bucket
+  build_logs_to_retain: 0
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: oss-s3-buckets-stack
+  - task: create-bucket
+    file: runtime-ci/scripts/ci/create-final-release-bucket/task.yml
+    params:
+      RELEASE_NAME: nats
+    input_mapping:
+      oss-s3-buckets-creds: oss-s3-buckets-stack
+
 - name: setup-infrastructure
   public: true
   serial_groups: [nats-deploy]
