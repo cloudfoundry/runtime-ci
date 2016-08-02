@@ -458,9 +458,9 @@ jobs:
       output_mapping:
         fast-forwarded-master-repo: ff-hermione-deployment-configuration-master
     - task: commit-generated-manifest-to-master
-      file: runtime-ci/scripts/ci/commit-generated-manifest-to-master/task.yml
+      file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
       input_mapping:
-        master-repo: ff-hermione-deployment-configuration-master
+        repo: ff-hermione-deployment-configuration-master
         manifest: cf-hermione-generated-manifest
       params:
         MANIFEST_NAME: cf-deployment.yml
@@ -468,7 +468,7 @@ jobs:
         COMMIT_MESSAGE: 'Bless deployment manifest.'
     - put: hermione-deployment-configuration-master
       params:
-        repository: committed-master-repo
+        repository: updated-repo
     - task: merge-master-into-develop
       file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
       params:

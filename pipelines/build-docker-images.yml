@@ -53,7 +53,7 @@ groups:
   - build-extract-cloudformation-properties-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-extend-deployment-manifest-with-security-groups-and-elb-docker-image
-  - build-commit-generated-manifest-to-master-docker-image
+  - build-commit-generated-manifest-docker-image
   - build-fast-forward-master-to-develop-docker-image
   - build-create-final-release-bucket-docker-image
 
@@ -385,12 +385,12 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/Dockerfile]
 
-- name: runtime-ci-commit-generated-manifest-to-master
+- name: runtime-ci-commit-generated-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/commit-generated-manifest-to-master/Dockerfile]
+    paths: [scripts/ci/commit-generated-manifest/Dockerfile]
 
 - name: runtime-ci-fast-forward-master-to-develop
   type: git
@@ -774,10 +774,10 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: commit-generated-manifest-to-master
+- name: commit-generated-manifest
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/commit-generated-manifest-to-master
+    repository: relintdockerhubpushbot/commit-generated-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1751,7 +1751,7 @@ jobs:
         build: runtime-ci-extend-deployment-manifest-with-security-groups-and-elb/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb
         push: true
 
-- name: build-commit-generated-manifest-to-master-docker-image
+- name: build-commit-generated-manifest-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1763,11 +1763,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-commit-generated-manifest-to-master
+      - get: runtime-ci-commit-generated-manifest
         trigger: true
-    - put: commit-generated-manifest-to-master
+    - put: commit-generated-manifest
       params:
-        build: runtime-ci-commit-generated-manifest-to-master/scripts/ci/commit-generated-manifest-to-master
+        build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
         push: true
 
 - name: build-fast-forward-master-to-develop-docker-image

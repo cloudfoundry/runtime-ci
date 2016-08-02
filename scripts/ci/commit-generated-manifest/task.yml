@@ -4,18 +4,18 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/commit-generated-manifest-to-master
+    repository: relintdockerhubpushbot/commit-generated-manifest
 
 inputs:
 - name: runtime-ci
-- name: master-repo
+- name: repo
 - name: manifest
 
 outputs:
-- name: committed-master-repo
+- name: updated-repo
 
 run:
-  path: runtime-ci/scripts/ci/commit-generated-manifest-to-master/task
+  path: runtime-ci/scripts/ci/commit-generated-manifest/task
 
 params:
   MANIFEST_NAME:

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -exu
 
-cp ./manifest/"${MANIFEST_NAME}" ./master-repo/"${MANIFEST_DESTINATION}"
-pushd master-repo > /dev/null
+cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
+pushd repo > /dev/null
   git config user.name "CF MEGA BOT"
   git config user.email "cf-mega@pivotal.io"
 
@@ -14,4 +14,4 @@ pushd master-repo > /dev/null
 popd > /dev/null
 
 shopt -s dotglob
-cp -R master-repo/* committed-master-repo
+cp -R repo/* updated-repo
