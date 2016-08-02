@@ -24,15 +24,6 @@
         "UserName": { "Ref": "BlobstoreUser" }
       }
     },
-    "ReleaseBlobsBucket": {
-      "Type" : "AWS::S3::Bucket",
-      "Properties" : {
-        "BucketName" : "nats-blobs"
-      },
-      "Metadata" : {
-        "Timestamp": { "Ref": "CurrentTimestamp" }
-      }
-    },
     "NewReleaseBlobsBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
@@ -85,49 +76,6 @@
         "Bucket" : { "Ref" : "NewReleaseBlobsBucket" }
       }
     },
-    "ReleaseBlobsBucketPolicy": {
-      "Type" : "AWS::S3::BucketPolicy",
-      "Properties" : {
-        "PolicyDocument" : {
-          "Statement" : [ {
-            "Sid" : "AllowReadForEveryone",
-            "Action" : [
-              "s3:GetObject"
-            ],
-            "Effect" : "Allow",
-            "Principal" : "*",
-            "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "ReleaseBlobsBucket" } , "/*" ]
-            ] }
-          },
-          {
-            "Sid" : "AllowList",
-            "Action" : [
-              "s3:ListBucket"
-            ],
-            "Effect" : "Allow",
-            "Principal" : "*",
-            "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "ReleaseBlobsBucket" } ]
-            ] }
-          },
-          {
-            "Sid" : "AllowWrite",
-            "Action" : [
-              "s3:PutObject"
-            ],
-            "Effect" : "Allow",
-            "Principal" : {
-              "AWS" : { "Fn::GetAtt" : [ "BlobstoreUser", "Arn" ] }
-            },
-            "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "ReleaseBlobsBucket" } , "/*" ]
-            ] }
-          } ]
-        },
-        "Bucket" : { "Ref" : "ReleaseBlobsBucket" }
-      }
-    }
   },
   "Outputs" : {
     "BlobstoreAccessKeyID": {
@@ -140,7 +88,7 @@
     },
     "BlobstoreDomain" : {
       "Description": "Blobstore Domain",
-      "Value": { "Ref": "ReleaseBlobsBucket" }
+      "Value": { "Ref": "NewReleaseBlobsBucket" }
     }
   }
 }
