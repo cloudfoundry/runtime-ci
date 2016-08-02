@@ -21,11 +21,8 @@ AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION is not set"}"
 AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID is not set"}"
 AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY is not set"}"
 
-BLOBS_BUCKET_ACCESS_KEY_ID=$(aws cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" \
-  | jq .Stacks[0].Outputs[0].OutputValue)
-BLOBS_BUCKET_SECRET_KEY=$(aws cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" \
-  | jq .Stacks[0].Outputs[1].OutputValue)
-
+BLOBS_BUCKET_ACCESS_KEY_ID=$(aws --output text cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" --query 'Stacks[0].Outputs[?OutputKey==`BlobstoreAccessKeyID`].OutputValue')
+BLOBS_BUCKET_SECRET_KEY=$(aws --output text cloudformation describe-stacks --stack-name "${RELEASE_NAME}-buckets" --query 'Stacks[0].Outputs[?OutputKey==`BlobstoreSecretAccessKey`].OutputValue')
 
 cat > "${RELEASE_REPO_DIR}/config//private.yml" <<EOF
 ---
