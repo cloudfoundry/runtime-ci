@@ -75,7 +75,7 @@
         },
         "Bucket" : { "Ref" : "NewReleaseBlobsBucket" }
       }
-    },
+    }
   },
   "Outputs" : {
     "BlobstoreAccessKeyID": {
