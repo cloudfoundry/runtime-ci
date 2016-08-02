@@ -24,7 +24,7 @@
         "UserName": { "Ref": "BlobstoreUser" }
       }
     },
-    "OldReleaseBlobsBucket": {
+    "ReleaseBlobsBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
         "BucketName" : "nats-blobs"
@@ -33,7 +33,7 @@
         "Timestamp": { "Ref": "CurrentTimestamp" }
       }
     },
-    "ReleaseBlobsBucket": {
+    "NewReleaseBlobsBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
         "BucketName" : { "Ref": "BucketName" }
@@ -42,7 +42,7 @@
         "Timestamp": { "Ref": "CurrentTimestamp" }
       }
     },
-    "OldReleaseBlobsBucketPolicy": {
+    "NewReleaseBlobsBucketPolicy": {
       "Type" : "AWS::S3::BucketPolicy",
       "Properties" : {
         "PolicyDocument" : {
@@ -54,7 +54,7 @@
             "Effect" : "Allow",
             "Principal" : "*",
             "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } , "/*" ]
+              "", [ "arn:aws:s3:::", { "Ref" : "NewReleaseBlobsBucket" } , "/*" ]
             ] }
           },
           {
@@ -65,7 +65,7 @@
             "Effect" : "Allow",
             "Principal" : "*",
             "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } ]
+              "", [ "arn:aws:s3:::", { "Ref" : "NewReleaseBlobsBucket" } ]
             ] }
           },
           {
@@ -78,11 +78,11 @@
               "AWS" : { "Fn::GetAtt" : [ "BlobstoreUser", "Arn" ] }
             },
             "Resource" : { "Fn::Join" : [
-              "", [ "arn:aws:s3:::", { "Ref" : "OldReleaseBlobsBucket" } , "/*" ]
+              "", [ "arn:aws:s3:::", { "Ref" : "NewReleaseBlobsBucket" } , "/*" ]
             ] }
           } ]
         },
-        "Bucket" : { "Ref" : "OldReleaseBlobsBucket" }
+        "Bucket" : { "Ref" : "NewReleaseBlobsBucket" }
       }
     },
     "ReleaseBlobsBucketPolicy": {
