@@ -49,7 +49,10 @@ RELEASE_NAME="${RELEASE_NAME:?"\$RELEASE_NAME not set"}"
 STACK_NAME="${RELEASE_NAME}-buckets"
 BUCKET_NAME="${RELEASE_NAME}-release-blobs"
 
+set +x
+echo "Loading AWS creds"
 source "oss-s3-buckets-creds/$BUCKET_CREDENTIALS_FILE"
+set -x
 
 STACK_OPERATION=create-stack
 if aws cloudformation describe-stacks --stack-name "${STACK_NAME}" > /dev/null; then
