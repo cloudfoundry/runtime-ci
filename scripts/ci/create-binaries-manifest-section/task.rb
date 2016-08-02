@@ -10,6 +10,7 @@ release_names=[
   'diego',
   'etcd',
   'loggregator',
+  'nats',
   'cf-mysql',
   'uaa',
   'garden-linux',
@@ -37,12 +38,6 @@ release_array = release_names.map do |release_name|
     'sha1' => sha1
   }
 end
-
-release_array << {
-    'name' => 'nats',
-    'version' => 'latest'
-}
-
 
 deployment_manifest.deep_merge!('releases' => release_array)
 

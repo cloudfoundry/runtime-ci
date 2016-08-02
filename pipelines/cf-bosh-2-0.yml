@@ -40,11 +40,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/capi-release
-- name: nats-release-repo
-  type: git
+- name: nats-release
+  type: bosh-io-release
   source:
-    branch: master
-    uri: https://github.com/cloudfoundry/nats-release.git
+    repository: cloudfoundry/nats-release
 - name: routing-release
   type: bosh-io-release
   source:
@@ -168,10 +167,12 @@ jobs:
       trigger: true
     - get: capi-release
       trigger: true
-    - get: nats-release-repo
-      trigger: true
     - get: stemcell
       trigger: true
+    - get: nats-release
+      trigger: true
+      params:
+        tarball: false
     - get: routing-release
       trigger: true
       params:
@@ -219,24 +220,6 @@ jobs:
     input_mapping:
       env-repo: hermione-bbl-configuration
   - aggregate:
-    - do:
-      - task: create-nats-release
-        file: runtime-ci/scripts/ci/create-release/task.yml
-        input_mapping:
-          release-repo: nats-release-repo
-        output_mapping:
-          release-tarball: nats-release-tarball
-        params:
-          RELEASE_NAME: nats
-      - task: upload-nats-release
-        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-        input_mapping:
-          release: nats-release-tarball
-        params:
-          TARGET_FILE: target
-          USERNAME_FILE: username
-          PASSWORD_FILE: password
-          RELEASE_NAME: nats-*.tgz
     - task: upload-stemcell
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       params:
@@ -292,11 +275,11 @@ jobs:
         passed: [ deploy-releases ]
         params:
           submodules: none
-      - get: nats-release-repo
+      - get: nats-release
         trigger: true
         passed: [ deploy-releases ]
         params:
-          submodules: none
+          tarball: false
       - get: routing-release
         trigger: true
         passed: [ deploy-releases ]
@@ -404,11 +387,13 @@ jobs:
         - get: capi-release
           trigger: true
           passed: [ hermione-diego-cats ]
-        - get: nats-release-repo
-          trigger: true
-          passed: [ hermione-diego-cats ]
         - get: stemcell
           trigger: true
+          passed: [ hermione-diego-cats ]
+        - get: nats-release
+          trigger: true
+          params:
+            tarball: false
           passed: [ hermione-diego-cats ]
         - get: routing-release
           trigger: true
