@@ -94,7 +94,7 @@ jobs:
 
 # This job exists just so that we can reap the logs. Remove this Aug 8
 - name: create-nats-release-blobs-bucket
-  build_logs_to_retain: 0
+  build_logs_to_retain: 1
   plan:
   - aggregate:
     - get: runtime-ci
