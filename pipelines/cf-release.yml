@@ -4,7 +4,6 @@ groups:
   - cf-release-unit-tests
   - cf-release-branch-freshness
   - create-release
-  - deploy-and-test-openstack
   - bosh-lite-provision-cf-deploy
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
@@ -111,13 +110,6 @@ resources:
     private_key: {{cf_release_cat_env}}
     uri: git@github.com:cloudfoundry/cat-env.git
 
-- name: dumbledore-env
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_dumbledore_env}}
-    uri: git@github.com:cloudfoundry/dumbledore-env.git
-
 - name: minimal-env
   type: git
   source:
@@ -209,24 +201,10 @@ resources:
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
-- name: openstack-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-
 - name: vsphere-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-
-- name: openstack-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.runtime-bb-1.cf-app.com:25555
-    username: {{openstack_bosh_username}}
-    password: {{openstack_bosh_password}}
-    deployment: cf-runtime-bb-1
-    ignore_ssl: true
 
 - name: vsphere-deployment
   type: bosh-deployment
@@ -425,52 +403,6 @@ jobs:
           BOSH_USER: {{a1_bosh_username}}
           BOSH_PASSWORD: {{a1_bosh_password}}
 
-- name: deploy-and-test-openstack
-  public: true
-  serial: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-release-tarball
-        passed: [create-release]
-        trigger: true
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [create-release]
-      - get: runtime-ci
-      - get: deployments
-        resource: dumbledore-env
-      - get: openstack-stemcell
-    - task: create-manifest
-      privileged: true
-      file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
-      params:
-        INFRASTRUCTURE: openstack
-        ENVIRONMENT: runtime-bb-1
-    - put: openstack-deployment
-      params:
-        manifest: manifest/deployment.yml
-        stemcells: [openstack-stemcell/*.tgz]
-        releases:
-          - cf-release-tarball/*.tgz
-    - task: smoke-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params: &bosh-target-runtime-bb-1
-        BOSH_DIRECTOR: https://bosh.runtime-bb-1.cf-app.com:25555
-        BOSH_USER: {{openstack_bosh_username}}
-        BOSH_PASSWORD: {{openstack_bosh_password}}
-        DEPLOYMENT_NAME: cf-runtime-bb-1
-        ERRAND_NAME: smoke_tests
-    - task: acceptance-tests
-      privileged: true
-      file: runtime-ci/scripts/ci/run-errand/task.yml
-      params:
-        <<: *bosh-target-runtime-bb-1
-        DEPLOYMENT_NAME: cf-runtime-bb-1
-        ERRAND_NAME: acceptance_tests
 - name: bosh-lite-provision-cf-deploy
   public: true
   serial_groups:
