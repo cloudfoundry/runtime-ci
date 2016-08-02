@@ -25,6 +25,12 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/nats-release.git
+- name: nats-release-develop
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/nats-release.git
+    private_key: {{nats_release_private_key}}
 - name: nats-release-master
   type: git
   source:
@@ -461,6 +467,7 @@ jobs:
       - get: runtime-ci
       - get: oss-s3-buckets-stack
       - get: nats-release-master
+      - get: nats-release-develop
       - get: nats-release
         trigger: true
         passed:  [ cats-tests ]
@@ -479,9 +486,9 @@ jobs:
   - task: merge-master-into-develop
     file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
     input_mapping:
-      release-repo: nats-release
+      release-repo: nats-release-develop
       release-repo-master: nats-release-master
-  - put: nats-release
+  - put: nats-release-develop
     params:
       repository: final-release-repo
 
