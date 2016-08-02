@@ -8,6 +8,7 @@ groups:
     - setup-infrastructure
     - upload-stemcell
     - cats-tests
+    - create-final-release
     - delete-deployment
 - name: buckets
   jobs:
@@ -24,6 +25,12 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/nats-release.git
+- name: nats-release-master
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/nats-release.git
+    private_key: {{nats_release_private_key}}
 - name: hagrid-env-stubs
   type: git
   source:
@@ -442,6 +449,42 @@ jobs:
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
         NODES: 6
+
+- name: create-final-release
+  public: true
+  serial: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: oss-s3-buckets-stack
+      - get: nats-release-master
+      - get: nats-release
+        trigger: true
+        passed:  [ cats-tests ]
+  - task: create-final-release
+    file: runtime-ci/scripts/ci/create-final-release/task.yml
+    params:
+      RELEASE_NAME: nats
+    input_mapping:
+      release-repo: nats-release
+      release-repo-master: nats-release-master
+  - put: nats-release-master
+    params:
+      repository: final-release-repo
+      tag: final-release-repo/version_number
+      tag_prefix: v
+  - task: merge-master-into-develop
+    file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+    input_mapping:
+      release-repo: nats-release
+      release-repo-master: nats-release-master
+  - put: nats-release
+    params:
+      repository: final-release-repo
+
 - name: delete-deployment
   public: true
   serial_groups: [nats-deploy]
