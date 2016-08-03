@@ -343,7 +343,7 @@ jobs:
         trigger: true
         resource: cf-release-develop
       - get: runtime-ci
-    - task: create-release-tarball
+    - task: create-release
       privileged: true
       file: runtime-ci/scripts/ci/create-release/task.yml
       on_failure:
