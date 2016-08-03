@@ -201,7 +201,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: extract-creds
+  - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
@@ -248,7 +248,7 @@ jobs:
     - get: hermione-bbl-configuration
     - get: hermione-deployment-configuration-develop
       trigger: true
-  - task: extract-creds
+  - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
