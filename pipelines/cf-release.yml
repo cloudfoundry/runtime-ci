@@ -597,7 +597,7 @@ jobs:
             TARGET: api.bosh-lite.runtime-ci.cf-app.com
           output_mapping:
             target-file-dir: bosh-lite-api-target-file
-        - task: enable-docker
+        - task: enable-docker-diego
           file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
           input_mapping:
             cf-target: bosh-lite-api-target-file
@@ -971,7 +971,7 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: api.cat.wild.cf-app.com
-    - task: enable-docker
+    - task: enable-docker-diego
       tags: [ vsphere ]
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
@@ -1358,7 +1358,7 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: api.a1.cf-app.com
-    - task: enable-docker
+    - task: enable-docker-diego
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-target: target-file-dir

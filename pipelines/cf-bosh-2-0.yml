@@ -281,7 +281,7 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: api.hermione.cf-app.com
-    - task: enable-docker
+    - task: enable-docker-diego
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-target: target-file-dir
