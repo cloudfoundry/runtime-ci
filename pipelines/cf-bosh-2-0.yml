@@ -24,12 +24,6 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths: [ cf-deployment.yml ]
-- name: hermione-deployment-configuration-merge-master-to-develop
-  type: git
-  source:
-    branch: develop
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
 - name: hermione-deployment-configuration-master
   type: git
   source:
@@ -53,13 +47,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
-- name: cf-hermione-generated-manifest
-  type: s3
-  source:
-    bucket: cf-hermione-manifest
-    versioned_file: cf-deployment.yml
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
 - name: stemcell
   type: bosh-io-stemcell
   source:
@@ -152,8 +139,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
 
-
-- name: deploy-releases
+- name: update-releases
   public: true
   serial_groups: [hermione]
   build_logs_to_retain: 100
@@ -164,7 +150,6 @@ jobs:
       trigger: true
     - get: hermione-bbl-configuration
     - get: hermione-deployment-configuration-develop
-      trigger: true
     - get: capi-release
       trigger: true
     - get: stemcell
@@ -240,6 +225,31 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       MANIFEST_FILE: cf-deployment.yml
+  - task: commit-generated-manifest
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: hermione-deployment-configuration-develop
+      manifest: manifest-updated
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_MESSAGE: 'Bless deployment manifest.'
+  - put: hermione-deployment-configuration-develop
+    params:
+      repository: updated-repo
+
+- name: deploy-releases
+  plan:
+  - aggregate:
+    - get: hermione-bbl-configuration
+    - get: hermione-deployment-configuration-develop
+      trigger: true
+  - task: extract-creds
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hermione-bbl-configuration
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
@@ -249,9 +259,6 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       MANIFEST_FILE: cf-deployment.yml
-  - put: cf-hermione-generated-manifest
-    params:
-      file: deployment-manifest/cf-deployment.yml
 
 - name: hermione-diego-cats
   public: true
@@ -261,78 +268,9 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: build-binaries-section-script
-        trigger: true
-        passed: [ deploy-releases ]
-      - get: stemcell
-        trigger: true
-        passed: [ deploy-releases ]
-      - get: hermione-deployment-configuration-develop
-        trigger: true
-        passed: [ deploy-releases ]
-      - get: capi-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          submodules: none
-      - get: nats-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: routing-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: consul-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: etcd-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: diego-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: loggregator-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: cf-mysql-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: uaa-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: garden-linux-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: cflinuxfs2-rootfs-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
-      - get: cf-release
-        trigger: true
-        passed: [ deploy-releases ]
-        params:
-          tarball: false
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: cf-hermione-generated-manifest
+      - get: hermione-deployment-configuration-develop
         trigger: true
         passed: [ deploy-releases ]
     - task: write-api-target-file
@@ -384,100 +322,12 @@ jobs:
         - get: hermione-deployment-configuration-develop
           trigger: true
           passed: [ hermione-diego-cats ]
-        - get: capi-release
-          trigger: true
-          passed: [ hermione-diego-cats ]
-        - get: stemcell
-          trigger: true
-          passed: [ hermione-diego-cats ]
-        - get: nats-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: routing-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: consul-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: etcd-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: diego-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: loggregator-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: cf-mysql-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: uaa-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: garden-linux-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: cflinuxfs2-rootfs-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: cf-release
-          trigger: true
-          params:
-            tarball: false
-          passed: [ hermione-diego-cats ]
-        - get: cf-hermione-generated-manifest
-          trigger: true
-          passed: [ hermione-diego-cats ]
-        - get: hermione-deployment-configuration-merge-master-to-develop
         - get: hermione-deployment-configuration-master
     - task: fast-forward-master-to-develop
       file: runtime-ci/scripts/ci/fast-forward-master-to-develop/task.yml
       input_mapping:
         master-repo: hermione-deployment-configuration-master
         develop-repo: hermione-deployment-configuration-develop
-      output_mapping:
-        fast-forwarded-master-repo: ff-hermione-deployment-configuration-master
-    - task: commit-generated-manifest-to-master
-      file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-      input_mapping:
-        repo: ff-hermione-deployment-configuration-master
-        manifest: cf-hermione-generated-manifest
-      params:
-        MANIFEST_NAME: cf-deployment.yml
-        MANIFEST_DESTINATION: cf-deployment.yml
-        COMMIT_MESSAGE: 'Bless deployment manifest.'
     - put: hermione-deployment-configuration-master
       params:
-        repository: updated-repo
-    - task: merge-master-into-develop
-      file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-      params:
-        MERGE_MESSAGE: '[ci skip] Merge master into develop'
-      input_mapping:
-        release-repo-master: hermione-deployment-configuration-master
-        release-repo: hermione-deployment-configuration-merge-master-to-develop
-      output_mapping:
-        final-release-repo: hermione-deployment-configuration-merged
-    - put: hermione-deployment-configuration-merge-master-to-develop
-      params:
-        repository: hermione-deployment-configuration-merged
+        repository: fast-forwarded-master-repo
