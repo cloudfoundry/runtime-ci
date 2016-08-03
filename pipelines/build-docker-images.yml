@@ -48,7 +48,7 @@ groups:
   - build-cats-from-cf-release-docker-image
   - build-set-bosh-uuid-in-manifest-docker-image
   - build-run-ginkgo-docker-image
-  - build-recreate-datadog-dashboard-docker-image
+  - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-extract-cloudformation-properties-docker-image
   - build-create-binaries-manifest-section-docker-image
@@ -351,12 +351,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-ginkgo/Dockerfile]
-- name: runtime-ci-recreate-datadog-dashboard
+- name: runtime-ci-recreate-datadog-dashboards
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/recreate-datadog-dashboard/Dockerfile]
+    paths: [scripts/ci/recreate-datadog-dashboards/Dockerfile]
 - name: runtime-ci-extend-bosh-lite-diego-stub
   type: git
   source:
@@ -735,10 +735,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: recreate-datadog-dashboard-pipeline-image
+- name: recreate-datadog-dashboards-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/recreate-datadog-dashboard
+    repository: relintdockerhubpushbot/recreate-datadog-dashboards
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1656,7 +1656,7 @@ jobs:
         build: runtime-ci-run-ginkgo/scripts/ci/run-ginkgo
         push: true
 
-- name: build-recreate-datadog-dashboard-docker-image
+- name: build-recreate-datadog-dashboards-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1668,11 +1668,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-recreate-datadog-dashboard
+      - get: runtime-ci-recreate-datadog-dashboards
         trigger: true
-    - put: recreate-datadog-dashboard-pipeline-image
+    - put: recreate-datadog-dashboards-pipeline-image
       params:
-        build: runtime-ci-recreate-datadog-dashboard/scripts/ci/recreate-datadog-dashboard
+        build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
         push: true
 
 - name: build-extend-bosh-lite-diego-stub-docker-image
