@@ -218,7 +218,7 @@ jobs:
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
-  - task: deploy-nats
+  - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     params:
       TARGET_FILE: target
