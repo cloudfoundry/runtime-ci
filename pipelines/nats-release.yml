@@ -126,7 +126,7 @@ jobs:
   plan:
   - get: hagrid-env-infrastructure
   - get: runtime-ci
-  - task: run-bbl
+  - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
