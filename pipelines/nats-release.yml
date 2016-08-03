@@ -317,7 +317,7 @@ jobs:
         params:
           INFRASTRUCTURE: aws
           STUBS_PATH: cf/*.yml
-      - task: extend-cf-manifest
+      - task: extend-deployment-manifest-with-security-groups-and-elb-cf
         file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
         input_mapping:
           generated-deployment-manifest: manifest
@@ -348,7 +348,7 @@ jobs:
           PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
           INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
           RELEASE_VERSIONS_PATH: diego/release-versions.yml
-      - task: extend-diego-manifest
+      - task: extend-deployment-manifest-with-security-groups-and-elb-diego
         file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
         input_mapping:
           generated-deployment-manifest: generated-diego-manifest
