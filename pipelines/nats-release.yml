@@ -488,6 +488,8 @@ jobs:
     input_mapping:
       release-repo: nats-release-develop
       release-repo-master: nats-release-master
+    params:
+      MERGE_MESSAGE: '[ci skip] Merge master into develop'
   - put: nats-release-develop
     params:
       repository: final-release-repo
