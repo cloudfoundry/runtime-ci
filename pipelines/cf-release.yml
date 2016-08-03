@@ -537,7 +537,7 @@ jobs:
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
-    - task: run-smoke-tests
+    - task: run-errand-bbl-smoke-test
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
         BOSH_USER_FILE: bosh-user-file-dir/username
@@ -631,7 +631,7 @@ jobs:
             TARGET: {{bosh_lite_elastic_ip}}
           output_mapping:
             target-file-dir: bosh-lite-target-file
-        - task: run-acceptance-tests
+        - task: run-errand-bbl-acceptance-tests
           file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
             BOSH_TARGET_FILE: target
@@ -650,7 +650,7 @@ jobs:
             TARGET: {{bosh_lite_elastic_ip}}
           output_mapping:
             target-file-dir: bosh-lite-target-file
-        - task: run-diego-acceptance-tests
+        - task: run-errand-bbl-diego-acceptance-tests
           file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
             BOSH_TARGET_FILE: target
