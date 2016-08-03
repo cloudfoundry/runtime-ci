@@ -373,14 +373,14 @@ jobs:
       - get: daily
         trigger: true
     - aggregate:
-      - task: cleanup-runtime-ci
+      - task: run-bosh-cleanup-runtime-ci
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
         params:
           BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
           BOSH_USER: {{runtime_ci_username}}
           BOSH_PASSWORD: {{runtime_ci_password}}
-      - task: cleanup-vsphere
+      - task: run-bosh-cleanup-vsphere
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
         tags: [vsphere]
@@ -388,14 +388,14 @@ jobs:
           BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
           BOSH_USER: {{vsphere_bosh_username}}
           BOSH_PASSWORD: {{vsphere_bosh_password}}
-      - task: cleanup-minimal
+      - task: run-bosh-cleanup-minimal
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
         params:
           BOSH_DIRECTOR: https://54.165.111.247:25555
           BOSH_USER: {{minimal_bosh_username}}
           BOSH_PASSWORD: {{minimal_bosh_password}}
-      - task: cleanup-a1
+      - task: run-bosh-cleanup-a1
         privileged: true
         file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
         params: &bosh-target-a1
