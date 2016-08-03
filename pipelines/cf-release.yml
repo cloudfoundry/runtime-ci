@@ -449,7 +449,7 @@ jobs:
         AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
         AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-    - task: bosh-lite-provision
+    - task: provision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
       params:
