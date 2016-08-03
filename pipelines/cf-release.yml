@@ -796,14 +796,14 @@ jobs:
           USERNAME: {{vsphere_bosh_username}}
           PASSWORD: {{vsphere_bosh_password}}
     - aggregate:
-      - task: delete-cf
+      - task: delete-deployment-cf
         privileged: true
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         tags: [vsphere]
         params:
           <<: *bosh-target-cat
           DEPLOYMENT_NAME: cf-cat
-      - task: delete-diego
+      - task: delete-deployment-diego
         privileged: true
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         tags: [vsphere]

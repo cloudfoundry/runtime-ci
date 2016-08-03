@@ -525,11 +525,11 @@ jobs:
       params:
         STATE_DIR_PATH: bbl-infrastructure
     - aggregate:
-      - task: delete-cf
+      - task: delete-deployment-cf
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-hagrid
-      - task: delete-diego
+      - task: delete-deployment-diego
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-hagrid-diego
