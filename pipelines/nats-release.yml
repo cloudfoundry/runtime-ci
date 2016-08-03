@@ -165,7 +165,7 @@ jobs:
       env-repo: hagrid-env-infrastructure
     params:
       STATE_DIR_PATH: bbl-infrastructure
-  - task: upload-stemcell
+  - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: aws-stemcell
