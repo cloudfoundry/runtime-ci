@@ -46,7 +46,7 @@ groups:
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
-  - build-bosh-uuid-docker-image
+  - build-set-bosh-uuid-in-manifest-docker-image
   - build-run-ginkgo-docker-image
   - build-recreate-datadog-dashboard-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
@@ -339,12 +339,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/cats-from-cf-release/Dockerfile]
-- name: runtime-ci-bosh-uuid
+- name: runtime-ci-set-bosh-uuid-in-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-uuid/Dockerfile]
+    paths: [scripts/ci/set-bosh-uuid-in-manifest/Dockerfile]
 - name: runtime-ci-run-ginkgo
   type: git
   source:
@@ -721,10 +721,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-uuid-pipeline-image
+- name: set-bosh-uuid-in-manifest-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/bosh-uuid
+    repository: relintdockerhubpushbot/set-bosh-uuid-in-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1618,7 +1618,7 @@ jobs:
       params:
         build: runtime-ci-cats-from-cf-release/scripts/ci/cats-from-cf-release
         push: true
-- name: build-bosh-uuid-docker-image
+- name: build-set-bosh-uuid-in-manifest-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1630,11 +1630,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-uuid
+      - get: runtime-ci-set-bosh-uuid-in-manifest
         trigger: true
-    - put: bosh-uuid-pipeline-image
+    - put: set-bosh-uuid-in-manifest-pipeline-image
       params:
-        build: runtime-ci-bosh-uuid/scripts/ci/bosh-uuid
+        build: runtime-ci-set-bosh-uuid-in-manifest/scripts/ci/set-bosh-uuid-in-manifest
         push: true
 
 - name: build-run-ginkgo-docker-image

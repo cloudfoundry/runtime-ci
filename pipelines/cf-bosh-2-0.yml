@@ -219,8 +219,8 @@ jobs:
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
       deployment-configuration: hermione-deployment-configuration-develop
-  - task: set-bosh-uuid
-    file: runtime-ci/scripts/ci/bosh-uuid/task.yml
+  - task: set-bosh-uuid-in-manifest
+    file: runtime-ci/scripts/ci/set-bosh-uuid-in-manifest/task.yml
     input_mapping:
       manifest: deployment-manifest
     params:
