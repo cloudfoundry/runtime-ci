@@ -257,7 +257,7 @@ jobs:
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
-      manifest: manifest-updated
+      manifest: hermione-deployment-configuration-develop
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
