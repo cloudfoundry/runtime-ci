@@ -1214,7 +1214,7 @@ jobs:
     params:
       INFRASTRUCTURE: bosh-lite
       STUBS_PATH: stub.yml
-  - task: extend-diego-stub
+  - task: extend-bosh-lite-diego-stub
     file: runtime-ci/scripts/ci/extend-bosh-lite-diego-stub/task.yml
     input_mapping:
       bosh-lite-stub: diego-release-master
