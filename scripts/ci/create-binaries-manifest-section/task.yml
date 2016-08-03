@@ -20,6 +20,7 @@ inputs:
 - name: garden-linux-release
 - name: cflinuxfs2-rootfs-release
 - name: routing-release
+- name: nats-release
 - name: cf-release # for residual jobs that have not been moved into other releases yet
 
 outputs:
