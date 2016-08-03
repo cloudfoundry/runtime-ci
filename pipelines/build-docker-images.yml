@@ -774,7 +774,7 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: commit-generated-manifest
+- name: commit-generated-manifest-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/commit-generated-manifest
@@ -782,7 +782,7 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: fast-forward-master-to-develop
+- name: fast-forward-master-to-develop-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/fast-forward-master-to-develop
@@ -790,7 +790,7 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: create-final-release-bucket
+- name: create-final-release-bucket-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-final-release-bucket
@@ -1765,7 +1765,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-commit-generated-manifest
         trigger: true
-    - put: commit-generated-manifest
+    - put: commit-generated-manifest-pipeline-image
       params:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
         push: true
@@ -1784,7 +1784,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-fast-forward-master-to-develop
         trigger: true
-    - put: fast-forward-master-to-develop
+    - put: fast-forward-master-to-develop-pipeline-image
       params:
         build: runtime-ci-fast-forward-master-to-develop/scripts/ci/fast-forward-master-to-develop
         push: true
@@ -1802,7 +1802,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-create-final-release-bucket
         trigger: true
-    - put: create-final-release-bucket
+    - put: create-final-release-bucket-pipeline-image
       params:
         build: runtime-ci-create-final-release-bucket/scripts/ci/create-final-release-bucket
         push: true
