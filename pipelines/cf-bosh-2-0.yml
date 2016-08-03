@@ -277,7 +277,7 @@ jobs:
       - get: hermione-deployment-configuration-develop
         trigger: true
         passed: [ deploy-releases ]
-    - task: write-api-target-file
+    - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: api.hermione.cf-app.com

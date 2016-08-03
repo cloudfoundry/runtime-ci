@@ -422,7 +422,7 @@ jobs:
       - get: hagrid-env-stubs
         trigger: true
         passed: [ deploy-cf-with-updated-nats ]
-    - task: write-api-target-file
+    - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: api.hagrid.cf-app.com
