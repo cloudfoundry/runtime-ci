@@ -1472,7 +1472,7 @@ jobs:
         params:
           repository: cf-release
       - do:
-        - task: update-compatibility
+        - task: record-compatible-versions
           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
           params:
             BOSH_TARGET: https://bosh.a1.cf-app.com
