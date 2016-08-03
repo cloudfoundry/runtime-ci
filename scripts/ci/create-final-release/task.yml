@@ -25,3 +25,4 @@ params:
   RELEASE_REPO_DIR: release-repo
   FINAL_RELEASE_REPO_DIR: final-release-repo
   STACK_REPO_DIR: oss-s3-buckets-stack
+  SKIP_COMMIT: false

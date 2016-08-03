@@ -475,6 +475,7 @@ jobs:
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     params:
       RELEASE_NAME: nats
+      SKIP_COMMIT: true
     input_mapping:
       release-repo: nats-release
       release-repo-master: nats-release-master
