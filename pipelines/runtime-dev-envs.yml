@@ -26,7 +26,7 @@ jobs:
       trigger: true
     - get: runtime-ci
       trigger: true
-  - task: check-deployments
+  - task: check-deployment
     file: runtime-ci/scripts/ci/check-deployment/task.yml
     params:
       BOSH_USER: {{runtime_1_bosh_user}}
@@ -42,7 +42,7 @@ jobs:
       trigger: true
     - get: runtime-ci
       trigger: true
-  - task: check-deployments
+  - task: check-deployment
     file: runtime-ci/scripts/ci/check-deployment/task.yml
     params:
       BOSH_USER: {{runtime_2_bosh_user}}
