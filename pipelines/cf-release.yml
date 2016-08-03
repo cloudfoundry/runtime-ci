@@ -1495,7 +1495,7 @@ jobs:
       - get: smoke-tests
       - get: runtime-ci
     - aggregate:
-      - task: run1
+      - task: run-smoketests-1
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params: &aws-smoke-params
           SUITE_NAME: RUNTIME-SMOKE
@@ -1508,72 +1508,72 @@ jobs:
           SPACE: concourse-runtime-smoke-tests-1
           USE_EXISTING_ORG: true
           ARGS: '--focus=Runtime:'
-      - task: run2
+      - task: run-smoketests-2
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-2
-      - task: run3
+      - task: run-smoketests-3
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-3
-      - task: run4
+      - task: run-smoketests-4
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-4
-      - task: run5
+      - task: run-smoketests-5
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-5
-      - task: run6
+      - task: run-smoketests-6
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-6
-      - task: run7
+      - task: run-smoketests-7
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-7
-      - task: run8
+      - task: run-smoketests-8
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-8
-      - task: run9
+      - task: run-smoketests-9
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-9
-      - task: run10
+      - task: run-smoketests-10
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-10
-      - task: run11
+      - task: run-smoketests-11
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests11
-      - task: run12
+      - task: run-smoketests-12
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-12
-      - task: run13
+      - task: run-smoketests-13
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-13
-      - task: run14
+      - task: run-smoketests-14
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
           SPACE: concourse-runtime-smoke-tests-14
-      - task: run15
+      - task: run-smoketests-15
         file: runtime-ci/scripts/ci/run-smoketests/task.yml
         params:
           <<: *aws-smoke-params
@@ -1592,7 +1592,7 @@ jobs:
         trigger: true
       - get: smoke-tests
       - get: runtime-ci
-    - task: run1
+    - task: run-smoketests
       file: runtime-ci/scripts/ci/run-smoketests/task.yml
       params:
         SUITE_NAME: RUNTIME-SMOKE
