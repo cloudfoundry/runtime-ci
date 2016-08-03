@@ -1,4 +1,16 @@
 ---
+groups:
+- name: cf-bosh-2-0
+  jobs:
+  - update-releases
+  - deploy-releases
+  - hermione-diego-cats
+  - bless-manifest
+- name: infrastructure
+  jobs:
+  - setup-infrastructure
+  - destroy-infrastructure
+
 resources:
 - name: runtime-ci
   type: git
@@ -17,7 +29,6 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-    paths: [ cf-deployment.yml ]
 - name: hermione-deployment-configuration-master
   type: git
   source:
@@ -225,7 +236,7 @@ jobs:
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
-      COMMIT_MESSAGE: 'Bless deployment manifest.'
+      COMMIT_MESSAGE: 'Update releases'
   - put: hermione-deployment-configuration-develop
     params:
       repository: updated-repo
@@ -233,6 +244,7 @@ jobs:
 - name: deploy-releases
   plan:
   - aggregate:
+    - get: runtime-ci
     - get: hermione-bbl-configuration
     - get: hermione-deployment-configuration-develop
       trigger: true
@@ -308,7 +320,6 @@ jobs:
     - do:
       - aggregate:
         - get: runtime-ci
-          passed: [ hermione-diego-cats ]
         - get: hermione-deployment-configuration-develop
           trigger: true
           passed: [ hermione-diego-cats ]
