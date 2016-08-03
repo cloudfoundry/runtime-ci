@@ -1147,7 +1147,7 @@ jobs:
     - get: cf-release-tarball
       trigger: true
       passed: [ create-release ]
-  - task: create-cf-manifest
+  - task: create-cf-release-manifest
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
       cf-release: cf-release-develop
@@ -1207,7 +1207,7 @@ jobs:
       BOSH_LITE_IP: {{bosh_lite_elastic_ip}}
     output_mapping:
       bosh-lite-stub: cf-stubs
-  - task: create-cf-manifest
+  - task: create-cf-release-manifest
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
       cf-release: cf-release-develop
@@ -1267,7 +1267,7 @@ jobs:
       trigger: true
       params:
         submodules: none
-  - task: create-cf-manifest
+  - task: create-cf-release-manifest
     tags: [vsphere]
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:

@@ -309,7 +309,7 @@ jobs:
       env-repo: hagrid-env-stubs
   - aggregate: # prepare the deploy
     - do: # generate manifests
-      - task: create-cf-manifest
+      - task: create-cf-release-manifest
         file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
         input_mapping:
           cf-release: cf-release-develop
