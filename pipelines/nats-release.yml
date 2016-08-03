@@ -98,7 +98,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: oss-s3-buckets-stack
-  - task: create-bucket
+  - task: create-final-release-bucket
     file: runtime-ci/scripts/ci/create-final-release-bucket/task.yml
     params:
       RELEASE_NAME: nats
