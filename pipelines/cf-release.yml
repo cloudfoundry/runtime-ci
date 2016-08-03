@@ -893,7 +893,7 @@ jobs:
         passed: [deploy-vsphere]
         params:
           tarball: false
-    - task: smoke-tests
+    - task: run-errand-smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
@@ -1119,7 +1119,7 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
-    - task: smoke-tests
+    - task: run-errand-smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       params:
