@@ -215,7 +215,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         STEMCELL_NAME: "*.tgz"
-  - task: build-binaries-section
+  - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
       deployment-configuration: hermione-deployment-configuration-develop
