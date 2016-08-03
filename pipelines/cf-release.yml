@@ -682,7 +682,7 @@ jobs:
       - get: runtime-ci
       - get: deployments
         resource: minimal-env
-    - task: create-manifest
+    - task: create-minimal-cf-release-manifest
       privileged: true
       file: runtime-ci/scripts/ci/create-minimal-cf-release-manifest/task.yml
     - put: minimal-deployment
