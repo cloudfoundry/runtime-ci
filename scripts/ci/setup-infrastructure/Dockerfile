@@ -30,6 +30,8 @@ RUN \
 
 RUN \
   go get github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
+  cd $GOPATH/src/github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
+  git checkout develop && \
   go install github.com/pivotal-cf-experimental/bosh-bootloader/bbl
 
 RUN \
