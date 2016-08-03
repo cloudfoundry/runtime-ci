@@ -45,10 +45,6 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
-	if _, err = env.GetSkipLogging(); err != nil {
-		errs.Add(err)
-	}
-
 	if _, err = env.GetSkipOperator(); err != nil {
 		errs.Add(err)
 	}
@@ -264,10 +260,6 @@ func (e *environment) GetSkipServices() (string, error) {
 
 func (e *environment) GetSkipRouteServices() (string, error) {
 	return e.returnsSkipFlag("INCLUDE_ROUTE_SERVICES", "route_services", false)
-}
-
-func (e *environment) GetSkipLogging() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_LOGGING", "logging", false)
 }
 
 func (e *environment) GetCatsPath() string {

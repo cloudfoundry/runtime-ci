@@ -50,13 +50,6 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
-	GetSkipLoggingStub        func() (string, error)
-	getSkipLoggingMutex       sync.RWMutex
-	getSkipLoggingArgsForCall []struct{}
-	getSkipLoggingReturns     struct {
-		result1 string
-		result2 error
-	}
 	GetSkipOperatorStub        func() (string, error)
 	getSkipOperatorMutex       sync.RWMutex
 	getSkipOperatorArgsForCall []struct{}
@@ -266,32 +259,6 @@ func (fake *FakeEnvironment) GetSkipSecurityGroupsCallCount() int {
 func (fake *FakeEnvironment) GetSkipSecurityGroupsReturns(result1 string, result2 error) {
 	fake.GetSkipSecurityGroupsStub = nil
 	fake.getSkipSecurityGroupsReturns = struct {
-		result1 string
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *FakeEnvironment) GetSkipLogging() (string, error) {
-	fake.getSkipLoggingMutex.Lock()
-	fake.getSkipLoggingArgsForCall = append(fake.getSkipLoggingArgsForCall, struct{}{})
-	fake.recordInvocation("GetSkipLogging", []interface{}{})
-	fake.getSkipLoggingMutex.Unlock()
-	if fake.GetSkipLoggingStub != nil {
-		return fake.GetSkipLoggingStub()
-	} else {
-		return fake.getSkipLoggingReturns.result1, fake.getSkipLoggingReturns.result2
-	}
-}
-
-func (fake *FakeEnvironment) GetSkipLoggingCallCount() int {
-	fake.getSkipLoggingMutex.RLock()
-	defer fake.getSkipLoggingMutex.RUnlock()
-	return len(fake.getSkipLoggingArgsForCall)
-}
-
-func (fake *FakeEnvironment) GetSkipLoggingReturns(result1 string, result2 error) {
-	fake.GetSkipLoggingStub = nil
-	fake.getSkipLoggingReturns = struct {
 		result1 string
 		result2 error
 	}{result1, result2}
@@ -518,8 +485,6 @@ func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	defer fake.getSkipBackendCompatibilityMutex.RUnlock()
 	fake.getSkipSecurityGroupsMutex.RLock()
 	defer fake.getSkipSecurityGroupsMutex.RUnlock()
-	fake.getSkipLoggingMutex.RLock()
-	defer fake.getSkipLoggingMutex.RUnlock()
 	fake.getSkipOperatorMutex.RLock()
 	defer fake.getSkipOperatorMutex.RUnlock()
 	fake.getSkipInternetDependentMutex.RLock()

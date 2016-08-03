@@ -43,7 +43,6 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
 			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
 			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
-			os.Unsetenv("INCLUDE_LOGGING")
 			os.Unsetenv("INCLUDE_OPERATOR")
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
@@ -74,7 +73,6 @@ var _ = Describe("Environment", func() {
 				os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
 				os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "no")
 				os.Setenv("INCLUDE_SECURITY_GROUPS", "yes")
-				os.Setenv("INCLUDE_LOGGING", "T")
 				os.Setenv("INCLUDE_OPERATOR", "F")
 				os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 				os.Setenv("INCLUDE_SERVICES", "troo")
@@ -103,7 +101,6 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'diego'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false' but was set to 'no'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'yes'"),
-					ContainSubstring("* Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false' but was set to 'T'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false' but was set to 'F'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'Falz'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'troo'"),
@@ -879,44 +876,6 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetSkipSecurityGroups()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'falsey'"))
-		})
-	})
-
-	Describe("GetSkipLogging", func() {
-		AfterEach(func() {
-			os.Unsetenv("INCLUDE_LOGGING")
-		})
-
-		It("Returns the string 'logging' if it should be skipped", func() {
-			os.Setenv("INCLUDE_LOGGING", "false")
-			env := environment.New()
-			skipFlag, err := env.GetSkipLogging()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("logging"))
-		})
-
-		It("Returns an empty string if it should not be skipped", func() {
-			os.Setenv("INCLUDE_LOGGING", "true")
-			env := environment.New()
-			skipFlag, err := env.GetSkipLogging()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal(""))
-		})
-
-		It("Defaults to skip", func() {
-			os.Unsetenv("INCLUDE_LOGGING")
-			env := environment.New()
-			skipFlag, err := env.GetSkipLogging()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("logging"))
-		})
-
-		It("Returns an error if there was an invalid value", func() {
-			os.Setenv("INCLUDE_LOGGING", "falsey")
-			env := environment.New()
-			_, err := env.GetSkipLogging()
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_LOGGING' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 

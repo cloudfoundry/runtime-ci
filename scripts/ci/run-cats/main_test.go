@@ -114,7 +114,7 @@ var _ = Describe("Main", func() {
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,logging,operator,route_services,security_groups,services,ssh,v3 -skip=SSO\|NO_DEA_SUPPORT\|NO_DIEGO_SUPPORT -keepGoing`,
+				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,operator,route_services,security_groups,services,ssh,v3 -skip=SSO\|NO_DEA_SUPPORT\|NO_DIEGO_SUPPORT -keepGoing`,
 			))
 		})
 
@@ -312,7 +312,6 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_DIEGO_DOCKER", "true")
 			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "true")
 			os.Setenv("INCLUDE_SECURITY_GROUPS", "true")
-			os.Setenv("INCLUDE_LOGGING", "true")
 			os.Setenv("INCLUDE_OPERATOR", "true")
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "true")
 			os.Setenv("INCLUDE_SERVICES", "true")
@@ -355,7 +354,6 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
 			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
 			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
-			os.Unsetenv("INCLUDE_LOGGING")
 			os.Unsetenv("INCLUDE_OPERATOR")
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
@@ -467,7 +465,6 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
 			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "no")
 			os.Setenv("INCLUDE_SECURITY_GROUPS", "yes")
-			os.Setenv("INCLUDE_LOGGING", "T")
 			os.Setenv("INCLUDE_OPERATOR", "F")
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 			os.Setenv("INCLUDE_SERVICES", "troo")
@@ -497,7 +494,6 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
 			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
 			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
-			os.Unsetenv("INCLUDE_LOGGING")
 			os.Unsetenv("INCLUDE_OPERATOR")
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
@@ -535,7 +531,6 @@ var _ = Describe("Main", func() {
 				ContainSubstring("INCLUDE_DIEGO_DOCKER"),
 				ContainSubstring("INCLUDE_BACKEND_COMPATIBILITY"),
 				ContainSubstring("INCLUDE_SECURITY_GROUPS"),
-				ContainSubstring("INCLUDE_LOGGING"),
 				ContainSubstring("INCLUDE_OPERATOR"),
 				ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
 				ContainSubstring("INCLUDE_SERVICES"),
