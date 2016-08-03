@@ -378,7 +378,7 @@ jobs:
         TARGET_FILE: target
         USERNAME_FILE: username
         PASSWORD_FILE: password
-  - aggregate:
+  - do:
     - task: cf-bosh-deploy
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
