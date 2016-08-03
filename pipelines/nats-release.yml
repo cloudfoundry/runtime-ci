@@ -205,7 +205,7 @@ jobs:
       release-repo: nats-release
     params:
       RELEASE_NAME: nats
-  - task: upload-release
+  - task: bosh-upload-release-nats
     file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
     input_mapping:
       release: release-tarball
@@ -360,7 +360,7 @@ jobs:
           EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
           BBL_STATE_DIRECTORY: bbl-infrastructure
-    - task: upload-cf-release
+    - task: bosh-upload-release-cf
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:
         release: cf-release-tarball
@@ -369,7 +369,7 @@ jobs:
         TARGET_FILE: target
         USERNAME_FILE: username
         PASSWORD_FILE: password
-    - task: upload-diego-release
+    - task: bosh-upload-release-diego
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:
         release: diego-release-tarball

@@ -197,7 +197,7 @@ jobs:
     input_mapping:
       env-repo: hermione-bbl-configuration
   - aggregate:
-    - task: upload-stemcell
+    - task: bosh-upload-stemcell
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       params:
         TARGET_FILE: target
