@@ -1154,7 +1154,7 @@ jobs:
       cf-stubs: a1-env
     params:
       INFRASTRUCTURE: aws
-  - task: create-diego-iaas-settings
+  - task: create-iaas-settings-diego
     file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
     input_mapping:
       deployments: a1-env
