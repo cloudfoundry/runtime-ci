@@ -57,11 +57,7 @@ pushd release-repo > /dev/null
   new_release_version=$(find releases -regex ".*${RELEASE_NAME}-[0-9]*.yml" | egrep -o "${RELEASE_NAME}-[0-9]+" | egrep -o "[0-9]+" | sort -n | tail -n 1)
 
   git add .final_builds releases
-  if [ $SKIP_COMMIT == true ]; then
-    git commit -m "[ci skip] Final release ${new_release_version}"
-  else
-    git commit -m "Final release ${new_release_version}"
-  fi
+  git commit -m "Final release ${new_release_version}"
   echo "${new_release_version}" > version_number
 popd > /dev/null
 
