@@ -326,7 +326,7 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
-    - task: validate-branches
+    - task: validate-branch-freshness
       privileged: true
       file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
 
