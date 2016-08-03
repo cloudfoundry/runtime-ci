@@ -214,7 +214,7 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       RELEASE_NAME: nats-*.tgz
-  - task: generate-nats-manfiest
+  - task: generate-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
