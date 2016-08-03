@@ -22,7 +22,6 @@ var _ = Describe("Commandgenerator", func() {
 		env.GetSkipBackendCompatibilityReturns("backend_compatibility", nil)
 		env.GetSkipDiegoDockerReturns("docker", nil)
 		env.GetSkipInternetDependentReturns("internet_dependent", nil)
-		env.GetSkipOperatorReturns("operator", nil)
 		env.GetSkipRouteServicesReturns("route_services", nil)
 		env.GetSkipSecurityGroupsReturns("security_groups", nil)
 		env.GetSkipServicesReturns("services", nil)
@@ -41,7 +40,7 @@ var _ = Describe("Commandgenerator", func() {
 			Expect(cmd).To(Equal("bin/test"))
 
 			Expect(strings.Join(args, " ")).To(Equal(
-				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,operator,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
+				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
 			))
 
 			env.GetCatsPathReturns("/path/to/cats")
@@ -66,7 +65,6 @@ var _ = Describe("Commandgenerator", func() {
 					env.GetSkipBackendCompatibilityReturns("", nil)
 					env.GetSkipDiegoDockerReturns("", nil)
 					env.GetSkipInternetDependentReturns("", nil)
-					env.GetSkipOperatorReturns("", nil)
 					env.GetSkipRouteServicesReturns("", nil)
 					env.GetSkipSecurityGroupsReturns("", nil)
 					env.GetSkipServicesReturns("", nil)
@@ -94,7 +92,7 @@ var _ = Describe("Commandgenerator", func() {
 					))
 
 					Expect(strings.Join(args, " ")).To(ContainSubstring(
-						" -skipPackage=backend_compatibility,docker,helpers,internet_dependent,operator,route_services,security_groups,services,ssh,v3 ",
+						" -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 ",
 					))
 				})
 			})

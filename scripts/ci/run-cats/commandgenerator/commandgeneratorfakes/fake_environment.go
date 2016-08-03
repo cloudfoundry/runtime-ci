@@ -50,13 +50,6 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
-	GetSkipOperatorStub        func() (string, error)
-	getSkipOperatorMutex       sync.RWMutex
-	getSkipOperatorArgsForCall []struct{}
-	getSkipOperatorReturns     struct {
-		result1 string
-		result2 error
-	}
 	GetSkipInternetDependentStub        func() (string, error)
 	getSkipInternetDependentMutex       sync.RWMutex
 	getSkipInternetDependentArgsForCall []struct{}
@@ -264,32 +257,6 @@ func (fake *FakeEnvironment) GetSkipSecurityGroupsReturns(result1 string, result
 	}{result1, result2}
 }
 
-func (fake *FakeEnvironment) GetSkipOperator() (string, error) {
-	fake.getSkipOperatorMutex.Lock()
-	fake.getSkipOperatorArgsForCall = append(fake.getSkipOperatorArgsForCall, struct{}{})
-	fake.recordInvocation("GetSkipOperator", []interface{}{})
-	fake.getSkipOperatorMutex.Unlock()
-	if fake.GetSkipOperatorStub != nil {
-		return fake.GetSkipOperatorStub()
-	} else {
-		return fake.getSkipOperatorReturns.result1, fake.getSkipOperatorReturns.result2
-	}
-}
-
-func (fake *FakeEnvironment) GetSkipOperatorCallCount() int {
-	fake.getSkipOperatorMutex.RLock()
-	defer fake.getSkipOperatorMutex.RUnlock()
-	return len(fake.getSkipOperatorArgsForCall)
-}
-
-func (fake *FakeEnvironment) GetSkipOperatorReturns(result1 string, result2 error) {
-	fake.GetSkipOperatorStub = nil
-	fake.getSkipOperatorReturns = struct {
-		result1 string
-		result2 error
-	}{result1, result2}
-}
-
 func (fake *FakeEnvironment) GetSkipInternetDependent() (string, error) {
 	fake.getSkipInternetDependentMutex.Lock()
 	fake.getSkipInternetDependentArgsForCall = append(fake.getSkipInternetDependentArgsForCall, struct{}{})
@@ -485,8 +452,6 @@ func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	defer fake.getSkipBackendCompatibilityMutex.RUnlock()
 	fake.getSkipSecurityGroupsMutex.RLock()
 	defer fake.getSkipSecurityGroupsMutex.RUnlock()
-	fake.getSkipOperatorMutex.RLock()
-	defer fake.getSkipOperatorMutex.RUnlock()
 	fake.getSkipInternetDependentMutex.RLock()
 	defer fake.getSkipInternetDependentMutex.RUnlock()
 	fake.getSkipServicesMutex.RLock()

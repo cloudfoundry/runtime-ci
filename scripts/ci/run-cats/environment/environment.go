@@ -45,10 +45,6 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
-	if _, err = env.GetSkipOperator(); err != nil {
-		errs.Add(err)
-	}
-
 	if _, err = env.GetSkipInternetDependent(); err != nil {
 		errs.Add(err)
 	}
@@ -244,10 +240,6 @@ func (e *environment) GetSkipSecurityGroups() (string, error) {
 
 func (e *environment) GetSkipBackendCompatibility() (string, error) {
 	return e.returnsSkipFlag("INCLUDE_BACKEND_COMPATIBILITY", "backend_compatibility", false)
-}
-
-func (e *environment) GetSkipOperator() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_OPERATOR", "operator", false)
 }
 
 func (e *environment) GetSkipInternetDependent() (string, error) {

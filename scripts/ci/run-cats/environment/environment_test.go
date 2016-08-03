@@ -43,7 +43,6 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
 			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
 			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
-			os.Unsetenv("INCLUDE_OPERATOR")
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
@@ -73,7 +72,6 @@ var _ = Describe("Environment", func() {
 				os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
 				os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "no")
 				os.Setenv("INCLUDE_SECURITY_GROUPS", "yes")
-				os.Setenv("INCLUDE_OPERATOR", "F")
 				os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 				os.Setenv("INCLUDE_SERVICES", "troo")
 				os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
@@ -101,7 +99,6 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'diego'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false' but was set to 'no'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'yes'"),
-					ContainSubstring("* Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false' but was set to 'F'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'Falz'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'troo'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'truce'"),
@@ -876,44 +873,6 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetSkipSecurityGroups()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'falsey'"))
-		})
-	})
-
-	Describe("GetSkipOperator", func() {
-		AfterEach(func() {
-			os.Unsetenv("INCLUDE_OPERATOR")
-		})
-
-		It("Returns the string 'operator' if it should be skipped", func() {
-			os.Setenv("INCLUDE_OPERATOR", "false")
-			env := environment.New()
-			skipFlag, err := env.GetSkipOperator()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("operator"))
-		})
-
-		It("Returns an empty string if it should not be skipped", func() {
-			os.Setenv("INCLUDE_OPERATOR", "true")
-			env := environment.New()
-			skipFlag, err := env.GetSkipOperator()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal(""))
-		})
-
-		It("Defaults to skip", func() {
-			os.Unsetenv("INCLUDE_OPERATOR")
-			env := environment.New()
-			skipFlag, err := env.GetSkipOperator()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("operator"))
-		})
-
-		It("Returns an error if there was an invalid value", func() {
-			os.Setenv("INCLUDE_OPERATOR", "falsey")
-			env := environment.New()
-			_, err := env.GetSkipOperator()
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_OPERATOR' must be a boolean 'true' or 'false' but was set to 'falsey'"))
 		})
 	})
 

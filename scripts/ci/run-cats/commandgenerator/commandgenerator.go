@@ -15,7 +15,6 @@ var envVarToPackageMap = map[string]string{
 	"INCLUDE_DIEGO_DOCKER":          "docker",
 	"INCLUDE_BACKEND_COMPATIBILITY": "backend_compatibility",
 	"INCLUDE_SECURITY_GROUPS":       "security_groups",
-	"INCLUDE_OPERATOR":              "operator",
 	"INCLUDE_INTERNET_DEPENDENT":    "internet_dependent",
 	"INCLUDE_SERVICES":              "services",
 	"INCLUDE_ROUTE_SERVICES":        "route_services",
@@ -28,7 +27,6 @@ type Environment interface {
 	GetSkipDiegoDocker() (string, error)
 	GetSkipBackendCompatibility() (string, error)
 	GetSkipSecurityGroups() (string, error)
-	GetSkipOperator() (string, error)
 	GetSkipInternetDependent() (string, error)
 	GetSkipServices() (string, error)
 	GetSkipRouteServices() (string, error)
@@ -115,11 +113,6 @@ func generateSkipPackages(env Environment) (string, error) {
 	}
 
 	skipPackage, _ = env.GetSkipSecurityGroups()
-	if skipPackage != "" {
-		skipPackages = append(skipPackages, skipPackage)
-	}
-
-	skipPackage, _ = env.GetSkipOperator()
 	if skipPackage != "" {
 		skipPackages = append(skipPackages, skipPackage)
 	}
