@@ -35,7 +35,6 @@ properties:
   acceptance_tests:
     nodes: 1
     include_sso: true
-    include_operator: true
     include_security_groups: true
     include_internet_dependent: true
     include_services: true
