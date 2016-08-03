@@ -432,7 +432,7 @@ jobs:
       params:
         CF_USER: {{hagrid_cf_admin_username}}
         CF_PASSWORD: {{hagrid_cf_admin_password}}
-    - task: cf-acceptance-tests
+    - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         INCLUDE_BACKEND_COMPATIBILITY: false

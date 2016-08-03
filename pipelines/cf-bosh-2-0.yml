@@ -288,7 +288,7 @@ jobs:
       params:
         CF_USER: {{hermione_admin_username}}
         CF_PASSWORD: {{hermione_admin_password}}
-    - task: cf-acceptance-tests
+    - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         INCLUDE_BACKEND_COMPATIBILITY: false

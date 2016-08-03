@@ -709,7 +709,7 @@ jobs:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
-    - task: run-acceptance-tests
+    - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         CF_API: api.minimal-aws.cf-app.com
@@ -981,7 +981,7 @@ jobs:
         CF_PASSWORD: {{vsphere_cf_password}}
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
-    - task: acceptance-tests
+    - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       tags: [ vsphere ]
       params:
@@ -1367,7 +1367,7 @@ jobs:
         CF_PASSWORD: {{a1_admin_password}}
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
-    - task: cf-acceptance-tests
+    - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         INCLUDE_BACKEND_COMPATIBILITY: false
