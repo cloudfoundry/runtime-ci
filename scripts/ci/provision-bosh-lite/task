@@ -36,7 +36,6 @@ properties:
     nodes: 1
     include_sso: true
     include_operator: true
-    include_logging: true
     include_security_groups: true
     include_internet_dependent: true
     include_services: true
