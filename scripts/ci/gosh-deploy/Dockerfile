@@ -10,3 +10,6 @@ RUN \
 
 RUN \
   wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.18-darwin-amd64 --output-document="/usr/bin/bosh"
+
+RUN \
+  chmod +x /usr/bin/bosh
