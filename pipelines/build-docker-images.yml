@@ -56,6 +56,7 @@ groups:
   - build-commit-generated-manifest-docker-image
   - build-fast-forward-master-to-develop-docker-image
   - build-create-final-release-bucket-docker-image
+  - build-gosh-deploy-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -405,6 +406,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release-bucket/Dockerfile]
+
+- name: runtime-ci-gosh-deploy
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/gosh-deploy/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -794,6 +802,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-final-release-bucket
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: gosh-deploy-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/gosh-deploy
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1805,4 +1821,22 @@ jobs:
     - put: create-final-release-bucket-pipeline-image
       params:
         build: runtime-ci-create-final-release-bucket/scripts/ci/create-final-release-bucket
+        push: true
+
+- name: build-gosh-deploy-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-gosh-deploy
+        trigger: true
+    - put: gosh-deploy-pipeline-image
+      params:
+        build: runtime-ci-gosh-deploy/scripts/ci/gosh-deploy
         push: true
