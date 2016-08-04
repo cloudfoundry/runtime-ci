@@ -509,6 +509,9 @@ jobs:
         passed: [ deploy-bosh-lite ]
         params:
           submodules: none
+      - get: bosh-lite
+        passed:
+        - deploy-bosh-lite
       - get: runtime-ci
       - get: cf-release-tarball
         passed: [deploy-bosh-lite]
@@ -568,6 +571,9 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
+      - get: bosh-lite
+        passed:
+        - bosh-lite-smoke-tests
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true
@@ -1404,6 +1410,9 @@ jobs:
         trigger: true
         params:
           submodules: none
+      - get: bosh-lite
+        passed:
+        - bosh-lite-acceptance-tests
       - get: bosh-lite-stemcell
         passed:
         - bosh-lite-acceptance-tests
