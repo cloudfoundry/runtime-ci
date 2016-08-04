@@ -7,13 +7,12 @@ BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
-echo "bosh -n -t ${BOSH_TARGET} -u ${BOSH_USER} -p REDACTED -d ${BOSH_MANIFEST} deploy --redact-diff"
+echo "bosh -n -e ${BOSH_TARGET} --user="${BOSH_USER}" --password="REDACTED" deploy ${BOSH_MANIFEST}"
 bosh \
   -n \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  -d "${BOSH_MANIFEST}" \
+  -e "${BOSH_TARGET}" \
+  --user="${BOSH_USER}" \
+  --password="${BOSH_PASSWORD}" \
   deploy \
-  --redact-diff
+  ${BOSH_MANIFEST}
 set -x
