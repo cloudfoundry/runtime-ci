@@ -6,13 +6,15 @@ BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 
 echo "bosh -n -e ${BOSH_TARGET} --user="${BOSH_USER}" --password="REDACTED" deploy ${BOSH_MANIFEST}"
 bosh \
   -n \
+  -d "${DEPLOYMENT_NAME}"
   -e "${BOSH_TARGET}" \
   --user="${BOSH_USER}" \
   --password="${BOSH_PASSWORD}" \
   deploy \
-  ${BOSH_MANIFEST}
+  "${BOSH_MANIFEST}"
 set -x
