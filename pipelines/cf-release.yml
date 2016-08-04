@@ -1416,8 +1416,7 @@ jobs:
         params:
           tarball: false
         trigger: true
-      - get: stemcell
-        resource: aws-stemcell
+      - get: aws-stemcell
         passed:
         - aws-acceptance-tests
         trigger: true

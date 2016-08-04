@@ -13,23 +13,33 @@ director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
 cf_release_sha=$(cd cf-release; git rev-parse HEAD)
 diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
 
-tar xzf stemcell/stemcell.tgz
-stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
-stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
-stemcell="${stemcell_name}/${stemcell_version}"
+tar xzf aws-stemcell/stemcell.tgz
+aws_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
+aws_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+aws_stemcell="${aws_stemcell_name}/${aws_stemcell_version}"
+
+tar xzf bosh-lite-stemcell/stemcell.tgz
+bosh_lite_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
+bosh_lite_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+bosh_lite_stemcell="${bosh_lite_stemcell_name}/${bosh_lite_stemcell_version}"
+
+tar xzf vsphere-stemcell/stemcell.tgz
+vsphere_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
+vsphere_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+vsphere_stemcell="${vsphere_stemcell_name}/${vsphere_stemcell_version}"
 
 diego_release_version=$(cd diego-final-releases; cat version)
 garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
 etcd_release_version=$(cd etcd-release-tarball; cat version)
 cflinuxfs2_release_version=$(cd cflinuxfs2-rootfs-release-tarball; cat version)
 
-new_row="${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${cflinuxfs2_release_version},${stemcell},${director_version}"
+new_row="${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${cflinuxfs2_release_version},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${director_version}"
 if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
   echo "No changes to be made".
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,stemcell,director-version" \
+      echo "date,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,aws_stemcell,bosh_lite_stemcell,vsphere_stemcell,director-version" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"

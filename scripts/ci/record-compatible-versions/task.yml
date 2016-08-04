@@ -9,7 +9,9 @@ image_resource:
 inputs:
   - name: runtime-ci
   - name: cf-release
-  - name: stemcell
+  - name: aws-stemcell
+  - name: bosh-lite-stemcell
+  - name: vsphere-stemcell
   - name: diego-final-releases
   - name: diego-release-master
   - name: garden-linux-release-tarball
