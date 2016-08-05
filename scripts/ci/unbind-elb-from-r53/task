@@ -112,6 +112,11 @@ main() {
 
     aws_hosted_zone_id=$(aws_hosted_zone_id_from_partial_name "${DOMAIN}")
 
+    if [ -z "$aws_hosted_zone_id" ]; then
+      echo "HostedZone not found. Exiting..."
+      exit 0
+    fi
+
     change_file=/tmp/change_file
 
     write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}" "${cf_ssh_proxy_lb_url}"
