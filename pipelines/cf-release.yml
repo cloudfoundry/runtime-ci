@@ -676,8 +676,8 @@ jobs:
     - task: write-cats-endorsements
       file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
       input_mapping:
-        cf-release: cf-release-develop
-        diego-cf-compatibility: endorsements-repo
+        cf-release-develop: cf-release
+        endorsements-repo: diego-cf-compatibility
         bosh-username: bosh-user-file-dir
         bosh-password: bosh-password-file-dir
       params:
@@ -1045,8 +1045,8 @@ jobs:
     - task: write-cats-endorsements
       file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
       input_mapping:
-        cf-release: cf-release-develop
-        diego-cf-compatibility: endorsements-repo
+        cf-release-develop: cf-release
+        endorsements-repo: diego-cf-compatibility
       params:
         ENDORSEMENT_NAME: vsphere
         BOSH_TARGET_FILE: target
@@ -1453,8 +1453,8 @@ jobs:
     - task: write-cats-endorsements
       file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
       input_mapping:
-        cf-release: cf-release-develop
-        diego-cf-compatibility: endorsements-repo
+        cf-release-develop: cf-release
+        endorsements-repo: diego-cf-compatibility
       params:
         ENDORSEMENT_NAME: aws
         BOSH_TARGET_FILE: target
