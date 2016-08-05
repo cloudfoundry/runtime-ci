@@ -8,6 +8,7 @@ RUN \
     software-properties-common \
     wget \
     python-pip \
+    dnsutils \
     jq
 
 RUN \
