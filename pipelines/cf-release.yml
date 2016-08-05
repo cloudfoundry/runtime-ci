@@ -666,6 +666,22 @@ jobs:
             ERRAND_NAME: diego-cats
           input_mapping:
             target-file-dir: bosh-lite-target-file
+    - task: write-target-file-bosh-director
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      output_mapping:
+        target-file-dir: bosh-target
+      params:
+        TARGET: {{bosh_lite_elastic_ip}}
+    - task: write-cats-endorsements
+      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
+      input_mapping:
+        bosh-username: bosh-user-file-dir
+        bosh-password: bosh-password-file-dir
+      params:
+        ENDORSEMENT_NAME: bosh-lite
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
 - name: generate-minimal-manifest-and-deploy
   public: true
   serial: true
@@ -1007,6 +1023,28 @@ jobs:
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
         NODES: 6
+    - aggregate:
+      - task: write-target-file-bosh-director
+        file: runtime-ci/scripts/ci/write-target-file/task.yml
+        output_mapping:
+          target-file-dir: bosh-target
+        params:
+          TARGET: https://bosh.cat.wild.cf-app.com
+      - task: write-creds-bosh
+        file: runtime-ci/scripts/ci/write-creds/task.yml
+        params:
+          USERNAME: {{vsphere_bosh_username}}
+          PASSWORD: {{vsphere_bosh_password}}
+        output_mapping:
+          username: bosh-username
+          password: bosh-password
+    - task: write-cats-endorsements
+      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
+      params:
+        ENDORSEMENT_NAME: vsphere
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
 
 - name: deploy-aws
   public: true
@@ -1064,7 +1102,6 @@ jobs:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
         releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
         stemcells: [aws-stemcell/*.tgz]
-
 
 - name: aws-smoke-tests
   public: true
@@ -1390,6 +1427,28 @@ jobs:
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
         NODES: 6
+    - aggregate:
+      - task: write-target-file-bosh-director
+        file: runtime-ci/scripts/ci/write-target-file/task.yml
+        output_mapping:
+          target-file-dir: bosh-target
+        params:
+          TARGET: https://bosh.a1.cf-app.com/
+      - task: write-creds-bosh
+        file: runtime-ci/scripts/ci/write-creds/task.yml
+        params:
+          USERNAME: {{a1_bosh_username}}
+          PASSWORD: {{a1_bosh_password}}
+        output_mapping:
+          username: bosh-username
+          password: bosh-password
+    - task: write-cats-endorsements
+      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
+      params:
+        ENDORSEMENT_NAME: aws
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
 
 - name: rc
   public: true
@@ -1476,10 +1535,6 @@ jobs:
       - do:
         - task: record-compatible-versions
           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-          params:
-            BOSH_TARGET: https://bosh.a1.cf-app.com
-            BOSH_USER: {{a1_bosh_username}}
-            BOSH_PASSWORD: {{a1_bosh_password}}
         - put: diego-cf-compatibility
           params:
             repository: updated-diego-cf-compatibility

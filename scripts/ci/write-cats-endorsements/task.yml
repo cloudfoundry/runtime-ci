@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-cats-endorsements
+
+inputs:
+  - name: runtime-ci
+  - name: cf-release-develop
+  - name: diego-release
+  - name: endorsements-repo
+outputs:
+  - name: endorsed-repo
+
+run:
+  path: runtime-ci/scripts/ci/write-cats-endorsements/task
+
+params:
+  ENDORSEMENT_NAME:
+  BOSH_TARGET_FILE:
+  BOSH_USERNAME_FILE:
+  BOSH_PASSWORD_FILE:
