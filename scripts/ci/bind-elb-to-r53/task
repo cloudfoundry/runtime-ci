@@ -37,6 +37,17 @@ aws_hosted_zone_id_from_partial_name() {
   set -u
 }
 
+assert_nameserver_exists() {
+  local domain="${1}"
+  local hosted_zone_id="${2}"
+  nssearch_result="$(dig +nssearch $domain)"
+  if [ -z "$nssearch_result" ]; then
+    echo "You should create an NS record in an authoritative DNS account with the following NS values: "
+    aws --output table route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query='ResourceRecordSets[?Type==`NS`].ResourceRecords[*].Value'
+    exit 1
+  fi
+}
+
 write_change_file() {
   cat << EOF > "$1"
 {
@@ -92,6 +103,8 @@ main() {
     write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}" "${cf_ssh_proxy_lb_url}"
 
     post_change_file "${change_file}" "${aws_hosted_zone_id}"
+
+    assert_nameserver_exists "${DOMAIN}" "${aws_hosted_zone_id}"
   popd
 }
 
