@@ -77,6 +77,33 @@ post_change_file() {
   fi
 }
 
+wait_for_post_change_to_get_insync() {
+  set -e
+  local hosted_zone_id="$1"
+  for n in $(seq 1 60); do
+    list_resource_record_set_output=$(aws --output text route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query 'ResourceRecordSets[?Type==`CNAME`].Name' | wc -l | awk '{print $1}')
+    if [ $list_resource_record_set_output == 0 ]; then
+      break
+    fi
+    sleep 1
+  done
+  if [ $list_resource_record_set_output -gt 0 ]; then
+    echo "The following Recordsets have not been deleted after waiting ~1 minute. Failing."
+    aws --output table route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query 'ResourceRecordSets[?Type==`CNAME`]'
+    exit 1
+  fi
+}
+
+delete_hosted_zone() {
+  local hosted_zone_id="$1"
+  local number_of_hosted_zone=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Id==\`${hosted_zone_id}\`].Name" | wc -l | awk '{print $1}')
+  if [ $number_of_hosted_zone -gt 0 ]; then
+    aws route53 delete-hosted-zone --id $hosted_zone_id
+  else
+    echo "HostedZone does not exist. Skipping deletion..."
+  fi
+}
+
 main() {
   pushd env-repo
     cf_router_lb_url=$(cf_router_load_balancer_url)
@@ -90,6 +117,10 @@ main() {
     write_change_file "${change_file}" "${DOMAIN}" "${cf_router_lb_url}" "${cf_ssh_proxy_lb_url}"
 
     post_change_file "${change_file}" "${aws_hosted_zone_id}"
+
+    wait_for_post_change_to_get_insync "${aws_hosted_zone_id}"
+
+    delete_hosted_zone "${aws_hosted_zone_id}"
   popd
 }
 
