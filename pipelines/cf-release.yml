@@ -596,6 +596,9 @@ jobs:
         trigger: true
         passed: [ bosh-lite-smoke-tests ]
       - get: diego-cf-compatibility
+      - get: diego-release-master
+        params:
+          submodules: none
     - aggregate:
       - do: # enable docker
         - task: write-target-file-api
@@ -678,6 +681,7 @@ jobs:
       input_mapping:
         cf-release-develop: cf-release
         endorsements-repo: diego-cf-compatibility
+        diego-release: diego-release-master
         bosh-username: bosh-user-file-dir
         bosh-password: bosh-password-file-dir
       params:
@@ -991,6 +995,9 @@ jobs:
         params:
           tarball: false
       - get: diego-cf-compatibility
+      - get: diego-release-master
+        params:
+          submodules: none
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -1047,6 +1054,7 @@ jobs:
       input_mapping:
         cf-release-develop: cf-release
         endorsements-repo: diego-cf-compatibility
+        diego-release: diego-release-master
       params:
         ENDORSEMENT_NAME: vsphere
         BOSH_TARGET_FILE: target
@@ -1401,6 +1409,9 @@ jobs:
         params:
           tarball: false
       - get: diego-cf-compatibility
+      - get: diego-release-master
+        params:
+          submodules: none
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -1455,6 +1466,7 @@ jobs:
       input_mapping:
         cf-release-develop: cf-release
         endorsements-repo: diego-cf-compatibility
+        diego-release: diego-release-master
       params:
         ENDORSEMENT_NAME: aws
         BOSH_TARGET_FILE: target
