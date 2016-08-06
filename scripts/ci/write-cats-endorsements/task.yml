@@ -11,6 +11,9 @@ inputs:
   - name: cf-release-develop
   - name: diego-release
   - name: endorsements-repo
+  - name: bosh-target
+  - name: bosh-username
+  - name: bosh-password
 outputs:
   - name: endorsed-repo
 
