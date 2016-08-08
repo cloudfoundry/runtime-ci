@@ -4,7 +4,7 @@ set -eux
 
 BOSH_TARGET=$(cat "bosh-target/${BOSH_TARGET_FILE}")
 
-BOSH_USER=$(cat bosh-username/"${BOSH_USERNAME_FILE}")
+BOSH_USER=$(cat bosh-username/"${BOSH_USER_FILE}")
 
 set +x
 BOSH_PASSWORD=$(cat "bosh-password/${BOSH_PASSWORD_FILE}")
