@@ -372,7 +372,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
   - do:
-    - task: cf-bosh-deploy
+    - task: bosh-deploy-cf
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: extended-cf-deployment-manifest
@@ -381,7 +381,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         MANIFEST_FILE: extended_deployment.yml
-    - task: diego-bosh-deploy
+    - task: bosh-deploy-diego
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: extended-diego-deployment-manifest
