@@ -14,7 +14,6 @@ outputs:
 - name: target
 - name: username
 - name: password
-- name: ca-cert
 
 run:
   path: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task

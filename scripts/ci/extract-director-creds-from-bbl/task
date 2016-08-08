@@ -3,4 +3,3 @@
 bbl --state-dir "env-repo/$STATE_DIR_PATH" director-address > target/target
 bbl --state-dir "env-repo/$STATE_DIR_PATH" director-username > username/username
 bbl --state-dir "env-repo/$STATE_DIR_PATH" director-password > password/password
-bbl --state-dir "env-repo/$STATE_DIR_PATH" bosh-ca-cert > ca-cert/ca-cert
