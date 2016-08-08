@@ -15,7 +15,7 @@ else
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
       git add bbl-infrastructure
-      git commit -m "Update bbl artifacts"
+      git commit -m "Destroy infrastructure and remove bbl artifacts"
     fi
   popd
 fi
