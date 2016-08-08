@@ -42,7 +42,7 @@ groups:
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
-  - build-create-iaas-settings-docker-image
+  - build-create-diego-iaas-settings-docker-image
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
@@ -78,12 +78,12 @@ resources:
   source:
     interval: 2h
 
-- name: runtime-ci-create-iaas-settings
+- name: runtime-ci-create-diego-iaas-settings
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-iaas-settings/Dockerfile]
+    paths: [scripts/ci/create-diego-iaas-settings/Dockerfile]
 - name: runtime-ci-verify-every-task-has-docker-build
   type: git
   source:
@@ -437,10 +437,10 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 # All the docker images
-- name: create-iaas-settings-pipeline-image
+- name: create-diego-iaas-settings-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-iaas-settings
+    repository: relintdockerhubpushbot/create-diego-iaas-settings
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -854,7 +854,7 @@ jobs:
   plan:
   - get: trigger-resource
 
-- name: build-create-iaas-settings-docker-image
+- name: build-create-diego-iaas-settings-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -866,11 +866,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-iaas-settings
+      - get: runtime-ci-create-diego-iaas-settings
         trigger: true
-    - put: create-iaas-settings-pipeline-image
+    - put: create-diego-iaas-settings-pipeline-image
       params:
-        build: runtime-ci-create-iaas-settings/scripts/ci/create-iaas-settings
+        build: runtime-ci-create-diego-iaas-settings/scripts/ci/create-diego-iaas-settings
         push: true
 - name: build-verify-every-task-has-docker-build-docker-image
   public: true

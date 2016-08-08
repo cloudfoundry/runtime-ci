@@ -320,8 +320,8 @@ jobs:
           EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
           BBL_STATE_DIRECTORY: bbl-infrastructure
-      - task: create-iaas-settings-diego
-        file: runtime-ci/scripts/ci/create-iaas-settings/task.yml
+      - task: create-diego-iaas-settings
+        file: runtime-ci/scripts/ci/create-diego-iaas-settings/task.yml
         input_mapping:
           deployments: hagrid-env-stubs
           diego-release: diego-release-master

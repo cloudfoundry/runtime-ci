@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-iaas-settings
+    repository: relintdockerhubpushbot/create-diego-iaas-settings
 
 inputs:
 - name: diego-release
@@ -20,4 +20,4 @@ params:
   IAAS_SETTINGS_STUB_PATH: stubs/diego/iaas-settings.yml
 
 run:
-  path: runtime-ci/scripts/ci/create-iaas-settings/task
+  path: runtime-ci/scripts/ci/create-diego-iaas-settings/task
