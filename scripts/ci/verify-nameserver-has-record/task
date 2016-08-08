@@ -1,7 +1,9 @@
 #!/bin/bash
 set -xeu
 
+set +e
 NS_SEARCH_RESULT="$(nslookup -type=NS ${DOMAIN})"
+set -e
 
 if ! (echo "$NS_SEARCH_RESULT" | grep "server can\'t find"); then
   HOSTED_ZONE_FOUND=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Name==\`${DOMAIN}.\`]" | wc -l | awk '{print $1}')
