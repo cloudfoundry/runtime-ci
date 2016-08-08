@@ -534,6 +534,27 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
+    - task: create-bosh-lite-creds
+      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+      output_mapping:
+        bosh-user-file-dir: bosh-username
+        bosh-password-file-dir: bosh-password
+    - task: write-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: {{bosh_lite_elastic_ip}}
+      output_mapping:
+        target-file-dir: bosh-target
+    - task: write-director-version
+      file: runtime-ci/scripts/ci/write-director-version/task.yml
+      output_mapping:
+        director-version: bosh-lite
+      params:
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
+    - put: bosh-lite-director-version
+      file: bosh-lite/director_version
 - name: bosh-lite-smoke-tests
   public: true
   serial_groups:
@@ -890,6 +911,18 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
+    - task: write-director-version
+      file: runtime-ci/scripts/ci/write-director-version/task.yml
+      input_mapping:
+        bosh-target: target
+      output_mapping:
+        director-version: vsphere
+      params:
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
+    - put: vsphere-director-version
+      file: vsphere/director_version
 
 - name: vsphere-smoke-tests
   public: true
@@ -1149,6 +1182,30 @@ jobs:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
         releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
         stemcells: [aws-stemcell/*.tgz]
+    - aggregate:
+      - task: write-target-file-bosh-director
+        file: runtime-ci/scripts/ci/write-target-file/task.yml
+        output_mapping:
+          target-file-dir: target
+        params:
+          TARGET: https://bosh.a1.cf-app.com
+      - task: write-creds-bosh
+        file: runtime-ci/scripts/ci/write-creds/task.yml
+        params:
+          USERNAME: {{a1_bosh_username}}
+          PASSWORD: {{a1_bosh_password}}
+    - task: write-director-version
+      file: runtime-ci/scripts/ci/write-director-version/task.yml
+      input_mapping:
+        bosh-target: target
+      output_mapping:
+        director-version: aws
+      params:
+        BOSH_TARGET_FILE: target
+        BOSH_USER_FILE: username
+        BOSH_PASSWORD_FILE: password
+    - put: aws-director-version
+      file: aws/director_version
 
 - name: aws-smoke-tests
   public: true

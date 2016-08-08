@@ -2,27 +2,5 @@
 
 set -eux
 
-BOSH_TARGET=$(cat "bosh-target/${BOSH_TARGET_FILE}")
-
-BOSH_USER=$(cat bosh-username/"${BOSH_USER_FILE}")
-
-set +x
-BOSH_PASSWORD=$(cat "bosh-password/${BOSH_PASSWORD_FILE}")
-echo bosh -u "${BOSH_USER}" -p REDACTED target "$BOSH_TARGET"
-bosh -u "${BOSH_USER}" -p "${BOSH_PASSWORD}" target "$BOSH_TARGET"
-set -x
-
-bosh status
-director_version=$(bosh status | grep Version | tr -s ' ' | cut -f3 -d' ')
-
-diego_sha=$(cd diego-release; git rev-parse HEAD)
-cf_sha=$(cd cf-release-develop; git rev-parse HEAD)
-diego_sha_cf_sha="${diego_sha}-${cf_sha}"
-
 build_url="${ATC_EXTERNAL_URL}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
-
-cp -rfp endorsements-repo endorsed-repo
-mkdir -p "endorsements-repo/endorsements/cats/${diego_sha_cf_sha}"
-echo "{ \"build-url\" : \"${build_url}\", \"director-version\" : \"${director_version}\" }" > "endorsements-repo/endorsements/cats/$diego_sha_cf_sha/${ENDORSEMENT_NAME}.json"
-git add "endorsements-repo/${diego_sha_cf_sha}"
-git commit -m "Add ${ENDORSEMENT_NAME} CATs endorsement for ${diego_sha_cf_sha}"
+echo "$build_url" > build_url/build_url

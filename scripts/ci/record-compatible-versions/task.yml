@@ -18,6 +18,13 @@ inputs:
   - name: etcd-release-tarball
   - name: cflinuxfs2-rootfs-release-tarball
   - name: diego-cf-compatibility
+  - name: aws-director-version
+  - name: bosh-lite-director-version
+  - name: vsphere-director-version
+  - name: aws-build-url
+  - name: bosh-lite-build-url
+  - name: vsphere-build-url
+  - name: bosh-lite
 
 outputs:
   - name: updated-diego-cf-compatibility

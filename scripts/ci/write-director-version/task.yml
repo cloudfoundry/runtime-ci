@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/write-director-version
+
+inputs:
+  - name: runtime-ci
+  - name: bosh-target
+  - name: bosh-username
+  - name: bosh-password
+
+outputs:
+  - name: director-version
+
+run:
+  path: runtime-ci/scripts/ci/write-director-version/task
+
+params:
+  BOSH_TARGET_FILE: target
+  BOSH_USER_FILE:
+  BOSH_PASSWORD_FILE:

@@ -8,33 +8,32 @@ current_date=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
 cf_release_sha=$(cd cf-release; git rev-parse HEAD)
 diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
 bosh_lite_sha=$(cd bosh-lite; git rev-parse HEAD)
-cf_sha_diego_sha="${cf_release_sha}-${diego_release_sha}"
 function readEndorsement() {
   endorsement=$1
   endorsement_type=$2
-  cat diego-cf-compatibility/endorsements/cats/${cf_sha_diego_sha}/${endorsement}.json | jq --raw-output ".[\"${endorsement_type}\"]"
+  cat "${endorsement}/${endorsement_type}"
 }
 
 tar xzf aws-stemcell/stemcell.tgz
 aws_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
 aws_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
 aws_stemcell="${aws_stemcell_name}/${aws_stemcell_version}"
-aws_director_version=$(readEndorsement aws director-version)
-aws_build_url=$(readEndorsement aws build-url)
+aws_director_version=$(readEndorsement aws-director-version director_version)
+aws_build_url=$(readEndorsement aws-build-url build_url)
 
 tar xzf bosh-lite-stemcell/stemcell.tgz
 bosh_lite_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
 bosh_lite_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
 bosh_lite_stemcell="${bosh_lite_stemcell_name}/${bosh_lite_stemcell_version}"
-bosh_lite_director_version=$(readEndorsement bosh-lite director-version)
-bosh_lite_build_url=$(readEndorsement bosh-lite build-url)
+bosh_lite_director_version=$(readEndorsement bosh-lite-director-version director_version)
+bosh_lite_build_url=$(readEndorsement bosh-lite-build-url build_url)
 
 tar xzf vsphere-stemcell/stemcell.tgz
 vsphere_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
 vsphere_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
 vsphere_stemcell="${vsphere_stemcell_name}/${vsphere_stemcell_version}"
-vsphere_director_version=$(readEndorsement vsphere director-version)
-vsphere_build_url=$(readEndorsement vsphere build-url)
+vsphere_director_version=$(readEndorsement vsphere-director-version director_version)
+vsphere_build_url=$(readEndorsement vsphere-build-url build_url)
 
 diego_release_version=$(cd diego-final-releases; cat version)
 garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
