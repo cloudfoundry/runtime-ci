@@ -3,10 +3,11 @@
 set -xeu
 
 pushd env-repo
-  bbl \
-    --state-dir bbl-infrastructure \
-    destroy \
-    --no-confirm
+  pushd bbl-infrastructure
+    bbl \
+      destroy \
+      --no-confirm
+  popd
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
