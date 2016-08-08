@@ -59,6 +59,7 @@ groups:
   - build-gosh-deploy-docker-image
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
+  - build-write-director-version-docker-image
 
 - name: run-cats-tests
   jobs:
