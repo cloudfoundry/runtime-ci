@@ -10,8 +10,15 @@ groups:
   jobs:
   - setup-infrastructure
   - destroy-infrastructure
+  - verify-nameserver-has-record
 
 resources:
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
 - name: runtime-ci
   type: git
   source:
@@ -331,3 +338,19 @@ jobs:
     - put: hermione-deployment-configuration-master
       params:
         repository: fast-forwarded-master-repo
+
+- name: verify-nameserver-has-record
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: runtime-ci
+    - get: weekly
+      trigger: true
+    - task: verify-nameserver-has-record
+      file: runtime-ci/scripts/ci/verify-nameserver-has-record/task.yml
+      params:
+        AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+        DOMAIN: hermione.cf-app.com
