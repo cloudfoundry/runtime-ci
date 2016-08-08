@@ -170,6 +170,54 @@ resources:
     access_key_id: {{diego_final_release_bucket_access_key_id}}
     secret_access_key: {{diego_final_release_bucket_secret_access_key}}
 
+- name: aws-build-url
+  type: s3
+  source:
+    bucket: aws-build-url
+    versioned_file: build_url
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: bosh-lite-build-url
+  type: s3
+  source:
+    bucket: bosh-lite-build-url
+    versioned_file: build_url
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: vsphere-build-url
+  type: s3
+  source:
+    bucket: vsphere-build-url
+    versioned_file: build_url
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: aws-director-version
+  type: s3
+  source:
+    bucket: aws-director-version
+    versioned_file: director_version
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: bosh-lite-director-version
+  type: s3
+  source:
+    bucket: bosh-lite-director-version
+    versioned_file: director_version
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
+- name: vsphere-director-version
+  type: s3
+  source:
+    bucket: vsphere-director-version
+    versioned_file: director_version
+    access_key_id: {{s3_bucket_access_key_id}}
+    secret_access_key: {{s3_bucket_secret_key}}
+
 - name: garden-linux-release-tarball
   type: bosh-io-release
   source:
@@ -670,25 +718,13 @@ jobs:
             ERRAND_NAME: diego-cats
           input_mapping:
             target-file-dir: bosh-lite-target-file
-    - task: write-target-file-bosh-director
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
+    - task: write-build-url
+      file: runtime-ci/scripts/ci/write-build-url/task.yml
       output_mapping:
-        target-file-dir: bosh-target
+        build_url: bosh-lite
+    - put: bosh-lite-build-url
       params:
-        TARGET: {{bosh_lite_elastic_ip}}
-    - task: write-cats-endorsements
-      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
-      input_mapping:
-        cf-release-develop: cf-release
-        endorsements-repo: diego-cf-compatibility
-        diego-release: diego-release-master
-        bosh-username: bosh-user-file-dir
-        bosh-password: bosh-password-file-dir
-      params:
-        ENDORSEMENT_NAME: bosh-lite
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: username
-        BOSH_PASSWORD_FILE: password
+        file: bosh-lite/build_url
 - name: generate-minimal-manifest-and-deploy
   public: true
   serial: true
@@ -1049,17 +1085,13 @@ jobs:
         output_mapping:
           username: bosh-username
           password: bosh-password
-    - task: write-cats-endorsements
-      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
-      input_mapping:
-        cf-release-develop: cf-release
-        endorsements-repo: diego-cf-compatibility
-        diego-release: diego-release-master
+    - task: write-build-url
+      file: runtime-ci/scripts/ci/write-build-url/task.yml
+      output_mapping:
+        build_url: vsphere
+    - put: vsphere-build-url
       params:
-        ENDORSEMENT_NAME: vsphere
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: username
-        BOSH_PASSWORD_FILE: password
+        file: vsphere/build_url
 
 - name: deploy-aws
   public: true
@@ -1461,17 +1493,13 @@ jobs:
         output_mapping:
           username: bosh-username
           password: bosh-password
-    - task: write-cats-endorsements
-      file: runtime-ci/scripts/ci/write-cats-endorsements/task.yml
-      input_mapping:
-        cf-release-develop: cf-release
-        endorsements-repo: diego-cf-compatibility
-        diego-release: diego-release-master
+    - task: write-build-url
+      file: runtime-ci/scripts/ci/write-build-url/task.yml
+      output_mapping:
+        build_url: aws
+    - put: aws-build-url
       params:
-        ENDORSEMENT_NAME: aws
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: username
-        BOSH_PASSWORD_FILE: password
+        file: aws/build_url
 
 - name: rc
   public: true
@@ -1555,12 +1583,12 @@ jobs:
       - put: cf-release-release-candidate
         params:
           repository: cf-release
-      - do:
-        - task: record-compatible-versions
-          file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-        - put: diego-cf-compatibility
-          params:
-            repository: updated-diego-cf-compatibility
+#       - do:
+#         - task: record-compatible-versions
+#           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
+#         - put: diego-cf-compatibility
+#           params:
+#             repository: updated-diego-cf-compatibility
 
 - name: a1-runtime-smokes
   public: true

@@ -57,8 +57,8 @@ groups:
   - build-fast-forward-master-to-develop-docker-image
   - build-create-final-release-bucket-docker-image
   - build-gosh-deploy-docker-image
-  - build-write-cats-endorsements-docker-image
   - build-verify-nameserver-has-record-docker-image
+  - build-write-build-url-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -416,12 +416,12 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/gosh-deploy/Dockerfile]
 
-- name: runtime-ci-write-cats-endorsements
+- name: runtime-ci-write-build-url
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-cats-endorsements/Dockerfile]
+    paths: [scripts/ci/write-build-url/Dockerfile]
 
 - name: runtime-ci-verify-nameserver-has-record
   type: git
@@ -830,10 +830,10 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: write-cats-endorsements-pipeline-image
+- name: write-build-url-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/write-cats-endorsements
+    repository: relintdockerhubpushbot/write-build-url
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1873,7 +1873,7 @@ jobs:
         build: runtime-ci-gosh-deploy/scripts/ci/gosh-deploy
         push: true
 
-- name: build-write-cats-endorsements-docker-image
+- name: build-write-build-url-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -1884,11 +1884,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-cats-endorsements
+      - get: runtime-ci-write-build-url
         trigger: true
-    - put: write-cats-endorsements-pipeline-image
+    - put: write-build-url-pipeline-image
       params:
-        build: runtime-ci-write-cats-endorsements/scripts/ci/write-cats-endorsements
+        build: runtime-ci-write-build-url/scripts/ci/write-build-url
         push: true
 
 - name: build-verify-nameserver-has-record-docker-image
