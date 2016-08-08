@@ -9,3 +9,5 @@ RUN \
 
 RUN \
   pip install awscli==1.6.6
+
+COPY resolv.conf /etc/resolv.conf
