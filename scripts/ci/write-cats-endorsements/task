@@ -8,8 +8,8 @@ BOSH_USER=$(cat bosh-username/"${BOSH_USER_FILE}")
 
 set +x
 BOSH_PASSWORD=$(cat "bosh-password/${BOSH_PASSWORD_FILE}")
-echo bosh target -u "${BOSH_USER}" -p REDACTED -t "$BOSH_TARGET"
-bosh target -u "${BOSH_USER}" -p "${BOSH_PASSWORD}" -t "$BOSH_TARGET"
+echo bosh -u "${BOSH_USER}" -p REDACTED target "$BOSH_TARGET"
+bosh -u "${BOSH_USER}" -p "${BOSH_PASSWORD}" target "$BOSH_TARGET"
 set -x
 
 bosh status
