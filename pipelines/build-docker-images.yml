@@ -62,7 +62,7 @@ groups:
 
 - name: run-cats-tests
   jobs:
-  - test-cats-golang
+  - cats-task-unit-tests
   - build-run-cats-docker-image
 
 resources:
@@ -1395,7 +1395,7 @@ jobs:
         build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
         push: true
 
-- name: test-cats-golang
+- name: cats-task-unit-tests
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1403,7 +1403,7 @@ jobs:
       - get: runtime-ci
       - get: runtime-ci-run-cats # used only for control -- trigger this job and the subsequent build-run-cats-docker-image build
         trigger: true
-      - task: run-cats-unit-tests
+      - task: run-ginkgo
         file: runtime-ci/scripts/ci/run-ginkgo/task.yml
         input_mapping:
           project: runtime-ci
@@ -1426,7 +1426,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cats
         trigger: true
-        passed: [test-cats-golang]
+        passed: [cats-task-unit-tests]
     - put: run-cats-pipeline-image
       params:
         build: runtime-ci-run-cats/scripts/ci/run-cats
