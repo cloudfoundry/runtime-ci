@@ -10,11 +10,18 @@ groups:
     - cats-tests
     - create-final-release
     - delete-deployment
+    - verify-nameserver-has-record
 - name: buckets
   jobs:
     - create-nats-release-bucket
 
 resources:
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
 - name: runtime-ci
   type: git
   source:
@@ -529,3 +536,19 @@ jobs:
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-hagrid-diego
+
+- name: verify-nameserver-has-record
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: runtime-ci
+    - get: weekly
+      trigger: true
+    - task: verify-nameserver-has-record
+      file: runtime-ci/scripts/ci/verify-nameserver-has-record/task.yml
+      params:
+        AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+        DOMAIN: hagrid.cf-app.com
