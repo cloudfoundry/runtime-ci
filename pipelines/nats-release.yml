@@ -79,6 +79,18 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/diego-release
+- name: garden-linux-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/garden-linux-release
+- name: etcd-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+- name: cflinuxfs2-rootfs-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
 - name: cf-release-tarball
   type: s3
   source:
@@ -284,6 +296,9 @@ jobs:
       params:
         submodules: none
     - get: diego-release-tarball
+    - get: garden-linux-release-tarball
+    - get: etcd-release-tarball
+    - get: cflinuxfs2-rootfs-release-tarball
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -366,6 +381,33 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:
         release: diego-release-tarball
+      params:
+        RELEASE_NAME: release.tgz
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+    - task: bosh-upload-release-garden-linux
+      file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+      input_mapping:
+        release: garden-linux-release-tarball
+      params:
+        RELEASE_NAME: release.tgz
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+    - task: bosh-upload-release-etcd
+      file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+      input_mapping:
+        release: etcd-release-tarball
+      params:
+        RELEASE_NAME: release.tgz
+        TARGET_FILE: target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+    - task: bosh-upload-release-cflinuxf2-rootfs
+      file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+      input_mapping:
+        release: cflinuxfs2-rootfs-release-tarball
       params:
         RELEASE_NAME: release.tgz
         TARGET_FILE: target
