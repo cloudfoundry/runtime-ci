@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -uex
+
+tar xzfv release-tarball/*.tar.gz untarred-release/
