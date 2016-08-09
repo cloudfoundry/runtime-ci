@@ -2,4 +2,4 @@
 
 set -uex
 
-tar xzfv release-tarball/*.tar.gz untarred-release/
+tar xzfv release-tarball/*.tgz untarred-release/
