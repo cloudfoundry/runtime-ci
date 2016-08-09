@@ -59,6 +59,7 @@ groups:
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
   - build-write-director-version-docker-image
+  - build-build-metadata-resource-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -429,6 +430,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-director-version/Dockerfile]
+
+- name: runtime-ci-build-metadata-resource
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [resources/build-metadata-resource/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -842,6 +850,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-director-version
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: build-metadata-resource-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/build-metadata-resource
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1907,4 +1923,22 @@ jobs:
     - put: write-director-version-pipeline-image
       params:
         build: runtime-ci-write-director-version/scripts/ci/write-director-version
+        push: true
+
+- name: build-build-metadata-resource-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-build-metadata-resource
+        trigger: true
+    - put: build-metadata-resource-pipeline-image
+      params:
+        build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
         push: true
