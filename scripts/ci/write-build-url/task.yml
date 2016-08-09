@@ -8,11 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: build-id
-- name: build-name
-- name: build-job-name
-- name: build-pipeline-name
-- name: atc-external-url
+- name: acceptance-test-metadata
 
 outputs:
 - name: build_url
