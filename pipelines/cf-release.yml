@@ -169,13 +169,10 @@ resources:
     uri: git@github.com:cloudfoundry/diego-cf-compatibility
     private_key: {{diego_cf_compatibility_private_key}}
 
-- name: diego-final-releases
-  type: s3
+- name: diego-release-tarball
+  type: bosh-io-release
   source:
-    bucket: diego-final-releases
-    regexp: diego-(.*).tgz
-    access_key_id: {{diego_final_release_bucket_access_key_id}}
-    secret_access_key: {{diego_final_release_bucket_secret_access_key}}
+    repository: cloudfoundry/diego-release
 
 - name: aws-build-url
   type: s3
@@ -475,7 +472,8 @@ jobs:
       - get: cf-release-tarball
         passed: [generate-bosh-lite-manifests]
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
+        trigger: true
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
@@ -499,7 +497,6 @@ jobs:
         params:
           submodules: none
         passed: [ generate-bosh-lite-manifests ]
-        trigger: true
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -540,7 +537,7 @@ jobs:
         manifest: cf-bosh-lite-diego-manifest/diego-deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases:
-        - diego-final-releases/*.tgz
+        - diego-release-tarball/*.tgz
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
@@ -596,18 +593,26 @@ jobs:
       - get: cf-release-tarball
         passed: [deploy-bosh-lite]
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
+        params:
+          tarball: false
       - get: garden-linux-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
+        params:
+          tarball: false
       - get: etcd-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
+        params:
+          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
+        params:
+          tarball: false
       - get: cf-bosh-lite-manifest
         passed: [ deploy-bosh-lite ]
         trigger: true
@@ -657,18 +662,26 @@ jobs:
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+        params:
+          tarball: false
       - get: garden-linux-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+        params:
+          tarball: false
       - get: etcd-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+        params:
+          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+        params:
+          tarball: false
       - get: cf-bosh-lite-manifest
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
@@ -773,7 +786,7 @@ jobs:
         trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         trigger: true
       - get: cf-release
         resource: cf-release-develop
@@ -792,7 +805,7 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-          - diego-final-releases/*.tgz
+          - diego-release-tarball/*.tgz
           - garden-linux-release-tarball/*.tgz
           - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-release-tarball/*.tgz
@@ -874,10 +887,10 @@ jobs:
         resource: diego-release-master
         params: {submodules: none}
         tags: [vsphere]
-        trigger: true
         passed: [ generate-vsphere-manifests ]
-      - get: diego-final-releases
+      - get: diego-release-tarball
         tags: [vsphere]
+        trigger: true
       - get: garden-linux-release-tarball
         trigger: true
         tags: [vsphere]
@@ -927,7 +940,7 @@ jobs:
         manifest: cf-vsphere-diego-manifest/diego-deployment.yml
         stemcells: [vsphere-stemcell/*.tgz]
         releases:
-        - diego-final-releases/*.tgz
+        - diego-release-tarball/*.tgz
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
@@ -1004,7 +1017,7 @@ jobs:
         params: {submodules: none}
         tags: [vsphere]
         passed: [deploy-vsphere]
-      - get: diego-final-releases
+      - get: diego-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [deploy-vsphere]
@@ -1078,7 +1091,7 @@ jobs:
         params: {submodules: none}
         tags: [vsphere]
         passed: [vsphere-smoke-tests]
-      - get: diego-final-releases
+      - get: diego-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [vsphere-smoke-tests]
@@ -1191,9 +1204,9 @@ jobs:
       - get: diego-release
         resource: diego-release-master
         params: {submodules: none}
-        trigger: true
         passed: [ generate-aws-manifests ]
-      - get: diego-final-releases
+      - get: diego-release-tarball
+        trigger: true
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
@@ -1212,7 +1225,11 @@ jobs:
     - put: a1-diego-deployment
       params:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
-        releases: [diego-final-releases/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-tarball/*.tgz ]
+        releases:
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
       - task: write-target-file-bosh-director
@@ -1273,12 +1290,12 @@ jobs:
         params:
           tarball: false
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         passed: [ deploy-aws ]
         trigger: true
+        params:
+          tarball: false
       - get: diego-release-master
-        resource: diego-release-master
-        trigger: true
         passed: [ deploy-aws ]
         params:
           submodules: none
@@ -1508,12 +1525,10 @@ jobs:
         params:
           tarball: false
         trigger: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         passed: [ aws-smoke-tests ]
         trigger: true
       - get: diego-release-master
-        resource: diego-release-master
-        trigger: true
         passed: [ aws-smoke-tests ]
         params:
           submodules: none
@@ -1626,7 +1641,7 @@ jobs:
         trigger: true
         params:
           tarball: true
-      - get: diego-final-releases
+      - get: diego-release-tarball
         passed:
         - aws-acceptance-tests
         - bosh-lite-acceptance-tests
