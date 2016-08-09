@@ -912,6 +912,18 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
+    - aggregate:
+      - task: write-target-file-bosh-director
+        file: runtime-ci/scripts/ci/write-target-file/task.yml
+        output_mapping:
+          target-file-dir: target
+        params:
+          TARGET: https://bosh.cat.wild.cf-app.com
+      - task: write-creds-bosh
+        file: runtime-ci/scripts/ci/write-creds/task.yml
+        params:
+          USERNAME: {{vsphere_bosh_username}}
+          PASSWORD: {{vsphere_bosh_password}}
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       input_mapping:
@@ -1201,9 +1213,9 @@ jobs:
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       input_mapping:
-        target: bosh-target
-        username: bosh-username
-        password: bosh-password
+        bosh-target: target
+        bosh-username: username
+        bosh-password: password
       output_mapping:
         director-version: aws
       params:
