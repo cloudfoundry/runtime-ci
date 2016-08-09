@@ -1201,9 +1201,9 @@ jobs:
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       input_mapping:
-        bosh-target: target
-        bosh-username: username
-        bosh-password: password
+        target: bosh-target
+        username: bosh-username
+        password: bosh-password
       output_mapping:
         director-version: aws
       params:
