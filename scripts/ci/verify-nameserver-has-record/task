@@ -1,28 +1,26 @@
 #!/bin/bash
 set -xeu
 
-for NS in 10.10.0.2 4.2.2.1 4.2.2.2; do
-  set +e
-  NS_SEARCH_RESULT="$(nslookup -type=NS ${DOMAIN} ${NS})"
-  set -e
+set +e
+NS_SEARCH_RESULT="$(nslookup -type=NS ${DOMAIN} 4.2.2.1)"
+set -e
 
-  if ! (echo "$NS_SEARCH_RESULT" | grep "server can't find"); then
-    HOSTED_ZONE_FOUND=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Name==\`${DOMAIN}.\`]" | wc -l | awk '{print $1}')
-    if [[ $HOSTED_ZONE_FOUND -eq 0 ]]; then
-      set +x
-      echo "ERROR: You must delete the following NS record/s from the authoritative DNS account"
-      echo "$NS_SEARCH_RESULT" | grep 'nameserver'
-      exit 1
-    fi
-
-    HOSTED_ZONE_ID=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Name==\`${DOMAIN}.\`].Id" | awk '{print $1}')
-    CNAME_RECORD_FOUND=$(aws --output text route53 list-resource-record-sets --hosted-zone-id ${HOSTED_ZONE_ID} --query 'ResourceRecordSets[?Type==`CNAME`]' | wc -l | awk '{print $1}')
-    if [[ $CNAME_RECORD_FOUND -eq 0 ]]; then
-      set +x
-      echo "ERROR: You must delete the following NS record/s from the authoritative DNS account"
-      echo "$NS_SEARCH_RESULT" | grep 'nameserver'
-      echo "You must also delete the hosted zone ${DOMAIN}. from aws route 53"
-      exit 1
-    fi
+if ! (echo "$NS_SEARCH_RESULT" | grep "server can't find"); then
+  HOSTED_ZONE_FOUND=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Name==\`${DOMAIN}.\`]" | wc -l | awk '{print $1}')
+  if [[ $HOSTED_ZONE_FOUND -eq 0 ]]; then
+    set +x
+    echo "ERROR: You must delete the following NS record/s from the authoritative DNS account"
+    echo "$NS_SEARCH_RESULT" | grep 'nameserver'
+    exit 1
   fi
-done
+
+  HOSTED_ZONE_ID=$(aws --output text route53 list-hosted-zones --query "HostedZones[?Name==\`${DOMAIN}.\`].Id" | awk '{print $1}')
+  CNAME_RECORD_FOUND=$(aws --output text route53 list-resource-record-sets --hosted-zone-id ${HOSTED_ZONE_ID} --query 'ResourceRecordSets[?Type==`CNAME`]' | wc -l | awk '{print $1}')
+  if [[ $CNAME_RECORD_FOUND -eq 0 ]]; then
+    set +x
+    echo "ERROR: You must delete the following NS record/s from the authoritative DNS account"
+    echo "$NS_SEARCH_RESULT" | grep 'nameserver'
+    echo "You must also delete the hosted zone ${DOMAIN}. from aws route 53"
+    exit 1
+  fi
+fi
