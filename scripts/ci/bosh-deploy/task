@@ -6,14 +6,17 @@ BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 
-echo "bosh -n -t ${BOSH_TARGET} -u ${BOSH_USER} -p REDACTED -d ${BOSH_MANIFEST} deploy --redact-diff"
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --user=${BOSH_USER} --password=[REDACTED] --ca-cert=${BOSH_CA_CERT} deploy ${BOSH_MANIFEST}"
 bosh \
   -n \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  -d "${BOSH_MANIFEST}" \
+  -d "${DEPLOYMENT_NAME}" \
+  -e "${BOSH_TARGET}" \
+  --user="${BOSH_USER}" \
+  --password="${BOSH_PASSWORD}" \
+  --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  --redact-diff
+  "${BOSH_MANIFEST}"
 set -x

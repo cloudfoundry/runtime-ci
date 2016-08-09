@@ -262,7 +262,7 @@ jobs:
     input_mapping:
       env-repo: hermione-bbl-configuration
   - task: bosh-deploy-cf
-    file: runtime-ci/scripts/ci/gosh-deploy/task.yml
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
       manifest: hermione-deployment-configuration-develop
     params:
