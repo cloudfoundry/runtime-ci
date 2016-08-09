@@ -436,7 +436,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [resources/build-metadata-resource/Dockerfile]
+    paths: [resources/build-metadata-resource/*]
 
 - name: runtime-ci
   type: git
