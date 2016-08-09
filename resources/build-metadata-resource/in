@@ -7,4 +7,4 @@ echo "$BUILD_NAME" > build-name
 echo "$BUILD_JOB_NAME" > build-job-name
 echo "$BUILD_PIPELINE_NAME" > build-pipeline-name
 echo "$ATC_EXTERNAL_URL" > atc-external-url
-echo "[]"
+echo '{"version": {}, "metadata": []}'
