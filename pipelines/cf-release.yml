@@ -732,7 +732,7 @@ jobs:
           input_mapping:
             target-file-dir: bosh-lite-target-file
       - do:
-        - get: acceptance-test-metadata
+        - put: acceptance-test-metadata
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
@@ -1135,7 +1135,7 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
-      - get: acceptance-test-metadata
+      - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
@@ -1571,7 +1571,7 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
-      - get: acceptance-test-metadata
+      - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
