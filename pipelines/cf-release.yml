@@ -27,6 +27,13 @@ groups:
   - a1-runtime-smokes
   - a1-loggregator-smokes
 
+resource_types:
+- name: build-metadata-resource
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/build-metadata-resource
+    tag: latest
+
 resources:
 - name: periodically
   type: time
@@ -322,6 +329,9 @@ resources:
     password: {{minimal_bosh_password}}
     deployment: cf
     ignore_ssl: true
+
+- name: acceptance-test-metadata
+  type: build-metadata-resource
 
 - name: runtime-ci
   type: git
@@ -722,6 +732,7 @@ jobs:
           input_mapping:
             target-file-dir: bosh-lite-target-file
       - do:
+        - get: acceptance-test-metadata
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
@@ -1124,6 +1135,7 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
+      - get: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
@@ -1559,6 +1571,7 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
+      - get: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
