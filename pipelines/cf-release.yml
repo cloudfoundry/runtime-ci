@@ -732,7 +732,6 @@ jobs:
           input_mapping:
             target-file-dir: bosh-lite-target-file
       - do:
-        - put: acceptance-test-metadata
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
@@ -751,13 +750,6 @@ jobs:
             ERRAND_NAME: diego-cats
           input_mapping:
             target-file-dir: bosh-lite-target-file
-    - task: write-build-url
-      file: runtime-ci/scripts/ci/write-build-url/task.yml
-      output_mapping:
-        build_url: bosh-lite
-    - put: bosh-lite-build-url
-      params:
-        file: bosh-lite/build_url
 - name: generate-minimal-manifest-and-deploy
   public: true
   serial: true
@@ -1135,7 +1127,6 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
-      - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
@@ -1150,13 +1141,6 @@ jobs:
         output_mapping:
           username: bosh-username
           password: bosh-password
-    - task: write-build-url
-      file: runtime-ci/scripts/ci/write-build-url/task.yml
-      output_mapping:
-        build_url: vsphere
-    - put: vsphere-build-url
-      params:
-        file: vsphere/build_url
 
 - name: deploy-aws
   public: true
@@ -1571,7 +1555,6 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
     - aggregate:
-      - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
         output_mapping:
@@ -1586,13 +1569,6 @@ jobs:
         output_mapping:
           username: bosh-username
           password: bosh-password
-    - task: write-build-url
-      file: runtime-ci/scripts/ci/write-build-url/task.yml
-      output_mapping:
-        build_url: aws
-    - put: aws-build-url
-      params:
-        file: aws/build_url
 
 - name: rc
   public: true
