@@ -688,10 +688,6 @@ jobs:
       - get: cf-bosh-lite-diego-manifest
         trigger: true
         passed: [ bosh-lite-smoke-tests ]
-      - get: diego-cf-compatibility
-      - get: diego-release-master
-        params:
-          submodules: none
     - aggregate:
       - do: # enable docker
         - task: write-target-file-api
@@ -1115,10 +1111,6 @@ jobs:
         passed: [vsphere-smoke-tests]
         params:
           tarball: false
-      - get: diego-cf-compatibility
-      - get: diego-release-master
-        params:
-          submodules: none
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -1547,10 +1539,6 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
-      - get: diego-cf-compatibility
-      - get: diego-release-master
-        params:
-          submodules: none
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
