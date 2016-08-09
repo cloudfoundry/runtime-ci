@@ -6,8 +6,16 @@ image_resource:
   source:
     repository: relintdockerhubpushbot/write-build-url
 
+inputs:
+- name: runtime-ci
+- name: build-id
+- name: build-name
+- name: build-job-name
+- name: build-pipeline-name
+- name: atc-external-url
+
 outputs:
-  - name: build_url
+- name: build_url
 
 run:
   path: runtime-ci/scripts/ci/write-build-url/task
