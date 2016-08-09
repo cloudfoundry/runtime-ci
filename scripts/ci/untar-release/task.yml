@@ -15,3 +15,6 @@ outputs:
 
 run:
   path: runtime-ci/scripts/ci/untar-release/task
+
+params:
+  RELEASE_TARBALL_PATH:
