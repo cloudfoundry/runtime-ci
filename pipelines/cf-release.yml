@@ -764,6 +764,17 @@ jobs:
       - get: cf-release-tarball
         passed: [create-release]
         trigger: true
+      - get: diego-release-master
+        params:
+          submodules: none
+      - get: garden-linux-release-tarball
+        trigger: true
+      - get: etcd-release-tarball
+        trigger: true
+      - get: cflinuxfs2-rootfs-release-tarball
+        trigger: true
+      - get: diego-final-releases
+        trigger: true
       - get: cf-release
         resource: cf-release-develop
         passed: [create-release]
@@ -781,6 +792,11 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
+          - diego-final-releases/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-release-tarball/*.tgz
+
 - name: minimal-acceptance-tests
   public: true
   serial_groups:

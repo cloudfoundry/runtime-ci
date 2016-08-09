@@ -6,6 +6,7 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
+    openssh-client \
     wget
 
 RUN \

@@ -12,6 +12,19 @@ OUTPUT_DIR="${root_dir}/${OUTPUT_DIR:?"OUTPUT_DIR must be provided"}"
 STEMCELL_VERSION="$(cat aws-stemcell/version)"
 echo "REPLACE_WITH_BOSH_STEMCELL_VERSION: '${STEMCELL_VERSION}'" >> deployments/manifest_config.yml
 
+ssh-keygen -N '' -f ssh-proxy-host-key.pem
+ssh-keygen -lf ssh-proxy-host-key.pem.pub | cut -d ' ' -f2 > ssh-proxy-host-key-fingerprint
+
+cat <<EOF | sed -E '2,$s/^(.)/  \1/' >> deployments/manifest_config.yml
+REPLACE_WITH_SSH_HOST_KEY_FINGERPRINT: $(cat ssh-proxy-host-key-fingerprint)
+EOF
+
+cat <<EOF | sed -E '2,$s/^(.)/  \1/' >> deployments/manifest_config.yml
+REPLACE_WITH_SSH_HOST_KEY: |
+$(cat ssh-proxy-host-key.pem)
+EOF
+
+
 ruby \
   "${RUNTIME_CI_DIR}/scripts/ci/template_the_manifest.rb" \
   "cf-release/example_manifests/minimal-aws.yml" \
