@@ -249,6 +249,7 @@ jobs:
       repository: updated-repo
 
 - name: deploy-releases
+  public: true
   plan:
   - aggregate:
     - get: runtime-ci
