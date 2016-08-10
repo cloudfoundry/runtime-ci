@@ -576,6 +576,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite-director-version
+        passed: [ deploy-bosh-lite ]
       - get: bosh-lite-stemcell
         passed: [deploy-bosh-lite]
         params:
@@ -641,6 +643,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: bosh-lite-director-version
+        passed: [ bosh-lite-smoke-tests ]
       - get: bosh-lite-stemcell
         passed: [bosh-lite-smoke-tests]
         params:
@@ -965,6 +969,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: vsphere-director-version
+        passed: [ deploy-vsphere ]
       - get: runtime-ci
       - get: manifest
         resource: cf-vsphere-manifest
@@ -1034,6 +1040,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: vsphere-director-version
+        passed: [ vsphere-smoke-tests ]
       - get: cf-vsphere-manifest
         passed: [ vsphere-smoke-tests ]
         trigger: true
@@ -1240,6 +1248,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: aws-director-version
+        passed: [ deploy-aws ]
       - get: manifest
         resource: cf-a1-manifest
         passed: [ deploy-aws ]
@@ -1513,6 +1523,8 @@ jobs:
   - timeout: *timeout
     do:
     - aggregate:
+      - get: aws-director-version
+        passed: [ aws-smoke-tests ]
       - get: cf-a1-manifest
         trigger: true
         passed: [ aws-smoke-tests ]
@@ -1687,11 +1699,17 @@ jobs:
           repository: cf-release
       - do:
         - get: vsphere-director-version
+          passed: [ vsphere-acceptance-tests ]
         - get: aws-director-version
+          passed: [ aws-acceptance-tests ]
         - get: bosh-lite-director-version
+          passed: [ bosh-lite-acceptance-tests ]
         - get: vsphere-build-url
+          passed: [ vsphere-acceptance-tests ]
         - get: aws-build-url
+          passed: [ aws-acceptance-tests ]
         - get: bosh-lite-build-url
+          passed: [ bosh-lite-acceptance-tests ]
         - task: record-compatible-versions
           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
         - put: diego-cf-compatibility
