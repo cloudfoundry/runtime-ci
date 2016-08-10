@@ -2,4 +2,10 @@
 
 set -uex
 
-tar xzfv release-tarball/$RELEASE_TARBALL_PATH -C untarred-release/
+scratch_dir=/tmp/release-scratch
+
+mkdir -p $scratch_dir
+tar xzfv release-tarball/$RELEASE_TARBALL_PATH -C $scratch_dir
+
+shopt -s dotglob
+mv $scratch_dir/*/* untarred-release/
