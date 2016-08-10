@@ -563,6 +563,10 @@ jobs:
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-hagrid-diego
+      - task: delete-deployment-nats
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: nats
 
 - name: verify-nameserver-has-record
   public: true
