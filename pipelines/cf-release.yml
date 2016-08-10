@@ -741,7 +741,6 @@ jobs:
           input_mapping:
             target-file-dir: bosh-lite-target-file
       - do:
-        - put: acceptance-test-metadata
         - task: create-bosh-lite-creds
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
@@ -760,6 +759,7 @@ jobs:
             ERRAND_NAME: diego-cats
           input_mapping:
             target-file-dir: bosh-lite-target-file
+    - put: acceptance-test-metadata
     - task: write-build-url
       file: runtime-ci/scripts/ci/write-build-url/task.yml
       output_mapping:
