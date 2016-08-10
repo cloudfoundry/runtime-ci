@@ -914,14 +914,12 @@ jobs:
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         tags: [vsphere]
         params:
-          <<: *bosh-target-cat
           DEPLOYMENT_NAME: cf-cat
       - task: delete-deployment-diego
         privileged: true
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
         tags: [vsphere]
         params:
-          <<: *bosh-target-cat
           DEPLOYMENT_NAME: cf-cat-diego
     - put: vsphere-deployment
       tags: [vsphere]
@@ -940,20 +938,6 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
-    - aggregate:
-      - task: write-target-file-bosh-director
-        file: runtime-ci/scripts/ci/write-target-file/task.yml
-        tags: [vsphere]
-        output_mapping:
-          target-file-dir: target
-        params:
-          TARGET: https://bosh.cat.wild.cf-app.com
-      - task: write-creds-bosh
-        file: runtime-ci/scripts/ci/write-creds/task.yml
-        tags: [vsphere]
-        params:
-          USERNAME: {{vsphere_bosh_username}}
-          PASSWORD: {{vsphere_bosh_password}}
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       tags: [vsphere]
