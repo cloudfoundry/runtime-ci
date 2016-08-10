@@ -156,6 +156,13 @@ resources:
     private_key: {{cf_release_private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
+- name: diego-release-github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: diego-release
+    access_token: {{release_integration_download_bot_access_token}}
+
 - name: diego-release-master
   type: git
   source:
@@ -474,6 +481,7 @@ jobs:
         trigger: true
       - get: diego-release-tarball
         trigger: true
+        passed: [ generate-bosh-lite-manifests ]
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
@@ -493,10 +501,6 @@ jobs:
         passed: [generate-bosh-lite-manifests]
         params:
           submodules: none
-      - get: diego-release-master
-        params:
-          submodules: none
-        passed: [ generate-bosh-lite-manifests ]
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -582,10 +586,6 @@ jobs:
         passed: [deploy-bosh-lite]
         params:
           submodules: none
-      - get: diego-release-master
-        passed: [ deploy-bosh-lite ]
-        params:
-          submodules: none
       - get: bosh-lite
         passed:
         - deploy-bosh-lite
@@ -649,10 +649,6 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-smoke-tests]
-        params:
-          submodules: none
-      - get: diego-release-master
-        passed: [ bosh-lite-smoke-tests ]
         params:
           submodules: none
       - get: runtime-ci
@@ -887,14 +883,10 @@ jobs:
         passed: [ generate-vsphere-manifests ]
         trigger: true
         tags: [vsphere]
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-        tags: [vsphere]
-        passed: [ generate-vsphere-manifests ]
       - get: diego-release-tarball
         tags: [vsphere]
         trigger: true
+        passed: [generate-vsphere-manifests]
       - get: garden-linux-release-tarball
         trigger: true
         tags: [vsphere]
@@ -1016,11 +1008,6 @@ jobs:
           tarball: false
         passed: [deploy-vsphere]
         trigger: true
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-        tags: [vsphere]
-        passed: [deploy-vsphere]
       - get: diego-release-tarball
         trigger: true
         tags: [vsphere]
@@ -1090,11 +1077,6 @@ jobs:
           tarball: false
         passed: [vsphere-smoke-tests]
         trigger: true
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-        tags: [vsphere]
-        passed: [vsphere-smoke-tests]
       - get: diego-release-tarball
         trigger: true
         tags: [vsphere]
@@ -1209,12 +1191,9 @@ jobs:
       - get: cf-a1-diego-manifest
         passed: [ generate-aws-manifests ]
         trigger: true
-      - get: diego-release
-        resource: diego-release-master
-        params: {submodules: none}
-        passed: [ generate-aws-manifests ]
       - get: diego-release-tarball
         trigger: true
+        passed: [ generate-aws-manifests ]
       - get: garden-linux-release-tarball
         trigger: true
       - get: etcd-release-tarball
@@ -1303,10 +1282,6 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: diego-release-master
-        passed: [ deploy-aws ]
-        params:
-          submodules: none
       - get: garden-linux-release-tarball
         trigger: true
         passed: [ deploy-aws ]
@@ -1337,10 +1312,10 @@ jobs:
   plan:
   - aggregate:
     - get: a1-env
-    - get: diego-release-master
-      trigger: true
+    - get: diego-release-github-release
       params:
-        submodules: none
+        globs: [ none ]
+        include_source_tarball: true
     - get: runtime-ci
     - get: cf-release-develop
       trigger: true
@@ -1350,6 +1325,10 @@ jobs:
     - get: cf-release-tarball
       trigger: true
       passed: [ create-release ]
+    - get: diego-release-tarball
+      trigger: true
+      params:
+        tarball: false
   - task: create-cf-release-manifest
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
     input_mapping:
@@ -1357,17 +1336,25 @@ jobs:
       cf-stubs: a1-env
     params:
       INFRASTRUCTURE: aws
+  - task: untar-diego-release
+    file: runtime-ci/scripts/ci/untar-release/task.yml
+    input_mapping:
+      release-tarball: diego-release-github-release
+    output_mapping:
+      untarred-release: diego-release
+    params:
+      RELEASE_TARBALL_PATH: source.tar.gz
   - task: create-diego-iaas-settings
     file: runtime-ci/scripts/ci/create-diego-iaas-settings/task.yml
     input_mapping:
       deployments: a1-env
-      diego-release: diego-release-master
+      diego-release: diego-release
     params:
       INFRASTRUCTURE: aws
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
-      diego-release: diego-release-master
+      diego-release: diego-release
       cf-manifest: manifest
       property-overrides: a1-env
       instance-count-overrides: a1-env
@@ -1391,10 +1378,11 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: diego-release-master
-      trigger: true
+    - get: diego-release-github-release
+      tags: [vsphere]
       params:
-        submodules: none
+        globs: [ none ]
+        include_source_tarball: true
     - get: runtime-ci
     - get: cf-release-develop
       trigger: true
@@ -1404,6 +1392,11 @@ jobs:
     - get: cf-release-tarball
       trigger: true
       passed: [ create-release ]
+    - get: diego-release-tarball
+      tags: [vsphere]
+      trigger: true
+      params:
+        tarball: false
   - task: create-bosh-lite-stub
     file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
     params:
@@ -1417,22 +1410,31 @@ jobs:
     params:
       INFRASTRUCTURE: bosh-lite
       STUBS_PATH: stub.yml
+  - task: untar-diego-release
+    tags: [vsphere]
+    file: runtime-ci/scripts/ci/untar-release/task.yml
+    input_mapping:
+      release-tarball: diego-release-github-release
+    output_mapping:
+      untarred-release: diego-release
+    params:
+      RELEASE_TARBALL_PATH: source.tar.gz
   - task: extend-bosh-lite-diego-stub
     file: runtime-ci/scripts/ci/extend-bosh-lite-diego-stub/task.yml
     input_mapping:
-      bosh-lite-stub: diego-release-master
+      bosh-lite-stub: diego-release
     params:
       BOSH_LITE_STUB_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
       EXTENDED_BOSH_LITE_STUB_PATH: property-overrides.yml
   - task: create-diego-manifest
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
-      diego-release: diego-release-master
+      diego-release: diego-release
       cf-manifest: manifest
       property-overrides: extended-bosh-lite-stub
-      instance-count-overrides: diego-release-master
-      release-versions: diego-release-master
-      iaas-settings: diego-release-master
+      instance-count-overrides: diego-release
+      release-versions: diego-release
+      iaas-settings: diego-release
     params:
       PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
@@ -1453,6 +1455,11 @@ jobs:
   - aggregate:
     - get: cat-env
       tags: [vsphere]
+    - get: diego-release-github-release
+      tags: [vsphere]
+      params:
+        globs: [ none ]
+        include_source_tarball: true
     - get: runtime-ci
       tags: [vsphere]
     - get: cf-release-develop
@@ -1465,11 +1472,11 @@ jobs:
       tags: [vsphere]
       trigger: true
       passed: [ create-release ]
-    - get: diego-release-master
+    - get: diego-release-tarball
       tags: [vsphere]
       trigger: true
       params:
-        submodules: none
+        tarball: false
   - task: create-cf-release-manifest
     tags: [vsphere]
     file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
@@ -1478,11 +1485,20 @@ jobs:
       cf-stubs: cat-env
     params:
       INFRASTRUCTURE: vsphere
+  - task: untar-diego-release
+    tags: [vsphere]
+    file: runtime-ci/scripts/ci/untar-release/task.yml
+    input_mapping:
+      release-tarball: diego-release-github-release
+    output_mapping:
+      untarred-release: diego-release
+    params:
+      RELEASE_TARBALL_PATH: source.tar.gz
   - task: create-diego-manifest
     tags: [vsphere]
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
-      diego-release: diego-release-master
+      diego-release: diego-release
       cf-manifest: manifest
       iaas-settings: cat-env
       property-overrides: cat-env
@@ -1536,10 +1552,6 @@ jobs:
       - get: diego-release-tarball
         passed: [ aws-smoke-tests ]
         trigger: true
-      - get: diego-release-master
-        passed: [ aws-smoke-tests ]
-        params:
-          submodules: none
       - get: garden-linux-release-tarball
         trigger: true
         passed: [ aws-smoke-tests ]
@@ -1661,12 +1673,6 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: diego-release-master
-        passed:
-        - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
-        - vsphere-acceptance-tests
-        trigger: true
       - get: garden-linux-release-tarball
         passed:
         - aws-acceptance-tests
