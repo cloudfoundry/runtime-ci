@@ -2,4 +2,4 @@
 
 set -uex
 
-tar xzfv "release-tarball/$RELEASE_TARBALL_PATH" untarred-release/
+tar xzfv "release-tarball/$RELEASE_TARBALL_PATH" -C untarred-release/
