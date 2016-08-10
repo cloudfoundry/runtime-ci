@@ -834,7 +834,7 @@ jobs:
         SKIP_SSL_VALIDATION: true
         USE_HTTP: false
         NODES: 2
-        BACKEND: dea
+        BACKEND: diego
         INCLUDE_DIEGO_SSH: false
         INCLUDE_DIEGO_DOCKER: false
         INCLUDE_BACKEND_COMPATIBILITY: false
