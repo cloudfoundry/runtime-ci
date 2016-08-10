@@ -1695,12 +1695,18 @@ jobs:
       - put: cf-release-release-candidate
         params:
           repository: cf-release
-#       - do:
-#         - task: record-compatible-versions
-#           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
-#         - put: diego-cf-compatibility
-#           params:
-#             repository: updated-diego-cf-compatibility
+       - do:
+         - get: vsphere-director-version
+         - get: aws-director-version
+         - get: bosh-lite-director-version
+         - get: vsphere-build-url
+         - get: aws-build-url
+         - get: bosh-lite-build-url
+         - task: record-compatible-versions
+           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
+         - put: diego-cf-compatibility
+           params:
+             repository: updated-diego-cf-compatibility
 
 - name: a1-runtime-smokes
   public: true
