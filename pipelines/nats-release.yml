@@ -449,6 +449,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         MANIFEST_FILE: extended_deployment.yml
+        CA_CERT_FILE: ca-cert
     - task: bosh-deploy-diego
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
@@ -458,6 +459,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         MANIFEST_FILE: diego-deployment.yml
+        CA_CERT_FILE: ca-cert
 - name: cats-tests
   public: true
   serial_groups: [nats-deploy]
