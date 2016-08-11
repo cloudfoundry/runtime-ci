@@ -6,6 +6,7 @@ groups:
     - deploy-cf-with-updated-nats
     - smoke-tests
     - setup-infrastructure
+    - destroy-infrastructure
     - upload-stemcell
     - cats-tests
     - create-final-release
@@ -153,6 +154,30 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
       DOMAIN: hagrid.cf-app.com
 
+- name: destroy-infrastructure
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: hagrid-env-infrastructure
+    - get: runtime-ci
+  - task: unbind-elb-from-r53
+    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+    params:
+      AWS_ACCESS_KEY_ID: {hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {hagrid_aws_secret_access_key}}
+      DOMAIN: hagrid.cf-app.com
+  - task: destroy-infrastructure
+    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+  - put: hagrid-env-infrastructure
+    params:
+      repository: updated-env-repo
+
 - name: upload-stemcell
   public: true
   build_logs_to_retain: 100
@@ -234,7 +259,7 @@ jobs:
 
 - name: smoke-tests
   public: true
-  #serial_groups: [nats-deploy]
+  serial_groups: [nats-deploy]
   build_logs_to_retain: 100
   plan:
   - aggregate:
