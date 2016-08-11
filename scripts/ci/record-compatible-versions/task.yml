@@ -12,8 +12,7 @@ inputs:
   - name: aws-stemcell
   - name: bosh-lite-stemcell
   - name: vsphere-stemcell
-  - name: diego-final-releases
-  - name: diego-release-master
+  - name: diego-release-tarball
   - name: garden-linux-release-tarball
   - name: etcd-release-tarball
   - name: cflinuxfs2-rootfs-release-tarball

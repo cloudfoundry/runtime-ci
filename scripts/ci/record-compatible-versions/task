@@ -6,7 +6,6 @@ set -exu
 current_date=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
 
 cf_release_sha=$(cd cf-release; git rev-parse HEAD)
-diego_release_sha=$(cd diego-release-master; git rev-parse HEAD)
 bosh_lite_sha=$(cd bosh-lite; git rev-parse HEAD)
 
 tar xzf aws-stemcell/stemcell.tgz
@@ -30,18 +29,18 @@ vsphere_stemcell="${vsphere_stemcell_name}/${vsphere_stemcell_version}"
 vsphere_director_version=$(cat vsphere-director-version/director_version)
 vsphere_build_url=$(cat vsphere-build-url/build_url)
 
-diego_release_version=$(cd diego-final-releases; cat version)
+diego_release_version=$(cd diego-release-tarball; cat version)
 garden_linux_release_version=$(cd garden-linux-release-tarball; cat version)
 etcd_release_version=$(cd etcd-release-tarball; cat version)
 cflinuxfs2_release_version=$(cd cflinuxfs2-rootfs-release-tarball; cat version)
 
-new_row="${cf_release_sha},${diego_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${cflinuxfs2_release_version},${bosh_lite_sha},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${aws_director_version},${bosh_lite_director_version},${vsphere_director_version},${aws_build_url},${bosh_lite_build_url},${vsphere_build_url}"
+new_row="${cf_release_sha},${diego_release_version},${garden_linux_release_version},${etcd_release_version},${cflinuxfs2_release_version},${bosh_lite_sha},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${aws_director_version},${bosh_lite_director_version},${vsphere_director_version},${aws_build_url},${bosh_lite_build_url},${vsphere_build_url}"
 if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
   echo "No changes to be made".
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,cf-release-commit-sha,diego-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,bosh_lite_commit_sha,aws_stemcell,bosh_lite_stemcell,vsphere_stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
+      echo "date,cf-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,bosh_lite_commit_sha,aws_stemcell,bosh_lite_stemcell,vsphere_stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"
