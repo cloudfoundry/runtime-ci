@@ -167,8 +167,8 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-infrastructure
     params:
-      AWS_ACCESS_KEY_ID: {hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {hagrid_aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
       DOMAIN: hagrid.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
