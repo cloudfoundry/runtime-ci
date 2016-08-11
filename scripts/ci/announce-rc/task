@@ -34,6 +34,13 @@ Does this cf-release SHA look good for the infrastructure team?  Any bugs, regre
 - **Comments**:
 
 ----
+@Amit-PivotalLabs, @valeriap:
+Does this cf-release SHA look good for the postgres-release team?  Any bugs, regressions, or incomplete features of concern?
+- **Approval**: :+1: / :-1:
+- **Decider**:
+- **Comments**:
+
+----
 @shalako, @crhino:
 Does this cf-release SHA look good for the routing team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
@@ -48,7 +55,7 @@ Does this cf-release SHA look good for the identity team?  Any bugs, regressions
 - **Comments**:
 
 ----
-@Jim-Campbell, @wfernandes, @jasonkeene:
+@Jim-Campbell, @wfernandes:
 Does this cf-release SHA look good for the Loggregator team? Do the a1 logging metrics look nominal?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
@@ -62,7 +69,7 @@ Does this cf-release SHA look good for the CAPI team?  Any bugs, regressions, or
 - **Comments**:
 
 ----
-@Dannyzen, @RochesterinNYC:
+@sclevine, @RochesterinNYC:
 Does this cf-release SHA look good for the Buildpacks and Stacks team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
