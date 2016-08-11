@@ -1646,21 +1646,15 @@ jobs:
       - get: bosh-lite-stemcell
         passed:
         - bosh-lite-acceptance-tests
-        params:
-          tarball: false
         trigger: true
       - get: vsphere-stemcell
         passed:
         - vsphere-acceptance-tests
-        params:
-          tarball: false
         trigger: true
       - get: aws-stemcell
         passed:
         - aws-acceptance-tests
         trigger: true
-        params:
-          tarball: true
       - get: diego-release-tarball
         passed:
         - aws-acceptance-tests
@@ -1693,23 +1687,23 @@ jobs:
         - vsphere-acceptance-tests
         params:
           tarball: false
+      - get: vsphere-director-version
+        passed: [ vsphere-acceptance-tests ]
+      - get: aws-director-version
+        passed: [ aws-acceptance-tests ]
+      - get: bosh-lite-director-version
+        passed: [ bosh-lite-acceptance-tests ]
+      - get: vsphere-build-url
+        passed: [ vsphere-acceptance-tests ]
+      - get: aws-build-url
+        passed: [ aws-acceptance-tests ]
+      - get: bosh-lite-build-url
+        passed: [ bosh-lite-acceptance-tests ]
     - aggregate:
       - put: cf-release-release-candidate
         params:
           repository: cf-release
       - do:
-        - get: vsphere-director-version
-          passed: [ vsphere-acceptance-tests ]
-        - get: aws-director-version
-          passed: [ aws-acceptance-tests ]
-        - get: bosh-lite-director-version
-          passed: [ bosh-lite-acceptance-tests ]
-        - get: vsphere-build-url
-          passed: [ vsphere-acceptance-tests ]
-        - get: aws-build-url
-          passed: [ aws-acceptance-tests ]
-        - get: bosh-lite-build-url
-          passed: [ bosh-lite-acceptance-tests ]
         - task: record-compatible-versions
           file: runtime-ci/scripts/ci/record-compatible-versions/task.yml
         - put: diego-cf-compatibility
