@@ -6,43 +6,90 @@ release_notes_body="The cf-release ${tag} was released on $(date +'%B %d, %Y').
 
 **Contents:**
 * <a href='#cc-and-service-broker-apis'>CC and Service Broker APIs</a>
-* <a href='#dea-warden-hm9000-runtime'>DEA-Warden-HM9000 Runtime</a>
-* <a href='#buildpacks-and-stacks'>Buildpacks and Stacks</a>
 * <a href='#identity'>Identity</a>
 * <a href='#routing'>Routing</a>
 * <a href='#loggregator'>Loggregator</a>
+* <a href='#buildpacks-and-stacks'>Buildpacks and Stacks</a>
+* <a href='#dea-warden-hm9000-runtime'>DEA-Warden-HM9000 Runtime</a>
 * <a href='#internal-components'>Internal Components</a>
-* <a href='#job-spec-changes'>Job Spec Changes</a>
-* <a href='#recommended-bosh-stemcell-versions'>Recommended BOSH Stemcell Versions</a>
 * <a href='#recommended-diego-release-version'>Recommended diego-release Version</a>
 * <a href='#recommended-garden-linux-release-version'>Recommended garden-linux-release Version</a>
 * <a href='#recommended-etcd-release-version'>Recommended etcd-release Version</a>
 * <a href='#recommended-cflinuxfs2-rootfs-release-version'>Recommended cflinuxfs2-rootfs-release Version</a>
+* <a href='#job-spec-changes'>Job Spec Changes</a>
+* <a href='#recommended-bosh-stemcell-versions'>Recommended BOSH Stemcell Versions</a>
 
 ## <a name='cc-and-service-broker-apis'></a>CC and Service Broker APIs
 
-## <a name='dea-warden-hm9000-runtime'></a>DEA-Warden-HM9000 Runtime
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
 
-## <a name='buildpacks-and-stacks'></a>Buildpacks and Stacks
+* direct team email: cf-capi-eng@pivotal.io
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/capi/
+* GitHub issues: https://github.com/cloudfoundry/capi-release/issues
 
 ## <a name='identity'></a>Identity
 
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
+
+* direct team email: cf-identity-eng@pivotal.io
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/uaa/
+* GitHub issues: https://github.com/cloudfoundry/uaa-release/issues
+
 ## <a name='routing'></a>Routing
+
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
+
+* direct team email: cf-routing-eng@pivotal.io
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/routing/
+* GitHub issues: https://github.com/cloudfoundry-incubator/routing-release/issues
 
 ## <a name='loggregator'></a>Loggregator
 
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
+
+* direct team email: cf-loggregator@pivotal.io
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/loggregator/
+* GitHub issues: https://github.com/cloudfoundry/loggregator/issues
+
+## <a name='buildpacks-and-stacks'></a>Buildpacks and Stacks
+
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
+
+* direct team email: cf-buildpacks-eng@pivotal.io
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/buildpacks/
+* GitHub issues: https://github.com/cloudfoundry/buildpack-releases/issues
+
+## <a name='dea-warden-hm9000-runtime'></a>DEA-Warden-HM9000 Runtime
+
+This section will be updated soon.  If this section is not yet up-to-date, please reach out for information:
+
+* direct team email: runtime-og@cloudfoundry.org
+* CF Dev mailing list: https://lists.cloudfoundry.org/archives/list/cf-dev@lists.cloudfoundry.org/
+* Slack channel: https://cloudfoundry.slack.com/messages/runtime_og/
+* GitHub issues: https://github.com/cloudfoundry/dea-hm-workspace/issues
+
 ## <a name='internal-components'></a>Internal Components
 
-## <a name='job-spec-changes'></a>Job Spec Changes
+#### `postgres-release` (includes `postgres` job)
 
-## <a name='recommended-bosh-stemcell-versions'></a>Recommended BOSH Stemcell Versions
+* Bumped from vXX to [vXX](https://github.com/cloudfoundry/postgres-release/releases/tag/vXX). Functional changes:
 
-* AWS:
-* vSphere:
-* OpenStack:
-* BOSH-Lite:
+#### `etcd-release` (includes `etcd` and `etcd_metrics_server` jobs)
 
-These are soft recommendations; several different versions of the stemcells are likely to work fine with this version of cf-release and the corresponding versions of diego-release, garden-linux-release, and etcd-release.
+* Bumped from vXX to [vXX](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vXX). Functional changes:
+
+#### `consul-release` (includes `consul_agent` job)
+
+* Bumped from vXX to [vXX](https://github.com/cloudfoundry-incubator/consul-release/releases/tag/vXX). Functional changes:
+
+#### `nats-release` (includes `nats` and `nats_stream_forwarder` jobs)
+
+* Bumped from vXX to [vXX](https://github.com/cloudfoundry/nats-release/releases/tags/vXX). Functional changes:
 
 ## <a name='recommended-diego-release-version'></a>Recommended diego-release Version
 
@@ -67,6 +114,17 @@ This is a soft recommendation; several different versions of the etcd-release ma
 * cflinuxfs2-rootfs-release Version:
 
 This is a soft recommendation; several different versions of the cflinuxfs2-rootfs-release may work fine with this version of cf-release and the aforementioned version of diego-release.
+
+## <a name='job-spec-changes'></a>Job Spec Changes
+
+## <a name='recommended-bosh-stemcell-versions'></a>Recommended BOSH Stemcell Versions
+
+* real IaaS:
+* BOSH-Lite:
+
+Note: For AWS you should use the [Xen-HVM](http://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent) stemcells rather than Xen.
+
+These are soft recommendations; several different versions of the stemcells are likely to work fine with this version of cf-release and the corresponding versions of the additional releases listed below.
 "
 
 echo "Creating release notes"
