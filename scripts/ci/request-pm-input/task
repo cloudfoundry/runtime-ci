@@ -8,30 +8,30 @@ release_version=v$(cat cf-final-bosh-release/version)
 
 bp=1042066 # Buildpacks and Stacks
 capi=966314 # CAPI
+dea=900612 # DEAs & HM9000
 diego=1003146 # Diego
 id=997278 # Identity
-lamb=993188 # LAMB
+log=993188 # Loggregator
 infr=1488988 # Infrastructure
+pg=1783931 # postgres-release
 relint=1382120 # Release Integration
-prego=900612 # DEAs & HM9000
 rtg=1358110 # Routing
 
 story_description="
-**Please read these instructions, as they changed on 1 Jul 2016.**
+**Please read these instructions, as they changed on 11 Aug 2016.**
 
 1. Within two business days of the creation of this story, contribute to your section of the release notes for ${release_version} [here](https://github.com/cloudfoundry/cf-release/releases).
 2. Call out important changes with additional emphasis in an 'Important' section that you create or add to at the top of the release notes. These are things like critical CVE info or instructions necessary for an operator to deploy this new release correctly.
-3. If there is nothing critical to note for your section, but there are non-critical items, it's okay to not fully complete your section within two days, but then at minimum the following should be added within two days: \"There are no critical updates for this section; non-critical updates will be provided here in a few days.\"
-4. If there are no functional changes at all, please put \"No functional changes.\"
-5. Also contribute to the 'Job Spec Changes' section, following the guidelines below:
+3. If there are no functional changes at all, please put \"No functional changes.\"
+4. Also contribute to the 'Job Spec Changes' section, following the guidelines below:
     - A typical entry looks something like \"Removed \\\`property.name\\\` property from \\\`job.name\\\` job. \\[details\\]\\(link/to/tracker/story\\)\"
     - Add an entry whenever the release adds a property, removes a property, renames a property, adds a default value, removes a default value, changes a default value, changes the type of a property (e.g. going from integer to boolean), or changes the semantics of a property (i.e. what the property actually does).
     - Do not assume users are using spiff templates.
     - Job spec changes that require action by the user (e.g. new properites with no default) should be called out especially.
-6. If you are the last person to add to the release notes (all other sections are non-blank), Publish your changes, do not save them as Draft. Otherwise, always save as Draft. 
+5. If the release notes have already been published, click \"Update release\" to save your changes. If they are still in draft mode, click \"Save draft\" instead.
 "
 
-for tracker_project_id in $bp $capi $diego $id $lamb $infr $relint $prego $rtg ; do
+for tracker_project_id in $bp $capi $dea $diego $id $log $infr $pg $relint $rtg ; do
     echo "Creating story for project:" $tracker_project_id
     set +x
         curl -s -f "https://www.pivotaltracker.com/services/v5/projects/${tracker_project_id}/stories" \
