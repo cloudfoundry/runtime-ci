@@ -149,13 +149,6 @@ resources:
     private_key: {{cf_release_private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
-- name: cf-release-acceptance-deployed
-  type: git
-  source:
-    branch: acceptance-deployed
-    private_key: {{cf_release_private_key}}
-    uri: git@github.com:cloudfoundry/cf-release.git
-
 - name: diego-release-github-release
   type: github-release
   source:
@@ -1198,9 +1191,6 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
-    - put: cf-release-acceptance-deployed
-      params:
-        repository: cf-release
     - put: a1-diego-deployment
       params:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
