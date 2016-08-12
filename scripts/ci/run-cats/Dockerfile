@@ -24,7 +24,7 @@ RUN \
   mkdir $GOPATH && \
   rm -rf /tmp/*
 
-RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.17.1&source=github-rel" && \
+RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&source=github-rel" && \
   dpkg -i cf.deb
 
 RUN mkdir -p $GOPATH/src/github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats

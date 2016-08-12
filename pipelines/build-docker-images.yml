@@ -452,6 +452,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
+- name: cf-cli
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: cli
+    access_token: {{release_integration_download_bot_access_token}}
+
 # All the docker images
 - name: create-diego-iaas-settings-pipeline-image
   type: docker-image
@@ -1459,6 +1466,8 @@ jobs:
       - get: runtime-ci-run-cats
         trigger: true
         passed: [cats-task-unit-tests]
+      - get: cf-cli
+        trigger: true
     - put: run-cats-pipeline-image
       params:
         build: runtime-ci-run-cats/scripts/ci/run-cats
