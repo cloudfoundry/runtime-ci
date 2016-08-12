@@ -823,10 +823,10 @@ jobs:
         passed: [ generate-minimal-manifest-and-deploy ]
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
-    - task: write-target-file-bosh
+    - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        TARGET: 54.165.111.247
+        TARGET: api.minimal-aws.cf-app.com
     - task: enable-docker-diego
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
