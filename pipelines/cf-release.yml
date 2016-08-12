@@ -823,13 +823,24 @@ jobs:
         passed: [ generate-minimal-manifest-and-deploy ]
         params:
           submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
+    - task: write-target-file-bosh
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: 54.165.111.247
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{minimal_cf_admin_username}}
+        CF_PASSWORD: {{minimal_cf_admin_password}}
     - task: cats-from-cf-release
       file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
     - task: run-cats
       file: runtime-ci/scripts/ci/run-cats/task.yml
       params:
         CF_API: api.minimal-aws.cf-app.com
-        CF_ADMIN_USER: admin
+        CF_ADMIN_USER: {{minimal_cf_admin_username}}
         CF_ADMIN_PASSWORD: {{minimal_cf_admin_password}}
         CF_APPS_DOMAIN: minimal-aws.cf-app.com
         SKIP_SSL_VALIDATION: true
