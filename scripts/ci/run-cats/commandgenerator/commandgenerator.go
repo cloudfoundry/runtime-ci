@@ -74,17 +74,6 @@ func generateSkips(env Environment) (string, error) {
 		skips = append(skips, skipSso)
 	}
 
-	backend, _ := env.GetBackend()
-
-	switch backend {
-	case "diego":
-		skips = append(skips, "NO_DIEGO_SUPPORT")
-	case "dea":
-		skips = append(skips, "NO_DEA_SUPPORT")
-	case "":
-		skips = append(skips, "NO_DEA_SUPPORT|NO_DIEGO_SUPPORT")
-	}
-
 	return "-skip=" + strings.Join(skips, "|"), nil
 }
 

@@ -40,7 +40,7 @@ var _ = Describe("Commandgenerator", func() {
 			Expect(cmd).To(Equal("bin/test"))
 
 			Expect(strings.Join(args, " ")).To(Equal(
-				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT -keepGoing", nodes),
+				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -skip= -keepGoing", nodes),
 			))
 
 			env.GetCatsPathReturns("/path/to/cats")
@@ -112,7 +112,7 @@ var _ = Describe("Commandgenerator", func() {
 						"bin/test",
 					))
 
-					Expect(args).To(ContainElement(ContainSubstring("-skip=SSO|")))
+					Expect(args).To(ContainElement(ContainSubstring("-skip=SSO")))
 				})
 			})
 
@@ -128,58 +128,10 @@ var _ = Describe("Commandgenerator", func() {
 						"bin/test",
 					))
 
-					Expect(args).ToNot(ContainElement(ContainSubstring("-skip=SSO|")))
+					Expect(args).ToNot(ContainElement(ContainSubstring("-skip=SSO")))
 				})
 			})
 
-		})
-
-		Describe("the BACKEND parameter", func() {
-			Context("is set to diego", func() {
-				BeforeEach(func() {
-					env.GetBackendReturns("diego", nil)
-				})
-
-				It("should generate a command that skips NO_DIEGO_SUPPORT", func() {
-					cmd, args, err := commandgenerator.GenerateCmd(env)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cmd).To(Equal(
-						"bin/test",
-					))
-
-					Expect(args).To(ContainElement("-skip=NO_DIEGO_SUPPORT"))
-				})
-
-			})
-
-			Context("is set to dea", func() {
-				BeforeEach(func() {
-					env.GetBackendReturns("dea", nil)
-				})
-
-				It("should generate a command that skips NO_DEA_SUPPORT", func() {
-					cmd, args, err := commandgenerator.GenerateCmd(env)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cmd).To(Equal(
-						"bin/test",
-					))
-					Expect(args).To(ContainElement("-skip=NO_DEA_SUPPORT"))
-				})
-			})
-
-			Context("isn't set", func() {
-				BeforeEach(func() {
-					env.GetBackendReturns("", nil)
-				})
-				It("should generate a command that skips both NO_DIEGO_SUPPORT and NO_DEA_SUPPORT", func() {
-					cmd, args, err := commandgenerator.GenerateCmd(env)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cmd).To(Equal(
-						"bin/test",
-					))
-					Expect(args).To(ContainElement("-skip=NO_DEA_SUPPORT|NO_DIEGO_SUPPORT"))
-				})
-			})
 		})
 	})
 
