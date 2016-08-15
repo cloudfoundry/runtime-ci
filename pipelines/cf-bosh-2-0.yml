@@ -272,6 +272,7 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
       MANIFEST_FILE: cf-deployment.yml
+      DEPLOYMENT_VAR_FILE: deployment-env-vars.yml
 
 - name: hermione-diego-cats
   public: true
