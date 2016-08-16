@@ -9,7 +9,7 @@ export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 set +u
-DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE}"
+DEPLOYMENT_VAR_FILE="manifest/${DEPLOYMENT_VAR_FILE}"
 set -u
 
 if [[ -f $DEPLOYMENT_VAR_FILE ]]; then
