@@ -2,10 +2,10 @@
 set -eux
 
 BOSH_TARGET=$(cat "target/${TARGET_FILE}")
-BOSH_USER=$(cat username/"${USERNAME_FILE}")
+export BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
 set +x
-BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 set +u
