@@ -35,7 +35,7 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
-			os.Unsetenv("SKIP_SSO")
+			os.Unsetenv("INCLUDE_SSO")
 
 			os.Unsetenv("NODES")
 			os.Unsetenv("INCLUDE_DIEGO_SSH")
@@ -64,7 +64,7 @@ var _ = Describe("Environment", func() {
 				os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
 				os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
 				os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
-				os.Setenv("SKIP_SSO", "falsey")
+				os.Setenv("INCLUDE_SSO", "falsey")
 
 				os.Setenv("NODES", "five")
 				os.Setenv("INCLUDE_DIEGO_SSH", "1")
@@ -92,7 +92,7 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'LONG_CURL_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '180 days'"),
 					ContainSubstring("* Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '240 mins'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false' but was set to 'true\n'"),
-					ContainSubstring("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"),
 					ContainSubstring("* Invalid environment variable: 'NODES' must be an integer greater than 0 but was set to 'five'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false' but was set to '1'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false' but was set to '0'"),
@@ -726,12 +726,12 @@ var _ = Describe("Environment", func() {
 
 	Describe("GetIncludeSSO", func() {
 		AfterEach(func() {
-			os.Unsetenv("SKIP_SSO")
+			os.Unsetenv("INCLUDE_SSO")
 		})
 
 		It("returns a boolean when set properly", func() {
 			env := environment.New()
-			os.Setenv("SKIP_SSO", "false")
+			os.Setenv("INCLUDE_SSO", "true")
 			result, _ := env.GetIncludeSSO()
 			Expect(result).To(BeTrue())
 		})
@@ -744,10 +744,10 @@ var _ = Describe("Environment", func() {
 
 		It("returns an error when it is set wrong", func() {
 			env := environment.New()
-			os.Setenv("SKIP_SSO", "blah blah blah")
+			os.Setenv("INCLUDE_SSO", "blah blah blah")
 			_, err := env.GetIncludeSSO()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 

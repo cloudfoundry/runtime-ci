@@ -109,7 +109,7 @@ var _ = Describe("Main", func() {
 		})
 
 		It("Executes the command to run CATs, excluding configarable suites and SSO", func() {
-			os.Unsetenv("SKIP_SSO")
+			os.Unsetenv("INCLUDE_SSO")
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -306,7 +306,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("PHP_BUILDPACK_NAME", "php-buildpack")
 			os.Setenv("BINARY_BUILDPACK_NAME", "binary-buildpack")
 			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true")
-			os.Setenv("SKIP_SSO", "false")
+			os.Setenv("INCLUDE_SSO", "true")
 
 			os.Setenv("NODES", "5")
 			os.Setenv("INCLUDE_DIEGO_SSH", "true")
@@ -347,7 +347,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("PHP_BUILDPACK_NAME")
 			os.Unsetenv("BINARY_BUILDPACK_NAME")
 			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
-			os.Unsetenv("SKIP_SSO")
+			os.Unsetenv("INCLUDE_SSO")
 
 			os.Unsetenv("NODES")
 			os.Unsetenv("INCLUDE_DIEGO_SSH")
@@ -459,7 +459,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
 			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
 			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
-			os.Setenv("SKIP_SSO", "falsey")
+			os.Setenv("INCLUDE_SSO", "falsey")
 
 			os.Setenv("NODES", "five")
 			os.Setenv("INCLUDE_DIEGO_SSH", "1")
@@ -487,7 +487,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
-			os.Unsetenv("SKIP_SSO")
+			os.Unsetenv("INCLUDE_SSO")
 
 			os.Unsetenv("NODES")
 			os.Unsetenv("INCLUDE_DIEGO_SSH")
@@ -524,7 +524,7 @@ var _ = Describe("Main", func() {
 				ContainSubstring("LONG_CURL_TIMEOUT_IN_SECONDS"),
 				ContainSubstring("BROKER_START_TIMEOUT_IN_SECONDS"),
 				ContainSubstring("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
-				ContainSubstring("SKIP_SSO"),
+				ContainSubstring("INCLUDE_SSO"),
 				ContainSubstring("NODES"),
 				ContainSubstring("INCLUDE_DIEGO_SSH"),
 				ContainSubstring("INCLUDE_V3"),

@@ -231,8 +231,7 @@ func (e *environment) GetSkipDiegoDocker() (string, error) {
 }
 
 func (e *environment) GetIncludeSSO() (bool, error) {
-	skip, err := e.getBooleanDefaultToTrue("SKIP_SSO")
-	return !skip, err
+	return e.getBooleanDefaultToFalse("INCLUDE_SSO")
 }
 
 func (e *environment) GetSkipSecurityGroups() (string, error) {
