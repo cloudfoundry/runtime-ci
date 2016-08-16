@@ -231,7 +231,7 @@ jobs:
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: hermione-deployment-configuration-develop
-      manifest: manifest-updated
+      manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
