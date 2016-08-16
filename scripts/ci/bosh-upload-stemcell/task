@@ -14,5 +14,5 @@ bosh \
   --ca-cert="${CA_CERT}" \
   --environment="${BOSH_TARGET}" \
   upload-stemcell \
-  "stemcell/${STEMCELL_NAME}"
+  stemcell/${STEMCELL_NAME}
 set -x
