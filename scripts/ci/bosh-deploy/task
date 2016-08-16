@@ -13,25 +13,21 @@ DEPLOYMENT_VAR_FILE="manifest/${DEPLOYMENT_VAR_FILE}"
 set -u
 
 if [[ -f $DEPLOYMENT_VAR_FILE ]]; then
-  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --user=${BOSH_USER} --password=[REDACTED] --ca-cert=${BOSH_CA_CERT} deploy --var-files="$DEPLOYMENT_VAR_FILE" ${BOSH_MANIFEST}"
+  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="$DEPLOYMENT_VAR_FILE" ${BOSH_MANIFEST}"
   bosh \
     -n \
     -d "${DEPLOYMENT_NAME}" \
     -e "${BOSH_TARGET}" \
-    --user="${BOSH_USER}" \
-    --password="${BOSH_PASSWORD}" \
     --ca-cert="${BOSH_CA_CERT}" \
     deploy \
     --var-files="${DEPLOYMENT_VAR_FILE}" \
     "${BOSH_MANIFEST}"
 else
-  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --user=${BOSH_USER} --password=[REDACTED] --ca-cert=${BOSH_CA_CERT} deploy ${BOSH_MANIFEST}"
+  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${BOSH_MANIFEST}"
   bosh \
     -n \
     -d "${DEPLOYMENT_NAME}" \
     -e "${BOSH_TARGET}" \
-    --user="${BOSH_USER}" \
-    --password="${BOSH_PASSWORD}" \
     --ca-cert="${BOSH_CA_CERT}" \
     deploy \
     "${BOSH_MANIFEST}"

@@ -8,13 +8,11 @@ set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
 
-echo "bosh -n --ca-cert=${CA_CERT} --environment=${BOSH_TARGET}  --user=${BOSH_USER}  --password=REDACTED  upload-stemcell  stemcell/$STEMCELL_NAME"
+echo "bosh -n --ca-cert=${CA_CERT} --environment=${BOSH_TARGET} upload-stemcell  stemcell/$STEMCELL_NAME"
 bosh \
   -n \
   --ca-cert="${CA_CERT}" \
   --environment="${BOSH_TARGET}" \
-  --user="${BOSH_USER}" \
-  --password="${BOSH_PASSWORD}" \
   upload-stemcell \
-  stemcell/${STEMCELL_NAME}
+  "stemcell/${STEMCELL_NAME}"
 set -x
