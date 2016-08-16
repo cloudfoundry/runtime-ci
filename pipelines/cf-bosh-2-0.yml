@@ -302,7 +302,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        SKIP_SSO: false
+        INCLUDE_SSO: true
         BACKEND: diego
         CF_API: "api.hermione.cf-app.com"
         CF_ADMIN_USER: {{hermione_admin_username}}

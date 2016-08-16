@@ -856,7 +856,7 @@ jobs:
         INCLUDE_ROUTE_SERVICES: true
         INCLUDE_SECURITY_GROUPS: true
         INCLUDE_SERVICES: true
-        SKIP_SSO: false
+        INCLUDE_SSO: true
 - name: deploy-vsphere
   public: true
   serial_groups:
@@ -1124,7 +1124,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        SKIP_SSO: false
+        INCLUDE_SSO: true
         BACKEND: diego
         CF_API: "api.cat.wild.cf-app.com"
         CF_ADMIN_USER: {{vsphere_cf_username}}
@@ -1589,7 +1589,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        SKIP_SSO: false
+        INCLUDE_SSO: true
         BACKEND: diego
         CF_API: "api.a1.cf-app.com"
         CF_ADMIN_USER: {{a1_admin_username}}

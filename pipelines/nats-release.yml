@@ -514,7 +514,7 @@ jobs:
         INCLUDE_SERVICES: true
         INCLUDE_V3: false
         INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        SKIP_SSO: false
+        INCLUDE_SSO: true
         BACKEND: diego
         CF_API: "api.hagrid.cf-app.com"
         CF_ADMIN_USER: {{hagrid_cf_admin_username}}
