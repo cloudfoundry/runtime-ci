@@ -3,17 +3,18 @@ set -eux
 
 BOSH_TARGET=$(cat "target/${TARGET_FILE}")
 BOSH_USER=$(cat username/"${USERNAME_FILE}")
+CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
 
-echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED  upload stemcell  stemcell/$STEMCELL_NAME  --skip-if-exists"
+echo "bosh -n --ca-cert=${CA_CERT} --environment=${BOSH_TARGET}  --user=${BOSH_USER}  --password=REDACTED  upload-stemcell  stemcell/$STEMCELL_NAME"
 bosh \
   -n \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  upload stemcell \
-  stemcell/${STEMCELL_NAME} \
-  --skip-if-exists
+  --ca-cert="${CA_CERT}" \
+  --environment="${BOSH_TARGET}" \
+  --user="${BOSH_USER}" \
+  --password="${BOSH_PASSWORD}" \
+  upload-stemcell \
+  stemcell/${STEMCELL_NAME}
 set -x

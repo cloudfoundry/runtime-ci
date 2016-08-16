@@ -11,6 +11,7 @@ inputs:
 - name: target
 - name: username
 - name: password
+- name: ca-cert
 - name: manifest
 
 outputs:
@@ -23,4 +24,5 @@ params:
   TARGET_FILE:
   USERNAME_FILE:
   PASSWORD_FILE:
+  CA_CERT_FILE:
   MANIFEST_FILE:

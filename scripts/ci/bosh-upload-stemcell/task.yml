@@ -10,6 +10,7 @@ inputs:
 - name: target
 - name: username
 - name: password
+- name: ca-cert
 - name: stemcell
 
 run:
@@ -20,3 +21,4 @@ params:
   USERNAME_FILE:
   PASSWORD_FILE:
   STEMCELL_NAME:
+  CA_CERT_FILE:

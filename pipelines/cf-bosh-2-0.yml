@@ -221,6 +221,7 @@ jobs:
         TARGET_FILE: target
         USERNAME_FILE: username
         PASSWORD_FILE: password
+        CA_CERT_FILE: ca-cert
         STEMCELL_NAME: "*.tgz"
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
@@ -234,6 +235,7 @@ jobs:
       TARGET_FILE:  target
       USERNAME_FILE: username
       PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
       MANIFEST_FILE: cf-deployment.yml
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml

@@ -4,11 +4,12 @@ set -eux
 BOSH_TARGET=$(cat "target/${TARGET_FILE}")
 BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
+CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +x
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
-echo "bosh -n  -t ${BOSH_TARGET}  -u ${BOSH_USER}  -p REDACTED status --uuid"
-UUID=$(bosh -n  -t "${BOSH_TARGET}"  -u "${BOSH_USER}"  -p "${BOSH_PASSWORD}" status --uuid)
+echo "bosh -n --ca-cert=${CA_CERT} -e ${BOSH_TARGET}  --user=${BOSH_USER} --password=REDACTED env | grep UUID | cut -f2"
+UUID=$(bosh -n --ca-cert=${CA_CERT} -e "${BOSH_TARGET}"  --user="${BOSH_USER}"  --password="${BOSH_PASSWORD}" env | grep UUID | cut -f2)
 set -x
 
 if grep director_uuid "${BOSH_MANIFEST}"; then
