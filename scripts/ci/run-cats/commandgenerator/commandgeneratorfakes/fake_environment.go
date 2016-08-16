@@ -22,13 +22,6 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
-	GetSkipSSOStub        func() (string, error)
-	getSkipSSOMutex       sync.RWMutex
-	getSkipSSOArgsForCall []struct{}
-	getSkipSSOReturns     struct {
-		result1 string
-		result2 error
-	}
 	GetSkipDiegoDockerStub        func() (string, error)
 	getSkipDiegoDockerMutex       sync.RWMutex
 	getSkipDiegoDockerArgsForCall []struct{}
@@ -148,32 +141,6 @@ func (fake *FakeEnvironment) GetSkipV3CallCount() int {
 func (fake *FakeEnvironment) GetSkipV3Returns(result1 string, result2 error) {
 	fake.GetSkipV3Stub = nil
 	fake.getSkipV3Returns = struct {
-		result1 string
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *FakeEnvironment) GetSkipSSO() (string, error) {
-	fake.getSkipSSOMutex.Lock()
-	fake.getSkipSSOArgsForCall = append(fake.getSkipSSOArgsForCall, struct{}{})
-	fake.recordInvocation("GetSkipSSO", []interface{}{})
-	fake.getSkipSSOMutex.Unlock()
-	if fake.GetSkipSSOStub != nil {
-		return fake.GetSkipSSOStub()
-	} else {
-		return fake.getSkipSSOReturns.result1, fake.getSkipSSOReturns.result2
-	}
-}
-
-func (fake *FakeEnvironment) GetSkipSSOCallCount() int {
-	fake.getSkipSSOMutex.RLock()
-	defer fake.getSkipSSOMutex.RUnlock()
-	return len(fake.getSkipSSOArgsForCall)
-}
-
-func (fake *FakeEnvironment) GetSkipSSOReturns(result1 string, result2 error) {
-	fake.GetSkipSSOStub = nil
-	fake.getSkipSSOReturns = struct {
 		result1 string
 		result2 error
 	}{result1, result2}
@@ -444,8 +411,6 @@ func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
 	defer fake.getSkipDiegoSSHMutex.RUnlock()
 	fake.getSkipV3Mutex.RLock()
 	defer fake.getSkipV3Mutex.RUnlock()
-	fake.getSkipSSOMutex.RLock()
-	defer fake.getSkipSSOMutex.RUnlock()
 	fake.getSkipDiegoDockerMutex.RLock()
 	defer fake.getSkipDiegoDockerMutex.RUnlock()
 	fake.getSkipBackendCompatibilityMutex.RLock()

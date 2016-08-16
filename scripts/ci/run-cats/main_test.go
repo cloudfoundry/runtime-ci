@@ -92,6 +92,7 @@ var _ = Describe("Main", func() {
 				AdminPassword     string `json:"admin_password"`
 				AppsDomain        string `json:"apps_domain"`
 				SkipSSLValidation bool   `json:"skip_ssl_validation"`
+				IncludeSSO        bool   `json:"include_sso"`
 				UseHTTP           bool   `json:"use_http"`
 			}
 
@@ -103,6 +104,7 @@ var _ = Describe("Main", func() {
 			Expect(config.AdminPassword).To(Equal("non-empty-value"))
 			Expect(config.AppsDomain).To(Equal("non-empty-value"))
 			Expect(config.SkipSSLValidation).To(BeFalse())
+			Expect(config.IncludeSSO).To(BeFalse())
 			Expect(config.UseHTTP).To(BeFalse())
 		})
 
@@ -114,7 +116,7 @@ var _ = Describe("Main", func() {
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -skip=SSO -keepGoing`,
+				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -keepGoing`,
 			))
 		})
 
@@ -235,7 +237,7 @@ var _ = Describe("Main", func() {
 			Expect(configJsonPath).NotTo(BeARegularFile())
 		})
 
-		It("Doesn't execute the command to run CATs, excluding configurable suites and SSO", func() {
+		It("Doesn't execute the command to run CATs, excluding configurable suites", func() {
 			command := exec.Command(binPath)
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -365,7 +367,7 @@ var _ = Describe("Main", func() {
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=5 -skipPackage=helpers -skip= -keepGoing",
+				"bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=5 -skipPackage=helpers -keepGoing",
 			))
 
 			configBytes, err := ioutil.ReadFile(configJsonPath)
@@ -377,6 +379,7 @@ var _ = Describe("Main", func() {
 				AdminPassword        string `json:"admin_password"`
 				AppsDomain           string `json:"apps_domain"`
 				SkipSSLValidation    bool   `json:"skip_ssl_validation"`
+				IncludeSSO           bool   `json:"include_sso"`
 				UseHTTP              bool   `json:"use_http"`
 				ExistingUser         string `json:"existing_user"`
 				ExistingUserPassword string `json:"existing_user_password"`
@@ -411,6 +414,7 @@ var _ = Describe("Main", func() {
 			Expect(config.AdminPassword).To(Equal("admin-password"))
 			Expect(config.AppsDomain).To(Equal("apps.example.com"))
 			Expect(config.SkipSSLValidation).To(BeTrue())
+			Expect(config.IncludeSSO).To(BeTrue())
 			Expect(config.UseHTTP).To(BeFalse())
 
 			Expect(config.ExistingUser).To(Equal("existing-cats-user"))

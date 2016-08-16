@@ -23,7 +23,6 @@ var envVarToPackageMap = map[string]string{
 type Environment interface {
 	GetSkipDiegoSSH() (string, error)
 	GetSkipV3() (string, error)
-	GetSkipSSO() (string, error)
 	GetSkipDiegoDocker() (string, error)
 	GetSkipBackendCompatibility() (string, error)
 	GetSkipSecurityGroups() (string, error)
@@ -52,7 +51,6 @@ func GenerateCmd(env Environment) (string, []string, error) {
 	}
 
 	skipPackages, _ := generateSkipPackages(env)
-	skips, _ := generateSkips(env)
 
 	return testBinPath, []string{
 		"-r",
@@ -60,21 +58,8 @@ func GenerateCmd(env Environment) (string, []string, error) {
 		"-randomizeAllSpecs",
 		fmt.Sprintf("-nodes=%d", nodes),
 		fmt.Sprintf("%s", skipPackages),
-		fmt.Sprintf("%s", skips),
 		"-keepGoing",
 	}, nil
-}
-
-func generateSkips(env Environment) (string, error) {
-	skips := []string{}
-
-	skipSso, _ := env.GetSkipSSO()
-
-	if skipSso != "" {
-		skips = append(skips, skipSso)
-	}
-
-	return "-skip=" + strings.Join(skips, "|"), nil
 }
 
 func generateSkipPackages(env Environment) (string, error) {

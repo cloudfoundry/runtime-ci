@@ -15,6 +15,13 @@ type FakeEnvironment struct {
 		result1 bool
 		result2 error
 	}
+	GetIncludeSSOStub        func() (bool, error)
+	getIncludeSSOMutex       sync.RWMutex
+	getIncludeSSOArgsForCall []struct{}
+	getIncludeSSOReturns     struct {
+		result1 bool
+		result2 error
+	}
 	GetUseHTTPStub        func() (bool, error)
 	getUseHTTPMutex       sync.RWMutex
 	getUseHTTPArgsForCall []struct{}
@@ -184,14 +191,11 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
-	invocations      map[string][][]interface{}
-	invocationsMutex sync.RWMutex
 }
 
 func (fake *FakeEnvironment) GetSkipSSLValidation() (bool, error) {
 	fake.getSkipSSLValidationMutex.Lock()
 	fake.getSkipSSLValidationArgsForCall = append(fake.getSkipSSLValidationArgsForCall, struct{}{})
-	fake.recordInvocation("GetSkipSSLValidation", []interface{}{})
 	fake.getSkipSSLValidationMutex.Unlock()
 	if fake.GetSkipSSLValidationStub != nil {
 		return fake.GetSkipSSLValidationStub()
@@ -214,10 +218,34 @@ func (fake *FakeEnvironment) GetSkipSSLValidationReturns(result1 bool, result2 e
 	}{result1, result2}
 }
 
+func (fake *FakeEnvironment) GetIncludeSSO() (bool, error) {
+	fake.getIncludeSSOMutex.Lock()
+	fake.getIncludeSSOArgsForCall = append(fake.getIncludeSSOArgsForCall, struct{}{})
+	fake.getIncludeSSOMutex.Unlock()
+	if fake.GetIncludeSSOStub != nil {
+		return fake.GetIncludeSSOStub()
+	} else {
+		return fake.getIncludeSSOReturns.result1, fake.getIncludeSSOReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeSSOCallCount() int {
+	fake.getIncludeSSOMutex.RLock()
+	defer fake.getIncludeSSOMutex.RUnlock()
+	return len(fake.getIncludeSSOArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeSSOReturns(result1 bool, result2 error) {
+	fake.GetIncludeSSOStub = nil
+	fake.getIncludeSSOReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeEnvironment) GetUseHTTP() (bool, error) {
 	fake.getUseHTTPMutex.Lock()
 	fake.getUseHTTPArgsForCall = append(fake.getUseHTTPArgsForCall, struct{}{})
-	fake.recordInvocation("GetUseHTTP", []interface{}{})
 	fake.getUseHTTPMutex.Unlock()
 	if fake.GetUseHTTPStub != nil {
 		return fake.GetUseHTTPStub()
@@ -243,7 +271,6 @@ func (fake *FakeEnvironment) GetUseHTTPReturns(result1 bool, result2 error) {
 func (fake *FakeEnvironment) GetIncludePrivilegedContainerSupport() (bool, error) {
 	fake.getIncludePrivilegedContainerSupportMutex.Lock()
 	fake.getIncludePrivilegedContainerSupportArgsForCall = append(fake.getIncludePrivilegedContainerSupportArgsForCall, struct{}{})
-	fake.recordInvocation("GetIncludePrivilegedContainerSupport", []interface{}{})
 	fake.getIncludePrivilegedContainerSupportMutex.Unlock()
 	if fake.GetIncludePrivilegedContainerSupportStub != nil {
 		return fake.GetIncludePrivilegedContainerSupportStub()
@@ -269,7 +296,6 @@ func (fake *FakeEnvironment) GetIncludePrivilegedContainerSupportReturns(result1
 func (fake *FakeEnvironment) GetDefaultTimeoutInSeconds() (int, error) {
 	fake.getDefaultTimeoutInSecondsMutex.Lock()
 	fake.getDefaultTimeoutInSecondsArgsForCall = append(fake.getDefaultTimeoutInSecondsArgsForCall, struct{}{})
-	fake.recordInvocation("GetDefaultTimeoutInSeconds", []interface{}{})
 	fake.getDefaultTimeoutInSecondsMutex.Unlock()
 	if fake.GetDefaultTimeoutInSecondsStub != nil {
 		return fake.GetDefaultTimeoutInSecondsStub()
@@ -295,7 +321,6 @@ func (fake *FakeEnvironment) GetDefaultTimeoutInSecondsReturns(result1 int, resu
 func (fake *FakeEnvironment) GetCFPushTimeoutInSeconds() (int, error) {
 	fake.getCFPushTimeoutInSecondsMutex.Lock()
 	fake.getCFPushTimeoutInSecondsArgsForCall = append(fake.getCFPushTimeoutInSecondsArgsForCall, struct{}{})
-	fake.recordInvocation("GetCFPushTimeoutInSeconds", []interface{}{})
 	fake.getCFPushTimeoutInSecondsMutex.Unlock()
 	if fake.GetCFPushTimeoutInSecondsStub != nil {
 		return fake.GetCFPushTimeoutInSecondsStub()
@@ -321,7 +346,6 @@ func (fake *FakeEnvironment) GetCFPushTimeoutInSecondsReturns(result1 int, resul
 func (fake *FakeEnvironment) GetLongCurlTimeoutInSeconds() (int, error) {
 	fake.getLongCurlTimeoutInSecondsMutex.Lock()
 	fake.getLongCurlTimeoutInSecondsArgsForCall = append(fake.getLongCurlTimeoutInSecondsArgsForCall, struct{}{})
-	fake.recordInvocation("GetLongCurlTimeoutInSeconds", []interface{}{})
 	fake.getLongCurlTimeoutInSecondsMutex.Unlock()
 	if fake.GetLongCurlTimeoutInSecondsStub != nil {
 		return fake.GetLongCurlTimeoutInSecondsStub()
@@ -347,7 +371,6 @@ func (fake *FakeEnvironment) GetLongCurlTimeoutInSecondsReturns(result1 int, res
 func (fake *FakeEnvironment) GetBrokerStartTimeoutInSeconds() (int, error) {
 	fake.getBrokerStartTimeoutInSecondsMutex.Lock()
 	fake.getBrokerStartTimeoutInSecondsArgsForCall = append(fake.getBrokerStartTimeoutInSecondsArgsForCall, struct{}{})
-	fake.recordInvocation("GetBrokerStartTimeoutInSeconds", []interface{}{})
 	fake.getBrokerStartTimeoutInSecondsMutex.Unlock()
 	if fake.GetBrokerStartTimeoutInSecondsStub != nil {
 		return fake.GetBrokerStartTimeoutInSecondsStub()
@@ -373,7 +396,6 @@ func (fake *FakeEnvironment) GetBrokerStartTimeoutInSecondsReturns(result1 int, 
 func (fake *FakeEnvironment) GetCFAPI() string {
 	fake.getCFAPIMutex.Lock()
 	fake.getCFAPIArgsForCall = append(fake.getCFAPIArgsForCall, struct{}{})
-	fake.recordInvocation("GetCFAPI", []interface{}{})
 	fake.getCFAPIMutex.Unlock()
 	if fake.GetCFAPIStub != nil {
 		return fake.GetCFAPIStub()
@@ -398,7 +420,6 @@ func (fake *FakeEnvironment) GetCFAPIReturns(result1 string) {
 func (fake *FakeEnvironment) GetCFAdminUser() string {
 	fake.getCFAdminUserMutex.Lock()
 	fake.getCFAdminUserArgsForCall = append(fake.getCFAdminUserArgsForCall, struct{}{})
-	fake.recordInvocation("GetCFAdminUser", []interface{}{})
 	fake.getCFAdminUserMutex.Unlock()
 	if fake.GetCFAdminUserStub != nil {
 		return fake.GetCFAdminUserStub()
@@ -423,7 +444,6 @@ func (fake *FakeEnvironment) GetCFAdminUserReturns(result1 string) {
 func (fake *FakeEnvironment) GetCFAdminPassword() string {
 	fake.getCFAdminPasswordMutex.Lock()
 	fake.getCFAdminPasswordArgsForCall = append(fake.getCFAdminPasswordArgsForCall, struct{}{})
-	fake.recordInvocation("GetCFAdminPassword", []interface{}{})
 	fake.getCFAdminPasswordMutex.Unlock()
 	if fake.GetCFAdminPasswordStub != nil {
 		return fake.GetCFAdminPasswordStub()
@@ -448,7 +468,6 @@ func (fake *FakeEnvironment) GetCFAdminPasswordReturns(result1 string) {
 func (fake *FakeEnvironment) GetCFAppsDomain() string {
 	fake.getCFAppsDomainMutex.Lock()
 	fake.getCFAppsDomainArgsForCall = append(fake.getCFAppsDomainArgsForCall, struct{}{})
-	fake.recordInvocation("GetCFAppsDomain", []interface{}{})
 	fake.getCFAppsDomainMutex.Unlock()
 	if fake.GetCFAppsDomainStub != nil {
 		return fake.GetCFAppsDomainStub()
@@ -473,7 +492,6 @@ func (fake *FakeEnvironment) GetCFAppsDomainReturns(result1 string) {
 func (fake *FakeEnvironment) GetExistingUser() string {
 	fake.getExistingUserMutex.Lock()
 	fake.getExistingUserArgsForCall = append(fake.getExistingUserArgsForCall, struct{}{})
-	fake.recordInvocation("GetExistingUser", []interface{}{})
 	fake.getExistingUserMutex.Unlock()
 	if fake.GetExistingUserStub != nil {
 		return fake.GetExistingUserStub()
@@ -498,7 +516,6 @@ func (fake *FakeEnvironment) GetExistingUserReturns(result1 string) {
 func (fake *FakeEnvironment) UseExistingUser() bool {
 	fake.useExistingUserMutex.Lock()
 	fake.useExistingUserArgsForCall = append(fake.useExistingUserArgsForCall, struct{}{})
-	fake.recordInvocation("UseExistingUser", []interface{}{})
 	fake.useExistingUserMutex.Unlock()
 	if fake.UseExistingUserStub != nil {
 		return fake.UseExistingUserStub()
@@ -523,7 +540,6 @@ func (fake *FakeEnvironment) UseExistingUserReturns(result1 bool) {
 func (fake *FakeEnvironment) KeepUserAtSuiteEnd() bool {
 	fake.keepUserAtSuiteEndMutex.Lock()
 	fake.keepUserAtSuiteEndArgsForCall = append(fake.keepUserAtSuiteEndArgsForCall, struct{}{})
-	fake.recordInvocation("KeepUserAtSuiteEnd", []interface{}{})
 	fake.keepUserAtSuiteEndMutex.Unlock()
 	if fake.KeepUserAtSuiteEndStub != nil {
 		return fake.KeepUserAtSuiteEndStub()
@@ -548,7 +564,6 @@ func (fake *FakeEnvironment) KeepUserAtSuiteEndReturns(result1 bool) {
 func (fake *FakeEnvironment) GetExistingUserPassword() string {
 	fake.getExistingUserPasswordMutex.Lock()
 	fake.getExistingUserPasswordArgsForCall = append(fake.getExistingUserPasswordArgsForCall, struct{}{})
-	fake.recordInvocation("GetExistingUserPassword", []interface{}{})
 	fake.getExistingUserPasswordMutex.Unlock()
 	if fake.GetExistingUserPasswordStub != nil {
 		return fake.GetExistingUserPasswordStub()
@@ -573,7 +588,6 @@ func (fake *FakeEnvironment) GetExistingUserPasswordReturns(result1 string) {
 func (fake *FakeEnvironment) GetStaticBuildpackName() string {
 	fake.getStaticBuildpackNameMutex.Lock()
 	fake.getStaticBuildpackNameArgsForCall = append(fake.getStaticBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetStaticBuildpackName", []interface{}{})
 	fake.getStaticBuildpackNameMutex.Unlock()
 	if fake.GetStaticBuildpackNameStub != nil {
 		return fake.GetStaticBuildpackNameStub()
@@ -598,7 +612,6 @@ func (fake *FakeEnvironment) GetStaticBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetJavaBuildpackName() string {
 	fake.getJavaBuildpackNameMutex.Lock()
 	fake.getJavaBuildpackNameArgsForCall = append(fake.getJavaBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetJavaBuildpackName", []interface{}{})
 	fake.getJavaBuildpackNameMutex.Unlock()
 	if fake.GetJavaBuildpackNameStub != nil {
 		return fake.GetJavaBuildpackNameStub()
@@ -623,7 +636,6 @@ func (fake *FakeEnvironment) GetJavaBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetRubyBuildpackName() string {
 	fake.getRubyBuildpackNameMutex.Lock()
 	fake.getRubyBuildpackNameArgsForCall = append(fake.getRubyBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetRubyBuildpackName", []interface{}{})
 	fake.getRubyBuildpackNameMutex.Unlock()
 	if fake.GetRubyBuildpackNameStub != nil {
 		return fake.GetRubyBuildpackNameStub()
@@ -648,7 +660,6 @@ func (fake *FakeEnvironment) GetRubyBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetNodeJSBuildpackName() string {
 	fake.getNodeJSBuildpackNameMutex.Lock()
 	fake.getNodeJSBuildpackNameArgsForCall = append(fake.getNodeJSBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetNodeJSBuildpackName", []interface{}{})
 	fake.getNodeJSBuildpackNameMutex.Unlock()
 	if fake.GetNodeJSBuildpackNameStub != nil {
 		return fake.GetNodeJSBuildpackNameStub()
@@ -673,7 +684,6 @@ func (fake *FakeEnvironment) GetNodeJSBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetGoBuildpackName() string {
 	fake.getGoBuildpackNameMutex.Lock()
 	fake.getGoBuildpackNameArgsForCall = append(fake.getGoBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetGoBuildpackName", []interface{}{})
 	fake.getGoBuildpackNameMutex.Unlock()
 	if fake.GetGoBuildpackNameStub != nil {
 		return fake.GetGoBuildpackNameStub()
@@ -698,7 +708,6 @@ func (fake *FakeEnvironment) GetGoBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetPythonBuildpackName() string {
 	fake.getPythonBuildpackNameMutex.Lock()
 	fake.getPythonBuildpackNameArgsForCall = append(fake.getPythonBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetPythonBuildpackName", []interface{}{})
 	fake.getPythonBuildpackNameMutex.Unlock()
 	if fake.GetPythonBuildpackNameStub != nil {
 		return fake.GetPythonBuildpackNameStub()
@@ -723,7 +732,6 @@ func (fake *FakeEnvironment) GetPythonBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetPHPBuildpackName() string {
 	fake.getPHPBuildpackNameMutex.Lock()
 	fake.getPHPBuildpackNameArgsForCall = append(fake.getPHPBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetPHPBuildpackName", []interface{}{})
 	fake.getPHPBuildpackNameMutex.Unlock()
 	if fake.GetPHPBuildpackNameStub != nil {
 		return fake.GetPHPBuildpackNameStub()
@@ -748,7 +756,6 @@ func (fake *FakeEnvironment) GetPHPBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetBinaryBuildpackName() string {
 	fake.getBinaryBuildpackNameMutex.Lock()
 	fake.getBinaryBuildpackNameArgsForCall = append(fake.getBinaryBuildpackNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetBinaryBuildpackName", []interface{}{})
 	fake.getBinaryBuildpackNameMutex.Unlock()
 	if fake.GetBinaryBuildpackNameStub != nil {
 		return fake.GetBinaryBuildpackNameStub()
@@ -773,7 +780,6 @@ func (fake *FakeEnvironment) GetBinaryBuildpackNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetPersistentAppHost() string {
 	fake.getPersistentAppHostMutex.Lock()
 	fake.getPersistentAppHostArgsForCall = append(fake.getPersistentAppHostArgsForCall, struct{}{})
-	fake.recordInvocation("GetPersistentAppHost", []interface{}{})
 	fake.getPersistentAppHostMutex.Unlock()
 	if fake.GetPersistentAppHostStub != nil {
 		return fake.GetPersistentAppHostStub()
@@ -798,7 +804,6 @@ func (fake *FakeEnvironment) GetPersistentAppHostReturns(result1 string) {
 func (fake *FakeEnvironment) GetPersistentAppSpace() string {
 	fake.getPersistentAppSpaceMutex.Lock()
 	fake.getPersistentAppSpaceArgsForCall = append(fake.getPersistentAppSpaceArgsForCall, struct{}{})
-	fake.recordInvocation("GetPersistentAppSpace", []interface{}{})
 	fake.getPersistentAppSpaceMutex.Unlock()
 	if fake.GetPersistentAppSpaceStub != nil {
 		return fake.GetPersistentAppSpaceStub()
@@ -823,7 +828,6 @@ func (fake *FakeEnvironment) GetPersistentAppSpaceReturns(result1 string) {
 func (fake *FakeEnvironment) GetPersistentAppOrg() string {
 	fake.getPersistentAppOrgMutex.Lock()
 	fake.getPersistentAppOrgArgsForCall = append(fake.getPersistentAppOrgArgsForCall, struct{}{})
-	fake.recordInvocation("GetPersistentAppOrg", []interface{}{})
 	fake.getPersistentAppOrgMutex.Unlock()
 	if fake.GetPersistentAppOrgStub != nil {
 		return fake.GetPersistentAppOrgStub()
@@ -848,7 +852,6 @@ func (fake *FakeEnvironment) GetPersistentAppOrgReturns(result1 string) {
 func (fake *FakeEnvironment) GetPersistentAppQuotaName() string {
 	fake.getPersistentAppQuotaNameMutex.Lock()
 	fake.getPersistentAppQuotaNameArgsForCall = append(fake.getPersistentAppQuotaNameArgsForCall, struct{}{})
-	fake.recordInvocation("GetPersistentAppQuotaName", []interface{}{})
 	fake.getPersistentAppQuotaNameMutex.Unlock()
 	if fake.GetPersistentAppQuotaNameStub != nil {
 		return fake.GetPersistentAppQuotaNameStub()
@@ -873,7 +876,6 @@ func (fake *FakeEnvironment) GetPersistentAppQuotaNameReturns(result1 string) {
 func (fake *FakeEnvironment) GetBackend() (string, error) {
 	fake.getBackendMutex.Lock()
 	fake.getBackendArgsForCall = append(fake.getBackendArgsForCall, struct{}{})
-	fake.recordInvocation("GetBackend", []interface{}{})
 	fake.getBackendMutex.Unlock()
 	if fake.GetBackendStub != nil {
 		return fake.GetBackendStub()
@@ -894,80 +896,6 @@ func (fake *FakeEnvironment) GetBackendReturns(result1 string, result2 error) {
 		result1 string
 		result2 error
 	}{result1, result2}
-}
-
-func (fake *FakeEnvironment) Invocations() map[string][][]interface{} {
-	fake.invocationsMutex.RLock()
-	defer fake.invocationsMutex.RUnlock()
-	fake.getSkipSSLValidationMutex.RLock()
-	defer fake.getSkipSSLValidationMutex.RUnlock()
-	fake.getUseHTTPMutex.RLock()
-	defer fake.getUseHTTPMutex.RUnlock()
-	fake.getIncludePrivilegedContainerSupportMutex.RLock()
-	defer fake.getIncludePrivilegedContainerSupportMutex.RUnlock()
-	fake.getDefaultTimeoutInSecondsMutex.RLock()
-	defer fake.getDefaultTimeoutInSecondsMutex.RUnlock()
-	fake.getCFPushTimeoutInSecondsMutex.RLock()
-	defer fake.getCFPushTimeoutInSecondsMutex.RUnlock()
-	fake.getLongCurlTimeoutInSecondsMutex.RLock()
-	defer fake.getLongCurlTimeoutInSecondsMutex.RUnlock()
-	fake.getBrokerStartTimeoutInSecondsMutex.RLock()
-	defer fake.getBrokerStartTimeoutInSecondsMutex.RUnlock()
-	fake.getCFAPIMutex.RLock()
-	defer fake.getCFAPIMutex.RUnlock()
-	fake.getCFAdminUserMutex.RLock()
-	defer fake.getCFAdminUserMutex.RUnlock()
-	fake.getCFAdminPasswordMutex.RLock()
-	defer fake.getCFAdminPasswordMutex.RUnlock()
-	fake.getCFAppsDomainMutex.RLock()
-	defer fake.getCFAppsDomainMutex.RUnlock()
-	fake.getExistingUserMutex.RLock()
-	defer fake.getExistingUserMutex.RUnlock()
-	fake.useExistingUserMutex.RLock()
-	defer fake.useExistingUserMutex.RUnlock()
-	fake.keepUserAtSuiteEndMutex.RLock()
-	defer fake.keepUserAtSuiteEndMutex.RUnlock()
-	fake.getExistingUserPasswordMutex.RLock()
-	defer fake.getExistingUserPasswordMutex.RUnlock()
-	fake.getStaticBuildpackNameMutex.RLock()
-	defer fake.getStaticBuildpackNameMutex.RUnlock()
-	fake.getJavaBuildpackNameMutex.RLock()
-	defer fake.getJavaBuildpackNameMutex.RUnlock()
-	fake.getRubyBuildpackNameMutex.RLock()
-	defer fake.getRubyBuildpackNameMutex.RUnlock()
-	fake.getNodeJSBuildpackNameMutex.RLock()
-	defer fake.getNodeJSBuildpackNameMutex.RUnlock()
-	fake.getGoBuildpackNameMutex.RLock()
-	defer fake.getGoBuildpackNameMutex.RUnlock()
-	fake.getPythonBuildpackNameMutex.RLock()
-	defer fake.getPythonBuildpackNameMutex.RUnlock()
-	fake.getPHPBuildpackNameMutex.RLock()
-	defer fake.getPHPBuildpackNameMutex.RUnlock()
-	fake.getBinaryBuildpackNameMutex.RLock()
-	defer fake.getBinaryBuildpackNameMutex.RUnlock()
-	fake.getPersistentAppHostMutex.RLock()
-	defer fake.getPersistentAppHostMutex.RUnlock()
-	fake.getPersistentAppSpaceMutex.RLock()
-	defer fake.getPersistentAppSpaceMutex.RUnlock()
-	fake.getPersistentAppOrgMutex.RLock()
-	defer fake.getPersistentAppOrgMutex.RUnlock()
-	fake.getPersistentAppQuotaNameMutex.RLock()
-	defer fake.getPersistentAppQuotaNameMutex.RUnlock()
-	fake.getBackendMutex.RLock()
-	defer fake.getBackendMutex.RUnlock()
-	return fake.invocations
-}
-
-func (fake *FakeEnvironment) recordInvocation(key string, args []interface{}) {
-	fake.invocationsMutex.Lock()
-	defer fake.invocationsMutex.Unlock()
-	if fake.invocations == nil {
-		fake.invocations = map[string][][]interface{}{}
-	}
-	if fake.invocations[key] == nil {
-		fake.invocations[key] = [][]interface{}{}
-	}
-	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
 var _ configwriter.Environment = new(FakeEnvironment)

@@ -724,41 +724,30 @@ var _ = Describe("Environment", func() {
 		})
 	})
 
-	Describe("GetSkipSSO", func() {
+	Describe("GetIncludeSSO", func() {
 		AfterEach(func() {
 			os.Unsetenv("SKIP_SSO")
 		})
 
-		It("Returns the string 'SSO' if it should be skipped", func() {
-			os.Setenv("SKIP_SSO", "true")
+		It("returns a boolean when set properly", func() {
 			env := environment.New()
-			skipFlag, err := env.GetSkipSSO()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("SSO"))
-		})
-
-		It("Returns an empty string if it should not be skipped", func() {
 			os.Setenv("SKIP_SSO", "false")
-			env := environment.New()
-			skipFlag, err := env.GetSkipSSO()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal(""))
+			result, _ := env.GetIncludeSSO()
+			Expect(result).To(BeTrue())
 		})
 
-		It("Defaults to skip", func() {
-			os.Unsetenv("SKIP_SSO")
+		It("returns a default of false", func() {
 			env := environment.New()
-			skipFlag, err := env.GetSkipSSO()
-			Expect(err).NotTo(HaveOccurred())
-			Expect(skipFlag).To(Equal("SSO"))
+			result, _ := env.GetIncludeSSO()
+			Expect(result).To(BeFalse())
 		})
 
-		It("Returns an error if there was an invalid value", func() {
-			os.Setenv("SKIP_SSO", "falsey")
+		It("returns an error when it is set wrong", func() {
 			env := environment.New()
-			_, err := env.GetSkipSSO()
+			os.Setenv("SKIP_SSO", "blah blah blah")
+			_, err := env.GetIncludeSSO()
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"))
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'SKIP_SSO' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 

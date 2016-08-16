@@ -29,6 +29,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.AdminPassword).To(Equal(""))
 			Expect(configFile.Config.AppsDomain).To(Equal(""))
 			Expect(configFile.Config.SkipSslValidation).To(BeFalse())
+			Expect(configFile.Config.IncludeSSO).To(BeFalse())
 			Expect(configFile.Config.UseHttp).To(BeFalse())
 			Expect(configFile.Config.ExistingUser).To(Equal(""))
 			Expect(configFile.Config.ExistingUserPassword).To(Equal(""))
@@ -64,6 +65,7 @@ var _ = Describe("Configwriter", func() {
 			expectedPassword                          string
 			expectedAppsDomain                        string
 			expectedSkipSslValidation                 bool
+			expectedIncludeSSO                        bool
 			expectedUseHttp                           bool
 			expectedIncludePrivilegedContainerSupport bool
 			expectedExistingUser                      string
@@ -95,6 +97,7 @@ var _ = Describe("Configwriter", func() {
 			expectedPassword = "admin_password"
 			expectedAppsDomain = "apps_domain"
 			expectedSkipSslValidation = true
+			expectedIncludeSSO = true
 			expectedUseHttp = true
 			expectedIncludePrivilegedContainerSupport = true
 			expectedExistingUser = "existing_user"
@@ -122,7 +125,8 @@ var _ = Describe("Configwriter", func() {
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME"
 
 			env.GetSkipSSLValidationReturns(expectedSkipSslValidation, nil)
-			env.GetUseHTTPReturns(expectedSkipSslValidation, nil)
+			env.GetIncludeSSOReturns(expectedIncludeSSO, nil)
+			env.GetUseHTTPReturns(expectedUseHttp, nil)
 			env.GetIncludePrivilegedContainerSupportReturns(expectedIncludePrivilegedContainerSupport, nil)
 
 			env.GetCFAPIReturns(expectedApi)
@@ -163,6 +167,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.AdminPassword).To(Equal(expectedPassword))
 			Expect(configFile.Config.AppsDomain).To(Equal(expectedAppsDomain))
 			Expect(configFile.Config.SkipSslValidation).To(Equal(expectedSkipSslValidation))
+			Expect(configFile.Config.IncludeSSO).To(Equal(expectedIncludeSSO))
 			Expect(configFile.Config.UseHttp).To(Equal(expectedUseHttp))
 			Expect(configFile.Config.IncludePrivilegedContainerSupport).To(Equal(expectedIncludePrivilegedContainerSupport))
 			Expect(configFile.Config.ExistingUser).To(Equal(expectedExistingUser))
@@ -208,6 +213,7 @@ var _ = Describe("Configwriter", func() {
                                               "admin_password": "",
                                               "apps_domain": "",
                                               "skip_ssl_validation": false,
+                                              "include_sso": false,
                                               "use_http": false,
                                               "use_existing_user": false,
                                               "keep_user_at_suite_end": false
@@ -217,6 +223,7 @@ var _ = Describe("Configwriter", func() {
 		Context("when any env variables are provided", func() {
 			BeforeEach(func() {
 				env.GetSkipSSLValidationReturns(true, nil)
+				env.GetIncludeSSOReturns(true, nil)
 				env.GetUseHTTPReturns(true, nil)
 
 				env.GetBackendReturns("diego", nil)
@@ -259,6 +266,7 @@ var _ = Describe("Configwriter", func() {
 																							"admin_password": "non-empty-value",
 																							"apps_domain": "non-empty-value",
 																							"skip_ssl_validation": true,
+																							"include_sso": true,
 																							"use_http": true,
 																							"existing_user": "non-empty-value",
 																							"use_existing_user": true,
@@ -289,6 +297,7 @@ var _ = Describe("Configwriter", func() {
 		Context("when only required env variables are provided", func() {
 			BeforeEach(func() {
 				env.GetSkipSSLValidationReturns(false, nil)
+				env.GetIncludeSSOReturns(false, nil)
 				env.GetUseHTTPReturns(false, nil)
 
 				env.GetBackendReturns("", nil)
@@ -329,6 +338,7 @@ var _ = Describe("Configwriter", func() {
 																							"admin_password": "non-empty-value",
 																							"apps_domain": "non-empty-value",
 																							"skip_ssl_validation": false,
+																							"include_sso": false,
 																							"use_http": false,
 																							"use_existing_user": false,
 																							"keep_user_at_suite_end": false
@@ -372,6 +382,7 @@ var _ = Describe("Configwriter", func() {
 																							"admin_password": "",
 																							"apps_domain": "",
 																							"skip_ssl_validation": false,
+																							"include_sso": false,
 																							"use_http": false,
 																							"use_existing_user": false,
 																							"keep_user_at_suite_end": false
@@ -402,6 +413,7 @@ var _ = Describe("Configwriter", func() {
                                     "admin_password": "",
                                     "apps_domain": "",
                                     "skip_ssl_validation": false,
+																	  "include_sso": false,
                                     "use_http": false,
                                     "use_existing_user": false,
                                     "keep_user_at_suite_end": false

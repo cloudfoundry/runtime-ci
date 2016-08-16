@@ -61,7 +61,7 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
-	if _, err := env.GetSkipSSO(); err != nil {
+	if _, err := env.GetIncludeSSO(); err != nil {
 		errs.Add(err)
 	}
 
@@ -230,8 +230,9 @@ func (e *environment) GetSkipDiegoDocker() (string, error) {
 	return e.returnsSkipFlag("INCLUDE_DIEGO_DOCKER", "docker", false)
 }
 
-func (e *environment) GetSkipSSO() (string, error) {
-	return e.returnsSkipFlag("SKIP_SSO", "SSO", true)
+func (e *environment) GetIncludeSSO() (bool, error) {
+	skip, err := e.getBooleanDefaultToTrue("SKIP_SSO")
+	return !skip, err
 }
 
 func (e *environment) GetSkipSecurityGroups() (string, error) {

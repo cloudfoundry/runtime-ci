@@ -13,6 +13,7 @@ type config struct {
 	AdminPassword                     string `json:"admin_password"`
 	AppsDomain                        string `json:"apps_domain"`
 	SkipSslValidation                 bool   `json:"skip_ssl_validation"`
+	IncludeSSO                        bool   `json:"include_sso"`
 	UseHttp                           bool   `json:"use_http"`
 	ExistingUser                      string `json:"existing_user,omitempty"`
 	ExistingUserPassword              string `json:"existing_user_password,omitempty"`
@@ -45,6 +46,7 @@ type configFile struct {
 
 type Environment interface {
 	GetSkipSSLValidation() (bool, error)
+	GetIncludeSSO() (bool, error)
 	GetUseHTTP() (bool, error)
 	GetIncludePrivilegedContainerSupport() (bool, error)
 	GetDefaultTimeoutInSeconds() (int, error)
@@ -81,11 +83,13 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
-		skipSslValidation, useHttp                                         bool
+		skipSslValidation, includeSSO, useHttp                             bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout int
 	)
 
 	skipSslValidation, _ = env.GetSkipSSLValidation()
+
+	includeSSO, _ = env.GetIncludeSSO()
 
 	useHttp, _ = env.GetUseHTTP()
 
@@ -107,6 +111,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		AdminPassword:        env.GetCFAdminPassword(),
 		AppsDomain:           env.GetCFAppsDomain(),
 		SkipSslValidation:    skipSslValidation,
+		IncludeSSO:           includeSSO,
 		UseHttp:              useHttp,
 		ExistingUser:         env.GetExistingUser(),
 		UseExistingUser:      env.UseExistingUser(),
