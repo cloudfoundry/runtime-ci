@@ -13,6 +13,7 @@ inputs:
 - name: password
 - name: ca-cert
 - name: manifest
+- name: manifest-properties
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy/task
