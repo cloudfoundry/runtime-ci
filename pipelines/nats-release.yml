@@ -2,6 +2,7 @@
 groups:
 - name: nats-release
   jobs:
+    - create-release
     - deploy-nats-standalone
     - deploy-1-0-nats-standalone
     - smoke-tests-1-0
@@ -214,9 +215,9 @@ jobs:
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: '*.tgz'
 
-- name: deploy-nats-standalone
+- name: create-release
   public: true
-  serial_groups: [nats-deploy]
+  serial_groups: [nats-deploy, nats-1-0-deploy]
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -253,12 +254,38 @@ jobs:
       USERNAME_FILE: username
       PASSWORD_FILE: password
       RELEASE_NAME: nats-*.tgz
+
+- name: deploy-nats-standalone
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+    - get: hagrid-env-infrastructure
+      trigger: true
+      passed: [create-release]
+    - get: aws-stemcell
+      trigger: true
+      passed: [create-release]
+      params:
+        tarball: false
+    - get: runtime-ci
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
   - task: generate-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest-properties: hagrid-env-infrastructure
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
@@ -313,10 +340,10 @@ jobs:
       trigger: true
     - get: hagrid-env-infrastructure
       trigger: true
-      passed: [ upload-stemcell ]
+      passed: [create-release]
     - get: aws-stemcell
       trigger: true
-      passed: [ upload-stemcell ]
+      passed: [create-release]
       params:
         tarball: false
     - get: runtime-ci
@@ -326,28 +353,14 @@ jobs:
       env-repo: hagrid-env-infrastructure
     params:
       STATE_DIR_PATH: bbl-infrastructure
-  - task: create-release
-    file: runtime-ci/scripts/ci/create-release/task.yml
-    privileged: true
-    input_mapping:
-      release-repo: nats-release
-    params:
-      RELEASE_NAME: nats
-  - task: bosh-upload-release-nats
-    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-    input_mapping:
-      release: release-tarball
-    params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      RELEASE_NAME: nats-*.tgz
   - task: generate-1-0-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest-properties: hagrid-env-infrastructure
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
