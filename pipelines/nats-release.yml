@@ -3,6 +3,8 @@ groups:
 - name: nats-release
   jobs:
     - deploy-nats-standalone
+    - deploy-1-0-nats-standalone
+    - smoke-tests-1-0
     - deploy-cf-with-updated-nats
     - smoke-tests
     - setup-infrastructure
@@ -299,6 +301,95 @@ jobs:
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
       DEPLOYMENT_NAME: nats
+      ERRAND_NAME: smoke-tests
+
+- name: deploy-1-0-nats-standalone
+  public: true
+  serial_groups: [1-0-nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+    - get: hagrid-env-infrastructure
+      trigger: true
+      passed: [ upload-stemcell ]
+    - get: aws-stemcell
+      trigger: true
+      passed: [ upload-stemcell ]
+      params:
+        tarball: false
+    - get: runtime-ci
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+  - task: create-release
+    file: runtime-ci/scripts/ci/create-release/task.yml
+    privileged: true
+    input_mapping:
+      release-repo: nats-release
+    params:
+      RELEASE_NAME: nats
+  - task: bosh-upload-release-nats
+    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+    input_mapping:
+      release: release-tarball
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      RELEASE_NAME: nats-*.tgz
+  - task: generate-1-0-nats-deployment-manifest-from-bbl
+    file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+  - task: bosh-deploy-nats
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: nats.yml
+
+- name: smoke-tests-1-0
+  public: true
+  serial_groups: [1-0-nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+      passed: [deploy-1-0-nats-standalone]
+    - get: runtime-ci
+    - get: hagrid-env-infrastructure
+      passed: [deploy-1-0-nats-standalone]
+      trigger: true
+    - get: aws-stemcell
+      trigger: true
+      passed: [deploy-1-0-nats-standalone]
+      params:
+        tarball: false
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hagrid-env-infrastructure
+  - task: run-errand-bbl-smoke-tests
+    file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+    input_mapping:
+      target-file-dir: target
+      bosh-user-file-dir: username
+      bosh-password-file-dir: password
+    params:
+      BOSH_TARGET_FILE: target
+      BOSH_USER_FILE: bosh-user-file-dir/username
+      BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+      DEPLOYMENT_NAME: nats_1-0
       ERRAND_NAME: smoke-tests
 
 - name: deploy-cf-with-updated-nats

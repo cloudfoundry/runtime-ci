@@ -126,7 +126,7 @@ jobs:
       release: nats
     update: {}
 
-  - name: smoke_tests
+  - name: smoke-tests
     templates:
     - name: smoke-tests
       release: nats
