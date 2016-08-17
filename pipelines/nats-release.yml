@@ -70,7 +70,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
-    paths: [ bbl-infrastructure ]
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
