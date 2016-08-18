@@ -12,8 +12,6 @@ cat <<EOF > manifest/nats.yml
 name: nats_1-0
 director_uuid: $DIRECTOR_UUID
 releases:
-- name: cf
-  version: latest
 - name: nats
   version: latest
 resource_pools:
