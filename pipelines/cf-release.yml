@@ -7,9 +7,6 @@ groups:
   - deploy-bosh-lite
   - bosh-lite-smoke-tests
   - bosh-lite-acceptance-tests
-  - generate-minimal-manifest
-  - deploy-minimal
-  - minimal-acceptance-tests
   - generate-aws-manifests
   - generate-bosh-lite-manifests
   - generate-vsphere-manifests
@@ -27,6 +24,12 @@ groups:
   jobs:
   - a1-runtime-smokes
   - a1-loggregator-smokes
+- name: minimal
+  jobs:
+  - generate-minimal-manifest
+  - deploy-minimal
+  - minimal-acceptance-tests
+
 
 resource_types:
 - name: build-metadata-resource
@@ -480,10 +483,13 @@ jobs:
         passed: [ generate-bosh-lite-manifests ]
       - get: garden-linux-release-tarball
         trigger: true
+        passed: [ generate-bosh-lite-manifests ]
       - get: etcd-release-tarball
+        passed: [ generate-bosh-lite-manifests ]
         trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
+        passed: [ generate-bosh-lite-manifests ]
       - get: cf-bosh-lite-manifest
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
@@ -817,7 +823,6 @@ jobs:
         trigger: true
         passed: [ generate-minimal-manifest ]
       - get: aws-stemcell
-        passed: [ generate-minimal-manifest ]
         trigger: true
       - get: cf-release-tarball
         passed: [ generate-minimal-manifest ]
@@ -840,10 +845,6 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
-      - get: deployments
-        passed: [ generate-minimal-manifest ]
-        resource: minimal-env
-        trigger: true
     - put: minimal-deployment
       params:
         manifest: cf-minimal-manifest/deployment.yml
@@ -878,9 +879,6 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: minimal-env
-        trigger: true
-        passed: [ deploy-minimal ]
       - get: diego-release-tarball
         trigger: true
         passed: [ deploy-minimal ]
@@ -959,8 +957,6 @@ jobs:
           submodules: none
       - get: runtime-ci
         tags: [vsphere]
-      - get: cat-env
-        tags: [vsphere]
       - get: vsphere-stemcell
         tags: [vsphere]
         trigger: true
@@ -979,12 +975,15 @@ jobs:
       - get: garden-linux-release-tarball
         trigger: true
         tags: [vsphere]
+        passed: [ generate-vsphere-manifests ]
       - get: etcd-release-tarball
         trigger: true
         tags: [vsphere]
+        passed: [ generate-vsphere-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
+        passed: [ generate-vsphere-manifests ]
     - aggregate:
       - task: write-target-file-bosh-director
         file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -1259,8 +1258,6 @@ jobs:
         params:
           submodules: none
       - get: runtime-ci
-      - get: deployments
-        resource: a1-env
       - get: aws-stemcell
       - get: cf-a1-manifest
         trigger: true
@@ -1273,10 +1270,13 @@ jobs:
         passed: [ generate-aws-manifests ]
       - get: garden-linux-release-tarball
         trigger: true
+        passed: [ generate-aws-manifests ]
       - get: etcd-release-tarball
         trigger: true
+        passed: [ generate-aws-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
+        passed: [ generate-aws-manifests ]
     - put: a1-deployment
       params:
         manifest: cf-a1-manifest/deployment.yml
@@ -1388,6 +1388,11 @@ jobs:
   plan:
   - aggregate:
     - get: a1-env
+      trigger: true
+    - get: etcd-release-tarball
+      trigger: true
+      params:
+        tarball: false
     - get: diego-release-github-release
       params:
         globs: [ none ]
@@ -1402,6 +1407,14 @@ jobs:
       trigger: true
       passed: [ create-release ]
     - get: diego-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-linux-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: cflinuxfs2-rootfs-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1455,7 +1468,6 @@ jobs:
   plan:
   - aggregate:
     - get: diego-release-github-release
-      tags: [vsphere]
       params:
         globs: [ none ]
         include_source_tarball: true
@@ -1469,7 +1481,18 @@ jobs:
       trigger: true
       passed: [ create-release ]
     - get: diego-release-tarball
-      tags: [vsphere]
+      trigger: true
+      params:
+        tarball: false
+    - get: etcd-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-linux-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: cflinuxfs2-rootfs-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1531,6 +1554,7 @@ jobs:
   - aggregate:
     - get: cat-env
       tags: [vsphere]
+      trigger: true
     - get: diego-release-github-release
       tags: [vsphere]
       params:
@@ -1551,6 +1575,21 @@ jobs:
     - get: diego-release-tarball
       tags: [vsphere]
       trigger: true
+      params:
+        tarball: false
+    - get: etcd-release-tarball
+      tags: [vsphere]
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-linux-release-tarball
+      tags: [vsphere]
+      trigger: true
+      params:
+        tarball: false
+    - get: cflinuxfs2-rootfs-release-tarball
+      tags: [vsphere]
+      tragger: true
       params:
         tarball: false
   - task: create-cf-release-manifest
