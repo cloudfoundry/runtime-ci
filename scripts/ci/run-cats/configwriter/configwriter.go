@@ -37,9 +37,9 @@ type config struct {
 	LongCurlTimeout                   int    `json:"long_curl_timeout,omitempty"`
 	BrokerStartTimeout                int    `json:"broker_start_timeout,omitempty"`
 	IncludePrivilegedContainerSupport bool   `json:"include_privileged_container_support,omitempty"`
-	IncludeDiegoSSH                   bool   `json:"include_diego_ssh"`
+	IncludeDiegoSSH                   bool   `json:"include_ssh"`
 	IncludeV3                         bool   `json:"include_v3"`
-	IncludeDiegoDocker                bool   `json:"include_diego_docker"`
+	IncludeDiegoDocker                bool   `json:"include_docker"`
 	IncludeSecurityGroups             bool   `json:"include_security_groups"`
 	IncludeBackendCompatibility       bool   `json:"include_backend_compatibility"`
 	IncludeInternetDependent          bool   `json:"include_internet_dependent"`

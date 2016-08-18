@@ -94,9 +94,9 @@ var _ = Describe("Main", func() {
 				SkipSSLValidation           bool   `json:"skip_ssl_validation"`
 				IncludeSSO                  bool   `json:"include_sso"`
 				UseHTTP                     bool   `json:"use_http"`
-				IncludeDiegoSSH             bool   `json:"include_diego_ssh"`
+				IncludeDiegoSSH             bool   `json:"include_ssh"`
 				IncludeV3                   bool   `json:"include_v3"`
-				IncludeDiegoDocker          bool   `json:"include_diego_docker"`
+				IncludeDiegoDocker          bool   `json:"include_docker"`
 				IncludeSecurityGroups       bool   `json:"include_security_groups"`
 				IncludeBackendCompatibility bool   `json:"include_backend_compatibility"`
 				IncludeInternetDependent    bool   `json:"include_internet_dependent"`
@@ -429,9 +429,9 @@ var _ = Describe("Main", func() {
 				BinaryBuildpackName     string `json:"binary_buildpack_name"`
 
 				IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support"`
-				IncludeDiegoSSH                   bool `json:"include_diego_ssh"`
+				IncludeDiegoSSH                   bool `json:"include_ssh"`
 				IncludeV3                         bool `json:"include_v3"`
-				IncludeDiegoDocker                bool `json:"include_diego_docker"`
+				IncludeDiegoDocker                bool `json:"include_docker"`
 				IncludeSecurityGroups             bool `json:"include_security_groups"`
 				IncludeBackendCompatibility       bool `json:"include_backend_compatibility"`
 				IncludeInternetDependent          bool `json:"include_internet_dependent"`
