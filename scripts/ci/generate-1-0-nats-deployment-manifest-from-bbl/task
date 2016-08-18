@@ -109,6 +109,7 @@ jobs:
     - name: nats_stream_forwarder
       release: nats
     update: {}
+    consumes: {nats: nil}
 
   - name: nats_z2
     instances: 1
@@ -123,6 +124,7 @@ jobs:
     - name: nats_stream_forwarder
       release: nats
     update: {}
+    consumes: {nats: nil}
 
   - name: smoke-tests
     templates:
