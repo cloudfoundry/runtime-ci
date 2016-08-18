@@ -65,6 +65,46 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
+	if _, err = env.GetIncludeDiegoSSH(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeV3(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeDiegoDocker(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeBackendCompatibility(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeSecurityGroups(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeInternetDependent(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeServices(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeRouteServices(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeRouting(); err != nil {
+		errs.Add(err)
+	}
+
+	if _, err = env.GetIncludeDetect(); err != nil {
+		errs.Add(err)
+	}
+
 	if _, err := env.GetBackend(); err != nil {
 		errs.Add(err)
 	}
@@ -252,6 +292,46 @@ func (e *environment) GetSkipServices() (string, error) {
 
 func (e *environment) GetSkipRouteServices() (string, error) {
 	return e.returnsSkipFlag("INCLUDE_ROUTE_SERVICES", "route_services", false)
+}
+
+func (e *environment) GetIncludeDiegoSSH() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_DIEGO_SSH")
+}
+
+func (e *environment) GetIncludeV3() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_V3")
+}
+
+func (e *environment) GetIncludeDiegoDocker() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_DIEGO_DOCKER")
+}
+
+func (e *environment) GetIncludeSecurityGroups() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_SECURITY_GROUPS")
+}
+
+func (e *environment) GetIncludeBackendCompatibility() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_BACKEND_COMPATIBILITY")
+}
+
+func (e *environment) GetIncludeInternetDependent() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_INTERNET_DEPENDENT")
+}
+
+func (e *environment) GetIncludeServices() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_SERVICES")
+}
+
+func (e *environment) GetIncludeRouteServices() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_ROUTE_SERVICES")
+}
+
+func (e *environment) GetIncludeRouting() (bool, error) {
+	return e.getBooleanDefaultToTrue("INCLUDE_ROUTING")
+}
+
+func (e *environment) GetIncludeDetect() (bool, error) {
+	return e.getBooleanDefaultToTrue("INCLUDE_DETECT")
 }
 
 func (e *environment) GetCatsPath() string {

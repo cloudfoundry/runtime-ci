@@ -46,6 +46,8 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_ROUTING")
+			os.Unsetenv("INCLUDE_DETECT")
 		})
 
 		Context("when there are errors", func() {
@@ -75,6 +77,8 @@ var _ = Describe("Environment", func() {
 				os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 				os.Setenv("INCLUDE_SERVICES", "troo")
 				os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
+				os.Setenv("INCLUDE_ROUTING", "truce")
+				os.Setenv("INCLUDE_DETECT", "truce")
 			})
 
 			It("contains all the error messages", func() {
@@ -102,6 +106,8 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'Falz'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'troo'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'truce'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTING' must be a boolean 'true' or 'false' but was set to 'truce'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_DETECT' must be a boolean 'true' or 'false' but was set to 'truce'"),
 				))
 			})
 		})
@@ -119,6 +125,7 @@ var _ = Describe("Environment", func() {
 			})
 		})
 	})
+
 	Describe("GetSkipSSLValidation", func() {
 		AfterEach(func() {
 			os.Unsetenv("SKIP_SSL_VALIDATION")
@@ -748,6 +755,276 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetIncludeSSO()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeDiegoSSH", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_DIEGO_SSH")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DIEGO_SSH", "true")
+			result, _ := env.GetIncludeDiegoSSH()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeDiegoSSH()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DIEGO_SSH", "blah blah blah")
+			_, err := env.GetIncludeDiegoSSH()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeV3", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_V3")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_V3", "true")
+			result, _ := env.GetIncludeV3()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeV3()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_V3", "blah blah blah")
+			_, err := env.GetIncludeV3()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeDiegoDocker", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "true")
+			result, _ := env.GetIncludeDiegoDocker()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeDiegoDocker()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DIEGO_DOCKER", "blah blah blah")
+			_, err := env.GetIncludeDiegoDocker()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeSecurityGroups", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_SECURITY_GROUPS")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "true")
+			result, _ := env.GetIncludeSecurityGroups()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeSecurityGroups()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_SECURITY_GROUPS", "blah blah blah")
+			_, err := env.GetIncludeSecurityGroups()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SECURITY_GROUPS' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeBackendCompatibility", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_BACKEND_COMPATIBILITY")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "true")
+			result, _ := env.GetIncludeBackendCompatibility()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeBackendCompatibility()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_BACKEND_COMPATIBILITY", "blah blah blah")
+			_, err := env.GetIncludeBackendCompatibility()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_BACKEND_COMPATIBILITY' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeInternetDependent", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "true")
+			result, _ := env.GetIncludeInternetDependent()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeInternetDependent()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "blah blah blah")
+			_, err := env.GetIncludeInternetDependent()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_INTERNET_DEPENDENT' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeServices", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_SERVICES")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_SERVICES", "true")
+			result, _ := env.GetIncludeServices()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeServices()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_SERVICES", "blah blah blah")
+			_, err := env.GetIncludeServices()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeRouteServices", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "true")
+			result, _ := env.GetIncludeRouteServices()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeRouteServices()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_ROUTE_SERVICES", "blah blah blah")
+			_, err := env.GetIncludeRouteServices()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeRouting", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_ROUTING")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_ROUTING", "false")
+			result, _ := env.GetIncludeRouting()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns a default of true", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeRouting()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_ROUTING", "blah blah blah")
+			_, err := env.GetIncludeRouting()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_ROUTING' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeDetect", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_DETECT")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DETECT", "false")
+			result, _ := env.GetIncludeDetect()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns a default of true", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeDetect()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_DETECT", "blah blah blah")
+			_, err := env.GetIncludeDetect()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_DETECT' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 
