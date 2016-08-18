@@ -19,14 +19,6 @@ var _ = Describe("Commandgenerator", func() {
 		env = &commandgeneratorfakes.FakeEnvironment{}
 		nodes = 10
 		env.GetNodesReturns(nodes, nil)
-		env.GetSkipBackendCompatibilityReturns("backend_compatibility", nil)
-		env.GetSkipDiegoDockerReturns("docker", nil)
-		env.GetSkipInternetDependentReturns("internet_dependent", nil)
-		env.GetSkipRouteServicesReturns("route_services", nil)
-		env.GetSkipSecurityGroupsReturns("security_groups", nil)
-		env.GetSkipServicesReturns("services", nil)
-		env.GetSkipDiegoSSHReturns("ssh", nil)
-		env.GetSkipV3Returns("v3", nil)
 	})
 
 	Context("When the path to CATs is set", func() {
@@ -40,7 +32,7 @@ var _ = Describe("Commandgenerator", func() {
 			Expect(cmd).To(Equal("bin/test"))
 
 			Expect(strings.Join(args, " ")).To(Equal(
-				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -keepGoing", nodes),
+				fmt.Sprintf("-r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=%d -skipPackage=helpers -keepGoing", nodes),
 			))
 
 			env.GetCatsPathReturns("/path/to/cats")
@@ -57,46 +49,6 @@ var _ = Describe("Commandgenerator", func() {
 				_, args, _ := commandgenerator.GenerateCmd(env)
 				Expect(args).To(ContainElement("-nodes=2"))
 			})
-		})
-
-		Context("when there are optional skipPackage env vars set", func() {
-			Context("to not skip", func() {
-				BeforeEach(func() {
-					env.GetSkipBackendCompatibilityReturns("", nil)
-					env.GetSkipDiegoDockerReturns("", nil)
-					env.GetSkipInternetDependentReturns("", nil)
-					env.GetSkipRouteServicesReturns("", nil)
-					env.GetSkipSecurityGroupsReturns("", nil)
-					env.GetSkipServicesReturns("", nil)
-					env.GetSkipDiegoSSHReturns("", nil)
-					env.GetSkipV3Returns("", nil)
-				})
-
-				It("should generate a command with the correct list of skipPackage flags", func() {
-					cmd, args, err := commandgenerator.GenerateCmd(env)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cmd).To(Equal(
-						"bin/test",
-					))
-
-					Expect(strings.Join(args, " ")).To(ContainSubstring(" -skipPackage=helpers "))
-				})
-			})
-
-			Context("to skip", func() {
-				It("should generate a command with the correct list of skipPackage flags", func() {
-					cmd, args, err := commandgenerator.GenerateCmd(env)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cmd).To(Equal(
-						"bin/test",
-					))
-
-					Expect(strings.Join(args, " ")).To(ContainSubstring(
-						" -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 ",
-					))
-				})
-			})
-
 		})
 	})
 

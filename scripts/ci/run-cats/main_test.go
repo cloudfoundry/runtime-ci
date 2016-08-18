@@ -87,13 +87,23 @@ var _ = Describe("Main", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			var config struct {
-				Api               string `json:"api"`
-				AdminUser         string `json:"admin_user"`
-				AdminPassword     string `json:"admin_password"`
-				AppsDomain        string `json:"apps_domain"`
-				SkipSSLValidation bool   `json:"skip_ssl_validation"`
-				IncludeSSO        bool   `json:"include_sso"`
-				UseHTTP           bool   `json:"use_http"`
+				Api                         string `json:"api"`
+				AdminUser                   string `json:"admin_user"`
+				AdminPassword               string `json:"admin_password"`
+				AppsDomain                  string `json:"apps_domain"`
+				SkipSSLValidation           bool   `json:"skip_ssl_validation"`
+				IncludeSSO                  bool   `json:"include_sso"`
+				UseHTTP                     bool   `json:"use_http"`
+				IncludeDiegoSSH             bool   `json:"include_diego_ssh"`
+				IncludeV3                   bool   `json:"include_v3"`
+				IncludeDiegoDocker          bool   `json:"include_diego_docker"`
+				IncludeSecurityGroups       bool   `json:"include_security_groups"`
+				IncludeBackendCompatibility bool   `json:"include_backend_compatibility"`
+				IncludeInternetDependent    bool   `json:"include_internet_dependent"`
+				IncludeServices             bool   `json:"include_services"`
+				IncludeRouteServices        bool   `json:"include_route_services"`
+				IncludeRouting              bool   `json:"include_routing"`
+				IncludeDetect               bool   `json:"include_detect"`
 			}
 
 			err = json.Unmarshal(configBytes, &config)
@@ -106,6 +116,16 @@ var _ = Describe("Main", func() {
 			Expect(config.SkipSSLValidation).To(BeFalse())
 			Expect(config.IncludeSSO).To(BeFalse())
 			Expect(config.UseHTTP).To(BeFalse())
+			Expect(config.IncludeDiegoSSH).To(BeFalse())
+			Expect(config.IncludeV3).To(BeFalse())
+			Expect(config.IncludeDiegoDocker).To(BeFalse())
+			Expect(config.IncludeSecurityGroups).To(BeFalse())
+			Expect(config.IncludeBackendCompatibility).To(BeFalse())
+			Expect(config.IncludeInternetDependent).To(BeFalse())
+			Expect(config.IncludeServices).To(BeFalse())
+			Expect(config.IncludeRouteServices).To(BeFalse())
+			Expect(config.IncludeRouting).To(BeTrue())
+			Expect(config.IncludeDetect).To(BeTrue())
 		})
 
 		It("Executes the command to run CATs, excluding configarable suites and SSO", func() {
@@ -116,7 +136,7 @@ var _ = Describe("Main", func() {
 
 			Eventually(session, 30).Should(gexec.Exit(0))
 			Eventually(session.Out, 30).Should(gbytes.Say(
-				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=backend_compatibility,docker,helpers,internet_dependent,route_services,security_groups,services,ssh,v3 -keepGoing`,
+				`bin/test -r -slowSpecThreshold=120 -randomizeAllSpecs -nodes=2 -skipPackage=helpers -keepGoing`,
 			))
 		})
 
@@ -317,6 +337,8 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "true")
 			os.Setenv("INCLUDE_SERVICES", "true")
 			os.Setenv("INCLUDE_ROUTE_SERVICES", "true")
+			os.Setenv("INCLUDE_ROUTING", "false")
+			os.Setenv("INCLUDE_DETECT", "false")
 		})
 
 		AfterEach(func() {
@@ -358,6 +380,8 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_ROUTING")
+			os.Unsetenv("INCLUDE_DETECT")
 		})
 
 		It("Executes the command to run CATs", func() {
@@ -405,6 +429,16 @@ var _ = Describe("Main", func() {
 				BinaryBuildpackName     string `json:"binary_buildpack_name"`
 
 				IncludePrivilegedContainerSupport bool `json:"include_privileged_container_support"`
+				IncludeDiegoSSH                   bool `json:"include_diego_ssh"`
+				IncludeV3                         bool `json:"include_v3"`
+				IncludeDiegoDocker                bool `json:"include_diego_docker"`
+				IncludeSecurityGroups             bool `json:"include_security_groups"`
+				IncludeBackendCompatibility       bool `json:"include_backend_compatibility"`
+				IncludeInternetDependent          bool `json:"include_internet_dependent"`
+				IncludeServices                   bool `json:"include_services"`
+				IncludeRouteServices              bool `json:"include_route_services"`
+				IncludeRouting                    bool `json:"include_routing"`
+				IncludeDetect                     bool `json:"include_detect"`
 			}
 			err = json.Unmarshal(configBytes, &config)
 			Expect(err).NotTo(HaveOccurred())
@@ -440,6 +474,16 @@ var _ = Describe("Main", func() {
 			Expect(config.BinaryBuildpackName).To(Equal("binary-buildpack"))
 
 			Expect(config.IncludePrivilegedContainerSupport).To(Equal(true))
+			Expect(config.IncludeDiegoSSH).To(BeTrue())
+			Expect(config.IncludeV3).To(BeTrue())
+			Expect(config.IncludeDiegoDocker).To(BeTrue())
+			Expect(config.IncludeSecurityGroups).To(BeTrue())
+			Expect(config.IncludeBackendCompatibility).To(BeTrue())
+			Expect(config.IncludeInternetDependent).To(BeTrue())
+			Expect(config.IncludeServices).To(BeTrue())
+			Expect(config.IncludeRouteServices).To(BeTrue())
+			Expect(config.IncludeRouting).To(BeFalse())
+			Expect(config.IncludeDetect).To(BeFalse())
 		})
 	})
 
@@ -470,6 +514,8 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 			os.Setenv("INCLUDE_SERVICES", "troo")
 			os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
+			os.Setenv("INCLUDE_ROUTING", "truce")
+			os.Setenv("INCLUDE_DETECT", "truce")
 			Expect(configJsonPath).NotTo(BeAnExistingFile())
 		})
 
@@ -498,6 +544,8 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_ROUTING")
+			os.Unsetenv("INCLUDE_DETECT")
 		})
 
 		It("Shows all the errors and doesn't write the config or run the CATs command", func() {
@@ -534,6 +582,8 @@ var _ = Describe("Main", func() {
 				ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
 				ContainSubstring("INCLUDE_SERVICES"),
 				ContainSubstring("INCLUDE_ROUTE_SERVICES"),
+				ContainSubstring("INCLUDE_ROUTING"),
+				ContainSubstring("INCLUDE_DETECT"),
 			))
 
 			Expect(commandOutput).ToNot(ContainSubstring("bin/test -r"))

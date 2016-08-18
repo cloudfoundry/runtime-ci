@@ -25,38 +25,6 @@ func (env *environment) Validate() validationerrors.Errors {
 %s`, missingEnvKeys))
 	}
 
-	if _, err = env.GetSkipDiegoSSH(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipV3(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipDiegoDocker(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipBackendCompatibility(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipSecurityGroups(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipInternetDependent(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipServices(); err != nil {
-		errs.Add(err)
-	}
-
-	if _, err = env.GetSkipRouteServices(); err != nil {
-		errs.Add(err)
-	}
-
 	if _, err := env.GetNodes(); err != nil {
 		errs.Add(err)
 	}
@@ -258,40 +226,8 @@ func (e *environment) GetBackend() (string, error) {
 	}
 }
 
-func (e *environment) GetSkipDiegoSSH() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_DIEGO_SSH", "ssh", false)
-}
-
-func (e *environment) GetSkipV3() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_V3", "v3", false)
-}
-
-func (e *environment) GetSkipDiegoDocker() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_DIEGO_DOCKER", "docker", false)
-}
-
 func (e *environment) GetIncludeSSO() (bool, error) {
 	return e.getBooleanDefaultToFalse("INCLUDE_SSO")
-}
-
-func (e *environment) GetSkipSecurityGroups() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_SECURITY_GROUPS", "security_groups", false)
-}
-
-func (e *environment) GetSkipBackendCompatibility() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_BACKEND_COMPATIBILITY", "backend_compatibility", false)
-}
-
-func (e *environment) GetSkipInternetDependent() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_INTERNET_DEPENDENT", "internet_dependent", false)
-}
-
-func (e *environment) GetSkipServices() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_SERVICES", "services", false)
-}
-
-func (e *environment) GetSkipRouteServices() (string, error) {
-	return e.returnsSkipFlag("INCLUDE_ROUTE_SERVICES", "route_services", false)
 }
 
 func (e *environment) GetIncludeDiegoSSH() (bool, error) {
