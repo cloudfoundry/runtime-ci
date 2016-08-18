@@ -554,6 +554,7 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: extended-cf-deployment-manifest
+        manifest-properties: hagrid-env-infrastructure
       params:
         TARGET_FILE:   target
         USERNAME_FILE: username
@@ -564,6 +565,7 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: extended-diego-deployment-manifest
+        manifest-properties: hagrid-env-infrastructure
       params:
         TARGET_FILE:   target
         USERNAME_FILE: username
