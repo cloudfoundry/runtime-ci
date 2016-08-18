@@ -37,6 +37,16 @@ type config struct {
 	LongCurlTimeout                   int    `json:"long_curl_timeout,omitempty"`
 	BrokerStartTimeout                int    `json:"broker_start_timeout,omitempty"`
 	IncludePrivilegedContainerSupport bool   `json:"include_privileged_container_support,omitempty"`
+	IncludeDiegoSSH                   bool   `json:"include_diego_ssh"`
+	IncludeV3                         bool   `json:"include_v3"`
+	IncludeDiegoDocker                bool   `json:"include_diego_docker"`
+	IncludeSecurityGroups             bool   `json:"include_security_groups"`
+	IncludeBackendCompatibility       bool   `json:"include_backend_compatibility"`
+	IncludeInternetDependent          bool   `json:"include_internet_dependent"`
+	IncludeServices                   bool   `json:"include_services"`
+	IncludeRouteServices              bool   `json:"include_route_services"`
+	IncludeRouting                    bool   `json:"include_routing"`
+	IncludeDetect                     bool   `json:"include_detect"`
 }
 
 type configFile struct {
@@ -74,6 +84,16 @@ type Environment interface {
 	GetPersistentAppOrg() string
 	GetPersistentAppQuotaName() string
 	GetBackend() (string, error)
+	GetIncludeDiegoSSH() (bool, error)
+	GetIncludeV3() (bool, error)
+	GetIncludeDiegoDocker() (bool, error)
+	GetIncludeSecurityGroups() (bool, error)
+	GetIncludeBackendCompatibility() (bool, error)
+	GetIncludeInternetDependent() (bool, error)
+	GetIncludeServices() (bool, error)
+	GetIncludeRouteServices() (bool, error)
+	GetIncludeRouting() (bool, error)
+	GetIncludeDetect() (bool, error)
 }
 
 func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
@@ -83,8 +103,11 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
-		skipSslValidation, includeSSO, useHttp                             bool
-		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout int
+		skipSslValidation, includeSSO, useHttp                                 bool
+		includeDiegoSSH, includeV3, includeDiegoDocker, includeSecurityGroups  bool
+		includeBackendCompatibility, includeInternetDependent, includeServices bool
+		includeRouteServices, includeRouting, includeDetect                    bool
+		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout     int
 	)
 
 	skipSslValidation, _ = env.GetSkipSSLValidation()
@@ -102,6 +125,17 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	longCurlTimeout, _ = env.GetLongCurlTimeoutInSeconds()
 
 	brokerStartTimeout, _ = env.GetBrokerStartTimeoutInSeconds()
+
+	includeDiegoSSH, _ = env.GetIncludeDiegoSSH()
+	includeV3, _ = env.GetIncludeV3()
+	includeDiegoDocker, _ = env.GetIncludeDiegoDocker()
+	includeSecurityGroups, _ = env.GetIncludeSecurityGroups()
+	includeBackendCompatibility, _ = env.GetIncludeBackendCompatibility()
+	includeInternetDependent, _ = env.GetIncludeInternetDependent()
+	includeServices, _ = env.GetIncludeServices()
+	includeRouteServices, _ = env.GetIncludeRouteServices()
+	includeRouting, _ = env.GetIncludeRouting()
+	includeDetect, _ = env.GetIncludeDetect()
 
 	backend, _ := env.GetBackend()
 
@@ -139,6 +173,16 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		BrokerStartTimeout: brokerStartTimeout,
 
 		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
+		IncludeDiegoSSH:                   includeDiegoSSH,
+		IncludeV3:                         includeV3,
+		IncludeDiegoDocker:                includeDiegoDocker,
+		IncludeSecurityGroups:             includeSecurityGroups,
+		IncludeBackendCompatibility:       includeBackendCompatibility,
+		IncludeInternetDependent:          includeInternetDependent,
+		IncludeServices:                   includeServices,
+		IncludeRouteServices:              includeRouteServices,
+		IncludeRouting:                    includeRouting,
+		IncludeDetect:                     includeDetect,
 	}, nil
 }
 

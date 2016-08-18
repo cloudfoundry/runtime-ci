@@ -16,6 +16,8 @@ var _ = Describe("Configwriter", func() {
 	var env *configwriterfakes.FakeEnvironment
 	BeforeEach(func() {
 		env = &configwriterfakes.FakeEnvironment{}
+		env.GetIncludeRoutingReturns(true, nil)
+		env.GetIncludeDetectReturns(true, nil)
 	})
 
 	Context("when env vars are not set", func() {
@@ -46,6 +48,16 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.PythonBuildpackName).To(Equal(""))
 			Expect(configFile.Config.PhpBuildpackName).To(Equal(""))
 			Expect(configFile.Config.BinaryBuildpackName).To(Equal(""))
+			Expect(configFile.Config.IncludeDiegoSSH).To(BeFalse())
+			Expect(configFile.Config.IncludeV3).To(BeFalse())
+			Expect(configFile.Config.IncludeDiegoDocker).To(BeFalse())
+			Expect(configFile.Config.IncludeSecurityGroups).To(BeFalse())
+			Expect(configFile.Config.IncludeBackendCompatibility).To(BeFalse())
+			Expect(configFile.Config.IncludeInternetDependent).To(BeFalse())
+			Expect(configFile.Config.IncludeServices).To(BeFalse())
+			Expect(configFile.Config.IncludeRouteServices).To(BeFalse())
+			Expect(configFile.Config.IncludeRouting).To(BeTrue())
+			Expect(configFile.Config.IncludeDetect).To(BeTrue())
 			Expect(configFile.DestinationDir).To(Equal("/dir/name"))
 		})
 
@@ -89,6 +101,16 @@ var _ = Describe("Configwriter", func() {
 			expectedPythonBuildpackName               string
 			expectedPhpBuildpackName                  string
 			expectedBinaryBuildpackName               string
+			expectedIncludeDiegoSSH                   bool
+			expectedIncludeV3                         bool
+			expectedIncludeDiegoDocker                bool
+			expectedIncludeSecurityGroups             bool
+			expectedIncludeBackendCompatibility       bool
+			expectedIncludeInternetDependent          bool
+			expectedIncludeServices                   bool
+			expectedIncludeRouteServices              bool
+			expectedIncludeRouting                    bool
+			expectedIncludeDetect                     bool
 		)
 
 		BeforeEach(func() {
@@ -124,6 +146,17 @@ var _ = Describe("Configwriter", func() {
 			expectedPhpBuildpackName = "PHP_BUILDPACK_NAME"
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME"
 
+			expectedIncludeDiegoSSH = true
+			expectedIncludeV3 = true
+			expectedIncludeDiegoDocker = true
+			expectedIncludeSecurityGroups = true
+			expectedIncludeBackendCompatibility = true
+			expectedIncludeInternetDependent = true
+			expectedIncludeServices = true
+			expectedIncludeRouteServices = true
+			expectedIncludeRouting = false
+			expectedIncludeDetect = false
+
 			env.GetSkipSSLValidationReturns(expectedSkipSslValidation, nil)
 			env.GetIncludeSSOReturns(expectedIncludeSSO, nil)
 			env.GetUseHTTPReturns(expectedUseHttp, nil)
@@ -154,6 +187,17 @@ var _ = Describe("Configwriter", func() {
 			env.GetCFPushTimeoutInSecondsReturns(expectedCfPushTimeout, nil)
 			env.GetLongCurlTimeoutInSecondsReturns(expectedLongCurlTimeout, nil)
 			env.GetBrokerStartTimeoutInSecondsReturns(expectedBrokerStartTimeout, nil)
+
+			env.GetIncludeDiegoSSHReturns(expectedIncludeDiegoSSH, nil)
+			env.GetIncludeV3Returns(expectedIncludeV3, nil)
+			env.GetIncludeDiegoDockerReturns(expectedIncludeDiegoDocker, nil)
+			env.GetIncludeSecurityGroupsReturns(expectedIncludeSecurityGroups, nil)
+			env.GetIncludeBackendCompatibilityReturns(expectedIncludeBackendCompatibility, nil)
+			env.GetIncludeInternetDependentReturns(expectedIncludeInternetDependent, nil)
+			env.GetIncludeServicesReturns(expectedIncludeServices, nil)
+			env.GetIncludeRouteServicesReturns(expectedIncludeRouteServices, nil)
+			env.GetIncludeRoutingReturns(expectedIncludeRouting, nil)
+			env.GetIncludeDetectReturns(expectedIncludeDetect, nil)
 
 			env.GetBackendReturns(expectedBackend, nil)
 		})
@@ -189,6 +233,16 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.PythonBuildpackName).To(Equal(expectedPythonBuildpackName))
 			Expect(configFile.Config.PhpBuildpackName).To(Equal(expectedPhpBuildpackName))
 			Expect(configFile.Config.BinaryBuildpackName).To(Equal(expectedBinaryBuildpackName))
+			Expect(configFile.Config.IncludeDiegoSSH).To(Equal(expectedIncludeDiegoSSH))
+			Expect(configFile.Config.IncludeV3).To(Equal(expectedIncludeV3))
+			Expect(configFile.Config.IncludeDiegoDocker).To(Equal(expectedIncludeDiegoDocker))
+			Expect(configFile.Config.IncludeSecurityGroups).To(Equal(expectedIncludeSecurityGroups))
+			Expect(configFile.Config.IncludeBackendCompatibility).To(Equal(expectedIncludeBackendCompatibility))
+			Expect(configFile.Config.IncludeInternetDependent).To(Equal(expectedIncludeInternetDependent))
+			Expect(configFile.Config.IncludeServices).To(Equal(expectedIncludeServices))
+			Expect(configFile.Config.IncludeRouteServices).To(Equal(expectedIncludeRouteServices))
+			Expect(configFile.Config.IncludeRouting).To(Equal(expectedIncludeRouting))
+			Expect(configFile.Config.IncludeDetect).To(Equal(expectedIncludeDetect))
 			Expect(configFile.DestinationDir).To(Equal("/some/dir"))
 		})
 
@@ -216,7 +270,17 @@ var _ = Describe("Configwriter", func() {
                                               "include_sso": false,
                                               "use_http": false,
                                               "use_existing_user": false,
-                                              "keep_user_at_suite_end": false
+                                              "keep_user_at_suite_end": false,
+                                              "include_diego_ssh": false,
+                                              "include_v3": false,
+                                              "include_diego_docker": false,
+                                              "include_security_groups": false,
+                                              "include_backend_compatibility": false,
+                                              "include_internet_dependent": false,
+                                              "include_services": false,
+                                              "include_route_services": false,
+                                              "include_routing": true,
+                                              "include_detect": true
                                               }`))
 		})
 
@@ -252,6 +316,17 @@ var _ = Describe("Configwriter", func() {
 				env.GetPythonBuildpackNameReturns("non-empty-value")
 				env.GetPHPBuildpackNameReturns("non-empty-value")
 				env.GetBinaryBuildpackNameReturns("non-empty-value")
+				env.GetIncludeDiegoSSHReturns(true, nil)
+				env.GetIncludeV3Returns(true, nil)
+				env.GetIncludeDiegoDockerReturns(true, nil)
+				env.GetIncludeSecurityGroupsReturns(true, nil)
+				env.GetIncludeBackendCompatibilityReturns(true, nil)
+				env.GetIncludeInternetDependentReturns(true, nil)
+				env.GetIncludeServicesReturns(true, nil)
+				env.GetIncludeRouteServicesReturns(true, nil)
+				env.GetIncludeRoutingReturns(false, nil)
+				env.GetIncludeDetectReturns(false, nil)
+
 			})
 
 			It("renders the variables in the integration_config", func() {
@@ -261,35 +336,45 @@ var _ = Describe("Configwriter", func() {
 				configJson, err = json.Marshal(configFile.Config)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(configJson)).To(MatchJSON(`{
-																							"api": "non-empty-value",
-																							"admin_user": "non-empty-value",
-																							"admin_password": "non-empty-value",
-																							"apps_domain": "non-empty-value",
-																							"skip_ssl_validation": true,
-																							"include_sso": true,
-																							"use_http": true,
-																							"existing_user": "non-empty-value",
-																							"use_existing_user": true,
-																							"keep_user_at_suite_end": true,
-																							"existing_user_password": "non-empty-value",
-																							"backend": "diego",
-																							"staticfile_buildpack_name": "non-empty-value",
-																							"java_buildpack_name": "non-empty-value",
-																							"ruby_buildpack_name": "non-empty-value",
-																							"nodejs_buildpack_name": "non-empty-value",
-																							"go_buildpack_name": "non-empty-value",
-																							"python_buildpack_name": "non-empty-value",
-																							"php_buildpack_name": "non-empty-value",
-																							"binary_buildpack_name": "non-empty-value",
-																							"persistent_app_host": "non-empty-value",
-																							"persistent_app_space": "non-empty-value",
-																							"persistent_app_org": "non-empty-value",
-																							"persistent_app_quota_name": "non-empty-value",
-																							"default_timeout": 1,
-																							"cf_push_timeout": 1,
-																							"long_curl_timeout": 1,
-																							"broker_start_timeout": 1
-																							}`))
+                                              "api": "non-empty-value",
+                                              "admin_user": "non-empty-value",
+                                              "admin_password": "non-empty-value",
+                                              "apps_domain": "non-empty-value",
+                                              "skip_ssl_validation": true,
+                                              "include_sso": true,
+                                              "use_http": true,
+                                              "existing_user": "non-empty-value",
+                                              "use_existing_user": true,
+                                              "keep_user_at_suite_end": true,
+                                              "existing_user_password": "non-empty-value",
+                                              "backend": "diego",
+                                              "staticfile_buildpack_name": "non-empty-value",
+                                              "java_buildpack_name": "non-empty-value",
+                                              "ruby_buildpack_name": "non-empty-value",
+                                              "nodejs_buildpack_name": "non-empty-value",
+                                              "go_buildpack_name": "non-empty-value",
+                                              "python_buildpack_name": "non-empty-value",
+                                              "php_buildpack_name": "non-empty-value",
+                                              "binary_buildpack_name": "non-empty-value",
+                                              "persistent_app_host": "non-empty-value",
+                                              "persistent_app_space": "non-empty-value",
+                                              "persistent_app_org": "non-empty-value",
+                                              "persistent_app_quota_name": "non-empty-value",
+                                              "default_timeout": 1,
+                                              "cf_push_timeout": 1,
+                                              "long_curl_timeout": 1,
+                                              "broker_start_timeout": 1,
+                                              "include_diego_ssh": true,
+                                              "include_v3": true,
+                                              "include_diego_docker": true,
+                                              "include_security_groups": true,
+                                              "include_backend_compatibility": true,
+                                              "include_internet_dependent": true,
+                                              "include_services": true,
+                                              "include_route_services": true,
+                                              "include_routing": false,
+                                              "include_detect": false
+                                              }`))
 
 			})
 		})
@@ -324,6 +409,16 @@ var _ = Describe("Configwriter", func() {
 				env.GetPythonBuildpackNameReturns("")
 				env.GetPHPBuildpackNameReturns("")
 				env.GetBinaryBuildpackNameReturns("")
+				env.GetIncludeDiegoSSHReturns(false, nil)
+				env.GetIncludeV3Returns(false, nil)
+				env.GetIncludeDiegoDockerReturns(false, nil)
+				env.GetIncludeSecurityGroupsReturns(false, nil)
+				env.GetIncludeBackendCompatibilityReturns(false, nil)
+				env.GetIncludeInternetDependentReturns(false, nil)
+				env.GetIncludeServicesReturns(false, nil)
+				env.GetIncludeRouteServicesReturns(false, nil)
+				env.GetIncludeRoutingReturns(true, nil)
+				env.GetIncludeDetectReturns(true, nil)
 			})
 
 			It("renders the default variables in the integration_config", func() {
@@ -333,16 +428,26 @@ var _ = Describe("Configwriter", func() {
 				configJson, err = json.Marshal(configFile.Config)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(configJson)).To(MatchJSON(`{
-																							"api": "non-empty-value",
-																							"admin_user": "non-empty-value",
-																							"admin_password": "non-empty-value",
-																							"apps_domain": "non-empty-value",
-																							"skip_ssl_validation": false,
-																							"include_sso": false,
-																							"use_http": false,
-																							"use_existing_user": false,
-																							"keep_user_at_suite_end": false
-																							}`))
+                                              "api": "non-empty-value",
+                                              "admin_user": "non-empty-value",
+                                              "admin_password": "non-empty-value",
+                                              "apps_domain": "non-empty-value",
+                                              "skip_ssl_validation": false,
+                                              "include_sso": false,
+                                              "use_http": false,
+                                              "use_existing_user": false,
+                                              "keep_user_at_suite_end": false,
+                                              "include_diego_ssh": false,
+                                              "include_v3": false,
+                                              "include_diego_docker": false,
+                                              "include_security_groups": false,
+                                              "include_backend_compatibility": false,
+                                              "include_internet_dependent": false,
+                                              "include_services": false,
+                                              "include_route_services": false,
+                                              "include_routing": true,
+                                              "include_detect": true
+                                              }`))
 			})
 		})
 
@@ -377,16 +482,26 @@ var _ = Describe("Configwriter", func() {
 			contents, err := ioutil.ReadFile(file.Name())
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).To(MatchJSON(`{
-																							"api": "cf-api-value",
-																							"admin_user": "",
-																							"admin_password": "",
-																							"apps_domain": "",
-																							"skip_ssl_validation": false,
-																							"include_sso": false,
-																							"use_http": false,
-																							"use_existing_user": false,
-																							"keep_user_at_suite_end": false
-																							}`))
+                                              "api": "cf-api-value",
+                                              "admin_user": "",
+                                              "admin_password": "",
+                                              "apps_domain": "",
+                                              "skip_ssl_validation": false,
+                                              "include_sso": false,
+                                              "use_http": false,
+                                              "use_existing_user": false,
+                                              "keep_user_at_suite_end": false,
+                                              "include_diego_ssh": false,
+                                              "include_v3": false,
+                                              "include_diego_docker": false,
+                                              "include_security_groups": false,
+                                              "include_backend_compatibility": false,
+                                              "include_internet_dependent": false,
+                                              "include_services": false,
+                                              "include_route_services": false,
+                                              "include_routing": true,
+                                              "include_detect": true
+                                              }`))
 		})
 	})
 
@@ -413,10 +528,20 @@ var _ = Describe("Configwriter", func() {
                                     "admin_password": "",
                                     "apps_domain": "",
                                     "skip_ssl_validation": false,
-																	  "include_sso": false,
+                                    "include_sso": false,
                                     "use_http": false,
                                     "use_existing_user": false,
-                                    "keep_user_at_suite_end": false
+                                    "keep_user_at_suite_end": false,
+                                    "include_diego_ssh": false,
+                                    "include_v3": false,
+                                    "include_diego_docker": false,
+                                    "include_security_groups": false,
+                                    "include_backend_compatibility": false,
+                                    "include_internet_dependent": false,
+                                    "include_services": false,
+                                    "include_route_services": false,
+                                    "include_routing": true,
+                                    "include_detect": true
                                     }`))
 		})
 	})

@@ -191,6 +191,76 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
+	GetIncludeDiegoSSHStub        func() (bool, error)
+	getIncludeDiegoSSHMutex       sync.RWMutex
+	getIncludeDiegoSSHArgsForCall []struct{}
+	getIncludeDiegoSSHReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeV3Stub        func() (bool, error)
+	getIncludeV3Mutex       sync.RWMutex
+	getIncludeV3ArgsForCall []struct{}
+	getIncludeV3Returns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeDiegoDockerStub        func() (bool, error)
+	getIncludeDiegoDockerMutex       sync.RWMutex
+	getIncludeDiegoDockerArgsForCall []struct{}
+	getIncludeDiegoDockerReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeSecurityGroupsStub        func() (bool, error)
+	getIncludeSecurityGroupsMutex       sync.RWMutex
+	getIncludeSecurityGroupsArgsForCall []struct{}
+	getIncludeSecurityGroupsReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeBackendCompatibilityStub        func() (bool, error)
+	getIncludeBackendCompatibilityMutex       sync.RWMutex
+	getIncludeBackendCompatibilityArgsForCall []struct{}
+	getIncludeBackendCompatibilityReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeInternetDependentStub        func() (bool, error)
+	getIncludeInternetDependentMutex       sync.RWMutex
+	getIncludeInternetDependentArgsForCall []struct{}
+	getIncludeInternetDependentReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeServicesStub        func() (bool, error)
+	getIncludeServicesMutex       sync.RWMutex
+	getIncludeServicesArgsForCall []struct{}
+	getIncludeServicesReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeRouteServicesStub        func() (bool, error)
+	getIncludeRouteServicesMutex       sync.RWMutex
+	getIncludeRouteServicesArgsForCall []struct{}
+	getIncludeRouteServicesReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeRoutingStub        func() (bool, error)
+	getIncludeRoutingMutex       sync.RWMutex
+	getIncludeRoutingArgsForCall []struct{}
+	getIncludeRoutingReturns     struct {
+		result1 bool
+		result2 error
+	}
+	GetIncludeDetectStub        func() (bool, error)
+	getIncludeDetectMutex       sync.RWMutex
+	getIncludeDetectArgsForCall []struct{}
+	getIncludeDetectReturns     struct {
+		result1 bool
+		result2 error
+	}
 }
 
 func (fake *FakeEnvironment) GetSkipSSLValidation() (bool, error) {
@@ -894,6 +964,256 @@ func (fake *FakeEnvironment) GetBackendReturns(result1 string, result2 error) {
 	fake.GetBackendStub = nil
 	fake.getBackendReturns = struct {
 		result1 string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoSSH() (bool, error) {
+	fake.getIncludeDiegoSSHMutex.Lock()
+	fake.getIncludeDiegoSSHArgsForCall = append(fake.getIncludeDiegoSSHArgsForCall, struct{}{})
+	fake.getIncludeDiegoSSHMutex.Unlock()
+	if fake.GetIncludeDiegoSSHStub != nil {
+		return fake.GetIncludeDiegoSSHStub()
+	} else {
+		return fake.getIncludeDiegoSSHReturns.result1, fake.getIncludeDiegoSSHReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoSSHCallCount() int {
+	fake.getIncludeDiegoSSHMutex.RLock()
+	defer fake.getIncludeDiegoSSHMutex.RUnlock()
+	return len(fake.getIncludeDiegoSSHArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoSSHReturns(result1 bool, result2 error) {
+	fake.GetIncludeDiegoSSHStub = nil
+	fake.getIncludeDiegoSSHReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeV3() (bool, error) {
+	fake.getIncludeV3Mutex.Lock()
+	fake.getIncludeV3ArgsForCall = append(fake.getIncludeV3ArgsForCall, struct{}{})
+	fake.getIncludeV3Mutex.Unlock()
+	if fake.GetIncludeV3Stub != nil {
+		return fake.GetIncludeV3Stub()
+	} else {
+		return fake.getIncludeV3Returns.result1, fake.getIncludeV3Returns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeV3CallCount() int {
+	fake.getIncludeV3Mutex.RLock()
+	defer fake.getIncludeV3Mutex.RUnlock()
+	return len(fake.getIncludeV3ArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeV3Returns(result1 bool, result2 error) {
+	fake.GetIncludeV3Stub = nil
+	fake.getIncludeV3Returns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoDocker() (bool, error) {
+	fake.getIncludeDiegoDockerMutex.Lock()
+	fake.getIncludeDiegoDockerArgsForCall = append(fake.getIncludeDiegoDockerArgsForCall, struct{}{})
+	fake.getIncludeDiegoDockerMutex.Unlock()
+	if fake.GetIncludeDiegoDockerStub != nil {
+		return fake.GetIncludeDiegoDockerStub()
+	} else {
+		return fake.getIncludeDiegoDockerReturns.result1, fake.getIncludeDiegoDockerReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoDockerCallCount() int {
+	fake.getIncludeDiegoDockerMutex.RLock()
+	defer fake.getIncludeDiegoDockerMutex.RUnlock()
+	return len(fake.getIncludeDiegoDockerArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeDiegoDockerReturns(result1 bool, result2 error) {
+	fake.GetIncludeDiegoDockerStub = nil
+	fake.getIncludeDiegoDockerReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeSecurityGroups() (bool, error) {
+	fake.getIncludeSecurityGroupsMutex.Lock()
+	fake.getIncludeSecurityGroupsArgsForCall = append(fake.getIncludeSecurityGroupsArgsForCall, struct{}{})
+	fake.getIncludeSecurityGroupsMutex.Unlock()
+	if fake.GetIncludeSecurityGroupsStub != nil {
+		return fake.GetIncludeSecurityGroupsStub()
+	} else {
+		return fake.getIncludeSecurityGroupsReturns.result1, fake.getIncludeSecurityGroupsReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeSecurityGroupsCallCount() int {
+	fake.getIncludeSecurityGroupsMutex.RLock()
+	defer fake.getIncludeSecurityGroupsMutex.RUnlock()
+	return len(fake.getIncludeSecurityGroupsArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeSecurityGroupsReturns(result1 bool, result2 error) {
+	fake.GetIncludeSecurityGroupsStub = nil
+	fake.getIncludeSecurityGroupsReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeBackendCompatibility() (bool, error) {
+	fake.getIncludeBackendCompatibilityMutex.Lock()
+	fake.getIncludeBackendCompatibilityArgsForCall = append(fake.getIncludeBackendCompatibilityArgsForCall, struct{}{})
+	fake.getIncludeBackendCompatibilityMutex.Unlock()
+	if fake.GetIncludeBackendCompatibilityStub != nil {
+		return fake.GetIncludeBackendCompatibilityStub()
+	} else {
+		return fake.getIncludeBackendCompatibilityReturns.result1, fake.getIncludeBackendCompatibilityReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeBackendCompatibilityCallCount() int {
+	fake.getIncludeBackendCompatibilityMutex.RLock()
+	defer fake.getIncludeBackendCompatibilityMutex.RUnlock()
+	return len(fake.getIncludeBackendCompatibilityArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeBackendCompatibilityReturns(result1 bool, result2 error) {
+	fake.GetIncludeBackendCompatibilityStub = nil
+	fake.getIncludeBackendCompatibilityReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeInternetDependent() (bool, error) {
+	fake.getIncludeInternetDependentMutex.Lock()
+	fake.getIncludeInternetDependentArgsForCall = append(fake.getIncludeInternetDependentArgsForCall, struct{}{})
+	fake.getIncludeInternetDependentMutex.Unlock()
+	if fake.GetIncludeInternetDependentStub != nil {
+		return fake.GetIncludeInternetDependentStub()
+	} else {
+		return fake.getIncludeInternetDependentReturns.result1, fake.getIncludeInternetDependentReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeInternetDependentCallCount() int {
+	fake.getIncludeInternetDependentMutex.RLock()
+	defer fake.getIncludeInternetDependentMutex.RUnlock()
+	return len(fake.getIncludeInternetDependentArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeInternetDependentReturns(result1 bool, result2 error) {
+	fake.GetIncludeInternetDependentStub = nil
+	fake.getIncludeInternetDependentReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeServices() (bool, error) {
+	fake.getIncludeServicesMutex.Lock()
+	fake.getIncludeServicesArgsForCall = append(fake.getIncludeServicesArgsForCall, struct{}{})
+	fake.getIncludeServicesMutex.Unlock()
+	if fake.GetIncludeServicesStub != nil {
+		return fake.GetIncludeServicesStub()
+	} else {
+		return fake.getIncludeServicesReturns.result1, fake.getIncludeServicesReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeServicesCallCount() int {
+	fake.getIncludeServicesMutex.RLock()
+	defer fake.getIncludeServicesMutex.RUnlock()
+	return len(fake.getIncludeServicesArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeServicesReturns(result1 bool, result2 error) {
+	fake.GetIncludeServicesStub = nil
+	fake.getIncludeServicesReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeRouteServices() (bool, error) {
+	fake.getIncludeRouteServicesMutex.Lock()
+	fake.getIncludeRouteServicesArgsForCall = append(fake.getIncludeRouteServicesArgsForCall, struct{}{})
+	fake.getIncludeRouteServicesMutex.Unlock()
+	if fake.GetIncludeRouteServicesStub != nil {
+		return fake.GetIncludeRouteServicesStub()
+	} else {
+		return fake.getIncludeRouteServicesReturns.result1, fake.getIncludeRouteServicesReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeRouteServicesCallCount() int {
+	fake.getIncludeRouteServicesMutex.RLock()
+	defer fake.getIncludeRouteServicesMutex.RUnlock()
+	return len(fake.getIncludeRouteServicesArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeRouteServicesReturns(result1 bool, result2 error) {
+	fake.GetIncludeRouteServicesStub = nil
+	fake.getIncludeRouteServicesReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeRouting() (bool, error) {
+	fake.getIncludeRoutingMutex.Lock()
+	fake.getIncludeRoutingArgsForCall = append(fake.getIncludeRoutingArgsForCall, struct{}{})
+	fake.getIncludeRoutingMutex.Unlock()
+	if fake.GetIncludeRoutingStub != nil {
+		return fake.GetIncludeRoutingStub()
+	} else {
+		return fake.getIncludeRoutingReturns.result1, fake.getIncludeRoutingReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeRoutingCallCount() int {
+	fake.getIncludeRoutingMutex.RLock()
+	defer fake.getIncludeRoutingMutex.RUnlock()
+	return len(fake.getIncludeRoutingArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeRoutingReturns(result1 bool, result2 error) {
+	fake.GetIncludeRoutingStub = nil
+	fake.getIncludeRoutingReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeDetect() (bool, error) {
+	fake.getIncludeDetectMutex.Lock()
+	fake.getIncludeDetectArgsForCall = append(fake.getIncludeDetectArgsForCall, struct{}{})
+	fake.getIncludeDetectMutex.Unlock()
+	if fake.GetIncludeDetectStub != nil {
+		return fake.GetIncludeDetectStub()
+	} else {
+		return fake.getIncludeDetectReturns.result1, fake.getIncludeDetectReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeDetectCallCount() int {
+	fake.getIncludeDetectMutex.RLock()
+	defer fake.getIncludeDetectMutex.RUnlock()
+	return len(fake.getIncludeDetectArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeDetectReturns(result1 bool, result2 error) {
+	fake.GetIncludeDetectStub = nil
+	fake.getIncludeDetectReturns = struct {
+		result1 bool
 		result2 error
 	}{result1, result2}
 }
