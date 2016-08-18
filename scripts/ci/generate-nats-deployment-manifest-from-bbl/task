@@ -39,8 +39,6 @@ instance_groups:
         - 10.0.31.241
         - 10.0.63.241
         - 10.0.79.241
-    provides: {nats: {as: nats_2-0}}
-    consumes: {nats: {from: nats_2-0}}
   networks:
   - name: private
     static_ips:
