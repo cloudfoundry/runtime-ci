@@ -79,11 +79,12 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
-- name: diego-release-master
-  type: git
+- name: diego-release-github-release
+  type: github-release
   source:
-    branch: master
-    uri: https://github.com/cloudfoundry/diego-release
+    user: cloudfoundry
+    repository: diego-release
+    access_token: {{release_integration_download_bot_access_token}}
 - name: diego-release-tarball
   type: bosh-io-release
   source:
@@ -427,10 +428,11 @@ jobs:
     - get: cf-release-develop
       params:
         submodules: none
-    - get: cf-release-tarball
-    - get: diego-release-master
+    - get: diego-release-github-release
       params:
-        submodules: none
+        globs: [ none ]
+        include_source_tarball: true
+    - get: cf-release-tarball
     - get: diego-release-tarball
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
@@ -471,11 +473,18 @@ jobs:
           EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
           BBL_STATE_DIRECTORY: bbl-infrastructure
+      - task: untar-diego-release
+        file: runtime-ci/scripts/ci/untar-release/task.yml
+        input_mapping:
+          release-tarball: diego-release-github-release
+        output_mapping:
+          untarred-release: diego-release
+        params:
+          RELEASE_TARBALL_PATH: source.tar.gz
       - task: create-diego-iaas-settings
         file: runtime-ci/scripts/ci/create-diego-iaas-settings/task.yml
         input_mapping:
           deployments: hagrid-env-stubs
-          diego-release: diego-release-master
         params:
           INFRASTRUCTURE: aws
           IAAS_SETTINGS_TEMPLATE_PATH: diego/iaas-settings-internal.yml
@@ -483,7 +492,6 @@ jobs:
       - task: create-diego-manifest
         file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
         input_mapping:
-          diego-release: diego-release-master
           cf-manifest: manifest
           property-overrides: hagrid-env-stubs
           instance-count-overrides: hagrid-env-stubs
