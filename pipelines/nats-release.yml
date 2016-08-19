@@ -651,7 +651,7 @@ jobs:
       - get: nats-release-merge-target
       - get: nats-release
         trigger: true
-        passed:  [ cats-tests ]
+        passed:  [ cats-tests, smoke-tests-1-0 ]
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     params:
