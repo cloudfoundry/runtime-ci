@@ -1,10 +1,10 @@
 ---
 groups:
-- name: cf-bosh-2-0
+- name: cf-deployment
   jobs:
   - update-releases
   - deploy-releases
-  - hermione-diego-cats
+  - acceptance-tests
   - bless-manifest
 - name: infrastructure
   jobs:
@@ -27,27 +27,27 @@ resources:
 - name: hermione-bbl-configuration
   type: git
   source:
-    branch: develop
+    branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-- name: hermione-deployment-configuration-develop
+- name: hermione-deployment-configuration
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+- name: cf-deployment-develop
   type: git
   source:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: hermione-deployment-configuration-master
+- name: cf-deployment-master
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: hermione-deployment-configuration-properties-develop
-  type: git
-  source:
-    branch: develop
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
 - name: capi-release
   type: bosh-io-release
   source:
@@ -113,19 +113,20 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: env-repo
-      resource: hermione-bbl-configuration
+    - get: hermione-bbl-configuration
     - get: runtime-ci
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
-      env-repo: env-repo
+      env-repo: hermione-bbl-configuration
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    input_mapping:
+      env-repo: hermione-bbl-configuration
   - put: hermione-bbl-configuration
     params:
       repository: updated-env-repo
@@ -135,8 +136,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: env-repo
-      resource: hermione-bbl-configuration
+    - get: hermione-bbl-configuration
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -145,6 +145,8 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+    input_mapping:
+      env-repo: hermione-bbl-configuration
   - put: hermione-bbl-configuration
     params:
       repository: updated-env-repo
@@ -159,14 +161,13 @@ jobs:
 
 - name: update-releases
   public: true
-  serial_groups: [hermione]
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
     - get: hermione-bbl-configuration
-    - get: hermione-deployment-configuration-develop
-    - get: hermione-deployment-configuration-properties-develop
+    - get: cf-deployment-develop
+    - get: hermione-deployment-configuration
     - get: capi-release
       trigger: true
     - get: stemcell
@@ -221,29 +222,28 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hermione-bbl-configuration
-  - aggregate:
-    - task: bosh-upload-stemcell
-      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-      params:
-        TARGET_FILE: target
-        USERNAME_FILE: username
-        PASSWORD_FILE: password
-        CA_CERT_FILE: ca-cert
-        STEMCELL_NAME: "*.tgz"
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      STEMCELL_NAME: "*.tgz"
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
-      deployment-configuration: hermione-deployment-configuration-develop
+      deployment-configuration: cf-deployment-develop
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
-      repo: hermione-deployment-configuration-develop
+      repo: cf-deployment-develop
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
       COMMIT_MESSAGE: 'Update releases'
-  - put: hermione-deployment-configuration-develop
+  - put: cf-deployment-develop
     params:
       repository: updated-repo
 
@@ -252,11 +252,11 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-develop
+      trigger: true
+    - get: hermione-deployment-configuration
+      trigger: true
     - get: hermione-bbl-configuration
-    - get: hermione-deployment-configuration-develop
-      trigger: true
-    - get: hermione-deployment-configuration-properties-develop
-      trigger: true
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -266,8 +266,8 @@ jobs:
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
-      manifest: hermione-deployment-configuration-develop
-      manifest-properties: hermione-deployment-configuration-properties-develop
+      manifest: cf-deployment-develop
+      manifest-properties: hermione-deployment-configuration
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
@@ -276,7 +276,7 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VAR_FILE: deployment-env-vars.yml
 
-- name: hermione-diego-cats
+- name: acceptance-tests
   public: true
   serial_groups: [hermione]
   build_logs_to_retain: 100
@@ -286,10 +286,10 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: hermione-deployment-configuration-properties-develop
+      - get: hermione-deployment-configuration
         trigger: true
         passed: [ deploy-releases ]
-      - get: hermione-deployment-configuration-develop
+      - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases ]
     - task: write-target-file-api
@@ -333,19 +333,19 @@ jobs:
     - do:
       - aggregate:
         - get: runtime-ci
-        - get: hermione-deployment-configuration-properties-develop
+        - get: hermione-deployment-configuration
           trigger: true
-          passed: [ hermione-diego-cats ]
-        - get: hermione-deployment-configuration-develop
+          passed: [ acceptance-tests ]
+        - get: cf-deployment-develop
           trigger: true
-          passed: [ hermione-diego-cats ]
-        - get: hermione-deployment-configuration-master
+          passed: [ acceptance-tests ]
+        - get: cf-deployment-master
     - task: fast-forward-master-to-develop
       file: runtime-ci/scripts/ci/fast-forward-master-to-develop/task.yml
       input_mapping:
-        master-repo: hermione-deployment-configuration-master
-        develop-repo: hermione-deployment-configuration-develop
-    - put: hermione-deployment-configuration-master
+        master-repo: cf-deployment-master
+        develop-repo: cf-deployment-develop
+    - put: cf-deployment-master
       params:
         repository: fast-forwarded-master-repo
 
