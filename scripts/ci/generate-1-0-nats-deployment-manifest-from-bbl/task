@@ -95,7 +95,7 @@ networks:
             - sg-172afa6d
           subnet: subnet-ae4a8fe7
 
-jobs:
+instance_groups:
   - name: nats_z1
     instances: 1
     networks:
@@ -103,7 +103,7 @@ jobs:
       static_ips:
       - 10.0.31.242
     resource_pool: medium_z1
-    templates:
+    jobs:
     - name: nats
       release: nats
       consumes: {nats: nil}
@@ -118,7 +118,7 @@ jobs:
       static_ips:
       - 10.0.63.242
     resource_pool: medium_z2
-    templates:
+    jobs:
     - name: nats
       release: nats
       consumes: {nats: nil}
@@ -127,7 +127,7 @@ jobs:
     update: {}
 
   - name: smoke-tests
-    templates:
+    jobs:
     - name: smoke-tests
       release: nats
     instances: 1
