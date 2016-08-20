@@ -13,43 +13,20 @@ set +x
 BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
 set -x
 
-set +x
-echo 'bosh \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "REDACTED" \
-  download manifest \
-  "$DEPLOYMENT_NAME" \
-  manifest.yml'
-
-bosh \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  download manifest \
-  "$DEPLOYMENT_NAME" \
-  manifest.yml
-
 echo 'bosh \
   -n \
-  --color \
-  -t "$BOSH_TARGET" \
+  -e "$BOSH_TARGET" \
   -u "${BOSH_USER}" \
   -p "REDACTED" \
-  -d manifest.yml \
-  run errand "$ERRAND_NAME" \
+  run-errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
   --logs-dir logs-dir'
 
 bosh \
   -n \
-  --color \
-  -t "${BOSH_TARGET}" \
-  -u "${BOSH_USER}" \
-  -p "${BOSH_PASSWORD}" \
-  -d manifest.yml \
-  run errand "$ERRAND_NAME" \
+  -e "${BOSH_TARGET}" \
+  run-errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
   --logs-dir logs-dir
