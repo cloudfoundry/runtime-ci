@@ -7,6 +7,7 @@ root_dir="${PWD}"
 BOSH_TARGET=$(cat "${root_dir}/target-file-dir/${BOSH_TARGET_FILE:?"Path to BOSH_TARGET_FILE must be provided"}")
 BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE:?"CA_CERT_FILE must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
 set +x
