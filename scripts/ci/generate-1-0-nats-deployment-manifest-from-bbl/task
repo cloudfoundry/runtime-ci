@@ -130,6 +130,7 @@ jobs:
     templates:
     - name: smoke-tests
       release: nats
+      consumes: {nats: nil}
     instances: 1
     resource_pool: small_errand
     lifecycle: errand
