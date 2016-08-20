@@ -38,6 +38,7 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("INCLUDE_SSO")
 
 			os.Unsetenv("NODES")
+			os.Unsetenv("INCLUDE_APPS")
 			os.Unsetenv("INCLUDE_DIEGO_SSH")
 			os.Unsetenv("INCLUDE_V3")
 			os.Unsetenv("INCLUDE_DIEGO_DOCKER")
@@ -69,6 +70,7 @@ var _ = Describe("Environment", func() {
 				os.Setenv("INCLUDE_SSO", "falsey")
 
 				os.Setenv("NODES", "five")
+				os.Setenv("INCLUDE_APPS", "ok fine")
 				os.Setenv("INCLUDE_DIEGO_SSH", "1")
 				os.Setenv("INCLUDE_V3", "0")
 				os.Setenv("INCLUDE_DIEGO_DOCKER", "diego")
@@ -98,6 +100,7 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false' but was set to 'true\n'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"),
 					ContainSubstring("* Invalid environment variable: 'NODES' must be an integer greater than 0 but was set to 'five'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_APPS' must be a boolean 'true' or 'false' but was set to 'ok fine'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_SSH' must be a boolean 'true' or 'false' but was set to '1'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_V3' must be a boolean 'true' or 'false' but was set to '0'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DIEGO_DOCKER' must be a boolean 'true' or 'false' but was set to 'diego'"),
@@ -679,6 +682,33 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetIncludeSSO()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeApps", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_APPS")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_APPS", "false")
+			result, _ := env.GetIncludeApps()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns a default of true", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeApps()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_APPS", "blah blah blah")
+			_, err := env.GetIncludeApps()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_APPS' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 

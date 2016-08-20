@@ -33,6 +33,10 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
+	if _, err = env.GetIncludeApps(); err != nil {
+		errs.Add(err)
+	}
+
 	if _, err = env.GetIncludeDiegoSSH(); err != nil {
 		errs.Add(err)
 	}
@@ -228,6 +232,10 @@ func (e *environment) GetBackend() (string, error) {
 
 func (e *environment) GetIncludeSSO() (bool, error) {
 	return e.getBooleanDefaultToFalse("INCLUDE_SSO")
+}
+
+func (e *environment) GetIncludeApps() (bool, error) {
+	return e.getBooleanDefaultToTrue("INCLUDE_APPS")
 }
 
 func (e *environment) GetIncludeDiegoSSH() (bool, error) {

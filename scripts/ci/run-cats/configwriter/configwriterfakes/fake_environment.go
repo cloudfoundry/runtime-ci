@@ -191,6 +191,13 @@ type FakeEnvironment struct {
 		result1 string
 		result2 error
 	}
+	GetIncludeAppsStub        func() (bool, error)
+	getIncludeAppsMutex       sync.RWMutex
+	getIncludeAppsArgsForCall []struct{}
+	getIncludeAppsReturns     struct {
+		result1 bool
+		result2 error
+	}
 	GetIncludeDiegoSSHStub        func() (bool, error)
 	getIncludeDiegoSSHMutex       sync.RWMutex
 	getIncludeDiegoSSHArgsForCall []struct{}
@@ -964,6 +971,31 @@ func (fake *FakeEnvironment) GetBackendReturns(result1 string, result2 error) {
 	fake.GetBackendStub = nil
 	fake.getBackendReturns = struct {
 		result1 string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeApps() (bool, error) {
+	fake.getIncludeAppsMutex.Lock()
+	fake.getIncludeAppsArgsForCall = append(fake.getIncludeAppsArgsForCall, struct{}{})
+	fake.getIncludeAppsMutex.Unlock()
+	if fake.GetIncludeAppsStub != nil {
+		return fake.GetIncludeAppsStub()
+	} else {
+		return fake.getIncludeAppsReturns.result1, fake.getIncludeAppsReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeAppsCallCount() int {
+	fake.getIncludeAppsMutex.RLock()
+	defer fake.getIncludeAppsMutex.RUnlock()
+	return len(fake.getIncludeAppsArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeAppsReturns(result1 bool, result2 error) {
+	fake.GetIncludeAppsStub = nil
+	fake.getIncludeAppsReturns = struct {
+		result1 bool
 		result2 error
 	}{result1, result2}
 }

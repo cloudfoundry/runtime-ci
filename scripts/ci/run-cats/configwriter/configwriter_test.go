@@ -18,6 +18,7 @@ var _ = Describe("Configwriter", func() {
 		env = &configwriterfakes.FakeEnvironment{}
 		env.GetIncludeRoutingReturns(true, nil)
 		env.GetIncludeDetectReturns(true, nil)
+		env.GetIncludeAppsReturns(true, nil)
 	})
 
 	Context("when env vars are not set", func() {
@@ -48,6 +49,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.PythonBuildpackName).To(Equal(""))
 			Expect(configFile.Config.PhpBuildpackName).To(Equal(""))
 			Expect(configFile.Config.BinaryBuildpackName).To(Equal(""))
+			Expect(configFile.Config.IncludeApps).To(BeTrue())
 			Expect(configFile.Config.IncludeDiegoSSH).To(BeFalse())
 			Expect(configFile.Config.IncludeV3).To(BeFalse())
 			Expect(configFile.Config.IncludeDiegoDocker).To(BeFalse())
@@ -101,6 +103,7 @@ var _ = Describe("Configwriter", func() {
 			expectedPythonBuildpackName               string
 			expectedPhpBuildpackName                  string
 			expectedBinaryBuildpackName               string
+			expectedIncludeApps                       bool
 			expectedIncludeDiegoSSH                   bool
 			expectedIncludeV3                         bool
 			expectedIncludeDiegoDocker                bool
@@ -146,6 +149,7 @@ var _ = Describe("Configwriter", func() {
 			expectedPhpBuildpackName = "PHP_BUILDPACK_NAME"
 			expectedBinaryBuildpackName = "BINARY_BUILDPACK_NAME"
 
+			expectedIncludeApps = false
 			expectedIncludeDiegoSSH = true
 			expectedIncludeV3 = true
 			expectedIncludeDiegoDocker = true
@@ -188,6 +192,7 @@ var _ = Describe("Configwriter", func() {
 			env.GetLongCurlTimeoutInSecondsReturns(expectedLongCurlTimeout, nil)
 			env.GetBrokerStartTimeoutInSecondsReturns(expectedBrokerStartTimeout, nil)
 
+			env.GetIncludeAppsReturns(expectedIncludeApps, nil)
 			env.GetIncludeDiegoSSHReturns(expectedIncludeDiegoSSH, nil)
 			env.GetIncludeV3Returns(expectedIncludeV3, nil)
 			env.GetIncludeDiegoDockerReturns(expectedIncludeDiegoDocker, nil)
@@ -233,6 +238,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.PythonBuildpackName).To(Equal(expectedPythonBuildpackName))
 			Expect(configFile.Config.PhpBuildpackName).To(Equal(expectedPhpBuildpackName))
 			Expect(configFile.Config.BinaryBuildpackName).To(Equal(expectedBinaryBuildpackName))
+			Expect(configFile.Config.IncludeApps).To(Equal(expectedIncludeApps))
 			Expect(configFile.Config.IncludeDiegoSSH).To(Equal(expectedIncludeDiegoSSH))
 			Expect(configFile.Config.IncludeV3).To(Equal(expectedIncludeV3))
 			Expect(configFile.Config.IncludeDiegoDocker).To(Equal(expectedIncludeDiegoDocker))
@@ -279,6 +285,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_internet_dependent": false,
                                               "include_services": false,
                                               "include_route_services": false,
+                                              "include_apps": true,
                                               "include_routing": true,
                                               "include_detect": true
                                               }`))
@@ -316,6 +323,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetPythonBuildpackNameReturns("non-empty-value")
 				env.GetPHPBuildpackNameReturns("non-empty-value")
 				env.GetBinaryBuildpackNameReturns("non-empty-value")
+				env.GetIncludeAppsReturns(false, nil)
 				env.GetIncludeDiegoSSHReturns(true, nil)
 				env.GetIncludeV3Returns(true, nil)
 				env.GetIncludeDiegoDockerReturns(true, nil)
@@ -372,6 +380,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_internet_dependent": true,
                                               "include_services": true,
                                               "include_route_services": true,
+                                              "include_apps": false,
                                               "include_routing": false,
                                               "include_detect": false
                                               }`))
@@ -417,6 +426,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetIncludeInternetDependentReturns(false, nil)
 				env.GetIncludeServicesReturns(false, nil)
 				env.GetIncludeRouteServicesReturns(false, nil)
+				env.GetIncludeAppsReturns(true, nil)
 				env.GetIncludeRoutingReturns(true, nil)
 				env.GetIncludeDetectReturns(true, nil)
 			})
@@ -445,6 +455,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_internet_dependent": false,
                                               "include_services": false,
                                               "include_route_services": false,
+                                              "include_apps": true,
                                               "include_routing": true,
                                               "include_detect": true
                                               }`))
@@ -499,6 +510,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_internet_dependent": false,
                                               "include_services": false,
                                               "include_route_services": false,
+                                              "include_apps": true,
                                               "include_routing": true,
                                               "include_detect": true
                                               }`))
@@ -540,6 +552,7 @@ var _ = Describe("Configwriter", func() {
                                     "include_internet_dependent": false,
                                     "include_services": false,
                                     "include_route_services": false,
+                                    "include_apps": true,
                                     "include_routing": true,
                                     "include_detect": true
                                     }`))

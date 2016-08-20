@@ -37,6 +37,7 @@ type config struct {
 	LongCurlTimeout                   int    `json:"long_curl_timeout,omitempty"`
 	BrokerStartTimeout                int    `json:"broker_start_timeout,omitempty"`
 	IncludePrivilegedContainerSupport bool   `json:"include_privileged_container_support,omitempty"`
+	IncludeApps                       bool   `json:"include_apps"`
 	IncludeDiegoSSH                   bool   `json:"include_ssh"`
 	IncludeV3                         bool   `json:"include_v3"`
 	IncludeDiegoDocker                bool   `json:"include_docker"`
@@ -84,6 +85,7 @@ type Environment interface {
 	GetPersistentAppOrg() string
 	GetPersistentAppQuotaName() string
 	GetBackend() (string, error)
+	GetIncludeApps() (bool, error)
 	GetIncludeDiegoSSH() (bool, error)
 	GetIncludeV3() (bool, error)
 	GetIncludeDiegoDocker() (bool, error)
@@ -106,7 +108,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		skipSslValidation, includeSSO, useHttp                                 bool
 		includeDiegoSSH, includeV3, includeDiegoDocker, includeSecurityGroups  bool
 		includeBackendCompatibility, includeInternetDependent, includeServices bool
-		includeRouteServices, includeRouting, includeDetect                    bool
+		includeRouteServices, includeRouting, includeDetect, includeApps       bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout     int
 	)
 
@@ -126,6 +128,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 
 	brokerStartTimeout, _ = env.GetBrokerStartTimeoutInSeconds()
 
+	includeApps, _ = env.GetIncludeApps()
 	includeDiegoSSH, _ = env.GetIncludeDiegoSSH()
 	includeV3, _ = env.GetIncludeV3()
 	includeDiegoDocker, _ = env.GetIncludeDiegoDocker()
@@ -173,6 +176,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		BrokerStartTimeout: brokerStartTimeout,
 
 		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
+		IncludeApps:                       includeApps,
 		IncludeDiegoSSH:                   includeDiegoSSH,
 		IncludeV3:                         includeV3,
 		IncludeDiegoDocker:                includeDiegoDocker,

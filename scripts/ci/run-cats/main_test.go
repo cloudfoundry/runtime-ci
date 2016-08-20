@@ -337,6 +337,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "true")
 			os.Setenv("INCLUDE_SERVICES", "true")
 			os.Setenv("INCLUDE_ROUTE_SERVICES", "true")
+			os.Setenv("INCLUDE_APPS", "false")
 			os.Setenv("INCLUDE_ROUTING", "false")
 			os.Setenv("INCLUDE_DETECT", "false")
 		})
@@ -380,6 +381,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_APPS")
 			os.Unsetenv("INCLUDE_ROUTING")
 			os.Unsetenv("INCLUDE_DETECT")
 		})
@@ -437,6 +439,7 @@ var _ = Describe("Main", func() {
 				IncludeInternetDependent          bool `json:"include_internet_dependent"`
 				IncludeServices                   bool `json:"include_services"`
 				IncludeRouteServices              bool `json:"include_route_services"`
+				IncludeApps                       bool `json:"include_apps"`
 				IncludeRouting                    bool `json:"include_routing"`
 				IncludeDetect                     bool `json:"include_detect"`
 			}
@@ -482,6 +485,7 @@ var _ = Describe("Main", func() {
 			Expect(config.IncludeInternetDependent).To(BeTrue())
 			Expect(config.IncludeServices).To(BeTrue())
 			Expect(config.IncludeRouteServices).To(BeTrue())
+			Expect(config.IncludeApps).To(BeFalse())
 			Expect(config.IncludeRouting).To(BeFalse())
 			Expect(config.IncludeDetect).To(BeFalse())
 		})
@@ -514,6 +518,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("INCLUDE_INTERNET_DEPENDENT", "Falz")
 			os.Setenv("INCLUDE_SERVICES", "troo")
 			os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
+			os.Setenv("INCLUDE_APPS", "no way")
 			os.Setenv("INCLUDE_ROUTING", "truce")
 			os.Setenv("INCLUDE_DETECT", "truce")
 			Expect(configJsonPath).NotTo(BeAnExistingFile())
@@ -544,6 +549,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("INCLUDE_INTERNET_DEPENDENT")
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
+			os.Unsetenv("INCLUDE_APPS")
 			os.Unsetenv("INCLUDE_ROUTING")
 			os.Unsetenv("INCLUDE_DETECT")
 		})
@@ -582,6 +588,7 @@ var _ = Describe("Main", func() {
 				ContainSubstring("INCLUDE_INTERNET_DEPENDENT"),
 				ContainSubstring("INCLUDE_SERVICES"),
 				ContainSubstring("INCLUDE_ROUTE_SERVICES"),
+				ContainSubstring("INCLUDE_APPS"),
 				ContainSubstring("INCLUDE_ROUTING"),
 				ContainSubstring("INCLUDE_DETECT"),
 			))
