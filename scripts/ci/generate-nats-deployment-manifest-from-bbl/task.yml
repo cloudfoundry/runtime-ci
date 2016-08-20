@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: env-repo
 
 outputs:
 - name: manifest

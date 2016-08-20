@@ -281,8 +281,6 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
   - task: generate-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
-    input_mapping:
-      env-repo: hagrid-env-infrastructure
   - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
