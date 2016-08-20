@@ -413,7 +413,7 @@ jobs:
   - aggregate:
     - get: nats-release
       trigger: true
-      passed:  [smoke-tests]
+      passed:  [smoke-tests, smoke-tests-1-0]
     - get: hagrid-env-infrastructure
       trigger: true
       passed: [ smoke-tests ]
@@ -651,7 +651,7 @@ jobs:
       - get: nats-release-merge-target
       - get: nats-release
         trigger: true
-        passed:  [ cats-tests, smoke-tests-1-0 ]
+        passed:  [ cats-tests ]
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     params:
