@@ -11,6 +11,7 @@ inputs:
 - name: target-file-dir
 - name: bosh-user-file-dir
 - name: bosh-password-file-dir
+- name: ca-cert
 
 outputs:
 - name: logs-dir
@@ -23,4 +24,5 @@ params:
   BOSH_USER_FILE:
   BOSH_PASSWORD_FILE:
   DEPLOYMENT_NAME:
+  CA_CERT_FILE:
   ERRAND_NAME:

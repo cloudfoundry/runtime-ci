@@ -16,6 +16,7 @@ set -x
 echo 'bosh \
   -n \
   -e "$BOSH_TARGET" \
+  --ca-cert="${BOSH_CA_CERT}" \
   -u "${BOSH_USER}" \
   -p "REDACTED" \
   run-errand "$ERRAND_NAME" \
@@ -26,6 +27,7 @@ echo 'bosh \
 bosh \
   -n \
   -e "${BOSH_TARGET}" \
+  --ca-cert="${BOSH_CA_CERT}" \
   -d "${DEPLOYMENT_NAME}" \
   run-errand "$ERRAND_NAME" \
   --keep-alive \
