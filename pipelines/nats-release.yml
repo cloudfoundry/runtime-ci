@@ -263,6 +263,7 @@ jobs:
   - aggregate:
     - get: nats-release
       trigger: true
+      passed: [create-release]
     - get: hagrid-env-infrastructure
       trigger: true
       passed: [create-release]
@@ -338,6 +339,7 @@ jobs:
   - aggregate:
     - get: nats-release
       trigger: true
+      passed: [create-release]
     - get: hagrid-env-infrastructure
       trigger: true
       passed: [create-release]
