@@ -217,7 +217,7 @@ jobs:
 
 - name: create-release
   public: true
-  serial_groups: [nats-deploy, nats-1-0-deploy]
+  serial_groups: [nats-deploy, 1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - aggregate:
