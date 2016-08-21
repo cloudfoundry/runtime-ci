@@ -326,7 +326,6 @@ jobs:
       BOSH_TARGET_FILE: target
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-      CA_CERT_FILE: ca-cert
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
 
@@ -403,7 +402,6 @@ jobs:
       BOSH_TARGET_FILE: target
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-      CA_CERT_FILE: ca-cert
       DEPLOYMENT_NAME: nats_1-0
       ERRAND_NAME: smoke-tests
 
