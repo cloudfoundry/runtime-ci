@@ -35,6 +35,7 @@ groups:
   - build-create-diego-manifest-docker-image
   - build-create-bosh-lite-diego-cats-manifest-docker-image
   - build-run-errand-bbl-docker-image
+  - build-run-errand-bbl-bosh-2-0-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
   - build-bosh-deploy-docker-image
@@ -134,6 +135,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-errand-bbl/Dockerfile]
+- name: runtime-ci-run-errand-bbl-bosh-2-0
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-errand-bbl-bosh-2-0/Dockerfile]
 - name: runtime-ci-write-target-file
   type: git
   source:
@@ -520,6 +527,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-errand-bbl
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-errand-bbl-bosh-2-0-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-errand-bbl-bosh-2-0
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1072,6 +1086,24 @@ jobs:
     - put: run-errand-bbl-pipeline-image
       params:
         build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
+        push: true
+- name: build-run-errand-bbl-bosh-2-0-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-run-errand-bbl-bosh-2-0
+        trigger: true
+    - put: run-errand-bbl-bosh-2-0-pipeline-image
+      params:
+        build: runtime-ci-run-errand-bbl-bosh-2-0/scripts/ci/run-errand-bbl-bosh-2-0
         push: true
 - name: build-create-diego-manifest-docker-image
   public: true

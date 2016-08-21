@@ -317,7 +317,7 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - task: run-errand-bbl-smoke-tests
-    file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+    file: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task.yml
     input_mapping:
       target-file-dir: target
       bosh-user-file-dir: username
@@ -326,6 +326,7 @@ jobs:
       BOSH_TARGET_FILE: target
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+      CA_CERT_FILE: ca-cert
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
 
@@ -402,6 +403,7 @@ jobs:
       BOSH_TARGET_FILE: target
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+      CA_CERT_FILE: ca-cert
       DEPLOYMENT_NAME: nats_1-0
       ERRAND_NAME: smoke-tests
 
