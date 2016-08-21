@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/run-errand-bbl
+    repository: relintdockerhubpushbot/run-errand-bbl-bosh-2-0
 
 inputs:
 - name: runtime-ci
@@ -17,7 +17,7 @@ outputs:
 - name: logs-dir
 
 run:
-  path: runtime-ci/scripts/ci/run-errand-bbl/task
+  path: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task
 
 params:
   BOSH_TARGET_FILE: target
