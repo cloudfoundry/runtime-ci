@@ -316,7 +316,7 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hagrid-env-infrastructure
-  - task: run-errand-bbl-smoke-tests
+  - task: run-errand-bbl-bosh-2-0-smoke-tests
     file: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task.yml
     input_mapping:
       target-file-dir: target
@@ -393,8 +393,8 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hagrid-env-infrastructure
-  - task: run-errand-bbl-smoke-tests
-    file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+  - task: run-errand-bbl-bosh-2-0-smoke-tests
+    file: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task.yml
     input_mapping:
       target-file-dir: target
       bosh-user-file-dir: username
