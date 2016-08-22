@@ -12,7 +12,6 @@ DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
 set +x
 BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
-set -x
 
 echo "bosh \
   -n \
@@ -28,8 +27,9 @@ echo "bosh \
 
 bosh \
   -n \
-  --password="${BOSH_PASSWORD}" \
   -e "${BOSH_TARGET}" \
+  --user="${BOSH_USER}" \
+  --password="${BOSH_PASSWORD}" \
   --ca-cert="${BOSH_CA_CERT}" \
   -d "${DEPLOYMENT_NAME}" \
   run-errand "$ERRAND_NAME" \
