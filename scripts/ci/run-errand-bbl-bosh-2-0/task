@@ -17,9 +17,9 @@ echo "bosh \
   -n \
   --password=REDACTED \
   -e \"${BOSH_TARGET}\" \
+  -d nats \
   --ca-cert=\"${BOSH_CA_CERT}\" \
-  -u \"${BOSH_USER}\" \
-  -p \"REDACTED\" \
+  --user=\"${BOSH_USER}\" \
   run-errand \"$ERRAND_NAME\" \
   --keep-alive \
   --download-logs \
