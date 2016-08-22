@@ -10,6 +10,8 @@ ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE:?"CA_CERT_FILE must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
+mkdir -p /tmp/scratch/logs
+
 set +x
 BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
 
@@ -23,7 +25,7 @@ echo "bosh \
   run-errand \"$ERRAND_NAME\" \
   --keep-alive \
   --download-logs \
-  --logs-dir logs-dir"
+  --logs-dir /tmp/scratch/logs"
 
 bosh \
   -n \
@@ -35,5 +37,6 @@ bosh \
   run-errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
-  --logs-dir logs-dir
+  --logs-dir /tmp/scratch/logs
 set -x
+cp -r /tmp/scratch/logs logs-dir
