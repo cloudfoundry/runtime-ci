@@ -454,7 +454,7 @@ jobs:
       AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
     input_mapping:
-      env-repo: hagrid-env-stubs
+      env-repo: hagrid-env-infrastructure
   - aggregate: # prepare the deploy
     - do: # generate manifests
       - task: create-cf-release-manifest
@@ -469,7 +469,7 @@ jobs:
         file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
         input_mapping:
           generated-deployment-manifest: manifest
-          env-repo: hagrid-env-stubs
+          env-repo: hagrid-env-infrastructure
         params:
           CF_DEPLOYMENT_MANIFEST: deployment.yml
           EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
@@ -506,7 +506,7 @@ jobs:
         file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
         input_mapping:
           generated-deployment-manifest: generated-diego-manifest
-          env-repo: hagrid-env-stubs
+          env-repo: hagrid-env-infrastructure
         output_mapping:
           extended-cf-deployment-manifest: extended-diego-deployment-manifest
         params:
