@@ -48,6 +48,8 @@ resource_pools:
 compilation:
   cloud_properties:
     name: random
+    instance_type: c3.large
+    availability_zone: us-east-1a
   network: cf1
   reuse_compilation_vms: true
   workers: 1
