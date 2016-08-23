@@ -16,32 +16,32 @@ releases:
   version: latest
 resource_pools:
   - name: medium_z2
-    instance_type: c3.large
-    availability_zone: us-east-1d
     cloud_properties:
+      instance_type: c3.large
       ephemeral_disk:
         size: 200_536
         type: gp2
+      availability_zone: us-east-1d
     stemcell:
       name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
       version: latest
   - name: medium_z1
-    instance_type: c3.large
-    availability_zone: us-east-1a
     cloud_properties:
+      instance_type: c3.large
       ephemeral_disk:
         size: 200_536
         type: gp2
+      availability_zone: us-east-1a
     stemcell:
       name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
       version: latest
   - name: small_errand
-    instance_type: m3.medium
-    availability_zone: us-east-1a
     cloud_properties:
+      instance_type: m3.medium
       ephemeral_disk:
         size: 10_240
         type: gp2
+      availability_zone: us-east-1a
     stemcell:
       name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
       version: latest
