@@ -4,39 +4,30 @@ set -exu
 root_dir="${PWD}"
 
 # Inputs
+export BOSH_USER
+export BOSH_PASSWORD
 BOSH_TARGET=$(cat "${root_dir}/target-file-dir/${BOSH_TARGET_FILE:?"Path to BOSH_TARGET_FILE must be provided"}")
-BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 ERRAND_NAME="${ERRAND_NAME:?"ERRAND_NAME must be provided"}"
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE:?"CA_CERT_FILE must be provided"}"
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
-
-mkdir -p /tmp/scratch/logs
+BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 
 set +x
-BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}")
+echo "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}"
+echo 'export BOSH_PASSWORD="REDACTED"'
+BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE}")
 
-echo "bosh \
-  -n \
-  --password=REDACTED \
-  -e \"${BOSH_TARGET}\" \
-  -d nats \
-  --ca-cert=\"${BOSH_CA_CERT}\" \
-  --user=\"${BOSH_USER}\" \
-  run-errand \"$ERRAND_NAME\" \
-  --keep-alive \
-  --download-logs \
-  --logs-dir /tmp/scratch/logs"
+set -x
+
+mkdir -p /tmp/scratch/logs
 
 bosh \
   -n \
   -e "${BOSH_TARGET}" \
-  --user="${BOSH_USER}" \
-  --password="${BOSH_PASSWORD}" \
   --ca-cert="${BOSH_CA_CERT}" \
   -d "${DEPLOYMENT_NAME}" \
   run-errand "$ERRAND_NAME" \
   --keep-alive \
   --download-logs \
   --logs-dir /tmp/scratch/logs
-set -x
 cp -r /tmp/scratch/logs logs-dir
