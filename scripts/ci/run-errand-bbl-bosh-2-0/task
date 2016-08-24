@@ -13,7 +13,7 @@ DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 BOSH_USER=$(cat "${BOSH_USER_FILE:?"Path to BOSH_USER_FILE must be provided"}")
 
 set +x
-echo "${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}"
+echo "Using password from ${BOSH_PASSWORD_FILE:?"Path to BOSH_PASSWORD_FILE must be provided"}"
 echo 'export BOSH_PASSWORD="REDACTED"'
 BOSH_PASSWORD=$(cat "${BOSH_PASSWORD_FILE}")
 
