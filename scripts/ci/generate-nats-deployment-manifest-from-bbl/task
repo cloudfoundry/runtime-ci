@@ -28,7 +28,6 @@ instance_groups:
     release: nats
     properties:
       nats:
-        port: 6363
         user: nats
         password: nats
         machines:
@@ -54,7 +53,6 @@ instance_groups:
     release: nats
     properties:
       nats:
-        port: 6363
         user: nats
         password: nats
         machines:
