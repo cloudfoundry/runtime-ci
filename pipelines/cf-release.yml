@@ -924,7 +924,7 @@ jobs:
         CF_APPS_DOMAIN: minimal-aws.cf-app.com
         SKIP_SSL_VALIDATION: true
         USE_HTTP: false
-        NODES: 1
+        NODES: 2
         BACKEND: diego
         INCLUDE_BACKEND_COMPATIBILITY: false
         INCLUDE_DIEGO_SSH: false
