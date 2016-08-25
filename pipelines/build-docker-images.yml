@@ -82,6 +82,13 @@ resources:
   source:
     interval: 2h
 
+
+- name: runtime-ci-build-metadata-resource
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [resources/build-metadata-resource/*]
 - name: runtime-ci-create-diego-iaas-settings
   type: git
   source:
@@ -447,19 +454,12 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/untar-release/Dockerfile]
 
-- name: runtime-ci-build-metadata-resource
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [resources/build-metadata-resource/*]
-
 - name: runtime-ci-generate-logsearch-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [resources/generate-logsearch-manifest/*]
+    paths: [scripts/ci/generate-logsearch-manifest/*]
 
 - name: runtime-ci
   type: git
