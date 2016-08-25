@@ -1418,13 +1418,14 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: create-cf-release-manifest
-    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+  - task: generate-release-manifest-cf
+    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
-      cf-release: cf-release-develop
-      cf-stubs: a1-env
+      release-repo: cf-release-develop
+      stubs-repo: a1-env
     params:
       INFRASTRUCTURE: aws
+      STUBS_PATH: stubs/cf/*.yml
   - task: untar-diego-release
     file: runtime-ci/scripts/ci/untar-release/task.yml
     input_mapping:
@@ -1500,12 +1501,11 @@ jobs:
     file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
     params:
       BOSH_LITE_IP: {{bosh_lite_elastic_ip}}
-    output_mapping:
-      bosh-lite-stub: cf-stubs
-  - task: create-cf-release-manifest
-    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+  - task: generate-release-manifest-cf
+    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
-      cf-release: cf-release-develop
+      release-repo: cf-release-develop
+      stubs-repo: bosh-lite-stub
     params:
       INFRASTRUCTURE: bosh-lite
       STUBS_PATH: stub.yml
@@ -1592,14 +1592,15 @@ jobs:
       tragger: true
       params:
         tarball: false
-  - task: create-cf-release-manifest
+  - task: generate-release-manifest-cf
     tags: [vsphere]
-    file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
-      cf-release: cf-release-develop
-      cf-stubs: cat-env
+      release-repo: cf-release-develop
+      stubs-repo: cat-env
     params:
       INFRASTRUCTURE: vsphere
+      STUBS_PATH: stubs/cf/*.yml
   - task: untar-diego-release
     tags: [vsphere]
     file: runtime-ci/scripts/ci/untar-release/task.yml

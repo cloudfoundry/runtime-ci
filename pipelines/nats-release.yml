@@ -457,11 +457,11 @@ jobs:
       env-repo: hagrid-env-infrastructure
   - aggregate: # prepare the deploy
     - do: # generate manifests
-      - task: create-cf-release-manifest
-        file: runtime-ci/scripts/ci/create-cf-release-manifest/task.yml
+      - task: generate-release-manifest-cf
+        file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
         input_mapping:
-          cf-release: cf-release-develop
-          cf-stubs: hagrid-env-stubs
+          release-repo: cf-release-develop
+          stubs-repo: hagrid-env-stubs
         params:
           INFRASTRUCTURE: aws
           STUBS_PATH: cf/*.yml

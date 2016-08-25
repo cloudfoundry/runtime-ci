@@ -1,7 +1,0 @@
-#!/bin/bash
-set -exu
-
-cf-release/scripts/generate_deployment_manifest \
-  "${INFRASTRUCTURE}" \
-  cf-stubs/${STUBS_PATH} > manifest/deployment.yml
-

@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/generate-release-manifest
+
+inputs:
+- name: release-repo
+- name: stubs-repo
+- name: runtime-ci
+
+outputs:
+- name: manifest
+
+run:
+  path: runtime-ci/scripts/ci/generate-release-manifest/task
+
+params:
+  INFRASTRUCTURE:
+  STUBS_PATH:

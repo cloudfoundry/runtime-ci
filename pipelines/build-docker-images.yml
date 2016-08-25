@@ -5,7 +5,7 @@ groups:
   - build-announce-rc-docker-image
   - build-can-bump-docker-image
   - build-cannot-bump-docker-image
-  - build-create-cf-release-manifest-docker-image
+  - build-generate-release-manifest-docker-image
   - build-create-final-release-docker-image
   - build-create-minimal-cf-release-manifest-docker-image
   - build-create-release-docker-image
@@ -196,12 +196,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/cannot-bump/Dockerfile]
-- name: runtime-ci-create-cf-release-manifest
+- name: runtime-ci-generate-release-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-cf-release-manifest/Dockerfile]
+    paths: [scripts/ci/generate-release-manifest/Dockerfile]
 - name: runtime-ci-create-final-release
   type: git
   source:
@@ -593,10 +593,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-cf-release-manifest-pipeline-image
+- name: generate-release-manifest-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-cf-release-manifest
+    repository: relintdockerhubpushbot/generate-release-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1231,7 +1231,7 @@ jobs:
       params:
         build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
         push: true
-- name: build-create-cf-release-manifest-docker-image
+- name: build-generate-release-manifest-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1243,11 +1243,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-cf-release-manifest
+      - get: runtime-ci-generate-release-manifest
         trigger: true
-    - put: create-cf-release-manifest-pipeline-image
+    - put: generate-release-manifest-pipeline-image
       params:
-        build: runtime-ci-create-cf-release-manifest/scripts/ci/create-cf-release-manifest
+        build: runtime-ci-generate-release-manifest/scripts/ci/generate-release-manifest
         push: true
 - name: build-create-final-release-docker-image
   public: true
