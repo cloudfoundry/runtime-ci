@@ -53,8 +53,6 @@ instance_groups:
     release: nats
     properties:
       nats:
-        user: nats
-        password: nats
         machines:
         - 10.0.31.241
         - 10.0.63.241
