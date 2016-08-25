@@ -51,12 +51,6 @@ instance_groups:
   jobs:
   - name: smoke-tests
     release: nats
-    properties:
-      nats:
-        machines:
-        - 10.0.31.241
-        - 10.0.63.241
-        - 10.0.79.241
   networks:
   - name: private
 EOF
