@@ -62,6 +62,7 @@ groups:
   - build-write-director-version-docker-image
   - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
+  - build-generate-logsearch-manifest-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -452,6 +453,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [resources/build-metadata-resource/*]
+
+- name: runtime-ci-generate-logsearch-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [resources/generate-logsearch-manifest/*]
 
 - name: runtime-ci
   type: git
@@ -895,6 +903,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/build-metadata-resource
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: generate-logsearch-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/generate-logsearch-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2016,4 +2032,22 @@ jobs:
     - put: build-metadata-resource-pipeline-image
       params:
         build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
+        push: true
+
+- name: build-generate-logsearch-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-generate-logsearch-manifest
+        trigger: true
+    - put: generate-logsearch-manifest-pipeline-image
+      params:
+        build: runtime-ci-generate-logsearch-manifest/resources/generate-logsearch-manifest
         push: true
