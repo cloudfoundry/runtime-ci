@@ -1,0 +1,101 @@
+groups:
+- name: a1-logsearch
+  jobs:
+  - deploy-a1-logsearch
+
+resources:
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
+- name: a1-deployment
+  type: bosh-deployment
+  source:
+    target: {{a1_bosh_target}}
+    username: {{a1_bosh_username}}
+    password: {{a1_bosh_password}}
+    deployment: a1-logsearch
+- name: s3-logsearch-operators-release
+  type: s3
+  source:
+    access_key_id: {{logsearch_bucket_aws_access_key_id}}
+    secret_access_key: {{logsearch_bucket_aws_secret_access_key}}
+    region_name: {{logsearch_bucket_aws_region}}
+    endpoint: {{logsearch_bucket_aws_endpoint}}
+    bucket: london-pipelines
+    regexp: elk/dev-logsearch-for-cloudfoundry-operators/logsearch-for-cloudfoundry-operators-(.*).tgz
+- name: logsearch-release
+  type: bosh-io-release
+  source:
+    repository: logsearch/logsearch-boshrelease
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: a1-env
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry/a1-env.git
+    branch: master
+    paths: [stubs/logsearch/a1-logsearch-stub.yml]
+    private_key: {{cf_release_a1_env}}
+- name: logsearch-release-repo
+  type: git
+  source:
+    uri: https://github.com/logsearch/logsearch-boshrelease.git
+    branch: develop
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+
+jobs:
+- name: deploy-a1-logsearch
+  plan:
+  - aggregate:
+    - get: aws-stemcell
+    - get: s3-logsearch-operators-release
+    - get: a1-env
+    - get: logsearch-release-repo
+    - get: logsearch-release
+    - get: runtime-ci
+  - task: generate-release-manifest-logsearch
+    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
+    input_mapping:
+      release-repo: logsearch-release-repo
+      stubs-repo: a1-env
+    params:
+      STUBS_PATH: stubs/logsearch/*.yml
+      INFRASTRUCTURE: aws
+  - put: a1-deployment
+    params:
+      manifest: manifest/deployment.yml
+      stemcells:
+      - aws-stemcell/*.tgz
+      releases:
+      - s3-logsearch-operators-release/*.tgz
+      - logsearch-release/*.tgz
+  - aggregate:
+    - task: write-target-file
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: bosh.a1.cf-app.com
+    - task: write-creds
+      file: runtime-ci/scripts/ci/write-creds/task.yml
+      params:
+        USERNAME: {{a1_bosh_username}}
+        PASSWORD: {{a1_bosh_password}}
+  - task: run-errand-bbl
+    file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
+    params:
+      BOSH_USER_FILE: bosh-user-file-dir/username
+      BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+      DEPLOYMENT_NAME: a1-logsearch
+      ERRAND_NAME: enable_shard_allocation
+    input_mapping:
+      bosh-user-file-dir: username
+      bosh-password-file-dir: password
+
