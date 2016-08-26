@@ -48,6 +48,7 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("INCLUDE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTE_SERVICES")
 			os.Unsetenv("INCLUDE_ROUTING")
+			os.Unsetenv("INCLUDE_TASKS")
 			os.Unsetenv("INCLUDE_DETECT")
 		})
 
@@ -80,6 +81,7 @@ var _ = Describe("Environment", func() {
 				os.Setenv("INCLUDE_SERVICES", "troo")
 				os.Setenv("INCLUDE_ROUTE_SERVICES", "truce")
 				os.Setenv("INCLUDE_ROUTING", "truce")
+				os.Setenv("INCLUDE_TASKS", "truce")
 				os.Setenv("INCLUDE_DETECT", "truce")
 			})
 
@@ -110,6 +112,7 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SERVICES' must be a boolean 'true' or 'false' but was set to 'troo'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTE_SERVICES' must be a boolean 'true' or 'false' but was set to 'truce'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_ROUTING' must be a boolean 'true' or 'false' but was set to 'truce'"),
+					ContainSubstring("* Invalid environment variable: 'INCLUDE_TASKS' must be a boolean 'true' or 'false' but was set to 'truce'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_DETECT' must be a boolean 'true' or 'false' but was set to 'truce'"),
 				))
 			})
@@ -952,6 +955,33 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetIncludeRouting()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_ROUTING' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetIncludeTasks", func() {
+		AfterEach(func() {
+			os.Unsetenv("INCLUDE_TASKS")
+		})
+
+		It("returns a boolean when set properly", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_TASKS", "true")
+			result, _ := env.GetIncludeTasks()
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns a default of false", func() {
+			env := environment.New()
+			result, _ := env.GetIncludeTasks()
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("INCLUDE_TASKS", "blah blah blah")
+			_, err := env.GetIncludeTasks()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'INCLUDE_TASKS' must be a boolean 'true' or 'false' but was set to 'blah blah blah'"))
 		})
 	})
 

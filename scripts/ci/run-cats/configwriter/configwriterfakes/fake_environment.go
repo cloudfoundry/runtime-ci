@@ -261,6 +261,13 @@ type FakeEnvironment struct {
 		result1 bool
 		result2 error
 	}
+	GetIncludeTasksStub        func() (bool, error)
+	getIncludeTasksMutex       sync.RWMutex
+	getIncludeTasksArgsForCall []struct{}
+	getIncludeTasksReturns     struct {
+		result1 bool
+		result2 error
+	}
 	GetIncludeDetectStub        func() (bool, error)
 	getIncludeDetectMutex       sync.RWMutex
 	getIncludeDetectArgsForCall []struct{}
@@ -1220,6 +1227,31 @@ func (fake *FakeEnvironment) GetIncludeRoutingCallCount() int {
 func (fake *FakeEnvironment) GetIncludeRoutingReturns(result1 bool, result2 error) {
 	fake.GetIncludeRoutingStub = nil
 	fake.getIncludeRoutingReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetIncludeTasks() (bool, error) {
+	fake.getIncludeTasksMutex.Lock()
+	fake.getIncludeTasksArgsForCall = append(fake.getIncludeTasksArgsForCall, struct{}{})
+	fake.getIncludeTasksMutex.Unlock()
+	if fake.GetIncludeTasksStub != nil {
+		return fake.GetIncludeTasksStub()
+	} else {
+		return fake.getIncludeTasksReturns.result1, fake.getIncludeTasksReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetIncludeTasksCallCount() int {
+	fake.getIncludeTasksMutex.RLock()
+	defer fake.getIncludeTasksMutex.RUnlock()
+	return len(fake.getIncludeTasksArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetIncludeTasksReturns(result1 bool, result2 error) {
+	fake.GetIncludeTasksStub = nil
+	fake.getIncludeTasksReturns = struct {
 		result1 bool
 		result2 error
 	}{result1, result2}

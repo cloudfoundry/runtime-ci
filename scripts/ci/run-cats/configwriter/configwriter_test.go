@@ -59,6 +59,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.IncludeServices).To(BeFalse())
 			Expect(configFile.Config.IncludeRouteServices).To(BeFalse())
 			Expect(configFile.Config.IncludeRouting).To(BeTrue())
+			Expect(configFile.Config.IncludeTasks).To(BeFalse())
 			Expect(configFile.Config.IncludeDetect).To(BeTrue())
 			Expect(configFile.DestinationDir).To(Equal("/dir/name"))
 		})
@@ -113,6 +114,7 @@ var _ = Describe("Configwriter", func() {
 			expectedIncludeServices                   bool
 			expectedIncludeRouteServices              bool
 			expectedIncludeRouting                    bool
+			expectedIncludeTasks                      bool
 			expectedIncludeDetect                     bool
 		)
 
@@ -159,6 +161,7 @@ var _ = Describe("Configwriter", func() {
 			expectedIncludeServices = true
 			expectedIncludeRouteServices = true
 			expectedIncludeRouting = false
+			expectedIncludeTasks = true
 			expectedIncludeDetect = false
 
 			env.GetSkipSSLValidationReturns(expectedSkipSslValidation, nil)
@@ -202,6 +205,7 @@ var _ = Describe("Configwriter", func() {
 			env.GetIncludeServicesReturns(expectedIncludeServices, nil)
 			env.GetIncludeRouteServicesReturns(expectedIncludeRouteServices, nil)
 			env.GetIncludeRoutingReturns(expectedIncludeRouting, nil)
+			env.GetIncludeTasksReturns(expectedIncludeTasks, nil)
 			env.GetIncludeDetectReturns(expectedIncludeDetect, nil)
 
 			env.GetBackendReturns(expectedBackend, nil)
@@ -248,6 +252,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.IncludeServices).To(Equal(expectedIncludeServices))
 			Expect(configFile.Config.IncludeRouteServices).To(Equal(expectedIncludeRouteServices))
 			Expect(configFile.Config.IncludeRouting).To(Equal(expectedIncludeRouting))
+			Expect(configFile.Config.IncludeTasks).To(Equal(expectedIncludeTasks))
 			Expect(configFile.Config.IncludeDetect).To(Equal(expectedIncludeDetect))
 			Expect(configFile.DestinationDir).To(Equal("/some/dir"))
 		})
@@ -287,6 +292,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_route_services": false,
                                               "include_apps": true,
                                               "include_routing": true,
+                                              "include_tasks": false,
                                               "include_detect": true
                                               }`))
 		})
@@ -333,6 +339,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetIncludeServicesReturns(true, nil)
 				env.GetIncludeRouteServicesReturns(true, nil)
 				env.GetIncludeRoutingReturns(false, nil)
+				env.GetIncludeTasksReturns(true, nil)
 				env.GetIncludeDetectReturns(false, nil)
 
 			})
@@ -382,6 +389,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_route_services": true,
                                               "include_apps": false,
                                               "include_routing": false,
+                                              "include_tasks": true,
                                               "include_detect": false
                                               }`))
 
@@ -428,6 +436,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetIncludeRouteServicesReturns(false, nil)
 				env.GetIncludeAppsReturns(true, nil)
 				env.GetIncludeRoutingReturns(true, nil)
+				env.GetIncludeTasksReturns(false, nil)
 				env.GetIncludeDetectReturns(true, nil)
 			})
 
@@ -457,6 +466,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_route_services": false,
                                               "include_apps": true,
                                               "include_routing": true,
+                                              "include_tasks": false,
                                               "include_detect": true
                                               }`))
 			})
@@ -512,6 +522,7 @@ var _ = Describe("Configwriter", func() {
                                               "include_route_services": false,
                                               "include_apps": true,
                                               "include_routing": true,
+                                              "include_tasks": false,
                                               "include_detect": true
                                               }`))
 		})
@@ -554,6 +565,7 @@ var _ = Describe("Configwriter", func() {
                                     "include_route_services": false,
                                     "include_apps": true,
                                     "include_routing": true,
+                                    "include_tasks": false,
                                     "include_detect": true
                                     }`))
 		})

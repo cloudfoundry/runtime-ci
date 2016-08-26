@@ -47,6 +47,7 @@ type config struct {
 	IncludeServices                   bool   `json:"include_services"`
 	IncludeRouteServices              bool   `json:"include_route_services"`
 	IncludeRouting                    bool   `json:"include_routing"`
+	IncludeTasks                      bool   `json:"include_tasks"`
 	IncludeDetect                     bool   `json:"include_detect"`
 }
 
@@ -95,6 +96,7 @@ type Environment interface {
 	GetIncludeServices() (bool, error)
 	GetIncludeRouteServices() (bool, error)
 	GetIncludeRouting() (bool, error)
+	GetIncludeTasks() (bool, error)
 	GetIncludeDetect() (bool, error)
 }
 
@@ -105,11 +107,11 @@ func NewConfigFile(destinationDir string, env Environment) (configFile, error) {
 
 func generateConfigFromEnv(env Environment) (config, error) {
 	var (
-		skipSslValidation, includeSSO, useHttp                                 bool
-		includeDiegoSSH, includeV3, includeDiegoDocker, includeSecurityGroups  bool
-		includeBackendCompatibility, includeInternetDependent, includeServices bool
-		includeRouteServices, includeRouting, includeDetect, includeApps       bool
-		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout     int
+		skipSslValidation, includeSSO, useHttp                                         bool
+		includeDiegoSSH, includeV3, includeDiegoDocker, includeSecurityGroups          bool
+		includeBackendCompatibility, includeInternetDependent, includeServices         bool
+		includeRouteServices, includeRouting, includeDetect, includeApps, includeTasks bool
+		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout             int
 	)
 
 	skipSslValidation, _ = env.GetSkipSSLValidation()
@@ -138,6 +140,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	includeServices, _ = env.GetIncludeServices()
 	includeRouteServices, _ = env.GetIncludeRouteServices()
 	includeRouting, _ = env.GetIncludeRouting()
+	includeTasks, _ = env.GetIncludeTasks()
 	includeDetect, _ = env.GetIncludeDetect()
 
 	backend, _ := env.GetBackend()
@@ -186,6 +189,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		IncludeServices:                   includeServices,
 		IncludeRouteServices:              includeRouteServices,
 		IncludeRouting:                    includeRouting,
+		IncludeTasks:                      includeTasks,
 		IncludeDetect:                     includeDetect,
 	}, nil
 }

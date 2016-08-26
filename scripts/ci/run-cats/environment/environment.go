@@ -73,6 +73,10 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
+	if _, err = env.GetIncludeTasks(); err != nil {
+		errs.Add(err)
+	}
+
 	if _, err = env.GetIncludeDetect(); err != nil {
 		errs.Add(err)
 	}
@@ -272,6 +276,10 @@ func (e *environment) GetIncludeRouteServices() (bool, error) {
 
 func (e *environment) GetIncludeRouting() (bool, error) {
 	return e.getBooleanDefaultToTrue("INCLUDE_ROUTING")
+}
+
+func (e *environment) GetIncludeTasks() (bool, error) {
+	return e.getBooleanDefaultToFalse("INCLUDE_TASKS")
 }
 
 func (e *environment) GetIncludeDetect() (bool, error) {
