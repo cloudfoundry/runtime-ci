@@ -8,8 +8,6 @@ release_name = ENV.fetch('RELEASE_NAME')
 release_to_modify = properties['releases'].find do |release|
   release['name'] == release_name
 end
-puts properties['releases'].inspect
-puts release_to_modify.inspect
 properties['releases'].delete(release_to_modify)
 properties['releases'] << {
     'name' => release_name,
