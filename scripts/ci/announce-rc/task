@@ -20,7 +20,7 @@ comment_body="cf-release Release Candidate SHA for ${next_tag}:
 - If you notice you are the last person to set your approval, as a courtesy please also add a new comment to the issue saying so, so that we get GitHub notifications that all approvals are done.
 
 ----
-@Amit-PivotalLabs, @JesseTAlford:
+@Amit-PivotalLabs, @JesseTAlford, @dsabeti:
 Does this cf-release SHA look good for the release integration team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
