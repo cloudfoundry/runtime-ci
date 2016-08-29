@@ -40,7 +40,7 @@ if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,cf-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,bosh-lite-commit-sha,aws-stemcell,bosh-lite-stemcell,vsphere-stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
+      echo "date,cf-release-commit-sha,diego-release-version,garden-linux-release-version,etcd-release-version,cflinuxfs2-rootfs-release-version,bosh-lite-commit-sha,aws-stemcell,bosh-lite-stemcell,vsphere-stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-lite-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"
