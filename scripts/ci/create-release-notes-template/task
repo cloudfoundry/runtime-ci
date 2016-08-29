@@ -72,19 +72,19 @@ This section will be updated soon.  If this section is not yet up-to-date, pleas
 
 ## <a name='internal-components'></a>Internal Components
 
-#### `postgres-release` (includes `postgres` job)
+#### \`postgres-release\` (includes \`postgres\` job)
 
 * Bumped from vXX to [vXX](https://github.com/cloudfoundry/postgres-release/releases/tag/vXX). Functional changes:
 
-#### `etcd-release` (includes `etcd` and `etcd_metrics_server` jobs)
+#### \`etcd-release\` (includes \`etcd\` and \`etcd_metrics_server\` jobs)
 
 * Bumped from vXX to [vXX](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vXX). Functional changes:
 
-#### `consul-release` (includes `consul_agent` job)
+#### \`consul-release\` (includes \`consul_agent\` job)
 
 * Bumped from vXX to [vXX](https://github.com/cloudfoundry-incubator/consul-release/releases/tag/vXX). Functional changes:
 
-#### `nats-release` (includes `nats` and `nats_stream_forwarder` jobs)
+#### \`nats-release\` (includes \`nats\` and \`nats_stream_forwarder\` jobs)
 
 * Bumped from vXX to [vXX](https://github.com/cloudfoundry/nats-release/releases/tags/vXX). Functional changes:
 
