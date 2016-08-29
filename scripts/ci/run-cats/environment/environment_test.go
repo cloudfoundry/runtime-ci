@@ -34,6 +34,7 @@ var _ = Describe("Environment", func() {
 			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 			os.Unsetenv("INCLUDE_SSO")
 
@@ -67,6 +68,7 @@ var _ = Describe("Environment", func() {
 				os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120 years")
 				os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
 				os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
+				os.Setenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS", "1 year")
 				os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
 				os.Setenv("INCLUDE_SSO", "falsey")
 
@@ -98,6 +100,7 @@ var _ = Describe("Environment", func() {
 					ContainSubstring("* Invalid environment variable: 'DEFAULT_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '60s'"),
 					ContainSubstring("* Invalid environment variable: 'CF_PUSH_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '120 years'"),
 					ContainSubstring("* Invalid environment variable: 'LONG_CURL_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '180 days'"),
+					ContainSubstring("* Invalid environment variable: 'ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '1 year'"),
 					ContainSubstring("* Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to '240 mins'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_PRIVILEGED_CONTAINER_SUPPORT' must be a boolean 'true' or 'false' but was set to 'true\n'"),
 					ContainSubstring("* Invalid environment variable: 'INCLUDE_SSO' must be a boolean 'true' or 'false' but was set to 'falsey'"),
@@ -318,6 +321,33 @@ var _ = Describe("Environment", func() {
 			_, err := env.GetBrokerStartTimeoutInSeconds()
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("* Invalid environment variable: 'BROKER_START_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
+		})
+	})
+
+	Describe("GetAsyncServiceOperationTimeoutInSeconds", func() {
+		AfterEach(func() {
+			os.Unsetenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS")
+		})
+
+		It("returns an integer when set properly", func() {
+			env := environment.New()
+			os.Setenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS", "2")
+			result, _ := env.GetAsyncServiceOperationTimeoutInSeconds()
+			Expect(result).To(Equal(2))
+		})
+
+		It("returns a default of 0", func() {
+			env := environment.New()
+			result, _ := env.GetAsyncServiceOperationTimeoutInSeconds()
+			Expect(result).To(Equal(0))
+		})
+
+		It("returns an error when it is set wrong", func() {
+			env := environment.New()
+			os.Setenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS", "blah blah blah")
+			_, err := env.GetAsyncServiceOperationTimeoutInSeconds()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("* Invalid environment variable: 'ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS' must be an integer greater than 0 but was set to 'blah blah blah'"))
 		})
 	})
 

@@ -317,6 +317,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120")
 			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180")
 			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240")
+			os.Setenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS", "300")
 			os.Setenv("STATICFILE_BUILDPACK_NAME", "static-buildpack")
 			os.Setenv("JAVA_BUILDPACK_NAME", "java-buildpack")
 			os.Setenv("RUBY_BUILDPACK_NAME", "ruby-buildpack")
@@ -361,6 +362,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("STATICFILE_BUILDPACK_NAME")
 			os.Unsetenv("JAVA_BUILDPACK_NAME")
 			os.Unsetenv("RUBY_BUILDPACK_NAME")
@@ -416,10 +418,11 @@ var _ = Describe("Main", func() {
 				PersistentAppOrg       string `json:"persistent_app_org"`
 				PersistentAppQuotaName string `json:"persistent_app_quota_name"`
 
-				DefaultTimeout     int `json:"default_timeout"`
-				CFPushTimeout      int `json:"cf_push_timeout"`
-				LongCurlTimeout    int `json:"long_curl_timeout"`
-				BrokerStartTimeout int `json:"broker_start_timeout"`
+				DefaultTimeout               int `json:"default_timeout"`
+				CFPushTimeout                int `json:"cf_push_timeout"`
+				LongCurlTimeout              int `json:"long_curl_timeout"`
+				BrokerStartTimeout           int `json:"broker_start_timeout"`
+				AsyncServiceOperationTimeout int `json:"async_service_operation_timeout"`
 
 				StaticfileBuildpackName string `json:"staticfile_buildpack_name"`
 				JavaBuildpackName       string `json:"java_buildpack_name"`
@@ -466,6 +469,7 @@ var _ = Describe("Main", func() {
 			Expect(config.CFPushTimeout).To(Equal(120))
 			Expect(config.LongCurlTimeout).To(Equal(180))
 			Expect(config.BrokerStartTimeout).To(Equal(240))
+			Expect(config.AsyncServiceOperationTimeout).To(Equal(300))
 
 			Expect(config.StaticfileBuildpackName).To(Equal("static-buildpack"))
 			Expect(config.JavaBuildpackName).To(Equal("java-buildpack"))
@@ -506,6 +510,7 @@ var _ = Describe("Main", func() {
 			os.Setenv("CF_PUSH_TIMEOUT_IN_SECONDS", "120 years")
 			os.Setenv("LONG_CURL_TIMEOUT_IN_SECONDS", "180 days")
 			os.Setenv("BROKER_START_TIMEOUT_IN_SECONDS", "240 mins")
+			os.Setenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS", "240 mins")
 			os.Setenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT", "true\n")
 			os.Setenv("INCLUDE_SSO", "falsey")
 
@@ -537,6 +542,7 @@ var _ = Describe("Main", func() {
 			os.Unsetenv("CF_PUSH_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("LONG_CURL_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("BROKER_START_TIMEOUT_IN_SECONDS")
+			os.Unsetenv("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS")
 			os.Unsetenv("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT")
 			os.Unsetenv("INCLUDE_SSO")
 
@@ -577,6 +583,7 @@ var _ = Describe("Main", func() {
 				ContainSubstring("CF_PUSH_TIMEOUT_IN_SECONDS"),
 				ContainSubstring("LONG_CURL_TIMEOUT_IN_SECONDS"),
 				ContainSubstring("BROKER_START_TIMEOUT_IN_SECONDS"),
+				ContainSubstring("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS"),
 				ContainSubstring("INCLUDE_PRIVILEGED_CONTAINER_SUPPORT"),
 				ContainSubstring("INCLUDE_SSO"),
 				ContainSubstring("NODES"),

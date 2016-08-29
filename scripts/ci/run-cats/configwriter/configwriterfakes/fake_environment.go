@@ -64,6 +64,13 @@ type FakeEnvironment struct {
 		result1 int
 		result2 error
 	}
+	GetAsyncServiceOperationTimeoutInSecondsStub        func() (int, error)
+	getAsyncServiceOperationTimeoutInSecondsMutex       sync.RWMutex
+	getAsyncServiceOperationTimeoutInSecondsArgsForCall []struct{}
+	getAsyncServiceOperationTimeoutInSecondsReturns     struct {
+		result1 int
+		result2 error
+	}
 	GetCFAPIStub        func() string
 	getCFAPIMutex       sync.RWMutex
 	getCFAPIArgsForCall []struct{}
@@ -472,6 +479,31 @@ func (fake *FakeEnvironment) GetBrokerStartTimeoutInSecondsCallCount() int {
 func (fake *FakeEnvironment) GetBrokerStartTimeoutInSecondsReturns(result1 int, result2 error) {
 	fake.GetBrokerStartTimeoutInSecondsStub = nil
 	fake.getBrokerStartTimeoutInSecondsReturns = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeEnvironment) GetAsyncServiceOperationTimeoutInSeconds() (int, error) {
+	fake.getAsyncServiceOperationTimeoutInSecondsMutex.Lock()
+	fake.getAsyncServiceOperationTimeoutInSecondsArgsForCall = append(fake.getAsyncServiceOperationTimeoutInSecondsArgsForCall, struct{}{})
+	fake.getAsyncServiceOperationTimeoutInSecondsMutex.Unlock()
+	if fake.GetAsyncServiceOperationTimeoutInSecondsStub != nil {
+		return fake.GetAsyncServiceOperationTimeoutInSecondsStub()
+	} else {
+		return fake.getAsyncServiceOperationTimeoutInSecondsReturns.result1, fake.getAsyncServiceOperationTimeoutInSecondsReturns.result2
+	}
+}
+
+func (fake *FakeEnvironment) GetAsyncServiceOperationTimeoutInSecondsCallCount() int {
+	fake.getAsyncServiceOperationTimeoutInSecondsMutex.RLock()
+	defer fake.getAsyncServiceOperationTimeoutInSecondsMutex.RUnlock()
+	return len(fake.getAsyncServiceOperationTimeoutInSecondsArgsForCall)
+}
+
+func (fake *FakeEnvironment) GetAsyncServiceOperationTimeoutInSecondsReturns(result1 int, result2 error) {
+	fake.GetAsyncServiceOperationTimeoutInSecondsStub = nil
+	fake.getAsyncServiceOperationTimeoutInSecondsReturns = struct {
 		result1 int
 		result2 error
 	}{result1, result2}

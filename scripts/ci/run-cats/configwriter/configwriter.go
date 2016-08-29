@@ -36,6 +36,7 @@ type config struct {
 	CfPushTimeout                     int    `json:"cf_push_timeout,omitempty"`
 	LongCurlTimeout                   int    `json:"long_curl_timeout,omitempty"`
 	BrokerStartTimeout                int    `json:"broker_start_timeout,omitempty"`
+	AsyncServiceOperationTimeout      int    `json:"async_service_operation_timeout,omitempty"`
 	IncludePrivilegedContainerSupport bool   `json:"include_privileged_container_support,omitempty"`
 	IncludeApps                       bool   `json:"include_apps"`
 	IncludeDiegoSSH                   bool   `json:"include_ssh"`
@@ -65,6 +66,7 @@ type Environment interface {
 	GetCFPushTimeoutInSeconds() (int, error)
 	GetLongCurlTimeoutInSeconds() (int, error)
 	GetBrokerStartTimeoutInSeconds() (int, error)
+	GetAsyncServiceOperationTimeoutInSeconds() (int, error)
 	GetCFAPI() string
 	GetCFAdminUser() string
 	GetCFAdminPassword() string
@@ -112,6 +114,7 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		includeBackendCompatibility, includeInternetDependent, includeServices         bool
 		includeRouteServices, includeRouting, includeDetect, includeApps, includeTasks bool
 		defaultTimeout, cfPushTimeout, longCurlTimeout, brokerStartTimeout             int
+		asyncServiceOperationTimeout                                                   int
 	)
 
 	skipSslValidation, _ = env.GetSkipSSLValidation()
@@ -129,6 +132,8 @@ func generateConfigFromEnv(env Environment) (config, error) {
 	longCurlTimeout, _ = env.GetLongCurlTimeoutInSeconds()
 
 	brokerStartTimeout, _ = env.GetBrokerStartTimeoutInSeconds()
+
+	asyncServiceOperationTimeout, _ = env.GetAsyncServiceOperationTimeoutInSeconds()
 
 	includeApps, _ = env.GetIncludeApps()
 	includeDiegoSSH, _ = env.GetIncludeDiegoSSH()
@@ -173,10 +178,11 @@ func generateConfigFromEnv(env Environment) (config, error) {
 		PersistentAppOrg:       env.GetPersistentAppOrg(),
 		PersistentAppQuotaName: env.GetPersistentAppQuotaName(),
 
-		DefaultTimeout:     defaultTimeout,
-		CfPushTimeout:      cfPushTimeout,
-		LongCurlTimeout:    longCurlTimeout,
-		BrokerStartTimeout: brokerStartTimeout,
+		DefaultTimeout:               defaultTimeout,
+		CfPushTimeout:                cfPushTimeout,
+		LongCurlTimeout:              longCurlTimeout,
+		BrokerStartTimeout:           brokerStartTimeout,
+		AsyncServiceOperationTimeout: asyncServiceOperationTimeout,
 
 		IncludePrivilegedContainerSupport: includePrivilegedContainerSupport,
 		IncludeApps:                       includeApps,

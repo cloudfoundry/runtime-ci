@@ -113,6 +113,10 @@ func (env *environment) Validate() validationerrors.Errors {
 		errs.Add(err)
 	}
 
+	if _, err = env.GetAsyncServiceOperationTimeoutInSeconds(); err != nil {
+		errs.Add(err)
+	}
+
 	return errs
 }
 
@@ -142,6 +146,10 @@ func (e *environment) GetLongCurlTimeoutInSeconds() (int, error) {
 
 func (e *environment) GetBrokerStartTimeoutInSeconds() (int, error) {
 	return e.getInteger("BROKER_START_TIMEOUT_IN_SECONDS")
+}
+
+func (e *environment) GetAsyncServiceOperationTimeoutInSeconds() (int, error) {
+	return e.getInteger("ASYNC_SERVICE_OPERATION_TIMEOUT_IN_SECONDS")
 }
 
 func (e *environment) GetCFAPI() string {

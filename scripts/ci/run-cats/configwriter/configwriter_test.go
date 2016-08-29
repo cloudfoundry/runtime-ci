@@ -96,6 +96,7 @@ var _ = Describe("Configwriter", func() {
 			expectedCfPushTimeout                     int
 			expectedLongCurlTimeout                   int
 			expectedBrokerStartTimeout                int
+			expectedAsyncServiceOperationTimeout      int
 			expectedStaticBuildpackName               string
 			expectedJavaBuildpackName                 string
 			expectedRubyBuildpackName                 string
@@ -141,6 +142,7 @@ var _ = Describe("Configwriter", func() {
 			expectedCfPushTimeout = 2
 			expectedLongCurlTimeout = 3
 			expectedBrokerStartTimeout = 4
+			expectedAsyncServiceOperationTimeout = 5
 
 			expectedStaticBuildpackName = "STATICFILE_BUILDPACK_NAME"
 			expectedJavaBuildpackName = "JAVA_BUILDPACK_NAME"
@@ -194,6 +196,7 @@ var _ = Describe("Configwriter", func() {
 			env.GetCFPushTimeoutInSecondsReturns(expectedCfPushTimeout, nil)
 			env.GetLongCurlTimeoutInSecondsReturns(expectedLongCurlTimeout, nil)
 			env.GetBrokerStartTimeoutInSecondsReturns(expectedBrokerStartTimeout, nil)
+			env.GetAsyncServiceOperationTimeoutInSecondsReturns(expectedAsyncServiceOperationTimeout, nil)
 
 			env.GetIncludeAppsReturns(expectedIncludeApps, nil)
 			env.GetIncludeDiegoSSHReturns(expectedIncludeDiegoSSH, nil)
@@ -234,6 +237,7 @@ var _ = Describe("Configwriter", func() {
 			Expect(configFile.Config.CfPushTimeout).To(Equal(expectedCfPushTimeout))
 			Expect(configFile.Config.LongCurlTimeout).To(Equal(expectedLongCurlTimeout))
 			Expect(configFile.Config.BrokerStartTimeout).To(Equal(expectedBrokerStartTimeout))
+			Expect(configFile.Config.AsyncServiceOperationTimeout).To(Equal(expectedAsyncServiceOperationTimeout))
 			Expect(configFile.Config.StaticBuildpackName).To(Equal(expectedStaticBuildpackName))
 			Expect(configFile.Config.JavaBuildpackName).To(Equal(expectedJavaBuildpackName))
 			Expect(configFile.Config.RubyBuildpackName).To(Equal(expectedRubyBuildpackName))
@@ -321,6 +325,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetCFPushTimeoutInSecondsReturns(1, nil)
 				env.GetLongCurlTimeoutInSecondsReturns(1, nil)
 				env.GetBrokerStartTimeoutInSecondsReturns(1, nil)
+				env.GetAsyncServiceOperationTimeoutInSecondsReturns(1, nil)
 				env.GetStaticBuildpackNameReturns("non-empty-value")
 				env.GetJavaBuildpackNameReturns("non-empty-value")
 				env.GetRubyBuildpackNameReturns("non-empty-value")
@@ -379,6 +384,7 @@ var _ = Describe("Configwriter", func() {
                                               "cf_push_timeout": 1,
                                               "long_curl_timeout": 1,
                                               "broker_start_timeout": 1,
+                                              "async_service_operation_timeout": 1,
                                               "include_ssh": true,
                                               "include_v3": true,
                                               "include_docker": true,
@@ -418,6 +424,7 @@ var _ = Describe("Configwriter", func() {
 				env.GetCFPushTimeoutInSecondsReturns(0, nil)
 				env.GetLongCurlTimeoutInSecondsReturns(0, nil)
 				env.GetBrokerStartTimeoutInSecondsReturns(0, nil)
+				env.GetAsyncServiceOperationTimeoutInSecondsReturns(0, nil)
 				env.GetStaticBuildpackNameReturns("")
 				env.GetJavaBuildpackNameReturns("")
 				env.GetRubyBuildpackNameReturns("")
