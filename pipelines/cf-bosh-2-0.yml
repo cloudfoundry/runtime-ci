@@ -249,6 +249,7 @@ jobs:
 
 - name: deploy-releases
   public: true
+  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
