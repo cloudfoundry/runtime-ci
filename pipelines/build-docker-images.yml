@@ -62,6 +62,7 @@ groups:
   - build-write-director-version-docker-image
   - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
+  - build-inject-latest-release-into-deployment-manifest-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -88,6 +89,14 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [resources/build-metadata-resource/*]
+
+- name: runtime-ci-inject-latest-release-into-deployment-manifest
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [resources/inject-latest-release-into-deployment-manifest/*]
+
 - name: runtime-ci-create-diego-iaas-settings
   type: git
   source:
@@ -466,7 +475,7 @@ resources:
     repository: cli
     access_token: {{release_integration_download_bot_access_token}}
 
-# All the docker images
+  # All the docker images
 - name: create-diego-iaas-settings-pipeline-image
   type: docker-image
   source:
@@ -887,6 +896,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/untar-release
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: inject-latest-release-into-deployment-manifest-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/inject-latest-release-into-deployment-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2016,4 +2033,22 @@ jobs:
     - put: build-metadata-resource-pipeline-image
       params:
         build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
+        push: true
+
+- name: build-inject-latest-release-into-deployment-manifest-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-inject-latest-release-into-deployment-manifest
+        trigger: true
+    - put: inject-latest-release-into-deployment-manifest-pipeline-image
+      params:
+        build: runtime-ci-inject-latest-release-into-deployment-manifest/resources/inject-latest-release-into-deployment-manifest
         push: true
