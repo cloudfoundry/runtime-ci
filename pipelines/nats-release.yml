@@ -3,18 +3,26 @@ groups:
 - name: nats-release
   jobs:
     - create-release
+    - upload-stemcell
+    - upload-stemcell-1-0
     - deploy-nats-standalone
     - deploy-1-0-nats-standalone
+    - smoke-tests
     - smoke-tests-1-0
     - deploy-cf-with-updated-nats
-    - smoke-tests
-    - setup-infrastructure
-    - destroy-infrastructure
-    - upload-stemcell
+    - deploy-cf-with-updated-nats-1-0
     - cats-tests
-    - create-final-release
+    - cats-tests-1-0
     - delete-deployment
+    - delete-deployment-1-0
+    - create-final-release
+- name: infrastructure
+  jobs:
     - verify-nameserver-has-record
+    - setup-infrastructure
+    - setup-infrastructure-1-0
+    - destroy-infrastructure
+    - destroy-infrastructure-1-0
 - name: buckets
   jobs:
     - create-nats-release-bucket
@@ -55,6 +63,28 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/nats-release.git
     private_key: {{nats_release_private_key}}
+- name: cf-deployment-develop
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{cf_deployment_private_key}}
+- name: minerva-env-properties
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_private_key}}
+    paths:
+    - deployment-env-vars.yml
+- name: minerva-env-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_private_key}}
+    paths:
+    - bbl-infrastructure/*
 - name: hagrid-env-stubs
   type: git
   source:
@@ -70,6 +100,8 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
+    paths:
+    - bbl-infrastructure/
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -134,9 +166,26 @@ jobs:
       RELEASE_NAME: nats
     input_mapping:
       oss-s3-buckets-creds: oss-s3-buckets-stack
-- name: setup-infrastructure
+
+- name: verify-nameserver-has-record
   public: true
-  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: runtime-ci
+    - get: weekly
+      trigger: true
+    - task: verify-nameserver-has-record
+      file: runtime-ci/scripts/ci/verify-nameserver-has-record/task.yml
+      params:
+        AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+        DOMAIN: hagrid.cf-app.com
+
+- name: setup-infrastructure-1-0
+  public: true
+  serial_groups: [1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - get: hagrid-env-infrastructure
@@ -146,26 +195,27 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-infrastructure
     params:
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
       BBL_LB_CERT: {{hagrid_bbl_lb_cert}}
       BBL_LB_KEY: {{hagrid_bbl_lb_key}}
     ensure:
       put: hagrid-env-infrastructure
       params:
         repository: updated-env-repo
+        rebase: true
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:
       env-repo: updated-env-repo
     params:
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
       DOMAIN: hagrid.cf-app.com
 
-- name: destroy-infrastructure
+- name: destroy-infrastructure-1-0
   public: true
-  serial_groups: [nats-deploy]
+  serial_groups: [1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -176,8 +226,8 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-infrastructure
     params:
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
       DOMAIN: hagrid.cf-app.com
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
@@ -185,16 +235,17 @@ jobs:
       env-repo: hagrid-env-infrastructure
   - put: hagrid-env-infrastructure
     params:
+      rebase: true
       repository: updated-env-repo
 
-- name: upload-stemcell
+- name: upload-stemcell-1-0
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
     - get: hagrid-env-infrastructure
-      passed: [ setup-infrastructure ]
+      passed: [setup-infrastructure-1-0]
       trigger: true
     - get: aws-stemcell
       trigger: true
@@ -224,20 +275,14 @@ jobs:
     - get: nats-release
       trigger: true
     - get: hagrid-env-infrastructure
-      trigger: true
-      passed: [ upload-stemcell ]
+      passed: [upload-stemcell-1-0]
+    - get: minerva-env-infrastructure
+      passed: [upload-stemcell]
     - get: aws-stemcell
-      trigger: true
-      passed: [ upload-stemcell ]
+      passed: [upload-stemcell, upload-stemcell-1-0]
       params:
         tarball: false
     - get: runtime-ci
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hagrid-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
   - task: create-release
     file: runtime-ci/scripts/ci/create-release/task.yml
     privileged: true
@@ -245,90 +290,39 @@ jobs:
       release-repo: nats-release
     params:
       RELEASE_NAME: nats
-  - task: bosh-upload-release-nats
-    file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-    input_mapping:
-      release: release-tarball
-    params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      RELEASE_NAME: nats-*.tgz
-
-- name: deploy-nats-standalone
-  public: true
-  serial_groups: [nats-deploy]
-  build_logs_to_retain: 100
-  plan:
   - aggregate:
-    - get: nats-release
-      trigger: true
-      passed: [create-release]
-    - get: hagrid-env-infrastructure
-      trigger: true
-      passed: [create-release]
-    - get: aws-stemcell
-      trigger: true
-      passed: [create-release]
-      params:
-        tarball: false
-    - get: runtime-ci
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hagrid-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
-  - task: generate-nats-deployment-manifest-from-bbl
-    file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
-  - task: bosh-deploy-nats
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
-    input_mapping:
-      manifest-properties: hagrid-env-infrastructure
-    params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: nats.yml
-
-- name: smoke-tests
-  public: true
-  serial_groups: [nats-deploy]
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: nats-release
-      trigger: true
-      passed: [deploy-nats-standalone]
-    - get: runtime-ci
-    - get: hagrid-env-infrastructure
-      passed: [deploy-nats-standalone]
-      trigger: true
-    - get: aws-stemcell
-      trigger: true
-      passed: [ deploy-nats-standalone ]
-      params:
-        tarball: false
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
-    input_mapping:
-      env-repo: hagrid-env-infrastructure
-  - task: run-errand-bbl-bosh-2-0-smoke-tests
-    file: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task.yml
-    input_mapping:
-      target-file-dir: target
-      bosh-user-file-dir: username
-      bosh-password-file-dir: password
-    params:
-      BOSH_TARGET_FILE: target
-      BOSH_USER_FILE: bosh-user-file-dir/username
-      BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-      CA_CERT_FILE: ca-cert
-      DEPLOYMENT_NAME: nats
-      ERRAND_NAME: smoke-tests
+    - do:
+      - task: extract-director-creds-from-bbl-1-0
+        file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+        input_mapping:
+          env-repo: hagrid-env-infrastructure
+        params:
+          STATE_DIR_PATH: bbl-infrastructure
+      - task: bosh-upload-release-nats-1-0
+        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+        input_mapping:
+          release: release-tarball
+        params:
+          TARGET_FILE: target
+          USERNAME_FILE: username
+          PASSWORD_FILE: password
+          RELEASE_NAME: nats-*.tgz
+    - do:
+      - task: extract-director-creds-from-bbl
+        file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+        input_mapping:
+          env-repo: minerva-env-infrastructure
+        params:
+          STATE_DIR_PATH: bbl-infrastructure
+      - task: bosh-upload-release-nats
+        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
+        input_mapping:
+          release: release-tarball
+        params:
+          TARGET_FILE: target
+          USERNAME_FILE: username
+          PASSWORD_FILE: password
+          RELEASE_NAME: nats-*.tgz
 
 - name: deploy-1-0-nats-standalone
   public: true
@@ -340,10 +334,8 @@ jobs:
       trigger: true
       passed: [create-release]
     - get: hagrid-env-infrastructure
-      trigger: true
       passed: [create-release]
     - get: aws-stemcell
-      trigger: true
       passed: [create-release]
       params:
         tarball: false
@@ -381,9 +373,7 @@ jobs:
     - get: runtime-ci
     - get: hagrid-env-infrastructure
       passed: [deploy-1-0-nats-standalone]
-      trigger: true
     - get: aws-stemcell
-      trigger: true
       passed: [deploy-1-0-nats-standalone]
       params:
         tarball: false
@@ -404,29 +394,26 @@ jobs:
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
       CA_CERT_FILE: ca-cert
-      DEPLOYMENT_NAME: nats_1-0
+      DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
 
-- name: deploy-cf-with-updated-nats
+- name: deploy-cf-with-updated-nats-1-0
   public: true
-  serial_groups: [nats-deploy]
+  serial_groups: [1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: nats-release
       trigger: true
-      passed:  [smoke-tests, smoke-tests-1-0]
+      passed:  [smoke-tests-1-0]
     - get: hagrid-env-infrastructure
-      trigger: true
-      passed: [ smoke-tests ]
+      passed: [smoke-tests-1-0]
     - get: aws-stemcell
-      trigger: true
-      passed: [ smoke-tests ]
+      passed: [smoke-tests-1-0]
       params:
         tarball: false
     - get: runtime-ci
     - get: hagrid-env-stubs
-      trigger: true
     - get: cf-release-develop
       params:
         submodules: none
@@ -451,8 +438,8 @@ jobs:
       MAPPING_OUTPUT_FILE: security-groups-mapping
       LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup CFSSHProxyInternalSecurityGroup InternalSecurityGroup
       STATE_DIR_PATH: bbl-infrastructure/state.json
-      AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - aggregate: # prepare the deploy
@@ -582,9 +569,10 @@ jobs:
         PASSWORD_FILE: password
         MANIFEST_FILE: diego-deployment.yml
         CA_CERT_FILE: ca-cert
-- name: cats-tests
+
+- name: cats-tests-1-0
   public: true
-  serial_groups: [nats-deploy]
+  serial_groups: [1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -594,18 +582,16 @@ jobs:
       - get: cf-acceptance-tests
       - get: nats-release
         trigger: true
-        passed:  [ deploy-cf-with-updated-nats ]
+        passed:  [deploy-cf-with-updated-nats-1-0]
       - get: hagrid-env-infrastructure
-        trigger: true
-        passed: [ deploy-cf-with-updated-nats ]
+        passed: [deploy-cf-with-updated-nats-1-0]
       - get: aws-stemcell
-        trigger: true
-        passed: [ deploy-cf-with-updated-nats ]
+        passed: [deploy-cf-with-updated-nats-1-0]
         params:
           tarball: false
       - get: hagrid-env-stubs
         trigger: true
-        passed: [ deploy-cf-with-updated-nats ]
+        passed: [deploy-cf-with-updated-nats-1-0]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -643,45 +629,9 @@ jobs:
         USE_HTTP: "true"
         NODES: 6
 
-- name: create-final-release
+- name: delete-deployment-1-0
   public: true
-  serial: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: oss-s3-buckets-stack
-      - get: nats-release-master
-      - get: nats-release-merge-target
-      - get: nats-release
-        trigger: true
-        passed:  [ cats-tests ]
-  - task: create-final-release
-    file: runtime-ci/scripts/ci/create-final-release/task.yml
-    params:
-      RELEASE_NAME: nats
-    input_mapping:
-      release-repo: nats-release
-      release-repo-master: nats-release-master
-  - put: nats-release-master
-    params:
-      repository: final-release-repo
-      tag: final-release-repo/version_number
-      tag_prefix: v
-  - task: merge-master-into-develop
-    file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-    input_mapping:
-      release-repo: nats-release-merge-target
-      release-repo-master: nats-release-master
-  - put: nats-release-merge-target
-    params:
-      repository: final-release-repo
-
-- name: delete-deployment
-  public: true
-  serial_groups: [nats-deploy]
+  serial_groups: [1-0-nats-deploy]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -690,18 +640,16 @@ jobs:
       - get: runtime-ci
       - get: nats-release
         trigger: true
-        passed:  [ cats-tests ]
+        passed:  [cats-tests-1-0]
       - get: hagrid-env-infrastructure
-        trigger: true
-        passed: [ cats-tests ]
+        passed: [cats-tests-1-0]
       - get: aws-stemcell
-        trigger: true
-        passed: [ cats-tests ]
+        passed: [cats-tests-1-0]
         params:
           tarball: false
       - get: hagrid-env-stubs
         trigger: true
-        passed: [ cats-tests ]
+        passed: [cats-tests-1-0]
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
@@ -722,18 +670,339 @@ jobs:
         params:
           DEPLOYMENT_NAME: nats
 
-- name: verify-nameserver-has-record
+- name: setup-infrastructure
   public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - get: minerva-env-infrastructure
+  - get: runtime-ci
+  - task: setup-infrastructure
+    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+    params:
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+      BBL_LB_CERT: {{minerva_bbl_lb_cert}}
+      BBL_LB_KEY: {{minerva_bbl_lb_key}}
+    ensure:
+      put: minerva-env-infrastructure
+      params:
+        repository: updated-env-repo
+        rebase: true
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+      DOMAIN: minerva.cf-app.com
+
+- name: destroy-infrastructure
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: minerva-env-infrastructure
+    - get: runtime-ci
+  - task: unbind-elb-from-r53
+    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+    params:
+      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+      DOMAIN: minerva.cf-app.com
+  - task: destroy-infrastructure
+    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+  - put: minerva-env-infrastructure
+    params:
+      rebase: true
+      repository: updated-env-repo
+
+- name: upload-stemcell
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: minerva-env-infrastructure
+      passed: [setup-infrastructure]
+      trigger: true
+    - get: aws-stemcell
+      trigger: true
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: aws-stemcell
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      STEMCELL_NAME: '*.tgz'
+
+- name: deploy-nats-standalone
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+      passed: [create-release]
+    - get: minerva-env-infrastructure
+      trigger: true
+      passed: [create-release]
+    - get: aws-stemcell
+      passed: [create-release]
+      params:
+        tarball: false
+    - get: runtime-ci
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+  - task: generate-nats-deployment-manifest-from-bbl
+    file: runtime-ci/scripts/ci/generate-nats-deployment-manifest-from-bbl/task.yml
+  - task: bosh-deploy-nats
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest-properties: minerva-env-infrastructure
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: nats.yml
+
+- name: smoke-tests
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+      passed: [deploy-nats-standalone]
+    - get: runtime-ci
+    - get: minerva-env-infrastructure
+      passed: [deploy-nats-standalone]
+    - get: aws-stemcell
+      passed: [deploy-nats-standalone]
+      params:
+        tarball: false
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+  - task: run-errand-bbl-bosh-2-0-smoke-tests
+    file: runtime-ci/scripts/ci/run-errand-bbl-bosh-2-0/task.yml
+    input_mapping:
+      target-file-dir: target
+      bosh-user-file-dir: username
+      bosh-password-file-dir: password
+    params:
+      BOSH_TARGET_FILE: target
+      BOSH_USER_FILE: bosh-user-file-dir/username
+      BOSH_PASSWORD_FILE: bosh-password-file-dir/password
+      CA_CERT_FILE: ca-cert
+      DEPLOYMENT_NAME: nats
+      ERRAND_NAME: smoke-tests
+
+- name: deploy-cf-with-updated-nats
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: minerva-env-infrastructure
+    - get: minerva-env-properties
+    - get: aws-stemcell
+      passed: [smoke-tests]
+      params:
+        tarball: false
+    - get: nats-release
+      trigger: true
+      passed:  [smoke-tests]
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: minerva-env-infrastructure
+  - task: inject-latest-release-into-deployment-manifest-nats
+    file: runtime-ci/scripts/ci/inject-latest-release-into-deployment-manifest/task.yml
+    params:
+      RELEASE_NAME: nats
+      DEPLOYMENT_MANIFEST: cf-deployment.yml
+      MODIFIED_DEPLOYMENT_MANIFEST: cf-deployment.yml
+    input_mapping:
+      deployment-manifest: cf-deployment-develop
+  - task: bosh-deploy-cf
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest: modified-deployment-manifest
+      manifest-properties: minerva-env-properties
+    params:
+      TARGET_FILE:  target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: cf-deployment.yml
+      DEPLOYMENT_VAR_FILE: deployment-env-vars.yml
+
+- name: cats-tests
+  public: true
+  serial_groups: [nats-deploy]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: runtime-ci
-    - get: weekly
-      trigger: true
-    - task: verify-nameserver-has-record
-      file: runtime-ci/scripts/ci/verify-nameserver-has-record/task.yml
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+      - get: nats-release
+        trigger: true
+        passed:  [deploy-cf-with-updated-nats]
+      - get: minerva-env-infrastructure
+        passed: [deploy-cf-with-updated-nats]
+      - get: aws-stemcell
+        passed: [deploy-cf-with-updated-nats]
+        params:
+          tarball: false
+      - get: minerva-env-properties
+        trigger: true
+        passed: [deploy-cf-with-updated-nats]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [deploy-cf-with-updated-nats]
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
-        AWS_ACCESS_KEY_ID: {{hagrid_aws_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{hagrid_aws_secret_access_key}}
-        DOMAIN: hagrid.cf-app.com
+        TARGET: api.minerva.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{minerva_cf_admin_username}}
+        CF_PASSWORD: {{minerva_cf_admin_password}}
+    - task: run-cats
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+      params:
+        INCLUDE_APPS: true
+        INCLUDE_BACKEND_COMPATIBILITY: false
+        INCLUDE_INTERNET_DEPENDENT: true
+        INCLUDE_DETECT: true
+        INCLUDE_DIEGO_DOCKER: true
+        INCLUDE_DIEGO_SSH: true
+        INCLUDE_ROUTE_SERVICES: true
+        INCLUDE_ROUTING: true
+        INCLUDE_TASKS: false
+        INCLUDE_SECURITY_GROUPS: true
+        INCLUDE_SERVICES: true
+        INCLUDE_V3: false
+        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
+        INCLUDE_SSO: true
+        BACKEND: diego
+        CF_API: "api.minerva.cf-app.com"
+        CF_ADMIN_USER: {{minerva_cf_admin_username}}
+        CF_ADMIN_PASSWORD: {{minerva_cf_admin_password}}
+        CF_APPS_DOMAIN: minerva.cf-app.com
+        SKIP_SSL_VALIDATION: "true"
+        USE_HTTP: "true"
+        NODES: 6
+
+- name: delete-deployment
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: nats-release
+        trigger: true
+        passed:  [cats-tests]
+      - get: minerva-env-infrastructure
+        passed: [cats-tests]
+      - get: aws-stemcell
+        passed: [cats-tests]
+        params:
+          tarball: false
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [cats-tests]
+      - get: minerva-env-properties
+        trigger: true
+        passed: [cats-tests]
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      input_mapping:
+        env-repo: minerva-env-infrastructure
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
+    - aggregate:
+      - task: delete-deployment-cf
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf
+      - task: delete-deployment-nats
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: nats
+
+- name: create-final-release
+  public: true
+  serial: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: oss-s3-buckets-stack
+      - get: nats-release-master
+      - get: nats-release-merge-target
+      - get: nats-release
+        trigger: true
+        passed:  [cats-tests, cats-tests-1-0]
+  - task: create-final-release
+    file: runtime-ci/scripts/ci/create-final-release/task.yml
+    params:
+      RELEASE_NAME: nats
+    input_mapping:
+      release-repo: nats-release
+      release-repo-master: nats-release-master
+  - put: nats-release-master
+    params:
+      repository: final-release-repo
+      tag: final-release-repo/version_number
+      tag_prefix: v
+  - task: merge-master-into-develop
+    file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+    input_mapping:
+      release-repo: nats-release-merge-target
+      release-repo-master: nats-release-master
+  - put: nats-release-merge-target
+    params:
+      repository: final-release-repo

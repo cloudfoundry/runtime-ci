@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/inject-latest-release-into-deployment-manifest
+
+inputs:
+  - name: runtime-ci
+  - name: deployment-manifest
+
+outputs:
+  - name: modified-deployment-manifest
+
+params:
+  RELEASE_NAME:
+  DEPLOYMENT_MANIFEST:
+  MODIFIED_DEPLOYMENT_MANIFEST:
+
+run:
+  path: runtime-ci/scripts/ci/inject-latest-release-into-deployment-manifest/task.rb
