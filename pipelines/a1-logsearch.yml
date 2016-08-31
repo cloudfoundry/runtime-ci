@@ -54,6 +54,7 @@ resources:
 
 jobs:
 - name: deploy-a1-logsearch
+  public: true
   plan:
   - aggregate:
     - get: aws-stemcell
