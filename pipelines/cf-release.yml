@@ -1078,6 +1078,8 @@ jobs:
         tags: [vsphere]
       - get: cf-release-tarball
         trigger: true
+        params:
+          tarball: false
         tags: [vsphere]
         passed: [deploy-vsphere]
       - get: vsphere-stemcell
