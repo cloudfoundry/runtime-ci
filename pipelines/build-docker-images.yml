@@ -2050,5 +2050,5 @@ jobs:
         trigger: true
     - put: inject-latest-release-into-deployment-manifest-pipeline-image
       params:
-        build: runtime-ci-inject-latest-release-into-deployment-manifest/resources/inject-latest-release-into-deployment-manifest
+        build: runtime-ci-inject-latest-release-into-deployment-manifest/scripts/ci/inject-latest-release-into-deployment-manifest
         push: true
