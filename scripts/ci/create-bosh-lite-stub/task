@@ -21,7 +21,7 @@ properties:
     include_route_services: true
     include_diego_docker: false
     include_diego_ssh: false
-    include_backend_compatability: true
+    include_backend_compatibility: true
     include_privileged_container_support: true
     backend: dea
   cc:
