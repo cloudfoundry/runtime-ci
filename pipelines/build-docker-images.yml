@@ -95,7 +95,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [resources/inject-latest-release-into-deployment-manifest/*]
+    paths: [scripts/ci/inject-latest-release-into-deployment-manifest/Dockerfile]
 
 - name: runtime-ci-create-diego-iaas-settings
   type: git
