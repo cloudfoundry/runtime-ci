@@ -335,6 +335,7 @@ jobs:
       passed: [create-release]
     - get: hagrid-env-infrastructure
       passed: [create-release]
+    - get: hagrid-env-stubs
     - get: aws-stemcell
       passed: [create-release]
       params:
@@ -349,7 +350,7 @@ jobs:
   - task: generate-1-0-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
-      env-repo: hagrid-env-infrastructure
+      env-repo: hagrid-env-stubs
   - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
@@ -763,7 +764,6 @@ jobs:
       trigger: true
       passed: [create-release]
     - get: minerva-env-infrastructure
-      trigger: true
       passed: [create-release]
     - get: aws-stemcell
       passed: [create-release]
