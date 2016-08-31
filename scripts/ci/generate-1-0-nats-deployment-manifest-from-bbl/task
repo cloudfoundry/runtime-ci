@@ -76,8 +76,8 @@ networks:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
           security_groups:
-            - sg-58ef4222
-          subnet: subnet-74382b2c
+            - sg-030a8f79
+          subnet: subnet-861b01de
   - name: cf2
     subnets:
       - range: 10.0.48.0/20
@@ -94,8 +94,8 @@ networks:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
           security_groups:
-            - sg-58ef4222
-          subnet: subnet-58408211
+            - sg-030a8f79
+          subnet: subnet-b66abfff
 
 jobs:
   - name: nats_z1
