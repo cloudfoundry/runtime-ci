@@ -395,7 +395,7 @@ jobs:
       BOSH_USER_FILE: bosh-user-file-dir/username
       BOSH_PASSWORD_FILE: bosh-password-file-dir/password
       CA_CERT_FILE: ca-cert
-      DEPLOYMENT_NAME: nats
+      DEPLOYMENT_NAME: nats_1-0
       ERRAND_NAME: smoke-tests
 
 - name: deploy-cf-with-updated-nats-1-0
