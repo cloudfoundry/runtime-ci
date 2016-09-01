@@ -32,10 +32,6 @@ instance_groups:
         password: nats
   networks:
   - name: private
-    static_ips:
-      - 10.0.31.241
-      - 10.0.63.241
-      - 10.0.79.241
   vm_type: m3.medium
   stemcell: default
 - name: smoke-tests
