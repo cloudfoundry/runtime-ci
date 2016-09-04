@@ -18,7 +18,7 @@ RUN \
 
 ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
 
-COPY Gemfile /
+COPY Gemfile Gemfile.lock /
 
 RUN \
   gem update --system && \
