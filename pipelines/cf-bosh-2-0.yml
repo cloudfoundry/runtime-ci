@@ -11,6 +11,7 @@ groups:
   - setup-infrastructure
   - destroy-infrastructure
   - verify-nameserver-has-record
+  - run-bosh-cleanup
 
 resources:
 - name: weekly
@@ -249,6 +250,8 @@ jobs:
 
 - name: deploy-releases
   public: true
+  serial: true
+  serial_groups: [hermione]
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -369,3 +372,24 @@ jobs:
         AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
         DOMAIN: hermione.cf-app.com
+
+- name: run-bosh-cleanup
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: hermione-bbl-configuration
+      - get: weekly
+        trigger: true
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
+      input_mapping:
+        env-repo: hermione-bbl-configuration
+    - task: run-bosh-cleanup
+      privileged: true
+      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
