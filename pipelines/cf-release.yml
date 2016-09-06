@@ -434,35 +434,101 @@ jobs:
       - get: daily
         trigger: true
     - aggregate:
-      - task: run-bosh-cleanup-runtime-ci
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        params:
-          BOSH_DIRECTOR: https://bosh.runtime.ci.cf-app.com:25555
-          BOSH_USER: {{runtime_ci_username}}
-          BOSH_PASSWORD: {{runtime_ci_password}}
-      - task: run-bosh-cleanup-vsphere
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        tags: [vsphere]
-        params: &bosh-target-cat
-          BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com
-          BOSH_USER: {{vsphere_bosh_username}}
-          BOSH_PASSWORD: {{vsphere_bosh_password}}
-      - task: run-bosh-cleanup-minimal
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        params:
-          BOSH_DIRECTOR: https://54.165.111.247:25555
-          BOSH_USER: {{minimal_bosh_username}}
-          BOSH_PASSWORD: {{minimal_bosh_password}}
-      - task: run-bosh-cleanup-a1
-        privileged: true
-        file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
-        params: &bosh-target-a1
-          BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
-          BOSH_USER: {{a1_bosh_username}}
-          BOSH_PASSWORD: {{a1_bosh_password}}
+      - do:
+        - aggregate:
+          - task: write-target-file-runtime-ci
+            file: runtime-ci/scripts/ci/write-target-file/task.yml
+            params:
+              TARGET: https://bosh.runtime.ci.cf-app.com:25555
+            output_mapping:
+              target-file-dir: runtime-ci-target-file
+          - task: write-creds-runtime-ci
+            file: runtime-ci/scripts/ci/write-creds/task.yml
+            params:
+              USERNAME: {{runtime_ci_username}}
+              PASSWORD: {{runtime_ci_password}}
+            output_mapping:
+              username: runtime-ci-username
+              password: runtime-ci-password
+        - task: run-bosh-cleanup-runtime-ci
+          privileged: true
+          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          input_mapping:
+            target: runtime-ci-target-file
+            username: runtime-ci-username
+            password: runtime-ci-password
+      - do:
+        - aggregate:
+          - task: write-target-file-vsphere
+            file: runtime-ci/scripts/ci/write-target-file/task.yml
+            tags: [vsphere]
+            params:
+              TARGET: https://bosh.cat.wild.cf-app.com
+            output_mapping:
+              target-file-dir: vsphere-target-file
+          - task: write-creds-vsphere
+            file: runtime-ci/scripts/ci/write-creds/task.yml
+            tags: [vsphere]
+            params:
+              USERNAME: {{vsphere_bosh_username}}
+              PASSWORD: {{vsphere_bosh_password}}
+            output_mapping:
+              username: vsphere-username
+              password: vsphere-password
+        - task: run-bosh-cleanup-vsphere
+          privileged: true
+          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          tags: [vsphere]
+          input_mapping:
+            target: vsphere-target-file
+            username: vsphere-username
+            password: vsphere-password
+      - do:
+        - aggregate:
+          - task: write-target-file-minimal
+            file: runtime-ci/scripts/ci/write-target-file/task.yml
+            params:
+              TARGET: https://54.165.111.247:25555
+            output_mapping:
+              target-file-dir: minimal-target-file
+          - task: write-creds-minimal
+            file: runtime-ci/scripts/ci/write-creds/task.yml
+            params:
+              USERNAME: {{minimal_bosh_username}}
+              PASSWORD: {{minimal_bosh_password}}
+            output_mapping:
+              username: minimal-username
+              password: minimal-password
+        - task: run-bosh-cleanup-minimal
+          privileged: true
+          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          input_mapping:
+            target: minimal-target-file
+            username: minimal-username
+            password: minimal-password
+      - do:
+        - aggregate:
+          - task: write-target-file-a1
+            file: runtime-ci/scripts/ci/write-target-file/task.yml
+            params:
+              TARGET: https://bosh.a1.cf-app.com:25555
+            output_mapping:
+              target-file-dir: a1-target-file
+          - task: write-creds-a1
+            file: runtime-ci/scripts/ci/write-creds/task.yml
+            params:
+              USERNAME: {{a1_bosh_username}}
+              PASSWORD: {{a1_bosh_password}}
+            output_mapping:
+              username: a1-username
+              password: a1-password
+        - task: run-bosh-cleanup-a1
+          privileged: true
+          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          input_mapping:
+            target: a1-target-file
+            username: a1-username
+            password: a1-password
 
 - name: deploy-bosh-lite
   public: true
@@ -1117,7 +1183,9 @@ jobs:
       file: runtime-ci/scripts/ci/run-errand/task.yml
       tags: [vsphere]
       params:
-        <<: *bosh-target-cat
+        BOSH_DIRECTOR: https://bosh.cat.wild.cf-app.com:25555
+        BOSH_USER: {{vsphere_bosh_username}}
+        BOSH_PASSWORD: {{vsphere_bosh_password}}
         DEPLOYMENT_NAME: cf-cat
         ERRAND_NAME: smoke_tests
 
@@ -1387,7 +1455,9 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
       params:
-        <<: *bosh-target-a1
+        BOSH_DIRECTOR: https://bosh.a1.cf-app.com:25555
+        BOSH_USER: {{a1_bosh_username}}
+        BOSH_PASSWORD: {{a1_bosh_password}}
         DEPLOYMENT_NAME: cf-a1
         ERRAND_NAME: smoke_tests
 
