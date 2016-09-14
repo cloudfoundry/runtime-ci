@@ -14,6 +14,7 @@ run:
   path: runtime-ci/scripts/ci/run-smoketests/task
 
 params:
+  SMOKE_TEST_REPO_NAME: cf-smoke-tests
   SUITE_NAME:
   API:
   APPS_DOMAIN:
