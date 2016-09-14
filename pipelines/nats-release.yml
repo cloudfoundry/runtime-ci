@@ -45,7 +45,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: nats-release
+- name: nats-release-develop
   type: git
   source:
     branch: develop
@@ -272,7 +272,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
     - get: hagrid-env-infrastructure
       passed: [upload-stemcell-1-0]
@@ -287,7 +287,7 @@ jobs:
     file: runtime-ci/scripts/ci/create-release/task.yml
     privileged: true
     input_mapping:
-      release-repo: nats-release
+      release-repo: nats-release-develop
     params:
       RELEASE_NAME: nats
   - aggregate:
@@ -330,7 +330,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed: [create-release]
     - get: hagrid-env-infrastructure
@@ -368,7 +368,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed: [deploy-1-0-nats-standalone]
     - get: runtime-ci
@@ -404,7 +404,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed:  [smoke-tests-1-0]
     - get: hagrid-env-infrastructure
@@ -581,7 +581,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: nats-release
+      - get: nats-release-develop
         trigger: true
         passed:  [deploy-cf-with-updated-nats-1-0]
       - get: hagrid-env-infrastructure
@@ -639,7 +639,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: nats-release
+      - get: nats-release-develop
         trigger: true
         passed:  [cats-tests-1-0]
       - get: hagrid-env-infrastructure
@@ -760,7 +760,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed: [create-release]
     - get: minerva-env-infrastructure
@@ -795,7 +795,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed: [deploy-nats-standalone]
     - get: runtime-ci
@@ -839,7 +839,7 @@ jobs:
       passed: [smoke-tests]
       params:
         tarball: false
-    - get: nats-release
+    - get: nats-release-develop
       trigger: true
       passed:  [smoke-tests]
   - task: extract-director-creds-from-bbl
@@ -879,7 +879,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: nats-release
+      - get: nats-release-develop
         trigger: true
         passed:  [deploy-cf-with-updated-nats]
       - get: minerva-env-infrastructure
@@ -940,7 +940,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: nats-release
+      - get: nats-release-develop
         trigger: true
         passed:  [cats-tests]
       - get: minerva-env-infrastructure
@@ -983,7 +983,7 @@ jobs:
       - get: oss-s3-buckets-stack
       - get: nats-release-master
       - get: nats-release-merge-target
-      - get: nats-release
+      - get: nats-release-develop
         trigger: true
         passed:  [cats-tests, cats-tests-1-0]
   - task: create-final-release
@@ -991,7 +991,7 @@ jobs:
     params:
       RELEASE_NAME: nats
     input_mapping:
-      release-repo: nats-release
+      release-repo: nats-release-develop
       release-repo-master: nats-release-master
   - put: nats-release-master
     params:
