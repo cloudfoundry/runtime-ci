@@ -30,10 +30,26 @@ cat > config.json <<EOF
 }
 EOF
 set -x
+
 export CONFIG=$PWD/config.json
 
 echo "======TEST======"
-cd smoke-tests
+
+export GOPATH=$PWD/go
+
+SMOKE_TESTS_PARENT_DIR=$GOPATH/src/github.com/cloudfoundry
+mkdir -p $SMOKE_TESTS_PARENT_DIR
+GINKGO_PARENT_DIR=$GOPATH/src/github.com/onsi
+mkdir -p $GINKGO_PARENT_DIR
+
+SMOKE_TESTS_DIR=$SMOKE_TESTS_PARENT_DIR/$SMOKE_TEST_REPO_NAME
+cp -R smoke-tests $SMOKE_TESTS_DIR
+GINKGO_DIR=$GINKGO_PARENT_DIR/ginkgo
+cp -R $SMOKE_TESTS_DIR/vendor/github.com/onsi/ginkgo $GINKGO_DIR
+
+go install github.com/onsi/ginkgo/ginkgo
+
+cd $SMOKE_TESTS_DIR
 
 set +e
 ./bin/test -v -trace $ARGS > output.log
