@@ -91,4 +91,8 @@ properties:
     system_domain: bosh-lite.runtime-ci.cf-app.com
     use_http: true
     skip_ssl_validation: true
+    persistent_app_host: CATS-persistent-app-diego
+    persistent_app_space: CATS-persistent-space-diego
+    persistent_app_quota_name: CATS-persistent-quota-diego
+    persistent_app_org: CATS-persistent-org-diego
 EOF

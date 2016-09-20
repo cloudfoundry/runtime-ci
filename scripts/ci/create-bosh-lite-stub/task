@@ -24,6 +24,10 @@ properties:
     include_backend_compatibility: true
     include_privileged_container_support: true
     backend: dea
+    persistent_app_host: CATS-persistent-app-dea
+    persistent_app_space: CATS-persistent-space-dea
+    persistent_app_quota_name: CATS-persistent-quota-dea
+    persistent_app_org: CATS-persistent-org-dea
   cc:
     security_group_definitions:
       - name: load_balancer
