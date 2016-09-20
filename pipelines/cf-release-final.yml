@@ -1,5 +1,5 @@
 groups:
-- name: cf-release
+- name: cf-release-final
   jobs:
   - create-final-release
   - merge-master-into-develop
