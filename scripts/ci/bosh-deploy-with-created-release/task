@@ -19,13 +19,13 @@ fi
 
 RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
 
-echo "---"                                > ops.yml
-echo "- type: replace"                   >> ops.yml
-echo "  path: /releases/name=${RELEASE_NAME}?" >> ops.yml
-echo "  value:"                          >> ops.yml
-echo "  - name: ${RELEASE_NAME}"         >> ops.yml
-echo "    version: create"               >> ops.yml
-echo "    url: file:/$(pwd)/release"     >> ops.yml
+echo "---"                                     > ops.yml
+echo "- type: replace"                        >> ops.yml
+echo "  path: /releases/name=${RELEASE_NAME}" >> ops.yml
+echo "  value:"                               >> ops.yml
+echo "    name: ${RELEASE_NAME}"              >> ops.yml
+echo "    version: create"                    >> ops.yml
+echo "    url: file://$(pwd)/release"         >> ops.yml
 
 echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" -o ops.yml ${BOSH_MANIFEST}"
 bosh \
