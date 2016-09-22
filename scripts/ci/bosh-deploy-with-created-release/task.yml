@@ -17,7 +17,7 @@ inputs:
 - name: release
 
 run:
-  path: runtime-ci/scripts/ci/bosh-deploy/task
+  path: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task
 
 params:
   TARGET_FILE:

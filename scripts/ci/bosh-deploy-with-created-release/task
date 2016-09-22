@@ -26,15 +26,15 @@ echo "- value:"                          >> ops.yml
 echo "  - version: create"               >> ops.yml
 echo "  - url: file:/$(pwd)/release"     >> ops.yml
 
-echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" ${BOSH_MANIFEST}"
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" -o ops.yml ${BOSH_MANIFEST}"
 bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
-  -o ops.yml \
   deploy \
   --var-files="${DEPLOYMENT_VAR_FILE}" \
+  -o ops.yml \
   "${BOSH_MANIFEST}"
 
 set -x

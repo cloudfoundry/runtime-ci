@@ -848,10 +848,10 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: minerva-env-infrastructure
-  - task: bosh-deploy-cf
+  - task: bosh-deploy-cf-with-new-nats
     file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
-      manifest: modified-deployment-manifest
+      manifest: cf-deployment-develop
       manifest-properties: minerva-env-properties
       release: nats-release-develop
     params:
