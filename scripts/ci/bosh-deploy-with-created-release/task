@@ -1,0 +1,40 @@
+#!/bin/bash
+set -eux
+
+BOSH_TARGET=$(cat "target/${TARGET_FILE}")
+export BOSH_USER=$(cat username/"${USERNAME_FILE}")
+BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
+set +x
+export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
+set +u
+DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE}"
+set -u
+
+if [[ ! -f $DEPLOYMENT_VAR_FILE ]]; then
+  echo "ERROR -- This task requires that the param 'DEPLOYMENT_VAR_FILE' be defined in your pipeline."
+  exit 1
+fi
+
+RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
+
+echo "---"                                > ops.yml
+echo "- type: replace"                   >> ops.yml
+echo "- path: /releases/${RELEASE_NAME}" >> ops.yml
+echo "- value:"                          >> ops.yml
+echo "  - version: create"               >> ops.yml
+echo "  - url: file:/$(pwd)/release"     >> ops.yml
+
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" ${BOSH_MANIFEST}"
+bosh \
+  -n \
+  -d "${DEPLOYMENT_NAME}" \
+  -e "${BOSH_TARGET}" \
+  --ca-cert="${BOSH_CA_CERT}" \
+  -o ops.yml \
+  deploy \
+  --var-files="${DEPLOYMENT_VAR_FILE}" \
+  "${BOSH_MANIFEST}"
+
+set -x

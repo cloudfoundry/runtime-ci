@@ -848,19 +848,12 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: minerva-env-infrastructure
-  - task: inject-latest-release-into-deployment-manifest-nats
-    file: runtime-ci/scripts/ci/inject-latest-release-into-deployment-manifest/task.yml
-    params:
-      RELEASE_NAME: nats
-      DEPLOYMENT_MANIFEST: cf-deployment.yml
-      MODIFIED_DEPLOYMENT_MANIFEST: cf-deployment.yml
-    input_mapping:
-      deployment-manifest: cf-deployment-develop
   - task: bosh-deploy-cf
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
       manifest: modified-deployment-manifest
       manifest-properties: minerva-env-properties
+      release: nats-release-develop
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
