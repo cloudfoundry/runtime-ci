@@ -1,41 +1,51 @@
 #!/bin/bash
 set -eux
 
+export BOSH_USER
+export BOSH_PASSWORD
+BOSH_USER=$(cat "username/${USERNAME_FILE}")
 BOSH_TARGET=$(cat "target/${TARGET_FILE}")
-export BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
-set +x
-export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
+RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
+
 set +u
 DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE}"
 set -u
 
-if [[ ! -f $DEPLOYMENT_VAR_FILE ]]; then
-  echo "ERROR -- This task requires that the param 'DEPLOYMENT_VAR_FILE' be defined in your pipeline."
-  exit 1
-fi
-
-RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
-
-echo "---"                                     > ops.yml
-echo "- type: replace"                        >> ops.yml
-echo "  path: /releases/name=${RELEASE_NAME}" >> ops.yml
-echo "  value:"                               >> ops.yml
-echo "    name: ${RELEASE_NAME}"              >> ops.yml
-echo "    version: create"                    >> ops.yml
-echo "    url: file://$(pwd)/release"         >> ops.yml
-
-echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" -o ops.yml ${BOSH_MANIFEST}"
-bosh \
-  -n \
-  -d "${DEPLOYMENT_NAME}" \
-  -e "${BOSH_TARGET}" \
-  --ca-cert="${BOSH_CA_CERT}" \
-  deploy \
-  --var-files="${DEPLOYMENT_VAR_FILE}" \
-  -o ops.yml \
-  "${BOSH_MANIFEST}"
-
+set +x
+echo "BOSH_PASSWORD=\$(cat password/${PASSWORD_FILE})"
+BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 set -x
+
+cat << EOF > ops.yml
+---
+- type: replace
+  path: /releases/name=${RELEASE_NAME}
+  value:
+    name: ${RELEASE_NAME}
+    version: create
+    url: file://$(pwd)/release
+EOF
+
+if [[ -f $DEPLOYMENT_VAR_FILE ]]; then
+  bosh \
+    -n \
+    -d "${DEPLOYMENT_NAME}" \
+    -e "${BOSH_TARGET}" \
+    --ca-cert="${BOSH_CA_CERT}" \
+    deploy \
+    --var-files="${DEPLOYMENT_VAR_FILE}" \
+    -o ops.yml \
+    "${BOSH_MANIFEST}"
+else
+  bosh \
+    -n \
+    -d "${DEPLOYMENT_NAME}" \
+    -e "${BOSH_TARGET}" \
+    --ca-cert="${BOSH_CA_CERT}" \
+    deploy \
+    -o ops.yml \
+    "${BOSH_MANIFEST}"
+fi
