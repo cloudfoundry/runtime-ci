@@ -548,17 +548,18 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
   - do:
-    - task: bosh-deploy-cf
-      file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    - task: bosh-deploy-cf-with-new-nats
+      file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
       input_mapping:
         manifest: extended-cf-deployment-manifest
         manifest-properties: hagrid-env-infrastructure
+        release: nats-release-develop
       params:
         TARGET_FILE:   target
         USERNAME_FILE: username
         PASSWORD_FILE: password
+        CA_CERT_FILE:  ca-cert
         MANIFEST_FILE: extended_deployment.yml
-        CA_CERT_FILE: ca-cert
     - task: bosh-deploy-diego
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
@@ -569,7 +570,7 @@ jobs:
         USERNAME_FILE: username
         PASSWORD_FILE: password
         MANIFEST_FILE: diego-deployment.yml
-        CA_CERT_FILE: ca-cert
+        CA_CERT_FILE:  ca-cert
 
 - name: cats-tests-1-0
   public: true
