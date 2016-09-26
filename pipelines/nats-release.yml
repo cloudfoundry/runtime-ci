@@ -2,7 +2,6 @@
 groups:
 - name: nats-release
   jobs:
-    - create-release
     - upload-stemcell
     - upload-stemcell-1-0
     - deploy-nats-standalone
@@ -265,64 +264,6 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: '*.tgz'
-
-- name: create-release
-  public: true
-  serial_groups: [nats-deploy, 1-0-nats-deploy]
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: nats-release-develop
-      trigger: true
-    - get: hagrid-env-infrastructure
-      passed: [upload-stemcell-1-0]
-    - get: minerva-env-infrastructure
-      passed: [upload-stemcell]
-    - get: aws-stemcell
-      passed: [upload-stemcell, upload-stemcell-1-0]
-      params:
-        tarball: false
-    - get: runtime-ci
-  - task: create-release
-    file: runtime-ci/scripts/ci/create-release/task.yml
-    privileged: true
-    input_mapping:
-      release-repo: nats-release-develop
-    params:
-      RELEASE_NAME: nats
-  - aggregate:
-    - do:
-      - task: extract-director-creds-from-bbl-1-0
-        file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-        input_mapping:
-          env-repo: hagrid-env-infrastructure
-        params:
-          STATE_DIR_PATH: bbl-infrastructure
-      - task: bosh-upload-release-nats-1-0
-        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-        input_mapping:
-          release: release-tarball
-        params:
-          TARGET_FILE: target
-          USERNAME_FILE: username
-          PASSWORD_FILE: password
-          RELEASE_NAME: nats-*.tgz
-    - do:
-      - task: extract-director-creds-from-bbl
-        file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-        input_mapping:
-          env-repo: minerva-env-infrastructure
-        params:
-          STATE_DIR_PATH: bbl-infrastructure
-      - task: bosh-upload-release-nats
-        file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
-        input_mapping:
-          release: release-tarball
-        params:
-          TARGET_FILE: target
-          USERNAME_FILE: username
-          PASSWORD_FILE: password
-          RELEASE_NAME: nats-*.tgz
 
 - name: deploy-1-0-nats-standalone
   public: true
