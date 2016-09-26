@@ -332,12 +332,11 @@ jobs:
   - aggregate:
     - get: nats-release-develop
       trigger: true
-      passed: [create-release]
     - get: hagrid-env-infrastructure
-      passed: [create-release]
+      passed: [upload-stemcell-1-0]
     - get: hagrid-env-stubs
     - get: aws-stemcell
-      passed: [create-release]
+      passed: [upload-stemcell-1-0]
       params:
         tarball: false
     - get: runtime-ci
@@ -351,10 +350,11 @@ jobs:
     file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-stubs
-  - task: bosh-deploy-nats
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+  - task: bosh-deploy-new-nats
+    file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
       manifest-properties: hagrid-env-infrastructure
+      release: nats-release-develop
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
