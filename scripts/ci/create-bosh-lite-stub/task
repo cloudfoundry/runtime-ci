@@ -12,7 +12,7 @@ properties:
   system_domain: bosh-lite.runtime-ci.cf-app.com
   apps_domain: bosh-lite.runtime-ci.cf-app.com
   acceptance_tests:
-    nodes: 4
+    nodes: 20
     include_sso: true
     include_security_groups: true
     include_internet_dependent: true
