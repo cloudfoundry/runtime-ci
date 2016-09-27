@@ -22,6 +22,8 @@ groups:
     - setup-infrastructure-1-0
     - destroy-infrastructure
     - destroy-infrastructure-1-0
+    - run-bosh-cleanup
+    - run-bosh-cleanup-1-0
 - name: buckets
   jobs:
     - create-nats-release-bucket
@@ -941,3 +943,45 @@ jobs:
   - put: nats-release-merge-target
     params:
       repository: final-release-repo
+
+- name: run-bosh-cleanup
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: hagrid-env-infrastructure
+      - get: weekly
+        trigger: true
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
+      input_mapping:
+        env-repo: hagrid-env-infrastructure
+    - task: run-bosh-cleanup
+      privileged: true
+      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+
+- name: run-bosh-cleanup-1-0
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: minerva-env-infrastructure
+      - get: weekly
+        trigger: true
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
+      input_mapping:
+        env-repo: minerva-env-infrastructure
+    - task: run-bosh-cleanup
+      privileged: true
+      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
