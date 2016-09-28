@@ -578,7 +578,7 @@ jobs:
         CF_APPS_DOMAIN: hagrid.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 6
+        NODES: 12
 
 - name: delete-deployment-1-0
   public: true
@@ -872,7 +872,7 @@ jobs:
         CF_APPS_DOMAIN: minerva.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 6
+        NODES: 12
 
 - name: delete-deployment
   public: true

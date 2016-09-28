@@ -990,7 +990,7 @@ jobs:
         CF_APPS_DOMAIN: minimal-aws.cf-app.com
         SKIP_SSL_VALIDATION: true
         USE_HTTP: false
-        NODES: 2
+        NODES: 12
         BACKEND: diego
         INCLUDE_APPS: true
         INCLUDE_BACKEND_COMPATIBILITY: false
@@ -1290,7 +1290,7 @@ jobs:
         CF_APPS_DOMAIN: cat.wild.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 6
+        NODES: 10
     - aggregate:
       - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
@@ -1802,7 +1802,7 @@ jobs:
         CF_APPS_DOMAIN: a1-app.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 6
+        NODES: 25
     - aggregate:
       - put: acceptance-test-metadata
       - task: write-target-file-bosh-director

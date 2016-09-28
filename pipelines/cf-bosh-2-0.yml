@@ -337,7 +337,7 @@ jobs:
         CF_APPS_DOMAIN: hermione.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 6
+        NODES: 12
 
 - name: bless-manifest
   public: true
