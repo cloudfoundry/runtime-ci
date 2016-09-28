@@ -20,6 +20,12 @@ resources:
     start: 3:00 -0700
     stop: 3:30 -0700
     interval: 168h
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
 - name: runtime-ci
   type: git
   source:
@@ -382,7 +388,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: hermione-bbl-configuration
-      - get: weekly
+      - get: daily
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
