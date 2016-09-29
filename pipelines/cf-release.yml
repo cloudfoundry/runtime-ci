@@ -1290,7 +1290,7 @@ jobs:
         CF_APPS_DOMAIN: cat.wild.cf-app.com
         SKIP_SSL_VALIDATION: "true"
         USE_HTTP: "true"
-        NODES: 10
+        NODES: 12
     - aggregate:
       - put: acceptance-test-metadata
       - task: write-target-file-bosh-director
