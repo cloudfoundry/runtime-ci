@@ -100,10 +100,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
-- name: garden-linux-release
+- name: garden-runc-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/garden-linux-release
+    repository: cloudfoundry/garden-runc-release
 - name: cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
@@ -211,7 +211,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: garden-linux-release
+    - get: garden-runc-release
       trigger: true
       params:
         tarball: false

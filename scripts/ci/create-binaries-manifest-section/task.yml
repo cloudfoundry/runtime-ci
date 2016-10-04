@@ -17,7 +17,7 @@ inputs:
 - name: loggregator-release
 - name: cf-mysql-release
 - name: uaa-release
-- name: garden-linux-release
+- name: garden-runc-release
 - name: cflinuxfs2-rootfs-release
 - name: routing-release
 - name: nats-release

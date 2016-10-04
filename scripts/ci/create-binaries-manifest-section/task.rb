@@ -13,7 +13,7 @@ release_names=[
   'nats',
   'cf-mysql',
   'uaa',
-  'garden-linux',
+  'garden-runc',
   'cflinuxfs2-rootfs',
   'routing',
   'cf',
