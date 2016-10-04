@@ -1870,10 +1870,15 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: garden-linux-release-tarball
+      - get: garden-runc-release-tarball
         passed:
         - aws-acceptance-tests
         - bosh-lite-acceptance-tests
+        trigger: true
+        params:
+          tarball: false
+      - get: garden-linux-release-tarball
+        passed:
         - vsphere-acceptance-tests
         trigger: true
         params:

@@ -14,6 +14,7 @@ inputs:
   - name: vsphere-stemcell
   - name: diego-release-tarball
   - name: garden-linux-release-tarball
+  - name: garden-runc-release-tarball
   - name: etcd-release-tarball
   - name: cflinuxfs2-rootfs-release-tarball
   - name: diego-cf-compatibility
