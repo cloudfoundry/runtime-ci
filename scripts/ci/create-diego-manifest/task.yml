@@ -26,6 +26,7 @@ params:
   INSTANCE_COUNT_OVERRIDES_PATH: ~
   RELEASE_VERSIONS_PATH: ~
   IAAS_SETTINGS_PATH: iaas-settings.yml
+  VSPHERE: false
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest/task

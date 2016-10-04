@@ -11,16 +11,31 @@ PROPERTY_OVERRIDES_PATH="${root_dir}/property-overrides/${PROPERTY_OVERRIDES_PAT
 INSTANCE_COUNT_OVERRIDES_PATH="${root_dir}/instance-count-overrides/${INSTANCE_COUNT_OVERRIDES_PATH:?"\$INSTANCE_COUNT_OVERRIDES_PATH not set"}"
 RELEASE_VERSIONS_PATH="${root_dir}/release-versions/${RELEASE_VERSIONS_PATH:?"\$RELEASE_VERSIONS_PATH not set"}"
 IAAS_SETTINGS_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
+VSPHERE="${VSPHERE}"
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
 
-pushd "${DIEGO_RELEASE_DIR}"
-  ./scripts/generate-deployment-manifest \
-    -c "${CF_MANIFEST_PATH}" \
-    -i "${IAAS_SETTINGS_PATH}" \
-    -p "${PROPERTY_OVERRIDES_PATH}" \
-    -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
-    -v "${RELEASE_VERSIONS_PATH}" \
-    > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
-popd
+
+if [[ $VSPHERE == "true" ]]; then
+  pushd "${DIEGO_RELEASE_DIR}"
+    ./scripts/generate-deployment-manifest \
+      -c "${CF_MANIFEST_PATH}" \
+      -i "${IAAS_SETTINGS_PATH}" \
+      -p "${PROPERTY_OVERRIDES_PATH}" \
+      -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
+      -v "${RELEASE_VERSIONS_PATH}" \
+      > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
+  popd
+else
+  pushd "${DIEGO_RELEASE_DIR}"
+    ./scripts/generate-deployment-manifest \
+      -c "${CF_MANIFEST_PATH}" \
+      -i "${IAAS_SETTINGS_PATH}" \
+      -p "${PROPERTY_OVERRIDES_PATH}" \
+      -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
+      -v "${RELEASE_VERSIONS_PATH}" \
+      -g \
+      > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
+  popd
+fi

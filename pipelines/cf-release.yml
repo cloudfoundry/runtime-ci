@@ -1705,6 +1705,7 @@ jobs:
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
       IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
+      VSPHERE: true
   - aggregate:
     - put: cf-vsphere-manifest
       tags: [vsphere]
