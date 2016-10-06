@@ -63,7 +63,7 @@ groups:
   - build-write-director-version-docker-image
   - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
-  - build-inject-latest-release-into-deployment-manifest-docker-image
+  - build-setup-infrastructure-terraform-docker-image
 
 - name: run-cats-tests
   jobs:
@@ -90,13 +90,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [resources/build-metadata-resource/*]
-
-- name: runtime-ci-inject-latest-release-into-deployment-manifest
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/inject-latest-release-into-deployment-manifest/Dockerfile]
 
 - name: runtime-ci-create-diego-iaas-settings
   type: git
@@ -468,6 +461,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/untar-release/Dockerfile]
+
+- name: runtime-ci-setup-infrastructure-terraform
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/setup-infrastructure-terraform/Dockerfile]
 
 - name: runtime-ci
   type: git
@@ -914,18 +914,18 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: inject-latest-release-into-deployment-manifest-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/inject-latest-release-into-deployment-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
 - name: build-metadata-resource-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/build-metadata-resource
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: setup-infrastructure-terraform-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/setup-infrastructure-terraform
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2067,8 +2067,10 @@ jobs:
         build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
         push: true
 
-- name: build-inject-latest-release-into-deployment-manifest-docker-image
+
+- name: build-setup-infrastructure-terraform-docker-image
   public: true
+  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -2078,9 +2080,9 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-inject-latest-release-into-deployment-manifest
+      - get: runtime-ci-setup-infrastructure-terraform
         trigger: true
-    - put: inject-latest-release-into-deployment-manifest-pipeline-image
+    - put: setup-infrastructure-terraform-pipeline-image
       params:
-        build: runtime-ci-inject-latest-release-into-deployment-manifest/scripts/ci/inject-latest-release-into-deployment-manifest
+        build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure-terraform
         push: true
