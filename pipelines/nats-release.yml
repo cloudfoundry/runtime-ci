@@ -128,10 +128,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/diego-release
-- name: garden-linux-release-tarball
+- name: garden-runc-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry/garden-linux-release
+    repository: cloudfoundry/garden-runc-release
 - name: etcd-release-tarball
   type: bosh-io-release
   source:
@@ -373,7 +373,7 @@ jobs:
         include_source_tarball: true
     - get: cf-release-tarball
     - get: diego-release-tarball
-    - get: garden-linux-release-tarball
+    - get: garden-runc-release-tarball
     - get: etcd-release-tarball
     - get: cflinuxfs2-rootfs-release-tarball
   - task: extract-director-creds-from-bbl
@@ -469,10 +469,10 @@ jobs:
         TARGET_FILE: target
         USERNAME_FILE: username
         PASSWORD_FILE: password
-    - task: bosh-upload-release-garden-linux
+    - task: bosh-upload-release-garden-runc
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:
-        release: garden-linux-release-tarball
+        release: garden-runc-release-tarball
       params:
         RELEASE_NAME: release.tgz
         TARGET_FILE: target
