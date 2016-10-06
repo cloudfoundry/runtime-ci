@@ -41,7 +41,7 @@ ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
 
 RUN \
   wget https://releases.hashicorp.com/terraform/0.7.5/terraform_0.7.5_linux_amd64.zip -P /tmp && \
-  unzip /tmp/terraform_0.7.5_linux_amd64.zip && \
+  unzip /tmp/terraform_0.7.5_linux_amd64.zip -d /tmp && \
   mv /tmp/terraform /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
