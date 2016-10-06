@@ -6,7 +6,8 @@ RUN \
     build-essential \
     mercurial \
     software-properties-common \
-    wget
+    wget \
+    unzip
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
@@ -40,6 +41,7 @@ ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
 
 RUN \
   wget https://releases.hashicorp.com/terraform/0.7.5/terraform_0.7.5_linux_amd64.zip -P /tmp && \
+  unzip /tmp/terraform_0.7.5_linux_amd64 && \
   mv /tmp/terraform_0.7.5_linux_amd64 /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
