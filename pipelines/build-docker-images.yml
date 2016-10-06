@@ -2084,5 +2084,5 @@ jobs:
         trigger: true
     - put: setup-infrastructure-terraform-pipeline-image
       params:
-        build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure-terraform
+        build: runtime-ci-setup-infrastructure-terraform/scripts/ci/setup-infrastructure-terraform
         push: true
