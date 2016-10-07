@@ -9,8 +9,8 @@ function commit_terraform_state_file {
 }
 
 pushd env-repo
-  export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
   pushd terraform
+    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
     set +x
     echo 'terraform apply'
     terraform apply
