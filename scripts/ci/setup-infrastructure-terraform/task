@@ -6,7 +6,7 @@ function commit_terraform_state_file {
   pushd env-repo
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
-    git add $1
+    git add .
     git commit -m "Update terraform state file"
   popd
 
@@ -24,6 +24,6 @@ pushd env-repo
 popd
 
 echo 'commit_terraform_state_file'
-commit_terraform_state_file terraform.tfstate
+commit_terraform_state_file
 set -x
 
