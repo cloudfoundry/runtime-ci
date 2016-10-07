@@ -4,7 +4,6 @@ set -xeu
 
 function commit_terraform_state_file {
  git add $1
- git add $2
  git commit -m "Update terraform state file"
 }
 
@@ -15,7 +14,7 @@ pushd env-repo
     echo 'terraform apply'
     terraform apply
     echo 'commit_terraform_state_file'
-    commit_terraform_state_file terraform.tfstate terraform.tfstate.backup
+    commit_terraform_state_file terraform.tfstate
     set -x
     popd
 
