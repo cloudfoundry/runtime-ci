@@ -1,0 +1,42 @@
+---
+groups:
+- name: nats-gcp
+- name: infrastructure
+  jobs:
+    - setup-infrastructure
+
+resource_types:
+- name: git
+  type: docker-image
+  source:
+    repository: concourse/git-resource
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: dobby-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dobby-env.git
+    private_key: {{dobby_env_private_key}}
+
+jobs:
+- name: setup-infrastructure
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: dobby-env
+    trigger: true
+  - get: runtime-ci
+    trigger: true
+  - task: setup-infrastructure-terraform
+    file: runtime-ci/scripts/ci/setup-infrastructure-terraform/task.yml
+    input_mapping:
+      env-repo: dobby-env
+  - put: dobby-env
+    params:
+      repository: updated-env-repo
