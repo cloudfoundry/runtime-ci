@@ -3,6 +3,8 @@
 set -xeu
 
 function commit_terraform_state_file {
+ git config user.name "CF MEGA BOT"
+ git config user.email "cf-mega@pivotal.io"
  git add $1
  git commit -m "Update terraform state file"
 }
