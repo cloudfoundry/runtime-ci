@@ -15,6 +15,9 @@ RUN \
   apt-get install -y git && \
   apt-get remove -y --purge software-properties-common
 
+RUN \
+  apt-get install curl -y
+
 ENV GOPATH $HOME/go
 ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
 RUN \
@@ -45,3 +48,9 @@ RUN \
   mv /tmp/terraform /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
+
+RUN \
+  export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
+  sudo apt-get update && sudo apt-get install google-cloud-sdk

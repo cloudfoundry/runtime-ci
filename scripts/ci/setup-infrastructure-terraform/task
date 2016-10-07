@@ -27,3 +27,5 @@ echo 'commit_terraform_state_file'
 commit_terraform_state_file
 set -x
 
+echo '******** HEY! ************'
+echo `gcloud compute addresses describe dobby-director-address | grep address: | awk '{print $2}'`
