@@ -3,11 +3,15 @@
 set -xeu
 
 function commit_terraform_state_file {
- git config user.name "CF MEGA BOT"
- git config user.email "cf-mega@pivotal.io"
- git add $1
- git commit -m "Update terraform state file"
- git push
+  pushd env-repo
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add $1
+    git commit -m "Update terraform state file"
+  popd
+
+  shopt -s dotglob
+  cp -R env-repo/* updated-env-repo/
 }
 
 pushd env-repo
@@ -16,8 +20,10 @@ pushd env-repo
     set +x
     echo 'terraform apply'
     terraform apply
-    echo 'commit_terraform_state_file'
-    commit_terraform_state_file terraform.tfstate
-    set -x
-    popd
+  popd
+popd
+
+echo 'commit_terraform_state_file'
+commit_terraform_state_file terraform.tfstate
+set -x
 
