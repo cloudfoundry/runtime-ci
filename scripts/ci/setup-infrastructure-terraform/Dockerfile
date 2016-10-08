@@ -18,6 +18,9 @@ RUN \
 RUN \
   apt-get install curl -y
 
+RUN \
+  apt-get install rpl -y
+
 ENV GOPATH $HOME/go
 ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
 RUN \
