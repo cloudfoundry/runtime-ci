@@ -27,7 +27,7 @@ pushd env-repo
     export DIRECTOR_IP=$(gcloud compute addresses describe dobby-director-address | grep address: | awk '{print $2}')
   popd
   pushd bosh-init
-    rpl DIRECTOR_ADDRESS $DIRECTOR_IP manifest.yml
+  rpl DIRECTOR_ADDRESS ${DIRECTOR_IP} manifest.yml
   popd
 popd
 
