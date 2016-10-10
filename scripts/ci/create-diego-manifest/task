@@ -15,27 +15,32 @@ VSPHERE="${VSPHERE}"
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
+USE_GARDEN_RUNC=false
 
 
-if [[ $VSPHERE == "true" ]]; then
-  pushd "${DIEGO_RELEASE_DIR}"
-    ./scripts/generate-deployment-manifest \
-      -c "${CF_MANIFEST_PATH}" \
-      -i "${IAAS_SETTINGS_PATH}" \
-      -p "${PROPERTY_OVERRIDES_PATH}" \
-      -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
-      -v "${RELEASE_VERSIONS_PATH}" \
-      > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
-  popd
-else
-  pushd "${DIEGO_RELEASE_DIR}"
-    ./scripts/generate-deployment-manifest \
-      -c "${CF_MANIFEST_PATH}" \
-      -i "${IAAS_SETTINGS_PATH}" \
-      -p "${PROPERTY_OVERRIDES_PATH}" \
-      -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
-      -v "${RELEASE_VERSIONS_PATH}" \
-      -g \
-      > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
-  popd
+if [ "$VSPHERE" == "false" ]; then
+  USE_GARDEN_RUNC=true
 fi
+
+if [ "$USE_MYSQL" == "true" ]; then
+  cat << EOF > /tmp/mysql-stubs.yml
+sql_overrides:
+  bbs:
+    db_connection_string: ${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DATABASE}
+    db_driver: mysql
+    max_open_connections: 500
+EOF
+fi
+
+pushd "${DIEGO_RELEASE_DIR}"
+  ./scripts/generate-deployment-manifest \
+    -c "${CF_MANIFEST_PATH}" \
+    -i "${IAAS_SETTINGS_PATH}" \
+    -p "${PROPERTY_OVERRIDES_PATH}" \
+    -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
+    -v "${RELEASE_VERSIONS_PATH}" \
+    $([ "${USE_GARDEN_RUNC}" == "true" ] && echo "-g") \
+    $([ "${USE_ETCD}" == "false" ] && echo "-x") \
+    $([ "${USE_MYSQL}" == "true" ] && echo "-s /tmp/mysql-stubs.yml") \
+    > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
+popd

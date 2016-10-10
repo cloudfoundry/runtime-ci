@@ -27,6 +27,13 @@ params:
   RELEASE_VERSIONS_PATH: ~
   IAAS_SETTINGS_PATH: iaas-settings.yml
   VSPHERE: false
+  USE_ETCD: true
+  USE_MYSQL: false
+  MYSQL_HOST:
+  MYSQL_PORT:
+  MYSQL_USER:
+  MYSQL_PASSWORD:
+  MYSQL_DATABASE:
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest/task
