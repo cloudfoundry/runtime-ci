@@ -1622,6 +1622,7 @@ jobs:
       instance-count-overrides: diego-release
       release-versions: diego-release
       iaas-settings: diego-release
+      diego-mysql-overrides: diego-release
     params:
       PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
@@ -1708,6 +1709,7 @@ jobs:
       property-overrides: cat-env
       instance-count-overrides: cat-env
       release-versions: cat-env
+      diego-mysql-overrides: cat-env
     params:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
