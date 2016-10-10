@@ -28,6 +28,7 @@ pushd env-repo
   popd
   pushd bosh-init
   rpl DIRECTOR_ADDRESS ${DIRECTOR_IP} manifest.yml
+  ./generate-certs.sh director ${DIRECTOR_IP}
   popd
 popd
 
