@@ -14,6 +14,7 @@ inputs:
 - name: instance-count-overrides
 - name: release-versions
 - name: iaas-settings
+- name: diego-mysql-overrides
 
 outputs:
 - name: generated-diego-manifest
@@ -29,11 +30,7 @@ params:
   VSPHERE: false
   USE_ETCD: true
   USE_MYSQL: false
-  MYSQL_HOST:
-  MYSQL_PORT:
-  MYSQL_USER:
-  MYSQL_PASSWORD:
-  MYSQL_DATABASE:
+  DIEGO_MYSQL_OVERRIDES_PATH:
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest/task

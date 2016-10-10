@@ -1534,10 +1534,13 @@ jobs:
       property-overrides: a1-env
       instance-count-overrides: a1-env
       release-versions: a1-env
+      diego-mysql-overrides: a1-env
     params:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
+      USE_MYSQL: true
+      DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-stubs/diego-property-overrides.yml
   - aggregate:
     - put: cf-a1-manifest
       params:
