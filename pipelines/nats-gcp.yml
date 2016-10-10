@@ -27,6 +27,7 @@ resources:
 jobs:
 - name: setup-infrastructure
   public: true
+  serial_groups: [infrastructure]
   build_logs_to_retain: 100
   plan:
   - get: dobby-env

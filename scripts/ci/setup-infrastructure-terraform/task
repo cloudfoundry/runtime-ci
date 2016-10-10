@@ -4,10 +4,12 @@ set -xeu
 
 function commit {
   pushd env-repo
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add .
-    git commit -m "Commit terraform state, bosh manifest, and bosh manifest state file"
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Commit terraform state, bosh manifest, and bosh manifest state file"
+    fi
   popd
 
   shopt -s dotglob
