@@ -57,4 +57,4 @@ cp -R env-repo/* updated-env-repo/
 echo $DIRECTOR_USERNAME > bosh-username/bosh-username
 echo $DIRECTOR_PASSWORD > bosh-password/bosh-password
 echo $DIRECTOR_IP > bosh-target/director-ip
-cp env-repo/bosh-init/certs/rootCA.pem bosh-ca-cert/ca.pem
+cp env-repo/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/ca.pem
