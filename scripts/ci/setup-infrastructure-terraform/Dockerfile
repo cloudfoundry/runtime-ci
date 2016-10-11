@@ -4,7 +4,6 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
-    mercurial \
     software-properties-common \
     wget \
     unzip
@@ -17,23 +16,6 @@ RUN \
 
 RUN \
   apt-get install curl -y
-
-RUN \
-  apt-get install rpl -y
-
-ENV GOPATH $HOME/go
-ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
-RUN \
-  wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.6.3.linux-amd64.tar.gz -C /usr/local && \
-  mkdir $GOPATH && \
-  rm -rf /tmp/*
-
-RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.63-linux-amd64 --output-document="/usr/bin/bosh"
-
-RUN \
-  chmod +x /usr/bin/bosh
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \

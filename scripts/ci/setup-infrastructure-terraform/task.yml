@@ -12,6 +12,10 @@ inputs:
 
 outputs:
 - name: updated-env-repo
+- name: bosh-username
+- name: bosh-password
+- name: bosh-ca-cert
+- name: bosh-target
 
 run:
   path: runtime-ci/scripts/ci/setup-infrastructure-terraform/task
