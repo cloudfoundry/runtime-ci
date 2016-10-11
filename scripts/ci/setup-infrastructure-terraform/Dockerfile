@@ -30,10 +30,10 @@ RUN \
   rm -rf /tmp/*
 
 RUN \
-  wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.91-linux-amd64 -P /tmp && \
-  mv /tmp/bosh-init-0.0.91-linux-amd64 /usr/local/bin/bosh-init && \
-  chmod +x /usr/local/bin/bosh-init && \
-  rm -rf /tmp/*
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.63-linux-amd64 --output-document="/usr/bin/bosh"
+
+RUN \
+  chmod +x /usr/bin/bosh
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
