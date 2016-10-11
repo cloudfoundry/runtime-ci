@@ -18,7 +18,7 @@ properties['jobs'].select do |job|
       { 'hm' => 'hm-password'},
       { ENV['DIRECTOR_USERNAME'] => ENV['DIRECTOR_PASSWORD'] }
     ]
-    job['networks'].find {|n| n.name == 'vip'}['static_ips'] = [ENV['DIRECTOR_IP']]
+    job['networks'].find {|n| n['name'] == 'vip'}['static_ips'] = [ENV['DIRECTOR_IP']]
   end
 end
 
