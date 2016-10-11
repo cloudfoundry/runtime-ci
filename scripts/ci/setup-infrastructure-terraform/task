@@ -22,7 +22,7 @@ function commit {
 }
 
 root_dir=$PWD
-infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-terraform/
+infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-terraform
 
 pushd env-repo
   pushd terraform
