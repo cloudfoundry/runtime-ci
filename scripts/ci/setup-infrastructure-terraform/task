@@ -22,7 +22,7 @@ function commit {
 }
 
 root_dir=$PWD
-infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-terraform
+infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-terraform/
 
 pushd env-repo
   pushd terraform
@@ -43,8 +43,8 @@ pushd env-repo
       ssh-keygen  -f keys/key -C vcap  -N ""
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=keys/key.pub
     fi
-    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo
-    ${infrastructure_task_dir}/inject_configuration.rb ${root_dir}/env-repo ${ip_filename}
+    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
+    ${infrastructure_task_dir}/inject_configuration.rb ${root_dir}/env-repo/bosh-init ${ip_filename}
   popd
 popd
 

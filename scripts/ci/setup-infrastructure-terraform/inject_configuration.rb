@@ -4,8 +4,8 @@ require 'yaml'
 manifest_filename = './manifest.yml'
 output_filename   = './updated_manifest.yml'
 env_repo_path, filename = ARGV[0], ARGV[1]
-director_ssl_cert_filename = env_repo_path + './certs/director-' + filename + '.crt'
-director_ssl_key_filename = env_repo_path + './certs/director-' + filename + '.key'
+director_ssl_cert_filename = File.expand_path File.join(env_repo_path, "/certs/director-#{filename}.crt")
+director_ssl_key_filename = File.expand_path File.join(env_repo_path, "/certs/director-#{filename}.key")
 director_cert = File.read(director_ssl_cert_filename)
 director_key = File.read(director_ssl_key_filename)
 properties = YAML.load_file(manifest_filename)
