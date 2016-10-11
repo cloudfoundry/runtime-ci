@@ -40,6 +40,7 @@ groups:
   - build-write-creds-docker-image
   - build-bosh-deploy-docker-image
   - build-bosh-deploy-with-created-release-docker-image
+  - build-bosh-create-env-docker-image
   - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
@@ -169,6 +170,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-deploy-with-created-release/Dockerfile]
+- name: runtime-ci-bosh-create-env
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-create-env/Dockerfile]
 - name: runtime-ci-bosh-deploy
   type: git
   source:
@@ -564,6 +571,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-creds
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-create-env-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-create-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1027,6 +1041,24 @@ jobs:
     - put: bosh-deploy-with-created-release-pipeline-image
       params:
         build: runtime-ci-bosh-deploy-with-created-release/scripts/ci/bosh-deploy-with-created-release
+        push: true
+- name: build-bosh-create-env-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bosh-create-env
+        trigger: true
+    - put: bosh-create-env-pipeline-image
+      params:
+        build: runtime-ci-bosh-create-env/scripts/ci/bosh-create-env
         push: true
 - name: build-bosh-deploy-docker-image
   public: true
