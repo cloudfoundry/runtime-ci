@@ -38,12 +38,12 @@ jobs:
     file: runtime-ci/scripts/ci/setup-infrastructure-terraform/task.yml
     input_mapping:
       env-repo: dobby-env
-  - put: dobby-env
     params:
       repository: updated-env-repo
       USERNAME_FILE: username
       PASSWORD_FILE: password
       CA_CERT_FILE: ca.pem
+  - put: dobby-env
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
