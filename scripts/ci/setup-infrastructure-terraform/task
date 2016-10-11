@@ -8,7 +8,6 @@ set -xeu
 
 export DIRECTOR_PASSWORD=`openssl rand -base64 32`
 export DIRECTOR_USERNAME=user-`openssl rand -base64 32`
-export DIRECTOR_SSH_KEY_PATH=env-repo/keys/ssh-key
 
 function commit {
   pushd env-repo
@@ -38,10 +37,10 @@ pushd env-repo
   popd
   pushd bosh-init
     ip_filename=`printf ${DIRECTOR_IP} | tr . _`
-    if [ ! -e keys/key ]; then
-      mkdir -p keys
-      ssh-keygen  -f keys/key -C vcap  -N ""
-      gcloud compute project-info add-metadata --metadata-from-file sshKeys=keys/key.pub
+    if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
+      mkdir -p `dirname ${DIRECTOR_SSH_KEY_PATH}`
+      ssh-keygen  -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
+      gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.pub
     fi
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
     ${infrastructure_task_dir}/inject_configuration.rb ${root_dir}/env-repo/bosh-init ${ip_filename}
