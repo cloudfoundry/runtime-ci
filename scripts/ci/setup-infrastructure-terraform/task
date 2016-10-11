@@ -54,7 +54,6 @@ set -x
 
 shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
-echo $DIRECTOR_USERNAME > bosh-username/bosh-username
-echo $DIRECTOR_PASSWORD > bosh-password/bosh-password
-echo $DIRECTOR_IP > bosh-target/director-ip
-cp env-repo/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/ca.pem
+echo $DIRECTOR_USERNAME > bosh-username/${USERNAME_FILE}
+echo $DIRECTOR_PASSWORD > bosh-password/${PASSWORD_FILE}
+cp env-repo/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/${CA_CERT_FILE}

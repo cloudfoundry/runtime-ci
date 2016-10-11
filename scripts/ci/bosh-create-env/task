@@ -1,0 +1,13 @@
+#!/bin/bash
+set -eux
+
+export BOSH_USER=$(cat username/"${USERNAME_FILE}")
+BOSH_MANIFEST="env-repo/bosh-init/updated_manifest.yml"
+set +x
+
+export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+set +u
+set -u
+
+bosh create-env -n ${BOSH_MANIFEST}

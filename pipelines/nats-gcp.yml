@@ -41,3 +41,18 @@ jobs:
   - put: dobby-env
     params:
       repository: updated-env-repo
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca.pem
+  - task: bosh-create-env
+    file: runtime-ci/scripts/ci/bosh-create-env/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+      username: bosh-username
+      password: bosh-password
+      ca-cert: bosh-ca-cert
+      env-repo: dobby-env
+    params:
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca.pem

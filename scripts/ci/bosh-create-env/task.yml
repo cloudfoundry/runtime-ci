@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-create-env
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+- name: username
+- name: password
+- name: ca-cert
+
+run:
+  path: runtime-ci/scripts/ci/bosh-create-env/task
+
+params:
+  USERNAME_FILE:
+  PASSWORD_FILE:
+  CA_CERT_FILE:
