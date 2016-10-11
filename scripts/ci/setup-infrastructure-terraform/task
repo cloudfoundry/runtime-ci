@@ -38,7 +38,10 @@ pushd env-repo
   popd
   pushd bosh-init
     ip_filename=`printf ${DIRECTOR_IP} | tr . _`
-    ssh-keygen keys/key -C vcap
+		if [ ! -e keys/key ]; then
+			ssh-keygen  -f keys/key -C vcap  -N ""
+			gcloud compute project-info add-metadata --metadata-from-file sshKeys=keys/key.pub
+		fi
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo
     ${infrastructure_task_dir}/inject_configuration.rb ${root_dir}/env-repo ${ip_filename}
   popd
