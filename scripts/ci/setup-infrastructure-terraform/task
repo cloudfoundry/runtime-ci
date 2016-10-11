@@ -29,9 +29,10 @@ pushd env-repo
     export DIRECTOR_IP=$(gcloud compute addresses describe dobby-director-address | grep address: | awk '{print $2}')
   popd
   pushd bosh-init
+  ip_filename=`printf ${DIRECTOR_IP} | tr . _`
   rpl DIRECTOR_ADDRESS ${DIRECTOR_IP} manifest.yml
-  ./generate-certs.sh director ${DIRECTOR_IP}
-  ./insert_director_cert.rb ${DIRECTOR_IP}
+  ./generate-certs.sh director ${DIRECTOR_IP} ${ip_filename}
+  ./insert_director_cert.rb ${ip_filename}
   bosh-init deploy updated_manifest.yml
   popd
 popd
