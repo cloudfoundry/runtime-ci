@@ -49,7 +49,7 @@ jobs:
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
-      env-repo: updated-env-repo
+      env-repo: dobby-env
       username: bosh-username
       password: bosh-password
       ca-cert: bosh-ca-cert
