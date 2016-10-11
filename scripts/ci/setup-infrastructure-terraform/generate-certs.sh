@@ -3,7 +3,6 @@
 
 set -e
 
-certs=`dirname $0`/certs
 name=$1
 ip=$2
 ip_filename=$3
@@ -15,7 +14,7 @@ pushd $4
 	if [ ! -e certs ]; then
 		mkdir certs
 	fi
-	cd $certs
+	cd certs
 
 	echo "Generating new CA..."
 	openssl genrsa -out rootCA-${ip_filename}.key 2048
