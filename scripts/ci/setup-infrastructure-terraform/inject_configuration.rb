@@ -24,7 +24,7 @@ end
 
 mbus_url = "https://mbus:mbus-password@#{ENV['DIRECTOR_IP']}:6868"
 properties['cloud_provider']['ssh_tunnel']['host'] = ENV['DIRECTOR_IP']
-properties['cloud_provider']['ssh_tunnel']['private_key'] = File.join('env-repo', ENV['DIRECTOR_SSH_KEY_PATH'])
+properties['cloud_provider']['ssh_tunnel']['private_key'] = ENV['DIRECTOR_SSH_KEY_PATH']
 properties['cloud_provider']['mbus'] = mbus_url
 properties['cloud_provider']['properties']['agent']['mbus'] = mbus_url
 
