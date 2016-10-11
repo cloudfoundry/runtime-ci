@@ -1539,6 +1539,7 @@ jobs:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
+      USE_ETCD: false
       USE_MYSQL: true
       DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-stubs/diego-property-overrides.yml
   - aggregate:
