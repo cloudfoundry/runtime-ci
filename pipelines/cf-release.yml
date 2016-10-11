@@ -1354,9 +1354,6 @@ jobs:
       - get: garden-runc-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
-      - get: etcd-release-tarball
-        trigger: true
-        passed: [ generate-aws-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
@@ -1372,7 +1369,6 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
@@ -1446,11 +1442,6 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
-      - get: etcd-release-tarball
-        trigger: true
-        passed: [ deploy-aws ]
-        params:
-          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ deploy-aws ]
@@ -1474,10 +1465,6 @@ jobs:
   - aggregate:
     - get: a1-env
       trigger: true
-    - get: etcd-release-tarball
-      trigger: true
-      params:
-        tarball: false
     - get: diego-release-github-release
       params:
         globs: [ none ]
@@ -1767,11 +1754,6 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
-      - get: etcd-release-tarball
-        trigger: true
-        passed: [ aws-smoke-tests ]
-        params:
-          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ aws-smoke-tests ]
@@ -1897,7 +1879,6 @@ jobs:
       - get: etcd-release-tarball
         trigger: true
         passed:
-        - aws-acceptance-tests
         - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         params:
