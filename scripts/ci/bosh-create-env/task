@@ -3,8 +3,8 @@ set -eux
 
 pushd env-repo
   pushd terraform
-    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
     set +x
+    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
     gcloud config set project cf-release-integration-141222
     gcloud config set compute/region us-west1
     gcloud config set compute/zone us-west1-a

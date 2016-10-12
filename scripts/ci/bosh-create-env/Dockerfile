@@ -6,7 +6,8 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
-    wget
+    wget \
+    unzip
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
@@ -23,3 +24,9 @@ RUN \
 
 RUN \
   chmod +x /usr/bin/bosh
+
+RUN \
+  export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
+  sudo apt-get update && sudo apt-get install -y google-cloud-sdk
