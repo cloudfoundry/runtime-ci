@@ -1,6 +1,18 @@
 #!/bin/bash
 set -eux
 
+pushd env-repo
+  pushd terraform
+    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
+    set +x
+    gcloud config set project cf-release-integration-141222
+    gcloud config set compute/region us-west1
+    gcloud config set compute/zone us-west1-a
+    gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
+  popd terraform
+popd env-repo
+set -x
+
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
 BOSH_MANIFEST="env-repo/bosh-init/updated_manifest.yml"
 set +x
