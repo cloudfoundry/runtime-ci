@@ -25,9 +25,9 @@ infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-t
 
 pushd env-repo
   pushd terraform
-    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
     set +x
     echo 'terraform apply'
+    export GOOGLE_CREDENTIALS=$(cat google_credentials.json)
     terraform apply
     gcloud config set project cf-release-integration-141222
     gcloud config set compute/region us-west1
@@ -40,7 +40,7 @@ pushd env-repo
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
       mkdir -p `dirname ${DIRECTOR_SSH_KEY_PATH}`
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
-      gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.pub
+      gcloud compute project-info add-metadata --metadata-from-file sshKeys=<(paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub)
     fi
 
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
