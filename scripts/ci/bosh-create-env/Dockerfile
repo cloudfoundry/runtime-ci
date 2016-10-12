@@ -16,6 +16,8 @@ RUN \
   rm -rf /usr/local/src/ruby-2.1.8 && \
   rm -rf /tmp/*
 
+ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
+
 RUN \
   wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.63-linux-amd64 --output-document="/usr/bin/bosh"
 
