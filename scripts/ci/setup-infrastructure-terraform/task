@@ -58,9 +58,9 @@ cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
   path: /jobs/name=bosh/properties/director/user_management/local/users
   value:
 	- name: ${DIRECTOR_USERNAME}
-		password: ${DIRECTOR_PASSWORD}
+	  password: ${DIRECTOR_PASSWORD}
 	- name: hm
-		password: hm-password
+	  password: hm-password
 - type: replace
   path: /cloud_provider/ssh_tunnel/host
 	value: ${DIRECTOR_IP}
