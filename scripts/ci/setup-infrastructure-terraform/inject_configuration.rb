@@ -6,10 +6,8 @@ output_filename   = './updated_manifest.yml'
 env_repo_path, filename = ARGV[0], ARGV[1]
 director_ssl_cert_filename = File.expand_path File.join(env_repo_path, "/certs/director-#{filename}.crt")
 director_ssl_key_filename = File.expand_path File.join(env_repo_path, "/certs/director-#{filename}.key")
-google_credentials_filename = File.expand_path File.join(env_repo_path, "/../terraform/google_credentials.json")
 director_cert = File.read(director_ssl_cert_filename)
 director_key = File.read(director_ssl_key_filename)
-google_credentials = File.read google_credentials_filename
 properties = YAML.load_file(manifest_filename)
 
 properties['jobs'].select do |job|
@@ -21,7 +19,6 @@ properties['jobs'].select do |job|
       { ENV['DIRECTOR_USERNAME'] => ENV['DIRECTOR_PASSWORD'] }
     ]
     job['networks'].find {|n| n['name'] == 'vip'}['static_ips'] = [ENV['DIRECTOR_IP']]
-    job['properties']['google']['json_key'] = json_key
   end
 end
 
