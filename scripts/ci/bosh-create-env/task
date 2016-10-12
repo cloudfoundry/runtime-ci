@@ -10,7 +10,7 @@ pushd env-repo
     gcloud config set compute/zone us-west1-a
     gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
   popd
-popd env-repo
+popd
 set -x
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
