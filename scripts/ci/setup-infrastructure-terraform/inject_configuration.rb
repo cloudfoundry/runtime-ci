@@ -21,7 +21,7 @@ properties['jobs'].select do |job|
       { ENV['DIRECTOR_USERNAME'] => ENV['DIRECTOR_PASSWORD'] }
     ]
     job['networks'].find {|n| n['name'] == 'vip'}['static_ips'] = [ENV['DIRECTOR_IP']]
-    job['properties']['google']['json_key'] = json_key
+    job['properties']['google']['json_key'] = google_credentials
   end
 end
 
