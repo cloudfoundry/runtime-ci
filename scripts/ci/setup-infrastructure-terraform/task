@@ -45,7 +45,7 @@ pushd env-repo
 
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
 
-cat << EOF > ${root_dir}/bosh-init/ops.yml
+cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
 ---
 - type: replace
   path: /jobs/name=bosh/properties/director/ssl
