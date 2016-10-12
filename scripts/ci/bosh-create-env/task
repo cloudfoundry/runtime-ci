@@ -23,4 +23,4 @@ export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +u
 set -u
 
-bosh create-env -n ${BOSH_MANIFEST} --var-files=${DEPLOYMENT_VAR_FILE}
+bosh create-env -n ${BOSH_MANIFEST} --var-files=env-repo/${DEPLOYMENT_VAR_FILE}
