@@ -31,7 +31,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - get: dobby-env
-    trigger: true
   - get: runtime-ci
     trigger: true
   - task: setup-infrastructure-terraform
