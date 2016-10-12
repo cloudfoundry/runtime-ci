@@ -51,9 +51,9 @@ cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
   path: /jobs/name=bosh/properties/director/ssl
   value:
     cert: |+
-      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n    ")')
+      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n      ")')
     key: |+
-      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n    ")')
+      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n      ")')
 - type: replace
   path: /jobs/name=bosh/properties/director/user_management/local/users
   value:
