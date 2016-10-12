@@ -62,8 +62,8 @@ cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
   - name: hm
     password: hm-password
 - type: replace
-	path: /jobs/name=bosh/networks/name=vip/static_ips
-	value: [${DIRECTOR_IP}]
+  path: /jobs/name=bosh/networks/name=vip/static_ips
+  value: [${DIRECTOR_IP}]
 - type: replace
   path: /cloud_provider/ssh_tunnel/host
   value: ${DIRECTOR_IP}
