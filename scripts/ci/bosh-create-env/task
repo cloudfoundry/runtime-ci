@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eux
 
+DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
+
 pushd env-repo
   pushd terraform
     set +x
@@ -21,4 +23,4 @@ export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +u
 set -u
 
-bosh create-env -n ${BOSH_MANIFEST}
+bosh create-env -n ${BOSH_MANIFEST} --var-files=${DEPLOYMENT_VAR_FILE}
