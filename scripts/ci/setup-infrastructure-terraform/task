@@ -40,7 +40,8 @@ pushd env-repo
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
       mkdir -p `dirname ${DIRECTOR_SSH_KEY_PATH}`
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
-      gcloud compute project-info add-metadata --metadata-from-file sshKeys=<(paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub)
+      paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub > ${DIRECTOR_SSH_KEY_PATH}.gcp_pub
+      gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
     fi
 
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
