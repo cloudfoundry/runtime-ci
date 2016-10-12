@@ -9,7 +9,7 @@ pushd env-repo
     gcloud config set compute/region us-west1
     gcloud config set compute/zone us-west1-a
     gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
-  popd terraform
+  popd
 popd env-repo
 set -x
 
