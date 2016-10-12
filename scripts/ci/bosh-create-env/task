@@ -2,6 +2,7 @@
 set -eux
 
 DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
+DEPLOYMENT_OPS_FILE="${DEPLOYMENT_OPS_FILE:?"DEPLOYMENT_OPS_FILE must be provided"}"
 
 pushd env-repo
   pushd terraform
@@ -15,7 +16,7 @@ popd
 set -x
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-BOSH_MANIFEST="env-repo/bosh-init/updated_manifest.yml"
+BOSH_MANIFEST="env-repo/bosh-init/manifest.yml"
 set +x
 
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
@@ -23,4 +24,4 @@ export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +u
 set -u
 
-bosh create-env -n ${BOSH_MANIFEST} --var-files=env-repo/${DEPLOYMENT_VAR_FILE}
+bosh create-env -n ${BOSH_MANIFEST} --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=${DEPLOYMENT_OPS_FILE}

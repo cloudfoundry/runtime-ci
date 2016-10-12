@@ -42,8 +42,38 @@ pushd env-repo
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.pub
     fi
+
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
-    ${infrastructure_task_dir}/inject_configuration.rb ${root_dir}/env-repo/bosh-init ${ip_filename}
+
+cat << EOF > ${root_dir}/bosh-init/ops.yml
+---
+- type: replace
+  path: /jobs/name=bosh/properties/director/ssl
+  value:
+    cert: |+
+			$(cat ${root_dir}/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n    ")')
+		key: |+
+		  $(cat ${root_dir}/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n    ")')
+- type: replace
+  path: /jobs/name=bosh/properties/director/user_management/local/users
+  value:
+	- name: ${DIRECTOR_USERNAME}
+		password: ${DIRECTOR_PASSWORD}
+	- name: hm
+		password: hm-password
+- type: replace
+  path: /cloud_provider/ssh_tunnel/host
+	value: ${DIRECTOR_IP}
+- type: replace
+  path: /cloud_provider/ssh_tunnel/private_key
+	value: ${DIRECTOR_SSH_KEY_PATH}
+- type: replace
+	path: /cloud_provider/mbus
+	value: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
+- type: replace
+	path: /cloud_provider/properties/agent/mbus
+	value: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
+EOF
   popd
 popd
 

@@ -22,30 +22,30 @@ set -x
 cat << EOF > ops.yml
 ---
 - type: replace
-  path: /releases/name=${RELEASE_NAME}
+  path: /releases/name=${release_name}
   value:
-    name: ${RELEASE_NAME}
+    name: ${release_name}
     version: create
     url: file://$(pwd)/release
-EOF
+eof
 
-if [[ -f $DEPLOYMENT_VAR_FILE ]]; then
+if [[ -f $deployment_var_file ]]; then
   bosh \
     -n \
-    -d "${DEPLOYMENT_NAME}" \
-    -e "${BOSH_TARGET}" \
-    --ca-cert="${BOSH_CA_CERT}" \
+    -d "${deployment_name}" \
+    -e "${bosh_target}" \
+    --ca-cert="${bosh_ca_cert}" \
     deploy \
-    --var-files="${DEPLOYMENT_VAR_FILE}" \
+    --var-files="${deployment_var_file}" \
     -o ops.yml \
-    "${BOSH_MANIFEST}"
+    "${bosh_manifest}"
 else
   bosh \
     -n \
-    -d "${DEPLOYMENT_NAME}" \
-    -e "${BOSH_TARGET}" \
-    --ca-cert="${BOSH_CA_CERT}" \
+    -d "${deployment_name}" \
+    -e "${bosh_target}" \
+    --ca-cert="${bosh_ca_cert}" \
     deploy \
     -o ops.yml \
-    "${BOSH_MANIFEST}"
+    "${bosh_manifest}"
 fi
