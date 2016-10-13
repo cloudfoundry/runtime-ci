@@ -16,7 +16,7 @@ function commit {
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
       git add .
-      git commit -m "Commit terraform state and bosh manifest"
+      git commit -m "Commit terraform state and bosh ops file"
     fi
   popd
 }

@@ -16,7 +16,6 @@ popd
 set -x
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-BOSH_MANIFEST="env-repo/infrastructure/bosh-init/manifest.yml"
 set +x
 
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
@@ -24,4 +23,18 @@ export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 set +u
 set -u
 
-bosh create-env -n ${BOSH_MANIFEST} --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=env-repo/${DEPLOYMENT_OPS_FILE}
+bosh create-env -n env-repo/${DIRECTOR_MANIFEST_FILE} --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=env-repo/${DEPLOYMENT_OPS_FILE}
+
+pushd env-repo
+  STATE_FILE_PATH=${DIRECTOR_MANIFEST_FILE%%.yml}-state.json
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add env-repo/${STATE_FILE_PATH}
+    git commit -m "Commit bosh state file"
+  fi
+popd
+
+shopt -s dotglob
+cp -R env-repo/* updated-env-repo/
+

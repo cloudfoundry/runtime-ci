@@ -13,10 +13,14 @@ inputs:
 - name: password
 - name: ca-cert
 
+outputs:
+- name: updated-env-repo
+
 run:
   path: runtime-ci/scripts/ci/bosh-create-env/task
 
 params:
+  DIRECTOR_MANIFEST_FILE: infrastructure/bosh-init/bosh.yml
   USERNAME_FILE:
   PASSWORD_FILE:
   CA_CERT_FILE:
