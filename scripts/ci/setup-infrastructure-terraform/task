@@ -23,7 +23,7 @@ function commit {
 root_dir=$PWD
 infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/setup-infrastructure-terraform/
 
-pushd env-repo
+pushd env-repo/infrastructure
   pushd terraform
     set +x
     echo 'terraform apply'
@@ -44,17 +44,17 @@ pushd env-repo
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
     fi
 
-    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/bosh-init
+    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/infrastructure/bosh-init
 
-cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
+cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
 ---
 - type: replace
   path: /jobs/name=bosh/properties/director/ssl
   value:
     cert: |+
-      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n      ")')
+      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n      ")')
     key: |+
-      $(cat ${root_dir}/env-repo/bosh-init/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n      ")')
+      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n      ")')
 - type: replace
   path: /jobs/name=bosh/properties/director/user_management/local/users
   value:
@@ -86,4 +86,4 @@ shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
 echo $DIRECTOR_USERNAME > bosh-username/${USERNAME_FILE}
 echo $DIRECTOR_PASSWORD > bosh-password/${PASSWORD_FILE}
-cp env-repo/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/${CA_CERT_FILE}
+cp env-repo/infrastructure/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/${CA_CERT_FILE}

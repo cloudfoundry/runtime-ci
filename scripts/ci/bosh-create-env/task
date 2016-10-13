@@ -4,7 +4,7 @@ set -eux
 DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
 DEPLOYMENT_OPS_FILE="${DEPLOYMENT_OPS_FILE:?"DEPLOYMENT_OPS_FILE must be provided"}"
 
-pushd env-repo
+pushd env-repo/infrastructure
   pushd terraform
     set +x
     gcloud config set project cf-release-integration-141222
@@ -16,7 +16,7 @@ popd
 set -x
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-BOSH_MANIFEST="env-repo/bosh-init/manifest.yml"
+BOSH_MANIFEST="env-repo/infrastructure/bosh-init/manifest.yml"
 set +x
 
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
