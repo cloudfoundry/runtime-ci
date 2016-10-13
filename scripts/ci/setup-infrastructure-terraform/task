@@ -36,7 +36,6 @@ pushd env-repo/infrastructure
     export DIRECTOR_IP=$(gcloud compute addresses describe dobby-director-address | grep address: | awk '{print $2}')
   popd
   pushd bosh-init
-    ip_filename=`printf ${DIRECTOR_IP} | tr . _`
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
       mkdir -p `dirname ${DIRECTOR_SSH_KEY_PATH}`
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
@@ -44,7 +43,7 @@ pushd env-repo/infrastructure
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
     fi
 
-    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${ip_filename} ${root_dir}/env-repo/infrastructure/bosh-init
+    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${root_dir}/env-repo/infrastructure/bosh-init
 
 cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
 ---
@@ -52,9 +51,9 @@ cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
   path: /jobs/name=bosh/properties/director/ssl
   value:
     cert: |+
-      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director-${ip_filename}.crt | ruby -p -e 'gsub("\n", "\n      ")')
+      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n      ")')
     key: |+
-      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director-${ip_filename}.key | ruby -p -e 'gsub("\n", "\n      ")')
+      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n      ")')
 - type: replace
   path: /jobs/name=bosh/properties/director/user_management/local/users
   value:
@@ -86,4 +85,4 @@ shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
 echo $DIRECTOR_USERNAME > bosh-username/${USERNAME_FILE}
 echo $DIRECTOR_PASSWORD > bosh-password/${PASSWORD_FILE}
-cp env-repo/infrastructure/bosh-init/certs/rootCA-${ip_filename}.pem bosh-ca-cert/${CA_CERT_FILE}
+cp env-repo/infrastructure/bosh-init/certs/rootCA.pem bosh-ca-cert/${CA_CERT_FILE}

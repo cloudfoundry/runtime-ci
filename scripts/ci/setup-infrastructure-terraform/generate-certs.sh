@@ -5,8 +5,7 @@ set -e
 
 name=$1
 ip=$2
-ip_filename=$3
-output_dir=$4
+output_dir=$3
 
 # rm -rf $certs && mkdir -p $certs
 pushd $4
@@ -17,9 +16,9 @@ pushd $4
 	cd certs
 
 	echo "Generating new CA..."
-	openssl genrsa -out rootCA-${ip_filename}.key 2048
-	yes "" | openssl req -x509 -new -nodes -key rootCA-${ip_filename}.key \
-		-out rootCA-${ip_filename}.pem -days 99999
+	openssl genrsa -out rootCA.key 2048
+	yes "" | openssl req -x509 -new -nodes -key rootCA.key \
+		-out rootCA.pem -days 99999
 
 
 	cat >openssl-exts.conf <<-EOL
@@ -32,18 +31,18 @@ pushd $4
 	echo "Generating certificate signing request for ${ip}..."
 	# golang requires to have SAN for the IP
 	openssl req -new -nodes -newkey rsa:2048 \
-		-out ${name}-${ip_filename}.csr -keyout ${name}-${ip_filename}.key \
+		-out ${name}.csr -keyout ${name}.key \
 		-subj "/C=US/O=BOSH/CN=${ip}"
 
 
 	echo "Generating certificate ${ip}..."
-	openssl x509 -req -in ${name}-${ip_filename}.csr \
-		-CA rootCA-${ip_filename}.pem -CAkey rootCA-${ip_filename}.key -CAcreateserial \
-		-out ${name}-${ip_filename}.crt -days 99999 \
+	openssl x509 -req -in ${name}.csr \
+		-CA rootCA.pem -CAkey rootCA.key -CAcreateserial \
+		-out ${name}.crt -days 99999 \
 		-extfile ./openssl-exts.conf
 
 	echo "Deleting certificate signing request and config..."
-	rm ${name}-${ip_filename}.csr
+	rm ${name}.csr
 	rm ./openssl-exts.conf
 
 	echo "Finished..."
