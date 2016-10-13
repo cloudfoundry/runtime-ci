@@ -74,9 +74,6 @@ cat << EOF > ${root_dir}/env-repo/bosh-init/ops.yml
 - type: replace
   path: /cloud_provider/mbus
   value: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
-- type: replace
-  path: /cloud_provider/properties/agent/mbus
-  value: "https://mbus:mbus-password@0.0.0.0:6868"
 EOF
   popd
 popd
