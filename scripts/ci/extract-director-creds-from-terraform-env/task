@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp env-repo/bosh-init/username username/username
+cp env-repo/bosh-init/password password/password
+cp env-repo/bosh-init/target target/target
+cp env-repo/bosh-init/certs/rootCA.pem ca-cert/ca-cert

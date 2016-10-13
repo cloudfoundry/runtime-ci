@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/extract-director-creds-from-terraform-env
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+
+outputs:
+- name: target
+- name: username
+- name: password
+- name: ca-cert
+
+run:
+  path: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task
+
+params:
+  STATE_DIR_PATH:
