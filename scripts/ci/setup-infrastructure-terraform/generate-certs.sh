@@ -8,7 +8,7 @@ ip=$2
 output_dir=$3
 
 # rm -rf $certs && mkdir -p $certs
-pushd $4
+pushd $output_dir
 
 	if [ ! -e certs ]; then
 		mkdir certs
