@@ -8,6 +8,7 @@ set -xeu
 
 export DIRECTOR_PASSWORD=`openssl rand -base64 32`
 export DIRECTOR_USERNAME=user-`openssl rand -base64 32`
+export DIRECTOR_SSH_KEY_PATH=keys/ssh-key
 
 function commit {
   pushd env-repo
@@ -45,6 +46,12 @@ pushd env-repo/infrastructure
 
     ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${root_dir}/env-repo/infrastructure/bosh-init
 
+    echo ${DIRECTOR_USERNAME} > username
+    echo ${DIRECTOR_PASSWORD} > password
+    echo ${DIRECTOR_IP} > target
+  popd
+popd
+
 cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
 ---
 - type: replace
@@ -74,8 +81,6 @@ cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
   path: /cloud_provider/mbus
   value: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
 EOF
-  popd
-popd
 
 echo 'commit'
 commit
@@ -83,6 +88,3 @@ set -x
 
 shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
-echo $DIRECTOR_USERNAME > bosh-username/${USERNAME_FILE}
-echo $DIRECTOR_PASSWORD > bosh-password/${PASSWORD_FILE}
-cp env-repo/infrastructure/bosh-init/certs/rootCA.pem bosh-ca-cert/${CA_CERT_FILE}

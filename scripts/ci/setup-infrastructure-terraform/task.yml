@@ -12,15 +12,6 @@ inputs:
 
 outputs:
 - name: updated-env-repo
-- name: bosh-username
-- name: bosh-password
-- name: bosh-ca-cert
 
 run:
   path: runtime-ci/scripts/ci/setup-infrastructure-terraform/task
-
-params:
-  USERNAME_FILE:
-  PASSWORD_FILE:
-  CA_CERT_FILE:
-  DIRECTOR_SSH_KEY_PATH:

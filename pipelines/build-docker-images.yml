@@ -27,6 +27,7 @@ groups:
   - build-generate-nats-deployment-manifest-from-bbl-docker-image
   - build-generate-1-0-nats-deployment-manifest-from-bbl-docker-image
   - build-setup-infrastructure-docker-image
+  - build-extract-director-creds-from-terraform-env-docker-image
   - build-extract-director-creds-from-bbl-docker-image
   - build-destroy-infrastructure-docker-image
   - build-check-deployment-docker-image
@@ -350,6 +351,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extract-director-creds-from-bbl/Dockerfile]
+- name: runtime-ci-extract-director-creds-from-terraform-env
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/extract-director-creds-from-terraform-env/Dockerfile]
 - name: runtime-ci-destroy-infrastructure
   type: git
   source:
@@ -788,6 +795,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/extract-director-creds-from-bbl
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: extract-director-creds-from-terraform-env-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/extract-director-creds-from-terraform-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1747,6 +1761,24 @@ jobs:
     - put: extract-director-creds-from-bbl-pipeline-image
       params:
         build: runtime-ci-extract-director-creds-from-bbl/scripts/ci/extract-director-creds-from-bbl
+        push: true
+- name: build-extract-director-creds-from-terraform-env-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-extract-director-creds-from-terraform-env
+        trigger: true
+    - put: extract-director-creds-from-terraform-env-pipeline-image
+      params:
+        build: runtime-ci-extract-director-creds-from-terraform-env/scripts/ci/extract-director-creds-from-terraform-env
         push: true
 - name: build-destroy-infrastructure-docker-image
   public: true
