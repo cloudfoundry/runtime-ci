@@ -47,7 +47,7 @@ jobs:
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
-      env-repo: dobby-env
+      env-repo: updated-env-repo
       username: username
       password: password
       ca-cert: ca-cert
@@ -56,4 +56,6 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca.pem
       DEPLOYMENT_VAR_FILE: infrastructure/bosh-init/deployment-env-vars.yml
-      DEPLOYMENT_OPS_FILE: infrastructure/bosh-init/ops.yml
+  - put: dobby-env
+    params:
+      repository: updated-env-repo
