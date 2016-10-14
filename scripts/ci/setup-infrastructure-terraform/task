@@ -54,11 +54,11 @@ popd
 
 cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/deployment-env-vars.yml
 ---
-google_credentials: |+
+google_credentials: |
   $(cat ${root_dir}/env-repo/infrastructure/terraform/google_credentials.json | ruby -p -e 'gsub("\n", "\n  ")')
-director_cert: |+
+director_cert: |
   $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n  ")')
-director_key: |+
+director_key: |
   $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n  ")')
 director_username: ${DIRECTOR_USERNAME}
 director_password: ${DIRECTOR_PASSWORD}
