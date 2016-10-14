@@ -2,7 +2,6 @@
 set -eux
 
 DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
-DEPLOYMENT_OPS_FILE="${DEPLOYMENT_OPS_FILE:?"DEPLOYMENT_OPS_FILE must be provided"}"
 
 set +x
 pushd env-repo/infrastructure
@@ -19,7 +18,7 @@ export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 
 set -x
-bosh -n create-env --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=env-repo/${DEPLOYMENT_OPS_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
+bosh -n create-env --var-files=env-repo/${DEPLOYMENT_VAR_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
 
 pushd env-repo
   STATE_FILE_PATH=${DIRECTOR_MANIFEST_FILE%%.yml}-state.json

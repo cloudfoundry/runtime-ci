@@ -52,34 +52,19 @@ pushd env-repo/infrastructure
   popd
 popd
 
-cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/ops.yml
+cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/deployment-env-vars.yml
 ---
-- type: replace
-  path: /jobs/name=bosh/properties/director/ssl
-  value:
-    cert: |+
-      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n      ")')
-    key: |+
-      $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n      ")')
-- type: replace
-  path: /jobs/name=bosh/properties/director/user_management/local/users
-  value:
-  - name: ${DIRECTOR_USERNAME}
-    password: ${DIRECTOR_PASSWORD}
-  - name: hm
-    password: hm-password
-- type: replace
-  path: /jobs/name=bosh/networks/name=vip/static_ips
-  value: [${DIRECTOR_IP}]
-- type: replace
-  path: /cloud_provider/ssh_tunnel/host
-  value: ${DIRECTOR_IP}
-- type: replace
-  path: /cloud_provider/ssh_tunnel/private_key
-  value: ${DIRECTOR_SSH_KEY_PATH}
-- type: replace
-  path: /cloud_provider/mbus
-  value: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
+google_credentials: |+
+  $(cat ${root_dir}/env-repo/infrastructure/terraform/google_credentals.json | ruby -p -e 'gsub("\n", "\n  ")')
+director_cert: |+
+	$(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n  ")')
+director_key: |+
+	$(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n  ")')
+director_username: ${DIRECTOR_USERNAME}
+director_password: ${DIRECTOR_PASSWORD}
+director_ip: ${DIRECTOR_IP}
+director_mbus_address: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
+director_ssh_key_path: ${DIRECTOR_SSH_KEY_PATH}
 EOF
 
 echo 'commit'
