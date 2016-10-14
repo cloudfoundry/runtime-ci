@@ -4,26 +4,22 @@ set -eux
 DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
 DEPLOYMENT_OPS_FILE="${DEPLOYMENT_OPS_FILE:?"DEPLOYMENT_OPS_FILE must be provided"}"
 
+set +x
 pushd env-repo/infrastructure
   pushd terraform
-    set +x
     gcloud config set project cf-release-integration-141222
     gcloud config set compute/region us-west1
     gcloud config set compute/zone us-west1
     gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
   popd
 popd
-set -x
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-set +x
-
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
-set +u
-set -u
 
-bosh create-env -n env-repo/${DIRECTOR_MANIFEST_FILE} --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=env-repo/${DEPLOYMENT_OPS_FILE}
+set -x
+bosh -n create-env --var-files=env-repo/${DEPLOYMENT_VAR_FILE} --ops-file=env-repo/${DEPLOYMENT_OPS_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
 
 pushd env-repo
   STATE_FILE_PATH=${DIRECTOR_MANIFEST_FILE%%.yml}-state.json
