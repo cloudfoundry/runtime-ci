@@ -57,9 +57,9 @@ cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/deployment-env-vars.y
 google_credentials: |+
   $(cat ${root_dir}/env-repo/infrastructure/terraform/google_credentials.json | ruby -p -e 'gsub("\n", "\n  ")')
 director_cert: |+
-	$(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n  ")')
+  $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n  ")')
 director_key: |+
-	$(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n  ")')
+  $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n  ")')
 director_username: ${DIRECTOR_USERNAME}
 director_password: ${DIRECTOR_PASSWORD}
 director_ip: ${DIRECTOR_IP}
