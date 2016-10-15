@@ -52,20 +52,18 @@ pushd env-repo/infrastructure
   popd
 popd
 
-cat << EOF > ${root_dir}/env-repo/infrastructure/bosh-init/deployment-env-vars.yml
----
-google_credentials: |
-  $(cat ${root_dir}/env-repo/infrastructure/terraform/google_credentials.json | ruby -p -e 'gsub("\n", "\n  ")')
-director_cert: |
-  $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.crt | ruby -p -e 'gsub("\n", "\n  ")')
-director_key: |
-  $(cat ${root_dir}/env-repo/infrastructure/bosh-init/certs/director.key | ruby -p -e 'gsub("\n", "\n  ")')
-director_username: ${DIRECTOR_USERNAME}
-director_password: ${DIRECTOR_PASSWORD}
-director_ip: ${DIRECTOR_IP}
-director_mbus_address: "https://mbus:mbus-password@${DIRECTOR_IP}:6868"
-director_ssh_key_path: ${DIRECTOR_SSH_KEY_PATH}
-EOF
+output_deployment_env_vars() {
+  ruby -ryaml -e 'puts ({
+    google_credentials: File.read("env-repo/infrastructure/terraform/google_credentials.json"),
+    director_cert: File.read("env-repo/infrastructure/bosh-init/certs/director.crt"),
+    director_key: File.read("env-repo/infrastructure/bosh-init/certs/director.key"),
+    director_ip: ENV["DIRECTOR_IP"],
+    director_mbus_address: "https://mbus:mbus-password@#{ENV[%(DIRECTOR_IP)]}:6868",
+    director_ssh_key_path: ENV["DIRECTOR_SSH_KEY_PATH"]
+  }).to_yaml'
+}
+
+output_deployment_env_vars > ${root_dir}/env-repo/infrastructure/bosh-init/deployment-env-vars.yml
 
 echo 'commit'
 commit
