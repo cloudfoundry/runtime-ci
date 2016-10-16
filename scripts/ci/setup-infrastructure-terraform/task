@@ -54,12 +54,12 @@ popd
 
 output_deployment_env_vars() {
   ruby -ryaml -e 'puts ({
-    "google_credentials" => file.read("env-repo/infrastructure/terraform/google_credentials.json"),
-    "director_cert" => file.read("env-repo/infrastructure/bosh-init/certs/director.crt"),
-    "director_key" => file.read("env-repo/infrastructure/bosh-init/certs/director.key"),
-    "director_ip" => env["director_ip"],
-    "director_mbus_address" => "https://mbus:mbus-password@#{env[%(director_ip)]}:6868",
-    "director_ssh_key_path" => env["director_ssh_key_path"]
+    "google_credentials" => File.read("env-repo/infrastructure/terraform/google_credentials.json"),
+    "director_cert" => File.read("env-repo/infrastructure/bosh-init/certs/director.crt"),
+    "director_key" => File.read("env-repo/infrastructure/bosh-init/certs/director.key"),
+    "director_ip" => ENV["DIRECTOR_IP"],
+    "director_mbus_address" => "https://mbus:mbus-password@#{ENV[%(DIRECTOR_IP)]}:6868",
+    "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"]
   }).to_yaml'
 }
 
