@@ -54,7 +54,7 @@ popd
 
 output_deployment_env_vars() {
   ruby -ryaml -e 'puts ({
-    "google_credentials" => File.read("env-repo/infrastructure/terraform/google_credentials.json"),
+    "google_cpi_json_key" => File.read("env-repo/infrastructure/terraform/google_credentials.json"),
     "director_cert" => File.read("env-repo/infrastructure/bosh-init/certs/director.crt"),
     "director_key" => File.read("env-repo/infrastructure/bosh-init/certs/director.key"),
     "director_ip" => ENV["DIRECTOR_IP"],
