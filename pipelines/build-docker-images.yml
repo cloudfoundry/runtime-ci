@@ -49,6 +49,7 @@ groups:
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
   - build-create-diego-iaas-settings-docker-image
   - build-bind-elb-to-r53-docker-image
+  - build-bind-terraform-env-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
   - build-run-ginkgo-docker-image
@@ -375,6 +376,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bind-elb-to-r53/Dockerfile]
+- name: runtime-ci-bind-terraform-env-to-r53
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bind-terraform-env-to-r53/Dockerfile]
 - name: runtime-ci-unbind-elb-from-r53
   type: git
   source:
@@ -823,6 +830,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bind-elb-to-r53
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bind-terraform-env-to-r53-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bind-terraform-env-to-r53
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1833,6 +1847,24 @@ jobs:
     - put: bind-elb-to-r53-pipeline-image
       params:
         build: runtime-ci-bind-elb-to-r53/scripts/ci/bind-elb-to-r53
+        push: true
+- name: build-bind-terraform-env-to-r53-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bind-terraform-env-to-r53
+        trigger: true
+    - put: bind-terraform-env-to-r53-pipeline-image
+      params:
+        build: runtime-ci-bind-terraform-env-to-r53/scripts/ci/bind-terraform-env-to-r53
         push: true
 - name: build-unbind-elb-from-r53-docker-image
   public: true
