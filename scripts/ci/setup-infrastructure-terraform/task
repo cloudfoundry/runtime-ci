@@ -63,7 +63,9 @@ output_deployment_env_vars() {
     "director_key" => File.read("env-repo/infrastructure/bosh-init/certs/director.key"),
     "director_ip" => ENV["DIRECTOR_IP"],
     "director_mbus_address" => "https://mbus:mbus-password@#{ENV[%(DIRECTOR_IP)]}:6868",
-    "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"]
+    "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"],
+    "director_username" => ENV["DIRECTOR_USERNAME"],
+    "director_password" => ENV["DIRECTOR_PASSWORD"]
   }).to_yaml'
 }
 
