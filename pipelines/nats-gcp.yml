@@ -1,9 +1,11 @@
 ---
 groups:
 - name: nats-gcp
+  jobs:
+  - upload-stemcell
 - name: infrastructure
   jobs:
-    - setup-infrastructure
+  - setup-infrastructure
 
 resource_types:
 - name: git
@@ -23,6 +25,10 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/dobby-env.git
     private_key: {{dobby_env_private_key}}
+- name: gcp-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 jobs:
 - name: setup-infrastructure
@@ -67,3 +73,30 @@ jobs:
       AWS_ACCESS_KEY_ID: {{dobby_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{dobby_aws_secret_access_key}}
       DOMAIN: dobby.cf-app.com
+
+- name: upload-stemcell
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: dobby-env
+      passed: [setup-infrastructure]
+      trigger: true
+    - get: gcp-stemcell
+      trigger: true
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: gcp-stemcell
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      STEMCELL_NAME: '*.tgz'
+
