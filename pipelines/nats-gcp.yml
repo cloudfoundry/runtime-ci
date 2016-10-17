@@ -59,3 +59,11 @@ jobs:
   - put: dobby-env
     params:
       repository: updated-env-repo
+  - task: bind-terraform-env-to-r53
+    file: runtime-ci/scripts/ci/bind-terraform-env-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{dobby_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{dobby_aws_secret_access_key}}
+      DOMAIN: dobby.cf-app.com

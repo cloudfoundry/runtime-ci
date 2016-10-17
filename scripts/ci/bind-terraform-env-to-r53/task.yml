@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bind-terraform-env-to-r53
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+
+run:
+  path: runtime-ci/scripts/ci/bind-terraform-env-to-r53/task
+
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  DOMAIN:
