@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/generate-nats-deployment-manifest
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: manifest
+
+params:
+
+run:
+  path: runtime-ci/scripts/ci/generate-nats-deployment-manifest/task
