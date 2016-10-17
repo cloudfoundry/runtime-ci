@@ -38,7 +38,6 @@ jobs:
   plan:
   - get: dobby-env
   - get: runtime-ci
-    trigger: true
   - task: setup-infrastructure-terraform
     file: runtime-ci/scripts/ci/setup-infrastructure-terraform/task.yml
     input_mapping:
