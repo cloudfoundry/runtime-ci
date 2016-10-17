@@ -35,6 +35,8 @@ pushd env-repo/infrastructure
     gcloud config set compute/zone us-west1-a
     gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
     export DIRECTOR_IP=$(gcloud compute addresses describe dobby-director-address | grep address: | awk '{print $2}')
+    export CF_STATIC_IP=$(gcloud compute addresses describe cf-static-ip | grep address: | awk '{print $2}')
+    export DIEGO_SSH_STATIC_IP=$(gcloud compute addresses describe diego-ssh-static-ip | grep address: | awk '{print $2}')
   popd
   pushd bosh-init
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
@@ -49,6 +51,8 @@ pushd env-repo/infrastructure
     echo ${DIRECTOR_USERNAME} > username
     echo ${DIRECTOR_PASSWORD} > password
     echo ${DIRECTOR_IP} > target
+    echo ${CF_STATIC_IP} > cf-api-target
+    echo ${DIEGO_SSH_STATIC_IP} > diego-ssh-target
   popd
 popd
 
