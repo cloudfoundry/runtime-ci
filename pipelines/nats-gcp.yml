@@ -25,6 +25,14 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/dobby-env.git
     private_key: {{dobby_env_private_key}}
+- name: dobby-env-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dobby-env.git
+    private_key: {{dobby_env_private_key}}
+    paths:
+    - infrastructure/*
 - name: gcp-stemcell
   type: bosh-io-stemcell
   source:
@@ -36,13 +44,13 @@ jobs:
   serial_groups: [infrastructure]
   build_logs_to_retain: 100
   plan:
-  - get: dobby-env
+  - get: dobby-env-infrastructure
   - get: runtime-ci
   - task: setup-infrastructure-terraform
     file: runtime-ci/scripts/ci/setup-infrastructure-terraform/task.yml
     input_mapping:
-      env-repo: dobby-env
-  - put: dobby-env
+      env-repo: dobby-env-infrastructure
+  - put: dobby-env-infrastructure
     params:
       repository: updated-env-repo
   - task: extract-director-creds-from-terraform-env
@@ -61,7 +69,7 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca.pem
       DEPLOYMENT_VAR_FILE: infrastructure/bosh-init/deployment-env-vars.yml
-  - put: dobby-env
+  - put: dobby-env-infrastructure
     params:
       repository: updated-env-repo
   - task: bind-terraform-env-to-r53
@@ -79,7 +87,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: dobby-env
+    - get: dobby-env-infrastructure
       passed: [setup-infrastructure]
       trigger: true
     - get: gcp-stemcell
@@ -87,7 +95,7 @@ jobs:
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
-      env-repo: dobby-env
+      env-repo: dobby-env-infrastructure
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -99,3 +107,35 @@ jobs:
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: '*.tgz'
 
+- name: deploy-nats-standalone
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release-develop
+      trigger: true
+    - get: dobby-env-infrastructure
+      passed: [upload-stemcell]
+    - get: gcp-stemcell
+      passed: [upload-stemcell]
+      params:
+        tarball: false
+    - get: runtime-ci
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: dobby-env-infrastructure
+  - task: generate-nats-deployment-manifest
+    file: runtime-ci/scripts/ci/generate-nats-deployment-manifest/task.yml
+  - task: bosh-deploy-new-nats
+    file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
+    input_mapping:
+      manifest-properties: dobby-env-infrastructure
+      release: nats-release-develop
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: nats.yml
