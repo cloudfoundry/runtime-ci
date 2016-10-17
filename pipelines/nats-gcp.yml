@@ -14,6 +14,12 @@ resource_types:
     repository: concourse/git-resource
 
 resources:
+- name: nats-release-develop
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/nats-release.git
+    ignore_paths: [ .final_builds, releases ]
 - name: runtime-ci
   type: git
   source:
