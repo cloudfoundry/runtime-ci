@@ -91,9 +91,9 @@ post_change_file() {
 
 main() {
   pushd env-repo
-    bosh_target_ip=$(cat env-repo/bosh-init/bosh-target)
-    cf_target_ip=$(cat env-repo/bosh-init/cf-api-target)
-    diego_ssh_target_ip=$(cat env-repo/bosh-init/diego-ssh-target)
+    bosh_target_ip=$(cat env-repo/infrastructure/bosh-init/bosh-target)
+    cf_target_ip=$(cat env-repo/infrastructure/bosh-init/cf-api-target)
+    diego_ssh_target_ip=$(cat env-repo/infrastructure/bosh-init/diego-ssh-target)
     aws_hosted_zone_id=$(aws_hosted_zone_id_from_partial_name "${DOMAIN}")
     change_file=/tmp/change_file
 
