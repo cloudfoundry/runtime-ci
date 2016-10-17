@@ -50,7 +50,7 @@ pushd env-repo/infrastructure
 
     echo ${DIRECTOR_USERNAME} > username
     echo ${DIRECTOR_PASSWORD} > password
-    echo ${DIRECTOR_IP} > target
+    echo ${DIRECTOR_IP} > bosh-target
     echo ${CF_STATIC_IP} > cf-api-target
     echo ${DIEGO_SSH_STATIC_IP} > diego-ssh-target
   popd
