@@ -27,7 +27,7 @@ cat << EOF > ops.yml
     name: ${RELEASE_NAME}
     version: create
     url: file://$(pwd)/release
-eof
+EOF
 
 if [[ -f ${DEPLOYMENT_VAR_FILE} ]]; then
   bosh \
@@ -49,4 +49,3 @@ else
     -o ops.yml \
     "${BOSH_MANIFEST}"
 fi
-EOF
