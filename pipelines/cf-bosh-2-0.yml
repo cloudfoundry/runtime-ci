@@ -31,18 +31,30 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: hermione-bbl-configuration
+- name: hermione-env-infrastructure
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
-- name: hermione-deployment-configuration
+    paths:
+    - bbl-infrastructure/*
+- name: hermione-env-properties
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
+    paths:
+    - deployment-env-vars.yml
+- name: hermione-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - integration_config.json
 - name: cf-deployment-develop
   type: git
   source:
@@ -120,12 +132,12 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: hermione-bbl-configuration
+    - get: hermione-env-infrastructure
     - get: runtime-ci
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
-      env-repo: hermione-bbl-configuration
+      env-repo: hermione-env-infrastructure
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
@@ -133,8 +145,8 @@ jobs:
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
     input_mapping:
-      env-repo: hermione-bbl-configuration
-  - put: hermione-bbl-configuration
+      env-repo: hermione-env-infrastructure
+  - put: hermione-env-infrastructure
     params:
       repository: updated-env-repo
 - name: setup-infrastructure
@@ -143,7 +155,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: hermione-bbl-configuration
+    - get: hermione-env-infrastructure
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -153,8 +165,8 @@ jobs:
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
     input_mapping:
-      env-repo: hermione-bbl-configuration
-  - put: hermione-bbl-configuration
+      env-repo: hermione-env-infrastructure
+  - put: hermione-env-infrastructure
     params:
       repository: updated-env-repo
   - task: bind-elb-to-r53
@@ -172,9 +184,9 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: hermione-bbl-configuration
+    - get: hermione-env-infrastructure
     - get: cf-deployment-develop
-    - get: hermione-deployment-configuration
+    - get: hermione-env-properties
     - get: capi-release
       trigger: true
     - get: stemcell
@@ -228,7 +240,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
-      env-repo: hermione-bbl-configuration
+      env-repo: hermione-env-infrastructure
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     params:
@@ -264,20 +276,20 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
       trigger: true
-    - get: hermione-deployment-configuration
+    - get: hermione-env-properties
       trigger: true
-    - get: hermione-bbl-configuration
+    - get: hermione-env-infrastructure
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
-      env-repo: hermione-bbl-configuration
+      env-repo: hermione-env-infrastructure
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
       manifest: cf-deployment-develop
-      manifest-properties: hermione-deployment-configuration
+      manifest-properties: hermione-env-properties
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
@@ -296,13 +308,13 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: hermione-deployment-configuration
+      - get: hermione-env-properties
         trigger: true
         passed: [ deploy-releases ]
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases ]
-      - get: hermione-deployment-configuration
+      - get: hermione-env-integration-config
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -316,7 +328,7 @@ jobs:
         CF_PASSWORD: {{hermione_admin_password}}
     - task: run-cats
       input_mapping:
-      - integration-config: hermione-deployment-configuration
+      - integration-config: hermione-env-integration-config
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: bless-manifest
@@ -327,7 +339,7 @@ jobs:
     - do:
       - aggregate:
         - get: runtime-ci
-        - get: hermione-deployment-configuration
+        - get: hermione-env-properties
           trigger: true
           passed: [ acceptance-tests ]
         - get: cf-deployment-develop
@@ -367,7 +379,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: hermione-bbl-configuration
+      - get: hermione-env-infrastructure
       - get: daily
         trigger: true
     - task: extract-director-creds-from-bbl
@@ -375,7 +387,7 @@ jobs:
       params:
         STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
-        env-repo: hermione-bbl-configuration
+        env-repo: hermione-env-infrastructure
     - task: run-bosh-cleanup
       privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
