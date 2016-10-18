@@ -68,11 +68,6 @@ groups:
   - build-build-metadata-resource-docker-image
   - build-setup-infrastructure-terraform-docker-image
 
-- name: run-cats-tests
-  jobs:
-  - cats-task-unit-tests
-  - build-run-cats-docker-image
-
 resources:
 - name: weekly
   type: time
@@ -1575,23 +1570,6 @@ jobs:
         build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
         push: true
 
-- name: cats-task-unit-tests
-  public: true
-  build_logs_to_retain: 100
-  plan:
-    - do:
-      - get: runtime-ci
-      - get: runtime-ci-run-cats # used only for control -- trigger this job and the subsequent build-run-cats-docker-image build
-        trigger: true
-      - task: run-ginkgo
-        file: runtime-ci/scripts/ci/run-ginkgo/task.yml
-        input_mapping:
-          project: runtime-ci
-        params:
-          GO_SRC_PATH: github.com/cloudfoundry/runtime-ci/scripts/ci/run-cats/
-          TEST_PATH: project/scripts/ci/run-cats/
-          GINKGO_PARAMS: -r
-
 - name: build-run-cats-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1606,7 +1584,6 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-run-cats
         trigger: true
-        passed: [cats-task-unit-tests]
       - get: cf-cli
         trigger: true
     - put: run-cats-pipeline-image

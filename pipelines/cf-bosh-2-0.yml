@@ -302,6 +302,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases ]
+      - get: hermione-env
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -314,30 +315,9 @@ jobs:
         CF_USER: {{hermione_admin_username}}
         CF_PASSWORD: {{hermione_admin_password}}
     - task: run-cats
+      input_mapping:
+      - integration-config: hermione-env
       file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        INCLUDE_APPS: true
-        INCLUDE_BACKEND_COMPATIBILITY: false
-        INCLUDE_INTERNET_DEPENDENT: true
-        INCLUDE_DETECT: true
-        INCLUDE_DIEGO_DOCKER: true
-        INCLUDE_DIEGO_SSH: true
-        INCLUDE_ROUTE_SERVICES: true
-        INCLUDE_ROUTING: true
-        INCLUDE_TASKS: false
-        INCLUDE_SECURITY_GROUPS: true
-        INCLUDE_SERVICES: true
-        INCLUDE_V3: false
-        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        INCLUDE_SSO: true
-        BACKEND: diego
-        CF_API: "api.hermione.cf-app.com"
-        CF_ADMIN_USER: {{hermione_admin_username}}
-        CF_ADMIN_PASSWORD: {{hermione_admin_password}}
-        CF_APPS_DOMAIN: hermione.cf-app.com
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "true"
-        NODES: 12
 
 - name: bless-manifest
   public: true

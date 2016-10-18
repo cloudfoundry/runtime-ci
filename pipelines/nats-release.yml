@@ -543,6 +543,7 @@ jobs:
       - get: hagrid-env-stubs
         trigger: true
         passed: [deploy-cf-with-updated-nats-1-0]
+      - get: hagrid-env
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -555,30 +556,9 @@ jobs:
         CF_USER: {{hagrid_cf_admin_username}}
         CF_PASSWORD: {{hagrid_cf_admin_password}}
     - task: run-cats
+      - input_mapping:
+        - integration-config: hagrid-env
       file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        INCLUDE_APPS: true
-        INCLUDE_BACKEND_COMPATIBILITY: false
-        INCLUDE_INTERNET_DEPENDENT: true
-        INCLUDE_DETECT: true
-        INCLUDE_DIEGO_DOCKER: true
-        INCLUDE_DIEGO_SSH: true
-        INCLUDE_ROUTE_SERVICES: true
-        INCLUDE_ROUTING: true
-        INCLUDE_TASKS: false
-        INCLUDE_SECURITY_GROUPS: true
-        INCLUDE_SERVICES: true
-        INCLUDE_V3: false
-        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        INCLUDE_SSO: true
-        BACKEND: diego
-        CF_API: "api.hagrid.cf-app.com"
-        CF_ADMIN_USER: {{hagrid_cf_admin_username}}
-        CF_ADMIN_PASSWORD: {{hagrid_cf_admin_password}}
-        CF_APPS_DOMAIN: hagrid.cf-app.com
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "true"
-        NODES: 12
 
 - name: delete-deployment-1-0
   public: true
@@ -837,6 +817,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [deploy-cf-with-updated-nats]
+      - get: minerva-env
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -849,30 +830,9 @@ jobs:
         CF_USER: {{minerva_cf_admin_username}}
         CF_PASSWORD: {{minerva_cf_admin_password}}
     - task: run-cats
+      input_mapping:
+      - integration-config: minerva-env
       file: runtime-ci/scripts/ci/run-cats/task.yml
-      params:
-        INCLUDE_APPS: true
-        INCLUDE_BACKEND_COMPATIBILITY: false
-        INCLUDE_INTERNET_DEPENDENT: true
-        INCLUDE_DETECT: true
-        INCLUDE_DIEGO_DOCKER: true
-        INCLUDE_DIEGO_SSH: true
-        INCLUDE_ROUTE_SERVICES: true
-        INCLUDE_ROUTING: true
-        INCLUDE_TASKS: false
-        INCLUDE_SECURITY_GROUPS: true
-        INCLUDE_SERVICES: true
-        INCLUDE_V3: false
-        INCLUDE_PRIVILEGED_CONTAINER_SUPPORT: true
-        INCLUDE_SSO: true
-        BACKEND: diego
-        CF_API: "api.minerva.cf-app.com"
-        CF_ADMIN_USER: {{minerva_cf_admin_username}}
-        CF_ADMIN_PASSWORD: {{minerva_cf_admin_password}}
-        CF_APPS_DOMAIN: minerva.cf-app.com
-        SKIP_SSL_VALIDATION: "true"
-        USE_HTTP: "true"
-        NODES: 12
 
 - name: delete-deployment
   public: true
