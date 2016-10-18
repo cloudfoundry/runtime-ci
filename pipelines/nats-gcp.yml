@@ -3,6 +3,7 @@ groups:
 - name: nats-gcp
   jobs:
   - upload-stemcell
+  - deploy-nats-standalone
 - name: infrastructure
   jobs:
   - setup-infrastructure
