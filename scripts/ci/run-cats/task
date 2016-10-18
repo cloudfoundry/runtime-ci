@@ -2,7 +2,7 @@
 set -xeu
 
 export CONFIG
-CONFIG="$(PWD)/integration-config/${CONFIG_FILE_PATH}"
+CONFIG="$PWD/integration-config/${CONFIG_FILE_PATH}"
 
 CF_GOPATH=/go/src/github.com/cloudfoundry/
 
