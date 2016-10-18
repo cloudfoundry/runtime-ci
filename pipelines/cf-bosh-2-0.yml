@@ -302,7 +302,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases ]
-      - get: hermione-env
+      - get: hermione-deployment-configuration
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -316,7 +316,7 @@ jobs:
         CF_PASSWORD: {{hermione_admin_password}}
     - task: run-cats
       input_mapping:
-      - integration-config: hermione-env
+      - integration-config: hermione-deployment-configuration
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: bless-manifest

@@ -92,6 +92,14 @@ resources:
     private_key: {{minerva_env_private_key}}
     paths:
     - bbl-infrastructure/*
+- name: minerva-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_private_key}}
+    paths:
+    - integration_config.json
 - name: hagrid-env-stubs
   type: git
   source:
@@ -109,6 +117,14 @@ resources:
     private_key: {{hagrid_env_private_key}}
     paths:
     - bbl-infrastructure/
+- name: hagrid-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_private_key}}
+    paths:
+    - integration_config.json
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -543,7 +559,7 @@ jobs:
       - get: hagrid-env-stubs
         trigger: true
         passed: [deploy-cf-with-updated-nats-1-0]
-      - get: hagrid-env
+      - get: hagrid-env-integration-config
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -556,8 +572,8 @@ jobs:
         CF_USER: {{hagrid_cf_admin_username}}
         CF_PASSWORD: {{hagrid_cf_admin_password}}
     - task: run-cats
-      - input_mapping:
-        - integration-config: hagrid-env
+      input_mapping:
+        - integration-config: hagrid-env-integration-config
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: delete-deployment-1-0
@@ -817,7 +833,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [deploy-cf-with-updated-nats]
-      - get: minerva-env
+      - get: minerva-env-integration-config
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -831,7 +847,7 @@ jobs:
         CF_PASSWORD: {{minerva_cf_admin_password}}
     - task: run-cats
       input_mapping:
-      - integration-config: minerva-env
+      - integration-config: minerva-env-integration-config
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: delete-deployment
