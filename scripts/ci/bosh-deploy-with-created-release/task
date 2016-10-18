@@ -49,3 +49,4 @@ else
     -o ops.yml \
     "${BOSH_MANIFEST}"
 fi
+EOF
