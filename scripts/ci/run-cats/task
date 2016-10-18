@@ -1,7 +1,9 @@
 #!/bin/bash
 set -xeu
 
-export CONFIG=integration-config/${CONFIG_FILE_PATH}
+export CONFIG
+CONFIG="$(PWD)/integration-config/${CONFIG_FILE_PATH}"
+
 CF_GOPATH=/go/src/github.com/cloudfoundry/
 
 echo "Moving cf-acceptance-tests onto the gopath..."
