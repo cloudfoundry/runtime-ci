@@ -15,4 +15,4 @@ run:
 
 params:
   NODES: 12
-  CONFIG_FILE_PATH: integration-config.json
+  CONFIG_FILE_PATH: integration_config.json
