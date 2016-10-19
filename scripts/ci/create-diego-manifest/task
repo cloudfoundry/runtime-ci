@@ -14,16 +14,10 @@ IAAS_SETTINGS_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETT
 if  [ "${USE_MYSQL}" == "true" ]; then
   DIEGO_MYSQL_OVERRIDES_PATH="${root_dir}/diego-mysql-overrides/${DIEGO_MYSQL_OVERRIDES_PATH:?"\$DIEGO_MYSQL_OVERRIDES_PATH not set"}"
 fi
-VSPHERE="${VSPHERE}"
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
 USE_GARDEN_RUNC=false
-
-
-if [ "$VSPHERE" == "false" ]; then
-  USE_GARDEN_RUNC=true
-fi
 
 pushd "${DIEGO_RELEASE_DIR}"
   ./scripts/generate-deployment-manifest \
@@ -32,7 +26,7 @@ pushd "${DIEGO_RELEASE_DIR}"
     -p "${PROPERTY_OVERRIDES_PATH}" \
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     -v "${RELEASE_VERSIONS_PATH}" \
-    $([ "${USE_GARDEN_RUNC}" == "true" ] && echo "-g") \
+    -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
     $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
