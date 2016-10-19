@@ -44,6 +44,7 @@ groups:
   - build-bosh-create-env-docker-image
   - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
+  - build-bosh-upate-cloud-config
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
@@ -191,6 +192,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-upload-stemcell/Dockerfile]
+- name: runtime-ci-bosh-update-cloud-config
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-update-cloud-config/Dockerfile]
 - name: runtime-ci-announce-rc
   type: git
   source:
@@ -615,6 +622,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-upload-stemcell
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-stemcell-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-update-cloud-config-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-update-cloud-config
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-stemcell-integration+dockerhub-push-bot@pivotal.io
@@ -1136,6 +1150,24 @@ jobs:
     - put: bosh-upload-stemcell-pipeline-image
       params:
         build: runtime-ci-bosh-upload-stemcell/scripts/ci/bosh-upload-stemcell
+        push: true
+- name: build-bosh-update-cloud-config-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bosh-update-cloud-config
+        trigger: true
+    - put: bosh-update-cloud-config-pipeline-image
+      params:
+        build: runtime-ci-bosh-update-cloud-config/scripts/ci/bosh-update-cloud-config
         push: true
 - name: build-write-target-file-docker-image
   public: true
