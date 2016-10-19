@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-update-cloud-config
+
+inputs:
+- name: runtime-ci
+- name: target
+- name: username
+- name: password
+- name: ca-cert
+- name: cloud-config
+
+run:
+  path: runtime-ci/scripts/ci/bosh-update-cloud-config/task
+
+params:
+  TARGET_FILE:
+  USERNAME_FILE:
+  PASSWORD_FILE:
+  CA_CERT_FILE:
+  CLOUD_CONFIG_FILE:

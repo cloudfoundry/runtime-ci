@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eux
+
+BOSH_TARGET=$(cat "target/${TARGET_FILE}")
+export BOSH_USER=$(cat username/"${USERNAME_FILE}")
+BOSH_CLOUD_CONFIG="cloud-config/${CLOUD_CONFIG_FILE}"
+
+set +x
+export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+set -x
+
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+
+bosh \
+  -e "${BOSH_TARGET}" \
+  update-cloud-config \
+  "${BOSH_CLOUD_CONFIG}" \
+  --ca-cert="${BOSH_CA_CERT}"
