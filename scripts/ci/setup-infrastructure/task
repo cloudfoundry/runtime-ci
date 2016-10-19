@@ -25,16 +25,16 @@ pushd env-repo
   set +x
   echo "bbl \
     --state-dir bbl-infrastructure \
+    up \
     --aws-access-key-id [REDACTED] \
     --aws-secret-access-key [REDACTED] \
-    --aws-region us-east-1 \
-    up"
+    --aws-region us-east-1"
   bbl \
     --state-dir bbl-infrastructure \
+    up \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-    --aws-region us-east-1 \
-    up
+    --aws-region us-east-1
 
   echo "$BBL_LB_CERT" > /tmp/bbl-cert
   echo "$BBL_LB_KEY" > /tmp/bbl-key
