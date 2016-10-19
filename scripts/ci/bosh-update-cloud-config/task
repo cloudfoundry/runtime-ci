@@ -12,6 +12,7 @@ set -x
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 
 bosh \
+  -n \
   -e "${BOSH_TARGET}" \
   update-cloud-config \
   "${BOSH_CLOUD_CONFIG}" \
