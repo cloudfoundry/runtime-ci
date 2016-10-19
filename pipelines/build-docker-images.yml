@@ -44,7 +44,7 @@ groups:
   - build-bosh-create-env-docker-image
   - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
-  - build-bosh-update-cloud-config
+  - build-bosh-update-cloud-config-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
