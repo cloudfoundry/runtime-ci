@@ -4,8 +4,10 @@ RUN \
   apt-get update && \
   apt-get -y install \
     build-essential \
+    curl \
     mercurial \
     software-properties-common \
+    jq \
     wget
 
 RUN \
@@ -14,23 +16,15 @@ RUN \
   apt-get install -y git && \
   apt-get remove -y --purge software-properties-common
 
-ENV GOPATH $HOME/go
-ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
-RUN \
-  wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.6.3.linux-amd64.tar.gz -C /usr/local && \
-  mkdir $GOPATH && \
-  rm -rf /tmp/*
-
 RUN \
   wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.91-linux-amd64 -P /tmp && \
   mv /tmp/bosh-init-0.0.91-linux-amd64 /usr/local/bin/bosh-init && \
   chmod +x /usr/local/bin/bosh-init && \
   rm -rf /tmp/*
 
-RUN \
-  go get github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
-  go install github.com/pivotal-cf-experimental/bosh-bootloader/bbl
+RUN wget "$(curl -s https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" && \
+  mv bbl-* /usr/local/bin/bbl && \
+  chmod +x /usr/local/bin/bbl
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \

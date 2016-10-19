@@ -5,11 +5,12 @@ ENV HOME /root
 RUN \
   apt-get update && \
   apt-get -y install \
-    build-essential \
-    software-properties-common \
-		curl \
-    wget \
-		unzip
+  build-essential \
+  curl \
+  jq \
+  software-properties-common \
+  unzip \
+  wget
 
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
@@ -33,17 +34,9 @@ RUN \
   gem install bundler --no-rdoc --no-ri && \
   gem install activesupport
 
-ENV GOPATH $HOME/go
-ENV PATH $HOME/go/bin:/usr/local/go/bin:$PATH
-RUN \
-  wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.6.3.linux-amd64.tar.gz -C /usr/local && \
-  mkdir $GOPATH && \
-  rm -rf /tmp/*
-
-RUN \
-  go get github.com/pivotal-cf-experimental/bosh-bootloader/bbl && \
-  go install github.com/pivotal-cf-experimental/bosh-bootloader/bbl
+RUN wget "$(curl -s https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" && \
+  mv bbl-* /usr/local/bin/bbl && \
+  chmod +x /usr/local/bin/bbl
 
 RUN \
   wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.91-linux-amd64 -P /tmp && \
