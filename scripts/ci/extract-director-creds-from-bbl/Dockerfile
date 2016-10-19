@@ -23,9 +23,8 @@ RUN \
   rm -rf /tmp/*
 
 RUN \
-wget "$(curl -s https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" && \
-  mv bbl-* /go/bin/bbl && \
-  chmod +x /go/bin/bbl
+  wget "$(curl -s https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" -P /usr/local/bin/bbl && \
+  chmod +x /usr/local/bin/bbl
 
 RUN \
   wget https://github.com/postmodern/ruby-install/archive/v0.4.1.tar.gz -P /tmp && \
