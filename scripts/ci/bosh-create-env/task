@@ -15,7 +15,6 @@ popd
 
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
-export BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 
 set -x
 bosh -n create-env --var-files=env-repo/${DEPLOYMENT_VAR_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
