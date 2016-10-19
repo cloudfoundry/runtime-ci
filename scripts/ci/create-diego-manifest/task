@@ -11,7 +11,7 @@ PROPERTY_OVERRIDES_PATH="${root_dir}/property-overrides/${PROPERTY_OVERRIDES_PAT
 INSTANCE_COUNT_OVERRIDES_PATH="${root_dir}/instance-count-overrides/${INSTANCE_COUNT_OVERRIDES_PATH:?"\$INSTANCE_COUNT_OVERRIDES_PATH not set"}"
 RELEASE_VERSIONS_PATH="${root_dir}/release-versions/${RELEASE_VERSIONS_PATH:?"\$RELEASE_VERSIONS_PATH not set"}"
 IAAS_SETTINGS_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
-if  [ "USE_MYSQL" == "true" ]; then
+if  [ "${USE_MYSQL}" == "true" ]; then
   DIEGO_MYSQL_OVERRIDES_PATH="${root_dir}/diego-mysql-overrides/${DIEGO_MYSQL_OVERRIDES_PATH:?"\$DIEGO_MYSQL_OVERRIDES_PATH not set"}"
 fi
 VSPHERE="${VSPHERE}"
@@ -34,6 +34,6 @@ pushd "${DIEGO_RELEASE_DIR}"
     -v "${RELEASE_VERSIONS_PATH}" \
     $([ "${USE_GARDEN_RUNC}" == "true" ] && echo "-g") \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
-    $([ "${USE_MYSQL}" == "true" ] && echo "-s ${root_dir}/diego-mysql-overrides/${DIEGO_MYSQL_OVERRIDES_PATH}") \
+    $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
