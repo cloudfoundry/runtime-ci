@@ -228,11 +228,6 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
-- name: garden-linux-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/garden-linux-release
-
 - name: garden-runc-release-tarball
   type: bosh-io-release
   source:
@@ -1027,7 +1022,7 @@ jobs:
         tags: [vsphere]
         trigger: true
         passed: [generate-vsphere-manifests]
-      - get: garden-linux-release-tarball
+      - get: garden-runc-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [ generate-vsphere-manifests ]
@@ -1078,7 +1073,7 @@ jobs:
         stemcells: [vsphere-stemcell/*.tgz]
         releases:
         - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
+        - garden-runc-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
     - task: write-director-version
@@ -1145,7 +1140,7 @@ jobs:
         passed: [deploy-vsphere]
         params:
           tarball: false
-      - get: garden-linux-release-tarball
+      - get: garden-runc-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [deploy-vsphere]
@@ -1218,7 +1213,7 @@ jobs:
         passed: [vsphere-smoke-tests]
         params:
           tarball: false
-      - get: garden-linux-release-tarball
+      - get: garden-runc-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [vsphere-smoke-tests]
@@ -1619,7 +1614,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: garden-linux-release-tarball
+    - get: garden-runc-release-tarball
       tags: [vsphere]
       trigger: true
       params:
@@ -1812,7 +1807,7 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: garden-linux-release-tarball
+      - get: garden-runc-release-tarball
         passed:
         - vsphere-acceptance-tests
         trigger: true
