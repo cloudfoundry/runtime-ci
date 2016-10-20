@@ -3,21 +3,29 @@ set -eux
 
 export BOSH_USER
 export BOSH_PASSWORD
-BOSH_USER=$(cat "username/${USERNAME_FILE}")
-BOSH_TARGET=$(cat "target/${TARGET_FILE}")
-BOSH_MANIFEST="manifest/${MANIFEST_FILE}"
-BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+BOSH_USER=$(cat "username/${USERNAME_FILE_PATH}")
+BOSH_TARGET=$(cat "target/${TARGET_FILE_PATH}")
+BOSH_MANIFEST="manifest/${MANIFEST_FILE_PATH}"
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE_PATH}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
 
 set +u
-DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE}"
-OPS_FILE_DIR="ops-files/${OPS_FILE_DIR_PATH}"
+DEPLOYMENT_VAR_FILE=""
+if [[ ! -z "$DEPLOYMENT_VAR_FILE_PATH" ]]; then
+  DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE_PATH}"
+fi
+
+OPS_FILE_DIR=""
+if [[ ! -z "$OPS_FILE_DIR_PATH" ]]; then
+  OPS_FILE_DIR="ops-files/${OPS_FILE_DIR_PATH}"
+fi
+
 set -u
 
 set +x
-echo "BOSH_PASSWORD=\$(cat password/${PASSWORD_FILE})"
-BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+echo "BOSH_PASSWORD=\$(cat password/${PASSWORD_FILE_PATH})"
+BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE_PATH}")
 set -x
 
 cat << EOF > ops.yml
