@@ -51,12 +51,12 @@ if [[ -d ${OPS_FILE_DIR} ]]; then
   done
 fi
 
-bosh \
+echo bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  "${VAR_FILES_FLAG}" \
-  "${OPS_FILE_FLAGS}" \
-  "${BOSH_MANIFEST}"
+  ${VAR_FILES_FLAG} \
+  ${OPS_FILE_FLAGS} \
+  ${BOSH_MANIFEST}
