@@ -1844,6 +1844,7 @@ jobs:
         - put: diego-cf-compatibility
           params:
             repository: updated-diego-cf-compatibility
+            rebase: true
 
 - name: a1-runtime-smokes
   public: true
