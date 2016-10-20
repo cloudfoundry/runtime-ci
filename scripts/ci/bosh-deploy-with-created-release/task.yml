@@ -8,13 +8,14 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: release
 - name: target
 - name: username
 - name: password
 - name: ca-cert
 - name: manifest
 - name: manifest-properties
-- name: release
+- name: ops-files
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task
@@ -26,3 +27,4 @@ params:
   CA_CERT_FILE:
   MANIFEST_FILE:
   DEPLOYMENT_VAR_FILE:
+  OPS_FILE_DIR_PATH:
