@@ -60,21 +60,15 @@ jobs:
   - put: dobby-env-infrastructure
     params:
       repository: updated-env-repo
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: updated-env-repo
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
       env-repo: updated-env-repo
-      username: username
-      password: password
-      ca-cert: ca-cert
+      username: updated-env-repo
+      password: updated-env-repo
     params:
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca.pem
+      USERNAME_FILE: infrastructure/bosh-init/username
+      PASSWORD_FILE: infrastructure/bosh-init/password
       DEPLOYMENT_VAR_FILE: infrastructure/bosh-init/deployment-env-vars.yml
   - put: dobby-env-infrastructure
     params:
@@ -87,6 +81,21 @@ jobs:
       AWS_ACCESS_KEY_ID: {{dobby_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{dobby_aws_secret_access_key}}
       DOMAIN: dobby.cf-app.com
+  - task: bosh-update-cloud-config
+    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+    input_mapping:
+      target: updated-env-repo
+      username: updated-env-repo
+      password: updated-env-repo
+      ca-cert: updated-env-repo
+      cloud-config: updated-env-repo
+    params:
+      TARGET_FILE:   infrastructure/bosh-init/bosh-target
+      USERNAME_FILE: infrastructure/bosh-init/username
+      PASSWORD_FILE: infrastructure/bosh-init/password
+      CA_CERT_FILE:  infrastructure/bosh-init/certs/rootCA.pem
+      CLOUD_CONFIG_FILE: infrastructure/bosh-init/cloud-config.yml
+
 
 - name: upload-stemcell
   public: true
@@ -99,19 +108,19 @@ jobs:
       trigger: true
     - get: gcp-stemcell
       trigger: true
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: dobby-env-infrastructure
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
+      username: dobby-env-infrastructure
+      password: dobby-env-infrastructure
+      target: dobby-env-infrastructure
+      ca-cert: dobby-env-infrastructure
       stemcell: gcp-stemcell
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
+      TARGET_FILE: infrastructure/bosh-init/bosh-target
+      USERNAME_FILE: infrastructure/bosh-init/username
+      PASSWORD_FILE: infrastructure/bosh-init/password
+      CA_CERT_FILE: infrastructure/bosh-init/certs/rootCA.pem
       STEMCELL_NAME: '*.tgz'
 
 - name: deploy-nats-standalone
@@ -129,20 +138,20 @@ jobs:
       params:
         tarball: false
     - get: runtime-ci
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: dobby-env-infrastructure
   - task: generate-nats-deployment-manifest
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest/task.yml
-  - task: bosh-deploy-new-nats
+  - task: bosh-deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
-      manifest-properties: dobby-env-infrastructure
+      manifest-properties: dobby-env-infrastructure # we only need this resource to appease the interface for bosh-deploy-with-created-release/task.yml
+      target: dobby-env-infrastructure
+      username: dobby-env-infrastructure
+      password: dobby-env-infrastructure
+      ca-cert: dobby-env-infrastructure
       release: nats-release-develop
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
+      TARGET_FILE:   infrastructure/bosh-init/bosh-target
+      USERNAME_FILE: infrastructure/bosh-init/username
+      PASSWORD_FILE: infrastructure/bosh-init/password
+      CA_CERT_FILE:  infrastructure/bosh-init/certs/rootCA.pem
       MANIFEST_FILE: nats.yml
