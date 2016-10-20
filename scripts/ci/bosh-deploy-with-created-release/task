@@ -51,7 +51,7 @@ if [[ -d ${OPS_FILE_DIR} ]]; then
   done
 fi
 
-echo bosh \
+bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
   -e "${BOSH_TARGET}" \
