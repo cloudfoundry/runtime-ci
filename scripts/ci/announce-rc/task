@@ -20,21 +20,21 @@ comment_body="cf-release Release Candidate SHA for ${next_tag}:
 - If you notice you are the last person to set your approval, as a courtesy please also add a new comment to the issue saying so, so that we get GitHub notifications that all approvals are done.
 
 ----
-@Amit-PivotalLabs, @JesseTAlford, @dsabeti:
+@dsabeti, @JesseTAlford:
 Does this cf-release SHA look good for the release integration team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
 - **Comments**:
 
 ----
-@Amit-PivotalLabs, @zankich:
+@zankich, @christianang:
 Does this cf-release SHA look good for the infrastructure team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
 - **Comments**:
 
 ----
-@Amit-PivotalLabs, @valeriap:
+@valeriap, @smoser-ibm:
 Does this cf-release SHA look good for the postgres-release team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
