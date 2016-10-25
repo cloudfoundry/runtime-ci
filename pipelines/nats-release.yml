@@ -298,7 +298,6 @@ jobs:
     - get: nats-release-develop
       trigger: true
     - get: hagrid-env-infrastructure
-      passed: [upload-stemcell-1-0]
     - get: hagrid-env-stubs
     - get: aws-stemcell
       passed: [upload-stemcell-1-0]
@@ -338,7 +337,6 @@ jobs:
       passed: [deploy-1-0-nats-standalone]
     - get: runtime-ci
     - get: hagrid-env-infrastructure
-      passed: [deploy-1-0-nats-standalone]
     - get: aws-stemcell
       passed: [deploy-1-0-nats-standalone]
       params:
@@ -373,7 +371,6 @@ jobs:
       trigger: true
       passed:  [smoke-tests-1-0]
     - get: hagrid-env-infrastructure
-      passed: [smoke-tests-1-0]
     - get: aws-stemcell
       passed: [smoke-tests-1-0]
       params:
@@ -517,7 +514,7 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
       input_mapping:
         manifest: extended-cf-deployment-manifest
-        manifest-properties: hagrid-env-infrastructure
+        manifest-properties: hagrid-env-stubs
         release: nats-release-develop
       params:
         TARGET_FILE:   target
@@ -529,7 +526,7 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: extended-diego-deployment-manifest
-        manifest-properties: hagrid-env-infrastructure
+        manifest-properties: hagrid-env-stubs
       params:
         TARGET_FILE:   target
         USERNAME_FILE: username
@@ -551,7 +548,6 @@ jobs:
         trigger: true
         passed:  [deploy-cf-with-updated-nats-1-0]
       - get: hagrid-env-infrastructure
-        passed: [deploy-cf-with-updated-nats-1-0]
       - get: aws-stemcell
         passed: [deploy-cf-with-updated-nats-1-0]
         params:
@@ -589,7 +585,6 @@ jobs:
         trigger: true
         passed:  [cats-tests-1-0]
       - get: hagrid-env-infrastructure
-        passed: [cats-tests-1-0]
       - get: aws-stemcell
         passed: [cats-tests-1-0]
         params:
