@@ -401,7 +401,7 @@ jobs:
     params:
       MAPPING_OUTPUT_FILE: security-groups-mapping
       LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup CFSSHProxyInternalSecurityGroup InternalSecurityGroup
-      STATE_DIR_PATH: bbl-infrastructure/bbl-state.json
+      STATE_DIR_PATH: bbl-infrastructure
       AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
     input_mapping:
@@ -425,7 +425,7 @@ jobs:
           CF_DEPLOYMENT_MANIFEST: deployment.yml
           EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-          BBL_STATE_DIRECTORY: bbl-infrastructure
+          STATE_DIR_PATH: bbl-infrastructure
       - task: untar-diego-release
         file: runtime-ci/scripts/ci/untar-release/task.yml
         input_mapping:
@@ -465,7 +465,7 @@ jobs:
           CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
           EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-          BBL_STATE_DIRECTORY: bbl-infrastructure
+          STATE_DIR_PATH: bbl-infrastructure
     - task: bosh-upload-release-cf
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:

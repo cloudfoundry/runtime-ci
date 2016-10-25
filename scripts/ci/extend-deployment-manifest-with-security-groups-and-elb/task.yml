@@ -19,7 +19,7 @@ params:
   CF_DEPLOYMENT_MANIFEST:
   EXTENDED_CF_DEPLOYMENT_MANIFEST:
   CLOUDFORMATION_MAPPING_FILE:
-  BBL_STATE_DIRECTORY:
+  STATE_DIR_PATH:
 
 run:
   path: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.rb
