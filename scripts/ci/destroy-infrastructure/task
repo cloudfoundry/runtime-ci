@@ -2,8 +2,8 @@
 
 set -xeu
 
-if [[ ! -e env-repo/bbl-infrastructure/state.json ]]; then
-  echo "no state.json present -- the infrastructure has already been deleted"
+if [[ ! -e env-repo/bbl-infrastructure/bbl-state.json ]]; then
+  echo "no bbl-state.json present -- the infrastructure has already been deleted"
 else
   pushd env-repo
     bbl \
