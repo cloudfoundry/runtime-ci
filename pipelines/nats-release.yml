@@ -298,7 +298,7 @@ jobs:
     - get: nats-release-develop
       trigger: true
     - get: hagrid-env-infrastructure
-    - get: hagrid-env-stubs
+      passed: [upload-stemcell-1-0]
     - get: aws-stemcell
       passed: [upload-stemcell-1-0]
       params:
@@ -313,18 +313,19 @@ jobs:
   - task: generate-1-0-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
-      env-repo: hagrid-env-stubs
+      env-repo: hagrid-env-infrastructure
   - task: bosh-deploy-new-nats
     file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
       manifest-properties: hagrid-env-infrastructure
+      ops-files: hagrid-env-infrastructure
       release: nats-release-develop
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: nats.yml
+      TARGET_FILE_PATH: target
+      USERNAME_FILE_PATH: username
+      PASSWORD_FILE_PATH: password
+      CA_CERT_FILE_PATH: ca-cert
+      MANIFEST_FILE_PATH: nats.yml
 
 - name: smoke-tests-1-0
   public: true
@@ -514,14 +515,15 @@ jobs:
       file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
       input_mapping:
         manifest: extended-cf-deployment-manifest
-        manifest-properties: hagrid-env-stubs
+        manifest-properties: hagrid-env-infrastructure
+        ops-files: hagrid-env-stubs
         release: nats-release-develop
       params:
-        TARGET_FILE:   target
-        USERNAME_FILE: username
-        PASSWORD_FILE: password
-        CA_CERT_FILE:  ca-cert
-        MANIFEST_FILE: extended_deployment.yml
+        TARGET_FILE_PATH:   target
+        USERNAME_FILE_PATH: username
+        PASSWORD_FILE_PATH: password
+        CA_CERT_FILE_PATH:  ca-cert
+        MANIFEST_FILE_PATH: extended_deployment.yml
     - task: bosh-deploy-diego
       file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
@@ -722,13 +724,14 @@ jobs:
     file: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task.yml
     input_mapping:
       manifest-properties: minerva-env-infrastructure
+      ops-files: minerva-env-infrastructure
       release: nats-release-develop
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: nats.yml
+      TARGET_FILE_PATH: target
+      USERNAME_FILE_PATH: username
+      PASSWORD_FILE_PATH: password
+      CA_CERT_FILE_PATH: ca-cert
+      MANIFEST_FILE_PATH: nats.yml
 
 - name: smoke-tests
   public: true
@@ -794,14 +797,15 @@ jobs:
     input_mapping:
       manifest: cf-deployment-develop
       manifest-properties: minerva-env-properties
+      ops-files: minerva-env-properties
       release: nats-release-develop
     params:
-      TARGET_FILE:  target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: cf-deployment.yml
-      DEPLOYMENT_VAR_FILE: deployment-env-vars.yml
+      TARGET_FILE_PATH:  target
+      USERNAME_FILE_PATH: username
+      PASSWORD_FILE_PATH: password
+      CA_CERT_FILE_PATH: ca-cert
+      MANIFEST_FILE_PATH: cf-deployment.yml
+      DEPLOYMENT_VAR_FILE_PATH: deployment-env-vars.yml
 
 - name: cats-tests
   public: true
