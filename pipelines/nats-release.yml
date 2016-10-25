@@ -401,7 +401,7 @@ jobs:
     params:
       MAPPING_OUTPUT_FILE: security-groups-mapping
       LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup CFSSHProxyInternalSecurityGroup InternalSecurityGroup
-      STATE_DIR_PATH: bbl-infrastructure/state.json
+      STATE_DIR_PATH: bbl-infrastructure/bbl-state.json
       AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
     input_mapping:
