@@ -446,7 +446,7 @@ jobs:
         file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
         input_mapping:
           cf-manifest: manifest
-          diego-mysql-overrides: hagred-env-stubs
+          diego-mysql-overrides: hagrid-env-stubs
           property-overrides: hagrid-env-stubs
           instance-count-overrides: hagrid-env-stubs
           release-versions: hagrid-env-stubs
