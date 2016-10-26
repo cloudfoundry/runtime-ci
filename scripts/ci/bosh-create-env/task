@@ -5,10 +5,11 @@ DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provide
 
 set +x
 pushd env-repo/infrastructure
+  # TODO this whole terraform section should use inputs for region, project, zone, etc...
   pushd terraform
     gcloud config set project cf-release-integration-141222
-    gcloud config set compute/region us-west1
-    gcloud config set compute/zone us-west1
+    gcloud config set compute/region us-central1
+    gcloud config set compute/zone us-central1-a
     gcloud auth activate-service-account 815441650186-compute@developer.gserviceaccount.com --key-file google_credentials.json
   popd
 popd
