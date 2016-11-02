@@ -231,7 +231,7 @@ resources:
 - name: garden-runc-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/garden-runc-release
+    repository: cloudfoundry/garden-runc-release
 
 - name: etcd-release-tarball
   type: bosh-io-release
