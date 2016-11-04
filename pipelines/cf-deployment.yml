@@ -116,14 +116,50 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/garden-runc-release
+- name: binary-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/binary-buildpack-release
+- name: dotnet-core-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/dotnet-core-buildpack-release
+- name: go-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/go-buildpack-release
+- name: java-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/java-buildpack-release
+- name: java-offline-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/java-offline-buildpack-release
+- name: nodejs-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nodejs-buildpack-release
+- name: php-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/php-buildpack-release
+- name: python-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/python-buildpack-release
+- name: ruby-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/ruby-buildpack-release
+- name: staticfile-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/staticfile-buildpack-release
 - name: cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-- name: cf-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-release
 
 jobs:
 - name: destroy-infrastructure
@@ -231,7 +267,43 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: cf-release
+    - get: binary-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: dotnet-core-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: go-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: java-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: java-offline-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: nodejs-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: php-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: python-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: ruby-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: staticfile-buildpack-release
       trigger: true
       params:
         tarball: false

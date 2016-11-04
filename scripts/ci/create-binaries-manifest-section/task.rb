@@ -16,7 +16,16 @@ release_names=[
   'garden-runc',
   'cflinuxfs2-rootfs',
   'routing',
-  'cf',
+  'binary-buildpack',
+  'dotnet-core-buildpack',
+  'go-buildpack',
+  'java-buildpack',
+  'java-offline-buildpack',
+  'nodejs-buildpack',
+  'php-buildpack',
+  'python-buildpack',
+  'ruby-buildpack',
+  'staticfile-buildpack',
 ]
 
 deployment_configuration_path = ENV.fetch('DEPLOYMENT_CONFIGURATION_PATH')
