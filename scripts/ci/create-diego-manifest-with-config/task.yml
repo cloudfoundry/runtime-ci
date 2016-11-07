@@ -10,11 +10,7 @@ inputs:
 - name: diego-release
 - name: runtime-ci
 - name: cf-manifest
-- name: property-overrides
-- name: instance-count-overrides
-- name: release-versions
-- name: iaas-settings
-- name: diego-mysql-overrides
+- name: config
 
 outputs:
 - name: generated-diego-manifest
@@ -23,6 +19,7 @@ params:
   DIEGO_RELEASE_DIR: diego-release
   GENERATED_DIEGO_MANIFEST_DIR: generated-diego-manifest
   CF_MANIFEST_PATH: deployment.yml
+  NETMAN_OVERRIDES_PATH: ~
   PROPERTY_OVERRIDES_PATH: ~
   INSTANCE_COUNT_OVERRIDES_PATH: ~
   RELEASE_VERSIONS_PATH: ~

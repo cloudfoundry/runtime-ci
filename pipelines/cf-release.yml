@@ -1473,10 +1473,7 @@ jobs:
     input_mapping:
       diego-release: diego-release
       cf-manifest: manifest
-      property-overrides: a1-env
-      instance-count-overrides: a1-env
-      release-versions: a1-env
-      diego-mysql-overrides: a1-env
+      config: a1-env
     params:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
