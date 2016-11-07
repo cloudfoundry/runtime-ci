@@ -1555,7 +1555,7 @@ jobs:
       BOSH_LITE_STUB_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
       EXTENDED_BOSH_LITE_STUB_PATH: property-overrides.yml
   - task: create-diego-manifest
-    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+    file: runtime-ci/scripts/ci/create-diego-manifest-with-config/task.yml
     input_mapping:
       diego-release: diego-release
       cf-manifest: manifest
