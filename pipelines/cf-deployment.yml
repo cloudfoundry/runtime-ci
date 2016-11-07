@@ -223,10 +223,12 @@ jobs:
     - get: hermione-env-infrastructure
     - get: cf-deployment-develop
     - get: hermione-env-properties
-    - get: capi-release
-      trigger: true
     - get: stemcell
       trigger: true
+    - get: capi-release
+      trigger: true
+      params:
+        tarball: false
     - get: nats-release
       trigger: true
       params:
