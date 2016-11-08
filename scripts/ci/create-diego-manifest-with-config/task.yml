@@ -10,6 +10,7 @@ inputs:
 - name: diego-release
 - name: runtime-ci
 - name: cf-manifest
+- name: iaas-settings
 - name: config
 
 outputs:

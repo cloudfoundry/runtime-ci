@@ -10,7 +10,7 @@ CF_MANIFEST_PATH="${root_dir}/cf-manifest/${CF_MANIFEST_PATH:?"\$CF_MANIFEST_PAT
 PROPERTY_OVERRIDES_PATH="${root_dir}/config/${PROPERTY_OVERRIDES_PATH:?"\$PROPERTY_OVERRIDES_PATH not set"}"
 INSTANCE_COUNT_OVERRIDES_PATH="${root_dir}/config/${INSTANCE_COUNT_OVERRIDES_PATH:?"\$INSTANCE_COUNT_OVERRIDES_PATH not set"}"
 RELEASE_VERSIONS_PATH="${root_dir}/config/${RELEASE_VERSIONS_PATH:?"\$RELEASE_VERSIONS_PATH not set"}"
-IAAS_SETTINGS_PATH="${root_dir}/config/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
+IAAS_SETTINGS_FULL_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
 if  [ "${USE_MYSQL}" == "true" ]; then
   DIEGO_MYSQL_OVERRIDES_PATH="${root_dir}/config/${DIEGO_MYSQL_OVERRIDES_PATH:?"\$DIEGO_MYSQL_OVERRIDES_PATH not set"}"
 fi
@@ -22,7 +22,7 @@ USE_GARDEN_RUNC=false
 pushd "${DIEGO_RELEASE_DIR}"
   ./scripts/generate-deployment-manifest \
     -c "${CF_MANIFEST_PATH}" \
-    -i "${IAAS_SETTINGS_PATH}" \
+    -i "${IAAS_SETTINGS_FULL_PATH}" \
     -p "${PROPERTY_OVERRIDES_PATH}" \
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     $([ "${NETMAN_OVERRIDES_PATH}" != "" ] && echo "-N ${root_dir}/config/${NETMAN_OVERRIDES_PATH}") \
