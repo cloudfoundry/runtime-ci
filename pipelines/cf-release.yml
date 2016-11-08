@@ -236,7 +236,7 @@ resources:
 - name: netman-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry/netman-release
+    repository: cloudfoundry-incubator/netman-release
 
 - name: etcd-release-tarball
   type: bosh-io-release
