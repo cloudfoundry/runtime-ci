@@ -233,6 +233,11 @@ resources:
   source:
     repository: cloudfoundry/garden-runc-release
 
+- name: netman-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/netman-release
+
 - name: etcd-release-tarball
   type: bosh-io-release
   source:
@@ -1309,6 +1314,9 @@ jobs:
       - get: garden-runc-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
+      - get: netman-release-tarball
+        trigger: true
+        passed: [ generate-aws-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
@@ -1318,6 +1326,7 @@ jobs:
         stemcells: [aws-stemcell/*.tgz]
         releases:
           - cf-release-tarball/*.tgz
+          - netman-release-tarball/*.tgz
     - put: a1-diego-deployment
       params:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
@@ -1442,6 +1451,10 @@ jobs:
       params:
         tarball: false
     - get: cflinuxfs2-rootfs-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: netman-release-tarball
       trigger: true
       params:
         tarball: false
