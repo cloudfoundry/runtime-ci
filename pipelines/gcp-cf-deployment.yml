@@ -1,0 +1,50 @@
+---
+groups:
+- name: infrastructure
+  jobs:
+  - setup-infrastructure
+  - destroy-infrastructure
+
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: terraform
+  type: terraform
+  source:
+    storage:
+      bucket: runtimeci-tfstate
+      bucket_path: cf-deployment/
+      region_name: us-west-1
+      access_key_id: {{aws_access_key}}
+      secret_access_key: {{aws_secret_key}}
+    terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
+    vars:
+      projectid: {{projectid}}
+      env_name: &terraform_env_name cf-deployment
+      service_account_key: {{service_account_json}}
+
+jobs:
+- name: setup-infrastructure
+  plan:
+  - put: terraform
+    params:
+      env_name: *terraform_env_name
+      delete_on_failure: true
+
+- name: destroy-infrastructure
+  plan:
+  - put: terraform
+    params:
+      env_name: *terraform_env_name
+      action: destroy
+    get_params:
+      action: destroy
