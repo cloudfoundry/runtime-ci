@@ -28,8 +28,13 @@ resources:
       secret_access_key: {{aws_secret_key}}
     terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
     vars:
-      projectid: {{projectid}}
-      env_name: &terraform_env_name cf-deployment
+      project: {{project}}
+      env_name: &terraform_env_name luna
+      region: us-west-1
+      zones: [us-west]
+      dns_suffix: luna.cf-app.com
+      ssl_cert: {{cf_ssl_cert}}
+      ssl_cert_private_key: {{cf_ssl_cert_private_key}}
       service_account_key: {{service_account_json}}
 
 jobs:
