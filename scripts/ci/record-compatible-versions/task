@@ -10,21 +10,21 @@ bosh_lite_sha=$(cd bosh-lite; git rev-parse HEAD)
 
 tar xzf aws-stemcell/stemcell.tgz
 aws_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
-aws_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+aws_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'" | tr -d '"')
 aws_stemcell="${aws_stemcell_name}/${aws_stemcell_version}"
 aws_director_version=$(cat aws-director-version/director_version)
 aws_build_url=$(cat aws-build-url/build_url)
 
 tar xzf bosh-lite-stemcell/stemcell.tgz
 bosh_lite_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
-bosh_lite_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+bosh_lite_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'" | tr -d '"')
 bosh_lite_stemcell="${bosh_lite_stemcell_name}/${bosh_lite_stemcell_version}"
 bosh_lite_director_version=$(cat bosh-lite-director-version/director_version)
 bosh_lite_build_url=$(cat bosh-lite-build-url/build_url)
 
 tar xzf vsphere-stemcell/stemcell.tgz
 vsphere_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
-vsphere_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'")
+vsphere_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'" | tr -d '"')
 vsphere_stemcell="${vsphere_stemcell_name}/${vsphere_stemcell_version}"
 vsphere_director_version=$(cat vsphere-director-version/director_version)
 vsphere_build_url=$(cat vsphere-build-url/build_url)
