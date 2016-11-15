@@ -30,8 +30,8 @@ resources:
     vars:
       project: {{project}}
       env_name: &terraform_env_name luna
-      region: us-west-1
-      zones: [us-west]
+      region: us-central1
+      zones: [us-central1-a, us-central1-b, us-central1-c]
       dns_suffix: luna.cf-app.com
       ssl_cert: {{cf_ssl_cert}}
       ssl_cert_private_key: {{cf_ssl_cert_private_key}}
