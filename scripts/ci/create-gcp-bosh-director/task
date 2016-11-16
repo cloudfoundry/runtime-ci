@@ -30,7 +30,7 @@ echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/username
 infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director/
 
 # GENERTATE CERTS + SSH Key
-pushd env-repo/infrastructure
+pushd ${root_dir}/env-repo/infrastructure
   pushd bosh
     export DIRECTOR_SSH_KEY_PATH=keys/ssh-key
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
@@ -79,7 +79,7 @@ export BOSH_PASSWORD=$DIRECTOR_PASSWORD
 
 bosh -n create-env --var-files=${DEPLOYMENT_VAR_FILE} cf-gcp-infrastructure/${DIRECTOR_MANIFEST_FILE}
 
-pushd env-repo
+pushd ${root_dir}/env-repo
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
