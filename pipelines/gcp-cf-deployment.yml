@@ -83,3 +83,6 @@ jobs:
     file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
     input_mapping:
       env-repo: luna-env
+  - put: luna-env
+    params:
+      repository: updated-env-repo

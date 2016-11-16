@@ -12,6 +12,9 @@ inputs:
 - name: env-repo
 - name: cf-gcp-infrastructure
 
+outputs:
+- name: updated-env-repo
+
 run:
   path: runtime-ci/scripts/ci/create-gcp-bosh-director/task
 

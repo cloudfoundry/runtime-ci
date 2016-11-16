@@ -81,14 +81,17 @@ output_deployment_vars > $DEPLOYMENT_VAR_FILE
 
 echo 'commit'
 commit
-set -x
+
+shopt -s dotglob
+cp -R env-repo/* updated-env-repo/
 
 export BOSH_USER=$DIRECTOR_USERNAME
 export BOSH_PASSWORD=$DIRECTOR_PASSWORD
 
-bosh -n create-env --var-files=${DEPLOYMENT_VAR_FILE} cf-gcp-infrastructure/${DIRECTOR_MANIFEST_FILE}
 
 pushd ${root_dir}/env-repo
+  bosh -n create-env --var-files=${DEPLOYMENT_VAR_FILE} ${root_dir}/cf-gcp-infrastructure/bosh.yml
+
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
@@ -97,3 +100,5 @@ pushd ${root_dir}/env-repo
   fi
 popd
 
+shopt -s dotglob
+cp -R env-repo/* updated-env-repo/
