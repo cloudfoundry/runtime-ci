@@ -42,6 +42,7 @@ pushd ${root_dir}/env-repo/infrastructure
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
       set -x
       paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub > ${DIRECTOR_SSH_KEY_PATH}.gcp_pub
+      gcloud auth activate-service-account ${root_dir}/env-repo/google_account_creds.json
       gcloud config set project ${project}
       gcloud config set compute/region ${region}
       gcloud config set compute/zone ${zone}
@@ -69,7 +70,7 @@ output_deployment_vars() {
     "mbus_password" => ENV["MBUS_PASSWORD"],
     "director_cert" => File.read("env-repo/infrastructure/bosh/certs/director.crt"),
     "director_key" => File.read("env-repo/infrastructure/bosh/certs/director.key"),
-    "google_cpi_json_key" => ENV["GOOGLE_CREDENTIALS"],
+    "google_cpi_json_key" => File.read("env-repo/google_account_creds.json"),
     "director_username" => ENV["DIRECTOR_USERNAME"],
     "director_password" => ENV["DIRECTOR_PASSWORD"],
     "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"],
