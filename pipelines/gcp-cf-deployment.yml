@@ -29,13 +29,13 @@ resources:
   type: git
   source:
     branch: master
-    uri: git@github.com/cloudfoundry/luna-env.git
+    uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_private_key}}
 - name: cf-gcp-infrastructure
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure.git
+    uri: git@github.com:cloudfoundry-incubator/cf-gcp-infrastructure.git
 - name: terraform
   type: terraform
   source:
