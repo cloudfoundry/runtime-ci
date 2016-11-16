@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-gcp-bosh-director
+
+inputs:
+- name: runtime-ci
+- name: terraform
+- name: env-repo
+- name: cf-gcp-infrastructure
+
+run:
+  path: runtime-ci/scripts/ci/create-gcp-bosh-director/task
+

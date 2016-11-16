@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# This concourse task results in:
+# 1. Bosh create-env manifest complete with ca-certs, credentials, etc.
+set -xeu
+
+export root_dir=$PWD
+
+export metadata_file=${root_dir}/terraform/metadata
+export name_file=${root_dir}/terraform/name
+export DIRECTOR_IP=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["bosh_ip"]}.to_yaml)')
+
+function commit {
+  pushd env-repo
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Commit terraform state and bosh ops file"
+    fi
+  popd
+}
+
+# GENERTATE Director Creds
+export DIRECTOR_PASSWORD=$(openssl rand -base64 32)
+export DIRECTOR_USERNAME=user-$(openssl rand -base64 32)
+echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/password
+echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/username
+
+infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director/
+
+# GENERTATE CERTS + SSH Key
+pushd env-repo/infrastructure
+  pushd bosh
+    export DIRECTOR_SSH_KEY_PATH=keys/ssh-key
+    if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
+      mkdir -p "$(dirname ${DIRECTOR_SSH_KEY_PATH})"
+      ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
+      paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub > ${DIRECTOR_SSH_KEY_PATH}.gcp_pub
+      gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
+    fi
+
+    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${root_dir}/env-repo/infrastructure/bosh
+  popd
+popd
+
+# GENERATE DEPLOYMENT VAR FILE
+output_deployment_vars() {
+  ruby -ryaml -e 'puts ({
+    "project" => YAML.load_from_file(metadata_file)["project"],
+    "zone" => YAML.load_from_file(metadata_file)["zone"],
+    "network_name" => YAML.load_from_file(metadata_file)["network_name"],
+    "subnet_name" => YAML.load_from_file(metadata_file)["subnet"],
+    "env_name" => File.read(name_file),
+    "director_ip" => ENV["DIRECTOR_IP"],
+    "nats_password" => ENV["NATS_PASSWORD"],
+    "postgres_password" => ENV["POSTGRES_PASSWORD"],
+    "blobstore_director_password" => ENV["BLOBSTORE_DIRECTOR_PASSWORD"],
+    "blobstore_agent_password" => ENV["BLOBSTORE_AGENT_PASSWORD"],
+    "hm_password" => ENV["HM_PASSWORD"],
+    "mbus_password" => ENV["MBUS_PASSWORD"],
+    "director_cert" => File.read("env-repo/infrastructure/bosh/certs/director.crt"),
+    "director_key" => File.read("env-repo/infrastructure/bosh/certs/director.key"),
+    "google_cpi_json_key" => ENV["GOOGLE_CREDENTIALS"],
+    "director_username" => ENV["DIRECTOR_USERNAME"],
+    "director_password" => ENV["DIRECTOR_PASSWORD"],
+    "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"],
+  }).to_yaml'
+}
+export DEPLOYMENT_VAR_FILE=${root_dir}/env-repo/infrastructure/bosh/deployment-vars.yml
+output_deployment_vars > $DEPLOYMENT_VAR_FILE
+
+echo 'commit'
+commit
+set -x
+
+export BOSH_USER=$DIRECTOR_USERNAME
+export BOSH_PASSWORD=$DIRECTOR_PASSWORD
+
+bosh -n create-env --var-files=${DEPLOYMENT_VAR_FILE} cf-gcp-infrastructure/${DIRECTOR_MANIFEST_FILE}
+
+pushd env-repo
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add .
+    git commit -m "Commit bosh state file"
+  fi
+popd
+
