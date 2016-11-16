@@ -33,11 +33,12 @@ echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/username
 infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director
 
 # GENERTATE CERTS + SSH Key
+export DIRECTOR_SSH_KEY_DIR=${root_dir}/env-repo/infrastructure/bosh/keys
+export DIRECTOR_SSH_KEY_PATH=${DIRECTOR_SSH_KEY_DIR}/ssh-key
 pushd ${root_dir}/env-repo/infrastructure
   pushd bosh
-    export DIRECTOR_SSH_KEY_PATH=keys/ssh-key
-    if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
-      mkdir -p "$(dirname ${DIRECTOR_SSH_KEY_PATH})"
+    if [ ! -f ${DIRECTOR_SSH_KEY_PATH} ]; then
+      mkdir -p "${DIRECTOR_SSH_KEY_DIR}"
       set +x
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
       set -x
