@@ -8,10 +8,10 @@ export root_dir=$PWD
 
 export metadata_file=${root_dir}/terraform/metadata
 export name_file=${root_dir}/terraform/name
-export DIRECTOR_IP=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["bosh_ip"]}).to_yaml')
-export project=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["project"]}).to_yaml')
-export region=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["region"]}).to_yaml')
-export zone=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["zone"]}).to_yaml')
+export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["bosh_ip"]')
+export project=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["project"]')
+export region=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["region"]')
+export zone=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["zone"]')
 
 function commit {
   pushd env-repo
@@ -55,10 +55,10 @@ popd
 # GENERATE DEPLOYMENT VAR FILE
 output_deployment_vars() {
   ruby -ryaml -e 'puts ({
-    "project" => YAML.load_from_file(metadata_file)["project"],
-    "zone" => YAML.load_from_file(metadata_file)["zone"],
-    "network_name" => YAML.load_from_file(metadata_file)["network_name"],
-    "subnet_name" => YAML.load_from_file(metadata_file)["subnet"],
+    "project" => YAML.load_file(metadata_file)["project"],
+    "zone" => YAML.load_file(metadata_file)["zone"],
+    "network_name" => YAML.load_file(metadata_file)["network_name"],
+    "subnet_name" => YAML.load_file(metadata_file)["subnet"],
     "env_name" => File.read(name_file),
     "director_ip" => ENV["DIRECTOR_IP"],
     "nats_password" => ENV["NATS_PASSWORD"],
