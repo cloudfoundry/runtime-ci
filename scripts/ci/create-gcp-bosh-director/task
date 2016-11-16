@@ -30,7 +30,7 @@ export DIRECTOR_USERNAME=user-$(openssl rand -base64 32)
 echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/password
 echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/username
 
-infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director/
+infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director
 
 # GENERTATE CERTS + SSH Key
 pushd ${root_dir}/env-repo/infrastructure
