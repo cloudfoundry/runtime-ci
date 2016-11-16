@@ -11,7 +11,7 @@ export name_file=${root_dir}/terraform/name
 export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["bosh_ip"]')
 export project=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["project"]')
 export region=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["region"]')
-export zone=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["zone"]')
+export zone=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["azs"].first')
 
 function commit {
   pushd env-repo
@@ -55,11 +55,11 @@ popd
 # GENERATE DEPLOYMENT VAR FILE
 output_deployment_vars() {
   ruby -ryaml -e 'puts ({
-    "project" => YAML.load_file(metadata_file)["project"],
-    "zone" => YAML.load_file(metadata_file)["zone"],
-    "network_name" => YAML.load_file(metadata_file)["network_name"],
-    "subnet_name" => YAML.load_file(metadata_file)["subnet"],
-    "env_name" => File.read(name_file),
+    "project" => ENV["project"],
+    "zone" => ENV["zone"],
+    "network_name" => YAML.load_file(ENV["metadata_file"])["network_name"],
+    "subnet_name" => YAML.load_file(ENV["metadata_file"])["subnet"],
+    "env_name" => File.read(ENV["name_file"]),
     "director_ip" => ENV["DIRECTOR_IP"],
     "nats_password" => ENV["NATS_PASSWORD"],
     "postgres_password" => ENV["POSTGRES_PASSWORD"],
