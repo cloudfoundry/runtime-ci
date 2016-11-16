@@ -83,6 +83,14 @@ jobs:
     file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
     input_mapping:
       env-repo: luna-env
+    params:
+      NATS_PASSWORD: {{nats_password}}
+      MBUS_PASSWORD: {{mbus_password}}
+      HM_PASSWORD: {{hm_password}}
+      BLOBSTORE_AGENT_PASSWORD: {{blobstore_agent_password}}
+      BLOBSTORE_DIRECTOR_PASSWORD: {{blobstore_director_password}}
+      POSTGRES_PASSWORD: {{postgres_password}}
+
   - put: luna-env
     params:
       repository: updated-env-repo

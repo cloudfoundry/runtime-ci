@@ -18,3 +18,10 @@ outputs:
 run:
   path: runtime-ci/scripts/ci/create-gcp-bosh-director/task
 
+params:
+  NATS_PASSWORD:
+  MBUS_PASSWORD:
+  HM_PASSWORD:
+  BLOBSTORE_AGENT_PASSWORD:
+  BLOBSTORE_DIRECTOR_PASSWORD:
+  POSTGRES_PASSWORD:
