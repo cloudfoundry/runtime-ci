@@ -4,6 +4,9 @@ groups:
   jobs:
   - setup-infrastructure
   - destroy-infrastructure
+- name: cf-deployment
+  jobs:
+  - create-gcp-bosh-director
 
 resource_types:
 - name: terraform
@@ -11,12 +14,28 @@ resource_types:
   source:
     repository: ljfranklin/terraform-resource
 
+- name: git
+  type: docker-image
+  source:
+    repository: concourse/git-resource
+
 resources:
 - name: runtime-ci
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: luna-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com/cloudfoundry/luna-env.git
+    private_key: {{luna_env_private_key}}
+- name: cf-gcp-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-gcp-infrastructure.git
 - name: terraform
   type: terraform
   source:
@@ -53,3 +72,14 @@ jobs:
       action: destroy
     get_params:
       action: destroy
+
+- name: create-gcp-bosh-director
+  plan:
+  - get: runtime-ci
+  - get: luna-env
+  - get: cf-gcp-infrastructure
+  - get: terraform
+  - task: create-gcp-bosh-director
+    file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
+    input_mapping:
+      env-repo: luna-env
