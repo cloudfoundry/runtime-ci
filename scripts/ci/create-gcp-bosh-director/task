@@ -8,10 +8,10 @@ export root_dir=$PWD
 
 export metadata_file=${root_dir}/terraform/metadata
 export name_file=${root_dir}/terraform/name
-export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["bosh_ip"]')
-export project=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["project"]')
-export region=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["region"]')
-export zone=$(ruby -ryaml -e 'puts YAML.load_file(metadata_file)["zone"]')
+export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["bosh_ip"]')
+export project=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["project"]')
+export region=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["region"]')
+export zone=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["zone"]')
 
 function commit {
   pushd env-repo
