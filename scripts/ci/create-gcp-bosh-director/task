@@ -9,6 +9,9 @@ export root_dir=$PWD
 export metadata_file=${root_dir}/terraform/metadata
 export name_file=${root_dir}/terraform/name
 export DIRECTOR_IP=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["bosh_ip"]}.to_yaml)')
+export project=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["project"]}.to_yaml)')
+export region=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["region"]}.to_yaml)')
+export zone=$(ruby -ryaml -e 'puts ({YAML.load_from_file(metadata_file)["zone"]}.to_yaml)')
 
 function commit {
   pushd env-repo
@@ -35,8 +38,13 @@ pushd ${root_dir}/env-repo/infrastructure
     export DIRECTOR_SSH_KEY_PATH=keys/ssh-key
     if [ ! -e ${DIRECTOR_SSH_KEY_PATH} ]; then
       mkdir -p "$(dirname ${DIRECTOR_SSH_KEY_PATH})"
+      set +x
       ssh-keygen -t rsa -f ${DIRECTOR_SSH_KEY_PATH} -C vcap  -N ""
+      set -x
       paste -d: <(echo vcap) ${DIRECTOR_SSH_KEY_PATH}.pub > ${DIRECTOR_SSH_KEY_PATH}.gcp_pub
+      gcloud config set project ${project}
+      gcloud config set compute/region ${region}
+      gcloud config set compute/zone ${zone}
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
     fi
 
