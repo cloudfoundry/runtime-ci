@@ -90,7 +90,7 @@ export BOSH_PASSWORD=$DIRECTOR_PASSWORD
 
 
 pushd ${root_dir}/env-repo
-  bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} ${root_dir}/cf-gcp-infrastructure/bosh.yml
+  bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
