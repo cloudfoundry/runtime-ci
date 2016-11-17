@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-gcp-bosh-director
+    repository: relintdockerhubpushbot/update-gcp-cloud-config
 
 inputs:
 - name: runtime-ci
@@ -16,7 +16,7 @@ outputs:
 - name: updated-env-repo
 
 run:
-  path: runtime-ci/scripts/ci/create-gcp-bosh-director/task
+  path: runtime-ci/scripts/ci/update-gcp-cloud-config/task
 
 params:
   NATS_PASSWORD:
