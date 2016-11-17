@@ -507,6 +507,13 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-gcp-bosh-director/Dockerfile]
 
+- name: runtime-ci-update-gcp-cloud-config
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/update-gcp-cloud-config/Dockerfile]
+
 - name: runtime-ci
   type: git
   source:
@@ -1007,6 +1014,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-gcp-bosh-director
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: update-gcp-cloud-config-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/update-gcp-cloud-config
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2272,7 +2287,7 @@ jobs:
         passed: [trigger-all-image-builds]
       - get: runtime-ci-update-gcp-cloud-config
         trigger: true
-    - put: create-gcp-bosh-director-pipeline-image
+    - put: update-gcp-cloud-config-pipeline-image
       params:
         build: runtime-ci-update-gcp-cloud-config/scripts/ci/update-gcp-cloud-config
         push: true
