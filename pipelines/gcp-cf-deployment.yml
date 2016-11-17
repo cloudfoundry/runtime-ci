@@ -7,6 +7,7 @@ groups:
 - name: cf-deployment
   jobs:
   - create-gcp-bosh-director
+  - update-gcp-cloud-config
 
 resource_types:
 - name: terraform
@@ -96,9 +97,13 @@ jobs:
 - name: update-gcp-cloud-config
   plan:
   - get: runtime-ci
+    passed: [create-gcp-bosh-director]
   - get: luna-env
+    passed: [create-gcp-bosh-director]
   - get: cf-gcp-infrastructure
+    passed: [create-gcp-bosh-director]
   - get: terraform
+    passed: [create-gcp-bosh-director]
   - task: update-gcp-cloud-config
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
