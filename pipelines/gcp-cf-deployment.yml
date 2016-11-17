@@ -110,10 +110,8 @@ jobs:
   plan:
   - get: runtime-ci
   - get: luna-env
-    passed: [create-gcp-bosh-director]
   - get: cf-gcp-infrastructure
   - get: terraform
-    passed: [create-gcp-bosh-director]
   - task: update-gcp-cloud-config
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
