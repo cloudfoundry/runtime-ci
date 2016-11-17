@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp env-repo/infrastructure/bosh-init/username username/username
-cp env-repo/infrastructure/bosh-init/password password/password
-cp env-repo/infrastructure/bosh-init/bosh-target target/target
-cp env-repo/infrastructure/bosh-init/certs/rootCA.pem ca-cert/ca-cert
+cp env-repo/infrastructure/bosh/username username/username
+cp env-repo/infrastructure/bosh/password password/password
+cp env-repo/infrastructure/bosh/bosh-target target/target
+cp env-repo/infrastructure/bosh/certs/rootCA.pem ca-cert/ca-cert

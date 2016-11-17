@@ -8,6 +8,7 @@ groups:
   jobs:
   - create-gcp-bosh-director
   - update-gcp-cloud-config
+  - deploy-releases
 
 resource_types:
 - name: terraform
@@ -37,6 +38,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
+- name: cf-deployment-develop
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{cf_deployment_private_key}}
 - name: terraform
   type: terraform
   source:
@@ -59,6 +66,7 @@ resources:
 
 jobs:
 - name: setup-infrastructure
+  serial_groups: [setup-deploy-and-test]
   plan:
   - put: terraform
     params:
@@ -66,6 +74,7 @@ jobs:
       delete_on_failure: true
 
 - name: destroy-infrastructure
+  serial_groups: [setup-deploy-and-test]
   plan:
   - put: terraform
     params:
@@ -75,6 +84,7 @@ jobs:
       action: destroy
 
 - name: create-gcp-bosh-director
+  serial_groups: [setup-deploy-and-test]
   plan:
   - get: runtime-ci
   - get: luna-env
@@ -94,7 +104,9 @@ jobs:
   - put: luna-env
     params:
       repository: updated-env-repo
+
 - name: update-gcp-cloud-config
+  serial_groups: [setup-deploy-and-test]
   plan:
   - get: runtime-ci
   - get: luna-env
@@ -106,3 +118,32 @@ jobs:
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
       env-repo: luna-env
+
+- name: deploy-releases
+  serial: true
+  serial_groups: [setup-deploy-and-test]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+      trigger: true
+    - get: luna-env
+      trigger: true
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: luna-env
+  - task: bosh-deploy-cf
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest: cf-deployment-develop
+      manifest-properties: luna-env
+    params:
+      TARGET_FILE:  target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: cf-deployment.yml
+      DEPLOYMENT_VAR_FILE: deployment-env-vars.yml
+      DEPLOYMENT_OPS_FILE: opsfiles/gcp.yml
