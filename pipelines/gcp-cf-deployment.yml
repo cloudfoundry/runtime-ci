@@ -100,7 +100,6 @@ jobs:
   - get: luna-env
     passed: [create-gcp-bosh-director]
   - get: cf-gcp-infrastructure
-    passed: [create-gcp-bosh-director]
   - get: terraform
     passed: [create-gcp-bosh-director]
   - task: update-gcp-cloud-config
