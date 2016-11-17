@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -xeu
+
+export root_dir=$PWD
+
+export metadata_file=${root_dir}/terraform/metadata
+
+export BOSH_USER=$(cat env-repo/username)
+set +x
+export BOSH_PASSWORD=$(cat env-repo/password)
+set -x
+export BOSH_ENVIRONMENT=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["bosh_ip"]')
+export BOSH_CA_CERT="${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem"
+
+bosh -n update-cloud-config \
+  --var-file=${root_dir}/env-repo/infrastructure/bosh/deployment-vars.yml \
+  ${root_dir}/cf-gcp-infrastructure/deployments/cloud_config.yml
+

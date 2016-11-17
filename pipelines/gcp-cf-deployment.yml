@@ -90,7 +90,16 @@ jobs:
       BLOBSTORE_AGENT_PASSWORD: {{blobstore_agent_password}}
       BLOBSTORE_DIRECTOR_PASSWORD: {{blobstore_director_password}}
       POSTGRES_PASSWORD: {{postgres_password}}
-
   - put: luna-env
     params:
       repository: updated-env-repo
+- name: update-gcp-cloud-config
+  plan:
+  - get: runtime-ci
+  - get: luna-env
+  - get: cf-gcp-infrastructure
+  - get: terraform
+  - task: update-gcp-cloud-config
+    file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
+    input_mapping:
+      env-repo: luna-env
