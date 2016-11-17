@@ -12,6 +12,8 @@ export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["
 export project=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["project"]')
 export region=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["region"]')
 export zone=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["azs"].first')
+export network_name=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["network_name"]')
+export subnet_name=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["subnet"]')
 
 function commit {
   pushd env-repo
@@ -61,8 +63,8 @@ output_deployment_vars() {
   ruby -ryaml -e 'puts ({
     "project" => ENV["project"],
     "zone" => ENV["zone"],
-    "network_name" => YAML.load_file(ENV["metadata_file"])["network_name"],
-    "subnet_name" => YAML.load_file(ENV["metadata_file"])["subnet"],
+    "network_name" => ENV["network_name"],
+    "subnet_name" => ENV["subnet_name"],
     "env_name" => File.read(ENV["name_file"]),
     "director_ip" => ENV["DIRECTOR_IP"],
     "nats_password" => ENV["NATS_PASSWORD"],
