@@ -8,28 +8,27 @@ set +x
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
-set +u
-DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE}"
-set -u
 
-if [[ -f $DEPLOYMENT_VAR_FILE ]]; then
-  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy --var-files="${DEPLOYMENT_VAR_FILE}" ${BOSH_MANIFEST}"
-  bosh \
-    -n \
-    -d "${DEPLOYMENT_NAME}" \
-    -e "${BOSH_TARGET}" \
-    --ca-cert="${BOSH_CA_CERT}" \
-    deploy \
-    --var-files="${DEPLOYMENT_VAR_FILE}" \
-    "${BOSH_MANIFEST}"
-else
-  echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${BOSH_MANIFEST}"
-  bosh \
-    -n \
-    -d "${DEPLOYMENT_NAME}" \
-    -e "${BOSH_TARGET}" \
-    --ca-cert="${BOSH_CA_CERT}" \
-    deploy \
-    "${BOSH_MANIFEST}"
+ops_file_argument=""
+deployment_var_file_argument=""
+
+if [ "${OPS_FILE}" != "" ]; then
+  ops_file_argument="-o manifest/${OPS_FILE}"
 fi
+
+if [ "${DEPLOYMENT_VAR_FILE}" != "" ]; then
+  deployment_var_file_argument="-l manifest-properties/${DEPLOYMENT_VAR_FILE}"
+fi
+
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_var_file_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
+bosh \
+  -n \
+  -d "${DEPLOYMENT_NAME}" \
+  -e "${BOSH_TARGET}" \
+  --ca-cert="${BOSH_CA_CERT}" \
+  deploy \
+  $deployment_var_file_argument \
+  $ops_file_argument \
+  "${BOSH_MANIFEST}"
+
 set -x
