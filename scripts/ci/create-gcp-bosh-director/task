@@ -25,10 +25,12 @@ function commit {
 }
 
 # GENERTATE Director Creds
-export DIRECTOR_PASSWORD=$(openssl rand -base64 32)
 export DIRECTOR_USERNAME=user-$(openssl rand -base64 32)
-echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/password
 echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/username
+set +x
+export DIRECTOR_PASSWORD=$(openssl rand -base64 32)
+echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/password
+set -x
 
 infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director
 
@@ -87,8 +89,9 @@ shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
 
 export BOSH_USER=$DIRECTOR_USERNAME
+set +x
 export BOSH_PASSWORD=$DIRECTOR_PASSWORD
-
+set -x
 
 pushd ${root_dir}/env-repo
   bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml
