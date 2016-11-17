@@ -97,7 +97,6 @@ jobs:
 - name: update-gcp-cloud-config
   plan:
   - get: runtime-ci
-    passed: [create-gcp-bosh-director]
   - get: luna-env
     passed: [create-gcp-bosh-director]
   - get: cf-gcp-infrastructure
