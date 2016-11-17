@@ -70,6 +70,7 @@ groups:
   - build-build-metadata-resource-docker-image
   - build-setup-infrastructure-terraform-docker-image
   - build-create-gcp-bosh-director-docker-image
+  - build-update-gcp-cloud-config-docker-image
 
 resources:
 - name: weekly
@@ -83,7 +84,6 @@ resources:
   type: time
   source:
     interval: 2h
-
 
 - name: runtime-ci-build-metadata-resource
   type: git
@@ -2256,4 +2256,23 @@ jobs:
     - put: create-gcp-bosh-director-pipeline-image
       params:
         build: runtime-ci-create-gcp-bosh-director/scripts/ci/create-gcp-bosh-director
+        push: true
+
+- name: build-update-gcp-cloud-config-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-update-gcp-cloud-config
+        trigger: true
+    - put: create-gcp-bosh-director-pipeline-image
+      params:
+        build: runtime-ci-update-gcp-cloud-config/scripts/ci/update-gcp-cloud-config
         push: true
