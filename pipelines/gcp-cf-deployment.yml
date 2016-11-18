@@ -144,4 +144,4 @@ jobs:
       CA_CERT_FILE: ca-cert
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VAR_FILE: deployment-vars.yml
-      DEPLOYMENT_OPS_FILE: opsfiles/gcp.yml
+      OPS_FILE: opsfiles/gcp.yml
