@@ -11,6 +11,7 @@ groups:
   - upload-stemcell
   - deploy-releases
   - delete-deployment
+  - acceptance-tests
 
 resource_types:
 - name: terraform
@@ -46,6 +47,11 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
 - name: terraform
   type: terraform
   source:
@@ -194,3 +200,31 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VAR_FILE: deployment-vars.yml
       OPS_FILE: opsfiles/gcp.yml
+
+- name: acceptance-tests
+  public: true
+  serial_groups: [setup-deploy-and-test]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+      - get: luna-env
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.luna.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      input_mapping:
+        cf-target: target-file-dir
+      params:
+        CF_USER: {{luna_admin_username}}
+        CF_PASSWORD: {{luna_admin_password}}
+    - task: run-cats
+      input_mapping:
+      - integration-config: luna-env
+      file: runtime-ci/scripts/ci/run-cats/task.yml
+
