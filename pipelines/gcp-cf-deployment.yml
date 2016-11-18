@@ -149,22 +149,6 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: "*.tgz"
-  - task: create-binaries-manifest-section
-    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
-    input_mapping:
-      deployment-configuration: cf-deployment-develop
-  - task: commit-generated-manifest
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      manifest: deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      COMMIT_MESSAGE: 'Update releases'
-  - put: cf-deployment-develop
-    params:
-      repository: updated-repo
 
 - name: deploy-releases
   serial: true
