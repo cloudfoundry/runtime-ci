@@ -26,8 +26,8 @@ function commit {
 
 # GENERTATE Director Creds
 export DIRECTOR_USERNAME=user-$(openssl rand -base64 32)
-echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/bosh/username
-echo $DIRECTOR_IP > ${root_dir}/env-repo/bosh/bosh-target
+echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/infrastructure/bosh/username
+echo $DIRECTOR_IP > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
 set +x
 export DIRECTOR_PASSWORD=$(openssl rand -base64 32)
 echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/bosh/password
