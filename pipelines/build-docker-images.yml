@@ -70,6 +70,7 @@ groups:
   - build-build-metadata-resource-docker-image
   - build-setup-infrastructure-terraform-docker-image
   - build-create-gcp-bosh-director-docker-image
+  - build-destroy-gcp-bosh-director-docker-image
   - build-update-gcp-cloud-config-docker-image
 
 resources:
@@ -506,6 +507,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-gcp-bosh-director/Dockerfile]
+
+- name: runtime-ci-destroy-gcp-bosh-director
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/destroy-gcp-bosh-director/Dockerfile]
 
 - name: runtime-ci-update-gcp-cloud-config
   type: git
@@ -1014,6 +1022,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-gcp-bosh-director
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: destroy-gcp-bosh-director-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/destroy-gcp-bosh-director
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2271,6 +2287,25 @@ jobs:
     - put: create-gcp-bosh-director-pipeline-image
       params:
         build: runtime-ci-create-gcp-bosh-director/scripts/ci/create-gcp-bosh-director
+        push: true
+
+- name: build-destroy-gcp-bosh-director-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-destroy-gcp-bosh-director
+        trigger: true
+    - put: destroy-gcp-bosh-director-pipeline-image
+      params:
+        build: runtime-ci-destroy-gcp-bosh-director/scripts/ci/destroy-gcp-bosh-director
         push: true
 
 - name: build-update-gcp-cloud-config-docker-image
