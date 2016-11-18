@@ -30,7 +30,7 @@ echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/infrastructure/bosh/username
 echo $DIRECTOR_IP > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
 set +x
 export DIRECTOR_PASSWORD=$(openssl rand -base64 32)
-echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/bosh/password
+echo $DIRECTOR_PASSWORD > ${root_dir}/env-repo/infrastructure/bosh/password
 set -x
 
 infrastructure_task_dir=${root_dir}/runtime-ci/scripts/ci/create-gcp-bosh-director
