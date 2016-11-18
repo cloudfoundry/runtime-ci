@@ -522,12 +522,6 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/update-gcp-cloud-config/Dockerfile]
 
-- name: runtime-ci
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-
 - name: cf-cli
   type: github-release
   source:
