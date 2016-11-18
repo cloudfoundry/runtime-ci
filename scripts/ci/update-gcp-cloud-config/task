@@ -6,9 +6,9 @@ export root_dir=$PWD
 
 export metadata_file=${root_dir}/terraform/metadata
 
-export BOSH_USER=$(cat env-repo/username)
+export BOSH_USER=$(cat env-repo/infrastructure/bosh/username)
 set +x
-export BOSH_PASSWORD=$(cat env-repo/password)
+export BOSH_PASSWORD=$(cat env-repo/infrastructure/bosh/password)
 set -x
 export BOSH_ENVIRONMENT=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["bosh_ip"]')
 export BOSH_CA_CERT="${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem"
