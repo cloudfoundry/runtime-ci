@@ -10,6 +10,7 @@ groups:
   - update-gcp-cloud-config
   - upload-stemcell
   - deploy-releases
+  - delete-deployment
 
 resource_types:
 - name: terraform
@@ -87,6 +88,26 @@ jobs:
       action: destroy
     get_params:
       action: destroy
+
+- name: delete-deployment
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: luna-env
+    - task: extract-director-creds-from-terraform-env
+      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+      input_mapping:
+        env-repo: luna-env
+    - aggregate:
+      - task: delete-deployment-cf
+        file: runtime-ci/scripts/ci/delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf
 
 - name: create-gcp-bosh-director
   serial_groups: [setup-deploy-and-test]
