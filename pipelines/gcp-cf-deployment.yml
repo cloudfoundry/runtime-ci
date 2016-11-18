@@ -60,15 +60,10 @@ resources:
       env_name: &terraform_env_name luna
       region: us-central1
       zones: [us-central1-a, us-central1-b, us-central1-c]
-      dns_suffix: luna.cf-app.com
+      dns_suffix: cf-app.com
       ssl_cert: {{cf_ssl_cert}}
       ssl_cert_private_key: {{cf_ssl_cert_private_key}}
       service_account_key: {{service_account_json}}
-- name: cf-acceptance-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-acceptance-tests
 - name: stemcell
   type: bosh-io-stemcell
   source:
