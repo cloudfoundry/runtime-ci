@@ -8,6 +8,7 @@ groups:
   jobs:
   - create-gcp-bosh-director
   - update-gcp-cloud-config
+  - update-releases
   - deploy-releases
 
 resource_types:
@@ -63,6 +64,99 @@ resources:
       ssl_cert: {{cf_ssl_cert}}
       ssl_cert_private_key: {{cf_ssl_cert_private_key}}
       service_account_key: {{service_account_json}}
+- name: capi-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/capi-release
+- name: nats-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nats-release
+- name: routing-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/cf-routing-release
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
+- name: consul-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/consul-release
+- name: etcd-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+- name: diego-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/diego-release
+- name: loggregator-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/loggregator
+- name: cf-mysql-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-mysql-release
+- name: uaa-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/uaa-release
+- name: garden-runc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/garden-runc-release
+- name: binary-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/binary-buildpack-release
+- name: dotnet-core-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/dotnet-core-buildpack-release
+- name: go-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/go-buildpack-release
+- name: java-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/java-buildpack-release
+- name: java-offline-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/java-offline-buildpack-release
+- name: nodejs-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nodejs-buildpack-release
+- name: php-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/php-buildpack-release
+- name: python-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/python-buildpack-release
+- name: ruby-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/ruby-buildpack-release
+- name: staticfile-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/staticfile-buildpack-release
+- name: cflinuxfs2-rootfs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 jobs:
 - name: setup-infrastructure
@@ -116,6 +210,129 @@ jobs:
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
       env-repo: luna-env
+
+- name: update-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: luna-env
+    - get: cf-deployment-develop
+    - get: stemcell
+      trigger: true
+    - get: capi-release
+      trigger: true
+      params:
+        tarball: false
+    - get: nats-release
+      trigger: true
+      params:
+        tarball: false
+    - get: routing-release
+      trigger: true
+      params:
+        tarball: false
+    - get: consul-release
+      trigger: true
+      params:
+        tarball: false
+    - get: etcd-release
+      trigger: true
+      params:
+        tarball: false
+    - get: diego-release
+      trigger: true
+      params:
+        tarball: false
+    - get: loggregator-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cf-mysql-release
+      trigger: true
+      params:
+        tarball: false
+    - get: uaa-release
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-runc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cflinuxfs2-rootfs-release
+      trigger: true
+      params:
+        tarball: false
+    - get: binary-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: dotnet-core-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: go-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: java-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: java-offline-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: nodejs-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: php-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: python-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: ruby-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: staticfile-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: luna-env
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      STEMCELL_NAME: "*.tgz"
+  - task: create-binaries-manifest-section
+    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+    input_mapping:
+      deployment-configuration: cf-deployment-develop
+  - task: commit-generated-manifest
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      manifest: deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_MESSAGE: 'Update releases'
+  - put: cf-deployment-develop
+    params:
+      repository: updated-repo
 
 - name: deploy-releases
   serial: true
