@@ -7,7 +7,7 @@ set -xeu
 export root_dir=$PWD
 
 export metadata_file=${root_dir}/terraform/metadata
-export name_file=${root_dir}/terraform/name
+export env_name=$(cat ${root_dir}/terraform/name)
 export DIRECTOR_IP=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["bosh_ip"]')
 export project=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["project"]')
 export region=$(ruby -ryaml -e 'puts YAML.load_file(ENV["metadata_file"])["region"]')
@@ -53,7 +53,7 @@ pushd ${root_dir}/env-repo/infrastructure
       gcloud compute project-info add-metadata --metadata-from-file sshKeys=${DIRECTOR_SSH_KEY_PATH}.gcp_pub
     fi
 
-    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} ${root_dir}/env-repo/infrastructure/bosh
+    ${infrastructure_task_dir}/generate-certs.sh director ${DIRECTOR_IP} bosh.${env_name}.cf-app.com ${root_dir}/env-repo/infrastructure/bosh
   popd
 popd
 
@@ -62,7 +62,7 @@ output_deployment_vars() {
   ruby -ryaml -e 'puts ({
     "project" => ENV["project"],
     "zone" => ENV["zone"],
-    "env_name" => File.read(ENV["name_file"]),
+    "env_name" => ENV["env_name"],
     "director_ip" => ENV["DIRECTOR_IP"],
     "nats_password" => ENV["NATS_PASSWORD"],
     "postgres_password" => ENV["POSTGRES_PASSWORD"],

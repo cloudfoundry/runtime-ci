@@ -5,7 +5,8 @@ set -e
 
 name=$1
 ip=$2
-output_dir=$3
+hostname=$3
+output_dir=$4
 
 # rm -rf $certs && mkdir -p $certs
 pushd $output_dir
@@ -24,7 +25,7 @@ pushd $output_dir
 	cat >openssl-exts.conf <<-EOL
 	extensions = san
 	[san]
-	subjectAltName = IP:${ip}
+	subjectAltName = IP:${ip},DNS:${hostname}
 	EOL
 
 
@@ -32,7 +33,7 @@ pushd $output_dir
 	# golang requires to have SAN for the IP
 	openssl req -new -nodes -newkey rsa:2048 \
 		-out ${name}.csr -keyout ${name}.key \
-		-subj "/C=US/O=BOSH/CN=${ip}"
+		-subj "/C=US/O=BOSH/CN=${hostname}"
 
 
 	echo "Generating certificate ${ip}..."
