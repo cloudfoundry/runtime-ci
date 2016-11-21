@@ -326,6 +326,7 @@ jobs:
       PASSWORD_FILE_PATH: password
       CA_CERT_FILE_PATH: ca-cert
       MANIFEST_FILE_PATH: nats.yml
+      OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
 
 - name: smoke-tests-1-0
   public: true
@@ -798,7 +799,6 @@ jobs:
     input_mapping:
       manifest: cf-deployment-develop
       manifest-properties: minerva-env-properties
-      ops-files: minerva-env-properties
       release: nats-release-develop
     params:
       TARGET_FILE_PATH:  target
@@ -807,6 +807,7 @@ jobs:
       CA_CERT_FILE_PATH: ca-cert
       MANIFEST_FILE_PATH: cf-deployment.yml
       DEPLOYMENT_VAR_FILE_PATH: deployment-env-vars.yml
+      OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
 
 - name: cats-tests
   public: true
