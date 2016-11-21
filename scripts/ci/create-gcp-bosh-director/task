@@ -93,7 +93,10 @@ export BOSH_PASSWORD=$DIRECTOR_PASSWORD
 set -x
 
 pushd ${root_dir}/env-repo
-  bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml
+  # Bosh create-env places the state file in the same directory as the manifest. Since we want the state file
+  # in the env-repo, we copy the manifest template to our env-repo so we can commit it.
+  cp ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml infrastructure/bosh/bosh.yml
+  bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} infrastructure/bosh/bosh.yml
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
