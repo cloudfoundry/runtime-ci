@@ -15,7 +15,6 @@ inputs:
 - name: ca-cert
 - name: manifest
 - name: manifest-properties
-- name: ops-files
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task
@@ -27,4 +26,4 @@ params:
   CA_CERT_FILE_PATH:
   MANIFEST_FILE_PATH:
   DEPLOYMENT_VAR_FILE_PATH:
-  OPS_FILE_DIR_PATH:
+  OPS_FILE:

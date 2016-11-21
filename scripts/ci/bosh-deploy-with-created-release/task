@@ -16,13 +16,7 @@ if [[ ! -z "$DEPLOYMENT_VAR_FILE_PATH" ]]; then
   DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE_PATH}"
 fi
 
-OPS_FILE_DIR=""
-if [[ ! -z "$OPS_FILE_DIR_PATH" ]]; then
-  OPS_FILE_DIR="ops-files/${OPS_FILE_DIR_PATH}"
-fi
-
 set -u
-
 set +x
 echo "BOSH_PASSWORD=\$(cat password/${PASSWORD_FILE_PATH})"
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE_PATH}")
@@ -38,17 +32,14 @@ cat << EOF > ops.yml
     url: file://$(pwd)/release
 EOF
 
-
 VAR_FILES_FLAG=""
 if [[ -f ${DEPLOYMENT_VAR_FILE} ]]; then
   VAR_FILES_FLAG="--var-files=${DEPLOYMENT_VAR_FILE}"
 fi
 
 OPS_FILE_FLAGS="-o ops.yml"
-if [[ -d ${OPS_FILE_DIR} ]]; then
-  for OPS_FILE in $OPS_FILE_DIR/*.yml; do
-    OPS_FILE_FLAGS="$OPS_FILE_FLAGS -o $OPS_FILE"
-  done
+if [[ -f ${OPS_FILE} ]]; then
+  OPS_FILE_FLAGS="$OPS_FILE_FLAGS -o manifest/$OPS_FILE"
 fi
 
 bosh \
