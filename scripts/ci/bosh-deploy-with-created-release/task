@@ -34,10 +34,10 @@ EOF
 
 VAR_FILES_FLAG=""
 if [[ -f ${DEPLOYMENT_VAR_FILE} ]]; then
-  VAR_FILES_FLAG="--var-files=${DEPLOYMENT_VAR_FILE}"
+  VAR_FILES_FLAG="-l ${DEPLOYMENT_VAR_FILE}"
 fi
 
-OPS_FILE_FLAGS="-o ops.yml"
+OPS_FILE_FLAG="-o ops.yml"
 if [[ -f "manifest/${OPS_FILE}" ]]; then
   grep -v "\-\-\-" "manifest/${OPS_FILE}" >> ops.yml
 fi
@@ -49,5 +49,5 @@ bosh \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
   ${VAR_FILES_FLAG} \
-  ${OPS_FILE_FLAGS} \
+  ${OPS_FILE_FLAG} \
   "${BOSH_MANIFEST}"
