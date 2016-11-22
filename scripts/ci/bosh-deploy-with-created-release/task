@@ -48,6 +48,6 @@ bosh \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  "${VAR_FILES_FLAG}" \
-  "${OPS_FILE_FLAGS}" \
+  ${VAR_FILES_FLAG} \
+  ${OPS_FILE_FLAGS} \
   "${BOSH_MANIFEST}"
