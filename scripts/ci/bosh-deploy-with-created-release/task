@@ -39,7 +39,7 @@ fi
 
 OPS_FILE_FLAGS="-o ops.yml"
 if [[ -f "manifest/${OPS_FILE}" ]]; then
-  OPS_FILE_FLAGS="$OPS_FILE_FLAGS -o manifest/$OPS_FILE"
+  OPS_FILE_FLAGS="$OPS_FILE_FLAGS manifest/$OPS_FILE"
 fi
 
 bosh \
