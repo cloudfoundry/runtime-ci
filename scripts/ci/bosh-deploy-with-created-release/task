@@ -38,7 +38,7 @@ if [[ -f ${DEPLOYMENT_VAR_FILE} ]]; then
 fi
 
 OPS_FILE_FLAGS="-o ops.yml"
-if [[ -f ${OPS_FILE} ]]; then
+if [[ -f "manifest/${OPS_FILE}" ]]; then
   OPS_FILE_FLAGS="$OPS_FILE_FLAGS -o manifest/$OPS_FILE"
 fi
 
@@ -48,6 +48,6 @@ bosh \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  ${VAR_FILES_FLAG} \
-  ${OPS_FILE_FLAGS} \
-  ${BOSH_MANIFEST}
+  "${VAR_FILES_FLAG}" \
+  "${OPS_FILE_FLAGS}" \
+  "${BOSH_MANIFEST}"
