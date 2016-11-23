@@ -6,39 +6,48 @@ BOSH_LITE_IP="${BOSH_LITE_IP:?"\$BOSH_LITE_IP not set"}"
 create_stub() {
   bosh -t "${BOSH_LITE_IP}" login admin admin
   DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
-  cat << EOF > bosh-lite-stub/stub.yml
-director_uuid: $DIRECTOR_UUID
-properties:
-  system_domain: bosh-lite.runtime-ci.cf-app.com
-  apps_domain: bosh-lite.runtime-ci.cf-app.com
-  acceptance_tests:
-    nodes: 4
-    include_sso: true
-    include_security_groups: true
-    include_internet_dependent: true
-    include_services: true
-    include_v3: false
-    include_route_services: true
-    include_diego_docker: false
-    include_diego_ssh: false
-    include_backend_compatibility: true
-    include_privileged_container_support: true
-    include_zipkin: false
-    backend: dea
-    persistent_app_host: CATS-persistent-app-dea
-    persistent_app_space: CATS-persistent-space-dea
-    persistent_app_quota_name: CATS-persistent-quota-dea
-    persistent_app_org: CATS-persistent-org-dea
-  cc:
-    security_group_definitions:
-      - name: load_balancer
-        rules:
-        - protocol: all
-          destination: ${BOSH_LITE_IP}
-
-EOF
-
-  cat bosh-lite-stub/stub.yml
+  ruby -ryaml -e "puts ({
+    'director_uuid' => ENV['DIRECTOR_UUID'],
+    'properties' => {
+      'login' => {
+        'saml' => {
+          'serviceProviderKey' => ENV['SAML_SERVICE_PROVIDER_KEY'],
+          'serviceProviderKeyPassword' => '',
+          'serviceProviderCertificate' => ENV['SAML_SERVICE_PROVIDER_CERTIFICATE']
+        }
+      },
+      'system_domain' => 'bosh-lite.runtime-ci.cf-app.com',
+      'apps_domain' => 'bosh-lite.runtime-ci.cf-app.com',
+      'acceptance_tests' => {
+        'nodes' => 4,
+        'include_sso' => true,
+        'include_security_groups' => true,
+        'include_internet_dependent' => true,
+        'include_services' => true,
+        'include_v3' => false,
+        'include_route_services' => true,
+        'include_diego_docker' => false,
+        'include_diego_ssh' => false,
+        'include_backend_compatibility' => true,
+        'include_privileged_container_support' => true,
+        'include_zipkin' => false,
+        'backend' => 'dea',
+        'persistent_app_host' => 'CATS-persistent-app-dea',
+        'persistent_app_space' => 'CATS-persistent-space-dea',
+        'persistent_app_quota_name' => 'CATS-persistent-quota-dea',
+        'persistent_app_org' => 'CATS-persistent-org-dea',
+      },
+      'cc' => {
+        'security_group_definitions' => [
+          'name' => 'load_balancer',
+          'rules' => [
+            'protocol' => 'all',
+            'destination' => ENV['BOSH_LITE_IP'],
+          ]
+        ]
+      }
+    }
+  }).to_yaml" > bosh-lite-stub/stub.yml
 }
 
 main() {

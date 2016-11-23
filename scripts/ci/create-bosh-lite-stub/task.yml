@@ -14,6 +14,8 @@ outputs:
 
 params:
   BOSH_LITE_IP:
+  SAML_SERVICE_PROVIDER_KEY:
+  SAML_SERVICE_PROVIDER_CERTIFICATE:
 
 run:
   path: runtime-ci/scripts/ci/create-bosh-lite-stub/task

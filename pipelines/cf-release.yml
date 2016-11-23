@@ -1543,6 +1543,8 @@ jobs:
     file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
     params:
       BOSH_LITE_IP: {{bosh_lite_elastic_ip}}
+      SAML_SERVICE_PROVIDER_KEY: {{saml_service_provider_key}}
+      SAML_SERVICE_PROVIDER_CERTIFICATE: {{saml_service_provider_certificate}}
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
