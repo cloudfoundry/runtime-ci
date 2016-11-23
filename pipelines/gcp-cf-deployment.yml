@@ -110,11 +110,12 @@ jobs:
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
         env-repo: luna-env
-    - aggregate:
-      - task: delete-deployment-cf
-        file: runtime-ci/scripts/ci/delete-deployment/task.yml
-        params:
-          DEPLOYMENT_NAME: cf
+    - task: delete-deployment-cf
+      input_mapping:
+        env-repo: luna-env
+      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+      params:
+        DEPLOYMENT_NAME: cf
 
 - name: create-gcp-bosh-director
   serial_groups: [setup-deploy-and-test]
