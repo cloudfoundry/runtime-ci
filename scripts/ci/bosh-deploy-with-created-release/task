@@ -43,7 +43,7 @@ if [[ -f "manifest/${OPS_FILE}" ]]; then
 fi
 
 set +x
-bosh -n interpolate ${VAR_FILES_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST}"
+bosh -n interpolate ${VAR_FILES_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST}
 set -x
 
 bosh \
