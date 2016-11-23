@@ -75,7 +75,7 @@ output_deployment_vars() {
     "google_cpi_json_key" => File.read("env-repo/google_account_creds.json"),
     "director_username" => ENV["DIRECTOR_USERNAME"],
     "director_password" => ENV["DIRECTOR_PASSWORD"],
-    "director_ssh_key_path" => ENV["DIRECTOR_SSH_KEY_PATH"],
+    "director_ssh_key_path" => "keys/ssh-key",
   }).to_yaml'
 }
 export DEPLOYMENT_VAR_FILE=${root_dir}/env-repo/infrastructure/bosh/deployment-vars.yml
