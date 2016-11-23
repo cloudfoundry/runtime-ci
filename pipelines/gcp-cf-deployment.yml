@@ -238,5 +238,7 @@ jobs:
     - task: run-cats
       input_mapping:
       - integration-config: luna-env
+      params:
+        NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
