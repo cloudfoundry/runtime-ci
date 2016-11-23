@@ -42,9 +42,7 @@ if [[ -f "manifest/${OPS_FILE}" ]]; then
   grep -v "\-\-\-" "manifest/${OPS_FILE}" >> ops.yml
 fi
 
-set +x
-bosh -n interpolate ${VAR_FILES_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST}
-set -x
+bosh -n interpolate ${VAR_FILES_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST} > /dev/null
 
 bosh \
   -n \
