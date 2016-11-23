@@ -96,6 +96,9 @@ pushd ${root_dir}/env-repo
   # Bosh create-env places the state file in the same directory as the manifest. Since we want the state file
   # in the env-repo, we copy the manifest template to our env-repo so we can commit it.
   cp ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml infrastructure/bosh/bosh.yml
+  set +x
+  bosh -n interpolate ${DEPLOYMENT_VAR_FILE} --var-errs infrastructure/bosh/bosh.yml
+  set -x
   bosh -n create-env --var-file=${DEPLOYMENT_VAR_FILE} infrastructure/bosh/bosh.yml
 
   if [[ -n $(git status --porcelain) ]]; then

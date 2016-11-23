@@ -17,8 +17,10 @@ popd
 export BOSH_USER=$(cat username/"${USERNAME_FILE}")
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 
+bosh -n interpolate --var-file=env-repo/${DEPLOYMENT_VAR_FILE} --var-errs env-repo/${DIRECTOR_MANIFEST_FILE}
+
 set -x
-bosh -n create-env --var-files=env-repo/${DEPLOYMENT_VAR_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
+bosh -n create-env --var-file=env-repo/${DEPLOYMENT_VAR_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
 
 pushd env-repo
   STATE_FILE_PATH=${DIRECTOR_MANIFEST_FILE%%.yml}-state.json

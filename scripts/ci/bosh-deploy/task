@@ -21,6 +21,7 @@ if [ "${DEPLOYMENT_VAR_FILE}" != "" ]; then
 fi
 
 echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_var_file_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
+bosh -n interpolate ${deployment_var_file_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST}"
 bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
