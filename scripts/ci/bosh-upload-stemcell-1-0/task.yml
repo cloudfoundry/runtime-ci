@@ -1,0 +1,24 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-upload-stemcell-1-0
+
+inputs:
+- name: runtime-ci
+- name: target
+- name: username
+- name: password
+- name: ca-cert
+- name: stemcell
+
+run:
+  path: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task
+
+params:
+  TARGET_FILE:
+  USERNAME_FILE:
+  PASSWORD_FILE:
+  STEMCELL_NAME:
+  CA_CERT_FILE:
