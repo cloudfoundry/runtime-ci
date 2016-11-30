@@ -15,15 +15,15 @@ BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}") && export BOSH_PASSWORD
 set -x
 
 # Ask bosh if it already has our OS / version stemcell combination
-EXISTING_STEMCELL=$(bosh stemcells | grep $OS | awk '{print $2}' | tr -d "\*" | grep ^"$VERSION"$ )
+EXISTING_STEMCELL=$(bosh stemcells | grep "$OS" | awk '{print $2}' | tr -d "\*" | grep ^"$VERSION"$ )
 
 STEMCELL_NAME="bosh"
 
-if [[ $INFRASTRUCTURE -eq "aws" ]]; then
+if [ "$INFRASTRUCTURE" != "aws" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-aws-xen-hvm"
-elif [[ $INFRASTRUCTURE -eq "google" ]]; then
+elif [ "$INFRASTRUCTURE" != "google" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-google-kvm"
-elif [[ $INFRASTRUCTURE -eq "boshlite" ]]; then
+elif [ "$INFRASTRUCTURE" != "boshlite" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-warden-boshlite"
 fi
 
@@ -42,6 +42,6 @@ set +x
 bosh \
   -n \
   upload-stemcell \
-  $BOSH_IO_STEMCELL_URL
+  "$BOSH_IO_STEMCELL_URL"
 set -x
 
