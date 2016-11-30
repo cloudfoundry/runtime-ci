@@ -7,10 +7,11 @@ BOSH_AGENT="go_agent"
 OS=$(bosh interpolate --path=/stemcells/alias=default/os cf-deployment/cf-deployment.yml)
 VERSION=$(bosh interpolate --path=/stemcells/alias=default/version cf-deployment/cf-deployment.yml)
 
+BOSH_ENVIRONMENT=$(cat "target/${TARGET_FILE}")  && export BOSH_ENVIRONMENT
+BOSH_USER=$(cat username/"${USERNAME_FILE}")     && export BOSH_USER
 set +x
-pushd env-repo
-  source env/environment $PWD
-popd
+BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"           && export BOSH_CA_CERT
+BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}") && export BOSH_PASSWORD
 set -x
 
 # Ask bosh if it already has our OS / version stemcell combination
@@ -37,8 +38,6 @@ if [ "$EXISTING_STEMCELL" ]; then
 fi
 
 # ... otherwise, begin the upload process
-set | grep BOSH | grep -v PASSWORD
-
 set +x
 bosh \
   -n \
