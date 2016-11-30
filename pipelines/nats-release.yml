@@ -279,7 +279,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
   - task: bosh-upload-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
       stemcell: aws-stemcell
     params:
