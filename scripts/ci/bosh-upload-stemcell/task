@@ -8,7 +8,9 @@ OS=$(bosh interpolate --path=/stemcells/alias=default/os cf-deployment/cf-deploy
 VERSION=$(bosh interpolate --path=/stemcells/alias=default/version cf-deployment/cf-deployment.yml)
 
 set +x
-source env-repo/env/environment
+pushd env-repo
+  source env/environment $PWD
+popd
 set -x
 
 # Ask bosh if it already has our OS / version stemcell combination
