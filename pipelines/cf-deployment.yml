@@ -225,6 +225,8 @@ jobs:
     - get: hermione-env-properties
     - get: stemcell
       trigger: true
+      params:
+        tarball: false
     - get: capi-release
       trigger: true
       params:
@@ -315,14 +317,6 @@ jobs:
       STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hermione-env-infrastructure
-  - task: bosh-upload-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-    params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      STEMCELL_NAME: "*.tgz"
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
@@ -339,6 +333,13 @@ jobs:
   - put: cf-deployment-develop
     params:
       repository: updated-repo
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      env-repo: hermione-env-infrastructure
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: aws
 
 - name: deploy-releases
   public: true
