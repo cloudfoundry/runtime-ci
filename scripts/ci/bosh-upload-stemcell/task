@@ -4,7 +4,7 @@ set -eux
 BOSH_IO_STEMCELL_URL="https://bosh.io/d/stemcells/"
 
 BOSH_AGENT="go_agent"
-OS=$(gosh interpolate --path=/stemcells/alias=default/os cf-deployment.yml)
+OS=$(bosh interpolate --path=/stemcells/alias=default/os cf-deployment.yml)
 VERSION=$(bosh interpolate --path=/stemcells/alias=default/version cf-deployment/cf-deployment.yml)
 
 # Ask bosh if it already has our OS / version stemcell combination
