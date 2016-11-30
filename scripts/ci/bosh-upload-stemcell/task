@@ -7,6 +7,10 @@ BOSH_AGENT="go_agent"
 OS=$(bosh interpolate --path=/stemcells/alias=default/os cf-deployment/cf-deployment.yml)
 VERSION=$(bosh interpolate --path=/stemcells/alias=default/version cf-deployment/cf-deployment.yml)
 
+set +x
+source env-repo/env/environment
+set -x
+
 # Ask bosh if it already has our OS / version stemcell combination
 EXISTING_STEMCELL=$(bosh stemcells | grep $OS | awk '{print $2}' | tr -d "\*" | grep ^"$VERSION"$ )
 
@@ -31,10 +35,6 @@ if [ "$EXISTING_STEMCELL" ]; then
 fi
 
 # ... otherwise, begin the upload process
-set +x
-source env-repo/env/environment
-set -x
-
 set | grep BOSH | grep -v PASSWORD
 
 set +x
