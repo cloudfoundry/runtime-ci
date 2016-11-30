@@ -7,18 +7,12 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: target
-- name: username
-- name: password
-- name: ca-cert
-- name: stemcell
+- name: env-repo
+- name: cf-deployment
 
 run:
   path: runtime-ci/scripts/ci/bosh-upload-stemcell/task
 
 params:
-  TARGET_FILE:
-  USERNAME_FILE:
-  PASSWORD_FILE:
-  STEMCELL_NAME:
-  CA_CERT_FILE:
+  INFRASTRUCTURE:
+
