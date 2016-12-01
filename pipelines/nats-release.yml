@@ -682,6 +682,7 @@ jobs:
       trigger: true
     - get: aws-stemcell
       trigger: true
+    - get: cf-deployment-develop
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
@@ -691,13 +692,13 @@ jobs:
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
-      stemcell: aws-stemcell
+      cf-deployment: cf-deployment-develop
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
-      STEMCELL_NAME: '*.tgz'
+      INFRASTRUCTURE: aws
 
 - name: deploy-nats-standalone
   public: true
