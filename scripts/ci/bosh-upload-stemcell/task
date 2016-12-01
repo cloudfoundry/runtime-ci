@@ -15,7 +15,9 @@ BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}") && export BOSH_PASSWORD
 set -x
 
 # Ask bosh if it already has our OS / version stemcell combination
+set +e
 EXISTING_STEMCELL=$(bosh stemcells | grep "$OS" | awk '{print $2}' | tr -d "\*" | grep ^"$VERSION"$ )
+set -e
 
 STEMCELL_NAME="bosh"
 
