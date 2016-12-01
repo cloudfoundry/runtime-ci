@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-BOSH_IO_STEMCELL_URL="https://bosh.io/d/stemcells/"
+BOSH_IO_STEMCELL_URL="https://bosh.io/d/stemcells"
 
 BOSH_AGENT="go_agent"
 OS=$(bosh interpolate --path=/stemcells/alias=default/os cf-deployment/cf-deployment.yml)
@@ -21,11 +21,11 @@ set -e
 
 STEMCELL_NAME="bosh"
 
-if [ "$INFRASTRUCTURE" != "aws" ]; then
+if [ "$INFRASTRUCTURE" = "aws" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-aws-xen-hvm"
-elif [ "$INFRASTRUCTURE" != "google" ]; then
+elif [ "$INFRASTRUCTURE" = "google" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-google-kvm"
-elif [ "$INFRASTRUCTURE" != "boshlite" ]; then
+elif [ "$INFRASTRUCTURE" = "boshlite" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-warden-boshlite"
 fi
 
