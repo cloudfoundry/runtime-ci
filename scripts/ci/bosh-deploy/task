@@ -22,6 +22,13 @@ fi
 
 echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
 bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} > /dev/null
+
+if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
+  cat manifest/integration_config_template.json | \
+    sed "s/REPLACE_ME/\"$(gosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l ${DEPLOYMENT_VARS_STORE})\"/" \
+    > manifest/integration_config.json
+fi
+
 bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
