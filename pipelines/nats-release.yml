@@ -807,7 +807,7 @@ jobs:
       PASSWORD_FILE_PATH: password
       CA_CERT_FILE_PATH: ca-cert
       MANIFEST_FILE_PATH: cf-deployment.yml
-      DEPLOYMENT_VAR_FILE_PATH: deployment-env-vars.yml
+      DEPLOYMENT_VARS_STORE_PATH: deployment-env-vars.yml
       OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
 
 - name: cats-tests
