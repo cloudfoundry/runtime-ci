@@ -45,9 +45,11 @@ fi
 bosh -n interpolate ${VARS_STORE_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST} > /dev/null
 
 if [ ! -z "${DEPLOYMENT_VARS_STORE}" ]; then
+  set +x
   cat manifest/integration_config_template.json | \
     sed "s/REPLACE_ME/\"$(bosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l ${DEPLOYMENT_VARS_STORE})\"/" \
     > manifest/integration_config.json
+  set -x
 fi
 
 bosh \
