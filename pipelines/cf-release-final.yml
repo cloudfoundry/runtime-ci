@@ -42,12 +42,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-release
-- name: oss-s3-buckets-stack
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/oss-s3-buckets-stack.git
-    private_key: {{oss_s3_buckets_stack_private_key}}
 
 jobs:
 - name: create-final-release
@@ -62,11 +56,12 @@ jobs:
       trigger: true
     - get: release-repo-master
       resource: cf-release-master
-    - get: oss-s3-buckets-stack
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     params:
       RELEASE_NAME: cf
+      BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
+      BLOBS_BUCKET_SECRET_KEY: {{cf_release_blobs_buckets_secrect_access_key}}
   - put: cf-release-master
     params:
       repository: final-release-repo

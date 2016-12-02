@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: oss-s3-buckets-stack
 - name: release-repo
 - name: release-repo-master
 
@@ -24,4 +23,5 @@ params:
   MASTER_BRANCH:
   RELEASE_REPO_DIR: release-repo
   FINAL_RELEASE_REPO_DIR: final-release-repo
-  STACK_REPO_DIR: oss-s3-buckets-stack
+  BLOBS_BUCKET_ACCESS_KEY_ID:
+  BLOBS_BUCKET_SECRET_KEY:
