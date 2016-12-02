@@ -47,6 +47,7 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-env-vars.yml
+    - integration_config_template.json
 - name: hermione-env-integration-config
   type: git
   source:
