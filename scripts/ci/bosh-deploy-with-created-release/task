@@ -22,6 +22,22 @@ echo "BOSH_PASSWORD=\$(cat password/${PASSWORD_FILE_PATH})"
 BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE_PATH}")
 set -x
 
+function commit_vars_store {
+  pushd manifest-properties
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Update vars store"
+    fi
+  popd
+
+  shopt -s dotglob
+  cp -R manifest-properties/* updated-var-store/
+}
+
+trap commit_vars_store EXIT
+
 cat << EOF > ops.yml
 ---
 - type: replace

@@ -735,6 +735,11 @@ jobs:
       PASSWORD_FILE_PATH: password
       CA_CERT_FILE_PATH: ca-cert
       MANIFEST_FILE_PATH: nats.yml
+    ensure:
+      put: minerva-env-infrastructure
+      params:
+        repository: updated-vars-store
+        rebase: true
 
 - name: smoke-tests
   public: true

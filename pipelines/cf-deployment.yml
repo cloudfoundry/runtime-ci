@@ -378,6 +378,11 @@ jobs:
       DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
+    ensure:
+      put: hermione-env-infrastructure
+      params:
+        repository: updated-vars-store
+        rebase: true
 
 - name: acceptance-tests
   public: true

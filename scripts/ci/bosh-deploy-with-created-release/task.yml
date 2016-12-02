@@ -16,6 +16,9 @@ inputs:
 - name: manifest
 - name: manifest-properties
 
+outputs:
+- name: updated-vars-store
+
 run:
   path: runtime-ci/scripts/ci/bosh-deploy-with-created-release/task
 

@@ -216,6 +216,11 @@ jobs:
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILE: opsfiles/gcp.yml
+    ensure:
+      put: luna-env
+      params:
+        repository: updated-vars-store
+        rebase: true
 
 - name: acceptance-tests
   public: true

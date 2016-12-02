@@ -20,6 +20,22 @@ if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
   deployment_vars_store_argument="--vars-store manifest-properties/${DEPLOYMENT_VARS_STORE} -v system_domain=${SYSTEM_DOMAIN}"
 fi
 
+function commit_vars_store {
+  pushd manifest-properties
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Update vars store"
+    fi
+  popd
+
+  shopt -s dotglob
+  cp -R manifest-properties/* updated-var-store/
+}
+
+trap commit_vars_store EXIT
+
 echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
 bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} > /dev/null
 
