@@ -33,7 +33,7 @@ cat << EOF > ops.yml
 EOF
 
 VARS_STORE_FLAG=""
-if [[ -f ${DEPLOYMENT_VARS_STORE} ]]; then
+if [[ ! -z "${DEPLOYMENT_VARS_STORE}" ]]; then
   VARS_STORE_FLAG="--vars-store ${DEPLOYMENT_VARS_STORE} -v system_domain=${SYSTEM_DOMAIN}"
 fi
 
@@ -44,9 +44,9 @@ fi
 
 bosh -n interpolate ${VARS_STORE_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST} > /dev/null
 
-if [ "${DEPLOYMENT_VARS_STORE_PATH}" != "" ]; then
+if [ ! -z "${DEPLOYMENT_VARS_STORE}" ]; then
   cat manifest/integration_config_template.json | \
-    sed "s/REPLACE_ME/\"$(bosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l manifest-properties/${DEPLOYMENT_VARS_STORE_PATH})\"/" \
+    sed "s/REPLACE_ME/\"$(bosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l ${DEPLOYMENT_VARS_STORE})\"/" \
     > manifest/integration_config.json
 fi
 
