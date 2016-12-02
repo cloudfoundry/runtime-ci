@@ -17,7 +17,7 @@ if [ "${OPS_FILE}" != "" ]; then
 fi
 
 if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
-  deployment_vars_store_argument="--vars-store manifest-properties/${DEPLOYMENT_VARS_STORE}"
+  deployment_vars_store_argument="--vars-store manifest-properties/${DEPLOYMENT_VARS_STORE} -v system_domain=${SYSTEM_DOMAIN}"
 fi
 
 echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_argument} ${BOSH_MANIFEST}"

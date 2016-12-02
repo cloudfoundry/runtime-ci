@@ -808,6 +808,7 @@ jobs:
       CA_CERT_FILE_PATH: ca-cert
       MANIFEST_FILE_PATH: cf-deployment.yml
       DEPLOYMENT_VARS_STORE_PATH: deployment-env-vars.yml
+      SYSTEM_DOMAIN: minerva.cf-app.com
       OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
 
 - name: cats-tests

@@ -214,6 +214,7 @@ jobs:
       CA_CERT_FILE: ca-cert
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILE: opsfiles/gcp.yml
 
 - name: acceptance-tests

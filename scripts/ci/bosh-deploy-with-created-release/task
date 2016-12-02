@@ -11,9 +11,9 @@ DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 RELEASE_NAME=$(grep final_name release/config/final.yml | awk '{print $2}')
 
 set +u
-DEPLOYMENT_VAR_FILE=""
-if [[ ! -z "$DEPLOYMENT_VAR_FILE_PATH" ]]; then
-  DEPLOYMENT_VAR_FILE="manifest-properties/${DEPLOYMENT_VAR_FILE_PATH}"
+DEPLOYMENT_VARS_STORE=""
+if [[ ! -z "$DEPLOYMENT_VARS_STORE_PATH" ]]; then
+  DEPLOYMENT_VARS_STORE="manifest-properties/${DEPLOYMENT_VARS_STORE_PATH}"
 fi
 
 set -u
@@ -32,9 +32,9 @@ cat << EOF > ops.yml
     url: file://$(pwd)/release
 EOF
 
-VAR_FILES_FLAG=""
-if [[ -f ${DEPLOYMENT_VAR_FILE} ]]; then
-  VAR_FILES_FLAG="-l ${DEPLOYMENT_VAR_FILE}"
+VARS_STORE_FLAG=""
+if [[ -f ${DEPLOYMENT_VARS_STORE} ]]; then
+  VARS_STORE_FLAG="--vars-store ${DEPLOYMENT_VARS_STORE} -v system_domain=${SYSTEM_DOMAIN}"
 fi
 
 OPS_FILE_FLAG="-o ops.yml"
@@ -42,7 +42,7 @@ if [[ -f "manifest/${OPS_FILE}" ]]; then
   grep -v "\-\-\-" "manifest/${OPS_FILE}" >> ops.yml
 fi
 
-bosh -n interpolate ${VAR_FILES_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST} > /dev/null
+bosh -n interpolate ${VARS_STORE_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFEST} > /dev/null
 
 bosh \
   -n \
@@ -50,6 +50,6 @@ bosh \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  ${VAR_FILES_FLAG} \
+  ${VARS_STORE_FLAG} \
   ${OPS_FILE_FLAG} \
   "${BOSH_MANIFEST}"
