@@ -10,25 +10,25 @@ BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 
 ops_file_argument=""
-deployment_var_file_argument=""
+deployment_vars_store_argument=""
 
 if [ "${OPS_FILE}" != "" ]; then
   ops_file_argument="-o manifest/${OPS_FILE}"
 fi
 
-if [ "${DEPLOYMENT_VAR_FILE}" != "" ]; then
-  deployment_var_file_argument="-l manifest-properties/${DEPLOYMENT_VAR_FILE}"
+if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
+  deployment_vars_store_argument="--vars-store manifest-properties/${DEPLOYMENT_VARS_STORE}"
 fi
 
-echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_var_file_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
-bosh -n interpolate ${deployment_var_file_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} > /dev/null
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
+bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} > /dev/null
 bosh \
   -n \
   -d "${DEPLOYMENT_NAME}" \
   -e "${BOSH_TARGET}" \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
-  $deployment_var_file_argument \
+  $deployment_vars_store_argument \
   $ops_file_argument \
   "${BOSH_MANIFEST}"
 
