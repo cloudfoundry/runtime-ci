@@ -232,6 +232,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
+      - get: cf-deployment-develop
       - get: luna-env
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
