@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cfd-enable-docker-diego
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment
+- name: env-repo
+
+params:
+  VARS_STORE_PATH:
+
+run:
+  path: runtime-ci/scripts/ci/cfd-enable-docker-diego/task
