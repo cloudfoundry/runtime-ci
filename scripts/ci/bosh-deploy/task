@@ -31,7 +31,7 @@ function commit_vars_store {
   popd
 
   shopt -s dotglob
-  cp -R manifest-properties/* updated-var-store/
+  cp -R manifest-properties/* updated-vars-store/
 }
 
 trap commit_vars_store EXIT
