@@ -10,5 +10,5 @@ RUN \
 RUN \
   wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.124-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "c6f5ee0d93a4e18fe6fa665245bcc3484f960bab bosh" | sha1sum -c - && \
+  echo "5065d3c8291abab1ffef1bac6de6cea8d514e319 bosh" | sha1sum -c - && \
   chmod +x bosh
