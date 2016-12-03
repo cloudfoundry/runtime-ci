@@ -13,6 +13,7 @@ inputs:
 
 params:
   VARS_STORE_PATH:
+  SYSTEM_DOMAIN:
 
 run:
   path: runtime-ci/scripts/ci/cfd-enable-docker-diego/task

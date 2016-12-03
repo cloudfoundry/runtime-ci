@@ -245,6 +245,7 @@ jobs:
         env-repo: luna-env
       params:
         VARS_STORE_PATH: deployment-vars.yml
+        SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
       - integration-config: luna-env
