@@ -3,6 +3,7 @@ FROM ubuntu:trusty
 ENV HOME /root
 
 RUN \
+  add-apt-repository ppa:git-core/ppa -y && \
   apt-get update && \
   apt-get -y install \
     build-essential \
