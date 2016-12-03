@@ -43,7 +43,7 @@ if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
   set +x
   cat manifest-properties/integration_config_template.json | \
     sed "s/REPLACE_ME/\"$(bosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l manifest-properties/${DEPLOYMENT_VARS_STORE})\"/" \
-    > manifest/integration_config.json
+    > manifest-properties/integration_config.json
   set -x
 fi
 
