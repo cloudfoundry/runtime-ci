@@ -709,10 +709,6 @@ jobs:
       trigger: true
     - get: minerva-env-infrastructure
       passed: [upload-stemcell]
-    - get: aws-stemcell
-      passed: [upload-stemcell]
-      params:
-        tarball: false
     - get: runtime-ci
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
@@ -752,10 +748,6 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-infrastructure
       passed: [deploy-nats-standalone]
-    - get: aws-stemcell
-      passed: [deploy-nats-standalone]
-      params:
-        tarball: false
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -786,10 +778,6 @@ jobs:
     - get: cf-deployment-develop
     - get: minerva-env-infrastructure
     - get: minerva-env-properties
-    - get: aws-stemcell
-      passed: [smoke-tests]
-      params:
-        tarball: false
     - get: nats-release-develop
       trigger: true
       passed:  [smoke-tests]
@@ -814,6 +802,11 @@ jobs:
       DEPLOYMENT_VARS_STORE_PATH: deployment-env-vars.yml
       SYSTEM_DOMAIN: minerva.cf-app.com
       OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
+    ensure:
+      put: minerva-env-properties
+      params:
+        repository: updated-vars-store
+        rebase: true
 
 - name: cats-tests
   public: true
@@ -830,10 +823,6 @@ jobs:
         passed:  [deploy-cf-with-updated-nats]
       - get: minerva-env-infrastructure
         passed: [deploy-cf-with-updated-nats]
-      - get: aws-stemcell
-        passed: [deploy-cf-with-updated-nats]
-        params:
-          tarball: false
       - get: minerva-env-properties
         trigger: true
         passed: [deploy-cf-with-updated-nats]
@@ -871,10 +860,6 @@ jobs:
         passed:  [cats-tests]
       - get: minerva-env-infrastructure
         passed: [cats-tests]
-      - get: aws-stemcell
-        passed: [cats-tests]
-        params:
-          tarball: false
       - get: cf-deployment-develop
         trigger: true
         passed: [cats-tests]
