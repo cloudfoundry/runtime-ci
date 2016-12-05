@@ -3,9 +3,8 @@
 set -eu
 
 root_dir="${PWD}"
-cf_target=$(bosh int cf-deployment/cf-deployment.yml --vars-store=env-repo/${VARS_STORE_PATH} --path=/instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api/uris/0 -v system_domain=${SYSTEM_DOMAIN} --var-errs)
-CF_PASSWORD=$(bosh int cf-deployment/cf-deployment.yml --vars-store=env-repo/${VARS_STORE_PATH} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -v system_domain=${SYSTEM_DOMAIN} --var-errs)
-CF_PASSWORD=$(bosh int env-repo/${VARS_STORE_PATH} --path=/uaa_scim_users_admin_password)
+cf_target="api.${SYSTEM_DOMAIN}"
+CF_PASSWORD=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/uaa_scim_users_admin_password)
 
 echo "Setting target to ${cf_target}"
 cf api --skip-ssl-validation "${cf_target}"
