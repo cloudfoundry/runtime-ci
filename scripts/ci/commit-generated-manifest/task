@@ -7,7 +7,7 @@ pushd repo > /dev/null
   git config user.email "cf-mega@pivotal.io"
 
   git add ./"${MANIFEST_DESTINATION}"
-  git commit -m "${COMMIT_MESSAGE}"
+  git commit -m "${COMMIT_MESSAGE}" --allow-empty
 
   git status
   git show --color | cat
