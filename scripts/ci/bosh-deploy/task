@@ -42,7 +42,7 @@ bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var
 if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
   set +x
   cat manifest-properties/integration_config_template.json | \
-    CF_PASSWORD=$(bosh int manifest-properties/${DEPLOYMENT_VARS_STORE} --path=/uaa_scim_users_admin_password)
+    export CF_PASSWORD=$(bosh int manifest-properties/${DEPLOYMENT_VARS_STORE} --path=/uaa_scim_users_admin_password)
     sed "s/REPLACE_ME/\"${CF_PASSWORD}\"/" \
     > manifest-properties/integration_config.json
   set -x
