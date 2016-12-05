@@ -62,8 +62,9 @@ bosh -n interpolate ${VARS_STORE_FLAG} ${OPS_FILE_FLAG} --var-errs ${BOSH_MANIFE
 
 if [ ! -z "${DEPLOYMENT_VARS_STORE}" ]; then
   set +x
+  CF_PASSWORD=$(bosh int ${DEPLOYMENT_VARS_STORE} --path=/uaa_scim_users_admin_password)
   cat manifest-properties/integration_config_template.json | \
-    sed "s/REPLACE_ME/\"$(bosh int ${BOSH_MANIFEST} --path=/instance_groups/name=uaa/jobs/name=uaa/properties/uaa/scim/users/name=admin/password -l ${DEPLOYMENT_VARS_STORE})\"/" \
+    sed "s/REPLACE_ME/\"${CF_PASSWORD}\"/" \
     > manifest-properties/integration_config.json
   set -x
 fi
