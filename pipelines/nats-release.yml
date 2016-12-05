@@ -680,9 +680,8 @@ jobs:
     - get: minerva-env-infrastructure
       passed: [setup-infrastructure]
       trigger: true
-    - get: aws-stemcell
-      trigger: true
     - get: cf-deployment-develop
+      trigger: true
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:

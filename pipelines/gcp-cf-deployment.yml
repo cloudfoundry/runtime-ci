@@ -173,7 +173,6 @@ jobs:
     - get: runtime-ci
     - get: luna-env
     - get: cf-deployment-develop
-    - get: stemcell
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:

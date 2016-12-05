@@ -337,7 +337,7 @@ jobs:
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
-      cf-deployment: cf-deployment-develop
+      cf-deployment: updated-repo
     params:
       INFRASTRUCTURE: aws
       TARGET_FILE: target
