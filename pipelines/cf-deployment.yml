@@ -429,14 +429,9 @@ jobs:
           trigger: true
           passed: [ acceptance-tests ]
         - get: cf-deployment-master
-    - task: fast-forward-master-to-develop
-      file: runtime-ci/scripts/ci/fast-forward-master-to-develop/task.yml
-      input_mapping:
-        master-repo: cf-deployment-master
-        develop-repo: cf-deployment-develop
     - put: cf-deployment-master
       params:
-        repository: fast-forwarded-master-repo
+        repository: cf-deployment-develop
 
 - name: verify-nameserver-has-record
   public: true
