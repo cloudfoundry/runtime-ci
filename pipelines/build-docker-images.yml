@@ -32,7 +32,6 @@ groups:
   - build-extract-director-creds-from-terraform-env-docker-image
   - build-extract-director-creds-from-bbl-docker-image
   - build-destroy-infrastructure-docker-image
-  - build-check-deployment-docker-image
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
@@ -57,14 +56,12 @@ groups:
   - build-bind-terraform-env-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-cats-from-cf-release-docker-image
-  - build-run-ginkgo-docker-image
   - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-extract-cloudformation-properties-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-extend-deployment-manifest-with-security-groups-and-elb-docker-image
   - build-commit-generated-manifest-docker-image
-  - build-fast-forward-master-to-develop-docker-image
   - build-create-final-release-bucket-docker-image
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
@@ -396,12 +393,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/destroy-infrastructure/Dockerfile]
-- name: runtime-ci-check-deployment
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/check-deployment/Dockerfile]
 - name: runtime-ci-bind-elb-to-r53
   type: git
   source:
@@ -426,12 +417,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/cats-from-cf-release/Dockerfile]
-- name: runtime-ci-run-ginkgo
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-ginkgo/Dockerfile]
 - name: runtime-ci-recreate-datadog-dashboards
   type: git
   source:
@@ -472,13 +457,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/commit-generated-manifest/Dockerfile]
-
-- name: runtime-ci-fast-forward-master-to-develop
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/fast-forward-master-to-develop/Dockerfile]
 
 - name: runtime-ci-create-final-release-bucket
   type: git
@@ -901,13 +879,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: check-deployment-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/check-deployment
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: bind-elb-to-r53-pipeline-image
   type: docker-image
   source:
@@ -933,13 +904,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cats-from-cf-release
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-ginkgo-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-ginkgo
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -986,14 +950,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/commit-generated-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: fast-forward-master-to-develop-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/fast-forward-master-to-develop
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1990,24 +1946,6 @@ jobs:
       params:
         build: runtime-ci-destroy-infrastructure/scripts/ci/destroy-infrastructure
         push: true
-- name: build-check-deployment-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-check-deployment
-        trigger: true
-    - put: check-deployment-pipeline-image
-      params:
-        build: runtime-ci-check-deployment/scripts/ci/check-deployment
-        push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
   build_logs_to_retain: 100
@@ -2079,25 +2017,6 @@ jobs:
     - put: cats-from-cf-release-pipeline-image
       params:
         build: runtime-ci-cats-from-cf-release/scripts/ci/cats-from-cf-release
-        push: true
-
-- name: build-run-ginkgo-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-ginkgo
-        trigger: true
-    - put: run-ginkgo-pipeline-image
-      params:
-        build: runtime-ci-run-ginkgo/scripts/ci/run-ginkgo
         push: true
 
 - name: build-recreate-datadog-dashboards-docker-image
@@ -2212,25 +2131,6 @@ jobs:
     - put: commit-generated-manifest-pipeline-image
       params:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
-        push: true
-
-- name: build-fast-forward-master-to-develop-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-fast-forward-master-to-develop
-        trigger: true
-    - put: fast-forward-master-to-develop-pipeline-image
-      params:
-        build: runtime-ci-fast-forward-master-to-develop/scripts/ci/fast-forward-master-to-develop
         push: true
 
 - name: build-create-final-release-bucket-docker-image
