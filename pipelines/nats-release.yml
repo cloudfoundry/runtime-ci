@@ -835,12 +835,13 @@ jobs:
       params:
         TARGET: api.minerva.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-      input_mapping:
-        cf-target: target-file-dir
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
       params:
-        CF_USER: {{minerva_cf_admin_username}}
-        CF_PASSWORD: {{minerva_cf_admin_password}}
+        VARS_STORE_PATH: deployment-env-vars.yml
+        SYSTEM_DOMAIN: minerva.cf-app.com
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        env-repo: minerva-env-properties
     - task: run-cats
       input_mapping:
       - integration-config: minerva-env-integration-config
