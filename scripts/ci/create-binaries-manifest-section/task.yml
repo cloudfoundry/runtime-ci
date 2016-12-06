@@ -19,7 +19,7 @@ inputs:
 - name: uaa-release
 - name: garden-runc-release
 - name: cflinuxfs2-rootfs-release
-- name: routing-release
+- name: cf-routing-release
 - name: nats-release
 - name: binary-buildpack-release
 - name: dotnet-core-buildpack-release

@@ -76,7 +76,7 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/nats-release
-- name: routing-release
+- name: cf-routing-release
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/cf-routing-release
@@ -236,7 +236,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: routing-release
+    - get: cf-routing-release
       trigger: true
       params:
         tarball: false
