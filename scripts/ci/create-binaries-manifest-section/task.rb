@@ -12,7 +12,7 @@ release_names=[
   'loggregator',
   'nats',
   'cf-mysql',
-  'cf-routing',
+  'routing',
   'uaa',
   'garden-runc',
   'cflinuxfs2-rootfs',
