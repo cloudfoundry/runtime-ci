@@ -27,6 +27,8 @@ elif [ "$INFRASTRUCTURE" = "google" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-google-kvm"
 elif [ "$INFRASTRUCTURE" = "boshlite" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-warden-boshlite"
+elif [ "$INFRASTRUCTURE" = "bosh-lite" ]; then
+  STEMCELL_NAME="$STEMCELL_NAME-warden-boshlite"
 elif [ "$INFRASTRUCTURE" = "vsphere" ]; then
   STEMCELL_NAME="$STEMCELL_NAME-vsphere-esxi"
 fi

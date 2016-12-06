@@ -693,10 +693,6 @@ jobs:
     input_mapping:
       cf-deployment: cf-deployment-develop
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
       INFRASTRUCTURE: aws
 
 - name: deploy-nats-standalone

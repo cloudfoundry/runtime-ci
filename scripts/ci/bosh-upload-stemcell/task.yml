@@ -18,8 +18,8 @@ run:
 
 params:
   INFRASTRUCTURE:
-  TARGET_FILE:
-  USERNAME_FILE:
-  PASSWORD_FILE:
-  CA_CERT_FILE:
+  TARGET_FILE: target
+  USERNAME_FILE: username
+  PASSWORD_FILE: password
+  CA_CERT_FILE: ca-cert
 
