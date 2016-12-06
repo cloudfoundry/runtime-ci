@@ -60,7 +60,7 @@ bosh_artifacts_section = {
       'version' => stemcell_version
     }
   ]
-}
+}.to_yaml[4..-1]
 
 
 File.open("deployment-manifest/#{deployment_manifest_path}", 'w') do |file|
