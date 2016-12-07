@@ -2,6 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
+  - delete-deployment-fresh
   - update-releases
   - deploy-releases
   - acceptance-tests
@@ -40,6 +41,12 @@ resources:
       ssl_cert: {{luna_cf_ssl_cert}}
       ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
       service_account_key: {{gcp_service_account_json}}
+- name: luna-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/luna-env.git
+    private_key: {{luna_env_private_key}}
 - name: weekly
   type: time
   source:
@@ -189,7 +196,6 @@ resources:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 jobs:
-
 - name: destroy-infrastructure-fresh
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
@@ -199,6 +205,26 @@ jobs:
       action: destroy
     get_params:
       action: destroy
+- name: delete-deployment-fresh
+  public: true
+  serial_groups: [nats-deploy]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: luna-env
+    - task: extract-director-creds-from-terraform-env
+      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+      input_mapping:
+        env-repo: luna-env
+    - task: delete-deployment-cf
+      input_mapping:
+        env-repo: luna-env
+      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+      params:
+        DEPLOYMENT_NAME: cf
 
 - name: destroy-infrastructure
   public: true
