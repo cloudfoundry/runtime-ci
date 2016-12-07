@@ -194,7 +194,7 @@ jobs:
   plan:
   - put: terraform-luna
     params:
-      env_name: *terraform_env_name
+      env_name: terraform_env_name
       action: destroy
     get_params:
       action: destroy
