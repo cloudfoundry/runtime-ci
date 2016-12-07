@@ -20,6 +20,7 @@ groups:
   - build-record-compatible-versions-docker-image
   - build-request-pm-input-docker-image
   - build-run-bosh-cleanup-docker-image
+  - build-run-rats-docker-image
   - build-run-cats-docker-image
   - build-run-cf-release-unit-tests-docker-image
   - build-run-errand-docker-image
@@ -327,6 +328,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-cats]
+- name: runtime-ci-run-rats
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-rats]
 - name: runtime-ci-run-cf-release-unit-tests
   type: git
   source:
@@ -799,6 +806,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-cats
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-rats-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-rats
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1746,6 +1760,27 @@ jobs:
     - put: run-cats-pipeline-image
       params:
         build: runtime-ci-run-cats/scripts/ci/run-cats
+        push: true
+
+- name: build-run-rats-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-run-rats
+        trigger: true
+      - get: cf-cli
+        trigger: true
+    - put: run-rats-pipeline-image
+      params:
+        build: runtime-ci-run-rats/scripts/ci/run-rats
         push: true
 
 - name: build-run-cf-release-unit-tests-docker-image

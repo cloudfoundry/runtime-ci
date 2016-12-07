@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-rats
+
+inputs:
+- name: runtime-ci
+- name: cf-acceptance-tests
+- name: integration-config
+run:
+  path: runtime-ci/scripts/ci/run-rats/task
+
+params:
+  NODES: 12
+  CONFIG_FILE_PATH: integration_config.json
