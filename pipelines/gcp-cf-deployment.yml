@@ -4,7 +4,7 @@ groups:
   jobs:
   - setup-infrastructure
   - destroy-infrastructure
-- name: cf-deployment
+- name: gcp-cf-deployment
   jobs:
   - create-gcp-bosh-director
   - destroy-gcp-bosh-director

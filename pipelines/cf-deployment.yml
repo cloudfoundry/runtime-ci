@@ -13,7 +13,32 @@ groups:
   - verify-nameserver-has-record
   - run-bosh-cleanup
 
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
 resources:
+- name: terraform-luna
+  type: terraform
+  source:
+    storage:
+      bucket: runtimeci-tfstate
+      bucket_path: cf-deployment/
+      region_name: us-west-1
+      access_key_id: {{luna_terraform_s3_access_key_id}}
+      secret_access_key: {{luna_terraform_s3_secret_key}}
+    terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
+    vars:
+      project: {{luna_gcp_project}}
+      env_name: luna
+      region: us-central1
+      zones: [us-central1-a, us-central1-b, us-central1-c]
+      dns_suffix: cf-app.com
+      ssl_cert: {{luna_cf_ssl_cert}}
+      ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
+      service_account_key: {{gcp_service_account_json}}
 - name: weekly
   type: time
   source:
@@ -163,6 +188,17 @@ resources:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 jobs:
+
+- name: destroy-infrastructure-fresh
+  serial_groups: [setup-deploy-and-test-fresh]
+  plan:
+  - put: terraform-luna
+    params:
+      env_name: *terraform_env_name
+      action: destroy
+    get_params:
+      action: destroy
+
 - name: destroy-infrastructure
   public: true
   serial_groups: [hermione]
