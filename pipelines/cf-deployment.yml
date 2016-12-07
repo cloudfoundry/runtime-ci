@@ -8,6 +8,7 @@ groups:
   - bless-manifest
 - name: infrastructure
   jobs:
+  - destroy-infrastructure-fresh
   - setup-infrastructure
   - destroy-infrastructure
   - verify-nameserver-has-record
@@ -194,7 +195,7 @@ jobs:
   plan:
   - put: terraform-luna
     params:
-      env_name: terraform_env_name
+      env_name: luna
       action: destroy
     get_params:
       action: destroy
