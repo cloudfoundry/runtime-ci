@@ -12,10 +12,16 @@ cp -R cf-routing-acceptance-tests $CF_GOPATH
 
 cd /go/src/github.com/cloudfoundry/cf-routing-acceptance-tests
 
-./bin/test \
--keepGoing \
--randomizeAllSpecs \
--skipPackage=helpers \
--slowSpecThreshold=120 \
--nodes="${NODES}"
+go install -v github.com/cloudfoundry/cf-routing-acceptance-tests/vendor/github.com/onsi/ginkgo/ginkgo
 
+packages=("http_routes" "tcp_routing")
+for i in "${packages[@]}"
+do
+  ginkgo -r "$i" \
+    -slowSpecThreshold=120 \
+    -keepGoing \
+    -randomizeAllSpecs \
+    -skipPackage=helpers \
+    -slowSpecThreshold=120 \
+    -nodes="${NODES}"
+done
