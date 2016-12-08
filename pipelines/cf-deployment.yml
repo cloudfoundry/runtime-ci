@@ -3,7 +3,7 @@ groups:
 - name: cf-deployment
   jobs:
   - upload-stemcell-fresh
-  - delete-deployment-fresh
+  - pre-delete-deployment-fresh
   - update-releases
   - upload-stemcell-upgrade
   - deploy-releases-fresh
@@ -231,7 +231,7 @@ jobs:
     get_params:
       action: destroy
 
-- name: delete-deployment-fresh
+- name: pre-delete-deployment-fresh
   serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
@@ -265,12 +265,12 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
       passed:
-      - delete-deployment-fresh
+      - pre-delete-deployment-fresh
       - upload-stemcell-fresh
     - get: luna-env
       trigger: true
       passed:
-      - delete-deployment-fresh
+      - pre-delete-deployment-fresh
       - upload-stemcell-fresh
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
