@@ -2,8 +2,10 @@
 groups:
 - name: cf-deployment
   jobs:
+  - upload-stemcell-fresh
   - delete-deployment-fresh
   - update-releases
+  - upload-stemcell-rolling
   - deploy-releases
   - acceptance-tests
   - bless-manifest
@@ -268,6 +270,9 @@ jobs:
       BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
       BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
       POSTGRES_PASSWORD: {{luna_postgres_password}}
+  - put: luna-env
+    params:
+      repository: updated-env-repo
 
 - name: destroy-bosh-director-fresh
   public: true
@@ -460,10 +465,49 @@ jobs:
   - put: cf-deployment-develop
     params:
       repository: updated-repo
-  - task: bosh-upload-stemcell
+
+- name: upload-stemcell-fresh
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+      trigger: true
+    - get: luna-env
+      trigger: true
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: luna-env
+  - task: bosh-upload-stemcell-rolling
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
-      cf-deployment: updated-repo
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+
+- name: upload-stemcell-rolling
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+      trigger: true
+    - get: hermione-env-properties
+      trigger: true
+    - get: hermione-env-infrastructure
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hermione-env-infrastructure
+  - task: bosh-upload-stemcell-rolling
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: aws
 
@@ -477,8 +521,10 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
       trigger: true
+      passed: [ upload-stemcell-rolling ]
     - get: hermione-env-properties
       trigger: true
+      passed: [ upload-stemcell-rolling ]
     - get: hermione-env-infrastructure
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
