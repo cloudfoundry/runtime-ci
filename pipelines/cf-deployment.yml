@@ -9,6 +9,7 @@ groups:
   - deploy-releases-upgrade
   - acceptance-tests-fresh
   - acceptance-tests-upgrade
+  - routing-acceptance-tests-upgrade
   - post-delete-deployment-fresh
   - bless-manifest
 - name: infrastructure
@@ -130,6 +131,11 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: cf-routing-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/routing-acceptance-tests
 - name: stemcell
   type: bosh-io-stemcell
   source:
@@ -386,7 +392,7 @@ jobs:
       repository: updated-env-repo
 
 - name: destroy-infrastructure
-  serial_groups: [hermione]
+  serial_groups: [hermione, hermione-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -410,7 +416,7 @@ jobs:
       repository: updated-env-repo
 
 - name: setup-infrastructure
-  serial_groups: [hermione]
+  serial_groups: [hermione, hermione-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -607,7 +613,7 @@ jobs:
       INFRASTRUCTURE: aws
 
 - name: deploy-releases-upgrade
-  serial_groups: [hermione]
+  serial_groups: [hermione, hermione-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -679,6 +685,40 @@ jobs:
       input_mapping:
       - integration-config: hermione-env-integration-config
       file: runtime-ci/scripts/ci/run-cats/task.yml
+
+- name: routing-acceptance-tests-upgrade
+  public: true
+  serial_groups: [hermione-routing]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-routing-acceptance-tests
+      - get: hermione-env-properties
+        trigger: true
+        passed: [ deploy-releases-upgrade ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ deploy-releases-fresh ]
+      - get: hermione-env-integration-config
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.hermione.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      params:
+        VARS_STORE_PATH: deployment-env-vars.yml
+        SYSTEM_DOMAIN: hermione.cf-app.com
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        env-repo: hermione-env-integration-config
+    - task: run-rats
+      input_mapping:
+      - integration-config: hermione-env-integration-config
+      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: bless-manifest
   public: true
