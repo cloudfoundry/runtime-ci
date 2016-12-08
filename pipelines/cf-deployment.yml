@@ -2,9 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
-  - upload-stemcell-fresh
   - update-releases
-  - upload-stemcell-upgrade
   - deploy-releases-fresh
   - deploy-releases-upgrade
   - acceptance-tests-fresh
@@ -245,17 +243,19 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
       trigger: true
-      passed:
-      - upload-stemcell-fresh
     - get: luna-env
       trigger: true
-      passed:
-      - upload-stemcell-fresh
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
       env-repo: luna-env
-  - task: gurantee-no-existing-deployment-cf
+  - task: bosh-upload-stemcell-upgrade
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: guarantee-no-existing-deployment-cf
     input_mapping:
       env-repo: luna-env
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
@@ -565,30 +565,8 @@ jobs:
     params:
       repository: updated-repo
 
-- name: upload-stemcell-fresh
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-      trigger: true
-    - get: luna-env
-      trigger: true
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: luna-env
-  - task: bosh-upload-stemcell-upgrade
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-
-- name: upload-stemcell-upgrade
-  serial: true
+- name: deploy-releases-upgrade
+  serial_groups: [hermione, hermione-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -611,27 +589,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: aws
-
-- name: deploy-releases-upgrade
-  serial_groups: [hermione, hermione-routing]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-      trigger: true
-      passed: [ upload-stemcell-upgrade ]
-    - get: hermione-env-properties
-      trigger: true
-      passed: [ upload-stemcell-upgrade ]
-    - get: hermione-env-infrastructure
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
-    input_mapping:
-      env-repo: hermione-env-infrastructure
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
