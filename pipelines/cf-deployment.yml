@@ -205,6 +205,8 @@ resources:
 
 jobs:
 - name: setup-infrastructure-fresh
+  public: true
+  build_logs_to_retain: 100
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
   - put: luna-terraform
@@ -213,6 +215,8 @@ jobs:
       delete_on_failure: true
 
 - name: destroy-infrastructure-fresh
+  public: true
+  build_logs_to_retain: 100
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
   - put: luna-terraform
@@ -244,6 +248,8 @@ jobs:
         DEPLOYMENT_NAME: cf
 
 - name: create-bosh-director-fresh
+  public: true
+  build_logs_to_retain: 100
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
   - get: runtime-ci
@@ -264,6 +270,8 @@ jobs:
       POSTGRES_PASSWORD: {{luna_postgres_password}}
 
 - name: destroy-bosh-director-fresh
+  public: true
+  build_logs_to_retain: 100
   serial_groups: [setup-deploy-and-test]
   plan:
   - get: runtime-ci
