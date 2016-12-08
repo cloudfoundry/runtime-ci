@@ -261,6 +261,7 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
     - get: luna-env
+      trigger: true
       passed: [ delete-deployment-fresh ]
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
@@ -297,8 +298,10 @@ jobs:
       - get: runtime-ci
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
+        trigger: true
         passed: [ deploy-releases-fresh ]
       - get: luna-env
+        trigger: true
         passed: [ deploy-releases-fresh ]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -641,7 +644,7 @@ jobs:
         passed: [ deploy-releases-upgrade ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ deploy-releases ]
+        passed: [ deploy-releases-upgrade ]
       - get: hermione-env-integration-config
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -668,11 +671,13 @@ jobs:
     - do:
       - aggregate:
         - get: runtime-ci
+        - get: luna-env
+          trigger: true
+          passed: [ acceptance-tests-fresh ]
         - get: hermione-env-properties
           trigger: true
           passed:
           - acceptance-tests-upgrade
-          - acceptance-tests-fresh
         - get: cf-deployment-develop
           trigger: true
           passed:
