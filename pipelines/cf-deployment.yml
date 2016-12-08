@@ -658,7 +658,7 @@ jobs:
         passed: [ deploy-releases-upgrade ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ deploy-releases-fresh ]
+        passed: [ deploy-releases-upgrade ]
       - get: hermione-env-integration-config
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
