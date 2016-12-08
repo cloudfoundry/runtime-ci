@@ -262,7 +262,9 @@ jobs:
     - get: cf-deployment-develop
     - get: luna-env
       trigger: true
-      passed: [ delete-deployment-fresh ]
+      passed:
+      - delete-deployment-fresh
+      - upload-stemcell-fresh
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
@@ -672,13 +674,6 @@ jobs:
     - do:
       - aggregate:
         - get: runtime-ci
-        - get: luna-env
-          trigger: true
-          passed: [ acceptance-tests-fresh ]
-        - get: hermione-env-properties
-          trigger: true
-          passed:
-          - acceptance-tests-upgrade
         - get: cf-deployment-develop
           trigger: true
           passed:
