@@ -30,7 +30,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
-- name: terraform-luna
+- name: luna-terraform
   type: terraform
   source:
     storage:
@@ -207,7 +207,7 @@ jobs:
 - name: setup-infrastructure-fresh
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
-  - put: terraform-luna
+  - put: luna-terraform
     params:
       env_name: luna
       delete_on_failure: true
@@ -215,7 +215,7 @@ jobs:
 - name: destroy-infrastructure-fresh
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
-  - put: terraform-luna
+  - put: luna-terraform
     params:
       env_name: luna
       action: destroy
@@ -249,11 +249,12 @@ jobs:
   - get: runtime-ci
   - get: luna-env
   - get: cf-gcp-infrastructure
-  - get: terraform-luna
+  - get: luna-terraform
   - task: create-gcp-bosh-director
     file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
     input_mapping:
       env-repo: luna-env
+      terraform: luna-terraform
     params:
       NATS_PASSWORD: {{luna_nats_password}}
       MBUS_PASSWORD: {{luna_mbus_password}}
