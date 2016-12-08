@@ -273,6 +273,10 @@ jobs:
   - put: luna-env
     params:
       repository: updated-env-repo
+  - task: update-gcp-cloud-config
+    file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
 
 - name: destroy-bosh-director-fresh
   public: true
