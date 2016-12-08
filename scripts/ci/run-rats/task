@@ -6,11 +6,11 @@ CONFIG="$PWD/integration-config/${CONFIG_FILE_PATH}"
 
 CF_GOPATH=/go/src/github.com/cloudfoundry/
 
-echo "Moving cf-acceptance-tests onto the gopath..."
+echo "Moving cf-routing-acceptance-tests onto the gopath..."
 mkdir -p $CF_GOPATH
-cp -R cf-acceptance-tests $CF_GOPATH
+cp -R cf-routing-acceptance-tests $CF_GOPATH
 
-cd /go/src/github.com/cloudfoundry/cf-acceptance-tests
+cd /go/src/github.com/cloudfoundry/cf-routing-acceptance-tests
 
 ./bin/test \
 -keepGoing \
