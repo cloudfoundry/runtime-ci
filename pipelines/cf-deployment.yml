@@ -350,6 +350,7 @@ jobs:
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
       env-repo: updated-env-repo
+      terraform: luna-terraform
 
 - name: destroy-bosh-director-fresh
   public: true
