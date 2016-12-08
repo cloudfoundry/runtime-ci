@@ -8,11 +8,11 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: cf-acceptance-tests
+- name: cf-routing-acceptance-tests
 - name: integration-config
 run:
   path: runtime-ci/scripts/ci/run-rats/task
 
 params:
   NODES: 12
-  CONFIG_FILE_PATH: integration_config.json
+  CONFIG_FILE_PATH: rats_integration_config.json
