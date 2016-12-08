@@ -4,15 +4,14 @@ set -xeu
 export CONFIG
 CONFIG="$PWD/integration-config/${CONFIG_FILE_PATH}"
 
-CF_GOPATH=/go/src/github.com/cloudfoundry/
+GOPATH=/go/src
+export GOPATH
 
 echo "Moving cf-routing-acceptance-tests onto the gopath..."
-mkdir -p $CF_GOPATH
-cp -R cf-routing-acceptance-tests $CF_GOPATH
+mkdir -p $GOPATH
+cp -R routing-release/src $CF_GOPATH
 
-cd /go/src/github.com/cloudfoundry/cf-routing-acceptance-tests
-
-go install -v github.com/cloudfoundry/cf-routing-acceptance-tests/vendor/github.com/onsi/ginkgo/ginkgo
+cd ${GOPATH}/code.cloudfoundry.org/routing-acceptance-tests
 
 packages=("http_routes" "tcp_routing")
 for i in "${packages[@]}"

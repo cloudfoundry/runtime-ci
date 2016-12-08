@@ -129,11 +129,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests
-- name: cf-routing-acceptance-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-acceptance-tests
 - name: stemcell
   type: bosh-io-stemcell
   source:
@@ -652,7 +647,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: cf-routing-acceptance-tests
+      - get: routing-release
       - get: hermione-env-properties
         trigger: true
         passed: [ deploy-releases-upgrade ]
