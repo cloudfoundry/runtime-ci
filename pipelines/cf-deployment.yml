@@ -11,6 +11,8 @@ groups:
   jobs:
   - setup-infrastructure-fresh
   - destroy-infrastructure-fresh
+  - create-bosh-director-fresh
+  - destroy-bosh-director-fresh
   - setup-infrastructure
   - destroy-infrastructure
   - verify-nameserver-has-record
@@ -23,6 +25,11 @@ resource_types:
     repository: ljfranklin/terraform-resource
 
 resources:
+- name: cf-gcp-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
 - name: terraform-luna
   type: terraform
   source:
@@ -204,6 +211,7 @@ jobs:
     params:
       env_name: luna
       delete_on_failure: true
+
 - name: destroy-infrastructure-fresh
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
@@ -213,6 +221,7 @@ jobs:
       action: destroy
     get_params:
       action: destroy
+
 - name: delete-deployment-fresh
   public: true
   serial_groups: [nats-deploy]
@@ -233,6 +242,42 @@ jobs:
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
+
+- name: create-bosh-director-fresh
+  serial_groups: [setup-deploy-and-test-fresh]
+  plan:
+  - get: runtime-ci
+  - get: luna-env
+  - get: cf-gcp-infrastructure
+  - get: terraform-luna
+  - task: create-gcp-bosh-director
+    file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
+    input_mapping:
+      env-repo: luna-env
+    params:
+      NATS_PASSWORD: {{luna_nats_password}}
+      MBUS_PASSWORD: {{luna_mbus_password}}
+      HM_PASSWORD: {{luna_hm_password}}
+      BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
+      BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
+      POSTGRES_PASSWORD: {{luna_postgres_password}}
+
+- name: destroy-bosh-director-fresh
+  serial_groups: [setup-deploy-and-test]
+  plan:
+  - get: runtime-ci
+  - get: luna-env
+  - get: cf-gcp-infrastructure
+  - task: destroy-gcp-bosh-director
+    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
+    input_mapping:
+      env-repo: luna-env
+  - put: luna-env
+    params:
+      repository: updated-env-repo
+  - put: luna-env
+    params:
+      repository: updated-env-repo
 
 - name: destroy-infrastructure
   public: true
@@ -257,6 +302,7 @@ jobs:
   - put: hermione-env-infrastructure
     params:
       repository: updated-env-repo
+
 - name: setup-infrastructure
   public: true
   serial_groups: [hermione]
