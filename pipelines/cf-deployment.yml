@@ -10,6 +10,7 @@ groups:
   - deploy-releases-upgrade
   - acceptance-tests-fresh
   - acceptance-tests-upgrade
+  - post-delete-deployment-fresh
   - bless-manifest
 - name: infrastructure
   jobs:
@@ -209,9 +210,9 @@ resources:
 
 jobs:
 - name: setup-infrastructure-fresh
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
-  serial_groups: [setup-deploy-and-test-fresh]
   plan:
   - put: luna-terraform
     params:
@@ -219,9 +220,9 @@ jobs:
       delete_on_failure: true
 
 - name: destroy-infrastructure-fresh
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
-  serial_groups: [setup-deploy-and-test-fresh]
   plan:
   - put: luna-terraform
     params:
@@ -231,8 +232,8 @@ jobs:
       action: destroy
 
 - name: delete-deployment-fresh
+  serial_groups: [luna]
   public: true
-  serial_groups: [setup-deploy-and-test-fresh]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -255,14 +256,17 @@ jobs:
         DEPLOYMENT_NAME: cf
 
 - name: deploy-releases-fresh
-  serial_groups: [setup-deploy-and-test-fresh]
-  serial: true
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+      trigger: true
+      passed:
+      - delete-deployment-fresh
+      - upload-stemcell-fresh
     - get: luna-env
       trigger: true
       passed:
@@ -293,7 +297,7 @@ jobs:
         rebase: true
 
 - name: acceptance-tests-fresh
-  serial_groups: [setup-deploy-and-test-fresh]
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -327,10 +331,36 @@ jobs:
         NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
-- name: create-bosh-director-fresh
+- name: post-delete-deployment-fresh
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
-  serial_groups: [setup-deploy-and-test-fresh]
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: luna-env
+        trigger: true
+        passed: [ acceptance-tests-fresh ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ acceptance-tests-fresh ]
+    - task: extract-director-creds-from-terraform-env
+      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+      input_mapping:
+        env-repo: luna-env
+    - task: delete-deployment-cf
+      input_mapping:
+        env-repo: luna-env
+      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+      params:
+        DEPLOYMENT_NAME: cf
+
+- name: create-bosh-director-fresh
+  serial_groups: [luna]
+  public: true
+  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: luna-env
@@ -358,9 +388,9 @@ jobs:
       terraform: luna-terraform
 
 - name: destroy-bosh-director-fresh
+  serial_groups: [setup-deploy-and-test]
   public: true
   build_logs_to_retain: 100
-  serial_groups: [setup-deploy-and-test]
   plan:
   - get: runtime-ci
   - get: luna-env
@@ -377,8 +407,8 @@ jobs:
       repository: updated-env-repo
 
 - name: destroy-infrastructure
-  public: true
   serial_groups: [hermione]
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -401,8 +431,8 @@ jobs:
       repository: updated-env-repo
 
 - name: setup-infrastructure
-  public: true
   serial_groups: [hermione]
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -430,6 +460,7 @@ jobs:
       DOMAIN: hermione.cf-app.com
 
 - name: update-releases
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -550,6 +581,7 @@ jobs:
       repository: updated-repo
 
 - name: upload-stemcell-fresh
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -571,6 +603,7 @@ jobs:
       INFRASTRUCTURE: google
 
 - name: upload-stemcell-upgrade
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -595,9 +628,8 @@ jobs:
       INFRASTRUCTURE: aws
 
 - name: deploy-releases-upgrade
-  public: true
-  serial: true
   serial_groups: [hermione]
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -636,8 +668,8 @@ jobs:
         rebase: true
 
 - name: acceptance-tests-upgrade
-  public: true
   serial_groups: [hermione]
+  public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -704,6 +736,7 @@ jobs:
         DOMAIN: hermione.cf-app.com
 
 - name: run-bosh-cleanup
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
