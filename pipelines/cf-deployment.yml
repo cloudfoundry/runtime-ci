@@ -9,6 +9,7 @@ groups:
   - bless-manifest
 - name: infrastructure
   jobs:
+  - setup-infrastructure-fresh
   - destroy-infrastructure-fresh
   - setup-infrastructure
   - destroy-infrastructure
@@ -196,6 +197,13 @@ resources:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 jobs:
+- name: setup-infrastructure-fresh
+  serial_groups: [setup-deploy-and-test-fresh]
+  plan:
+  - put: terraform-luna
+    params:
+      env_name: luna
+      delete_on_failure: true
 - name: destroy-infrastructure-fresh
   serial_groups: [setup-deploy-and-test-fresh]
   plan:
