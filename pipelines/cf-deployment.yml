@@ -3,7 +3,6 @@ groups:
 - name: cf-deployment
   jobs:
   - upload-stemcell-fresh
-  - pre-delete-deployment-fresh
   - update-releases
   - upload-stemcell-upgrade
   - deploy-releases-fresh
@@ -231,30 +230,6 @@ jobs:
     get_params:
       action: destroy
 
-- name: pre-delete-deployment-fresh
-  serial_groups: [luna]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: luna-env
-        trigger: true
-      - get: cf-deployment-develop
-        trigger: true
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-      input_mapping:
-        env-repo: luna-env
-    - task: delete-deployment-cf
-      input_mapping:
-        env-repo: luna-env
-      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-      params:
-        DEPLOYMENT_NAME: cf
-
 - name: deploy-releases-fresh
   serial_groups: [luna]
   public: true
@@ -265,17 +240,21 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
       passed:
-      - pre-delete-deployment-fresh
       - upload-stemcell-fresh
     - get: luna-env
       trigger: true
       passed:
-      - pre-delete-deployment-fresh
       - upload-stemcell-fresh
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
       env-repo: luna-env
+  - task: gurantee-no-existing-deployment-cf
+    input_mapping:
+      env-repo: luna-env
+    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    params:
+      DEPLOYMENT_NAME: cf
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
