@@ -124,6 +124,11 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/cf-routing-release
+- name: routing-release-github
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: cf-acceptance-tests
   type: git
   source:
@@ -647,7 +652,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: routing-release
+      - get: routing-release-github
       - get: hermione-env-properties
         trigger: true
         passed: [ deploy-releases-upgrade ]
@@ -669,6 +674,7 @@ jobs:
         env-repo: hermione-env-integration-config
     - task: run-rats
       input_mapping:
+      - routing-release: routing-release-github
       - integration-config: hermione-env-integration-config
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
