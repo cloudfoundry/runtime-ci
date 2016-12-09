@@ -226,6 +226,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: luna-terraform
   - put: luna-terraform
     params:
       env_name: luna
@@ -236,6 +237,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: luna-terraform
   - put: luna-terraform
     params:
       env_name: luna
@@ -267,7 +269,7 @@ jobs:
       INFRASTRUCTURE: google
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: luna-env-properties
+      env-repo: luna-env-infrastructure
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -307,8 +309,6 @@ jobs:
       - get: luna-env-properties
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env-infrastructure
-        passed: [ create-bosh-director-fresh ]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -346,7 +346,7 @@ jobs:
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
-        env-repo: luna-properties
+        env-repo: luna-env-properties
     - task: delete-deployment-cf
       input_mapping:
         env-repo: luna-env-properties
