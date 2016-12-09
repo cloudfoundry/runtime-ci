@@ -52,12 +52,20 @@ resources:
       ssl_cert: {{luna_cf_ssl_cert}}
       ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
       service_account_key: {{gcp_service_account_json}}
-- name: luna-env
+- name: luna-env-infrastructure
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_private_key}}
+    paths: [ infrastructure/* ]
+- name: luna-env-properties
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/luna-env.git
+    private_key: {{luna_env_private_key}}
+    paths: [ deployment-vars.yml ]
 - name: weekly
   type: time
   source:
@@ -244,21 +252,21 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
       trigger: true
-    - get: luna-env
+    - get: luna-env-properties
       trigger: true
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
-      env-repo: luna-env
+      env-repo: luna-env-properties
   - task: bosh-upload-stemcell-upgrade
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-  - task: guarantee-no-existing-deployment-cf
+  - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: luna-env
+      env-repo: luna-env-properties
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -266,7 +274,7 @@ jobs:
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
       manifest: cf-deployment-develop
-      manifest-properties: luna-env
+      manifest-properties: luna-env-properties
     params:
       TARGET_FILE:  target
       USERNAME_FILE: username
@@ -277,7 +285,7 @@ jobs:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILE: opsfiles/gcp.yml
     ensure:
-      put: luna-env
+      put: luna-env-properties
       params:
         repository: updated-vars-store
         rebase: true
@@ -295,9 +303,11 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env
+      - get: luna-env-properties
         trigger: true
         passed: [ deploy-releases-fresh ]
+      - get: luna-env-infrastructure
+        passed: [ create-bosh-director-fresh ]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -306,13 +316,13 @@ jobs:
       file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env
+        env-repo: luna-env-properties
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: luna-env
+      - integration-config: luna-env-properties
       params:
         NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
@@ -326,7 +336,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: luna-env
+      - get: luna-env-properties
         trigger: true
         passed: [ acceptance-tests-fresh ]
       - get: cf-deployment-develop
@@ -335,10 +345,10 @@ jobs:
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
-        env-repo: luna-env
+        env-repo: luna-properties
     - task: delete-deployment-cf
       input_mapping:
-        env-repo: luna-env
+        env-repo: luna-env-properties
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
@@ -349,13 +359,15 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: luna-env
+  - get: luna-env-infrastructure
   - get: cf-gcp-infrastructure
   - get: luna-terraform
+    trigger: true
+    passed: [ setup-infrastructure-fresh ]
   - task: create-gcp-bosh-director
     file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
     input_mapping:
-      env-repo: luna-env
+      env-repo: luna-env-infrastructure
       terraform: luna-terraform
     params:
       NATS_PASSWORD: {{luna_nats_password}}
@@ -364,9 +376,10 @@ jobs:
       BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
       BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
       POSTGRES_PASSWORD: {{luna_postgres_password}}
-  - put: luna-env
+  - put: luna-env-infrastructure
     params:
       repository: updated-env-repo
+      rebase: true
   - task: update-gcp-cloud-config
     file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
     input_mapping:
@@ -379,18 +392,17 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: luna-env
+  - get: luna-env-infrastructure
+    passed: [ create-bosh-director-fresh ]
   - get: cf-gcp-infrastructure
   - task: destroy-gcp-bosh-director
     file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
     input_mapping:
-      env-repo: luna-env
-  - put: luna-env
+      env-repo: luna-env-infrastructure
+  - put: luna-env-infrastructure
     params:
       repository: updated-env-repo
-  - put: luna-env
-    params:
-      repository: updated-env-repo
+      rebase: true
 
 - name: destroy-infrastructure
   serial_groups: [hermione, hermione-routing]
