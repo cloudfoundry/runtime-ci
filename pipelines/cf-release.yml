@@ -1554,7 +1554,6 @@ jobs:
       INFRASTRUCTURE: bosh-lite
       STUBS_PATH: stub.yml
   - task: untar-diego-release
-    tags: [vsphere]
     file: runtime-ci/scripts/ci/untar-release/task.yml
     input_mapping:
       release-tarball: diego-release-github-release
