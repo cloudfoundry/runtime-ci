@@ -254,11 +254,12 @@ jobs:
       trigger: true
     - get: luna-env-properties
       trigger: true
+    - get: luna-env-infrastructure
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
-      env-repo: luna-env-properties
-  - task: bosh-upload-stemcell-upgrade
+      env-repo: luna-env-infrastructure
+  - task: bosh-upload-stemcell-fresh
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
