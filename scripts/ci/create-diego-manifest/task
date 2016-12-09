@@ -13,11 +13,12 @@ RELEASE_VERSIONS_PATH="${root_dir}/release-versions/${RELEASE_VERSIONS_PATH:?"\$
 IAAS_SETTINGS_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
 if  [ "${USE_MYSQL}" == "true" ]; then
   DIEGO_MYSQL_OVERRIDES_PATH="${root_dir}/diego-mysql-overrides/${DIEGO_MYSQL_OVERRIDES_PATH:?"\$DIEGO_MYSQL_OVERRIDES_PATH not set"}"
+elif  [ "${USE_POSTGRES}" == "true" ]; then
+  DIEGO_POSTGRES_OVERRIDES_PATH="${root_dir}/diego-postgres-overrides/${DIEGO_POSTGRES_OVERRIDES_PATH:?"\$DIEGO_POSTGRES_OVERRIDES_PATH not set"}"
 fi
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
-USE_GARDEN_RUNC=false
 
 pushd "${DIEGO_RELEASE_DIR}"
   ./scripts/generate-deployment-manifest \
@@ -29,5 +30,6 @@ pushd "${DIEGO_RELEASE_DIR}"
     -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
     $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
+    $([ "${USE_POSTGRES}" == "true" ] && echo "-s ${DIEGO_POSTGRES_OVERRIDES_PATH}") \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
