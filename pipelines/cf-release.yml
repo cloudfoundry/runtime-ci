@@ -1079,7 +1079,6 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
@@ -1665,11 +1664,15 @@ jobs:
       instance-count-overrides: cat-env
       release-versions: cat-env
       diego-mysql-overrides: cat-env
+      diego-postgres-overrides: cat-env
     params:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
       IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
+      USE_ETCD: false
+      USE_POSTGRES: true
+      DIEGO_POSTGRES_OVERRIDES_PATH: deployments/cat-postgres-stubs/diego-property-overrides.yml
   - aggregate:
     - put: cf-vsphere-manifest
       tags: [vsphere]
