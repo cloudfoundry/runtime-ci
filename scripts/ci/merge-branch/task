@@ -1,16 +1,14 @@
 #!/bin/bash
 set -exu
 
-MERGE_BRANCH="${PWD}/${MERGE_BRANCH:?"MERGE_BRANCH required"}"
-
 pushd merging-repo > /dev/null
   git config user.name "CF MEGA BOT"
   git config user.email "cf-mega@pivotal.io"
 
   if (env | grep -E '^MERGE_MESSAGE=.*\w+' >/dev/null); then
-    git merge --no-ff --no-edit -m "${MERGE_MESSAGE}" "${MERGE_BRANCH}"
+    git pull --no-ff --no-edit -m "${MERGE_MESSAGE}" ../branch-repo
   else
-    git merge --no-edit "${MERGE_BRANCH}"
+    git pull --no-edit ../branch-repo
   fi
 
   git status
