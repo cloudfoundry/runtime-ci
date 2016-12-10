@@ -27,7 +27,6 @@ pushd "${DIEGO_RELEASE_DIR}"
     -p "${PROPERTY_OVERRIDES_PATH}" \
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     -v "${RELEASE_VERSIONS_PATH}" \
-    -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
     $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
     $([ "${USE_POSTGRES}" == "true" ] && echo "-s ${DIEGO_POSTGRES_OVERRIDES_PATH}") \
