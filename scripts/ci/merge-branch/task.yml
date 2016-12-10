@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: merging-repo
+- name: branch-repo
 
 outputs:
 - name: merged-repo
@@ -18,4 +19,3 @@ run:
 
 params:
   MERGE_MESSAGE:
-  MERGE_BRANCH:
