@@ -15,6 +15,7 @@ groups:
   - build-deprovision-bosh-lite-docker-image
   - build-cfd-enable-docker-diego-docker-image
   - build-enable-docker-diego-docker-image
+  - build-merge-branch-docker-image
   - build-merge-master-into-develop-docker-image
   - build-provision-bosh-lite-docker-image
   - build-record-compatible-versions-docker-image
@@ -298,6 +299,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/merge-master-into-develop/Dockerfile]
+- name: runtime-ci-merge-branch
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/merge-branch/Dockerfile]
 - name: runtime-ci-provision-bosh-lite
   type: git
   source:
@@ -771,6 +778,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/merge-master-into-develop
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: merge-branch-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/merge-branch
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1667,6 +1681,24 @@ jobs:
     - put: merge-master-into-develop-pipeline-image
       params:
         build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
+        push: true
+- name: build-merge-branch-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-merge-branch
+        trigger: true
+    - put: merge-branch-pipeline-image
+      params:
+        build: runtime-ci-merge-branch/scripts/ci/merge-branch
         push: true
 - name: build-provision-bosh-lite-docker-image
   public: true
