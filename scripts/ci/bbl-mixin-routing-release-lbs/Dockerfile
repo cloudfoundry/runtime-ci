@@ -5,7 +5,8 @@ ENV HOME /root
 RUN \
   apt-get update && \
   apt-get -y install \
-    git
+    git \
+    unzip
 
 RUN \
   wget https://releases.hashicorp.com/terraform/0.7.5/terraform_0.7.5_linux_amd64.zip -P /tmp && \
