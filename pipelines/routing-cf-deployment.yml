@@ -8,6 +8,7 @@ groups:
   - acceptance-tests-fresh
   - acceptance-tests-upgrade
   - routing-acceptance-tests-upgrade
+  - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
 - name: infrastructure
   jobs:
@@ -107,6 +108,15 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
     private_key: {{trelawney_env_private_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+- name: marauder-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/marauder-env.git
+    private_key: {{marauder_env_private_key}}
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -254,6 +264,40 @@ jobs:
       params:
         NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
+
+- name: routing-acceptance-tests-fresh
+  serial_groups: [marauder-routing]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: routing-release-github
+      - get: marauder-env-properties
+        trigger: true
+        passed: [ deploy-releases-fresh ]
+      - get: cf-deployment-routing-api
+        trigger: true
+        passed: [ deploy-releases-fresh ]
+      - get: marauder-env-integration-config
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.marauder.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      params:
+        VARS_STORE_PATH: deployment-env-vars.yml
+        SYSTEM_DOMAIN: marauder.cf-app.com
+      input_mapping:
+        cf-deployment: cf-deployment-routing-api
+        env-repo: marauder-env-integration-config
+    - task: run-rats
+      input_mapping:
+      - routing-release: routing-release-github
+      - integration-config: marauder-env-integration-config
+      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
   serial_groups: [marauder]
