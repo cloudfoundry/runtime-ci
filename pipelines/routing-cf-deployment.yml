@@ -57,7 +57,9 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/marauder-env.git
     private_key: {{marauder_env_private_key}}
-    paths: [ infrastructure/* ]
+    paths:
+    - infrastructure/*
+    - google_account_creds.json
 - name: marauder-env-properties
   type: git
   source:
