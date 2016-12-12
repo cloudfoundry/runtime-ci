@@ -14,8 +14,6 @@ inputs:
 - name: instance-count-overrides
 - name: release-versions
 - name: iaas-settings
-- name: diego-mysql-overrides
-- name: diego-postgres-overrides
 
 outputs:
 - name: generated-diego-manifest
@@ -28,11 +26,7 @@ params:
   INSTANCE_COUNT_OVERRIDES_PATH: ~
   RELEASE_VERSIONS_PATH: ~
   IAAS_SETTINGS_PATH: iaas-settings.yml
-  USE_ETCD: true
-  USE_MYSQL: false
-  USE_POSTGRES: false
-  DIEGO_MYSQL_OVERRIDES_PATH:
-  DIEGO_POSTGRES_OVERRIDES_PATH:
+  DIEGO_SQL_RESOURCE_PATH: diego-release/manifest-generation/bosh-lite-stubs/postgres/diego-sql.yml
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest/task

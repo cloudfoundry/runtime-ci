@@ -11,11 +11,7 @@ PROPERTY_OVERRIDES_PATH="${root_dir}/property-overrides/${PROPERTY_OVERRIDES_PAT
 INSTANCE_COUNT_OVERRIDES_PATH="${root_dir}/instance-count-overrides/${INSTANCE_COUNT_OVERRIDES_PATH:?"\$INSTANCE_COUNT_OVERRIDES_PATH not set"}"
 RELEASE_VERSIONS_PATH="${root_dir}/release-versions/${RELEASE_VERSIONS_PATH:?"\$RELEASE_VERSIONS_PATH not set"}"
 IAAS_SETTINGS_PATH="${root_dir}/iaas-settings/${IAAS_SETTINGS_PATH:?"\$IAAS_SETTINGS_PATH not set"}"
-if  [ "${USE_MYSQL}" == "true" ]; then
-  DIEGO_MYSQL_OVERRIDES_PATH="${root_dir}/diego-mysql-overrides/${DIEGO_MYSQL_OVERRIDES_PATH:?"\$DIEGO_MYSQL_OVERRIDES_PATH not set"}"
-elif  [ "${USE_POSTGRES}" == "true" ]; then
-  DIEGO_POSTGRES_OVERRIDES_PATH="${root_dir}/diego-postgres-overrides/${DIEGO_POSTGRES_OVERRIDES_PATH:?"\$DIEGO_POSTGRES_OVERRIDES_PATH not set"}"
-fi
+DIEGO_SQL_RESOURCE_PATH="${root_dir}/${DIEGO_SQL_RESOURCE_PATH:?"\$DIEGO_SQL_RESOURCE_PATH not set"}"
 
 # Outputs
 GENERATED_DIEGO_MANIFEST_DIR="${root_dir}/${GENERATED_DIEGO_MANIFEST_DIR:?"\$GENERATED_DIEGO_MANIFEST_DIR not set"}"
@@ -27,8 +23,7 @@ pushd "${DIEGO_RELEASE_DIR}"
     -p "${PROPERTY_OVERRIDES_PATH}" \
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     -v "${RELEASE_VERSIONS_PATH}" \
-    $([ "${USE_ETCD}" == "false" ] && echo "-x") \
-    $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
-    $([ "${USE_POSTGRES}" == "true" ] && echo "-s ${DIEGO_POSTGRES_OVERRIDES_PATH}") \
+    -s "${DIEGO_SQL_RESOURCE_PATH}" \
+    -x \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
