@@ -24,6 +24,8 @@ function commit {
   popd
 }
 
+mkdir -p "${root_dir}/env-repo/infrastructure/bosh"
+
 # GENERTATE Director Creds
 export DIRECTOR_USERNAME=user-$(openssl rand -base64 32)
 echo $DIRECTOR_USERNAME > ${root_dir}/env-repo/infrastructure/bosh/username
