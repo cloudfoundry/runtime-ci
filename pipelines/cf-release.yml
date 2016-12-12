@@ -555,9 +555,6 @@ jobs:
       - get: garden-runc-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
-      - get: etcd-release-tarball
-        passed: [ generate-bosh-lite-manifests ]
-        trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
@@ -616,7 +613,6 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
     - task: create-bosh-lite-creds
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
@@ -674,11 +670,6 @@ jobs:
         params:
           tarball: false
       - get: garden-runc-release-tarball
-        passed: [ deploy-bosh-lite ]
-        trigger: true
-        params:
-          tarball: false
-      - get: etcd-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
         params:
@@ -741,11 +732,6 @@ jobs:
         params:
           tarball: false
       - get: garden-runc-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-        params:
-          tarball: false
-      - get: etcd-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
         params:
@@ -1031,10 +1017,6 @@ jobs:
         trigger: true
         tags: [vsphere]
         passed: [ generate-vsphere-manifests ]
-      - get: etcd-release-tarball
-        trigger: true
-        tags: [vsphere]
-        passed: [ generate-vsphere-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
@@ -1150,12 +1132,6 @@ jobs:
         passed: [deploy-vsphere]
         params:
           tarball: false
-      - get: etcd-release-tarball
-        trigger: true
-        tags: [vsphere]
-        passed: [deploy-vsphere]
-        params:
-          tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         tags: [vsphere]
@@ -1218,12 +1194,6 @@ jobs:
         params:
           tarball: false
       - get: garden-runc-release-tarball
-        trigger: true
-        tags: [vsphere]
-        passed: [vsphere-smoke-tests]
-        params:
-          tarball: false
-      - get: etcd-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [vsphere-smoke-tests]
@@ -1526,10 +1496,6 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: etcd-release-tarball
-      trigger: true
-      params:
-        tarball: false
     - get: garden-runc-release-tarball
       trigger: true
       params:
@@ -1577,11 +1543,15 @@ jobs:
       release-versions: diego-release
       iaas-settings: diego-release
       diego-mysql-overrides: diego-release
+      diego-postgres-overrides: diego-release
     params:
       PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
       IAAS_SETTINGS_PATH: manifest-generation/bosh-lite-stubs/iaas-settings.yml
+      DIEGO_POSTGRES_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/postgres/diego-sql.yml
+      USE_ETCD: false
+      USE_POSTGRES: true
   - aggregate:
     - put: cf-bosh-lite-manifest
       params:
@@ -1616,11 +1586,6 @@ jobs:
       trigger: true
       passed: [ create-release ]
     - get: diego-release-tarball
-      tags: [vsphere]
-      trigger: true
-      params:
-        tarball: false
-    - get: etcd-release-tarball
       tags: [vsphere]
       trigger: true
       params:
@@ -1820,13 +1785,6 @@ jobs:
         - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
-        params:
-          tarball: false
-      - get: etcd-release-tarball
-        trigger: true
-        passed:
-        - bosh-lite-acceptance-tests
-        - vsphere-acceptance-tests
         params:
           tarball: false
       - get: cflinuxfs2-rootfs-release-tarball
