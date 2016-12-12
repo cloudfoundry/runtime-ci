@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bbl-mixin-routing-release-lbs
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+
+outputs:
+- name: updated-env-repo
+
+run:
+  path: runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/task
