@@ -1542,16 +1542,11 @@ jobs:
       instance-count-overrides: diego-release
       release-versions: diego-release
       iaas-settings: diego-release
-      diego-mysql-overrides: diego-release
-      diego-postgres-overrides: diego-release
     params:
       PROPERTY_OVERRIDES_PATH: property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
       IAAS_SETTINGS_PATH: manifest-generation/bosh-lite-stubs/iaas-settings.yml
-      DIEGO_POSTGRES_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/postgres/diego-sql.yml
-      USE_ETCD: false
-      USE_POSTGRES: true
   - aggregate:
     - put: cf-bosh-lite-manifest
       params:
@@ -1628,16 +1623,12 @@ jobs:
       property-overrides: cat-env
       instance-count-overrides: cat-env
       release-versions: cat-env
-      diego-mysql-overrides: cat-env
-      diego-postgres-overrides: cat-env
     params:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
       IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
-      USE_ETCD: false
-      USE_POSTGRES: true
-      DIEGO_POSTGRES_OVERRIDES_PATH: deployments/cat-postgres-stubs/diego-property-overrides.yml
+      DIEGO_SQL_RESOURCE_PATH: property-overrides/deployments/cat-postgres-stubs/diego-property-overrides.yml
   - aggregate:
     - put: cf-vsphere-manifest
       tags: [vsphere]
