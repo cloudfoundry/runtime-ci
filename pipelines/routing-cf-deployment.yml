@@ -415,8 +415,8 @@ jobs:
   - put: trelawney-env-infrastructure
     params:
       repository: updated-env-repo
-  - task: bbl-mixin-routing-release
-    file: runtime-ci/scripts/ci/bbl-mixin-routing-release/task.yml
+  - task: bbl-mixin-routing-release-lbs
+    file: runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/task.yml
     input_mapping:
       env-repo: updated-env-repo
     params:
