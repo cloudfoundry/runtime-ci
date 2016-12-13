@@ -37,12 +37,12 @@ function commit_vars_store {
 
 trap commit_vars_store EXIT
 
-echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_argument} ${BOSH_MANIFEST}"
-bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} > /dev/null
+echo "bosh -n -d ${DEPLOYMENT_NAME} -e ${BOSH_TARGET} --ca-cert=${BOSH_CA_CERT} deploy ${deployment_vars_store_argument} ${ops_file_arguments} ${BOSH_MANIFEST}"
+bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_arguments} --var-errs ${BOSH_MANIFEST} > /dev/null
 
 set +e
 echo "Here are all the unmodified static IP addresses left in this manifest after applying all bosh operations:"
-bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_argument} --var-errs ${BOSH_MANIFEST} | grep -E '10\.0\.31\.190|10\.0\.47\.190|10\.0\.63\.190|10\.0\.31\.191|10\.0\.47\.191|10\.0\.31\.193'
+bosh -n interpolate ${deployment_vars_store_argument} ${ops_file_arguments} --var-errs ${BOSH_MANIFEST} | grep -E '10\.0\.31\.190|10\.0\.47\.190|10\.0\.63\.190|10\.0\.31\.191|10\.0\.47\.191|10\.0\.31\.193'
 set -e
 
 if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
