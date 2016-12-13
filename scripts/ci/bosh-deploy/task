@@ -9,12 +9,13 @@ export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
 BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
 DEPLOYMENT_NAME=$(grep -E "^name:" "$BOSH_MANIFEST" | awk '{print $2}')
 
-ops_file_argument=""
 deployment_vars_store_argument=""
 
-if [ "${OPS_FILE}" != "" ]; then
-  ops_file_argument="-o manifest/${OPS_FILE}"
-fi
+ops_file_arguments=""
+for op in ${OPS_FILES}
+do
+  ops_file_arguments="${ops_file_arguments} -o ${op}"
+done
 
 if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
   deployment_vars_store_argument="--vars-store manifest-properties/${DEPLOYMENT_VARS_STORE} -v system_domain=${SYSTEM_DOMAIN}"
@@ -67,7 +68,7 @@ bosh \
   --ca-cert="${BOSH_CA_CERT}" \
   deploy \
   $deployment_vars_store_argument \
-  $ops_file_argument \
+  $ops_file_arguments \
   "${BOSH_MANIFEST}"
 
 set -x
