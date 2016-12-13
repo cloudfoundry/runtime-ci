@@ -288,7 +288,7 @@ jobs:
     - task: enable-docker-diego
       file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
       params:
-        VARS_STORE_PATH: deployment-env-vars.yml
+        VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: marauder.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-routing-api
