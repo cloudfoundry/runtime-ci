@@ -14,7 +14,7 @@ deployment_vars_store_argument=""
 ops_file_arguments=""
 for op in ${OPS_FILES}
 do
-  ops_file_arguments="${ops_file_arguments} -o ${op}"
+  ops_file_arguments="${ops_file_arguments} -o manifest/${op}"
 done
 
 if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
