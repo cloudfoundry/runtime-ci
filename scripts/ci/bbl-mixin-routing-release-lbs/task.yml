@@ -15,3 +15,9 @@ outputs:
 
 run:
   path: runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/task
+
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  AWS_REGION:
+  ENV_NAME:

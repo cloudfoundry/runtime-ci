@@ -415,6 +415,18 @@ jobs:
   - put: trelawney-env-infrastructure
     params:
       repository: updated-env-repo
+  - task: bbl-mixin-routing-release
+    file: runtime-ci/scripts/ci/bbl-mixin-routing-release/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
+      AWS_REGION: us-east-1a
+      ENV_NAME: trelawney
+  - put: trelawney-env-infrastructure
+    params:
+      repository: updated-env-repo
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:

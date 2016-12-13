@@ -11,7 +11,8 @@ variable "region" {
 variable "vpc_id" {
   type    = "string"
 }
-variable "subnets" {
+
+variable "subnet_ids" {
   type    = "list"
 }
 
@@ -24,8 +25,7 @@ provider "aws" {
 resource "aws_security_group" "tcp_elb_security_group" {
   name        = "tcp_elb_security_group"
   description = "ELB TCP Security Group"
-  depends_on  = ["aws_vpc.vpc"]
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${var.vpc_id}"
 
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
@@ -754,5 +754,5 @@ resource "aws_elb" "tcp_elb" {
   }
 
   security_groups = ["${aws_security_group.tcp_elb_security_group.id}"]
-  subnets         = ["${aws_subnet.public_subnets.*.id}"]
+  subnets         = ["${var.subnet_ids}"]
 }

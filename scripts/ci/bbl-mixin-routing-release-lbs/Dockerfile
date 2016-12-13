@@ -7,11 +7,12 @@ RUN \
   apt-get -y install \
     git \
     jq \
+    awscli \
     unzip
 
 RUN \
-  wget https://releases.hashicorp.com/terraform/0.7.5/terraform_0.7.5_linux_amd64.zip -P /tmp && \
-  unzip /tmp/terraform_0.7.5_linux_amd64.zip -d /tmp && \
+  wget https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip -P /tmp && \
+  unzip /tmp/terraform_0.7.13_linux_amd64.zip -d /tmp && \
   mv /tmp/terraform /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
