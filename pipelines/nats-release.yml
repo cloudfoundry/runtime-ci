@@ -447,7 +447,6 @@ jobs:
         file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
         input_mapping:
           cf-manifest: manifest
-          diego-mysql-overrides: hagrid-env-stubs
           property-overrides: hagrid-env-stubs
           instance-count-overrides: hagrid-env-stubs
           release-versions: hagrid-env-stubs
@@ -455,6 +454,7 @@ jobs:
           PROPERTY_OVERRIDES_PATH: diego/property-overrides.yml
           INSTANCE_COUNT_OVERRIDES_PATH: diego/instance-count-overrides.yml
           RELEASE_VERSIONS_PATH: diego/release-versions.yml
+          DIEGO_SQL_RESOURCE_PATH: property-overrides/diego/diego-postgres-overrides.yml
       - task: extend-deployment-manifest-with-security-groups-and-elb-diego
         file: runtime-ci/scripts/ci/extend-deployment-manifest-with-security-groups-and-elb/task.yml
         input_mapping:
