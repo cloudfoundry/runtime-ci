@@ -472,7 +472,7 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILE: opsfiles/change-logging-port-for-aws-elb.yml
+      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml"
     ensure:
       put: trelawney-env-infrastructure
       params:
