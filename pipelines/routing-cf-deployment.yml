@@ -422,7 +422,7 @@ jobs:
     params:
       AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
-      AWS_REGION: us-east-1a
+      AWS_DEFAULT_REGION: us-east-1a
       ENV_NAME: trelawney
   - put: trelawney-env-infrastructure
     params:

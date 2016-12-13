@@ -3,10 +3,10 @@ cp runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/tcp_router_elb.tf env-rep
 
 pushd env-repo
   # Get the VPC_ID
-  VPC_ID=$(aws cloudformation describe-stacks --stack-name (cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey=="VPCID").OutputValue')
+  VPC_ID=$(aws cloudformation describe-stacks --stack-name $(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey=="VPCID").OutputValue')
   # Get the comma-separated list of subnets
-  SUBNET_IDS=$(aws cloudformation describe-stacks --stack-name (cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("subnet-")) | .OutputValue' | jq -s . | tr -d '\n')
-  terraform apply -var "access_key=${AWS_ACCESS_KEY}" -var "secret_key=${AWS_SECRET_KEY}" -var "region=${AWS_REGION}" -var "env_name=${ENV_NAME}" -var "subnet_ids='${SUBNET_IDS}'" -var "vpc_id=${VPC_ID}"
+  SUBNET_IDS=$(aws cloudformation describe-stacks --stack-name $(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("subnet-")) | .OutputValue' | jq -s . | tr -d '\n')
+  terraform apply -var "access_key=${AWS_ACCESS_KEY}" -var "secret_key=${AWS_SECRET_KEY}" -var "region=${AWS_DEFAULT_REGION}" -var "env_name=${ENV_NAME}" -var "subnet_ids='${SUBNET_IDS}'" -var "vpc_id=${VPC_ID}"
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
