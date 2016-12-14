@@ -1628,7 +1628,7 @@ jobs:
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
       IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
-      DIEGO_SQL_RESOURCE_PATH: property-overrides/deployments/cat-postgres-stubs/diego-property-overrides.yml
+      DIEGO_SQL_OVERRIDES_PATH: property-overrides/stubs/diego/postgres-overrides.yml
   - aggregate:
     - put: cf-vsphere-manifest
       tags: [vsphere]
