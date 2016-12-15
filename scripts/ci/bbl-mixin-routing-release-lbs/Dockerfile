@@ -6,7 +6,6 @@ RUN \
   apt-get update && \
   apt-get -y install \
     git \
-    jq \
     awscli \
     unzip
 
@@ -16,6 +15,9 @@ RUN \
   mv /tmp/terraform /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
+
+RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document /usr/local/bin/jq && \
+  chmod +x /usr/local/bin/jq
 
 RUN wget "$(curl -s https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" && \
   mv bbl-* /usr/local/bin/bbl && \
