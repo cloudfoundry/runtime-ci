@@ -1,22 +1,68 @@
+#!/bin/bash -exu
 
-cp runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/tcp_router_elb.tf env-repo/tcp_router_elb.tf
+set -o pipefail
 
-pushd env-repo
-  # Get the VPC_ID
-  VPC_ID=$(aws cloudformation describe-stacks --stack-name $(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey=="VPCID").OutputValue')
-  # Get the comma-separated list of subnets
-  SUBNET_IDS=$(aws cloudformation describe-stacks --stack-name $(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)| jq -r '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("subnet-")) | .OutputValue' | jq -s . | tr -d '\n')
-  terraform apply -var "access_key=${AWS_ACCESS_KEY}" -var "secret_key=${AWS_SECRET_KEY}" -var "region=${AWS_DEFAULT_REGION}" -var "env_name=${ENV_NAME}" -var "subnet_ids='${SUBNET_IDS}'" -var "vpc_id=${VPC_ID}"
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  pushd "${root_dir}/env-repo" > /dev/null
+    cp "${root_dir}/runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/tcp_router_elb.tf" .
+
+    local stack_name
+    stack_name=$(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)
+
+    echo "getting vpc_id and subnet_ids..."
+    set +x
+    local describe_stacks_output
+    describe_stacks_output=$(aws cloudformation describe-stacks --stack-name "${stack_name}")
+
+    local vpc_id
+    vpc_id=$(echo "${describe_stacks_output}" | jq -r '.Stacks[].Outputs[] | select(.OutputKey=="VPCID").OutputValue')
+
+    local subnet_ids
+    subnet_ids=$(echo "${describe_stacks_output}" | jq '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("subnet-")) | .OutputValue' | jq -s . | tr -d '\n')
+    set -x
+
+    terraform_apply "${vpc_id}" "${subnet_ids}"
+
+    set +e
+    git_commit
+    set +e
+
+    rm tcp_router_elb.tf
+    if [ -f terraform.tfstate.backup ]; then
+      rm terraform.tfstate.backup
+    fi
+  popd > /dev/null
+
+  shopt -s dotglob
+  cp -R env-repo/* updated-env-repo/
+}
+
+function git_commit() {
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
     git add terraform.tfstate
     git commit -m "Commit terraform state file"
   fi
-  rm tcp_router_elb.tf
-  rm terraform.tfstate.backup
-popd
+}
 
-shopt -s dotglob
-cp -R env-repo/* updated-env-repo/
+function terraform_apply() {
+  local vpc_id
+  vpc_id="${1}"
+  local subnet_ids
+  subnet_ids="${2}"
 
+  set +x
+  terraform apply -var "access_key=${AWS_ACCESS_KEY_ID}" \
+    -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
+    -var "region=${AWS_DEFAULT_REGION}" \
+    -var "env_name=${ENV_NAME}" \
+    -var "subnet_ids=${subnet_ids}" \
+    -var "vpc_id=${vpc_id}"
+  set -x
+}
+
+main "${PWD}"
