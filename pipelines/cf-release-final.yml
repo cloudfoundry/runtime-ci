@@ -94,6 +94,8 @@ jobs:
     - get: runtime-ci
     - get: cf-release-release-candidate
     - get: cf-bosh-io-release
+      params:
+        tarball: false
   - task: announce-rc
     file: runtime-ci/scripts/ci/announce-rc/task.yml
     params:
