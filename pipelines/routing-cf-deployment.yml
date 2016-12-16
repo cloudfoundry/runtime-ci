@@ -229,6 +229,10 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+  - task: ensure-api-healthy
+    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+    params:
+      ENDPOINT: api.marauder.cf-app.com
 
 - name: acceptance-tests-fresh
   serial_groups: [marauder]
