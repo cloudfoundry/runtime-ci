@@ -56,6 +56,13 @@ resource "aws_security_group" "tcp_elb_security_group" {
     to_port     = 80
   }
 
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    protocol    = "tcp"
+    from_port   = 1024
+    to_port     = 1123
+  }
+
   tags {
     Name = "${var.env_name}-tcp-elb-security-group"
   }
