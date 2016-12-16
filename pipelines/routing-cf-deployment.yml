@@ -92,6 +92,7 @@ resources:
     private_key: {{trelawney_env_private_key}}
     paths:
     - bbl-infrastructure/*
+    - terraform.tfstate
 - name: trelawney-env-properties
   type: git
   source:
