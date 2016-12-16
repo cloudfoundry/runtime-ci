@@ -4,6 +4,7 @@ groups:
   - trigger-all-image-builds
   - build-announce-rc-docker-image
   - build-can-bump-docker-image
+  - build-wait-for-endpoint-docker-image
   - build-cannot-bump-docker-image
   - build-generate-release-manifest-docker-image
   - build-create-final-release-docker-image
@@ -228,6 +229,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/can-bump/Dockerfile]
+- name: runtime-ci-wait-for-endpoint
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/wait-for-endpoint/Dockerfile]
 - name: runtime-ci-cannot-bump
   type: git
   source:
@@ -702,6 +709,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/can-bump
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: wait-for-endpoint-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/wait-for-endpoint
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1481,6 +1495,24 @@ jobs:
     - put: can-bump-pipeline-image
       params:
         build: runtime-ci-can-bump/scripts/ci/can-bump
+        push: true
+- name: build-wait-for-endpoint-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-wait-for-endpoint
+        trigger: true
+    - put: wait-for-endpoint-pipeline-image
+      params:
+        build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
         push: true
 - name: build-cannot-bump-docker-image
   public: true
