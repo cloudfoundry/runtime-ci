@@ -310,10 +310,10 @@ jobs:
       - get: runtime-ci
       - get: marauder-env-properties
         trigger: true
-        passed: [ acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
       - get: cf-deployment-routing-api
         trigger: true
-        passed: [ acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
