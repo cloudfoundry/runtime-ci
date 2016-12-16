@@ -5,6 +5,8 @@ set -exu
 ENDPOINT="${ENDPOINT:?"\$ENDPOINT not set"}"
 
 function main() {
+  check-a-record "${ENDPOINT}"
+
   for i in $(seq 1 $TIMEOUT); do
     set +e
     local rc
