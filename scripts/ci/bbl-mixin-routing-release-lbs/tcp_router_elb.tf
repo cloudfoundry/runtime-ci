@@ -764,3 +764,12 @@ resource "aws_elb" "tcp_elb" {
   security_groups = ["${aws_security_group.tcp_elb_security_group.id}"]
   subnets         = ["${var.subnet_ids}"]
 }
+
+resource "aws_route53_record" "tcp_dns" {
+  zone_id = "${var.env_name}.cf-app.com"
+  name       = "tcp.${var.env_name}.cf-app.com"
+  type       = "CNAME"
+  ttl        = 300
+
+  records = ["${tcp_elb.dns_name}"]
+}
