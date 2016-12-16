@@ -67,7 +67,10 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/marauder-env.git
     private_key: {{marauder_env_private_key}}
-    paths: [ deployment-vars.yml ]
+    paths:
+    - deployment-vars.yml
+    - integration_config_template.json
+    - rats_integration_config_template.json
 - name: weekly
   type: time
   source:
@@ -103,6 +106,7 @@ resources:
     paths:
     - deployment-env-vars.yml
     - integration_config_template.json
+    - rats_integration_config_template.json
 - name: trelawney-env-integration-config
   type: git
   source:
