@@ -325,7 +325,7 @@ jobs:
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
-        env-repo: marauder-properties
+        env-repo: marauder-env-properties
     - task: delete-deployment-cf
       input_mapping:
         env-repo: marauder-env-properties
@@ -489,7 +489,7 @@ jobs:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml"
     ensure:
-      put: trelawney-env-infrastructure
+      put: trelawney-env-integration-config
       params:
         repository: updated-vars-store
         rebase: true
@@ -510,6 +510,7 @@ jobs:
         trigger: true
         passed: [ deploy-releases-upgrade ]
       - get: trelawney-env-integration-config
+        passed: [ deploy-releases-upgrade ]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -543,6 +544,7 @@ jobs:
         trigger: true
         passed: [ deploy-releases-upgrade ]
       - get: trelawney-env-integration-config
+        passed: [ deploy-releases-upgrade ]
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
