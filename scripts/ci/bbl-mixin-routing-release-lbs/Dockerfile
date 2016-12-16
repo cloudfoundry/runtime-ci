@@ -10,8 +10,8 @@ RUN \
     unzip
 
 RUN \
-  wget https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip -P /tmp && \
-  unzip /tmp/terraform_0.7.13_linux_amd64.zip -d /tmp && \
+  wget https://releases.hashicorp.com/terraform/0.8.1/terraform_0.8.1_linux_amd64.zip -P /tmp && \
+  unzip /tmp/terraform_0.8.1_linux_amd64.zip -d /tmp && \
   mv /tmp/terraform /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform && \
   rm -rf /tmp/*
