@@ -765,11 +765,15 @@ resource "aws_elb" "tcp_elb" {
   subnets         = ["${var.subnet_ids}"]
 }
 
+data "aws_route53_zone" "env_zone" {
+  name = "${var.env_name}.cf-app.com"
+}
+
 resource "aws_route53_record" "tcp_dns" {
-  zone_id = "${var.env_name}.cf-app.com"
-  name       = "tcp.${var.env_name}.cf-app.com"
+  zone_id = "${data.aws_route53_zone.env_zone.zone_id}"
+  name       = "tcp.${data.aws_route53_zone.env_zone.name}"
   type       = "CNAME"
   ttl        = 300
 
-  records = ["${tcp_elb.dns_name}"]
+  records = ["${aws_elb.tcp_elb.dns_name}"]
 }
