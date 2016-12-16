@@ -383,6 +383,12 @@ jobs:
   - put: trelawney-env-infrastructure
     params:
       repository: updated-env-repo
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: trelawney-env-infrastructure
   - task: bbl-mixin-routing-release-lbs
     file: runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/task.yml
     input_mapping:

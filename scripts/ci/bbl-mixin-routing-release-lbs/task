@@ -22,22 +22,68 @@ function main() {
 
     local subnet_ids
     subnet_ids=$(echo "${describe_stacks_output}" | jq '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("subnet-")) | .OutputValue' | jq -s . | tr -d '\n')
+
+    local internal_security_group_id
+    internal_security_group_id=$(echo "${describe_stacks_output}" | jq -r '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("sg-")) | .OutputValue')
     set -x
 
     terraform_apply "${vpc_id}" "${subnet_ids}"
 
     set +e
     git_commit
-    set +e
+    set -e
+
+    local tcp_router_elb_id
+    tcp_router_elb_id=$(terraform output tcp_router_elb_id)
+
+    local tcp_router_security_group_id
+    tcp_router_security_group_id=$(terraform output tcp_router_security_group_id)
 
     rm tcp_router_elb.tf
     if [ -f terraform.tfstate.backup ]; then
       rm terraform.tfstate.backup
     fi
+
+    update_cloud_config "${root_dir}" "${tcp_router_elb_id}" "${tcp_router_security_group_id}" "${internal_security_group_id}"
   popd > /dev/null
 
   shopt -s dotglob
   cp -R env-repo/* updated-env-repo/
+}
+
+function update_cloud_config() {
+  local root_dir
+  root_dir="${1}"
+
+  local tcp_router_elb_id
+  tcp_router_elb_id="${2}"
+
+  local tcp_router_security_group_id
+  tcp_router_security_group_id="${3}"
+
+  local internal_security_group_id
+  internal_security_group_id="${4}"
+
+  mkdir -p "${GOPATH}"/src/
+  ln -s "${root_dir}/runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs" "${GOPATH}/src/bbl-mixin-routing-release-lbs"
+
+  pushd "${GOPATH}/src/bbl-mixin-routing-release-lbs" > /dev/null
+    #bosh update-cloud-config <(go run update-bbl-cloud-config.go --cloud-config <(bosh cloud-config) --tcp-elb-id "${tcp_router_elb_id}" --tcp-security-group "${tcp_router_security_group_id}" --internal-security-group-id="${internal_security_group_id}")
+    export BOSH_ENVIRONMENT=$(cat "${root_dir}/target/${TARGET_FILE}")
+    export BOSH_USER=$(cat "${root_dir}/username/${USERNAME_FILE}")
+    set +x
+    export BOSH_PASSWORD=$(cat "${root_dir}/password/${PASSWORD_FILE}")
+    export BOSH_CA_CERT="${root_dir}/ca-cert/${CA_CERT_FILE}"
+    local cloud_config_file
+    cloud_config_file=$(mktemp)
+    bosh cloud-config > $cloud_config_file
+    set -x
+
+    local updated_cloud_config
+    updated_cloud_config=$(mktemp)
+    go run main.go --cloud-config $cloud_config_file --tcp-router-elb-id "${tcp_router_elb_id}" --tcp-router-security-group-id "${tcp_router_security_group_id}" --internal-security-group-id="${internal_security_group_id}" > $updated_cloud_config
+    bosh update-cloud-config -n "${updated_cloud_config}"
+  popd > /dev/null
 }
 
 function git_commit() {

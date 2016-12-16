@@ -16,6 +16,14 @@ variable "subnet_ids" {
   type    = "list"
 }
 
+output "tcp_router_elb_id" {
+  value = "${aws_elb.tcp_elb.id}"
+}
+
+output "tcp_router_security_group_id" {
+  value = "${aws_security_group.tcp_elb_security_group.id}"
+}
+
 provider "aws" {
   access_key = "${var.access_key}"
   secret_key = "${var.secret_key}"
