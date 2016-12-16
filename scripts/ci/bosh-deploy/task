@@ -51,7 +51,6 @@ if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
   cat manifest-properties/integration_config_template.json | \
     sed "s/REPLACE_ME/\"${CF_PASSWORD}\"/" \
     > manifest-properties/integration_config.json
-  set -x
   if [ -f manifest-properties/rats_integration_config_template.json ]; then
     TCP_EMITTER_SECRET=$(bosh int manifest-properties/${DEPLOYMENT_VARS_STORE} --path=/uaa_clients_tcp_emitter_secret)
     cat manifest-properties/rats_integration_config_template.json | \
@@ -59,6 +58,7 @@ if [ "${DEPLOYMENT_VARS_STORE}" != "" ]; then
       sed "s/TCP_EMITTER_SECRET/\"${TCP_EMITTER_SECRET}\"/" \
       > manifest-properties/rats_integration_config.json
   fi
+  set -x
 fi
 
 bosh \
