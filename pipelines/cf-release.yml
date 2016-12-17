@@ -238,11 +238,6 @@ resources:
   source:
     repository: cloudfoundry-incubator/netman-release
 
-- name: etcd-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/etcd-release
-
 - name: cflinuxfs2-rootfs-release-tarball
   type: bosh-io-release
   source:
@@ -844,8 +839,6 @@ jobs:
         trigger: true
       - get: garden-runc-release-tarball
         trigger: true
-      - get: etcd-release-tarball
-        trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
       - get: diego-release-tarball
@@ -887,9 +880,6 @@ jobs:
       - get: garden-runc-release-tarball
         passed: [ generate-minimal-manifest ]
         trigger: true
-      - get: etcd-release-tarball
-        passed: [ generate-minimal-manifest ]
-        trigger: true
       - get: cflinuxfs2-rootfs-release-tarball
         passed: [ generate-minimal-manifest ]
         trigger: true
@@ -910,7 +900,6 @@ jobs:
           - cf-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-release-tarball/*.tgz
 
 - name: minimal-acceptance-tests
@@ -942,11 +931,6 @@ jobs:
         params:
           tarball: false
       - get: garden-runc-release-tarball
-        trigger: true
-        passed: [ deploy-minimal ]
-        params:
-          tarball: false
-      - get: etcd-release-tarball
         trigger: true
         passed: [ deploy-minimal ]
         params:
