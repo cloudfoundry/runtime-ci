@@ -7,7 +7,6 @@ groups:
   - deploy-releases-upgrade
   - acceptance-tests-fresh
   - acceptance-tests-upgrade
-  - routing-acceptance-tests-upgrade
   - post-delete-deployment-fresh
   - bless-manifest
 - name: infrastructure
@@ -115,12 +114,21 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
 - name: cf-deployment-master
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 - name: capi-release
   type: bosh-io-release
   source:
@@ -133,20 +141,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/cf-routing-release
-- name: routing-release-github
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-release
-- name: cf-acceptance-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-acceptance-tests
-- name: stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 - name: consul-release
   type: bosh-io-release
   source:
@@ -221,6 +215,35 @@ resources:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 jobs:
+- name: setup-infrastructure
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: hermione-env-infrastructure
+    - get: runtime-ci
+  - task: setup-infrastructure
+    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+    input_mapping:
+      env-repo: hermione-env-infrastructure
+  - put: hermione-env-infrastructure
+    params:
+      repository: updated-env-repo
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      DOMAIN: hermione.cf-app.com
+
 - name: setup-infrastructure-fresh
   serial_groups: [luna]
   public: true
@@ -232,18 +255,38 @@ jobs:
       env_name: luna
       delete_on_failure: true
 
-- name: destroy-infrastructure-fresh
+- name: create-bosh-director-fresh
   serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: runtime-ci
+  - get: luna-env-infrastructure
+  - get: cf-gcp-infrastructure
   - get: luna-terraform
-  - put: luna-terraform
+    trigger: true
+    passed: [ setup-infrastructure-fresh ]
+  - task: create-gcp-bosh-director
+    file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
+    input_mapping:
+      env-repo: luna-env-infrastructure
+      terraform: luna-terraform
     params:
-      env_name: luna
-      action: destroy
-    get_params:
-      action: destroy
+      NATS_PASSWORD: {{luna_nats_password}}
+      MBUS_PASSWORD: {{luna_mbus_password}}
+      HM_PASSWORD: {{luna_hm_password}}
+      BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
+      BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
+      POSTGRES_PASSWORD: {{luna_postgres_password}}
+  - put: luna-env-infrastructure
+    params:
+      repository: updated-env-repo
+      rebase: true
+  - task: update-gcp-cloud-config
+    file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
+    input_mapping:
+      env-repo: updated-env-repo
+      terraform: luna-terraform
 
 - name: deploy-releases-fresh
   serial_groups: [luna]
@@ -292,6 +335,84 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+
+- name: deploy-releases-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+      trigger: true
+    - get: hermione-env-properties
+      trigger: true
+    - get: hermione-env-infrastructure
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
+    input_mapping:
+      env-repo: hermione-env-infrastructure
+  - task: bosh-upload-stemcell-upgrade
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: aws
+  - task: bosh-deploy-cf
+    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    input_mapping:
+      manifest: cf-deployment-develop
+      manifest-properties: hermione-env-properties
+    params:
+      TARGET_FILE:  target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      MANIFEST_FILE: cf-deployment.yml
+      DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
+      SYSTEM_DOMAIN: hermione.cf-app.com
+      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml"
+    ensure:
+      put: hermione-env-infrastructure
+      params:
+        repository: updated-vars-store
+        rebase: true
+
+- name: acceptance-tests-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+      - get: hermione-env-properties
+        trigger: true
+        passed: [ deploy-releases-upgrade ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ deploy-releases-upgrade ]
+      - get: hermione-env-integration-config
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.hermione.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      params:
+        VARS_STORE_PATH: deployment-env-vars.yml
+        SYSTEM_DOMAIN: hermione.cf-app.com
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        env-repo: hermione-env-integration-config
+    - task: run-cats
+      input_mapping:
+      - integration-config: hermione-env-integration-config
+      file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: acceptance-tests-fresh
   serial_groups: [luna]
@@ -354,59 +475,8 @@ jobs:
       params:
         DEPLOYMENT_NAME: cf
 
-- name: create-bosh-director-fresh
-  serial_groups: [luna]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: luna-env-infrastructure
-  - get: cf-gcp-infrastructure
-  - get: luna-terraform
-    trigger: true
-    passed: [ setup-infrastructure-fresh ]
-  - task: create-gcp-bosh-director
-    file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
-    input_mapping:
-      env-repo: luna-env-infrastructure
-      terraform: luna-terraform
-    params:
-      NATS_PASSWORD: {{luna_nats_password}}
-      MBUS_PASSWORD: {{luna_mbus_password}}
-      HM_PASSWORD: {{luna_hm_password}}
-      BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
-      BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
-      POSTGRES_PASSWORD: {{luna_postgres_password}}
-  - put: luna-env-infrastructure
-    params:
-      repository: updated-env-repo
-      rebase: true
-  - task: update-gcp-cloud-config
-    file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
-    input_mapping:
-      env-repo: updated-env-repo
-      terraform: luna-terraform
-
-- name: destroy-bosh-director-fresh
-  serial_groups: [setup-deploy-and-test]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: luna-env-infrastructure
-    passed: [ create-bosh-director-fresh ]
-  - get: cf-gcp-infrastructure
-  - task: destroy-gcp-bosh-director
-    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
-    input_mapping:
-      env-repo: luna-env-infrastructure
-  - put: luna-env-infrastructure
-    params:
-      repository: updated-env-repo
-      rebase: true
-
 - name: destroy-infrastructure
-  serial_groups: [hermione, hermione-routing]
+  serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -429,34 +499,54 @@ jobs:
     params:
       repository: updated-env-repo
 
-- name: setup-infrastructure
-  serial_groups: [hermione, hermione-routing]
+- name: destroy-infrastructure-fresh
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
   plan:
-  - aggregate:
-    - get: hermione-env-infrastructure
-    - get: runtime-ci
-  - task: setup-infrastructure
-    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+  - get: luna-terraform
+  - put: luna-terraform
     params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
-      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      env_name: luna
+      action: destroy
+    get_params:
+      action: destroy
+
+- name: destroy-bosh-director-fresh
+  serial_groups: [setup-deploy-and-test]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: luna-env-infrastructure
+    passed: [ create-bosh-director-fresh ]
+  - get: cf-gcp-infrastructure
+  - task: destroy-gcp-bosh-director
+    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
-  - put: hermione-env-infrastructure
+      env-repo: luna-env-infrastructure
+  - put: luna-env-infrastructure
     params:
       repository: updated-env-repo
-  - task: bind-elb-to-r53
-    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
-    input_mapping:
-      env-repo: updated-env-repo
-    params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      DOMAIN: hermione.cf-app.com
+      rebase: true
+
+- name: bless-manifest
+  public: true
+  serial: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - aggregate:
+        - get: runtime-ci
+        - get: cf-deployment-develop
+          trigger: true
+          passed:
+          - acceptance-tests-upgrade
+          - acceptance-tests-fresh
+        - get: cf-deployment-master
+    - put: cf-deployment-master
+      params:
+        repository: cf-deployment-develop
 
 - name: update-releases
   serial: true
@@ -578,137 +668,6 @@ jobs:
   - put: cf-deployment-develop
     params:
       repository: updated-repo
-
-- name: deploy-releases-upgrade
-  serial_groups: [hermione, hermione-routing]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-      trigger: true
-    - get: hermione-env-properties
-      trigger: true
-    - get: hermione-env-infrastructure
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
-    input_mapping:
-      env-repo: hermione-env-infrastructure
-  - task: bosh-upload-stemcell-upgrade
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: aws
-  - task: bosh-deploy-cf
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
-    input_mapping:
-      manifest: cf-deployment-develop
-      manifest-properties: hermione-env-properties
-    params:
-      TARGET_FILE:  target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: cf-deployment.yml
-      DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
-      SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml"
-    ensure:
-      put: hermione-env-infrastructure
-      params:
-        repository: updated-vars-store
-        rebase: true
-
-- name: acceptance-tests-upgrade
-  serial_groups: [hermione]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-acceptance-tests
-      - get: hermione-env-properties
-        trigger: true
-        passed: [ deploy-releases-upgrade ]
-      - get: cf-deployment-develop
-        trigger: true
-        passed: [ deploy-releases-upgrade ]
-      - get: hermione-env-integration-config
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.hermione.cf-app.com
-    - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
-      params:
-        VARS_STORE_PATH: deployment-env-vars.yml
-        SYSTEM_DOMAIN: hermione.cf-app.com
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-integration-config
-    - task: run-cats
-      input_mapping:
-      - integration-config: hermione-env-integration-config
-      file: runtime-ci/scripts/ci/run-cats/task.yml
-
-- name: routing-acceptance-tests-upgrade
-  public: true
-  serial_groups: [hermione-routing]
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: routing-release-github
-      - get: hermione-env-properties
-        trigger: true
-        passed: [ deploy-releases-upgrade ]
-      - get: cf-deployment-develop
-        trigger: true
-        passed: [ deploy-releases-upgrade ]
-      - get: hermione-env-integration-config
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.hermione.cf-app.com
-    - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
-      params:
-        VARS_STORE_PATH: deployment-env-vars.yml
-        SYSTEM_DOMAIN: hermione.cf-app.com
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-integration-config
-    - task: run-rats
-      input_mapping:
-      - routing-release: routing-release-github
-      - integration-config: hermione-env-integration-config
-      file: runtime-ci/scripts/ci/run-rats/task.yml
-
-- name: bless-manifest
-  public: true
-  serial: true
-  build_logs_to_retain: 100
-  plan:
-    - do:
-      - aggregate:
-        - get: runtime-ci
-        - get: cf-deployment-develop
-          trigger: true
-          passed:
-          - acceptance-tests-upgrade
-          - acceptance-tests-fresh
-        - get: cf-deployment-master
-    - put: cf-deployment-master
-      params:
-        repository: cf-deployment-develop
 
 - name: verify-nameserver-has-record
   public: true
