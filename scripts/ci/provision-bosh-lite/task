@@ -49,6 +49,7 @@ EOF
 
   echo "admin" > ../bosh-lite-creds/username
   echo "admin" > ../bosh-lite-creds/password
+  echo ${BOSH_LITE_ELASTIC_IP} > ../bosh-lite-creds/target
   popd
 }
 
