@@ -389,10 +389,23 @@ jobs:
   - aggregate:
     - get: trelawney-env-infrastructure
     - get: runtime-ci
+  - task: delete-bbl-mixin-routing-release-lbs
+    file: runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/task.yml
+    input_mapping:
+      env-repo: trelawney-env-infrastructure
+    params:
+      AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
+      AWS_DEFAULT_REGION: us-east-1
+      ENV_NAME: trelawney
+      TERRAFORM_COMMAND: delete
+  - put: trelawney-env-infrastructure
+    params:
+      repository: updated-env-repo
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
-      env-repo: trelawney-env-infrastructure
+      env-repo: updated-env-repo
     params:
       AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
