@@ -1447,7 +1447,7 @@ jobs:
       NETMAN_OVERRIDES_PATH: stubs/diego/netman.yml
       USE_ETCD: false
       USE_MYSQL: true
-      DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-stubs/diego-property-overrides.yml
+      DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-standalone-stubs/diego-property-overrides.yml
   - aggregate:
     - put: cf-a1-manifest
       params:
