@@ -29,3 +29,4 @@ params:
   USERNAME_FILE: username
   PASSWORD_FILE: password
   CA_CERT_FILE: ca-cert
+  TERRAFORM_COMMAND: apply

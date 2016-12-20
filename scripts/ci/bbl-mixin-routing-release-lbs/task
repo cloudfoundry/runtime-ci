@@ -27,7 +27,8 @@ function main() {
     internal_security_group_id=$(echo "${describe_stacks_output}" | jq -r '.Stacks[].Outputs[] | select(.OutputKey | startswith("Internal")) | select(.OutputValue | startswith("sg-")) | .OutputValue')
     set -x
 
-    terraform_apply "${vpc_id}" "${subnet_ids}"
+    echo "Executing specified terraform command..."
+    execute_terraforming "${vpc_id}" "${subnet_ids}"
 
     set +e
     git_commit
@@ -95,14 +96,14 @@ function git_commit() {
   fi
 }
 
-function terraform_apply() {
+function execute_terraforming() {
   local vpc_id
   vpc_id="${1}"
   local subnet_ids
   subnet_ids="${2}"
 
   set +x
-  terraform apply -var "access_key=${AWS_ACCESS_KEY_ID}" \
+  terraform "${TERRAFORM_COMMAND}" -var "access_key=${AWS_ACCESS_KEY_ID}" \
     -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
     -var "region=${AWS_DEFAULT_REGION}" \
     -var "env_name=${ENV_NAME}" \
