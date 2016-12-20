@@ -10,7 +10,7 @@ function main() {
     cp "${root_dir}/runtime-ci/scripts/ci/bbl-mixin-routing-release-lbs/tcp_router_elb.tf" .
 
     local stack_name
-    stack_name=$(cat bbl-infrastructure/bbl-state.json | jq -r .stack.name)
+    stack_name=$(jq -r .stack.name bbl-infrastructure/bbl-state.json)
 
     echo "getting vpc_id and subnet_ids..."
     set +x
@@ -70,19 +70,23 @@ function update_cloud_config() {
 
   pushd "${GOPATH}/src/bbl-mixin-routing-release-lbs" > /dev/null
     #bosh update-cloud-config <(go run update-bbl-cloud-config.go --cloud-config <(bosh cloud-config) --tcp-elb-id "${tcp_router_elb_id}" --tcp-security-group "${tcp_router_security_group_id}" --internal-security-group-id="${internal_security_group_id}")
-    export BOSH_ENVIRONMENT=$(cat "${root_dir}/target/${TARGET_FILE}")
-    export BOSH_USER=$(cat "${root_dir}/username/${USERNAME_FILE}")
+    export BOSH_ENVIRONMENT
+    BOSH_ENVIRONMENT=$(cat "${root_dir}/target/${TARGET_FILE}")
+    export BOSH_USER
+    BOSH_USER=$(cat "${root_dir}/username/${USERNAME_FILE}")
     set +x
-    export BOSH_PASSWORD=$(cat "${root_dir}/password/${PASSWORD_FILE}")
-    export BOSH_CA_CERT="${root_dir}/ca-cert/${CA_CERT_FILE}"
+    export BOSH_PASSWORD
+    BOSH_PASSWORD=$(cat "${root_dir}/password/${PASSWORD_FILE}")
+    export BOSH_CA_CERT
+    BOSH_CA_CERT="${root_dir}/ca-cert/${CA_CERT_FILE}"
     local cloud_config_file
     cloud_config_file=$(mktemp)
-    bosh cloud-config > $cloud_config_file
+    bosh cloud-config > "$cloud_config_file"
     set -x
 
     local updated_cloud_config
     updated_cloud_config=$(mktemp)
-    go run main.go --cloud-config $cloud_config_file --tcp-router-elb-id "${tcp_router_elb_id}" --tcp-router-security-group-id "${tcp_router_security_group_id}" --internal-security-group-id="${internal_security_group_id}" > $updated_cloud_config
+    go run main.go --cloud-config "$cloud_config_file" --tcp-router-elb-id "${tcp_router_elb_id}" --tcp-router-security-group-id "${tcp_router_security_group_id}" --internal-security-group-id="${internal_security_group_id}" > "$updated_cloud_config"
     bosh update-cloud-config -n "${updated_cloud_config}"
   popd > /dev/null
 }
