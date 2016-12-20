@@ -221,11 +221,23 @@ resources:
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
     paths: [ deployment-vars.yml ]
+- name: snitch-env-infrastructure
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths: [ infrastructure/* ]
 - name: bosh-lite
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-lite.git
+- name: bosh-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-deployment.git
 
 jobs:
 - name: setup-infrastructure
@@ -405,6 +417,8 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-develop
         # trigger: true
+      - get: bosh-deployment
+      - get: snitch-env-infrastructure
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
@@ -413,9 +427,9 @@ jobs:
         AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
         AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-    - task: bosh-create-bosh-deployment
+    - task: provision-bosh-lite
       privileged: true
-      file: runtime-ci/scripts/ci/bosh-create-bosh-deployment/task.yml
+      file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
       params:
         AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
@@ -526,6 +540,41 @@ jobs:
       params:
         NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
+
+# - name: acceptance-tests-lite
+#   serial_groups: [snitch]
+#   public: true
+#   build_logs_to_retain: 100
+#   plan:
+#   - timeout: 4h
+#     do:
+#     - aggregate:
+#       - get: runtime-ci
+#       - get: cf-acceptance-tests
+#       - get: cf-deployment-develop
+#         trigger: true
+#         passed: [ deploy-releases-lite ]
+#       - get: snitch-env-properties
+#         trigger: true
+#         passed: [ deploy-releases-lite ]
+#     - task: write-target-file-api
+#       file: runtime-ci/scripts/ci/write-target-file/task.yml
+#       params:
+#         TARGET: api.snitch.cf-app.com
+#     - task: enable-docker-diego
+#       file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+#       input_mapping:
+#         cf-deployment: cf-deployment-develop
+#         env-repo: snitch-env-properties
+#       params:
+#         VARS_STORE_PATH: deployment-vars.yml
+#         SYSTEM_DOMAIN: snitch.cf-app.com
+#     - task: run-cats
+#       input_mapping:
+#       - integration-config: snitch-env-properties
+#       params:
+#         NODES: 6
+#       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: post-delete-deployment-fresh
   serial_groups: [luna]
