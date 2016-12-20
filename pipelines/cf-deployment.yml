@@ -5,6 +5,7 @@ groups:
   - update-releases
   - deploy-releases-fresh
   - deploy-releases-upgrade
+  - deploy-releases-lite
   - acceptance-tests-fresh
   - acceptance-tests-upgrade
   - post-delete-deployment-fresh
@@ -213,6 +214,18 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
+- name: snitch-env-properties
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths: [ deployment-vars.yml ]
+- name: bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-lite.git
 
 jobs:
 - name: setup-infrastructure
@@ -379,6 +392,71 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+
+- name: deploy-releases-lite
+  public: true
+  serial_groups: [snitch]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: bosh-lite
+      - get: runtime-ci
+      - get: cf-deployment-develop
+        # trigger: true
+    - task: deprovision-bosh-lite
+      privileged: true
+      file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
+      params:
+        BOSH_LITE_NAME: bosh-lite-cf-deployment
+        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+    - task: bosh-create-bosh-deployment
+      privileged: true
+      file: runtime-ci/scripts/ci/bosh-create-bosh-deployment/task.yml
+      params:
+        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+        BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
+        BOSH_LITE_ELASTIC_IP: {{bosh_lite_elastic_ip}}
+        BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
+        SSH_KEY: {{bosh_lite_private_key}}
+    - task: bosh-upload-stemcell-lite
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        target: bosh-lite-creds
+        username: bosh-lite-creds
+        password: bosh-lite-creds
+        ca-cert: bosh-lite-creds
+      params:
+        INFRASTRUCTURE: bosh-lite
+    - task: bosh-deploy-cf-deployment
+      file: runtime-ci/scripts/cibosh-deploy/task.yml
+      input_mapping:
+        manifest: cf-deployment-develop
+        manifest-properties: snitch-env-properties
+        target: bosh-lite-creds
+        username: bosh-lite-creds
+        password: bosh-lite-creds
+        ca-cert: bosh-lite-creds
+      params:
+        MANIFEST_FILE: cf-deployment.yml
+        TARGET_FILE:  target
+        USERNAME_FILE: username
+        PASSWORD_FILE: password
+        CA_CERT_FILE: ca-cert
+        DEPLOYMENT_VARS_STORE: deployment-vars.yml
+        SYSTEM_DOMAIN: snitch.cf-app.com
+        OPS_FILES: "opsfiles/bosh-lite.yml"
+      ensure:
+        put: snitch-env-properties
+        params:
+          repository: updated-vars-store
+          rebase: true
 
 - name: acceptance-tests-upgrade
   serial_groups: [hermione]
