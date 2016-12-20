@@ -26,12 +26,14 @@ pushd env-repo
   echo "bbl \
     --state-dir bbl-infrastructure \
     up \
+    --iaas aws \
     --aws-access-key-id [REDACTED] \
     --aws-secret-access-key [REDACTED] \
     --aws-region us-east-1"
   bbl \
     --state-dir bbl-infrastructure \
     up \
+    --iaas aws \
     --aws-access-key-id "$AWS_ACCESS_KEY_ID" \
     --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
     --aws-region us-east-1
