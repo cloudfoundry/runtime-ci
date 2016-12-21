@@ -422,22 +422,6 @@ jobs:
     - task: deprovision-bosh-lite
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
-      params:
-        BOSH_LITE_NAME: bosh-lite-cf-deployment
-        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
-        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-    - task: provision-bosh-lite
-      privileged: true
-      file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
-      params:
-        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
-        BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
-        BOSH_LITE_ELASTIC_IP: {{bosh_lite_elastic_ip}}
-        BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
-        SSH_KEY: {{bosh_lite_private_key}}
     - task: bosh-upload-stemcell-lite
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
