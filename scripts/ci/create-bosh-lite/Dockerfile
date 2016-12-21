@@ -30,7 +30,7 @@ ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
 RUN \
   wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.139-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "5065d3c8291abab1ffef1bac6de6cea8d514e319 bosh" | sha1sum -c - && \
+  echo "0c8363a379aa48f58aeb828b41eb9eb92fa57e6f bosh" | sha1sum -c - && \
   chmod +x bosh
 
 RUN \
