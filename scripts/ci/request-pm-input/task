@@ -31,7 +31,7 @@ story_description="
 5. If the release notes have already been published, click \"Update release\" to save your changes. If they are still in draft mode, click \"Save draft\" instead.
 "
 
-for tracker_project_id in $diego $id $log $infr $pg $relint $rtg ; do
+for tracker_project_id in $relint $rtg ; do
     echo "Creating story for project:" $tracker_project_id
     set +x
         curl -s -f "https://www.pivotaltracker.com/services/v5/projects/${tracker_project_id}/stories" \
