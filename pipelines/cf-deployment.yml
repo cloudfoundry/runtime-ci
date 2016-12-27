@@ -7,6 +7,7 @@ groups:
   - deploy-releases-upgrade
   - deploy-releases-lite
   - acceptance-tests-fresh
+  - routing-acceptance-tests-fresh
   - acceptance-tests-upgrade
   - post-delete-deployment-fresh
   - bless-manifest
@@ -65,7 +66,10 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_private_key}}
-    paths: [ deployment-vars.yml ]
+    paths:
+    - deployment-vars.yml
+    - integration_config_template.json
+    - rats_integration_config_template.json
 - name: weekly
   type: time
   source:
@@ -115,6 +119,11 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: routing-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: cf-acceptance-tests
   type: git
   source:
@@ -314,7 +323,7 @@ jobs:
       terraform: luna-terraform
 
 - name: deploy-releases-fresh
-  serial_groups: [luna]
+  serial_groups: [luna, luna-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -323,7 +332,6 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
     - get: luna-env-properties
-      trigger: true
     - get: luna-env-infrastructure
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
@@ -354,12 +362,16 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "opsfiles/gcp.yml"
+      OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
     ensure:
       put: luna-env-properties
       params:
         repository: updated-vars-store
         rebase: true
+  - task: ensure-api-healthy
+    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+    params:
+      ENDPOINT: api.luna.cf-app.com
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione]
@@ -560,8 +572,41 @@ jobs:
 #         NODES: 6
 #       file: runtime-ci/scripts/ci/run-cats/task.yml
 
+- name: routing-acceptance-tests-fresh
+  serial_groups: [luna-routing]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: routing-acceptance-tests
+      - get: luna-env-properties
+        trigger: true
+        passed: [ deploy-releases-fresh ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ deploy-releases-fresh ]
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.luna.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      params:
+        VARS_STORE_PATH: deployment-vars.yml
+        SYSTEM_DOMAIN: luna.cf-app.com
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        env-repo: luna-env-properties
+    - task: run-rats
+      input_mapping:
+      - routing-release: routing-acceptance-tests
+      - integration-config: luna-env-properties
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+
 - name: post-delete-deployment-fresh
-  serial_groups: [luna]
+  serial_groups: [luna, luna-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -571,10 +616,10 @@ jobs:
       - get: runtime-ci
       - get: luna-env-properties
         trigger: true
-        passed: [ acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
@@ -654,6 +699,7 @@ jobs:
           passed:
           - acceptance-tests-upgrade
           - acceptance-tests-fresh
+          - routing-acceptance-tests-fresh
         - get: cf-deployment-master
     - put: cf-deployment-master
       params:
