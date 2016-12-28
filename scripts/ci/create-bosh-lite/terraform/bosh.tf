@@ -2,6 +2,12 @@ variable "env_name" {}
 
 variable "dns_suffix" {}
 
+provider "google" {
+  project     = "${var.project}"
+  region      = "${var.region}"
+  credentials = "${var.service_account_key}"
+}
+
 variable "projectid" {
     type = "string"
     default = "cf-relint-bosh-lite"
