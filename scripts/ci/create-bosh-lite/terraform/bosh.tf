@@ -81,5 +81,5 @@ resource "google_compute_firewall" "bosh-lite" {
 }
 
 output "director_address" {
-  value = "${google_compute_address.bosh-lite}"
+  value = "${google_compute_address.bosh-lite.address}"
 }
