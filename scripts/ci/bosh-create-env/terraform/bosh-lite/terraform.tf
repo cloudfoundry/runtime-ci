@@ -41,7 +41,7 @@ resource "google_compute_address" "bosh-lite" {
 // Subnet for the BOSH director
 resource "google_compute_subnetwork" "bosh-lite" {
   name          = "bosh-lite"
-  ip_cidr_range = "10.0.0.0/16"
+  ip_cidr_range = "10.0.1.0/24"
   network       = "${google_compute_network.bosh-lite.self_link}"
 }
 
@@ -80,6 +80,43 @@ resource "google_compute_firewall" "bosh-lite" {
   target_tags = ["bosh-lite"]
 }
 
-output "director_address" {
+// Outputs go below here:
+output "external_ip" {
   value = "${google_compute_address.bosh-lite.address}"
+}
+
+output "projectid" {
+  value = "${var.projectid}"
+}
+
+output "credentials" {
+  value = "${var.service_account_key}"
+}
+
+output "region" {
+  value = "${var.region}"
+}
+
+output "zone" {
+  value = "${var.zone}"
+}
+
+output "network_name" {
+  value = "${google_compute_network.bosh-lite.name}"
+}
+
+output "subnetwork_name" {
+  value = "${google_compute_subnetwork.bosh-lite.name}"
+}
+
+output "internal_cidr" {
+  value = "${google_compute_subnetwork.bosh-lite.ip_cidr_range}"
+}
+
+output "internal_gw" {
+  value = "${google_compute_subnetwork.bosh-lite.gateway_address}"
+}
+
+output "internal_ip" {
+  value = "10.0.1.6"
 }
