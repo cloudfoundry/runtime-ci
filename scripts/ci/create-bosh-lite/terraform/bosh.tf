@@ -23,11 +23,6 @@ variable "zone" {
     default = "us-central1-a"
 }
 
-provider "google" {
-    project = "cf-relint-bosh-lite"
-    region = "us-central1"
-}
-
 resource "google_compute_network" "bosh-lite" {
   name       = "bosh-lite"
 }
