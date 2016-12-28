@@ -79,3 +79,7 @@ resource "google_compute_firewall" "bosh-lite" {
   source_ranges = ["0.0.0.0/0"]
   target_tags = ["bosh-lite"]
 }
+
+output "project" {
+  value = "${var.project}"
+}
