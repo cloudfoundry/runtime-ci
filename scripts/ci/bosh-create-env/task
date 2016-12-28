@@ -102,7 +102,7 @@ output_bosh_metadata() {
   set +x
   echo admin > ${root_dir}/env-repo/infrastructure/bosh/username
   bosh interpolate ${root_dir}/env-repo/${var_file} --path=/admin_password > ${root_dir}/env-repo/infrastructure/bosh/password
-  bosh interpolate ${root_dir}/env-repo/${var_file} --path=/external_ip > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
+  cat ${root_dir}/terraform/metadata | jq -r .external_ip > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
   bosh interpolate ${root_dir}/env-repo/${var_file} --path=/director_ssl/ca > ${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem
   set -x
 }
