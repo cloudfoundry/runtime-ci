@@ -27,16 +27,13 @@ RUN \
 ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
 
 RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.124-linux-amd64 --output-document="/usr/bin/bosh" && \
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.139-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "5065d3c8291abab1ffef1bac6de6cea8d514e319 bosh" | sha1sum -c - && \
+  echo "0c8363a379aa48f58aeb828b41eb9eb92fa57e6f bosh" | sha1sum -c - && \
   chmod +x bosh
 
 RUN \
   apt-get install curl -y
 
-RUN \
-  export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
-  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
-  sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document /usr/local/bin/jq && \
+  chmod +x /usr/local/bin/jq
