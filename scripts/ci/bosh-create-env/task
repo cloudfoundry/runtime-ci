@@ -4,15 +4,18 @@ set -eux
 main() {
   local root_dir
   root_dir=$1
-  local var_file
-  var_file=$2
+  local vars_file
+  vars_file=$2
   local state_file
   state_file=$3
   local ops_files
   ops_files=$4
   local cloud_config
   cloud_config=$5
+  local director_name
+  director_name=$6
 
+  echo $ops_files
   local ops_file_arguments
   ops_file_arguments=""
   for op in ${ops_files}
@@ -20,9 +23,9 @@ main() {
     ops_file_arguments="${ops_file_arguments} -o ${root_dir}/bosh-deployment/${op}"
   done
 
-  ensure_all_vars_provided $PWD $ops_file_arguments $var_file
-  create_env $root_dir $ops_file_arguments $var_file $state_file
-  output_bosh_metadata $root_dir $var_file
+  ensure_all_vars_provided $PWD "$ops_file_arguments" $vars_file $director_name
+  create_env $root_dir "$ops_file_arguments" $vars_file $state_file $director_name
+  output_bosh_metadata $root_dir $vars_file
   update_cloud_config $cloud_config
   git_commit $root_dir
 
@@ -35,12 +38,24 @@ ensure_all_vars_provided() {
   root_dir=$1
   local ops_file_arguments
   ops_file_arguments=$2
-  local var_file
-  var_file=$3
+  local vars_file
+  vars_file=$3
+  local director_name
+  director_name=$4
   bosh -n interpolate \
-    --vars-store ${root_dir}/env-repo/${var_file} \
+    --vars-store ${root_dir}/env-repo/${vars_file} \
     $ops_file_arguments \
     --var-errs \
+    -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
+    -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
+    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
+    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
+    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
+    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
+    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
+    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
+    -v director_name=$director_name \
     ${root_dir}/bosh-deployment/bosh.yml > /dev/null
 }
 
@@ -49,27 +64,30 @@ create_env() {
   root_dir=$1
   local ops_file_arguments
   ops_file_arguments=$2
-  local var_file
-  var_file=$3
+  local vars_file
+  vars_file=$3
   local state_file
   state_file=$4
+  local director_name
+  director_name=$5
 
   set -x
   bosh -n create-env \
-    --vars-store ${root_dir}/env-repo/${var_file} \
+    --vars-store ${root_dir}/env-repo/${vars_file} \
     $ops_file_arguments \
     --state env-repo/${state_file} \
     -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
     -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
-    -v project_id=$(cat ${root_dir}/terraform/metadata | jq -r .projectid) \
-    -v gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq -r .credentials) \
-    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq -r .external_ip) \
-    -v zone=$(cat ${root_dir}/terraform/metadata | jq -r .zone) \
-    -v network=$(cat ${root_dir}/terraform/metadata | jq -r .network_name) \
-    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq -r .subnetwork_name) \
-    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq -r .internal_cidr) \
-    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq -r .internal_gw) \
-    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq -r .internal_ip) \
+    -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
+    -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
+    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
+    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
+    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
+    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
+    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
+    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
+    -v director_name=$director_name \
     ${root_dir}/bosh-deployment/bosh.yml
   set +x
 }
@@ -112,10 +130,11 @@ git_commit() {
   popd
 }
 
-VAR_FILE="${VAR_FILE:?"VAR_FILE must be provided"}"
+VARS_FILE="${VARS_FILE:?"VARS_FILE must be provided"}"
 STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
 CLOUD_CONFIG="${CLOUD_CONFIG:?"CLOUD_CONFIG must be provided"}"
+DIRECTOR_NAME="${DIRECTOR_NAME:?"DIRECTOR_NAME must be provided"}"
 OPS_FILES="${OPS_FILES:-""}"
 
 mkdir -p env-repo/infrastructure/bosh/certs
-main $PWD $VAR_FILE $STATE_FILE $OPS_FILES $CLOUD_CONFIG
+main $PWD $VARS_FILE $STATE_FILE $OPS_FILES $CLOUD_CONFIG $DIRECTOR_NAME

@@ -312,10 +312,25 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: bosh-deployment
+    - get: snitch-env-infrastructure
   - put: snitch-terraform
     params:
       env_name: snitch
       delete_on_failure: true
+  - task: bosh-create-env
+    file: runtime-ci/scripts/ci/bosh-create-env/task.yml
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+      terraform: snitch-terraform
+    params:
+      STATE_FILE: infrastructure/bosh/state.json
+      VARS_FILE: infrastructure/bosh/deployment-vars.yml
+      OPS_FILES: "bosh-lite.yml"
+      CLOUD_CONFIG: gcp/cloud-config.yml
+      DIRECTOR_NAME: snitch
 
 - name: create-bosh-director-fresh
   serial_groups: [luna]

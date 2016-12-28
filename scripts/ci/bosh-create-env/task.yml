@@ -23,7 +23,8 @@ run:
   path: runtime-ci/scripts/ci/bosh-create-env/task
 
 params:
-  VAR_FILE:
+  VARS_FILE:
   STATE_FILE:
   OPS_FILES:
   DIRECTOR_NAME:
+  CLOUD_CONFIG:
