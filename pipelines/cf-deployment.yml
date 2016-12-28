@@ -63,7 +63,7 @@ resources:
       region_name: us-west-1
       access_key_id: {{snitch_terraform_s3_access_key_id}}
       secret_access_key: {{snitch_terraform_s3_secret_key}}
-    terraform_source: github.com/cloudfoundry/runtime-ci//scripts/ci/bosh-create-env/terraform/
+    terraform_source: github.com/cloudfoundry/runtime-ci//scripts/ci/bosh-create-env/terraform/bosh-lite/
     vars:
       project: {{snitch_gcp_project}}
       region: us-central1
