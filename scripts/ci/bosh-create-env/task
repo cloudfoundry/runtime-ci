@@ -42,6 +42,7 @@ ensure_all_vars_provided() {
   vars_file=$3
   local director_name
   director_name=$4
+  set +x
   bosh -n interpolate \
     --vars-store ${root_dir}/env-repo/${vars_file} \
     $ops_file_arguments \
@@ -57,6 +58,7 @@ ensure_all_vars_provided() {
     -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
     -v director_name=$director_name \
     ${root_dir}/bosh-deployment/bosh.yml > /dev/null
+  set -x
 }
 
 create_env() {
@@ -71,7 +73,7 @@ create_env() {
   local director_name
   director_name=$5
 
-  set -x
+  set +x
   bosh -n create-env \
     --vars-store ${root_dir}/env-repo/${vars_file} \
     $ops_file_arguments \
@@ -89,7 +91,7 @@ create_env() {
     -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
     -v director_name=$director_name \
     ${root_dir}/bosh-deployment/bosh.yml
-  set +x
+  set -x
 }
 
 output_bosh_metadata() {
@@ -97,12 +99,12 @@ output_bosh_metadata() {
   root_dir=$1
   local var_file
   var_file=$2
-  set -x
+  set +x
   echo admin > ${root_dir}/env-repo/infrastructure/bosh/username
   bosh interpolate ${root_dir}/env-repo/${var_file} --path=/admin_password > ${root_dir}/env-repo/infrastructure/bosh/password
   bosh interpolate ${root_dir}/env-repo/${var_file} --path=/external_ip > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
   bosh interpolate ${root_dir}/env-repo/${var_file} --path=/director_ssl/ca > ${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem
-  set +x
+  set -x
 }
 
 update_cloud_config() {
@@ -111,11 +113,13 @@ update_cloud_config() {
   local cloud_config
   cloud_config=$2
 
+  set +x
   BOSH_TARGET=$(cat $root_dir/env-repo/infrastructure/bosh/bosh-target)
   BOSH_USER=$(cat $root_dir/env-repo/infrastructure/bosh/username)
   BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
   BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
   bosh update-cloud-config $root_dir/bosh-deployment/$cloud_config
+  set -x
 }
 
 git_commit() {
