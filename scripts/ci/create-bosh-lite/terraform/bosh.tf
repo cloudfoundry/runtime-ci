@@ -80,6 +80,6 @@ resource "google_compute_firewall" "bosh-lite" {
   target_tags = ["bosh-lite"]
 }
 
-output "project" {
-  value = "${var.project}"
+output "director_address" {
+  value = "${google_compute_address.bosh-lite}"
 }
