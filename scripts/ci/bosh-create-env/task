@@ -26,7 +26,7 @@ main() {
   ensure_all_vars_provided $PWD "$ops_file_arguments" $vars_file $director_name
   create_env $root_dir "$ops_file_arguments" $vars_file $state_file $director_name
   output_bosh_metadata $root_dir $vars_file
-  update_cloud_config $cloud_config
+  update_cloud_config $root_dir $cloud_config
   git_commit $root_dir
 
   shopt -s dotglob
