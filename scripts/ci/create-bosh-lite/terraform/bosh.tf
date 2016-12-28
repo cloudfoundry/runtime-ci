@@ -48,13 +48,13 @@ resource "google_dns_managed_zone" "env_dns_zone" {
 
 resource "google_dns_record_set" "wildcard-dns" {
   name       = "*.${google_dns_managed_zone.env_dns_zone.dns_name}"
-  depends_on = ["google_compute_global_address.bosh-lite"]
+  depends_on = ["google_compute_address.bosh-lite"]
   type       = "A"
   ttl        = 300
 
   managed_zone = "${google_dns_managed_zone.env_dns_zone.name}"
 
-  rrdatas = ["${google_compute_global_address.bosh-lite.address}"]
+  rrdatas = ["${google_compute_address.bosh-lite.address}"]
 }
 
 // Allow ssh & mbus access to director
