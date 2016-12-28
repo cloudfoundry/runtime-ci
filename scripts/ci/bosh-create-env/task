@@ -1,26 +1,121 @@
 #!/bin/bash
 set -eux
 
-DEPLOYMENT_VAR_FILE="${DEPLOYMENT_VAR_FILE:?"DEPLOYMENT_VAR_FILE must be provided"}"
+main() {
+  local root_dir
+  root_dir=$1
+  local var_file
+  var_file=$2
+  local state_file
+  state_file=$3
+  local ops_files
+  ops_files=$4
+  local cloud_config
+  cloud_config=$5
 
-export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
+  local ops_file_arguments
+  ops_file_arguments=""
+  for op in ${ops_files}
+  do
+    ops_file_arguments="${ops_file_arguments} -o ${root_dir}/bosh-deployment/${op}"
+  done
 
-bosh -n interpolate --var-file=env-repo/${DEPLOYMENT_VAR_FILE} --var-errs env-repo/${DIRECTOR_MANIFEST_FILE} > /dev/null
+  ensure_all_vars_provided $PWD $ops_file_arguments $var_file
+  create_env $root_dir $ops_file_arguments $var_file $state_file
+  output_bosh_metadata $root_dir $var_file
+  update_cloud_config $cloud_config
+  git_commit $root_dir
 
-set -x
-bosh -n create-env --var-file=env-repo/${DEPLOYMENT_VAR_FILE} env-repo/${DIRECTOR_MANIFEST_FILE}
+  shopt -s dotglob
+  cp -R env-repo/* updated-env-repo/
+}
 
-pushd env-repo
-  STATE_FILE_PATH=${DIRECTOR_MANIFEST_FILE%%.yml}-state.json
-  if [[ -n $(git status --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add ${STATE_FILE_PATH}
-    git commit -m "Commit bosh state file"
-  fi
-popd
+ensure_all_vars_provided() {
+  local root_dir
+  root_dir=$1
+  local ops_file_arguments
+  ops_file_arguments=$2
+  local var_file
+  var_file=$3
+  bosh -n interpolate \
+    --vars-store ${root_dir}/env-repo/${var_file} \
+    $ops_file_arguments \
+    --var-errs \
+    ${root_dir}/bosh-deployment/bosh.yml > /dev/null
+}
 
-shopt -s dotglob
-cp -R env-repo/* updated-env-repo/
+create_env() {
+  local root_dir
+  root_dir=$1
+  local ops_file_arguments
+  ops_file_arguments=$2
+  local var_file
+  var_file=$3
+  local state_file
+  state_file=$4
 
+  set -x
+  bosh -n create-env \
+    --vars-store ${root_dir}/env-repo/${var_file} \
+    $ops_file_arguments \
+    --state env-repo/${state_file} \
+    -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
+    -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
+    -v project_id=$(cat ${root_dir}/terraform/metadata | jq -r .projectid) \
+    -v gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq -r .credentials) \
+    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq -r .external_ip) \
+    -v zone=$(cat ${root_dir}/terraform/metadata | jq -r .zone) \
+    -v network=$(cat ${root_dir}/terraform/metadata | jq -r .network_name) \
+    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq -r .subnetwork_name) \
+    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq -r .internal_cidr) \
+    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq -r .internal_gw) \
+    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq -r .internal_ip) \
+    ${root_dir}/bosh-deployment/bosh.yml
+  set +x
+}
+
+output_bosh_metadata() {
+  local root_dir
+  root_dir=$1
+  local var_file
+  var_file=$2
+  set -x
+  echo admin > ${root_dir}/env-repo/infrastructure/bosh/username
+  bosh interpolate ${root_dir}/env-repo/${var_file} --path=/admin_password > ${root_dir}/env-repo/infrastructure/bosh/password
+  bosh interpolate ${root_dir}/env-repo/${var_file} --path=/external_ip > ${root_dir}/env-repo/infrastructure/bosh/bosh-target
+  bosh interpolate ${root_dir}/env-repo/${var_file} --path=/director_ssl/ca > ${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem
+  set +x
+}
+
+update_cloud_config() {
+  local root_dir
+  root_dir=$1
+  local cloud_config
+  cloud_config=$2
+
+  BOSH_TARGET=$(cat $root_dir/env-repo/infrastructure/bosh/bosh-target)
+  BOSH_USER=$(cat $root_dir/env-repo/infrastructure/bosh/username)
+  BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
+  BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
+  bosh update-cloud-config $root_dir/bosh-deployment/$cloud_config
+}
+
+git_commit() {
+  root_dir=$1
+  pushd ${root_dir}/env-repo
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Commit bosh state file and var file"
+    fi
+  popd
+}
+
+VAR_FILE="${VAR_FILE:?"VAR_FILE must be provided"}"
+STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
+CLOUD_CONFIG="${CLOUD_CONFIG:?"CLOUD_CONFIG must be provided"}"
+OPS_FILES="${OPS_FILES:-""}"
+
+mkdir -p ${root_dir}/env-repo/infrastructure/bosh/certs
+main $PWD $VAR_FILE $STATE_FILE $OPS_FILES $CLOUD_CONFIG

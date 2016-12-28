@@ -9,18 +9,21 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: env-repo
-- name: username
-- name: password
+- name: terraform
+- name: bosh-deployment
 
 outputs:
 - name: updated-env-repo
+- name: target
+- name: username
+- name: password
+- name: ca-cert
 
 run:
   path: runtime-ci/scripts/ci/bosh-create-env/task
 
 params:
-  DIRECTOR_MANIFEST_FILE: infrastructure/bosh-init/bosh.yml
-  USERNAME_FILE:
-  PASSWORD_FILE:
-  DEPLOYMENT_VAR_FILE:
-  DEPLOYMENT_OPS_FILE:
+  VAR_FILE:
+  STATE_FILE:
+  OPS_FILES:
+  DIRECTOR_NAME:
