@@ -2,6 +2,10 @@ variable "env_name" {}
 
 variable "dns_suffix" {}
 
+variable "project" {}
+
+variable "service_account_key" {}
+
 provider "google" {
   project     = "${var.project}"
   region      = "${var.region}"
