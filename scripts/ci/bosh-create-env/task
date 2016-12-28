@@ -117,5 +117,5 @@ STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
 CLOUD_CONFIG="${CLOUD_CONFIG:?"CLOUD_CONFIG must be provided"}"
 OPS_FILES="${OPS_FILES:-""}"
 
-mkdir -p ${root_dir}/env-repo/infrastructure/bosh/certs
+mkdir -p env-repo/infrastructure/bosh/certs
 main $PWD $VAR_FILE $STATE_FILE $OPS_FILES $CLOUD_CONFIG
