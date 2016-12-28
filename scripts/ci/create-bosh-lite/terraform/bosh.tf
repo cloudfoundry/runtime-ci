@@ -2,23 +2,6 @@ variable "env_name" {}
 
 variable "dns_suffix" {}
 
-resource "google_dns_managed_zone" "env_dns_zone" {
-  name        = "${var.env_name}-zone"
-  dns_name    = "${var.env_name}.${var.dns_suffix}."
-  description = "DNS zone for the ${var.env_name} environment"
-}
-
-resource "google_dns_record_set" "wildcard-dns" {
-  name       = "*.${google_dns_managed_zone.env_dns_zone.dns_name}"
-  depends_on = ["google_compute_global_address.bosh-lite"]
-  type       = "A"
-  ttl        = 300
-
-  managed_zone = "${google_dns_managed_zone.env_dns_zone.name}"
-
-  rrdatas = ["${google_compute_global_address.bosh-lite.address}"]
-}
-
 variable "projectid" {
     type = "string"
     default = "cf-relint-bosh-lite"
@@ -55,6 +38,23 @@ resource "google_compute_subnetwork" "bosh-lite" {
   name          = "bosh-lite"
   ip_cidr_range = "10.0.0.0/16"
   network       = "${google_compute_network.bosh-lite.self_link}"
+}
+
+resource "google_dns_managed_zone" "env_dns_zone" {
+  name        = "${var.env_name}-zone"
+  dns_name    = "${var.env_name}.${var.dns_suffix}."
+  description = "DNS zone for the ${var.env_name} environment"
+}
+
+resource "google_dns_record_set" "wildcard-dns" {
+  name       = "*.${google_dns_managed_zone.env_dns_zone.dns_name}"
+  depends_on = ["google_compute_global_address.bosh-lite"]
+  type       = "A"
+  ttl        = 300
+
+  managed_zone = "${google_dns_managed_zone.env_dns_zone.name}"
+
+  rrdatas = ["${google_compute_global_address.bosh-lite.address}"]
 }
 
 // Allow ssh & mbus access to director
