@@ -14,6 +14,7 @@ groups:
 - name: infrastructure
   jobs:
   - setup-infrastructure-fresh
+  - setup-infrastructure-lite
   - destroy-infrastructure-fresh
   - create-bosh-director-fresh
   - destroy-bosh-director-fresh
@@ -52,7 +53,24 @@ resources:
       dns_suffix: cf-app.com
       ssl_cert: {{luna_cf_ssl_cert}}
       ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
-      service_account_key: {{gcp_service_account_json}}
+      service_account_key: {{luna_gcp_service_account_json}}
+- name: snitch-terraform
+  type: terraform
+  source:
+    storage:
+      bucket: runtimeci-tfstate
+      bucket_path: cf-deployment-bosh-lite/
+      region_name: us-west-1
+      access_key_id: {{snitch_terraform_s3_access_key_id}}
+      secret_access_key: {{snitch_terraform_s3_secret_key}}
+    terraform_source: github.com/cloudfoundry/runtime-ci//scripts/ci/create-bosh-lite/terraform/
+    vars:
+      project: {{snitch_gcp_project}}
+      region: us-central1
+      zones: [us-central1-a]
+      env_name: snitch
+      dns_suffix: cf-app.com
+      service_account_key: {{snitch_gcp_service_account_json}}
 - name: luna-env-infrastructure
   type: git
   source:
@@ -287,6 +305,16 @@ jobs:
   - put: luna-terraform
     params:
       env_name: luna
+      delete_on_failure: true
+
+- name: setup-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - put: snitch-terraform
+    params:
+      env_name: snitch
       delete_on_failure: true
 
 - name: create-bosh-director-fresh
