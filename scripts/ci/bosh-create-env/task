@@ -121,7 +121,12 @@ update_cloud_config() {
   export BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
   export BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
   set -x
-  bosh update-cloud-config -n $root_dir/bosh-deployment/$cloud_config
+  bosh update-cloud-config -n $root_dir/bosh-deployment/$cloud_config \
+    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
+    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
+    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
+    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name)
 }
 
 git_commit() {
