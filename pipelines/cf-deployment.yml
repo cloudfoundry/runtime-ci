@@ -331,6 +331,10 @@ jobs:
       OPS_FILES: "bosh-lite.yml"
       CLOUD_CONFIG: gcp/cloud-config.yml
       DIRECTOR_NAME: snitch
+  - put: snitch-env-infrastructure
+    params:
+      repository: updated-env-repo
+      rebase: true
 
 - name: create-bosh-director-fresh
   serial_groups: [luna]
