@@ -20,7 +20,7 @@ main() {
   ops_file_arguments=""
   for op in ${ops_files}
   do
-    ops_file_arguments="${ops_file_arguments} -o ${root_dir}/bosh-deployment/${op}"
+    ops_file_arguments="${ops_file_arguments} -o ${root_dir}/${op}"
   done
 
   ensure_all_vars_provided $PWD "$ops_file_arguments" $vars_file $director_name

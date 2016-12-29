@@ -241,6 +241,13 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
+- name: lite-customizations
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths: [  remove_google_cpi_job.yml ]
 - name: snitch-env-properties
   type: git
   source:
@@ -316,6 +323,7 @@ jobs:
     - get: runtime-ci
     - get: bosh-deployment
     - get: snitch-env-infrastructure
+    - get: lite-customizations
   - put: snitch-terraform
     params:
       env_name: snitch
@@ -328,7 +336,7 @@ jobs:
     params:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-lite.yml"
+      OPS_FILES: "bosh-deployment/bosh-lite.yml lite-customizations/remove_google_cpi_job.yml"
       CLOUD_CONFIG: gcp/cloud-config.yml
       DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
