@@ -45,9 +45,9 @@ ensure_all_vars_provided() {
   set +x
   bosh -n interpolate \
     --vars-store ${root_dir}/env-repo/${vars_file} \
-    $ops_file_arguments \
     -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
     -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
+    $ops_file_arguments \
     --var-errs \
     -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
     -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
@@ -78,10 +78,10 @@ create_env() {
   set +x
   bosh -n create-env \
     --vars-store ${root_dir}/env-repo/${vars_file} \
-    $ops_file_arguments \
     --state env-repo/${state_file} \
     -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
     -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
+    $ops_file_arguments \
     -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
     -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
     -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
