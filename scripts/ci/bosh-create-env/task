@@ -116,12 +116,12 @@ update_cloud_config() {
   cloud_config=$2
 
   set +x
-  BOSH_ENVIRONMENT=$(cat $root_dir/env-repo/infrastructure/bosh/bosh-target)
-  BOSH_USER=$(cat $root_dir/env-repo/infrastructure/bosh/username)
-  BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
-  BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
-  bosh update-cloud-config $root_dir/bosh-deployment/$cloud_config
+  export BOSH_ENVIRONMENT=$(cat $root_dir/env-repo/infrastructure/bosh/bosh-target)
+  export BOSH_USER=$(cat $root_dir/env-repo/infrastructure/bosh/username)
+  export BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
+  export BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
   set -x
+  bosh update-cloud-config $root_dir/bosh-deployment/$cloud_config
 }
 
 git_commit() {
