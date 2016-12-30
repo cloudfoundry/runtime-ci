@@ -10,8 +10,6 @@ main() {
   state_file=$3
   local ops_files
   ops_files=$4
-  local cloud_config
-  cloud_config=$5
   local director_name
   director_name=$6
 
@@ -26,7 +24,6 @@ main() {
   ensure_all_vars_provided $PWD "$ops_file_arguments" $vars_file $director_name
   create_env $root_dir "$ops_file_arguments" $vars_file $state_file $director_name
   output_bosh_metadata $root_dir $vars_file
-  update_cloud_config $root_dir $cloud_config
   git_commit $root_dir
 
   shopt -s dotglob
@@ -109,26 +106,6 @@ output_bosh_metadata() {
   set -x
 }
 
-update_cloud_config() {
-  local root_dir
-  root_dir=$1
-  local cloud_config
-  cloud_config=$2
-
-  set +x
-  export BOSH_ENVIRONMENT=$(cat $root_dir/env-repo/infrastructure/bosh/bosh-target)
-  export BOSH_USER=$(cat $root_dir/env-repo/infrastructure/bosh/username)
-  export BOSH_PASSWORD=$(cat $root_dir/env-repo/infrastructure/bosh/password)
-  export BOSH_CA_CERT=$root_dir/env-repo/infrastructure/bosh/certs/rootCA.pem
-  set -x
-  bosh update-cloud-config -n $root_dir/bosh-deployment/$cloud_config \
-    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
-    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
-    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
-    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
-    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name)
-}
-
 git_commit() {
   root_dir=$1
   pushd ${root_dir}/env-repo
@@ -143,9 +120,8 @@ git_commit() {
 
 VARS_FILE="${VARS_FILE:?"VARS_FILE must be provided"}"
 STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
-CLOUD_CONFIG="${CLOUD_CONFIG:?"CLOUD_CONFIG must be provided"}"
 DIRECTOR_NAME="${DIRECTOR_NAME:?"DIRECTOR_NAME must be provided"}"
 OPS_FILES="${OPS_FILES:-""}"
 
 mkdir -p env-repo/infrastructure/bosh/certs
-main $PWD $VARS_FILE $STATE_FILE "$OPS_FILES" $CLOUD_CONFIG $DIRECTOR_NAME
+main $PWD $VARS_FILE $STATE_FILE "$OPS_FILES" $DIRECTOR_NAME
