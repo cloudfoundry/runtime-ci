@@ -11,7 +11,7 @@ main() {
   local ops_files
   ops_files=$4
   local director_name
-  director_name=$6
+  director_name=$5
 
   echo $ops_files
   local ops_file_arguments
