@@ -9,11 +9,18 @@ STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
 DIRECTOR_NAME="${DIRECTOR_NAME:?"DIRECTOR_NAME must be provided"}"
 OPS_FILES="${OPS_FILES:-""}"
 
+local ops_file_arguments
+ops_file_arguments=""
+for op in ${OPS_FILES}
+do
+  ops_file_arguments="${ops_file_arguments} -o ${root_dir}/${op}"
+done
+
 pushd ${root_dir}/env-repo
   set +x
   bosh -n create-env \
-    --vars-store ${root_dir}/env-repo/${vars_file} \
-    --state env-repo/${state_file} \
+    --vars-store ${root_dir}/env-repo/${VARS_FILE} \
+    --state env-repo/${STATE_FILE} \
     -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
     -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
     $ops_file_arguments \
@@ -26,7 +33,7 @@ pushd ${root_dir}/env-repo
     -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
     -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
     -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
-    -v director_name=$director_name \
+    -v director_name=$DIRECTOR_NAME \
     ${root_dir}/bosh-deployment/bosh.yml
   set -x
 
