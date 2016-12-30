@@ -17,7 +17,7 @@ done
 
 pushd ${root_dir}/env-repo
   set +x
-  bosh -n create-env \
+  bosh -n delete-env \
     --vars-store ${root_dir}/env-repo/${VARS_FILE} \
     --state env-repo/${STATE_FILE} \
     -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
