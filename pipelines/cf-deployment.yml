@@ -4,22 +4,25 @@ groups:
   jobs:
   - update-releases
   - deploy-releases-fresh
-  - deploy-releases-upgrade
   - deploy-releases-lite
+  - deploy-releases-upgrade
   - acceptance-tests-fresh
-  - routing-acceptance-tests-fresh
   - acceptance-tests-upgrade
+  - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
   - bless-manifest
 - name: infrastructure
   jobs:
+  - setup-infrastructure
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
-  - destroy-infrastructure-fresh
   - create-bosh-director-fresh
+  - create-bosh-director-lite
   - destroy-bosh-director-fresh
-  - setup-infrastructure
+  - destroy-bosh-director-lite
   - destroy-infrastructure
+  - destroy-infrastructure-fresh
+  - destroy-infrastructure-lite
   - verify-nameserver-has-record
   - run-bosh-cleanup
 
@@ -309,14 +312,24 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: bosh-deployment
-    - get: snitch-env-infrastructure
+  - get: snitch-terraform
   - put: snitch-terraform
     params:
       env_name: snitch
       delete_on_failure: true
+
+- name: create-bosh-director-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: bosh-deployment
+  - get: snitch-env-infrastructure
+  - get: cf-deployment-develop
+  - get: snitch-terraform
+    trigger: true
+    passed: [ setup-infrastructure-lite ]
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
@@ -326,12 +339,29 @@ jobs:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
       OPS_FILES: "bosh-deployment/bosh-lite.yml env-repo/remove_google_cpi_job.yml"
-      CLOUD_CONFIG: gcp/cloud-config.yml
       DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
     params:
       repository: updated-env-repo
       rebase: true
+  - put: snitch-env-infrastructure
+    params:
+      repository: updated-env-repo
+      rebase: true
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+  - task: bosh-update-cloud-config
+    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+    input_mapping:
+      cloud-config: cf-deployment-develop
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
 - name: create-bosh-director-fresh
   serial_groups: [luna]
@@ -469,34 +499,27 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: bosh-lite
       - get: runtime-ci
       - get: cf-deployment-develop
         # trigger: true
       - get: bosh-deployment
       - get: snitch-env-infrastructure
-    - task: deprovision-bosh-lite
-      privileged: true
-      file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
+      - get: snitch-env-properties
+    - task: extract-director-creds-from-terraform-env
+      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+      input_mapping:
+        env-repo: snitch-env-infrastructure
     - task: bosh-upload-stemcell-lite
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        target: bosh-lite-creds
-        username: bosh-lite-creds
-        password: bosh-lite-creds
-        ca-cert: bosh-lite-creds
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
-      file: runtime-ci/scripts/cibosh-deploy/task.yml
+      file: runtime-ci/scripts/ci/bosh-deploy/task.yml
       input_mapping:
         manifest: cf-deployment-develop
         manifest-properties: snitch-env-properties
-        target: bosh-lite-creds
-        username: bosh-lite-creds
-        password: bosh-lite-creds
-        ca-cert: bosh-lite-creds
       params:
         MANIFEST_FILE: cf-deployment.yml
         TARGET_FILE:  target
@@ -511,6 +534,10 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: ensure-api-healthy
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+      params:
+        ENDPOINT: api.snitch.cf-app.com
 
 - name: acceptance-tests-upgrade
   serial_groups: [hermione]
@@ -581,40 +608,39 @@ jobs:
         NODES: 6
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
-# - name: acceptance-tests-lite
-#   serial_groups: [snitch]
-#   public: true
-#   build_logs_to_retain: 100
-#   plan:
-#   - timeout: 4h
-#     do:
-#     - aggregate:
-#       - get: runtime-ci
-#       - get: cf-acceptance-tests
-#       - get: cf-deployment-develop
-#         trigger: true
-#         passed: [ deploy-releases-lite ]
-#       - get: snitch-env-properties
-#         trigger: true
-#         passed: [ deploy-releases-lite ]
-#     - task: write-target-file-api
-#       file: runtime-ci/scripts/ci/write-target-file/task.yml
-#       params:
-#         TARGET: api.snitch.cf-app.com
-#     - task: enable-docker-diego
-#       file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
-#       input_mapping:
-#         cf-deployment: cf-deployment-develop
-#         env-repo: snitch-env-properties
-#       params:
-#         VARS_STORE_PATH: deployment-vars.yml
-#         SYSTEM_DOMAIN: snitch.cf-app.com
-#     - task: run-cats
-#       input_mapping:
-#       - integration-config: snitch-env-properties
-#       params:
-#         NODES: 6
-#       file: runtime-ci/scripts/ci/run-cats/task.yml
+- name: acceptance-tests-lite
+  serial_groups: [snitch]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-acceptance-tests
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ deploy-releases-lite ]
+      - get: snitch-env-properties
+        trigger: true
+        passed: [ deploy-releases-lite ]
+    - task: write-target-file-api
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: api.snitch.cf-app.com
+    - task: enable-docker-diego
+      file: runtime-ci/scripts/ci/cf-enable-docker-diego/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        env-repo: snitch-env-properties
+      params:
+        VARS_STORE_PATH: deployment-vars.yml
+        SYSTEM_DOMAIN: snitch.cf-app.com
+    - task: run-cats
+      input_mapping:
+      - integration-config: snitch-env-properties
+      params:
+        NODES: 4
+      file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: routing-acceptance-tests-fresh
   serial_groups: [luna-routing]
@@ -712,8 +738,21 @@ jobs:
     get_params:
       action: destroy
 
+- name: destroy-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: snitch-terraform
+  - put: snitch-terraform
+    params:
+      env_name: snitch
+      action: destroy
+    get_params:
+      action: destroy
+
 - name: destroy-bosh-director-fresh
-  serial_groups: [setup-deploy-and-test]
+  serial_groups: [luna]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -726,6 +765,23 @@ jobs:
     input_mapping:
       env-repo: luna-env-infrastructure
   - put: luna-env-infrastructure
+    params:
+      repository: updated-env-repo
+      rebase: true
+
+- name: destroy-bosh-director-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: snitch-env-infrastructure
+    passed: [ create-bosh-director-lite ]
+  - task: destroy-gcp-bosh-director
+    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+  - put: snitch-env-infrastructure
     params:
       repository: updated-env-repo
       rebase: true
