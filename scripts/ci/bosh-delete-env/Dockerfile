@@ -31,3 +31,6 @@ RUN \
   cd /usr/bin && \
   echo "0c8363a379aa48f58aeb828b41eb9eb92fa57e6f bosh" | sha1sum -c - && \
   chmod +x bosh
+
+RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document /usr/local/bin/jq && \
+  chmod +x /usr/local/bin/jq
