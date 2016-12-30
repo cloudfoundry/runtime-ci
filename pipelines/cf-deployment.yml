@@ -509,6 +509,12 @@ jobs:
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
         env-repo: snitch-env-infrastructure
+    - task: guarantee-no-existing-cf-deployment
+      input_mapping:
+        env-repo: snitch-env-infrastructure
+      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+      params:
+        DEPLOYMENT_NAME: cf
     - task: bosh-upload-stemcell-lite
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
@@ -780,6 +786,16 @@ jobs:
     - get: bosh-deployment
     - get: snitch-env-infrastructure
       passed: [ create-bosh-director-lite ]
+  - task: extract-director-creds-from-terraform-env
+    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    params:
+      DEPLOYMENT_NAME: cf
   - task: bosh-delete-env-lite
     file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
     input_mapping:
