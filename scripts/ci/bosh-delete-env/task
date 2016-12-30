@@ -15,34 +15,32 @@ do
   ops_file_arguments="${ops_file_arguments} -o ${root_dir}/${op}"
 done
 
-pushd ${root_dir}/env-repo
-  set +x
-  bosh -n delete-env \
-    --vars-store ${root_dir}/env-repo/${VARS_FILE} \
-    --state env-repo/${STATE_FILE} \
-    -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
-    -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
-    $ops_file_arguments \
-    -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
-    -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
-    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
-    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
-    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
-    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
-    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
-    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
-    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
-    -v director_name=$DIRECTOR_NAME \
-    ${root_dir}/bosh-deployment/bosh.yml
-  set -x
+set +x
+bosh -n delete-env \
+  --vars-store ${root_dir}/env-repo/${VARS_FILE} \
+  --state env-repo/${STATE_FILE} \
+  -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
+  -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
+  $ops_file_arguments \
+  -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
+  -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
+  -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
+  -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+  -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
+  -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
+  -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
+  -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
+  -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
+  -v director_name=$DIRECTOR_NAME \
+  ${root_dir}/bosh-deployment/bosh.yml
+set -x
 
-  if [[ -n $(git status --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
-    git add .
-    git commit -m "Commit bosh state file"
-  fi
-popd
+if [[ -n $(git status --porcelain) ]]; then
+  git config user.name "CF MEGA BOT"
+  git config user.email "cf-mega@pivotal.io"
+  git add .
+  git commit -m "Commit bosh state file"
+fi
 
 shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
