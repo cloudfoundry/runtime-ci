@@ -4,14 +4,31 @@ set -xeu
 
 root_dir=$PWD
 
-export DEPLOYMENT_VAR_FILE=${root_dir}/env-repo/infrastructure/bosh/deployment-vars.yml
+VARS_FILE="${VARS_FILE:?"VARS_FILE must be provided"}"
+STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
+DIRECTOR_NAME="${DIRECTOR_NAME:?"DIRECTOR_NAME must be provided"}"
+OPS_FILES="${OPS_FILES:-""}"
 
 pushd ${root_dir}/env-repo
-  # Bosh create-env places the state file in the same directory as the manifest. Since we want the state file
-  # in the env-repo, we copy the manifest template to our env-repo so we can commit it.
-  cp ${root_dir}/cf-gcp-infrastructure/deployments/bosh.yml infrastructure/bosh/bosh.yml
-  bosh -n interpolate -l ${DEPLOYMENT_VAR_FILE} --var-errs infrastructure/bosh/bosh.yml > /dev/null
-  bosh -n delete-env -l ${DEPLOYMENT_VAR_FILE} infrastructure/bosh/bosh.yml
+  set +x
+  bosh -n create-env \
+    --vars-store ${root_dir}/env-repo/${vars_file} \
+    --state env-repo/${state_file} \
+    -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
+    -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
+    $ops_file_arguments \
+    -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
+    -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
+    -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
+    -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+    -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
+    -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
+    -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \
+    -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
+    -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
+    -v director_name=$director_name \
+    ${root_dir}/bosh-deployment/bosh.yml
+  set -x
 
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CF MEGA BOT"
