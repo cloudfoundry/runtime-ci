@@ -774,13 +774,25 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: runtime-ci
-  - get: snitch-env-infrastructure
-    passed: [ create-bosh-director-lite ]
-  - task: destroy-gcp-bosh-director
-    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
+  - aggregate:
+    - get: runtime-ci
+    - get: snitch-terraform
+    - get: bosh-deployment
+    - get: snitch-env-infrastructure
+      passed: [ create-bosh-director-lite ]
+  - task: bosh-delete-env-lite
+    file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
     input_mapping:
       env-repo: snitch-env-infrastructure
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+      bosh-deployment: bosh-deployment
+      terraform: snitch-terraform
+    params:
+      STATE_FILE: infrastructure/bosh/state.json
+      VARS_FILE: infrastructure/bosh/deployment-vars.yml
+      OPS_FILES: "bosh-deployment/bosh-lite.yml env-repo/remove_google_cpi_job.yml"
+      DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
     params:
       repository: updated-env-repo
