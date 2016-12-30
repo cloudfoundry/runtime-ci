@@ -260,6 +260,7 @@ resources:
     paths: 
     - infrastructure/*
     - remove_google_cpi_job.yml
+    - forward_to_bosh_lite.yml
 - name: bosh-deployment
   type: git
   source:
