@@ -74,6 +74,7 @@ groups:
   - build-bbl-mixin-routing-release-lbs-docker-image
   - build-setup-infrastructure-terraform-docker-image
   - build-create-gcp-bosh-director-docker-image
+  - build-bosh-delete-env-docker-image
   - build-destroy-gcp-bosh-director-docker-image
   - build-update-gcp-cloud-config-docker-image
 
@@ -535,6 +536,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-gcp-bosh-director/Dockerfile]
+
+- name: runtime-ci-bosh-delete-env
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/bosh-delete-env/Dockerfile]
 
 - name: runtime-ci-destroy-gcp-bosh-director
   type: git
@@ -1072,6 +1080,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-gcp-bosh-director
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: bosh-delete-env-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-delete-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2411,6 +2427,25 @@ jobs:
     - put: create-gcp-bosh-director-pipeline-image
       params:
         build: runtime-ci-create-gcp-bosh-director/scripts/ci/create-gcp-bosh-director
+        push: true
+
+- name: build-bosh-delete-env-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-bosh-delete-env
+        trigger: true
+    - put: bosh-delete-env-pipeline-image
+      params:
+        build: runtime-ci-bosh-delete-env/scripts/ci/bosh-delete-env
         push: true
 
 - name: build-destroy-gcp-bosh-director-docker-image

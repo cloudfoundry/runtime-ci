@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-delete-env
+
+inputs:
+- name: runtime-ci
+- name: env-repo
+- name: bosh-deployment
+
+outputs:
+- name: updated-env-repo
+
+run:
+  path: runtime-ci/scripts/ci/bosh-delete-env/task
