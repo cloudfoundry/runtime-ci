@@ -9,7 +9,6 @@ STATE_FILE="${STATE_FILE:?"STATE_FILE must be provided"}"
 DIRECTOR_NAME="${DIRECTOR_NAME:?"DIRECTOR_NAME must be provided"}"
 OPS_FILES="${OPS_FILES:-""}"
 
-local ops_file_arguments
 ops_file_arguments=""
 for op in ${OPS_FILES}
 do
