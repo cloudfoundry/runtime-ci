@@ -257,10 +257,9 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
-    paths: 
+    paths:
     - infrastructure/*
     - remove_google_cpi_job.yml
-    - forward_to_bosh_lite.yml
 - name: bosh-deployment
   type: git
   source:
@@ -338,7 +337,7 @@ jobs:
     params:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml env-repo/remove_google_cpi_job.yml env-repo/forward_to_bosh_lite.yml"
+      OPS_FILES: "bosh-deployment/bosh-lite.yml env-repo/remove_google_cpi_job.yml"
       DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
     params:
