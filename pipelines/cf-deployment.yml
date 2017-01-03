@@ -325,6 +325,7 @@ jobs:
   plan:
   - get: runtime-ci
   - get: bosh-deployment
+  - get: cf-deployment-develop
   - get: snitch-env-infrastructure
   - get: snitch-terraform
     trigger: true
@@ -354,13 +355,13 @@ jobs:
   - task: bosh-update-cloud-config
     file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
     input_mapping:
-      cloud-config: bosh-deployment
+      cloud-config: cf-deployment-develop
     params:
       TARGET_FILE: target
       USERNAME_FILE: username
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
-      CLOUD_CONFIG_FILE: warden/cloud-config.yml
+      CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
 - name: create-bosh-director-fresh
   serial_groups: [luna]
