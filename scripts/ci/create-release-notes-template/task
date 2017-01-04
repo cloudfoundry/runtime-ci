@@ -100,9 +100,6 @@ Release notes for
 Release notes for
 [vGGG](https://github.com/cloudfoundry/garden-runc-release/releases/tag/vGGG) ·
 [vLPP](https://github.com/cloudfoundry/garden-runc-release/releases/tag/vLPP).
-* etcd release [vEEE](https://github.com/cloudfoundry-incubator/etcd-release/tree/vEEE). Release notes for
-[vEEE](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vEEE) ·
-[vEPP](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vEPP).
 * cflinuxfs2-rootfs release [vCCC](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/tree/vCCC).
 Release notes for
 [vCCC](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/releases/tag/vCCC) ·
