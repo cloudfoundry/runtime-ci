@@ -340,7 +340,7 @@ jobs:
     params:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml env-repo/remove_google_cpi_job.yml"
+      OPS_FILES: "bosh-deployment/bosh-lite.yml"
       DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
     params:
