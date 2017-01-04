@@ -96,10 +96,10 @@ These versions are soft recommendations, as several different versions of these 
 Release notes for
 [vDDD](https://github.com/cloudfoundry/diego-release/releases/tag/vDDD) ·
 [vDPP](https://github.com/cloudfoundry/diego-release/releases/tag/vDPP).
-* Garden-Linux release [vLLL](https://github.com/cloudfoundry/garden-linux-release/tree/vLLL).
+* Garden-Runc release [vGGG](https://github.com/cloudfoundry/garden-runc-release/tree/vGGG).
 Release notes for
-[vLLL](https://github.com/cloudfoundry/garden-linux-release/releases/tag/vLLL) ·
-[vLPP](https://github.com/cloudfoundry/garden-linux-release/releases/tag/vLPP).
+[vGGG](https://github.com/cloudfoundry/garden-runc-release/releases/tag/vGGG) ·
+[vLPP](https://github.com/cloudfoundry/garden-runc-release/releases/tag/vLPP).
 * etcd release [vEEE](https://github.com/cloudfoundry-incubator/etcd-release/tree/vEEE). Release notes for
 [vEEE](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vEEE) ·
 [vEPP](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vEPP).
