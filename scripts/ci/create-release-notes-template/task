@@ -104,6 +104,10 @@ Release notes for
 Release notes for
 [vCCC](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/releases/tag/vCCC) ·
 [vCPP](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/releases/tag/vCPP).
+* netman release [vNNN](https://github.com/cloudfoundry-incubator/netman-release/tree/vNNN).
+Release notes for
+[vNNN](https://github.com/cloudfoundry-incubator/netman-release/releases/tag/vNNN) ·
+[vCPP](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/releases/tag/vCPP).
 
 ## <a name='job-spec-changes'></a>Job Spec Changes
 
