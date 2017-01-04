@@ -428,8 +428,10 @@ jobs:
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
-      AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-east-1
+      BBL_AWS_ACCESS_KEY_ID: {{trelawney_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{trelawney_aws_secret_access_key}}
       BBL_LB_CERT: {{trelawney_lbs_ssl_cert}}
       BBL_LB_KEY: {{trelawney_lbs_ssl_signing_key}}
     input_mapping:

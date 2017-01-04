@@ -218,8 +218,10 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-infrastructure
     params:
-      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-east-1
+      BBL_AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
       BBL_LB_CERT: {{hagrid_bbl_lb_cert}}
       BBL_LB_KEY: {{hagrid_bbl_lb_key}}
     ensure:
@@ -628,8 +630,10 @@ jobs:
     input_mapping:
       env-repo: minerva-env-infrastructure
     params:
-      AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-east-1
+      BBL_AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
       BBL_LB_CERT: {{minerva_bbl_lb_cert}}
       BBL_LB_KEY: {{minerva_bbl_lb_key}}
     ensure:
