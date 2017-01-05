@@ -35,12 +35,14 @@ bosh -n delete-env \
   ${root_dir}/bosh-deployment/bosh.yml
 set -x
 
-if [[ -n $(git status --porcelain) ]]; then
-  git config user.name "CF MEGA BOT"
-  git config user.email "cf-mega@pivotal.io"
-  git add .
-  git commit -m "Commit bosh state file"
-fi
+pushd env-repo
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+    git add .
+    git commit -m "Commit bosh state file"
+  fi
+popd
 
 shopt -s dotglob
 cp -R env-repo/* updated-env-repo/
