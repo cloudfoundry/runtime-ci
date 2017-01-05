@@ -1364,6 +1364,11 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
+      - get: netman-release-tarball
+        trigger: true
+        passed: [ deploy-aws ]
+        params:
+          tarball: false
     - task: run-errand-smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -1668,6 +1673,11 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
+      - get: netman-release-tarball
+        trigger: true
+        passed: [ aws-smoke-tests ]
+        params:
+          tarball: false
       - get: a1-env
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -1768,6 +1778,12 @@ jobs:
         - aws-acceptance-tests
         - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
+        params:
+          tarball: false
+      - get: netman-release-tarball
+        trigger: true
+        passed:
+        - aws-acceptance-tests
         params:
           tarball: false
       - get: vsphere-director-version
