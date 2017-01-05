@@ -32,14 +32,15 @@ vsphere_build_url=$(cat vsphere-build-url/build_url)
 diego_release_version=$(cd diego-release-tarball; cat version)
 garden_runc_release_version=$(cd garden-runc-release-tarball; cat version)
 cflinuxfs2_release_version=$(cd cflinuxfs2-rootfs-release-tarball; cat version)
+netman_release_version=$(cd netman-release-tarball; cat version)
 
-new_row="${cf_release_sha},${diego_release_version},${garden_runc_release_version},${cflinuxfs2_release_version},${bosh_lite_sha},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${aws_director_version},${bosh_lite_director_version},${vsphere_director_version},${aws_build_url},${bosh_lite_build_url},${vsphere_build_url}"
+new_row="${cf_release_sha},${diego_release_version},${garden_runc_release_version},${cflinuxfs2_release_version},${netman_release_version},${bosh_lite_sha},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${aws_director_version},${bosh_lite_director_version},${vsphere_director_version},${aws_build_url},${bosh_lite_build_url},${vsphere_build_url}"
 if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
   echo "No changes to be made".
 else
   pushd diego-cf-compatibility > /dev/null
     if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-      echo "date,cf-release-commit-sha,diego-release-version,garden-runc-release-version,cflinuxfs2-rootfs-release-version,bosh-lite-commit-sha,aws-stemcell,bosh-lite-stemcell,vsphere-stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-lite-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
+      echo "date,cf-release-commit-sha,diego-release-version,garden-runc-release-version,cflinuxfs2-rootfs-release-version,netman-release-version,bosh-lite-commit-sha,aws-stemcell,bosh-lite-stemcell,vsphere-stemcell,aws-director-version,bosh-lite-director-version,vsphere-director-version,aws-acceptance-tests-build-url,bosh-lite-acceptance-tests-build-url,vsphere-acceptance-tests-build-url" \
         > "$COMPATIBILITY_FILE"
     fi
     echo "${current_date},${new_row}" >> "$COMPATIBILITY_FILE"

@@ -15,6 +15,7 @@ inputs:
   - name: diego-release-tarball
   - name: garden-runc-release-tarball
   - name: cflinuxfs2-rootfs-release-tarball
+  - name: netman-release-tarball
   - name: diego-cf-compatibility
   - name: aws-director-version
   - name: bosh-lite-director-version
@@ -31,7 +32,7 @@ params:
   BOSH_PASSWORD:
   BOSH_USER:
   BOSH_TARGET:
-  COMPATIBILITY_FILE: compatibility-v8.csv
+  COMPATIBILITY_FILE: compatibility-v9.csv
 
 run:
   path: runtime-ci/scripts/ci/record-compatible-versions/task
