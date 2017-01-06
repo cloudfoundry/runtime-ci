@@ -650,6 +650,7 @@ jobs:
 
 - name: routing-acceptance-tests-fresh
   serial_groups: [luna-routing]
+  public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
