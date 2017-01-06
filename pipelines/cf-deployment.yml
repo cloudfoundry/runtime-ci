@@ -33,30 +33,6 @@ resource_types:
     repository: ljfranklin/terraform-resource
 
 resources:
-#  - name: cf-gcp-infrastructure
-#    type: git
-#    source:
-#      branch: master
-#      uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
-#  - name: luna-terraform
-#    type: terraform
-#    source:
-#      storage:
-#        bucket: runtimeci-tfstate
-#        bucket_path: cf-deployment/
-#        region_name: us-west-1
-#        access_key_id: {{luna_terraform_s3_access_key_id}}
-#        secret_access_key: {{luna_terraform_s3_secret_key}}
-#      terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
-#      vars:
-#        project: {{luna_gcp_project}}
-#        env_name: luna
-#        region: us-central1
-#        zones: [us-central1-a, us-central1-b, us-central1-c]
-#        dns_suffix: cf-app.com
-#        ssl_cert: {{luna_cf_ssl_cert}}
-#        ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
-#        service_account_key: {{luna_gcp_service_account_json}}
 - name: snitch-terraform
   type: terraform
   source:
