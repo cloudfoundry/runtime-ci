@@ -415,7 +415,7 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
+      OPS_FILES: "opsfiles/gcp.yml"
     ensure:
       put: luna-env-properties
       params:
@@ -673,10 +673,10 @@ jobs:
       - get: runtime-ci
       - get: luna-env-properties
         trigger: true
-        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ acceptance-tests-fresh, routing-acceptance-tests-fresh ]
+        passed: [ acceptance-tests-fresh]
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
@@ -820,7 +820,6 @@ jobs:
           passed:
           - acceptance-tests-upgrade
           - acceptance-tests-fresh
-          - routing-acceptance-tests-fresh
         - get: cf-deployment-master
     - put: cf-deployment-master
       params:
