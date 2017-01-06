@@ -17,6 +17,13 @@ RUN \
   apt-get remove -y --purge software-properties-common
 
 RUN \
+  wget https://releases.hashicorp.com/terraform/0.8.2/terraform_0.8.2_linux_amd64.zip -P /tmp && \
+  unzip /tmp/terraform_0.8.2_linux_amd64.zip -d /tmp && \
+  mv /tmp/terraform /usr/local/bin/terraform && \
+  chmod +x /usr/local/bin/terraform && \
+  rm -rf /tmp/*
+
+RUN \
   wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.91-linux-amd64 -P /tmp && \
   mv /tmp/bosh-init-0.0.91-linux-amd64 /usr/local/bin/bosh-init && \
   chmod +x /usr/local/bin/bosh-init && \
