@@ -7,6 +7,7 @@ groups:
   - deploy-releases-lite
   - deploy-releases-upgrade
   - acceptance-tests-fresh
+  - acceptance-tests-lite
   - acceptance-tests-upgrade
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
@@ -634,7 +635,7 @@ jobs:
       params:
         TARGET: api.snitch.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cf-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
         env-repo: snitch-env-properties
