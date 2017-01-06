@@ -18,9 +18,7 @@ groups:
   - setup-infrastructure
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
-  - create-bosh-director-fresh
   - create-bosh-director-lite
-  - destroy-bosh-director-fresh
   - destroy-bosh-director-lite
   - destroy-infrastructure
   - destroy-infrastructure-fresh
@@ -35,30 +33,30 @@ resource_types:
     repository: ljfranklin/terraform-resource
 
 resources:
-- name: cf-gcp-infrastructure
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
-- name: luna-terraform
-  type: terraform
-  source:
-    storage:
-      bucket: runtimeci-tfstate
-      bucket_path: cf-deployment/
-      region_name: us-west-1
-      access_key_id: {{luna_terraform_s3_access_key_id}}
-      secret_access_key: {{luna_terraform_s3_secret_key}}
-    terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
-    vars:
-      project: {{luna_gcp_project}}
-      env_name: luna
-      region: us-central1
-      zones: [us-central1-a, us-central1-b, us-central1-c]
-      dns_suffix: cf-app.com
-      ssl_cert: {{luna_cf_ssl_cert}}
-      ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
-      service_account_key: {{luna_gcp_service_account_json}}
+#  - name: cf-gcp-infrastructure
+#    type: git
+#    source:
+#      branch: master
+#      uri: https://github.com/cloudfoundry-incubator/cf-gcp-infrastructure
+#  - name: luna-terraform
+#    type: terraform
+#    source:
+#      storage:
+#        bucket: runtimeci-tfstate
+#        bucket_path: cf-deployment/
+#        region_name: us-west-1
+#        access_key_id: {{luna_terraform_s3_access_key_id}}
+#        secret_access_key: {{luna_terraform_s3_secret_key}}
+#      terraform_source: github.com/cloudfoundry-incubator/cf-gcp-infrastructure
+#      vars:
+#        project: {{luna_gcp_project}}
+#        env_name: luna
+#        region: us-central1
+#        zones: [us-central1-a, us-central1-b, us-central1-c]
+#        dns_suffix: cf-app.com
+#        ssl_cert: {{luna_cf_ssl_cert}}
+#        ssl_cert_private_key: {{luna_cf_ssl_cert_private_key}}
+#        service_account_key: {{luna_gcp_service_account_json}}
 - name: snitch-terraform
   type: terraform
   source:
@@ -303,6 +301,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: runtime-ci
   - get: luna-env-infrastructure
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -316,6 +315,9 @@ jobs:
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
     input_mapping:
       env-repo: luna-env-infrastructure
+  - put: luna-env-infrastructure
+    params:
+      repository: updated-env-repo
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -372,39 +374,6 @@ jobs:
       PASSWORD_FILE: password
       CA_CERT_FILE: ca-cert
       CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
-
-- name: create-bosh-director-fresh
-  serial_groups: [luna]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: luna-env-infrastructure
-  - get: cf-gcp-infrastructure
-  - get: luna-terraform
-    trigger: true
-    passed: [ setup-infrastructure-fresh ]
-  - task: create-gcp-bosh-director
-    file: runtime-ci/scripts/ci/create-gcp-bosh-director/task.yml
-    input_mapping:
-      env-repo: luna-env-infrastructure
-      terraform: luna-terraform
-    params:
-      NATS_PASSWORD: {{luna_nats_password}}
-      MBUS_PASSWORD: {{luna_mbus_password}}
-      HM_PASSWORD: {{luna_hm_password}}
-      BLOBSTORE_AGENT_PASSWORD: {{luna_blobstore_agent_password}}
-      BLOBSTORE_DIRECTOR_PASSWORD: {{luna_blobstore_director_password}}
-      POSTGRES_PASSWORD: {{luna_postgres_password}}
-  - put: luna-env-infrastructure
-    params:
-      repository: updated-env-repo
-      rebase: true
-  - task: update-gcp-cloud-config
-    file: runtime-ci/scripts/ci/update-gcp-cloud-config/task.yml
-    input_mapping:
-      env-repo: updated-env-repo
-      terraform: luna-terraform
 
 - name: deploy-releases-fresh
   serial_groups: [luna, luna-routing]
@@ -729,11 +698,11 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: snitch-env-properties
-        trigger: true
-        passed: [ acceptance-tests-lite ]
+        # trigger: true
+        # passed: [ acceptance-tests-lite ]
       - get: cf-deployment-develop
-        trigger: true
-        passed: [ acceptance-tests-lite ]
+        # trigger: true
+        # passed: [ acceptance-tests-lite ]
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
@@ -774,13 +743,16 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: luna-terraform
-  - put: luna-terraform
+  - aggregate:
+    - get: luna-env-infrastructure
+    - get: runtime-ci
+  - task: destroy-infrastructure
+    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    input_mapping:
+      env-repo: luna-env-infrastructure
+  - put: luna-env-infrastructure
     params:
-      env_name: luna
-      action: destroy
-    get_params:
-      action: destroy
+      repository: updated-env-repo
 
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
@@ -794,24 +766,6 @@ jobs:
       action: destroy
     get_params:
       action: destroy
-
-- name: destroy-bosh-director-fresh
-  serial_groups: [luna]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: luna-env-infrastructure
-    passed: [ create-bosh-director-fresh ]
-  - get: cf-gcp-infrastructure
-  - task: destroy-gcp-bosh-director
-    file: runtime-ci/scripts/ci/destroy-gcp-bosh-director/task.yml
-    input_mapping:
-      env-repo: luna-env-infrastructure
-  - put: luna-env-infrastructure
-    params:
-      repository: updated-env-repo
-      rebase: true
 
 - name: destroy-bosh-director-lite
   serial_groups: [snitch]
