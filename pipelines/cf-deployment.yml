@@ -524,7 +524,7 @@ jobs:
       params:
         TARGET: api.hermione.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       params:
         VARS_STORE_PATH: deployment-env-vars.yml
         SYSTEM_DOMAIN: hermione.cf-app.com
@@ -557,7 +557,7 @@ jobs:
       params:
         TARGET: api.luna.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
         env-repo: luna-env-properties
@@ -592,7 +592,7 @@ jobs:
       params:
         TARGET: api.snitch.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
         env-repo: snitch-env-properties
@@ -627,7 +627,7 @@ jobs:
       params:
         TARGET: api.luna.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: luna.cf-app.com

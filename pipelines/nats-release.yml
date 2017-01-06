@@ -567,7 +567,7 @@ jobs:
       params:
         TARGET: api.hagrid.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego-1-0/task.yml
       input_mapping:
         cf-target: target-file-dir
       params:
@@ -835,7 +835,7 @@ jobs:
       params:
         TARGET: api.minerva.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/cfd-enable-docker-diego/task.yml
+      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       params:
         VARS_STORE_PATH: deployment-env-vars.yml
         SYSTEM_DOMAIN: minerva.cf-app.com
