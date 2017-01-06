@@ -216,10 +216,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/java-buildpack-release
-- name: java-offline-buildpack-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/java-offline-buildpack-release
 - name: nodejs-buildpack-release
   type: bosh-io-release
   source:
@@ -896,10 +892,6 @@ jobs:
       params:
         tarball: false
     - get: java-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: java-offline-buildpack-release
       trigger: true
       params:
         tarball: false

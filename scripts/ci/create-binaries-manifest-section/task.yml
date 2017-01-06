@@ -25,7 +25,6 @@ inputs:
 - name: dotnet-core-buildpack-release
 - name: go-buildpack-release
 - name: java-buildpack-release
-- name: java-offline-buildpack-release
 - name: nodejs-buildpack-release
 - name: php-buildpack-release
 - name: python-buildpack-release

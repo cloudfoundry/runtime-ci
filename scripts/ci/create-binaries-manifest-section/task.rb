@@ -20,7 +20,6 @@ release_names=[
   'dotnet-core-buildpack',
   'go-buildpack',
   'java-buildpack',
-  'java-offline-buildpack',
   'nodejs-buildpack',
   'php-buildpack',
   'python-buildpack',
