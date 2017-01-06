@@ -615,6 +615,7 @@ jobs:
 
 - name: acceptance-tests-lite
   serial_groups: [snitch]
+  public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
