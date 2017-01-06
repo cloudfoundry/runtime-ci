@@ -82,7 +82,9 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_private_key}}
-    paths: [ infrastructure/* ]
+    paths:
+    - bbl-infrastructure/*
+    - google_account_creds.json
 - name: luna-env-properties
   type: git
   source:
@@ -301,11 +303,19 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: luna-terraform
-  - put: luna-terraform
+  - get: luna-env-infrastructure
+  - task: setup-infrastructure
+    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
-      env_name: luna
-      delete_on_failure: true
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: env-repo/google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{luna_cf_ssl_cert}}
+      BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+    input_mapping:
+      env-repo: luna-env-infrastructure
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
