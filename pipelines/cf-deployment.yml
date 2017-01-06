@@ -362,8 +362,10 @@ jobs:
       trigger: true
     - get: luna-env-properties
     - get: luna-env-infrastructure
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    params:
+      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: luna-env-infrastructure
   - task: bosh-upload-stemcell-fresh
@@ -653,10 +655,12 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ acceptance-tests-fresh]
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
-        env-repo: luna-env-properties
+        env-repo: luna-env-infrastructure
     - task: delete-deployment-cf
       input_mapping:
         env-repo: luna-env-properties
