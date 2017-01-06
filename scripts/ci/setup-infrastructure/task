@@ -43,9 +43,11 @@ pushd env-repo
     --key=/tmp/bbl-key \
     --skip-if-exists
 
-  bbl \
-    --state-dir bbl-infrastructure \
-    update-lbs \
-    --cert=/tmp/bbl-cert \
-    --key=/tmp/bbl-key
+  if [[ $BBL_IAAS == "aws" ]]; then
+    bbl \
+      --state-dir bbl-infrastructure \
+      update-lbs \
+      --cert=/tmp/bbl-cert \
+      --key=/tmp/bbl-key
+  fi
 popd
