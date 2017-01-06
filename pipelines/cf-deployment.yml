@@ -307,7 +307,7 @@ jobs:
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
       BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: env-repo/google_account_creds.json
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
       BBL_GCP_REGION: us-central1
       BBL_GCP_ZONE: us-central1-a
