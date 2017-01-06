@@ -8,12 +8,12 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: cf-target
+- name: cf-deployment
+- name: env-repo
 
 params:
-  CF_USER: ~
-  CF_PASSWORD: ~
-  CF_API_TARGET_PATH: target
+  VARS_STORE_PATH:
+  SYSTEM_DOMAIN:
 
 run:
   path: runtime-ci/scripts/ci/enable-docker-diego/task

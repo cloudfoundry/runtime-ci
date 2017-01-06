@@ -3,13 +3,14 @@
 set -eu
 
 root_dir="${PWD}"
-cf_target=$(cat "${root_dir}/cf-target/${CF_API_TARGET_PATH:?"\$CF_API_TARGET_PATH is not set"}")
+cf_target="api.${SYSTEM_DOMAIN}"
+CF_PASSWORD=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/uaa_scim_users_admin_password)
 
 echo "Setting target to ${cf_target}"
 cf api --skip-ssl-validation "${cf_target}"
 
-echo "Authenticating as ${CF_USER}"
-cf auth "${CF_USER}" "${CF_PASSWORD}"
+echo "Authenticating as admin"
+cf auth admin "${CF_PASSWORD}"
 
 echo "Listing existing feature flags"
 cf feature-flags
