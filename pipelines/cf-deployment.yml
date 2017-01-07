@@ -238,7 +238,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/bosh-deployment.git
+    uri: https://github.com/ChunyiLyu/bosh-deployment.git
 
 jobs:
 - name: setup-infrastructure
@@ -326,7 +326,7 @@ jobs:
     params:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml"
+      OPS_FILES: "bosh-deployment/bosh-lite.yml bosh-deployment/jumpbox-user.yml bosh-deployment/gcp/bosh-lite-vm-type.yml"
       DIRECTOR_NAME: snitch
   - put: snitch-env-infrastructure
     params:
@@ -603,7 +603,7 @@ jobs:
       input_mapping:
       - integration-config: snitch-env-properties
       params:
-        NODES: 4
+        NODES: 8
       file: runtime-ci/scripts/ci/run-cats/task.yml
 
 - name: routing-acceptance-tests-fresh
