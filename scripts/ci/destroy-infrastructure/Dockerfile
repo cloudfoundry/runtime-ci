@@ -13,7 +13,7 @@ RUN \
 RUN \
   add-apt-repository ppa:git-core/ppa -y && \
   apt-get update && \
-  apt-get install -y git && \
+  apt-get install -y git unzip && \
   apt-get remove -y --purge software-properties-common
 
 RUN \
