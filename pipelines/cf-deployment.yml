@@ -112,6 +112,11 @@ resources:
     paths:
     - integration_config.json
     - rats_integration_config.json
+- name: windows-stemcell
+  type: s3
+  source:
+    bucket: bosh-windows-stemcells
+    regexp: light-bosh-stemcell-(.*)-aws-xen-hvm-windows2012R2-go_agent.tgz
 - name: cf-deployment-develop
   type: git
   source:
@@ -417,6 +422,7 @@ jobs:
     - get: hermione-env-properties
       trigger: true
     - get: hermione-env-infrastructure
+    - get: windows-stemcell
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     params:
@@ -429,6 +435,16 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: aws
+  - task: bosh-upload-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
+    input_mapping:
+      stemcell: windows-stemcell
+    params:
+      TARGET_FILE: target
+      USERNAME_FILE: username
+      PASSWORD_FILE: password
+      CA_CERT_FILE: ca-cert
+      STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
     input_mapping:
@@ -442,7 +458,7 @@ jobs:
       MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
       SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml"
+      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
     ensure:
       put: hermione-env-infrastructure
       params:
