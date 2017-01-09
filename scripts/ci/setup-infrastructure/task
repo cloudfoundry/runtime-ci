@@ -22,14 +22,11 @@ function commit_bbl_state_file {
 trap commit_bbl_state_file EXIT
 
 pushd env-repo
-  set +x
-  echo "bbl \
-    --state-dir bbl-infrastructure \
-    up"
   bbl \
     --state-dir bbl-infrastructure \
     up
 
+  set +x
   echo "$BBL_LB_CERT" > /tmp/bbl-cert
   echo "$BBL_LB_KEY" > /tmp/bbl-key
   set -x
