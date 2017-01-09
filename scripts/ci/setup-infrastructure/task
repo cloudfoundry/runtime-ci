@@ -22,6 +22,8 @@ function commit_bbl_state_file {
 trap commit_bbl_state_file EXIT
 
 pushd env-repo
+  bbl version
+
   bbl \
     --state-dir bbl-infrastructure \
     up
