@@ -435,7 +435,7 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: aws
-  - task: bosh-upload-stemcell
+  - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
       stemcell: windows-stemcell
