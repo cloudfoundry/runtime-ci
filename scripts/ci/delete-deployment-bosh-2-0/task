@@ -3,14 +3,14 @@ set -exu
 
 DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 
-export BOSH_CA_CERT=env-repo/infrastructure/bosh/certs/rootCA.pem
+export BOSH_CA_CERT=ca-cert/${CA_CERT_FILE}
 
-export BOSH_ENVIRONMENT=$(cat env-repo/infrastructure/bosh/bosh-target)
+export BOSH_ENVIRONMENT=$(cat target/${TARGET_FILE})
 
-export BOSH_USER=$(cat env-repo/infrastructure/bosh/username)
+export BOSH_USER=$(cat username/${USERNAME_FILE})
 
 set +x
-export BOSH_PASSWORD=$(cat env-repo/infrastructure/bosh/password)
+export BOSH_PASSWORD=$(cat password/${PASSWORD_FILE})
 set -x
 
 bosh \
