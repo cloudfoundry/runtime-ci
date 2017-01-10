@@ -22,10 +22,10 @@ bosh -n delete-env \
   -o ${root_dir}/bosh-deployment/gcp/cpi.yml \
   -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
   $ops_file_arguments \
-  -v project_id=$(cat ${root_dir}/terraform/metadata | jq .projectid) \
-  -v $"gcp_credentials_json=$(cat ${root_dir}/terraform/metadata | jq .credentials)" \
+  -v project_id=$GCP_PROJECTID \
+  -v $"gcp_credentials_json='$GCP_CREDENTIALS'" \
   -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
-  -v zone=$(cat ${root_dir}/terraform/metadata | jq .zone) \
+  -v zone=$GCP_ZONE \
   -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
   -v subnetwork=$(cat ${root_dir}/terraform/metadata | jq .subnetwork_name) \
   -v internal_cidr=$(cat ${root_dir}/terraform/metadata | jq .internal_cidr) \

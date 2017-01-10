@@ -17,3 +17,8 @@ outputs:
 
 run:
   path: runtime-ci/scripts/ci/bosh-delete-env/task
+
+params:
+  GCP_PROJECTID:
+  GCP_CREDENTIALS:
+  GCP_ZONE:
