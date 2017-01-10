@@ -77,6 +77,7 @@ groups:
   - build-bosh-delete-env-docker-image
   - build-destroy-gcp-bosh-director-docker-image
   - build-update-gcp-cloud-config-docker-image
+  - build-cats-concourse-task-docker-image
 
 resources:
 - name: weekly
@@ -557,6 +558,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/update-gcp-cloud-config/Dockerfile]
+
+- name: cats-concourse-task
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cats-concourse-task.git
+    paths: [Dockerfile]
 
 - name: cf-cli
   type: github-release
@@ -1104,6 +1112,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/update-gcp-cloud-config
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: cats-concourse-task-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cats-concourse-task
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2485,3 +2501,25 @@ jobs:
       params:
         build: runtime-ci-update-gcp-cloud-config/scripts/ci/update-gcp-cloud-config
         push: true
+
+- name: build-cats-concourse-task-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        passed:
+        - trigger-all-image-builds
+        trigger: true
+      - get: cats-concourse-task
+        trigger: true
+      - get: cf-cli
+        trigger: true
+    - put: cats-concourse-task-pipeline-image
+      params:
+        build: cats-concourse-task
+        push: true
+    timeout: 4h
