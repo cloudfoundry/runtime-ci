@@ -545,6 +545,7 @@ jobs:
         trigger: true
         passed: [ deploy-releases-upgrade ]
       - get: hermione-env-integration-config
+      - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -578,6 +579,7 @@ jobs:
       - get: luna-env-properties
         trigger: true
         passed: [ deploy-releases-fresh ]
+      - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
@@ -613,6 +615,7 @@ jobs:
       - get: snitch-env-properties
         trigger: true
         passed: [ deploy-releases-lite ]
+      - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
