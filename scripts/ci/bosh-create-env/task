@@ -47,7 +47,7 @@ ensure_all_vars_provided() {
     $ops_file_arguments \
     --var-errs \
     -v project_id=$GCP_PROJECTID \
-    -v $"'gcp_credentials_json=$GCP_CREDENTIALS'" \
+    -v $"gcp_credentials_json='$GCP_CREDENTIALS'" \
     -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
     -v zone=$GCP_ZONE \
     -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
@@ -80,7 +80,7 @@ create_env() {
     -o ${root_dir}/bosh-deployment/external-ip-not-recommended.yml \
     $ops_file_arguments \
     -v project_id=$GCP_PROJECTID \
-    -v $"'gcp_credentials_json=$GCP_CREDENTIALS'" \
+    -v $"gcp_credentials_json='$GCP_CREDENTIALS'" \
     -v external_ip=$(cat ${root_dir}/terraform/metadata | jq .external_ip) \
     -v zone=$GCP_ZONE \
     -v network=$(cat ${root_dir}/terraform/metadata | jq .network_name) \
