@@ -85,22 +85,6 @@ output "external_ip" {
   value = "${google_compute_address.bosh-lite.address}"
 }
 
-output "projectid" {
-  value = "${var.projectid}"
-}
-
-output "credentials" {
-  value = "${var.service_account_key}"
-}
-
-output "region" {
-  value = "${var.region}"
-}
-
-output "zone" {
-  value = "${var.zone}"
-}
-
 output "network_name" {
   value = "${google_compute_network.bosh-lite.name}"
 }
