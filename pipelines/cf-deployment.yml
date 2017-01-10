@@ -307,7 +307,6 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: snitch-terraform
   - put: snitch-terraform
     params:
       env_name: snitch
