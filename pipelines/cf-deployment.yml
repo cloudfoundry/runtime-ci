@@ -245,6 +245,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/ChunyiLyu/bosh-deployment.git
+- name: cats-concourse-task
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cats-concourse-task.git
+
 
 jobs:
 - name: setup-infrastructure
@@ -554,7 +560,7 @@ jobs:
     - task: run-cats
       input_mapping:
       - integration-config: hermione-env-integration-config
-      file: runtime-ci/scripts/ci/run-cats/task.yml
+      file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-fresh
   serial_groups: [luna]
@@ -589,7 +595,7 @@ jobs:
       - integration-config: luna-env-properties
       params:
         NODES: 6
-      file: runtime-ci/scripts/ci/run-cats/task.yml
+      file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-lite
   serial_groups: [snitch]
@@ -624,7 +630,7 @@ jobs:
       - integration-config: snitch-env-properties
       params:
         NODES: 8
-      file: runtime-ci/scripts/ci/run-cats/task.yml
+      file: cats-concourse-task/task.yml
 
 - name: routing-acceptance-tests-fresh
   serial_groups: [luna-routing]
