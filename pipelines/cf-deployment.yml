@@ -25,6 +25,7 @@ groups:
   - destroy-infrastructure-lite
   - verify-nameserver-has-record
   - run-bosh-cleanup
+  - run-bosh-cleanup-lite
 
 resource_types:
 - name: terraform
@@ -973,6 +974,26 @@ jobs:
         STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: hermione-env-infrastructure
+    - task: run-bosh-cleanup
+      privileged: true
+      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+
+- name: run-bosh-cleanup-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: snitch-env-infrastructure
+      - get: daily
+        trigger: true
+    - task: extract-director-creds-from-terraform-env
+      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+      input_mapping:
+        env-repo: snitch-env-infrastructure
     - task: run-bosh-cleanup
       privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
