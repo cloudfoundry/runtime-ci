@@ -632,7 +632,7 @@ jobs:
       input_mapping:
       - integration-config: snitch-env-properties
       params:
-        NODES: 8
+        NODES: 6
       file: cats-concourse-task/task.yml
 
 - name: routing-acceptance-tests-fresh
