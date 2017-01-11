@@ -678,6 +678,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: luna-env-infrastructure
       - get: luna-env-properties
         trigger: true
         passed: [ acceptance-tests-fresh]
@@ -692,7 +693,7 @@ jobs:
         env-repo: luna-env-infrastructure
     - task: delete-deployment-cf
       input_mapping:
-        env-repo: luna-env-properties
+        env-repo: luna-env-infrastructure
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
