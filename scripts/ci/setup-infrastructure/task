@@ -26,7 +26,7 @@ pushd env-repo
 
   bbl \
     --state-dir bbl-infrastructure \
-    up
+    up > /dev/null
 
   set +x
   echo "$BBL_LB_CERT" > /tmp/bbl-cert
@@ -40,13 +40,13 @@ pushd env-repo
     --type=cf \
     --cert=/tmp/bbl-cert \
     --key=/tmp/bbl-key \
-    --skip-if-exists
+    --skip-if-exists > /dev/null
 
   if [[ $BBL_IAAS == "aws" ]]; then
     bbl \
       --state-dir bbl-infrastructure \
       update-lbs \
       --cert=/tmp/bbl-cert \
-      --key=/tmp/bbl-key
+      --key=/tmp/bbl-key > /dev/null
   fi
 popd
