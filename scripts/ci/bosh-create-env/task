@@ -21,13 +21,35 @@ main() {
     ops_file_arguments="${ops_file_arguments} -o ${root_dir}/${op}"
   done
 
-  ensure_all_vars_provided $PWD "$ops_file_arguments" $vars_file $director_name
+  cleanup_deployment_if_present $root_dir
+  ensure_all_vars_provided $root_dir "$ops_file_arguments" $vars_file $director_name
   create_env $root_dir "$ops_file_arguments" $vars_file $state_file $director_name
   output_bosh_metadata $root_dir $vars_file
   git_commit $root_dir
 
   shopt -s dotglob
   cp -R env-repo/* updated-env-repo/
+}
+
+cleanup_deployment_if_present() {
+  local root_dir
+  root_dir=$1
+  echo "Attempting to delete the deployment to prevent errors when recreating the environment.  This will print errors but continue regardless if this is not recreating (e.g. if this is a brand new environment)."
+  set +ex
+    local bosh_username
+    bosh_username=$(cat ${root_dir}/env-repo/infrastructure/bosh/username)
+    local bosh_password
+    bosh_password=$(cat ${root_dir}/env-repo/infrastructure/bosh/password)
+    local bosh_target
+    bosh_target=$(cat ${root_dir}/env-repo/infrastructure/bosh/bosh-target)
+    local bosh_ca_cert
+    bosh_ca_cert=${root_dir}/env-repo/infrastructure/bosh/certs/rootCA.pem
+    bosh -n delete-deployment -d cf \
+      --environment=${bosh_target} \
+      --ca-cert=${bosh_ca_cert} \
+      --user=${bosh_username} \
+      --password=${bosh_password}
+  set -ex
 }
 
 ensure_all_vars_provided() {
