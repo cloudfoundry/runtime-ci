@@ -69,7 +69,7 @@ resource "google_compute_firewall" "bosh-lite" {
 
   allow {
     protocol = "tcp"
-    ports = ["22", "6868", "25555", "80", "443"]
+    ports = ["22", "6868", "25555", "80", "443", "2222"]
   }
 
   allow {
