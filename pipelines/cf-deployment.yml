@@ -397,6 +397,7 @@ jobs:
       DEPLOYMENT_NAME: cf
   - task: bosh-deploy-cf
     file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    attempts: 3
     input_mapping:
       manifest: cf-deployment-develop
       manifest-properties: luna-env-properties
