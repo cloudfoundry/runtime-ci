@@ -78,6 +78,7 @@ ensure_all_vars_provided() {
     -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
     -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
     -v director_name=$director_name \
+    -v tags=[] \
     ${root_dir}/bosh-deployment/bosh.yml > /dev/null
   set -x
 }
@@ -111,6 +112,7 @@ create_env() {
     -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
     -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
     -v director_name=$director_name \
+    -v tags=[] \
     ${root_dir}/bosh-deployment/bosh.yml
   set -x
 }
