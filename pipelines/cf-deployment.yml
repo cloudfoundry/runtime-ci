@@ -605,7 +605,7 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-properties
+        env-repo: luna-env-integration-config
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: luna.cf-app.com
