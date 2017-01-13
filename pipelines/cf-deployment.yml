@@ -60,6 +60,15 @@ resources:
     paths:
     - bbl-infrastructure/*
     - google_account_creds.json
+- name: luna-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/luna-env.git
+    private_key: {{luna_env_private_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
 - name: luna-env-properties
   type: git
   source:
@@ -576,9 +585,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env-properties
-        trigger: true
-        passed: [ deploy-releases-fresh ]
+      - get: luna-env-integration-config
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -681,7 +688,7 @@ jobs:
       - get: luna-env-infrastructure
       - get: luna-env-properties
         trigger: true
-        passed: [ acceptance-tests-fresh]
+        passed: [ deploy-releases-fresh ]
       - get: cf-deployment-develop
         trigger: true
         passed: [ acceptance-tests-fresh]
