@@ -239,7 +239,10 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
-    paths: [ deployment-vars.yml ]
+    paths:
+    - deployment-vars.yml
+    - integration_config_template.json
+    - rats_integration_config_template.json
 - name: snitch-env-infrastructure
   type: git
   source:
@@ -248,7 +251,15 @@ resources:
     private_key: {{snitch_env_private_key}}
     paths:
     - infrastructure/*
-    - remove_google_cpi_job.yml
+- name: snitch-env-integration-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
 - name: bosh-deployment
   type: git
   source:
@@ -259,7 +270,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
-
 
 jobs:
 - name: setup-infrastructure
@@ -619,9 +629,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-lite ]
-      - get: snitch-env-properties
-        trigger: true
-        passed: [ deploy-releases-lite ]
+      - get: snitch-env-integration-config
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -631,13 +639,13 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: snitch-env-properties
+        env-repo: snitch-env-integration-config
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: snitch-env-properties
+      - integration-config: snitch-env-integration-config
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
