@@ -611,7 +611,7 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: luna-env-properties
+      - integration-config: luna-env-integration-config
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
@@ -675,11 +675,11 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-properties
+        env-repo: luna-env-integration-config
     - task: run-rats
       input_mapping:
       - routing-release: routing-acceptance-tests
-      - integration-config: luna-env-properties
+      - integration-config: luna-env-integration-config
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
