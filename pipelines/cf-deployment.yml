@@ -687,7 +687,6 @@ jobs:
       - get: runtime-ci
       - get: luna-env-infrastructure
       - get: luna-env-properties
-        trigger: true
         passed: [ deploy-releases-fresh ]
       - get: cf-deployment-develop
         trigger: true
