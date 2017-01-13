@@ -32,6 +32,7 @@ bosh -n delete-env \
   -v internal_gw=$(cat ${root_dir}/terraform/metadata | jq .internal_gw) \
   -v internal_ip=$(cat ${root_dir}/terraform/metadata | jq .internal_ip) \
   -v director_name=$DIRECTOR_NAME \
+  -v tags=[] \
   ${root_dir}/bosh-deployment/bosh.yml
 set -x
 
