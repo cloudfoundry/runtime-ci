@@ -652,9 +652,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: routing-acceptance-tests
-      - get: luna-env-properties
-        trigger: true
-        passed: [ deploy-releases-fresh ]
+      - get: luna-env-integration-config
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
