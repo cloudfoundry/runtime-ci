@@ -1019,8 +1019,10 @@ jobs:
       - get: luna-env-infrastructure
       - get: daily
         trigger: true
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
+    - task: extract-director-creds-from-bbl
+      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+      params:
+        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: luna-env-infrastructure
     - task: run-bosh-cleanup
