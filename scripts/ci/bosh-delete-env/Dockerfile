@@ -27,9 +27,9 @@ RUN \
 ENV PATH /opt/rubies/ruby-2.1.8/bin:$PATH
 
 RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.139-linux-amd64 --output-document="/usr/bin/bosh" && \
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.147-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "0c8363a379aa48f58aeb828b41eb9eb92fa57e6f bosh" | sha1sum -c - && \
+  echo "533342d7663c3e5dc731769e157608c74dd9eccb bosh" | sha1sum -c - && \
   chmod +x bosh
 
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document /usr/local/bin/jq && \
