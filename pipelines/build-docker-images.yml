@@ -200,12 +200,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-upload-release/Dockerfile]
-- name: runtime-ci-bosh-upload-stemcell
+- name: cf-deployment-concourse-tasks-bosh-upload-stemcell
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-upload-stemcell/Dockerfile]
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [bosh-upload-stemcell/Dockerfile]
 - name: runtime-ci-bosh-upload-stemcell-1-0
   type: git
   source:
@@ -1274,7 +1274,7 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-upload-stemcell
+      - get: cf-deployment-concourse-tasks-bosh-upload-stemcell
         trigger: true
     - put: bosh-upload-stemcell-pipeline-image
       params:
