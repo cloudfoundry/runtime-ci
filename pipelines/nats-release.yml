@@ -47,6 +47,11 @@ resources:
     start: 3:00 -0700
     stop: 3:30 -0700
     interval: 24h
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 - name: runtime-ci
   type: git
   source:
@@ -686,6 +691,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: minerva-env-infrastructure
       passed: [setup-infrastructure]
@@ -699,7 +705,7 @@ jobs:
     params:
       STATE_DIR_PATH: bbl-infrastructure
   - task: bosh-upload-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
     params:
