@@ -92,6 +92,11 @@ resources:
     start: 3:00 -0700
     stop: 3:30 -0700
     interval: 24h
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 - name: runtime-ci
   type: git
   source:
@@ -393,6 +398,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
     - get: luna-env-properties
@@ -404,7 +410,7 @@ jobs:
     input_mapping:
       env-repo: luna-env-infrastructure
   - task: bosh-upload-stemcell-fresh
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
     params:
@@ -446,6 +452,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
     - get: hermione-env-properties
@@ -459,7 +466,7 @@ jobs:
     input_mapping:
       env-repo: hermione-env-infrastructure
   - task: bosh-upload-stemcell-upgrade
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
     params:
@@ -503,6 +510,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
         # trigger: true
       - get: bosh-deployment
@@ -519,7 +527,7 @@ jobs:
       params:
         DEPLOYMENT_NAME: cf
     - task: bosh-upload-stemcell-lite
-      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
       params:
