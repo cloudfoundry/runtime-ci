@@ -847,6 +847,7 @@ jobs:
           passed:
           - acceptance-tests-upgrade
           - acceptance-tests-fresh
+          - acceptance-tests-lite
         - get: cf-deployment-master
     - put: cf-deployment-master
       params:
