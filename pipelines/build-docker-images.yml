@@ -1278,7 +1278,7 @@ jobs:
         trigger: true
     - put: bosh-upload-stemcell-pipeline-image
       params:
-        build: cf-deployment-concourse-tasks-bosh-upload-stemcell/scripts/ci/bosh-upload-stemcell
+        build: cf-deployment-concourse-tasks-bosh-upload-stemcell/bosh-upload-stemcell
         push: true
 - name: build-bosh-upload-stemcell-1-0-docker-image
   public: true
