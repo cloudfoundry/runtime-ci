@@ -61,15 +61,6 @@ resources:
     paths:
     - bbl-infrastructure/*
     - google_account_creds.json
-- name: luna-env-integration-config
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: {{luna_env_private_key}}
-    paths:
-    - integration_config.json
-    - rats_integration_config.json
 - name: luna-env-properties
   type: git
   source:
@@ -78,8 +69,8 @@ resources:
     private_key: {{luna_env_private_key}}
     paths:
     - deployment-vars.yml
-    - integration_config_template.json
-    - rats_integration_config_template.json
+    - integration_config.json
+    - rats_integration_config.json
 - name: weekly
   type: time
   source:
@@ -118,16 +109,7 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-env-vars.yml
-    - integration_config_template.json
-- name: hermione-env-integration-config
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
-    paths:
     - integration_config.json
-    - rats_integration_config.json
 - name: windows-stemcell
   type: s3
   source:
@@ -247,8 +229,8 @@ resources:
     private_key: {{snitch_env_private_key}}
     paths:
     - deployment-vars.yml
-    - integration_config_template.json
-    - rats_integration_config_template.json
+    - integration_config.json
+    - rats_integration_config.json
 - name: snitch-env-infrastructure
   type: git
   source:
@@ -257,15 +239,6 @@ resources:
     private_key: {{snitch_env_private_key}}
     paths:
     - infrastructure/*
-- name: snitch-env-integration-config
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: {{snitch_env_private_key}}
-    paths:
-    - integration_config.json
-    - rats_integration_config.json
 - name: bosh-deployment
   type: git
   source:
@@ -422,16 +395,12 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf
   - task: bosh-deploy-cf
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    file: ci/bosh-deploy/task.yml
     input_mapping:
+      ci: cf-deployment-concourse-tasks
       manifest: cf-deployment-develop
       manifest-properties: luna-env-properties
     params:
-      TARGET_FILE:  target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: "opsfiles/gcp.yml"
@@ -439,6 +408,18 @@ jobs:
       put: luna-env-properties
       params:
         repository: updated-vars-store
+        rebase: true
+  - task: update-integration-configs
+    file: ci/update-integration-configs/task.yml
+    params:
+      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+    input_mapping:
+      ci: cf-deployment-concourse-tasks
+      manifest-properties: luna-env-properties
+    ensure:
+      put: luna-env-properties
+      params:
+        repository: updated-integration-config
         rebase: true
   - task: ensure-api-healthy
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
@@ -482,16 +463,12 @@ jobs:
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
-    file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+    file: ci/bosh-deploy/task.yml
     input_mapping:
+      ci: cf-deployment-concourse-tasks
       manifest: cf-deployment-develop
       manifest-properties: hermione-env-properties
     params:
-      TARGET_FILE:  target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
-      MANIFEST_FILE: cf-deployment.yml
       DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
@@ -499,6 +476,18 @@ jobs:
       put: hermione-env-infrastructure
       params:
         repository: updated-vars-store
+        rebase: true
+  - task: update-integration-configs
+    file: ci/update-integration-configs/task.yml
+    params:
+      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+    input_mapping:
+      ci: cf-deployment-concourse-tasks
+      manifest-properties: hermione-env-properties
+    ensure:
+      put: hermione-env-properties
+      params:
+        repository: updated-integration-config
         rebase: true
 
 - name: deploy-releases-lite
@@ -533,16 +522,12 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
-      file: runtime-ci/scripts/ci/bosh-deploy/task.yml
+      file: ci/bosh-deploy/task.yml
       input_mapping:
+        ci: cf-deployment-concourse-tasks
         manifest: cf-deployment-develop
         manifest-properties: snitch-env-properties
       params:
-        MANIFEST_FILE: cf-deployment.yml
-        TARGET_FILE:  target
-        USERNAME_FILE: username
-        PASSWORD_FILE: password
-        CA_CERT_FILE: ca-cert
         DEPLOYMENT_VARS_STORE: deployment-vars.yml
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: "opsfiles/bosh-lite.yml"
@@ -550,6 +535,18 @@ jobs:
         put: snitch-env-properties
         params:
           repository: updated-vars-store
+          rebase: true
+    - task: update-integration-configs
+      file: ci/update-integration-configs/task.yml
+      params:
+        DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      input_mapping:
+        ci: cf-deployment-concourse-tasks
+        manifest-properties: snitch-env-properties
+      ensure:
+        put: snitch-env-properties
+        params:
+          repository: updated-integration-config
           rebase: true
     - task: ensure-api-healthy
       file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
@@ -572,7 +569,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-upgrade ]
-      - get: hermione-env-integration-config
+      - get: hermione-env-properties
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -585,10 +582,10 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-integration-config
+        env-repo: hermione-env-properties
     - task: run-cats
       input_mapping:
-      - integration-config: hermione-env-integration-config
+      - integration-config: hermione-env-properties
       file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-fresh
@@ -604,7 +601,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env-integration-config
+      - get: luna-env-properties
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -614,13 +611,13 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-integration-config
+        env-repo: luna-env-properties
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: luna-env-integration-config
+      - integration-config: luna-env-properties
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
@@ -638,7 +635,7 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-lite ]
-      - get: snitch-env-integration-config
+      - get: snitch-env-properties
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -648,13 +645,13 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: snitch-env-integration-config
+        env-repo: snitch-env-properties
       params:
         VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: snitch-env-integration-config
+      - integration-config: snitch-env-properties
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
@@ -669,7 +666,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: routing-acceptance-tests
-      - get: luna-env-integration-config
+      - get: luna-env-properties
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
@@ -684,11 +681,11 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-integration-config
+        env-repo: luna-env-properties
     - task: run-rats
       input_mapping:
       - routing-release: routing-acceptance-tests
-      - integration-config: luna-env-integration-config
+      - integration-config: luna-env-properties
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
