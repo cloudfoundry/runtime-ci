@@ -476,7 +476,7 @@ jobs:
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
-      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
     input_mapping:
       manifest-properties: hermione-env-properties
     ensure:
