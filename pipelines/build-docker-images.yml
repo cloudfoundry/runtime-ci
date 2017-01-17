@@ -43,6 +43,7 @@ groups:
   - build-run-errand-bbl-bosh-2-0-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
+  - build-update-integration-configs-docker-image
   - build-bosh-deploy-docker-image
   - build-bosh-deploy-with-created-release-docker-image
   - build-bosh-create-env-docker-image
@@ -176,6 +177,18 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-creds/Dockerfile]
+- name: cf-deployment-concourse-tasks-bosh-deploy
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [bosh-deploy/Dockerfile]
+- name: cf-deployment-concourse-tasks-update-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [update-integration-configs/Dockerfile]
 - name: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
   type: git
   source:
@@ -188,12 +201,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-create-env/Dockerfile]
-- name: runtime-ci-bosh-deploy
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-deploy/Dockerfile]
 - name: runtime-ci-bosh-upload-release
   type: git
   source:
@@ -669,6 +676,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-deploy-with-created-release
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: update-integration-configs-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/update-integration-configs
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1226,6 +1240,24 @@ jobs:
       params:
         build: runtime-ci-bosh-create-env/scripts/ci/bosh-create-env
         push: true
+- name: build-update-integration-configs-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: cf-deployment-concourse-tasks-update-integration-configs
+        trigger: true
+    - put: update-integration-configs-pipeline-image
+      params:
+        build: cf-deployment-concourse-tasks-update-integration-configs/update-integration-configs
+        push: true
 - name: build-bosh-deploy-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1238,11 +1270,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-deploy
+      - get: cf-deployment-concourse-tasks-bosh-deploy
         trigger: true
     - put: bosh-deploy-pipeline-image
       params:
-        build: runtime-ci-bosh-deploy/scripts/ci/bosh-deploy
+        build: cf-deployment-concourse-tasks-bosh-deploy/bosh-deploy
         push: true
 - name: build-bosh-upload-release-docker-image
   public: true
