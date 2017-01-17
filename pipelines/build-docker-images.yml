@@ -176,12 +176,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-creds/Dockerfile]
-- name: runtime-ci-bosh-deploy-with-created-release
+- name: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-deploy-with-created-release/Dockerfile]
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [bosh-deploy-with-created-release/Dockerfile]
 - name: runtime-ci-bosh-create-env
   type: git
   source:
@@ -1202,11 +1202,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-deploy-with-created-release
+      - get: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
         trigger: true
     - put: bosh-deploy-with-created-release-pipeline-image
       params:
-        build: runtime-ci-bosh-deploy-with-created-release/scripts/ci/bosh-deploy-with-created-release
+        build: cf-deployment-concourse-tasks-bosh-deploy-with-created-release/bosh-deploy-with-created-release
         push: true
 - name: build-bosh-create-env-docker-image
   public: true
