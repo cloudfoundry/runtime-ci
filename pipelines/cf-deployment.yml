@@ -9,7 +9,7 @@ groups:
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
-  - routing-acceptance-tests-fresh
+  # - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
   - bless-manifest
 - name: infrastructure
@@ -120,11 +120,11 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: routing-acceptance-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-release
+#- name: routing-acceptance-tests
+#  type: git
+#  source:
+#    branch: master
+#    uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: cf-acceptance-tests
   type: git
   source:
@@ -643,37 +643,37 @@ jobs:
         NODES: 6
       file: cats-concourse-task/task.yml
 
-- name: routing-acceptance-tests-fresh
-  serial_groups: [luna-routing]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: routing-acceptance-tests
-      - get: luna-env-properties
-      - get: cf-deployment-develop
-        trigger: true
-        passed: [ deploy-releases-fresh ]
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.luna.cf-app.com
-    - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
-      params:
-        VARS_STORE_PATH: deployment-vars.yml
-        SYSTEM_DOMAIN: luna.cf-app.com
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: luna-env-properties
-    - task: run-rats
-      input_mapping:
-      - routing-release: routing-acceptance-tests
-      - integration-config: luna-env-properties
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+#- name: routing-acceptance-tests-fresh
+#  serial_groups: [luna-routing]
+#  public: true
+#  build_logs_to_retain: 100
+#  plan:
+#  - timeout: 4h
+#    do:
+#    - aggregate:
+#      - get: runtime-ci
+#      - get: routing-acceptance-tests
+#      - get: luna-env-properties
+#      - get: cf-deployment-develop
+#        trigger: true
+#        passed: [ deploy-releases-fresh ]
+#    - task: write-target-file-api
+#      file: runtime-ci/scripts/ci/write-target-file/task.yml
+#      params:
+#        TARGET: api.luna.cf-app.com
+#    - task: enable-docker-diego
+#      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+#      params:
+#        VARS_STORE_PATH: deployment-vars.yml
+#        SYSTEM_DOMAIN: luna.cf-app.com
+#      input_mapping:
+#        cf-deployment: cf-deployment-develop
+#        env-repo: luna-env-properties
+#    - task: run-rats
+#      input_mapping:
+#      - routing-release: routing-acceptance-tests
+#      - integration-config: luna-env-properties
+#      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
   serial_groups: [luna, luna-routing]
