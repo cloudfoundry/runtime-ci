@@ -500,7 +500,7 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
-        # trigger: true
+        trigger: true
       - get: bosh-deployment
       - get: snitch-env-infrastructure
       - get: snitch-env-properties
