@@ -394,9 +394,8 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf
   - task: bosh-deploy-cf
-    file: ci/bosh-deploy/task.yml
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      ci: cf-deployment-concourse-tasks
       manifest: cf-deployment-develop
       manifest-properties: luna-env-properties
     params:
@@ -409,11 +408,10 @@ jobs:
         repository: updated-vars-store
         rebase: true
   - task: update-integration-configs
-    file: ci/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
     input_mapping:
-      ci: cf-deployment-concourse-tasks
       manifest-properties: luna-env-properties
     ensure:
       put: luna-env-properties
@@ -462,9 +460,8 @@ jobs:
       CA_CERT_FILE: ca-cert
       STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
-    file: ci/bosh-deploy/task.yml
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      ci: cf-deployment-concourse-tasks
       manifest: cf-deployment-develop
       manifest-properties: hermione-env-properties
     params:
@@ -477,11 +474,10 @@ jobs:
         repository: updated-vars-store
         rebase: true
   - task: update-integration-configs
-    file: ci/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
       DEPLOYMENT_VARS_STORE: deployment-vars.yml
     input_mapping:
-      ci: cf-deployment-concourse-tasks
       manifest-properties: hermione-env-properties
     ensure:
       put: hermione-env-properties
@@ -515,9 +511,8 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
-      file: ci/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        ci: cf-deployment-concourse-tasks
         manifest: cf-deployment-develop
         manifest-properties: snitch-env-properties
       params:
@@ -530,11 +525,10 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: update-integration-configs
-      file: ci/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         DEPLOYMENT_VARS_STORE: deployment-vars.yml
       input_mapping:
-        ci: cf-deployment-concourse-tasks
         manifest-properties: snitch-env-properties
       ensure:
         put: snitch-env-properties
