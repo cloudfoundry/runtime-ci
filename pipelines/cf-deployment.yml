@@ -11,7 +11,6 @@ groups:
   - acceptance-tests-upgrade
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
-  - post-delete-deployment-lite
   - bless-manifest
 - name: infrastructure
   jobs:
@@ -509,12 +508,6 @@ jobs:
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
         env-repo: snitch-env-infrastructure
-    - task: guarantee-no-existing-cf-deployment
-      input_mapping:
-        env-repo: snitch-env-infrastructure
-      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-      params:
-        DEPLOYMENT_NAME: cf
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
       input_mapping:
@@ -712,32 +705,6 @@ jobs:
     - task: delete-deployment-cf
       input_mapping:
         env-repo: luna-env-infrastructure
-      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-      params:
-        DEPLOYMENT_NAME: cf
-
-- name: post-delete-deployment-lite
-  serial_groups: [snitch]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: snitch-env-properties
-        # trigger: true
-        # passed: [ acceptance-tests-lite ]
-      - get: cf-deployment-develop
-        # trigger: true
-        # passed: [ acceptance-tests-lite ]
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-      input_mapping:
-        env-repo: snitch-env-properties
-    - task: delete-deployment-cf
-      input_mapping:
-        env-repo: snitch-env-properties
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
