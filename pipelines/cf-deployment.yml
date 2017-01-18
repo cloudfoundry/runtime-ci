@@ -396,12 +396,13 @@ jobs:
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      manifest: cf-deployment-develop
-      manifest-properties: luna-env-properties
+      bbl-state: luna-env-infrastructure
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-store: luna-env-properties
     params:
-      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      BBL_STATE_DIR: bbl-infrastructure
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "opsfiles/gcp.yml"
     ensure:
       put: luna-env-properties
       params:
@@ -462,10 +463,13 @@ jobs:
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      manifest: cf-deployment-develop
-      manifest-properties: hermione-env-properties
+      bbl-state: hermione-env-infrastructure
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-store: hermione-env-properties
     params:
-      DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
+      BBL_STATE_DIR: bbl-infrastructure
+      VARS_STORE_PATH: deployment-env-vars.yml
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
     ensure:
