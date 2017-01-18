@@ -8,8 +8,6 @@ if [ -z "${DOMAIN}" ]; then
   exit 1
 fi
 
-echo "\$DOMAIN is set to '$DOMAIN'; good job!"
-
 DIR="$(pwd)"
 
 function commit_bbl_state_file {
