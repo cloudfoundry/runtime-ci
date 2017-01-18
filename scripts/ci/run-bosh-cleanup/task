@@ -8,4 +8,4 @@ set +x
 export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE_PATH}")
 set -x
 
-bosh -n --color -t "${BOSH_TARGET}" cleanup
+bosh -n --color -t "${BOSH_TARGET}" cleanup --all
