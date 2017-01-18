@@ -1,0 +1,47 @@
+#!/bin/bash -exu
+
+set -o pipefail
+
+function commit_bbl_state() {
+  pushd env-repo
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
+      git add .
+      git commit -m "Update bbl-state.json"
+    fi
+  popd
+
+  shopt -s dotglob
+  cp -R env-repo/* updated-env-repo/
+}
+
+function create_bbl_state() {
+  set +x
+  local address
+  local cacert
+  local password
+
+  echo "extracting credentials from vars store and terraform..."
+  address=$(cat terraform/metadata | jq -r .external_ip)
+  cacert=$(gosh interpolate env-repo/${VARS_STORE_PATH} --path=/director_ssl/ca)
+  password=$(gosh interpolate env-repo/${VARS_STORE_PATH} --path=/admin_password)
+
+  echo "writing bbl-state.json..."
+  local bbl_state
+  bbl_state='{"bosh":{}}'
+  bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorUsername=\"admin\"")
+  bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorPassword=\"${password}\"")
+  bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorAddress=\"https://${address}:25555\"")
+  bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorSSLCA = \"${cacert}\"")
+
+  echo "${bbl_state}" > bbl-state.json
+  set -x
+}
+
+function main() {
+  create_bbl_state
+  commit_bbl_state
+}
+
+main

@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bbl-state-from-vars-store
+
+inputs:
+- name: env-repo
+- name: terraform
+
+outputs:
+- name: updated-env-repo
+
+run:
+  path: runtime-ci/scripts/ci/bbl-state-from-vars-store/task
+
+params:
+  VARS_STORE_PATH: infrastructure/bosh/deployment-vars.yml
