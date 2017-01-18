@@ -16,3 +16,7 @@ set -x
 bosh \
   -n \
   delete-deployment -d ${DEPLOYMENT_NAME}
+
+bosh \
+  -n \
+  clean-up --all
