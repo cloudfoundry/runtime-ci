@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -xeu
+
+: ${DOMAIN?}
+
 DIR="$(pwd)"
 
 function commit_bbl_state_file {
@@ -38,6 +41,7 @@ pushd env-repo
     --state-dir bbl-infrastructure \
     create-lbs \
     --type=cf \
+    --domain=${DOMAIN} \
     --cert=/tmp/bbl-cert \
     --key=/tmp/bbl-key \
     --skip-if-exists > ../bbl-create-lbs-output.txt
@@ -45,6 +49,7 @@ pushd env-repo
   bbl \
     --state-dir bbl-infrastructure \
     update-lbs \
+    --domain=${DOMAIN} \
     --cert=/tmp/bbl-cert \
     --key=/tmp/bbl-key > ../bbl-update-lbs-output.txt
 popd

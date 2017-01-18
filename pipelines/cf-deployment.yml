@@ -267,6 +267,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      DOMAIN: hermione.cf-app.com
     input_mapping:
       env-repo: hermione-env-infrastructure
   - put: hermione-env-infrastructure
@@ -298,6 +299,7 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{luna_cf_ssl_cert}}
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+      DOMAIN: luna.cf-app.com
     input_mapping:
       env-repo: luna-env-infrastructure
   - put: luna-env-infrastructure

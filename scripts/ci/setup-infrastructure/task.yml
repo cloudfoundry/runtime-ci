@@ -27,3 +27,4 @@ params:
   BBL_IAAS:
   BBL_LB_CERT:
   BBL_LB_KEY:
+  DOMAIN:
