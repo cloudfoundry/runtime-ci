@@ -3,6 +3,12 @@
 set -xeu
 
 : ${DOMAIN?}
+if [ -z "${DOMAIN}" ]; then
+  echo "\$DOMAIN was empty, which will not work for this task.  Please set the domain."
+  exit 1
+fi
+
+echo "\$DOMAIN is set to '$DOMAIN'; good job!"
 
 DIR="$(pwd)"
 
