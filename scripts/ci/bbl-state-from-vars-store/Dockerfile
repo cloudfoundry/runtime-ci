@@ -5,7 +5,8 @@ ENV HOME /root
 RUN \
   apt-get update && \
   apt-get -y install \
-    git
+    git \
+    wget
 
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document /usr/local/bin/jq && \
   chmod +x /usr/local/bin/jq
