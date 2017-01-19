@@ -4,14 +4,12 @@ set -eux
 
 cf_router_load_balancer_url() {
   bbl \
-    --state-dir bbl-infrastructure \
     lbs \
     | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
 
 cf_ssh_proxy_load_balancer_url() {
   bbl \
-    --state-dir bbl-infrastructure \
     lbs \
     | grep "SSH Proxy" | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }

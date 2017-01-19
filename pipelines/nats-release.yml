@@ -96,7 +96,7 @@ resources:
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_private_key}}
     paths:
-    - bbl-infrastructure/*
+    - bbl-state.json
 - name: minerva-env-integration-config
   type: git
   source:
@@ -121,7 +121,7 @@ resources:
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_private_key}}
     paths:
-    - bbl-infrastructure/
+    - bbl-state.json
 - name: hagrid-env-integration-config
   type: git
   source:
@@ -288,8 +288,6 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
   - task: bosh-upload-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
@@ -320,8 +318,6 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
       env-repo: hagrid-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
   - task: generate-1-0-nats-deployment-manifest-from-bbl
     file: runtime-ci/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/task.yml
     input_mapping:
@@ -357,8 +353,6 @@ jobs:
         tarball: false
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - task: run-errand-bbl-smoke-tests
@@ -405,8 +399,6 @@ jobs:
     - get: cflinuxfs2-rootfs-release-tarball
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hagrid-env-infrastructure
   - task: extract-cloudformation-properties
@@ -414,7 +406,6 @@ jobs:
     params:
       MAPPING_OUTPUT_FILE: security-groups-mapping
       LOGICAL_RESOURCE_IDS: CFRouterInternalSecurityGroup CFSSHProxyInternalSecurityGroup InternalSecurityGroup
-      STATE_DIR_PATH: bbl-infrastructure
       AWS_ACCESS_KEY_ID: {{cf_release_integration_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{cf_release_integration_secret_access_key}}
     input_mapping:
@@ -438,7 +429,6 @@ jobs:
           CF_DEPLOYMENT_MANIFEST: deployment.yml
           EXTENDED_CF_DEPLOYMENT_MANIFEST: extended_deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-          STATE_DIR_PATH: bbl-infrastructure
       - task: untar-diego-release
         file: runtime-ci/scripts/ci/untar-release/task.yml
         input_mapping:
@@ -478,7 +468,6 @@ jobs:
           CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
           EXTENDED_CF_DEPLOYMENT_MANIFEST: diego-deployment.yml
           CLOUDFORMATION_MAPPING_FILE: security-groups-mapping
-          STATE_DIR_PATH: bbl-infrastructure
     - task: bosh-upload-release-cf
       file: runtime-ci/scripts/ci/bosh-upload-release/task.yml
       input_mapping:
@@ -613,8 +602,6 @@ jobs:
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
         env-repo: hagrid-env-infrastructure
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
     - aggregate:
       - task: delete-deployment-cf
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
@@ -702,8 +689,6 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
       env-repo: minerva-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -726,8 +711,6 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
       env-repo: minerva-env-infrastructure
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
   - task: generate-nats-deployment-manifest
     file: runtime-ci/scripts/ci/generate-nats-deployment-manifest/task.yml
   - task: bosh-deploy-new-nats
@@ -762,8 +745,6 @@ jobs:
       passed: [deploy-nats-standalone]
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: minerva-env-infrastructure
   - task: run-errand-bbl-bosh-2-0-smoke-tests
@@ -795,8 +776,6 @@ jobs:
       passed:  [smoke-tests]
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: minerva-env-infrastructure
   - task: bosh-deploy-cf-with-new-nats
@@ -884,8 +863,6 @@ jobs:
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
         env-repo: minerva-env-infrastructure
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
     - aggregate:
       - task: delete-deployment-cf
         file: runtime-ci/scripts/ci/delete-deployment/task.yml
@@ -945,8 +922,6 @@ jobs:
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: hagrid-env-infrastructure
     - task: run-bosh-cleanup
@@ -966,8 +941,6 @@ jobs:
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: minerva-env-infrastructure
     - task: run-bosh-cleanup

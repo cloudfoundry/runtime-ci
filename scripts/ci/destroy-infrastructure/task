@@ -2,19 +2,18 @@
 
 set -xeu
 
-if [[ ! -e env-repo/bbl-infrastructure/bbl-state.json ]]; then
+if [[ ! -e env-repo/bbl-state.json ]]; then
   echo "no bbl-state.json present -- the infrastructure has already been deleted"
 else
   pushd env-repo
     bbl \
-      --state-dir bbl-infrastructure \
       destroy \
       --no-confirm
 
     if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
-      git add bbl-infrastructure
+      git add bbl-state.json
       git commit -m "Destroy infrastructure and remove bbl artifacts"
     fi
   popd

@@ -4,7 +4,7 @@ set -x
 set -e
 set -u
 
-DIRECTOR_URL=$(bbl --state-dir env-repo/bbl-infrastructure director-address)
+DIRECTOR_URL=$(bbl --state-dir env-repo/ director-address)
 DIRECTOR_UUID=$(bosh -t $DIRECTOR_URL status --uuid)
 
 cat <<EOF > manifest/nats.yml

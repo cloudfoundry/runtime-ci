@@ -58,7 +58,7 @@ resources:
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_private_key}}
     paths:
-    - bbl-infrastructure/*
+    - bbl-state.json
     - google_account_creds.json
 - name: luna-env-properties
   type: git
@@ -99,7 +99,7 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths:
-    - bbl-infrastructure/*
+    - bbl-state.json
 - name: hermione-env-properties
   type: git
   source:
@@ -392,8 +392,6 @@ jobs:
     - get: luna-env-infrastructure
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: luna-env-infrastructure
   - task: bosh-upload-stemcell-fresh
@@ -416,7 +414,6 @@ jobs:
       ops-files: cf-deployment-develop
       vars-store: luna-env-properties
     params:
-      BBL_STATE_DIR: bbl-infrastructure
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
     ensure:
@@ -456,8 +453,6 @@ jobs:
     - get: windows-stemcell
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hermione-env-infrastructure
   - task: bosh-upload-stemcell-upgrade
@@ -484,7 +479,6 @@ jobs:
       ops-files: cf-deployment-develop
       vars-store: hermione-env-properties
     params:
-      BBL_STATE_DIR: bbl-infrastructure
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
     ensure:
@@ -713,8 +707,6 @@ jobs:
         passed: [ acceptance-tests-fresh]
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: luna-env-infrastructure
     - task: delete-deployment-cf
@@ -937,8 +929,6 @@ jobs:
         tarball: false
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    params:
-      STATE_DIR_PATH: bbl-infrastructure
     input_mapping:
       env-repo: hermione-env-infrastructure
   - task: create-binaries-manifest-section
@@ -988,8 +978,6 @@ jobs:
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: hermione-env-infrastructure
     - task: run-bosh-cleanup
@@ -1010,8 +998,6 @@ jobs:
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      params:
-        STATE_DIR_PATH: bbl-infrastructure
       input_mapping:
         env-repo: luna-env-infrastructure
     - task: run-bosh-cleanup
