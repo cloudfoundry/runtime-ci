@@ -107,7 +107,7 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths:
-    - deployment-env-vars.yml
+    - deployment-vars.yml
     - integration_config.json
 - name: windows-stemcell
   type: s3
@@ -485,7 +485,6 @@ jobs:
       vars-store: hermione-env-properties
     params:
       BBL_STATE_DIR: bbl-infrastructure
-      VARS_STORE_PATH: deployment-env-vars.yml
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
     ensure:
@@ -496,7 +495,7 @@ jobs:
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
-      DEPLOYMENT_VARS_STORE: deployment-env-vars.yml
+      DEPLOYMENT_VARS_STORE: deployment-vars.yml
     input_mapping:
       manifest-properties: hermione-env-properties
     ensure:
@@ -587,7 +586,7 @@ jobs:
     - task: enable-docker-diego
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       params:
-        VARS_STORE_PATH: deployment-env-vars.yml
+        VARS_STORE_PATH: deployment-vars.yml
         SYSTEM_DOMAIN: hermione.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
