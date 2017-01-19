@@ -13,7 +13,7 @@ inputs:
 params:
   TRACKER_API_TOKEN: ~
   REQUESTER_ID: ~
-  TRACKER_PROJECTS: bp capi dea diego id log infr gp relint rtg
+  TRACKER_PROJECTS: bp capi dea diego id log infr pg relint rtg
 
 run:
   path: runtime-ci/scripts/ci/request-pm-input/task
