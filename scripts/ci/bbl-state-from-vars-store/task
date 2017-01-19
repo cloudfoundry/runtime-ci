@@ -24,8 +24,8 @@ function create_bbl_state() {
 
   echo "extracting credentials from vars store and terraform..."
   address=$(cat terraform/metadata | jq -r .external_ip)
-  cacert=$(gosh interpolate env-repo/${VARS_STORE_PATH} --path=/director_ssl/ca)
-  password=$(gosh interpolate env-repo/${VARS_STORE_PATH} --path=/admin_password)
+  cacert=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/director_ssl/ca)
+  password=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/admin_password)
 
   echo "writing bbl-state.json..."
   local bbl_state
