@@ -73,7 +73,6 @@ groups:
   - build-build-metadata-resource-docker-image
   - build-bbl-mixin-routing-release-lbs-docker-image
   - build-bbl-state-from-vars-store-docker-image
-  - build-setup-infrastructure-terraform-docker-image
   - build-create-gcp-bosh-director-docker-image
   - build-bosh-delete-env-docker-image
   - build-destroy-gcp-bosh-director-docker-image
@@ -517,13 +516,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/untar-release/Dockerfile]
-
-- name: runtime-ci-setup-infrastructure-terraform
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/setup-infrastructure-terraform/Dockerfile]
 
 - name: runtime-ci-bbl-mixin-routing-release-lbs
   type: git
@@ -1072,14 +1064,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/build-metadata-resource
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: setup-infrastructure-terraform-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/setup-infrastructure-terraform
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2437,25 +2421,6 @@ jobs:
     - put: bbl-state-from-vars-store-pipeline-image
       params:
         build: runtime-ci-bbl-state-from-vars-store/scripts/ci/bbl-state-from-vars-store
-        push: true
-
-- name: build-setup-infrastructure-terraform-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-setup-infrastructure-terraform
-        trigger: true
-    - put: setup-infrastructure-terraform-pipeline-image
-      params:
-        build: runtime-ci-setup-infrastructure-terraform/scripts/ci/setup-infrastructure-terraform
         push: true
 
 - name: build-create-gcp-bosh-director-docker-image
