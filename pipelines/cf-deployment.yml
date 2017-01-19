@@ -238,6 +238,14 @@ resources:
     private_key: {{snitch_env_private_key}}
     paths:
     - infrastructure/*
+- name: snitch-env-bbl-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths:
+    - bbl-state.json
 - name: bosh-deployment
   type: git
   source:
@@ -346,7 +354,12 @@ jobs:
     params:
       repository: updated-env-repo
       rebase: true
-  - put: snitch-env-infrastructure
+  - task: bbl-state-from-vars-store
+    file: runtime-ci/scripts/ci/bbl-state-from-vars-store/task.yml
+    input_mapping:
+      env-repo: snitch-env-infrastructure
+      terraform: snitch-terraform
+  - put: snitch-env-bbl-state
     params:
       repository: updated-env-repo
       rebase: true
@@ -506,6 +519,7 @@ jobs:
       - get: bosh-deployment
       - get: snitch-env-infrastructure
       - get: snitch-env-properties
+      - get: snitch-env-bbl-state
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
@@ -519,10 +533,11 @@ jobs:
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        manifest: cf-deployment-develop
-        manifest-properties: snitch-env-properties
+        bbl-state: snitch-env-bbl-state
+        cf-deployment: cf-deployment-develop
+        vars-store: snitch-env-properties
+        ops-files: cf-deployment-develop
       params:
-        DEPLOYMENT_VARS_STORE: deployment-vars.yml
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: "opsfiles/bosh-lite.yml"
       ensure:
