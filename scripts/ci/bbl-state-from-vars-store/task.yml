@@ -8,6 +8,7 @@ image_resource:
 
 inputs:
 - name: env-repo
+- name: runtime-ci
 - name: terraform
 
 outputs:
