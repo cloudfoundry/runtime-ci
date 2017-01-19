@@ -26,14 +26,16 @@ function create_bbl_state() {
   address=$(cat terraform/metadata | jq -r .external_ip)
   cacert=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/director_ssl/ca)
   password=$(bosh interpolate env-repo/${VARS_STORE_PATH} --path=/admin_password)
+  sshkey=$(bosh interpolate env-repo/infrastructure/bosh/deployment-vars.yml --path=/jumpbox_ssh/private_key)
 
   echo "writing bbl-state.json..."
   local bbl_state
-  bbl_state='{"bosh":{}}'
+  bbl_state='{"bosh":{},"keyPair":{}}'
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorUsername=\"admin\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorPassword=\"${password}\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorAddress=\"https://${address}:25555\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorSSLCA = \"${cacert}\"")
+  bbl_state=$(echo "${bbl_state}" | jq ".keyPair.privateKey = \"${sshkey}\"")
 
   echo "${bbl_state}" > env-repo/bbl-state.json
   set -x
