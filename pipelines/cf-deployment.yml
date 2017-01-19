@@ -423,13 +423,14 @@ jobs:
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
-      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      manifest-properties: luna-env-properties
+      vars-store: luna-env-properties
+      integration-configs: luna-env-properties
     ensure:
       put: luna-env-properties
       params:
-        repository: updated-integration-config
+        repository: updated-integration-configs
         rebase: true
   - task: ensure-api-healthy
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
@@ -488,13 +489,14 @@ jobs:
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
-      DEPLOYMENT_VARS_STORE: deployment-vars.yml
+      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      manifest-properties: hermione-env-properties
+      vars-store: hermione-env-properties
+      integration-configs: hermione-env-properties
     ensure:
       put: hermione-env-properties
       params:
-        repository: updated-integration-config
+        repository: updated-integration-configs
         rebase: true
 
 - name: deploy-releases-lite
@@ -541,13 +543,14 @@ jobs:
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
-        DEPLOYMENT_VARS_STORE: deployment-vars.yml
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        manifest-properties: snitch-env-properties
+        vars-store: snitch-env-properties
+        integration-configs: snitch-env-properties
       ensure:
         put: snitch-env-properties
         params:
-          repository: updated-integration-config
+          repository: updated-integration-configs
           rebase: true
     - task: ensure-api-healthy
       file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
