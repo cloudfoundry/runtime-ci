@@ -108,6 +108,8 @@ jobs:
   - aggregate:
     - get: cf-final-bosh-release
       trigger: true
+      params:
+        tarball: false
     - get: runtime-ci
   - task: create-release-notes-template
     file: runtime-ci/scripts/ci/create-release-notes-template/task.yml
