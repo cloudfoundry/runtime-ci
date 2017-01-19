@@ -35,7 +35,7 @@ function create_bbl_state() {
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorAddress=\"https://${address}:25555\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorSSLCA = \"${cacert}\"")
 
-  echo "${bbl_state}" > bbl-state.json
+  echo "${bbl_state}" > env-repo/bbl-state.json
   set -x
 }
 
