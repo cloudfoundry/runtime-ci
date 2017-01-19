@@ -418,6 +418,7 @@ jobs:
     params:
       BBL_STATE_DIR: bbl-infrastructure
       SYSTEM_DOMAIN: luna.cf-app.com
+      OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
     ensure:
       put: luna-env-properties
       params:
