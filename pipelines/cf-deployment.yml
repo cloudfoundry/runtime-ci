@@ -284,10 +284,11 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
   - task: setup-infrastructure
-    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-east-1
@@ -295,16 +296,15 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-      DOMAIN: hermione.cf-app.com
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state-dir: hermione-env-director-state
   - put: hermione-env-director-state
     params:
-      repository: updated-env-repo
+      repository: updated-bbl-state-dir
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:
-      env-repo: updated-env-repo
+      env-repo: updated-bbl-state-dir
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
@@ -782,10 +782,10 @@ jobs:
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
