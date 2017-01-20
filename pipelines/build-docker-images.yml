@@ -30,7 +30,7 @@ groups:
   - build-validate-branch-freshness-docker-image
   - build-generate-nats-deployment-manifest-docker-image
   - build-generate-1-0-nats-deployment-manifest-from-bbl-docker-image
-  - build-setup-infrastructure-docker-image
+  - build-bbl-up-docker-image
   - build-extract-director-creds-from-terraform-env-docker-image
   - build-extract-director-creds-from-bbl-docker-image
   - build-destroy-infrastructure-docker-image
@@ -393,12 +393,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/Dockerfile]
-- name: runtime-ci-setup-infrastructure
+- name: cf-deployment-concourse-tasks-bbl-up
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/setup-infrastructure/Dockerfile]
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [bbl-up/Dockerfile]
 - name: runtime-ci-extract-director-creds-from-bbl
   type: git
   source:
@@ -917,10 +917,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: setup-infrastructure-pipeline-image
+- name: bbl-up-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/setup-infrastructure
+    repository: relintdockerhubpushbot/bbl-up
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2018,7 +2018,7 @@ jobs:
       params:
         build: runtime-ci-generate-1-0-nats-deployment-manifest-from-bbl/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl
         push: true
-- name: build-setup-infrastructure-docker-image
+- name: build-bbl-up-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2030,11 +2030,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-setup-infrastructure
+      - get: cf-deployment-concourse-tasks-bbl-up
         trigger: true
-    - put: setup-infrastructure-pipeline-image
+    - put: bbl-up-pipeline-image
       params:
-        build: runtime-ci-setup-infrastructure/scripts/ci/setup-infrastructure
+        build: cf-deployment-concourse-tasks-bbl-up/bbl-up
         push: true
 - name: build-extract-director-creds-from-bbl-docker-image
   public: true
