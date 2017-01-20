@@ -757,7 +757,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: luna-env-director-state
-      - get: luna-env-vars-store
+        trigger: true
         passed: [ deploy-releases-fresh ]
       - get: cf-deployment-develop
         trigger: true
