@@ -536,6 +536,7 @@ jobs:
       - get: snitch-env-director-state
         passed: [ create-bosh-director-lite ]
       - get: snitch-env-vars-store
+      - get: snitch-env-integration-configs
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
@@ -593,7 +594,6 @@ jobs:
         passed: [ deploy-releases-upgrade ]
       - get: hermione-env-integration-configs
         trigger: true
-        passed: [ deploy-releases-upgrade ]
       - get: hermione-env-vars-store
         trigger: true
         passed: [ deploy-releases-upgrade ]
@@ -638,7 +638,6 @@ jobs:
         passed: [ deploy-releases-fresh ]
       - get: luna-env-integration-configs
         trigger: true
-        passed: [ deploy-releases-fresh ]
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -679,7 +678,6 @@ jobs:
         passed: [ deploy-releases-lite ]
       - get: snitch-env-integration-configs
         trigger: true
-        passed: [ deploy-releases-lite ]
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -717,7 +715,6 @@ jobs:
         passed: [ deploy-releases-fresh ]
       - get: luna-env-integration-configs
         trigger: true
-        passed: [ deploy-releases-fresh ]
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
