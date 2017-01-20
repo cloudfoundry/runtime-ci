@@ -407,7 +407,6 @@ jobs:
     - get: luna-env-integration-configs
     - get: luna-env-director-state
       passed: [ setup-infrastructure-fresh ]
-      trigger: true
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
@@ -470,7 +469,6 @@ jobs:
       trigger: true
     - get: hermione-env-director-state
       passed: [ setup-infrastructure-upgrade ]
-      trigger: true
     - get: windows-stemcell
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
@@ -535,7 +533,6 @@ jobs:
       - get: bosh-deployment
       - get: snitch-env-director-state
         passed: [ create-bosh-director-lite ]
-        trigger: true
       - get: snitch-env-vars-store
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
