@@ -17,8 +17,6 @@ groups:
   - setup-infrastructure-upgrade
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
-  - create-bosh-director-lite
-  - destroy-bosh-director-lite
   - destroy-infrastructure-upgrade
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
@@ -337,23 +335,16 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - put: snitch-terraform
-    params:
-      env_name: snitch
-      delete_on_failure: true
-
-- name: create-bosh-director-lite
-  serial_groups: [snitch]
-  public: true
-  build_logs_to_retain: 100
-  plan:
   - get: runtime-ci
   - get: bosh-deployment
   - get: cf-deployment-develop
   - get: snitch-env-director-state
   - get: snitch-terraform
     trigger: true
-    passed: [ setup-infrastructure-lite ]
+  - put: snitch-terraform
+    params:
+      env_name: snitch
+      delete_on_failure: true
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
@@ -534,7 +525,7 @@ jobs:
         trigger: true
       - get: bosh-deployment
       - get: snitch-env-director-state
-        passed: [ create-bosh-director-lite ]
+        passed: [ setup-infrastructure-lite ]
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: extract-director-creds-from-terraform-env
@@ -844,19 +835,6 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: snitch-terraform
-  - put: snitch-terraform
-    params:
-      env_name: snitch
-      action: destroy
-    get_params:
-      action: destroy
-
-- name: destroy-bosh-director-lite
-  serial_groups: [snitch]
-  public: true
-  build_logs_to_retain: 100
-  plan:
   - aggregate:
     - get: runtime-ci
     - get: snitch-terraform
@@ -886,6 +864,12 @@ jobs:
     params:
       repository: updated-env-repo
       rebase: true
+  - put: snitch-terraform
+    params:
+      env_name: snitch
+      action: destroy
+    get_params:
+      action: destroy
 
 - name: bless-manifest
   public: true
