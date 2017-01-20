@@ -50,7 +50,7 @@ resources:
       env_name: snitch
       dns_suffix: cf-app.com
       service_account_key: {{snitch_gcp_service_account_json}}
-- name: luna-env-infrastructure
+- name: luna-env-director-state
   type: git
   source:
     branch: master
@@ -59,7 +59,16 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
-- name: luna-env-properties
+- name: luna-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/luna-env.git
+    private_key: {{luna_env_private_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+- name: luna-env-vars-store
   type: git
   source:
     branch: master
@@ -67,8 +76,6 @@ resources:
     private_key: {{luna_env_private_key}}
     paths:
     - deployment-vars.yml
-    - integration_config.json
-    - rats_integration_config.json
 - name: weekly
   type: time
   source:
@@ -91,7 +98,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: hermione-env-infrastructure
+- name: hermione-env-director-state
   type: git
   source:
     branch: master
@@ -99,7 +106,15 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - bbl-state.json
-- name: hermione-env-properties
+- name: hermione-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - integration_config.json
+- name: hermione-env-vars-store
   type: git
   source:
     branch: master
@@ -107,7 +122,6 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-vars.yml
-    - integration_config.json
 - name: windows-stemcell
   type: s3
   source:
@@ -219,7 +233,7 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-- name: snitch-env-properties
+- name: snitch-env-vars-store
   type: git
   source:
     branch: master
@@ -227,9 +241,16 @@ resources:
     private_key: {{snitch_env_private_key}}
     paths:
     - deployment-vars.yml
+- name: snitch-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths:
     - integration_config.json
     - rats_integration_config.json
-- name: snitch-env-infrastructure
+- name: snitch-env-director-state
   type: git
   source:
     branch: master
@@ -263,7 +284,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: hermione-env-infrastructure
+    - get: hermione-env-director-state
     - get: runtime-ci
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
@@ -276,8 +297,8 @@ jobs:
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
       DOMAIN: hermione.cf-app.com
     input_mapping:
-      env-repo: hermione-env-infrastructure
-  - put: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
+  - put: hermione-env-director-state
     params:
       repository: updated-env-repo
   - task: bind-elb-to-r53
@@ -295,7 +316,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: luna-env-infrastructure
+  - get: luna-env-director-state
   - task: setup-infrastructure
     file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
     params:
@@ -308,8 +329,8 @@ jobs:
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
       DOMAIN: luna.cf-app.com
     input_mapping:
-      env-repo: luna-env-infrastructure
-  - put: luna-env-infrastructure
+      env-repo: luna-env-director-state
+  - put: luna-env-director-state
     params:
       repository: updated-env-repo
       rebase: true
@@ -332,14 +353,14 @@ jobs:
   - get: runtime-ci
   - get: bosh-deployment
   - get: cf-deployment-develop
-  - get: snitch-env-infrastructure
+  - get: snitch-env-director-state
   - get: snitch-terraform
     trigger: true
     passed: [ setup-infrastructure-lite ]
   - task: bosh-create-env
     file: runtime-ci/scripts/ci/bosh-create-env/task.yml
     input_mapping:
-      env-repo: snitch-env-infrastructure
+      env-repo: snitch-env-director-state
       terraform: snitch-terraform
     params:
       STATE_FILE: infrastructure/bosh/state.json
@@ -349,14 +370,14 @@ jobs:
       GCP_PROJECTID: {{snitch_gcp_project}}
       GCP_CREDENTIALS: {{snitch_gcp_service_account_json}}
       GCP_ZONE: us-central1-a
-  - put: snitch-env-infrastructure
+  - put: snitch-env-director-state
     params:
       repository: updated-env-repo
       rebase: true
   - task: bbl-state-from-vars-store
     file: runtime-ci/scripts/ci/bbl-state-from-vars-store/task.yml
     input_mapping:
-      env-repo: snitch-env-infrastructure
+      env-repo: snitch-env-vars-store
       terraform: snitch-terraform
   - put: snitch-env-bbl-state
     params:
@@ -365,7 +386,7 @@ jobs:
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
-      env-repo: snitch-env-infrastructure
+      env-repo: snitch-env-director-state
   - task: bosh-update-cloud-config
     file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
     input_mapping:
@@ -387,15 +408,16 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
-    - get: luna-env-properties
-    - get: luna-env-infrastructure
+    - get: luna-env-vars-store
+    - get: luna-env-integration-configs
+    - get: luna-env-director-state
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
-      env-repo: luna-env-infrastructure
+      env-repo: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: luna-env-infrastructure
+      env-repo: luna-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -408,15 +430,15 @@ jobs:
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      bbl-state: luna-env-infrastructure
+      bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
-      vars-store: luna-env-properties
+      vars-store: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
     ensure:
-      put: luna-env-properties
+      put: luna-env-vars-store
       params:
         repository: updated-vars-store
         rebase: true
@@ -425,10 +447,10 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      vars-store: luna-env-properties
-      integration-configs: luna-env-properties
+      vars-store: luna-env-vars-store
+      integration-configs: luna-env-integration-configs
     ensure:
-      put: luna-env-properties
+      put: luna-env-integration-configs
       params:
         repository: updated-integration-configs
         rebase: true
@@ -447,14 +469,14 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
-    - get: hermione-env-properties
+    - get: hermione-env-vars-store
       trigger: true
-    - get: hermione-env-infrastructure
+    - get: hermione-env-director-state
     - get: windows-stemcell
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
   - task: bosh-upload-stemcell-upgrade
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -474,15 +496,15 @@ jobs:
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      bbl-state: hermione-env-infrastructure
+      bbl-state: hermione-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
-      vars-store: hermione-env-properties
+      vars-store: hermione-env-vars-store
     params:
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
     ensure:
-      put: hermione-env-infrastructure
+      put: hermione-env-vars-store
       params:
         repository: updated-vars-store
         rebase: true
@@ -491,10 +513,10 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      vars-store: hermione-env-properties
-      integration-configs: hermione-env-properties
+      vars-store: hermione-env-vars-store
+      integration-configs: hermione-env-integration-configs
     ensure:
-      put: hermione-env-properties
+      put: hermione-env-integration-configs
       params:
         repository: updated-integration-configs
         rebase: true
@@ -512,13 +534,13 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
       - get: bosh-deployment
-      - get: snitch-env-infrastructure
-      - get: snitch-env-properties
+      - get: snitch-env-director-state
+      - get: snitch-env-vars-store
       - get: snitch-env-bbl-state
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
-        env-repo: snitch-env-infrastructure
+        env-repo: snitch-env-director-state
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
       input_mapping:
@@ -530,13 +552,13 @@ jobs:
       input_mapping:
         bbl-state: snitch-env-bbl-state
         cf-deployment: cf-deployment-develop
-        vars-store: snitch-env-properties
+        vars-store: snitch-env-vars-store
         ops-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: "opsfiles/bosh-lite.yml"
       ensure:
-        put: snitch-env-properties
+        put: snitch-env-vars-store
         params:
           repository: updated-vars-store
           rebase: true
@@ -545,10 +567,10 @@ jobs:
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: snitch-env-properties
-        integration-configs: snitch-env-properties
+        vars-store: snitch-env-vars-store
+        integration-configs: snitch-env-integration-configs
       ensure:
-        put: snitch-env-properties
+        put: snitch-env-integration-configs
         params:
           repository: updated-integration-configs
           rebase: true
@@ -567,13 +589,13 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-acceptance-tests
-      - get: hermione-env-properties
+      - get: hermione-env-integration-configs
+      - get: hermione-env-vars-store
         trigger: true
         passed: [ deploy-releases-upgrade ]
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-upgrade ]
-      - get: hermione-env-properties
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -585,10 +607,10 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-properties
+        env-repo: hermione-env-vars-store
     - task: run-cats
       input_mapping:
-      - integration-config: hermione-env-properties
+      - integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-fresh
@@ -604,7 +626,8 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env-properties
+      - get: luna-env-vars-store
+      - get: luna-env-integration-configs
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -614,12 +637,12 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-properties
+        env-repo: luna-env-vars-store
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: luna-env-properties
+      - integration-config: luna-env-integration-configs
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
@@ -637,7 +660,8 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-lite ]
-      - get: snitch-env-properties
+      - get: snitch-env-vars-store
+      - get: snitch-env-integration-configs
       - get: cats-concourse-task
     - task: write-target-file-api
       file: runtime-ci/scripts/ci/write-target-file/task.yml
@@ -647,12 +671,12 @@ jobs:
       file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: snitch-env-properties
+        env-repo: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: snitch-env-properties
+      - integration-config: snitch-env-integration-configs
       params:
         NODES: 6
       file: cats-concourse-task/task.yml
@@ -667,7 +691,8 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: routing-acceptance-tests
-      - get: luna-env-properties
+      - get: luna-env-vars-store
+      - get: luna-env-integration-configs
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
@@ -681,11 +706,11 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: luna-env-properties
+        env-repo: luna-env-vars-store
     - task: run-rats
       input_mapping:
       - routing-release: routing-acceptance-tests
-      - integration-config: luna-env-properties
+      - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
@@ -697,8 +722,8 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: luna-env-infrastructure
-      - get: luna-env-properties
+      - get: luna-env-director-state
+      - get: luna-env-vars-store
         passed: [ deploy-releases-fresh ]
       - get: cf-deployment-develop
         trigger: true
@@ -706,10 +731,10 @@ jobs:
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
-        env-repo: luna-env-infrastructure
+        env-repo: luna-env-director-state
     - task: delete-deployment-cf
       input_mapping:
-        env-repo: luna-env-infrastructure
+        env-repo: luna-env-director-state
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
@@ -720,7 +745,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: hermione-env-infrastructure
+    - get: hermione-env-director-state
     - get: runtime-ci
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
@@ -735,7 +760,7 @@ jobs:
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
@@ -743,8 +768,8 @@ jobs:
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
-  - put: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
+  - put: hermione-env-director-state
     params:
       repository: updated-env-repo
 
@@ -754,13 +779,13 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: luna-env-infrastructure
+    - get: luna-env-director-state
     - get: runtime-ci
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
     input_mapping:
-      env-repo: luna-env-infrastructure
-  - put: luna-env-infrastructure
+      env-repo: luna-env-director-state
+  - put: luna-env-director-state
     params:
       repository: updated-env-repo
       rebase: true
@@ -787,25 +812,24 @@ jobs:
     - get: runtime-ci
     - get: snitch-terraform
     - get: bosh-deployment
-    - get: snitch-env-properties
-    - get: snitch-env-infrastructure
+    - get: snitch-env-director-state
       passed: [ create-bosh-director-lite ]
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
-      env-repo: snitch-env-properties
+      env-repo: snitch-env-director-state
   - task: ensure-no-cf-deployment
     input_mapping:
-      env-repo: snitch-env-properties
+      env-repo: snitch-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
   - task: bosh-delete-env-lite
     file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
     input_mapping:
-      env-repo: snitch-env-infrastructure
+      env-repo: snitch-env-director-state
     input_mapping:
-      env-repo: snitch-env-infrastructure
+      env-repo: snitch-env-director-state
       bosh-deployment: bosh-deployment
       terraform: snitch-terraform
     params:
@@ -816,7 +840,7 @@ jobs:
       GCP_PROJECTID: {{snitch_gcp_project}}
       GCP_CREDENTIALS: {{snitch_gcp_service_account_json}}
       GCP_ZONE: us-central1-a
-  - put: snitch-env-infrastructure
+  - put: snitch-env-director-state
     params:
       repository: updated-env-repo
       rebase: true
@@ -848,9 +872,8 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: hermione-env-infrastructure
+    - get: hermione-env-director-state
     - get: cf-deployment-develop
-    - get: hermione-env-properties
     - get: stemcell
       trigger: true
       params:
@@ -938,7 +961,7 @@ jobs:
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
-      env-repo: hermione-env-infrastructure
+      env-repo: hermione-env-director-state
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
@@ -981,13 +1004,13 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: hermione-env-infrastructure
+      - get: hermione-env-director-state
       - get: daily
         trigger: true
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
-        env-repo: hermione-env-infrastructure
+        env-repo: hermione-env-director-state
     - task: run-bosh-cleanup
       privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
@@ -1001,13 +1024,13 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
-      - get: snitch-env-infrastructure
+      - get: snitch-env-director-state
       - get: daily
         trigger: true
     - task: extract-director-creds-from-terraform-env
       file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
       input_mapping:
-        env-repo: snitch-env-infrastructure
+        env-repo: snitch-env-director-state
     - task: run-bosh-cleanup
       privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
