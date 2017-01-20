@@ -33,7 +33,7 @@ groups:
   - build-bbl-up-docker-image
   - build-extract-director-creds-from-terraform-env-docker-image
   - build-extract-director-creds-from-bbl-docker-image
-  - build-destroy-infrastructure-docker-image
+  - build-bbl-destroy-docker-image
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
@@ -411,12 +411,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extract-director-creds-from-terraform-env/Dockerfile]
-- name: runtime-ci-destroy-infrastructure
+- name: cf-deployment-concourse-tasks-bbl-destroy
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/destroy-infrastructure/Dockerfile]
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    paths: [bbl-destroy/Dockerfile]
 - name: runtime-ci-bind-elb-to-r53
   type: git
   source:
@@ -938,10 +938,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: destroy-infrastructure-pipeline-image
+- name: bbl-destroy-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/destroy-infrastructure
+    repository: relintdockerhubpushbot/bbl-destroy
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2072,7 +2072,7 @@ jobs:
       params:
         build: runtime-ci-extract-director-creds-from-terraform-env/scripts/ci/extract-director-creds-from-terraform-env
         push: true
-- name: build-destroy-infrastructure-docker-image
+- name: build-bbl-destroy-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2084,11 +2084,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-destroy-infrastructure
+      - get: cf-deployment-concourse-tasks-bbl-destroy
         trigger: true
-    - put: destroy-infrastructure-pipeline-image
+    - put: bbl-destroy-pipeline-image
       params:
-        build: runtime-ci-destroy-infrastructure/scripts/ci/destroy-infrastructure
+        build: cf-deployment-concourse-tasks-bbl-destroy/bbl-destroy
         push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
