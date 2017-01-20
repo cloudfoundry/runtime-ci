@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-cf-cli-json
+
+inputs:
+- name: runtime-ci
+- name: cf-cli
+
+outputs:
+- name: cf-cli-version
+
+run:
+  path: runtime-ci/scripts/ci/create-cf-cli-json/task
+

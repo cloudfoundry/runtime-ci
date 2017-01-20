@@ -80,6 +80,12 @@ groups:
   - build-cats-concourse-task-docker-image
 
 resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
 - name: weekly
   type: time
   source:
@@ -91,6 +97,13 @@ resources:
   type: time
   source:
     interval: 2h
+
+- name: runtime-ci-create-cf-cli-json
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/create-cf-cli-json/Dockerfile]
 
 - name: runtime-ci-build-metadata-resource
   type: git
@@ -1120,6 +1133,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cats-concourse-task
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: create-cf-cli-json-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/create-cf-cli-json
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2505,6 +2526,9 @@ jobs:
   plan:
   - do:
     - aggregate:
+      - get: runtime-ci
+      - get: runtime-ci-create-cf-cli-json
+        trigger: true
       - get: weekly
         trigger: true
       - get: trigger-resource
@@ -2515,8 +2539,15 @@ jobs:
         trigger: true
       - get: cf-cli
         trigger: true
+    - put: create-cf-cli-json-pipeline-image
+      params:
+        build: runtime-ci-create-cf-cli-json/scripts/ci/create-cf-cli-json
+        push: true
+    - task: create-cf-cli-json
+      file: runtime-ci/scripts/ci/create-cf-cli-json/task.yml
     - put: cats-concourse-task-pipeline-image
       params:
         build: cats-concourse-task
         push: true
+        build_args_file: cf-cli-version/version.json
     timeout: 4h
