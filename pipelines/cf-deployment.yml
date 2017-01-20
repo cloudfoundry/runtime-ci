@@ -468,9 +468,9 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
     - get: hermione-env-vars-store
-      trigger: true
     - get: hermione-env-director-state
       passed: [ setup-infrastructure-upgrade ]
+    - get: hermione-env-integration-configs
     - get: windows-stemcell
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
