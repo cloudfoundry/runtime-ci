@@ -298,9 +298,10 @@ jobs:
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
     input_mapping:
       bbl-state-dir: hermione-env-director-state
-  - put: hermione-env-director-state
-    params:
-      repository: updated-bbl-state-dir
+    ensure:
+      put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state-dir
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:
@@ -330,10 +331,11 @@ jobs:
       DOMAIN: luna.cf-app.com
     input_mapping:
       env-repo: luna-env-director-state
-  - put: luna-env-director-state
-    params:
-      repository: updated-env-repo
-      rebase: true
+    ensure:
+      put: luna-env-director-state
+      params:
+        repository: updated-env-repo
+        rebase: true
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
