@@ -339,8 +339,6 @@ jobs:
   - get: bosh-deployment
   - get: cf-deployment-develop
   - get: snitch-env-director-state
-  - get: snitch-terraform
-    trigger: true
   - put: snitch-terraform
     params:
       env_name: snitch
