@@ -845,7 +845,6 @@ jobs:
     - get: snitch-terraform
     - get: bosh-deployment
     - get: snitch-env-director-state
-      passed: [ create-bosh-director-lite ]
   - task: extract-director-creds-from-terraform-env
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
