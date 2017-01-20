@@ -289,6 +289,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      BBL_ENV_NAME: hermione-upgrade
     input_mapping:
       bbl-state-dir: hermione-env-director-state
     ensure:
