@@ -783,6 +783,7 @@ jobs:
   - aggregate:
     - get: hermione-env-director-state
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
@@ -802,12 +803,13 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
-    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: hermione-env-director-state
-  - put: hermione-env-director-state
-    params:
-      repository: updated-env-repo
+      bbl-state-dir: hermione-env-director-state
+    ensure:
+      put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state-dir
 
 - name: destroy-infrastructure-fresh
   serial_groups: [luna]
@@ -817,6 +819,7 @@ jobs:
   - aggregate:
     - get: luna-env-director-state
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
   - task: extract-director-creds-from-bbl
     file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
     input_mapping:
@@ -828,13 +831,13 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf
   - task: destroy-infrastructure
-    file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
-  - put: luna-env-director-state
-    params:
-      repository: updated-env-repo
-      rebase: true
+      bbl-state-dir: luna-env-director-state
+    ensure:
+      put: luna-env-director-state
+      params:
+        repository: updated-bbl-state-dir
 
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
