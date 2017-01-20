@@ -312,8 +312,9 @@ jobs:
   plan:
   - get: runtime-ci
   - get: luna-env-director-state
+  - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
-    file: runtime-ci/scripts/ci/setup-infrastructure/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -322,14 +323,14 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{luna_cf_ssl_cert}}
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
-      DOMAIN: luna.cf-app.com
+      LB_DOMAIN: luna.cf-app.com
+      BBL_ENV_NAME: luna-fresh
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state-dir: luna-env-director-state
     ensure:
       put: luna-env-director-state
       params:
-        repository: updated-env-repo
-        rebase: true
+        repository: updated-bbl-state-dir
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -819,6 +820,16 @@ jobs:
   - aggregate:
     - get: luna-env-director-state
     - get: runtime-ci
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: luna-env-director-state
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      env-repo: luna-env-director-state
+    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    params:
+      DEPLOYMENT_NAME: cf
   - task: destroy-infrastructure
     file: runtime-ci/scripts/ci/destroy-infrastructure/task.yml
     input_mapping:
