@@ -849,12 +849,6 @@ jobs:
     file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
     input_mapping:
       env-repo: snitch-env-director-state
-  - task: ensure-no-cf-deployment
-    input_mapping:
-      env-repo: snitch-env-director-state
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-    params:
-      DEPLOYMENT_NAME: cf
   - task: bosh-delete-env-lite
     file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
     input_mapping:
