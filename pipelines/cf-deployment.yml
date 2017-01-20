@@ -758,10 +758,24 @@ jobs:
       - get: runtime-ci
       - get: luna-env-director-state
         trigger: true
-        passed: [ deploy-releases-fresh ]
+        passed:
+        - acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
       - get: cf-deployment-develop
         trigger: true
-        passed: [ acceptance-tests-fresh]
+        passed:
+        - acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
+      - get: luna-env-vars-store
+        trigger: true
+        passed:
+        - acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
+      - get: luna-env-integration-configs
+        trigger: true
+        passed:
+        - acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
     - task: extract-director-creds-from-bbl
       file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
       input_mapping:
