@@ -28,7 +28,6 @@ groups:
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-generate-nats-deployment-manifest-docker-image
-  - build-generate-1-0-nats-deployment-manifest-from-bbl-docker-image
   - build-bbl-up-docker-image
   - build-extract-director-creds-from-terraform-env-docker-image
   - build-extract-director-creds-from-bbl-docker-image
@@ -379,12 +378,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/generate-nats-deployment-manifest/Dockerfile]
-- name: runtime-ci-generate-1-0-nats-deployment-manifest-from-bbl
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl/Dockerfile]
 - name: cf-deployment-concourse-tasks-bbl-up
   type: git
   source:
@@ -837,13 +830,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/generate-nats-deployment-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: generate-1-0-nats-deployment-manifest-from-bbl-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/generate-1-0-nats-deployment-manifest-from-bbl
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1846,24 +1832,6 @@ jobs:
     - put: generate-nats-deployment-manifest-pipeline-image
       params:
         build: runtime-ci-generate-nats-deployment-manifest/scripts/ci/generate-nats-deployment-manifest
-        push: true
-- name: build-generate-1-0-nats-deployment-manifest-from-bbl-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-generate-1-0-nats-deployment-manifest-from-bbl
-        trigger: true
-    - put: generate-1-0-nats-deployment-manifest-from-bbl-pipeline-image
-      params:
-        build: runtime-ci-generate-1-0-nats-deployment-manifest-from-bbl/scripts/ci/generate-1-0-nats-deployment-manifest-from-bbl
         push: true
 - name: build-bbl-up-docker-image
   public: true
