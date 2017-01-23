@@ -1,22 +1,41 @@
 #!/bin/bash
 set -exu
 
-DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
+function check_input_params() {
+  if [ -z "$DEPLOYMENT_NAME" ]; then
+    echo "DEPLOYMENT_NAME has not been set"
+    exit 1
+  fi
+}
 
-export BOSH_CA_CERT=ca-cert/${CA_CERT_FILE}
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state-dir
+    export BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT_SECRET=$(bbl director-password)
+  popd
+  set -x
+}
 
-export BOSH_ENVIRONMENT=$(cat target/${TARGET_FILE})
+function bosh_clean_up() {
+  bosh \
+    -n \
+    clean-up --all
+}
 
-export BOSH_USER=$(cat username/${USERNAME_FILE})
+function bosh_delete_deployment() {
+  bosh \
+    -n \
+    delete-deployment -d ${DEPLOYMENT_NAME}
+}
 
-set +x
-export BOSH_PASSWORD=$(cat password/${PASSWORD_FILE})
-set -x
+function main() {
+  check_input_params
+  setup_bosh_env_vars
+  bosh_clean_up
+  bosh_delete_deployment
+}
 
-bosh \
-  -n \
-  clean-up --all
-
-bosh \
-  -n \
-  delete-deployment -d ${DEPLOYMENT_NAME}
+main
