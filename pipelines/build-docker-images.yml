@@ -45,7 +45,6 @@ groups:
   - build-write-creds-docker-image
   - build-update-integration-configs-docker-image
   - build-bosh-deploy-docker-image
-  - build-bosh-deploy-with-created-release-docker-image
   - build-bosh-create-env-docker-image
   - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
@@ -200,12 +199,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     paths: [update-integration-configs/Dockerfile]
-- name: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bosh-deploy-with-created-release/Dockerfile]
 - name: runtime-ci-bosh-create-env
   type: git
   source:
@@ -667,13 +660,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-create-env
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-deploy-with-created-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-deploy-with-created-release
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1194,24 +1180,6 @@ jobs:
     - put: verify-every-task-has-pipeline-image
       params:
         build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
-        push: true
-- name: build-bosh-deploy-with-created-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
-        trigger: true
-    - put: bosh-deploy-with-created-release-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bosh-deploy-with-created-release/bosh-deploy-with-created-release
         push: true
 - name: build-bosh-create-env-docker-image
   public: true
