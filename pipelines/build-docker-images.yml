@@ -53,7 +53,6 @@ groups:
   - build-create-diego-iaas-settings-docker-image
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
-  - build-cats-from-cf-release-docker-image
   - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-binaries-manifest-section-docker-image
@@ -407,12 +406,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/unbind-elb-from-r53/Dockerfile]
-- name: runtime-ci-cats-from-cf-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/cats-from-cf-release/Dockerfile]
 - name: runtime-ci-recreate-datadog-dashboards
   type: git
   source:
@@ -858,13 +851,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/unbind-elb-from-r53
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: cats-from-cf-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cats-from-cf-release
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1908,24 +1894,6 @@ jobs:
     - put: unbind-elb-from-r53-pipeline-image
       params:
         build: runtime-ci-unbind-elb-from-r53/scripts/ci/unbind-elb-from-r53
-        push: true
-- name: build-cats-from-cf-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-cats-from-cf-release
-        trigger: true
-    - put: cats-from-cf-release-pipeline-image
-      params:
-        build: runtime-ci-cats-from-cf-release/scripts/ci/cats-from-cf-release
         push: true
 
 - name: build-recreate-datadog-dashboards-docker-image
