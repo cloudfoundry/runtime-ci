@@ -827,6 +827,7 @@ jobs:
       put: luna-env-director-state
       params:
         repository: updated-bbl-state-dir
+        rebase: true
 
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
