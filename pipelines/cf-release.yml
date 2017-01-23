@@ -963,7 +963,7 @@ jobs:
         CF_USER: {{minimal_cf_admin_username}}
         CF_PASSWORD: {{minimal_cf_admin_password}}
     - task: cats-from-cf-release
-      file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
+      file: cats-concourse-task/cats-from-cf-release/task.yml
     - task: run-cats
       input_mapping:
       - integration-config: minimal-env
@@ -1211,7 +1211,7 @@ jobs:
         CF_USER: {{vsphere_cf_username}}
         CF_PASSWORD: {{vsphere_cf_password}}
     - task: cats-from-cf-release
-      file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
+      file: cats-concourse-task/cats-from-cf-release/task.yml
     - task: run-cats
       input_mapping:
         - integration-config: cat-env
@@ -1700,7 +1700,7 @@ jobs:
         CF_USER: {{a1_admin_username}}
         CF_PASSWORD: {{a1_admin_password}}
     - task: cats-from-cf-release
-      file: runtime-ci/scripts/ci/cats-from-cf-release/task.yml
+      file: cats-concourse-task/cats-from-cf-release/task.yml
     - task: run-cats
       input_mapping:
         integration-config: a1-env
