@@ -261,7 +261,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/ChunyiLyu/bosh-deployment.git
+    uri: https://github.com/cloudfoundry/bosh-deployment.git
 - name: cats-concourse-task
   type: git
   source:
