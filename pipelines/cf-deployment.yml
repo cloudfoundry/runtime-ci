@@ -404,7 +404,7 @@ jobs:
       env-repo: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state-dir: luna-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -762,7 +762,7 @@ jobs:
         env-repo: luna-env-director-state
     - task: delete-deployment-cf
       input_mapping:
-        env-repo: luna-env-director-state
+        bbl-state-dir: luna-env-director-state
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
@@ -782,7 +782,7 @@ jobs:
       env-repo: hermione-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state-dir: hermione-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -818,7 +818,7 @@ jobs:
       env-repo: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state-dir: luna-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
