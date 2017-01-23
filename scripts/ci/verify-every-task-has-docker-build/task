@@ -2,18 +2,18 @@
 
 set -eu
 
-root_dir="${PWD}"
+RUNTIME_CI_DIR="${PWD}/runtime-ci"
 
 function verify_image_exists_in_pipeline_yml {
   set +e
-  if ! grep "$(basename "${1}")" "runtime-ci/pipelines/build-docker-images.yml" >/dev/null; then
+  if ! grep "$(basename "${1}")" "${RUNTIME_CI_DIR}/pipelines/build-docker-images.yml" >/dev/null; then
     echo "${1}"
   fi
   set -e
 }
 
 errors_file=$(mktemp /tmp/errors.XXXXX)
-pushd "runtime-ci/scripts/ci" >/dev/null
+pushd "${RUNTIME_CI_DIR}/scripts/ci" >/dev/null
   find . -type d ! -path . -prune | while read -r dir; do
     pushd "${dir}" >/dev/null
       verify_image_exists_in_pipeline_yml "${dir}" >> "${errors_file}"
