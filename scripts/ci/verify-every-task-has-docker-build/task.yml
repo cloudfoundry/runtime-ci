@@ -11,6 +11,3 @@ inputs:
 
 run:
   path: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task
-
-params:
-  RUNTIME_CI_DIR: runtime-ci
