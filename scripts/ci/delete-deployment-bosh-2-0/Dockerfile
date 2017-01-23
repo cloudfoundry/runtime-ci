@@ -7,6 +7,7 @@ RUN \
   apt-get -y install \
     build-essential \
     software-properties-common \
+    jq \
     wget \
     unzip
 
