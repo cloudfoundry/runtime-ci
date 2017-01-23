@@ -58,7 +58,6 @@ groups:
   - build-cats-from-cf-release-docker-image
   - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
-  - build-extract-cloudformation-properties-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-commit-generated-manifest-docker-image
   - build-create-final-release-bucket-docker-image
@@ -447,13 +446,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-binaries-manifest-section/Dockerfile]
-
-- name: runtime-ci-extract-cloudformation-properties
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/extract-cloudformation-properties/Dockerfile]
 
 - name: runtime-ci-commit-generated-manifest
   type: git
@@ -923,14 +915,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-binaries-manifest-section
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: extract-cloudformation-properties-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/extract-cloudformation-properties
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2063,25 +2047,6 @@ jobs:
     - put: create-binaries-manifest-section-pipeline-image
       params:
         build: runtime-ci-create-binaries-manifest-section/scripts/ci/create-binaries-manifest-section
-        push: true
-
-- name: build-extract-cloudformation-properties-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-extract-cloudformation-properties
-        trigger: true
-    - put: extract-cloudformation-properties-pipeline-image
-      params:
-        build: runtime-ci-extract-cloudformation-properties/scripts/ci/extract-cloudformation-properties
         push: true
 
 - name: build-commit-generated-manifest-docker-image
