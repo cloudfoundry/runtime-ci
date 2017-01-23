@@ -33,4 +33,22 @@ RUN \
   chmod +x bosh
 
 RUN \
+  wget https://releases.hashicorp.com/terraform/0.8.4/terraform_0.8.4_linux_amd64.zip -P /tmp && \
+  unzip /tmp/terraform_0.8.4_linux_amd64.zip -d /tmp && \
+  mv /tmp/terraform /usr/local/bin/terraform && \
+  chmod +x /usr/local/bin/terraform && \
+  rm -rf /tmp/*
+
+RUN \
+  wget https://s3.amazonaws.com/bosh-init-artifacts/bosh-init-0.0.99-linux-amd64 -P /tmp && \
+  mv /tmp/bosh-init-0.0.99-linux-amd64 /usr/local/bin/bosh-init && \
+  chmod +x /usr/local/bin/bosh-init && \
+  rm -rf /tmp/*
+
+RUN \
+  wget "$(wget -qO- https://api.github.com/repos/cloudfoundry/bosh-bootloader/releases | jq -r .[0].assets[].browser_download_url | grep _linux)" && \
+  mv bbl-* /usr/local/bin/bbl && \
+  chmod +x /usr/local/bin/bbl
+
+RUN \
   apt-get install curl -y
