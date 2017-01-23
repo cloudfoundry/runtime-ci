@@ -2,14 +2,18 @@
 
 set -u
 
-declare -A EXCEPTION_TASKS
-EXCEPTION_TASKS["scripts/ci/create-final-release-bucket/task.yml"]=1
-EXCEPTION_TASKS["scripts/ci/run-errand-bbl-bosh-2-0/task.yml"]=1
+EXCEPTION_TASKS=("scripts/ci/create-final-release-bucket/task.yml" "scripts/ci/run-errand-bbl-bosh-2-0/task.yml")
 
 pushd runtime-ci >> /dev/null
   FAIL=false
   for task_file in scripts/ci/*/task.yml; do
-    if [[ ${EXCEPTION_TASKS["$task_file"]} -ne 1 ]]; then
+    is_exception=false
+    for exception_candidate in ${EXCEPTION_TASKS[*]}; do
+      if [[ "$exception_candidate" == "$task_file" ]]; then
+        is_exception=true
+      fi
+    done
+    if [[ ! $is_exception ]]; then
       ack "$task_file" pipelines >> /dev/null
     fi
     # task_is_used "$task_file"
