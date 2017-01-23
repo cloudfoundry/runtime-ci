@@ -47,7 +47,6 @@ groups:
   - build-bosh-deploy-docker-image
   - build-bosh-deploy-with-created-release-docker-image
   - build-bosh-create-env-docker-image
-  - build-bosh-upload-release-docker-image
   - build-bosh-upload-stemcell-docker-image
   - build-bosh-upload-stemcell-1-0-docker-image
   - build-bosh-update-cloud-config-docker-image
@@ -212,12 +211,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-create-env/Dockerfile]
-- name: runtime-ci-bosh-upload-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-upload-release/Dockerfile]
 - name: cf-deployment-concourse-tasks-bosh-upload-stemcell
   type: git
   source:
@@ -688,13 +681,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-deploy
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-upload-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-upload-release
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1266,24 +1252,6 @@ jobs:
     - put: bosh-deploy-pipeline-image
       params:
         build: cf-deployment-concourse-tasks-bosh-deploy/bosh-deploy
-        push: true
-- name: build-bosh-upload-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-upload-release
-        trigger: true
-    - put: bosh-upload-release-pipeline-image
-      params:
-        build: runtime-ci-bosh-upload-release/scripts/ci/bosh-upload-release
         push: true
 - name: build-bosh-upload-stemcell-docker-image
   public: true
