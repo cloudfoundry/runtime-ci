@@ -369,10 +369,6 @@ jobs:
     params:
       repository: updated-env-repo
       rebase: true
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: snitch-env-director-state
   - task: bosh-update-cloud-config
     file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
     input_mapping:
@@ -466,10 +462,6 @@ jobs:
       bbl-state-dir: hermione-env-director-state
     params:
       INFRASTRUCTURE: aws
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hermione-env-director-state
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
@@ -526,10 +518,6 @@ jobs:
         passed: [ setup-infrastructure-lite ]
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-      input_mapping:
-        env-repo: snitch-env-director-state
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
       input_mapping:
@@ -832,10 +820,6 @@ jobs:
     - get: snitch-terraform
     - get: bosh-deployment
     - get: snitch-env-director-state
-  - task: extract-director-creds-from-terraform-env
-    file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-    input_mapping:
-      env-repo: snitch-env-director-state
   - task: bosh-delete-env-lite
     file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
     input_mapping:
@@ -1038,10 +1022,6 @@ jobs:
       - get: snitch-env-director-state
       - get: daily
         trigger: true
-    - task: extract-director-creds-from-terraform-env
-      file: runtime-ci/scripts/ci/extract-director-creds-from-terraform-env/task.yml
-      input_mapping:
-        env-repo: snitch-env-director-state
     - task: run-bosh-cleanup
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
