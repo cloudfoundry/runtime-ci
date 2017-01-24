@@ -15,7 +15,6 @@ function setup_bosh_env_vars() {
 function bosh_clean_up() {
   bosh \
     -n \
-    --color \
     clean-up --all
 }
 
