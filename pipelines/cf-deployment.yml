@@ -376,12 +376,9 @@ jobs:
   - task: bosh-update-cloud-config
     file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
     input_mapping:
+      bbl-state-dir: snitch-env-director-state
       cloud-config: cf-deployment-develop
     params:
-      TARGET_FILE: target
-      USERNAME_FILE: username
-      PASSWORD_FILE: password
-      CA_CERT_FILE: ca-cert
       CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
 - name: deploy-releases-fresh

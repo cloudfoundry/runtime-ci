@@ -1,19 +1,32 @@
 #!/bin/bash
 set -eux
 
-BOSH_TARGET=$(cat "target/${TARGET_FILE}")
-export BOSH_USER=$(cat username/"${USERNAME_FILE}")
-BOSH_CLOUD_CONFIG="cloud-config/${CLOUD_CONFIG_FILE}"
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state-dir
+    BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_CA_CERT
+    BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_ENVIRONMENT
+    BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT
+    BOSH_CLIENT_SECRET=$(bbl director-password)
+    export BOSH_CLIENT_SECRET
+  popd
+  set -x
+}
 
-set +x
-export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE}")
-set -x
+function update_cloud_config() {
+  bosh \
+    -n \
+    update-cloud-config \
+    "${BOSH_CLOUD_CONFIG}"
+}
 
-BOSH_CA_CERT="ca-cert/${CA_CERT_FILE}"
+function main() {
+  setup_bosh_env_vars
+  update_cloud_config
+}
 
-bosh \
-  -n \
-  -e "${BOSH_TARGET}" \
-  update-cloud-config \
-  "${BOSH_CLOUD_CONFIG}" \
-  --ca-cert="${BOSH_CA_CERT}"
+main
+
