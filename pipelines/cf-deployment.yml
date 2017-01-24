@@ -398,10 +398,6 @@ jobs:
     - get: luna-env-integration-configs
     - get: luna-env-director-state
       passed: [ setup-infrastructure-fresh ]
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state-dir: luna-env-director-state
@@ -466,10 +462,6 @@ jobs:
       passed: [ setup-infrastructure-upgrade ]
     - get: hermione-env-integration-configs
     - get: windows-stemcell
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hermione-env-director-state
   - task: bosh-upload-stemcell-upgrade
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -477,6 +469,10 @@ jobs:
       bbl-state-dir: hermione-env-director-state
     params:
       INFRASTRUCTURE: aws
+  - task: extract-director-creds-from-bbl
+    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
+    input_mapping:
+      env-repo: hermione-env-director-state
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
@@ -768,10 +764,6 @@ jobs:
         passed:
         - acceptance-tests-fresh
         - routing-acceptance-tests-fresh
-    - task: extract-director-creds-from-bbl
-      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      input_mapping:
-        env-repo: luna-env-director-state
     - task: delete-deployment-cf
       input_mapping:
         bbl-state-dir: luna-env-director-state
@@ -788,10 +780,6 @@ jobs:
     - get: hermione-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hermione-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state-dir: hermione-env-director-state
@@ -824,10 +812,6 @@ jobs:
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state-dir: luna-env-director-state
@@ -998,10 +982,6 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: extract-director-creds-from-bbl
-    file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-    input_mapping:
-      env-repo: hermione-env-director-state
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
@@ -1047,10 +1027,6 @@ jobs:
       - get: hermione-env-director-state
       - get: daily
         trigger: true
-    - task: extract-director-creds-from-bbl
-      file: runtime-ci/scripts/ci/extract-director-creds-from-bbl/task.yml
-      input_mapping:
-        env-repo: hermione-env-director-state
     - task: run-bosh-cleanup
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
