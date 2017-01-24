@@ -20,7 +20,7 @@ function update_cloud_config() {
   bosh \
     -n \
     update-cloud-config \
-    "${BOSH_CLOUD_CONFIG}"
+    "cloud-config/${CLOUD_CONFIG_FILE}"
 }
 
 function main() {
