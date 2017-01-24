@@ -19,12 +19,6 @@ function setup_bosh_env_vars() {
   set -x
 }
 
-function bosh_clean_up() {
-  bosh \
-    -n \
-    clean-up --all
-}
-
 function bosh_delete_deployment() {
   bosh \
     -n \
@@ -34,7 +28,6 @@ function bosh_delete_deployment() {
 function main() {
   check_input_params
   setup_bosh_env_vars
-  bosh_clean_up
   bosh_delete_deployment
 }
 
