@@ -28,8 +28,6 @@ groups:
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-bbl-up-docker-image
-  - build-extract-director-creds-from-terraform-env-docker-image
-  - build-extract-director-creds-from-bbl-docker-image
   - build-bbl-destroy-docker-image
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
@@ -376,18 +374,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     paths: [bbl-up/Dockerfile]
-- name: runtime-ci-extract-director-creds-from-bbl
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/extract-director-creds-from-bbl/Dockerfile]
-- name: runtime-ci-extract-director-creds-from-terraform-env
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/extract-director-creds-from-terraform-env/Dockerfile]
 - name: cf-deployment-concourse-tasks-bbl-destroy
   type: git
   source:
@@ -816,20 +802,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bbl-up
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: extract-director-creds-from-bbl-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/extract-director-creds-from-bbl
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: extract-director-creds-from-terraform-env-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/extract-director-creds-from-terraform-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1804,42 +1776,6 @@ jobs:
     - put: bbl-up-pipeline-image
       params:
         build: cf-deployment-concourse-tasks-bbl-up/bbl-up
-        push: true
-- name: build-extract-director-creds-from-bbl-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-extract-director-creds-from-bbl
-        trigger: true
-    - put: extract-director-creds-from-bbl-pipeline-image
-      params:
-        build: runtime-ci-extract-director-creds-from-bbl/scripts/ci/extract-director-creds-from-bbl
-        push: true
-- name: build-extract-director-creds-from-terraform-env-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-extract-director-creds-from-terraform-env
-        trigger: true
-    - put: extract-director-creds-from-terraform-env-pipeline-image
-      params:
-        build: runtime-ci-extract-director-creds-from-terraform-env/scripts/ci/extract-director-creds-from-terraform-env
         push: true
 - name: build-bbl-destroy-docker-image
   public: true
