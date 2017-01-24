@@ -8,14 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: target
-- name: username
-- name: password
+- name: bbl-state-dir
 
 run:
   path: runtime-ci/scripts/ci/run-bosh-cleanup/task
-
-params:
-  TARGET_FILE_PATH: target
-  USERNAME_FILE_PATH: username
-  PASSWORD_FILE_PATH: password

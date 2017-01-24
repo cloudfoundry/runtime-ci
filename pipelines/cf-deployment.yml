@@ -430,6 +430,10 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+  - task: run-bosh-cleanup
+    file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state-dir: luna-env-director-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -498,6 +502,10 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+  - task: run-bosh-cleanup
+    file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state-dir: hermione-env-director-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -554,6 +562,10 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: run-bosh-cleanup
+      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state-dir: snitch-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -1040,8 +1052,9 @@ jobs:
       input_mapping:
         env-repo: hermione-env-director-state
     - task: run-bosh-cleanup
-      privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state-dir: hermione-env-director-state
 
 - name: run-bosh-cleanup-lite
   serial: true
@@ -1060,5 +1073,6 @@ jobs:
       input_mapping:
         env-repo: snitch-env-director-state
     - task: run-bosh-cleanup
-      privileged: true
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state-dir: snitch-env-director-state

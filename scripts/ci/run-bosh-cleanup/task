@@ -1,11 +1,25 @@
 #!/bin/bash
 set -exu
 
-# Inputs
-BOSH_TARGET=$(cat "target/${TARGET_FILE_PATH}")
-export BOSH_USER=$(cat username/"${USERNAME_FILE_PATH}")
-set +x
-export BOSH_PASSWORD=$(cat "password/${PASSWORD_FILE_PATH}")
-set -x
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state-dir
+    export BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT_SECRET=$(bbl director-password)
+  popd
+  set -x
+}
 
-bosh -n --color -t "${BOSH_TARGET}" cleanup --all
+function bosh_clean_up() {
+  bosh \
+    -n \
+    --color \
+    clean-up --all
+}
+
+function main() {
+  setup_bosh_env_vars
+  bosh_clean_up
+}
