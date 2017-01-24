@@ -23,3 +23,5 @@ function main() {
   setup_bosh_env_vars
   bosh_clean_up
 }
+
+main
