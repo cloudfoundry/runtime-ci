@@ -5,6 +5,7 @@ RUN \
   apt-get -y install \
     build-essential \
     jq \
+    unzip \
     wget
 
 RUN \
