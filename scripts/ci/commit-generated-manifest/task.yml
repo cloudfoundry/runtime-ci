@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: repo
 - name: manifest
+- name: commit-message
 
 outputs:
 - name: updated-repo
@@ -20,4 +21,4 @@ run:
 params:
   MANIFEST_NAME:
   MANIFEST_DESTINATION:
-  COMMIT_MESSAGE:
+  COMMIT_MESSAGE_PATH: commit-message.txt

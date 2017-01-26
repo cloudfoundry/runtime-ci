@@ -972,7 +972,6 @@ jobs:
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
-      COMMIT_MESSAGE: 'Update releases'
   - put: cf-deployment-develop
     params:
       repository: updated-repo

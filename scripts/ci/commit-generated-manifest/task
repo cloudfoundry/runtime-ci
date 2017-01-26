@@ -3,14 +3,16 @@ set -exu
 
 cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
 pushd repo > /dev/null
-  git config user.name "CF MEGA BOT"
-  git config user.email "cf-mega@pivotal.io"
+  if [[ -n $(git status ${MANIFEST_DESTINATION} --porcelain) ]]; then
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
 
-  git add ./"${MANIFEST_DESTINATION}"
-  git commit -m "${COMMIT_MESSAGE}" --allow-empty
+    git add ./"${MANIFEST_DESTINATION}"
+    git commit -m "$(cat commit-message/${COMMIT_MESSAGE_PATH})"
 
-  git status
-  git show --color | cat
+    git status
+    git show --color | cat
+  fi
 popd > /dev/null
 
 shopt -s dotglob
