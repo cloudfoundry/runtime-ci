@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -42,12 +43,18 @@ func main() {
 
 	cfDeploymentManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-configuration", deploymentConfigurationPath))
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
 	}
 
-	updatedDeploymentManifest := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+	updatedDeploymentManifest, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 
 	if err := ioutil.WriteFile(filepath.Join(buildDir, "deployment-manifest", deploymentManifestPath), updatedDeploymentManifest, 0666); err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
 	}
 }

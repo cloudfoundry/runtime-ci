@@ -199,6 +199,7 @@ var _ = Describe("main", func() {
 		DeploymentConfigurationPath string
 		DeploymentManifestPath      string
 		buildDir                    string
+		emptyDir                    string
 	)
 
 	BeforeEach(func() {
@@ -208,6 +209,9 @@ var _ = Describe("main", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		buildDir, err = ioutil.TempDir("", "")
+		Expect(err).NotTo(HaveOccurred())
+
+		emptyDir, err = ioutil.TempDir("", "")
 		Expect(err).NotTo(HaveOccurred())
 
 		for _, dir := range []string{
@@ -259,6 +263,9 @@ var _ = Describe("main", func() {
 
 		DeploymentConfigurationPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 		DeploymentManifestPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")
+
+		os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", "original-manifest.yml")
+		os.Setenv("DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
 	})
 
 	AfterEach(func() {
@@ -267,9 +274,6 @@ var _ = Describe("main", func() {
 	})
 
 	It("updates the given manifest with new releases and stemcells", func() {
-		os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", "original-manifest.yml")
-		os.Setenv("DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
-
 		session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
 
@@ -280,5 +284,44 @@ var _ = Describe("main", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
+	})
+
+	Context("failure cases", func() {
+		It("errors when the deployment manifest does not exist", func() {
+			os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", emptyDir)
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(1))
+
+			Expect(string(session.Err.Contents())).To(ContainSubstring("no such file or directory"))
+		})
+
+		It("errors when the directory to write out the updated manifest does not exist", func() {
+			os.Setenv("DEPLOYMENT_MANIFEST_PATH", filepath.Join(emptyDir, "doesnt-exist"))
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(1))
+
+			Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
+		})
+
+		It("errors when a required stemcell file is missing", func() {
+			err := os.Remove(filepath.Join(buildDir, "stemcell", "version"))
+			Expect(err).NotTo(HaveOccurred())
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(1))
+
+			Expect(string(session.Err.Contents())).To(ContainSubstring("stemcell/version: no such file or directory"))
+		})
 	})
 })

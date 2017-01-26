@@ -10,6 +10,8 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+var yamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
+
 type Stemcell struct {
 	Alias   string `yaml:"alias"`
 	OS      string `yaml:"os"`
@@ -28,7 +30,7 @@ type Manifest struct {
 	Stemcells []Stemcell `yaml:"stemcells"`
 }
 
-func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) []byte {
+func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 	cfDeploymentManifestReleasesIndex := r.FindSubmatchIndex([]byte(cfDeploymentManifest))[0]
 	cfDeploymentPreamble := cfDeploymentManifest[:cfDeploymentManifestReleasesIndex]
@@ -39,15 +41,15 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
 		sha, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, Release{
 			Name:    release,
@@ -59,7 +61,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 
 	stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
@@ -70,10 +72,10 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		},
 	}
 
-	cfDeploymentReleasesAndStemcellsYaml, err := yaml.Marshal(cfDeploymentReleasesAndStemcells)
+	cfDeploymentReleasesAndStemcellsYaml, err := yamlMarshal(cfDeploymentReleasesAndStemcells)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return append(cfDeploymentPreamble, cfDeploymentReleasesAndStemcellsYaml...)
+	return append(cfDeploymentPreamble, cfDeploymentReleasesAndStemcellsYaml...), err
 }

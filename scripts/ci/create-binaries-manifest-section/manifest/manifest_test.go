@@ -1,6 +1,7 @@
 package manifest_test
 
 import (
+	"errors"
 	"io/ioutil"
 	"regexp"
 
@@ -24,6 +25,8 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		cfDeploymentManifest, err = ioutil.ReadFile("fixtures/cf-deployment.yml")
 		Expect(err).NotTo(HaveOccurred())
+
+		manifest.ResetYAMLMarshal()
 	})
 
 	// TODO: Make CF Deployment manifest parameterized so that we can pass it in the real manifest somehow
@@ -31,7 +34,8 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		releases := []string{"release1", "release2"}
 		buildDir := "fixtures/build"
 
-		updatedManifest := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+		updatedManifest, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+		Expect(err).NotTo(HaveOccurred())
 
 		r := regexp.MustCompile(`(?m:^releases:$)`)
 		updatedManifestReleasesIndex := r.FindSubmatchIndex([]byte(updatedManifest))[0]
@@ -43,5 +47,54 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		Expect(cfDeploymentPreamble).To(MatchYAML(updatedManifestPreamble))
 		Expect(updatedManifestReleasesAndStemcells).To(MatchYAML(updatedReleasesAndStemcellsFixture))
+	})
+
+	Context("failure cases", func() {
+		It("returns errors instead of panicking when url is missing", func() {
+			releases := []string{"missing-url"}
+			buildDir := "fixtures/broken-build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+
+			Expect(err).To(MatchError("open fixtures/broken-build/missing-url-release/url: no such file or directory"))
+		})
+
+		It("returns errors instead of panicking when version is missing", func() {
+			releases := []string{"missing-version"}
+			buildDir := "fixtures/broken-build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+
+			Expect(err).To(MatchError("open fixtures/broken-build/missing-version-release/version: no such file or directory"))
+		})
+
+		It("returns errors instead of panicking when sha1 is missing", func() {
+			releases := []string{"missing-sha1"}
+			buildDir := "fixtures/broken-build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+
+			Expect(err).To(MatchError("open fixtures/broken-build/missing-sha1-release/sha1: no such file or directory"))
+		})
+
+		It("returns errors instead of panicking when sha1 is missing", func() {
+			releases := []string{"good-release"}
+			buildDir := "fixtures/broken-build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+
+			Expect(err).To(MatchError("open fixtures/broken-build/stemcell/version: no such file or directory"))
+		})
+
+		It("returns an error when the yaml marshaller fails", func() {
+			manifest.SetYAMLMarshal(func(interface{}) ([]byte, error) {
+				return nil, errors.New("failed to marshal yaml")
+			})
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			Expect(err).To(MatchError("failed to marshal yaml"))
+		})
 	})
 })
