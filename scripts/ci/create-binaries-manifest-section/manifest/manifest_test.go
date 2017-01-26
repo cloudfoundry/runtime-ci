@@ -27,9 +27,9 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		manifest.ResetYAMLMarshal()
+		manifest.ResetYAMLUnmarshal()
 	})
 
-	// TODO: Make CF Deployment manifest parameterized so that we can pass it in the real manifest somehow
 	It("updates the releases and stemcells to their latest version without modifying the rest", func() {
 		releases := []string{"release1", "release2"}
 		buildDir := "fixtures/build"
@@ -45,11 +45,52 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		updatedManifestReleasesAndStemcells := updatedManifest[updatedManifestReleasesIndex:]
 
-		Expect(cfDeploymentPreamble).To(MatchYAML(updatedManifestPreamble))
-		Expect(updatedManifestReleasesAndStemcells).To(MatchYAML(updatedReleasesAndStemcellsFixture))
+		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
+		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
 	})
 
 	Context("failure cases", func() {
+		It("ensures there is a releases key at the bottom of the manifest", func() {
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			badManifest := []byte(`
+name:
+stemcells:
+other_key:
+`)
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			Expect(err).To(MatchError("releases was not found at the bottom of the manifest"))
+		})
+
+		It("ensures there is a stemcell key at the bottom of the manifest", func() {
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			badManifest := []byte(`
+name:
+stemcells:
+releases:
+other_key:
+`)
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			Expect(err).To(MatchError("stemcells was not found at the bottom of the manifest"))
+		})
+
+		It("returns an error when there are keys other than release and stemcells", func() {
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			badManifest := []byte(`
+name:
+releases:
+stemcells:
+other_key:
+`)
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			Expect(err).To(MatchError(`found keys other than "releases" and "stemcells" at the bottom of the manifest`))
+		})
+
 		It("returns errors instead of panicking when url is missing", func() {
 			releases := []string{"missing-url"}
 			buildDir := "fixtures/broken-build"
@@ -84,6 +125,17 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 
 			Expect(err).To(MatchError("open fixtures/broken-build/stemcell/version: no such file or directory"))
+		})
+
+		It("returns an error when the yaml unmarshaller fails", func() {
+			manifest.SetYAMLUnmarshal(func([]byte, interface{}) error {
+				return errors.New("failed to unmarshal yaml")
+			})
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			Expect(err).To(MatchError("failed to unmarshal yaml"))
 		})
 
 		It("returns an error when the yaml marshaller fails", func() {

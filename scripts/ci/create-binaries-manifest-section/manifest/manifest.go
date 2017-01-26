@@ -11,6 +11,7 @@ import (
 )
 
 var yamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
+var yamlUnmarshal func([]byte, interface{}) error = yaml.Unmarshal
 
 type Stemcell struct {
 	Alias   string `yaml:"alias"`
@@ -32,25 +33,51 @@ type Manifest struct {
 
 func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
-	cfDeploymentManifestReleasesIndex := r.FindSubmatchIndex([]byte(cfDeploymentManifest))[0]
-	cfDeploymentPreamble := cfDeploymentManifest[:cfDeploymentManifestReleasesIndex]
+
+	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))
+
+	if len(submatches) == 0 {
+		return nil, fmt.Errorf("releases was not found at the bottom of the manifest")
+	}
+
+	cfDeploymentManifestReleasesIndex := submatches[0]
+
+	cfDeploymentPreamble := make([]byte, len(cfDeploymentManifest[:cfDeploymentManifestReleasesIndex]))
+	copy(cfDeploymentPreamble, cfDeploymentManifest[:cfDeploymentManifestReleasesIndex])
+
+	var deserializedManifestSuffix map[string]interface{}
+	if err := yamlUnmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
+		return nil, err
+	}
+
+	if len(deserializedManifestSuffix) > 2 {
+		return nil, fmt.Errorf(`found keys other than "releases" and "stemcells" at the bottom of the manifest`)
+	}
+
+	if _, ok := deserializedManifestSuffix["stemcells"]; !ok {
+		return nil, fmt.Errorf("stemcells was not found at the bottom of the manifest")
+	}
 
 	cfDeploymentReleasesAndStemcells := Manifest{}
 
 	for _, release := range releases {
 		releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
+
 		sha, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
 		if err != nil {
 			return nil, err
 		}
+
 		url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
 		if err != nil {
 			return nil, err
 		}
+
 		version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
 		if err != nil {
 			return nil, err
 		}
+
 		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, Release{
 			Name:    release,
 			SHA1:    strings.TrimSpace(string(sha)),

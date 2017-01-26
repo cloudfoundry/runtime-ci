@@ -21,7 +21,6 @@ function main() {
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section"
     go install github.com/onsi/ginkgo/ginkgo
 
-    cp "${root_dir}/deployment-configuration/${DEPLOYMENT_CONFIGURATION_PATH}" manifest/fixtures/cf-deployment.yml
     ginkgo -r -randomizeSuites -randomizeAllSpecs .
 
     go run main.go --build-dir "${root_dir}"
