@@ -4,7 +4,7 @@ groups:
   - build-bosh-deploy-docker-image
   - build-bosh-deploy-with-created-release-docker-image
   - build-update-integration-configs-docker-image
-  - build-bosh-upload-stemcell-docker-image
+  - build-bosh-upload-stemcell-from-cf-deployment-docker-image
   - build-bbl-up-docker-image
   - build-bbl-destroy-docker-image
   - build-cats-concourse-task-docker-image
@@ -46,7 +46,6 @@ groups:
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
   - build-bosh-create-env-docker-image
-  - build-bosh-upload-stemcell-from-cf-deployment-docker-image
   - build-bosh-upload-stemcell-1-0-docker-image
   - build-bosh-update-cloud-config-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
