@@ -35,7 +35,7 @@ outputs:
 - name: deployment-manifest
 
 run:
-  path: runtime-ci/scripts/ci/create-binaries-manifest-section/task.rb
+  path: runtime-ci/scripts/ci/create-binaries-manifest-section/task
 
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml

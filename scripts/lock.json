@@ -1,0 +1,30 @@
+{
+    "memo": "82ef3b021f43f191ec6c5eb8fa782e080d0fe725b9899430ff32b077ad32be81",
+    "projects": [
+        {
+            "name": "github.com/onsi/ginkgo",
+            "version": "v1.2.0",
+            "revision": "462326b1628e124b23f42e87a8f2750e3c4e2d24",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/onsi/gomega",
+            "version": "v1.0",
+            "revision": "a78ae492d53aad5a7a232d0d0462c14c400e3ee7",
+            "packages": [
+                ".",
+                "gexec"
+            ]
+        },
+        {
+            "name": "gopkg.in/yaml.v2",
+            "branch": "v2",
+            "revision": "4c78c975fe7c825c6d1466c42be594d1d6f3aba6",
+            "packages": [
+                "."
+            ]
+        }
+    ]
+}

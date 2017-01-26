@@ -1,0 +1,14 @@
+#!/bin/bash -exu
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  export GOPATH="${root_dir}/go"
+  mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
+  ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
+
+  go run "${root_dir}/runtime-ci/scripts/ci/create-binaries-manifest-section/main.go" --build-dir "${root_dir}"
+}
+
+main "${PWD}"
