@@ -1,4 +1,13 @@
 groups:
+- name: cf-deployment-concourse-tasks
+  jobs:
+  - build-bosh-deploy-docker-image
+  - build-bosh-deploy-with-created-release-docker-image
+  - build-update-integration-configs-docker-image
+  - build-bosh-upload-stemcell-docker-image
+  - build-bbl-up-docker-image
+  - build-bbl-destroy-docker-image
+  - build-cats-concourse-task-docker-image
 - name: build-docker-images
   jobs:
   - trigger-all-image-builds
@@ -27,8 +36,6 @@ groups:
   - build-run-smoketests-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
-  - build-bbl-up-docker-image
-  - build-bbl-destroy-docker-image
   - build-create-bosh-lite-creds-docker-image
   - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
@@ -38,11 +45,7 @@ groups:
   - build-run-errand-bbl-bosh-2-0-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
-  - build-update-integration-configs-docker-image
-  - build-bosh-deploy-docker-image
-  - build-bosh-deploy-with-created-release-docker-image
   - build-bosh-create-env-docker-image
-  - build-bosh-upload-stemcell-docker-image
   - build-bosh-upload-stemcell-1-0-docker-image
   - build-bosh-update-cloud-config-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
@@ -63,7 +66,6 @@ groups:
   - build-build-metadata-resource-docker-image
   - build-bbl-state-from-vars-store-docker-image
   - build-bosh-delete-env-docker-image
-  - build-cats-concourse-task-docker-image
 
 resources:
 - name: runtime-ci
@@ -71,6 +73,13 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+
+- name: weekly
+  type: time
+  source:
+    start: 7:00 -0700
+    stop: 7:30 -0700
+    interval: 168h
 
 - name: weekly-1
   type: time
@@ -1031,7 +1040,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-1
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -1067,7 +1076,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-1
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -1085,7 +1094,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-2
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -1103,7 +1112,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-1
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -1773,7 +1782,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-2
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -1791,7 +1800,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: weekly-1
+      - get: weekly
         trigger: true
       - get: trigger-resource
         trigger: true
@@ -2070,7 +2079,7 @@ jobs:
       - get: runtime-ci
       - get: runtime-ci-create-cf-cli-json
         trigger: true
-      - get: weekly-2
+      - get: weekly
         trigger: true
       - get: trigger-resource
         passed:
