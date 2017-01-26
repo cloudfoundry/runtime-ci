@@ -31,13 +31,14 @@ type Manifest struct {
 	Stemcells []Stemcell `yaml:"stemcells"`
 }
 
-func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, error) {
+func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, string, error) {
+	changes := []string{}
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
 	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))
 
 	if len(submatches) == 0 {
-		return nil, fmt.Errorf("releases was not found at the bottom of the manifest")
+		return nil, "", fmt.Errorf("releases was not found at the bottom of the manifest")
 	}
 
 	cfDeploymentManifestReleasesIndex := submatches[0]
@@ -47,40 +48,56 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 
 	var deserializedManifestSuffix map[string]interface{}
 	if err := yamlUnmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if len(deserializedManifestSuffix) > 2 {
-		return nil, fmt.Errorf(`found keys other than "releases" and "stemcells" at the bottom of the manifest`)
+		return nil, "", fmt.Errorf(`found keys other than "releases" and "stemcells" at the bottom of the manifest`)
 	}
 
 	if _, ok := deserializedManifestSuffix["stemcells"]; !ok {
-		return nil, fmt.Errorf("stemcells was not found at the bottom of the manifest")
+		return nil, "", fmt.Errorf("stemcells was not found at the bottom of the manifest")
 	}
 
 	cfDeploymentReleasesAndStemcells := Manifest{}
 
+	releasesSHA1s := map[string]string{}
+	for _, value := range deserializedManifestSuffix["releases"].([]interface{}) {
+		release := value.(map[interface{}]interface{})
+		releasesSHA1s[release["name"].(string)] = release["sha1"].(string)
+	}
+
+	stemcellsVersions := map[string]string{}
+	for _, value := range deserializedManifestSuffix["stemcells"].([]interface{}) {
+		stemcell := value.(map[interface{}]interface{})
+		stemcellsVersions[stemcell["alias"].(string)] = stemcell["version"].(string)
+	}
+
 	for _, release := range releases {
 		releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
 
-		sha, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
+		sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
 		if err != nil {
-			return nil, err
+			return nil, "", err
+		}
+
+		if releasesSHA1s[release] != strings.TrimSpace(string(sha1)) {
+			changes = append(changes, fmt.Sprintf("%s-release", release))
 		}
 
 		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, Release{
 			Name:    release,
-			SHA1:    strings.TrimSpace(string(sha)),
+			SHA1:    strings.TrimSpace(string(sha1)),
 			Version: strings.TrimSpace(string(version)),
 			URL:     strings.TrimSpace(string(url)),
 		})
@@ -88,7 +105,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 
 	stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
@@ -99,10 +116,19 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		},
 	}
 
-	cfDeploymentReleasesAndStemcellsYaml, err := yamlMarshal(cfDeploymentReleasesAndStemcells)
-	if err != nil {
-		return nil, err
+	if stemcellsVersions["default"] != strings.TrimSpace(string(stemcellVersion)) {
+		changes = append(changes, "ubuntu-trusty stemcell")
 	}
 
-	return append(cfDeploymentPreamble, cfDeploymentReleasesAndStemcellsYaml...), err
+	cfDeploymentReleasesAndStemcellsYaml, err := yamlMarshal(cfDeploymentReleasesAndStemcells)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var changeMessage string
+	if len(changes) > 0 {
+		changeMessage = fmt.Sprintf("Updated %s", strings.Join(changes, ", "))
+	}
+
+	return append(cfDeploymentPreamble, cfDeploymentReleasesAndStemcellsYaml...), changeMessage, err
 }

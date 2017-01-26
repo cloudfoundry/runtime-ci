@@ -33,6 +33,7 @@ inputs:
 
 outputs:
 - name: deployment-manifest
+- name: commit-message
 
 run:
   path: runtime-ci/scripts/ci/create-binaries-manifest-section/task
@@ -40,3 +41,4 @@ run:
 params:
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
+  COMMIT_MESSAGE_PATH: commit-message.txt

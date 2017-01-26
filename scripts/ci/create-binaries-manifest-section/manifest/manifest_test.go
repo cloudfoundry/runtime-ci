@@ -30,11 +30,11 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		manifest.ResetYAMLUnmarshal()
 	})
 
-	It("updates the releases and stemcells to their latest version without modifying the rest", func() {
+	It("updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
 		releases := []string{"release1", "release2"}
 		buildDir := "fixtures/build"
 
-		updatedManifest, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 		Expect(err).NotTo(HaveOccurred())
 
 		r := regexp.MustCompile(`(?m:^releases:$)`)
@@ -47,6 +47,8 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
 		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
+
+		Expect(changes).To(Equal("Updated release2-release, ubuntu-trusty stemcell"))
 	})
 
 	Context("failure cases", func() {
@@ -59,7 +61,7 @@ name:
 stemcells:
 other_key:
 `)
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
 			Expect(err).To(MatchError("releases was not found at the bottom of the manifest"))
 		})
 
@@ -73,7 +75,7 @@ stemcells:
 releases:
 other_key:
 `)
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
 			Expect(err).To(MatchError("stemcells was not found at the bottom of the manifest"))
 		})
 
@@ -87,7 +89,7 @@ releases:
 stemcells:
 other_key:
 `)
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, badManifest)
 			Expect(err).To(MatchError(`found keys other than "releases" and "stemcells" at the bottom of the manifest`))
 		})
 
@@ -95,7 +97,7 @@ other_key:
 			releases := []string{"missing-url"}
 			buildDir := "fixtures/broken-build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 
 			Expect(err).To(MatchError("open fixtures/broken-build/missing-url-release/url: no such file or directory"))
 		})
@@ -104,7 +106,7 @@ other_key:
 			releases := []string{"missing-version"}
 			buildDir := "fixtures/broken-build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 
 			Expect(err).To(MatchError("open fixtures/broken-build/missing-version-release/version: no such file or directory"))
 		})
@@ -113,7 +115,7 @@ other_key:
 			releases := []string{"missing-sha1"}
 			buildDir := "fixtures/broken-build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 
 			Expect(err).To(MatchError("open fixtures/broken-build/missing-sha1-release/sha1: no such file or directory"))
 		})
@@ -122,7 +124,7 @@ other_key:
 			releases := []string{"good-release"}
 			buildDir := "fixtures/broken-build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 
 			Expect(err).To(MatchError("open fixtures/broken-build/stemcell/version: no such file or directory"))
 		})
@@ -134,7 +136,7 @@ other_key:
 			releases := []string{"release1", "release2"}
 			buildDir := "fixtures/build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 			Expect(err).To(MatchError("failed to unmarshal yaml"))
 		})
 
@@ -145,7 +147,7 @@ other_key:
 			releases := []string{"release1", "release2"}
 			buildDir := "fixtures/build"
 
-			_, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 			Expect(err).To(MatchError("failed to marshal yaml"))
 		})
 	})

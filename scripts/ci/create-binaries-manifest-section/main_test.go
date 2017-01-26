@@ -18,85 +18,85 @@ const (
 name: cf-deployment
 releases:
 - name: capi
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: consul
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: diego
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: etcd
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: loggregator
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: nats
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: cf-mysql
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: routing
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: uaa
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: garden-runc
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: cflinuxfs2-rootfs
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: binary-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: dotnet-core-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: go-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: java-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: nodejs-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: php-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: python-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: ruby-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 - name: staticfile-buildpack
-  url: updated-release-url
-  version: updated-release-version
-  sha1: updated-release-sha
+  url: original-release-url
+  version: original-release-version
+  sha1: original-release-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -198,6 +198,7 @@ var _ = Describe("main", func() {
 		pathToBinary                string
 		DeploymentConfigurationPath string
 		DeploymentManifestPath      string
+		CommitMessagePath           string
 		buildDir                    string
 		emptyDir                    string
 	)
@@ -215,6 +216,7 @@ var _ = Describe("main", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		for _, dir := range []string{
+			"commit-message",
 			"deployment-configuration",
 			"deployment-manifest",
 			"stemcell",
@@ -252,7 +254,7 @@ var _ = Describe("main", func() {
 			err = os.Mkdir(releaseDir, os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			for file, value := range map[string]string{"version": "updated-release-version", "url": "updated-release-url", "sha1": "updated-release-sha"} {
+			for file, value := range map[string]string{"version": "original-release-version", "url": "original-release-url", "sha1": "original-release-sha"} {
 				err = ioutil.WriteFile(filepath.Join(releaseDir, file), []byte(value), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 			}
@@ -263,14 +265,17 @@ var _ = Describe("main", func() {
 
 		DeploymentConfigurationPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 		DeploymentManifestPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")
+		CommitMessagePath = os.Getenv("COMMIT_MESSAGE_PATH")
 
 		os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", "original-manifest.yml")
 		os.Setenv("DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
+		os.Setenv("COMMIT_MESSAGE_PATH", "commit-message.txt")
 	})
 
 	AfterEach(func() {
 		os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", DeploymentConfigurationPath)
 		os.Setenv("DEPLOYMENT_MANIFEST_PATH", DeploymentManifestPath)
+		os.Setenv("COMMIT_MESSAGE_PATH", CommitMessagePath)
 	})
 
 	It("updates the given manifest with new releases and stemcells", func() {
@@ -286,6 +291,19 @@ var _ = Describe("main", func() {
 		Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
 	})
 
+	It("writes the commit message to COMMIT_MESSAGE_PATH", func() {
+		session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
+
+		Eventually(session).Should(gexec.Exit())
+		Expect(session.ExitCode()).To(Equal(0))
+
+		commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(string(commitMessage)).To(Equal("Updated ubuntu-trusty stemcell"))
+	})
+
 	Context("failure cases", func() {
 		It("errors when the deployment manifest does not exist", func() {
 			os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", emptyDir)
@@ -297,6 +315,18 @@ var _ = Describe("main", func() {
 			Expect(session.ExitCode()).To(Equal(1))
 
 			Expect(string(session.Err.Contents())).To(ContainSubstring("no such file or directory"))
+		})
+
+		It("errors when the directory to write out the commit message does not exist", func() {
+			os.Setenv("COMMIT_MESSAGE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(1))
+
+			Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
 		})
 
 		It("errors when the directory to write out the updated manifest does not exist", func() {

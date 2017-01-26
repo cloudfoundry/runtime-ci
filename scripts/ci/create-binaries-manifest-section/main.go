@@ -36,6 +36,7 @@ func main() {
 
 	deploymentConfigurationPath := os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 	deploymentManifestPath := os.Getenv("DEPLOYMENT_MANIFEST_PATH")
+	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
@@ -47,8 +48,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	updatedDeploymentManifest, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+	updatedDeploymentManifest, commitMessage, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
+	if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
