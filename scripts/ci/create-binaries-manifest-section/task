@@ -5,10 +5,26 @@ function main() {
   root_dir="${1}"
 
   export GOPATH="${root_dir}/go"
+  export PATH=$GOPATH/bin:$PATH
+  export GO15VENDOREXPERIMENT=1
+
   mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 
-  go run "${root_dir}/runtime-ci/scripts/ci/create-binaries-manifest-section/main.go" --build-dir "${root_dir}"
+  mkdir -p "${GOPATH}/src/github.com/onsi"
+  ln -s "${root_dir}/runtime-ci/scripts/vendor/github.com/onsi/ginkgo" "${GOPATH}/src/github.com/onsi/ginkgo"
+  ln -s "${root_dir}/runtime-ci/scripts/vendor/github.com/onsi/gomega" "${GOPATH}/src/github.com/onsi/gomega"
+
+  mkdir -p "${GOPATH}/src/gopkg.in"
+  ln -s "${root_dir}/runtime-ci/scripts/vendor/gopkg.in/yaml.v2" "${GOPATH}/src/gopkg.in/yaml.v2"
+
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section"
+    go install github.com/onsi/ginkgo/ginkgo
+
+    ginkgo -r -randomizeSuites -randomizeAllSpecs .
+
+    go run main.go --build-dir "${root_dir}"
+  popd
 }
 
 main "${PWD}"
