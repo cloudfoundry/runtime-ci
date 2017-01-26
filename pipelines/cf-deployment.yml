@@ -289,15 +289,15 @@ jobs:
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
       BBL_ENV_NAME: hermione-upgrade
     input_mapping:
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     ensure:
       put: hermione-env-director-state
       params:
-        repository: updated-bbl-state-dir
+        repository: updated-bbl-state
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:
-      env-repo: updated-bbl-state-dir
+      env-repo: updated-bbl-state
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
@@ -324,11 +324,11 @@ jobs:
       LB_DOMAIN: luna.cf-app.com
       BBL_ENV_NAME: luna-fresh
     input_mapping:
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
     ensure:
       put: luna-env-director-state
       params:
-        repository: updated-bbl-state-dir
+        repository: updated-bbl-state
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -372,7 +372,7 @@ jobs:
   - task: bosh-update-cloud-config
     file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
     input_mapping:
-      bbl-state-dir: snitch-env-director-state
+      bbl-state: snitch-env-director-state
       cloud-config: cf-deployment-develop
     params:
       CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
@@ -393,7 +393,7 @@ jobs:
       passed: [ setup-infrastructure-fresh ]
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -401,7 +401,7 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
   - task: bosh-deploy-cf
@@ -422,7 +422,7 @@ jobs:
   - task: run-bosh-cleanup
     file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
     input_mapping:
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -459,14 +459,14 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     params:
       INFRASTRUCTURE: aws
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
     input_mapping:
       stemcell: windows-stemcell
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
@@ -487,7 +487,7 @@ jobs:
   - task: run-bosh-cleanup
     file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
     input_mapping:
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -522,7 +522,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        bbl-state-dir: snitch-env-director-state
+        bbl-state: snitch-env-director-state
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
@@ -543,7 +543,7 @@ jobs:
     - task: run-bosh-cleanup
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
-        bbl-state-dir: snitch-env-director-state
+        bbl-state: snitch-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -748,7 +748,7 @@ jobs:
         - routing-acceptance-tests-fresh
     - task: delete-deployment-cf
       input_mapping:
-        bbl-state-dir: luna-env-director-state
+        bbl-state: luna-env-director-state
       file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
       params:
         DEPLOYMENT_NAME: cf
@@ -764,7 +764,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
@@ -779,11 +779,11 @@ jobs:
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state-dir: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     ensure:
       put: hermione-env-director-state
       params:
-        repository: updated-bbl-state-dir
+        repository: updated-bbl-state
 
 - name: destroy-infrastructure-fresh
   serial_groups: [luna]
@@ -796,18 +796,18 @@ jobs:
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     params:
       DEPLOYMENT_NAME: cf
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state-dir: luna-env-director-state
+      bbl-state: luna-env-director-state
     ensure:
       put: luna-env-director-state
       params:
-        repository: updated-bbl-state-dir
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-lite
@@ -1008,7 +1008,7 @@ jobs:
     - task: run-bosh-cleanup
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
-        bbl-state-dir: hermione-env-director-state
+        bbl-state: hermione-env-director-state
 
 - name: run-bosh-cleanup-lite
   serial: true
@@ -1025,4 +1025,4 @@ jobs:
     - task: run-bosh-cleanup
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
-        bbl-state-dir: snitch-env-director-state
+        bbl-state: snitch-env-director-state

@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: bbl-state-dir
+- name: bbl-state
 
 run:
   path: runtime-ci/scripts/ci/run-bosh-cleanup/task

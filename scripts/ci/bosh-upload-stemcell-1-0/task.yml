@@ -6,7 +6,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-upload-stemcell-1-0
 
 inputs:
-- name: bbl-state-dir
+- name: bbl-state
 - name: runtime-ci
 - name: stemcell
 
