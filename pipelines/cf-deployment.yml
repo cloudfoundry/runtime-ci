@@ -398,7 +398,7 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf
   - task: bosh-upload-stemcell-fresh
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
       bbl-state: luna-env-director-state
@@ -456,7 +456,7 @@ jobs:
     - get: hermione-env-integration-configs
     - get: windows-stemcell
   - task: bosh-upload-stemcell-upgrade
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
       bbl-state: hermione-env-director-state
@@ -519,7 +519,7 @@ jobs:
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: bosh-upload-stemcell-lite
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell/task.yml
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
         bbl-state: snitch-env-director-state
