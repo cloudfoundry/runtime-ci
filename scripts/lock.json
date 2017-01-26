@@ -1,21 +1,29 @@
 {
-    "memo": "82ef3b021f43f191ec6c5eb8fa782e080d0fe725b9899430ff32b077ad32be81",
+    "memo": "4e15c6c14759f4a2ada2b415f4799d24659a46acd8e2241c6c2a8b9440ba21ac",
     "projects": [
         {
             "name": "github.com/onsi/ginkgo",
-            "version": "v1.2.0",
-            "revision": "462326b1628e124b23f42e87a8f2750e3c4e2d24",
+            "branch": "master",
+            "revision": "bb93381d543b0e5725244abe752214a110791d01",
             "packages": [
                 "."
             ]
         },
         {
             "name": "github.com/onsi/gomega",
-            "version": "v1.0",
-            "revision": "a78ae492d53aad5a7a232d0d0462c14c400e3ee7",
+            "branch": "master",
+            "revision": "e85f63af4302dc0e4277c6008ecf803f1d80e4f0",
             "packages": [
                 ".",
                 "gexec"
+            ]
+        },
+        {
+            "name": "golang.org/x/sys",
+            "branch": "master",
+            "revision": "d75a52659825e75fff6158388dddc6a5b04f9ba5",
+            "packages": [
+                "unix"
             ]
         },
         {
