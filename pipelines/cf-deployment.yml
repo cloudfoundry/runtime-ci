@@ -413,7 +413,7 @@ jobs:
       vars-store: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "opsfiles/gcp.yml opsfiles/tcp-routing-gcp.yml"
+      OPS_FILES: "operations/gcp.yml operations/tcp-routing-gcp.yml"
     ensure:
       put: luna-env-vars-store
       params:
@@ -478,7 +478,7 @@ jobs:
       vars-store: hermione-env-vars-store
     params:
       SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "opsfiles/change-logging-port-for-aws-elb.yml opsfiles/windows-cell.yml"
+      OPS_FILES: "operations/change-logging-port-for-aws-elb.yml operations/windows-cell.yml"
     ensure:
       put: hermione-env-vars-store
       params:
@@ -534,7 +534,7 @@ jobs:
         ops-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
-        OPS_FILES: "opsfiles/bosh-lite.yml"
+        OPS_FILES: "operations/bosh-lite.yml"
       ensure:
         put: snitch-env-vars-store
         params:
