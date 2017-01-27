@@ -51,6 +51,16 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(changes).To(Equal("Updated release2-release, ubuntu-trusty stemcell"))
 	})
 
+	It("provides a default commit message if no version updates were performed", func() {
+		releases := []string{"release1", "release2"}
+		buildDir := "fixtures/nochanges-build"
+
+		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(changes).To(Equal("No release or stemcell version updates"))
+	})
+
 	Context("failure cases", func() {
 		It("ensures there is a releases key at the bottom of the manifest", func() {
 			releases := []string{"release1", "release2"}

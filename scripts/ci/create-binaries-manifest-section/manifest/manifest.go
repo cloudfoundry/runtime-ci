@@ -125,7 +125,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", err
 	}
 
-	var changeMessage string
+	changeMessage := "No release or stemcell version updates"
 	if len(changes) > 0 {
 		changeMessage = fmt.Sprintf("Updated %s", strings.Join(changes, ", "))
 	}
