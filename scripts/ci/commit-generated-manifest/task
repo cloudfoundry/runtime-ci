@@ -1,19 +1,27 @@
-#!/bin/bash
-set -exu
+#!/bin/bash -exu
 
-cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
-pushd repo > /dev/null
-  if [[ -n $(git status ${MANIFEST_DESTINATION} --porcelain) ]]; then
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
+set -o pipefail
 
-    git add ./"${MANIFEST_DESTINATION}"
-    git commit -m "$(cat commit-message/${COMMIT_MESSAGE_PATH})"
+function main() {
+  local root_dir
+  root_dir="${1}"
 
-    git status
-    git show --color | cat
-  fi
-popd > /dev/null
+  cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
+  pushd repo > /dev/null
+    if [[ -n $(git status ${MANIFEST_DESTINATION} --porcelain) ]]; then
+      git config user.name "CF MEGA BOT"
+      git config user.email "cf-mega@pivotal.io"
 
-shopt -s dotglob
-cp -R repo/* updated-repo
+      git add ./"${MANIFEST_DESTINATION}"
+      git commit -m "$(cat ${root_dir}/commit-message/${COMMIT_MESSAGE_PATH})"
+
+      git status
+      git show --color | cat
+    fi
+  popd > /dev/null
+
+  shopt -s dotglob
+  cp -R repo/* updated-repo
+}
+
+main "${PWD}"
