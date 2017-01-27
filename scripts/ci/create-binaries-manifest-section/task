@@ -11,15 +11,11 @@ function main() {
   mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 
-  mkdir -p "${GOPATH}/src/github.com/onsi"
-  ln -s "${root_dir}/runtime-ci/scripts/vendor/github.com/onsi/ginkgo" "${GOPATH}/src/github.com/onsi/ginkgo"
-  ln -s "${root_dir}/runtime-ci/scripts/vendor/github.com/onsi/gomega" "${GOPATH}/src/github.com/onsi/gomega"
-
-  mkdir -p "${GOPATH}/src/gopkg.in"
-  ln -s "${root_dir}/runtime-ci/scripts/vendor/gopkg.in/yaml.v2" "${GOPATH}/src/gopkg.in/yaml.v2"
+  go get github.com/onsi/ginkgo/...
+  go get github.com/golang/dep
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section"
-    go install github.com/onsi/ginkgo/ginkgo
+    dep ensure -update
 
     ginkgo -r -randomizeSuites -randomizeAllSpecs .
 
