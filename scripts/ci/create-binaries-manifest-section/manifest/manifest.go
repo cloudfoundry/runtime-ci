@@ -11,7 +11,6 @@ import (
 )
 
 var yamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
-var yamlUnmarshal func([]byte, interface{}) error = yaml.Unmarshal
 
 type Stemcell struct {
 	Alias   string `yaml:"alias"`
@@ -47,7 +46,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	copy(cfDeploymentPreamble, cfDeploymentManifest[:cfDeploymentManifestReleasesIndex])
 
 	var deserializedManifestSuffix map[string]interface{}
-	if err := yamlUnmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
+	if err := yaml.Unmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
 		return nil, "", err
 	}
 
@@ -59,20 +58,22 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", fmt.Errorf("stemcells was not found at the bottom of the manifest")
 	}
 
-	cfDeploymentReleasesAndStemcells := Manifest{}
+	var releasesAndStemcells Manifest
+	if err := yaml.Unmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &releasesAndStemcells); err != nil {
+		return nil, "", err
+	}
 
 	releasesSHA1s := map[string]string{}
-	for _, value := range deserializedManifestSuffix["releases"].([]interface{}) {
-		release := value.(map[interface{}]interface{})
-		releasesSHA1s[release["name"].(string)] = release["sha1"].(string)
+	for _, release := range releasesAndStemcells.Releases {
+		releasesSHA1s[release.Name] = release.SHA1
 	}
 
 	stemcellsVersions := map[string]string{}
-	for _, value := range deserializedManifestSuffix["stemcells"].([]interface{}) {
-		stemcell := value.(map[interface{}]interface{})
-		stemcellsVersions[stemcell["alias"].(string)] = stemcell["version"].(string)
+	for _, stemcell := range releasesAndStemcells.Stemcells {
+		stemcellsVersions[stemcell.Alias] = stemcell.Version
 	}
 
+	cfDeploymentReleasesAndStemcells := Manifest{}
 	for _, release := range releases {
 		releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
 

@@ -27,7 +27,6 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		manifest.ResetYAMLMarshal()
-		manifest.ResetYAMLUnmarshal()
 	})
 
 	It("updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
@@ -59,6 +58,22 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("No release or stemcell version updates"))
+	})
+
+	It("adds all the releases and stemcells to the commit message if no releases exist", func() {
+		releases := []string{"release1", "release2"}
+		buildDir := "fixtures/nochanges-build"
+
+		cfDeploymentManifest := []byte(`
+name: my-deployment
+releases:
+stemcells:
+`)
+
+		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(changes).To(Equal("Updated release1-release, release2-release, ubuntu-trusty stemcell"))
 	})
 
 	Context("failure cases", func() {
@@ -139,15 +154,49 @@ other_key:
 			Expect(err).To(MatchError("open fixtures/broken-build/stemcell/version: no such file or directory"))
 		})
 
-		It("returns an error when the yaml unmarshaller fails", func() {
-			manifest.SetYAMLUnmarshal(func([]byte, interface{}) error {
-				return errors.New("failed to unmarshal yaml")
-			})
+		It("returns an error when the manifest is not valid yaml", func() {
 			releases := []string{"release1", "release2"}
 			buildDir := "fixtures/build"
 
+			cfDeploymentManifest := []byte(`
+%%%
+releases:
+%%%
+`)
 			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
-			Expect(err).To(MatchError("failed to unmarshal yaml"))
+			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
+		})
+
+		It("returns an error when the releases section is malformed", func() {
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			cfDeploymentManifest := []byte(`
+name: my-deployment
+releases:
+- wrong type
+stemcells:
+- alias: my-stemcell
+`)
+
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			Expect(err).To(MatchError(ContainSubstring("`wrong type` into manifest.Release")))
+		})
+
+		It("returns an error when the stemcells section is malformed", func() {
+			releases := []string{"release1", "release2"}
+			buildDir := "fixtures/build"
+
+			cfDeploymentManifest := []byte(`
+name: my-deployment
+releases:
+- name: my-release
+stemcells:
+- wrong type
+`)
+
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
+			Expect(err).To(MatchError(ContainSubstring("`wrong type` into manifest.Stemcell")))
 		})
 
 		It("returns an error when the yaml marshaller fails", func() {
