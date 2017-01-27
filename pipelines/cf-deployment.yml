@@ -464,7 +464,7 @@ jobs:
     params:
       INFRASTRUCTURE: aws
   - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task.yml
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-stemcell
       bbl-state: hermione-env-director-state

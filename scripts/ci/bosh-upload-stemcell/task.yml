@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/bosh-upload-stemcell-1-0
+    repository: relintdockerhubpushbot/bosh-upload-stemcell
 
 inputs:
 - name: bbl-state
@@ -11,7 +11,7 @@ inputs:
 - name: stemcell
 
 run:
-  path: runtime-ci/scripts/ci/bosh-upload-stemcell-1-0/task
+  path: runtime-ci/scripts/ci/bosh-upload-stemcell/task
 
 params:
   STEMCELL_NAME:
