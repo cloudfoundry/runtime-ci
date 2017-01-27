@@ -6,34 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section/manifest"
 )
 
 func main() {
-	var releases = []string{
-		"capi",
-		"consul",
-		"diego",
-		"etcd",
-		"loggregator",
-		"nats",
-		"cf-mysql",
-		"routing",
-		"uaa",
-		"garden-runc",
-		"cflinuxfs2-rootfs",
-		"binary-buildpack",
-		"dotnet-core-buildpack",
-		"go-buildpack",
-		"java-buildpack",
-		"nodejs-buildpack",
-		"php-buildpack",
-		"python-buildpack",
-		"ruby-buildpack",
-		"staticfile-buildpack",
-	}
-
 	deploymentConfigurationPath := os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 	deploymentManifestPath := os.Getenv("DEPLOYMENT_MANIFEST_PATH")
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
@@ -41,6 +19,19 @@ func main() {
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 	flag.Parse()
+
+	files, err := ioutil.ReadDir(buildDir)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
+	releases := []string{}
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), "-release") {
+			releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
+		}
+	}
 
 	cfDeploymentManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-configuration", deploymentConfigurationPath))
 	if err != nil {

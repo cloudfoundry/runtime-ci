@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/onsi/gomega/gexec"
 
@@ -17,86 +18,18 @@ const (
 	expectedReleasesAndStemcells string = `
 name: cf-deployment
 releases:
-- name: capi
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: consul
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: diego
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: etcd
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: loggregator
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: nats
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: cf-mysql
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: routing
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: uaa
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: garden-runc
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: cflinuxfs2-rootfs
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: binary-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: dotnet-core-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: go-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: java-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: nodejs-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: php-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: python-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: ruby-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: staticfile-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
+- name: release3
+  url: new-release3-url
+  version: new-release3-version
+  sha1: new-release3-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -106,86 +39,14 @@ stemcells:
 	releaseAndStemcellStub string = `
 name: cf-deployment
 releases:
-- name: capi
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: consul
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: diego
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: etcd
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: loggregator
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: nats
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: cf-mysql
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: routing
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: uaa
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: garden-runc
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: cflinuxfs2-rootfs
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: binary-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: dotnet-core-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: go-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: java-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: nodejs-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: php-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: python-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: ruby-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
-- name: staticfile-buildpack
-  url: original-release-url
-  version: original-release-version
-  sha1: original-release-sha
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -228,34 +89,17 @@ var _ = Describe("main", func() {
 		err = ioutil.WriteFile(filepath.Join(buildDir, "deployment-configuration", "original-manifest.yml"), []byte(releaseAndStemcellStub), os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
 
-		for _, release := range []string{
-			"capi",
-			"consul",
-			"diego",
-			"etcd",
-			"loggregator",
-			"nats",
-			"cf-mysql",
-			"routing",
-			"uaa",
-			"garden-runc",
-			"cflinuxfs2-rootfs",
-			"binary-buildpack",
-			"dotnet-core-buildpack",
-			"go-buildpack",
-			"java-buildpack",
-			"nodejs-buildpack",
-			"php-buildpack",
-			"python-buildpack",
-			"ruby-buildpack",
-			"staticfile-buildpack",
+		for _, release := range []map[string]string{
+			{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
+			{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
+			{"name": "release3", "version": "new-release3-version", "url": "new-release3-url", "sha1": "new-release3-sha"},
 		} {
-			releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
+			releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 			err = os.Mkdir(releaseDir, os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			for file, value := range map[string]string{"version": "original-release-version", "url": "original-release-url", "sha1": "original-release-sha"} {
-				err = ioutil.WriteFile(filepath.Join(releaseDir, file), []byte(value), os.ModePerm)
+			for _, value := range []string{"version", "url", "sha1"} {
+				err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 			}
 		}
@@ -301,10 +145,21 @@ var _ = Describe("main", func() {
 		commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(string(commitMessage)).To(Equal("Updated ubuntu-trusty stemcell"))
+		Expect(string(commitMessage)).To(Equal("Updated release3-release, ubuntu-trusty stemcell"))
 	})
 
 	Context("failure cases", func() {
+		It("errors when the build dir does not exist", func() {
+			fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(1))
+
+			Expect(string(session.Err.Contents())).To(ContainSubstring(fmt.Sprintf("%v: no such file or directory", fakeDirName)))
+		})
+
 		It("errors when the deployment manifest does not exist", func() {
 			os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", emptyDir)
 
