@@ -13,7 +13,15 @@ function main() {
       git config user.email "cf-mega@pivotal.io"
 
       git add ./"${MANIFEST_DESTINATION}"
-      git commit -m "$(cat ${root_dir}/commit-message/${COMMIT_MESSAGE_PATH})"
+
+      local commit_message
+      commit_message=$(cat ${root_dir}/commit-message/${COMMIT_MESSAGE_PATH})
+
+      if [ -z "${commit_message}" ]; then
+        commit_message="No changes"
+      fi
+
+      git commit -m "${commit_message}"
 
       git status
       git show --color | cat
