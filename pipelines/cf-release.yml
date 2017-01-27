@@ -1286,8 +1286,7 @@ jobs:
         manifest: cf-a1-manifest/deployment.yml
         stemcells: [aws-stemcell/*.tgz]
         releases:
-          - cf-release-tarball/*.tgz
-          - netman-release-tarball/*.tgz
+        - cf-release-tarball/*.tgz
     - put: a1-diego-deployment
       params:
         manifest: cf-a1-diego-manifest/diego-deployment.yml
@@ -1295,6 +1294,7 @@ jobs:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
+        - netman-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
       - task: write-target-file-bosh-director
