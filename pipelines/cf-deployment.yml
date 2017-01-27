@@ -414,6 +414,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: "operations/gcp.yml operations/tcp-routing-gcp.yml"
+      REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
       params:
