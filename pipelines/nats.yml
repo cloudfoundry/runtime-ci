@@ -1,0 +1,79 @@
+---
+groups:
+- name: infrastructure
+  jobs:
+  - setup-infrastructure-nats
+  - destroy-infrastructure-nats
+
+resources:
+- name: myrtle-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/myrtle-env.git
+    private_key: {{myrtle_env_private_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+- name: myrtle-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/myrtle-env.git
+    private_key: {{myrtle_env_private_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+- name: myrtle-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/myrtle-env.git
+    private_key: {{myrtle_env_private_key}}
+    paths:
+    - deployment-vars.yml
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+jobs:
+- name: setup-infrastructure
+  serial_groups: [myrtle]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: myrtle-env-director-state
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{myrtle_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{myrtle_cf_ssl_cert}}
+      BBL_LB_KEY: {{myrtle_cf_ssl_cert_private_key}}
+      LB_DOMAIN: myrtle.cf-app.com
+      BBL_ENV_NAME: myrtle-fresh
+    input_mapping:
+      bbl-state: myrtle-env-director-state
+    ensure:
+      put: myrtle-env-director-state
+      params:
+        repository: updated-bbl-state
