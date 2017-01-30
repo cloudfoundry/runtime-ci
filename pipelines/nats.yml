@@ -2,8 +2,8 @@
 groups:
 - name: infrastructure
   jobs:
-  - setup-infrastructure-nats
-  - destroy-infrastructure-nats
+  - setup-infrastructure
+  # - destroy-infrastructure
 
 resources:
 - name: myrtle-env-director-state
@@ -15,35 +15,35 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
-- name: myrtle-env-integration-configs
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/myrtle-env.git
-    private_key: {{myrtle_env_git_deploy_key}}
-    paths:
-    - integration_config.json
-    - rats_integration_config.json
-- name: myrtle-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/myrtle-env.git
-    private_key: {{myrtle_env_git_deploy_key}}
-    paths:
-    - deployment-vars.yml
-- name: weekly
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
-    interval: 168h
-- name: daily
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
-    interval: 24h
+# - name: myrtle-env-integration-configs
+#   type: git
+#   source:
+#     branch: master
+#     uri: git@github.com:cloudfoundry/myrtle-env.git
+#     private_key: {{myrtle_env_git_deploy_key}}
+#     paths:
+#     - integration_config.json
+#     - rats_integration_config.json
+# - name: myrtle-env-vars-store
+#   type: git
+#   source:
+#     branch: master
+#     uri: git@github.com:cloudfoundry/myrtle-env.git
+#     private_key: {{myrtle_env_git_deploy_key}}
+#     paths:
+#     - deployment-vars.yml
+# - name: weekly
+#   type: time
+#   source:
+#     start: 3:00 -0700
+#     stop: 3:30 -0700
+#     interval: 168h
+# - name: daily
+#   type: time
+#   source:
+#     start: 3:00 -0700
+#     stop: 3:30 -0700
+#     interval: 24h
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -70,7 +70,7 @@ jobs:
       BBL_LB_CERT: {{myrtle_cf_ssl_cert}}
       BBL_LB_KEY: {{myrtle_cf_ssl_cert_private_key}}
       LB_DOMAIN: myrtle.cf-app.com
-      BBL_ENV_NAME: myrtle-fresh
+      BBL_ENV_NAME: myrtle-nats
     input_mapping:
       bbl-state: myrtle-env-director-state
     ensure:
