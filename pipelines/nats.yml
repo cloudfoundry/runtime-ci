@@ -54,11 +54,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-- name: runtime-ci
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
+    tag_filter: v0.*
 
 jobs:
 - name: setup-infrastructure
@@ -95,7 +91,6 @@ jobs:
   plan:
   - aggregate:
     - get: myrtle-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
