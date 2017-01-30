@@ -11,7 +11,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/myrtle-env.git
-    private_key: {{myrtle_env_private_key}}
+    private_key: {{myrtle_env_git_deploy_key}}
     paths:
     - bbl-state.json
     - google_account_creds.json
@@ -20,7 +20,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/myrtle-env.git
-    private_key: {{myrtle_env_private_key}}
+    private_key: {{myrtle_env_git_deploy_key}}
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -29,7 +29,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/myrtle-env.git
-    private_key: {{myrtle_env_private_key}}
+    private_key: {{myrtle_env_git_deploy_key}}
     paths:
     - deployment-vars.yml
 - name: weekly
