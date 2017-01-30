@@ -3,9 +3,10 @@ groups:
 - name: infrastructure
   jobs:
   - setup-infrastructure
-  # - destroy-infrastructure
+  - destroy-infrastructure
 
 resources:
+# ENV
 - name: myrtle-env-director-state
   type: git
   source:
@@ -32,6 +33,8 @@ resources:
 #     private_key: {{myrtle_env_git_deploy_key}}
 #     paths:
 #     - deployment-vars.yml
+
+# Control
 # - name: weekly
 #   type: time
 #   source:
@@ -44,11 +47,18 @@ resources:
 #     start: 3:00 -0700
 #     stop: 3:30 -0700
 #     interval: 24h
+
+# Concourse Tasks
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 
 jobs:
 - name: setup-infrastructure
@@ -77,3 +87,22 @@ jobs:
       put: myrtle-env-director-state
       params:
         repository: updated-bbl-state
+
+- name: destroy-infrastructure
+  serial_groups: [myrtle]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: myrtle-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-director-state
+    ensure:
+      put: myrtle-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
