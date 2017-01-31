@@ -7,9 +7,20 @@ root_dir="${PWD}"
 # Inputs
 RUNTIME_CI_DIR="${root_dir}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR must be provided"}"
 
+EXCEPTION_TASKS=("bosh-deploy-nats")
+
 function verify_image {
   set +e
-  if ! grep "repository: relintdockerhubpushbot/$(basename "${1}")" task.yml >/dev/null; then
+  local task_dir
+  task_dir=$(basename "${1}")
+
+  for exception_candidate in ${EXCEPTION_TASKS[*]}; do
+    if [[ "${exception_candidate}" == "${task_dir}" ]]; then
+      return 0
+    fi
+  done
+
+  if ! grep "repository: relintdockerhubpushbot/${task_dir}" task.yml >/dev/null; then
     echo "${1}/task.yml"
     grep 'image:' task.yml
   fi
