@@ -17,6 +17,12 @@ resources:
     branch: develop
     uri: https://github.com/cloudfoundry/nats-release.git
 
+# Stemcell
+- name: stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
+
 # ENV
 - name: myrtle-env-bbl-state
   type: git
@@ -124,6 +130,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: stemcell
     - get: myrtle-env-bbl-state
     - get: nats-release
     - get: runtime-ci

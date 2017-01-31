@@ -10,6 +10,7 @@ inputs:
 - name: bbl-state
 - name: nats-release
 - name: runtime-ci
+- name: stemcell
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy-nats/task

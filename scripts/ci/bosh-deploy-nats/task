@@ -16,6 +16,10 @@ function setup_bosh_env_vars() {
 }
 
 function bosh_deploy() {
+  pushd stemcell
+    bosh upload-stemcell stemcell.tgz
+  popd
+
   pushd nats-release
     local deployment_name
     deployment_name=$(bosh interpolate "example-manifests/nats.yml" --path=/name)
