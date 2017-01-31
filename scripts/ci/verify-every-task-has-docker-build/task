@@ -4,9 +4,20 @@ set -eu
 
 RUNTIME_CI_DIR="${PWD}/runtime-ci"
 
+EXCEPTION_TASKS=("bosh-deploy-nats")
+
 function verify_image_exists_in_pipeline_yml {
   set +e
-  if ! grep "$(basename "${1}")" "${RUNTIME_CI_DIR}/pipelines/build-docker-images.yml" >/dev/null; then
+  local task_dir
+  task_dir=$(basename "${1}")
+
+  for exception_candidate in ${EXCEPTION_TASKS[*]}; do
+    if [[ "${exception_candidate}" == "${task_dir}" ]]; then
+      return 0
+    fi
+  done
+
+  if ! grep "${task_dir}" "${RUNTIME_CI_DIR}/pipelines/build-docker-images.yml" >/dev/null; then
     echo "${1}"
   fi
   set -e
