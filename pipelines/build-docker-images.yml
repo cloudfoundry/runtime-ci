@@ -8,6 +8,9 @@ groups:
   - build-bbl-up-docker-image
   - build-bbl-destroy-docker-image
   - build-cats-concourse-task-docker-image
+- name: runtime-ci-common-images
+  jobs:
+  - build-bosh-cli-docker-image
 - name: build-docker-images
   jobs:
   - trigger-all-image-builds
@@ -491,6 +494,13 @@ resources:
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
     paths: [Dockerfile]
 
+- name: cf-deployment-dockerfiles-bosh-cli
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [dockerfiles/bosh-cli/Dockerfile]
+
 - name: cf-cli
   type: github-release
   source:
@@ -949,6 +959,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-cf-cli-json
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: bosh-cli-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -2101,3 +2118,21 @@ jobs:
         push: true
         build_args_file: cf-cli-version/version.json
     timeout: 4h
+- name: build-bosh-cli-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: cf-deployment-dockerfiles-bosh-cli
+        trigger: true
+    - put: bosh-cli-image
+      params:
+        build: cf-deployment-dockerfiles-bosh-cli/dockerfiles/bosh-cli/
+        push: true
