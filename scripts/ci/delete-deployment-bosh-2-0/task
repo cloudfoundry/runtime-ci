@@ -22,7 +22,7 @@ function setup_bosh_env_vars() {
 function bosh_delete_deployment() {
   bosh \
     -n \
-    delete-deployment -d ${DEPLOYMENT_NAME}
+    delete-deployment -d ${DEPLOYMENT_NAME} --force
 }
 
 function main() {
