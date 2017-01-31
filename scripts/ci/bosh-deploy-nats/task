@@ -1,0 +1,45 @@
+#!/bin/bash -exu
+
+function setup_bosh_env_vars() {
+  set +x
+  pushd "bbl-state/"
+    BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_CA_CERT
+    BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_ENVIRONMENT
+    BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT
+    BOSH_CLIENT_SECRET=$(bbl director-password)
+    export BOSH_CLIENT_SECRET
+  popd
+  set -x
+}
+
+function bosh_deploy() {
+  pushd nats-release
+    local deployment_name
+    deployment_name=$(bosh interpolate "example-manifests/nats.yml" --path=/name)
+    cat << EOF > create-nats-dev-release.yml
+---
+- type: replace
+  path: /releases/name=nats
+  value:
+    name: nats
+    version: create
+    url: file://.
+EOF
+
+    bosh \
+      -n \
+      -d "${deployment_name}" \
+      deploy example-manifests/nats.yml \
+      -o create-nats-dev-release.yml
+  popd
+}
+
+function main() {
+  setup_bosh_env_vars
+  bosh_deploy
+}
+
+main
