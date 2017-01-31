@@ -436,10 +436,15 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: ensure-api-healthy
-    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
-    params:
-      ENDPOINT: api.luna.cf-app.com
+  - aggregate:
+    - task: ensure-api-healthy
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+      params:
+        ENDPOINT: api.luna.cf-app.com
+    - task: ensure-tcp-router-healthy
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+      params:
+        ENDPOINT: 104.197.244.13:8080/health
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione]
