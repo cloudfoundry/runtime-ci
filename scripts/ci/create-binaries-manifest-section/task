@@ -12,7 +12,7 @@ function main() {
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 
   go get github.com/onsi/ginkgo/...
-  go get github.com/golang/dep
+  go get github.com/golang/dep/...
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section"
     dep ensure -update
