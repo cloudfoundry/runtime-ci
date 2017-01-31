@@ -3,6 +3,7 @@ groups:
 - name: nats-release
   jobs:
   - deploy-nats-standalone
+  - smoke-tests
 - name: infrastructure
   jobs:
   - setup-infrastructure
@@ -142,3 +143,24 @@ jobs:
     file: runtime-ci/scripts/ci/bosh-deploy-nats/task.yml
     input_mapping:
       bbl-state: myrtle-env-bbl-state
+
+- name: smoke-tests
+  public: true
+  serial_groups: [myrtle]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: nats-release
+      trigger: true
+      passed: [deploy-nats-standalone]
+    - get: runtime-ci
+    - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [deploy-nats-standalone]
+  - task: run-errand-smoke-tests
+    file: runtime-ci/tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
+    params:
+      DEPLOYMENT_NAME: nats
+      ERRAND_NAME: smoke-tests
