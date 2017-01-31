@@ -1,13 +1,24 @@
 ---
 groups:
+- name: nats-release
+  jobs:
+  - deploy-nats-standalone
 - name: infrastructure
   jobs:
   - setup-infrastructure
   - destroy-infrastructure
 
+
 resources:
+# Manifests and Releases
+- name: nats-release
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/nats-release.git
+
 # ENV
-- name: myrtle-env-director-state
+- name: myrtle-env-bbl-state
   type: git
   source:
     branch: master
@@ -55,6 +66,11 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v0.*
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 
 jobs:
 - name: setup-infrastructure
@@ -64,7 +80,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: myrtle-env-director-state
+    - get: myrtle-env-bbl-state
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -78,9 +94,9 @@ jobs:
       LB_DOMAIN: myrtle.cf-app.com
       BBL_ENV_NAME: myrtle-nats
     input_mapping:
-      bbl-state: myrtle-env-director-state
+      bbl-state: myrtle-env-bbl-state
     ensure:
-      put: myrtle-env-director-state
+      put: myrtle-env-bbl-state
       params:
         repository: updated-bbl-state
 
@@ -90,14 +106,28 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: myrtle-env-director-state
+    - get: myrtle-env-bbl-state
     - get: cf-deployment-concourse-tasks
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state: myrtle-env-director-state
+      bbl-state: myrtle-env-bbl-state
     ensure:
-      put: myrtle-env-director-state
+      put: myrtle-env-bbl-state
       params:
         repository: updated-bbl-state
         rebase: true
+
+- name: deploy-nats-standalone
+  serial_groups: [myrtle]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: myrtle-env-bbl-state
+    - get: nats-release
+    - get: runtime-ci
+  - task: deploy-nats
+    file: runtime-ci/scripts/ci/bosh-deploy-nats/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
