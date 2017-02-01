@@ -245,7 +245,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: nats-release
       trigger: true
-  - task: enable-docker-diego
+  - task: set-cats-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
       vars-store: myrtle-env-vars-store
