@@ -351,7 +351,7 @@ jobs:
     params:
       STATE_FILE: infrastructure/bosh/state.json
       VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml bosh-deployment/jumpbox-user.yml bosh-deployment/gcp/bosh-lite-vm-type.yml"
+      OPS_FILES: "bosh-deployment/bosh-lite-runc.yml bosh-deployment/jumpbox-user.yml bosh-deployment/gcp/bosh-lite-vm-type.yml"
       DIRECTOR_NAME: snitch
       GCP_PROJECTID: {{snitch_gcp_project}}
       GCP_CREDENTIALS: {{snitch_gcp_service_account_json}}
