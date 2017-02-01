@@ -6,6 +6,7 @@ groups:
   - smoke-tests
   - deploy-cf-with-created-nats
   - cf-acceptance-tests
+  - create-final-release
 - name: infrastructure
   jobs:
   - setup-infrastructure
@@ -18,6 +19,11 @@ resources:
   type: git
   source:
     branch: develop
+    uri: https://github.com/cloudfoundry/nats-release.git
+- name: nats-release-master
+  type: git
+  source:
+    branch: master
     uri: https://github.com/cloudfoundry/nats-release.git
 - name: cf-deployment
   type: git
@@ -257,3 +263,37 @@ jobs:
     file: cats-concourse-task/task.yml
     params:
       CONFIG_FILE_PATH: cats_integration_config.json
+
+- name: create-final-release
+  public: true
+  serial_groups: [myrtle]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: nats-release
+      passed: [ cf-acceptance-tests ]
+      trigger: true
+    - get: nats-release-master
+  - task: create-final-release
+    file: runtime-ci/scripts/ci/create-final-release/task.yml
+    input_mapping:
+      release-repo-master: nats-release-master
+      release-repo: nats-release
+    params:
+      RELEASE_NAME: nats
+      BLOBS_BUCKET_ACCESS_KEY_ID: {{nats_release_blobs_buckets_access_key_id}}
+      BLOBS_BUCKET_SECRET_KEY: {{nats_release_blobs_buckets_secrect_access_key}}
+  - put: nats-release-master
+    params:
+      repository: final-release-repo
+      tag: final-release-repo/version_number
+      tag_prefix: v
+  - task: merge-master-into-develop
+    file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+    input_mapping:
+      release-repo-master: nats-release-master
+      release-repo: nats-release
+  - put: nats-release
+    params:
+      repository: final-release-repo
