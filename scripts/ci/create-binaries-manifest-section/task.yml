@@ -30,6 +30,7 @@ inputs:
 - name: python-buildpack-release
 - name: ruby-buildpack-release
 - name: staticfile-buildpack-release
+- name: statsd-injector-release
 
 outputs:
 - name: deployment-manifest

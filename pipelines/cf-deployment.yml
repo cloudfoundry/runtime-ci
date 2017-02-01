@@ -227,6 +227,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/staticfile-buildpack-release
+- name: statsd-injector-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/statsd-injector-release
 - name: cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
@@ -964,6 +968,10 @@ jobs:
       params:
         tarball: false
     - get: staticfile-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: statsd-injector-release
       trigger: true
       params:
         tarball: false
