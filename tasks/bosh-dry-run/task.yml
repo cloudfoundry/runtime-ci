@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bosh/bosh-lite
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: sleep
+  args: ["60"]
