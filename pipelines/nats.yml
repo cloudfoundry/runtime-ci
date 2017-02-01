@@ -5,6 +5,7 @@ groups:
   - deploy-nats-standalone
   - smoke-tests
   - deploy-cf-with-created-nats
+  - cf-acceptance-tests
 - name: infrastructure
   jobs:
   - setup-infrastructure
@@ -23,6 +24,16 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-deployment.git
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
+- name: cats-concourse-task
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cats-concourse-task.git
 
 # Stemcell
 - name: stemcell
@@ -47,24 +58,15 @@ resources:
     uri: git@github.com:cloudfoundry/myrtle-env.git
     private_key: {{myrtle_env_git_deploy_key}}
     paths:
-    - vars-store.yml
-# - name: myrtle-env-integration-configs
-#   type: git
-#   source:
-#     branch: master
-#     uri: git@github.com:cloudfoundry/myrtle-env.git
-#     private_key: {{myrtle_env_git_deploy_key}}
-#     paths:
-#     - integration_config.json
-#     - rats_integration_config.json
-# - name: myrtle-env-vars-store
-#   type: git
-#   source:
-#     branch: master
-#     uri: git@github.com:cloudfoundry/myrtle-env.git
-#     private_key: {{myrtle_env_git_deploy_key}}
-#     paths:
-#     - deployment-vars.yml
+    - deployment-vars.yml
+- name: myrtle-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/myrtle-env.git
+    private_key: {{myrtle_env_git_deploy_key}}
+    paths:
+    - cats_integration_config.json
 
 # Control
 # - name: weekly
@@ -191,6 +193,7 @@ jobs:
       trigger: true
       passed: [smoke-tests]
     - get: myrtle-env-vars-store
+    - get: myrtle-env-integration-configs
     - get: nats-release
       trigger: true
       passed: [smoke-tests]
@@ -212,3 +215,45 @@ jobs:
       params:
         repository: updated-vars-store
         rebase: true
+  - task: update-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      vars-store: myrtle-env-vars-store
+      integration-configs: myrtle-env-integration-configs
+    ensure:
+      put: myrtle-env-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+
+- name: cf-acceptance-tests
+  serial_groups: [myrtle]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cats-concourse-task
+    - get: cf-acceptance-tests
+    - get: cf-deployment
+      passed: [ deploy-cf-with-created-nats ]
+    - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [ deploy-cf-with-created-nats ]
+    - get: myrtle-env-vars-store
+      passed: [ deploy-cf-with-created-nats ]
+    - get: myrtle-env-integration-configs
+    - get: nats-release
+      trigger: true
+    - get: runtime-ci
+  - task: enable-docker-diego
+    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+    input_mapping:
+      env-repo: myrtle-env-vars-store
+    params:
+      SYSTEM_DOMAIN: myrtle.cf-app.com
+  - task: run-cats
+    input_mapping:
+    - integration-config: myrtle-env-integration-configs
+    file: cats-concourse-task/task.yml
+    params:
+      CONFIG_FILE_PATH: cats_integration_config.json
