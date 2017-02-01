@@ -88,7 +88,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v0.*
+    #tag_filter: v0.*
 - name: runtime-ci
   type: git
   source:
@@ -242,13 +242,13 @@ jobs:
     - get: myrtle-env-vars-store
       passed: [ deploy-cf-with-created-nats ]
     - get: myrtle-env-integration-configs
+    - get: cf-deployment-concourse-tasks
     - get: nats-release
       trigger: true
-    - get: runtime-ci
   - task: enable-docker-diego
-    file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
-      env-repo: myrtle-env-vars-store
+      vars-store: myrtle-env-vars-store
     params:
       SYSTEM_DOMAIN: myrtle.cf-app.com
   - task: run-cats
