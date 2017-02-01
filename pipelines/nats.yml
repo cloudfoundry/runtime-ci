@@ -4,6 +4,7 @@ groups:
   jobs:
   - deploy-nats-standalone
   - smoke-tests
+  - deploy-cf-with-created-nats
 - name: infrastructure
   jobs:
   - setup-infrastructure
@@ -17,6 +18,11 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/nats-release.git
+- name: cf-deployment
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-deployment.git
 
 # Stemcell
 - name: stemcell
@@ -34,6 +40,14 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
+- name: myrtle-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/myrtle-env.git
+    private_key: {{myrtle_env_git_deploy_key}}
+    paths:
+    - vars-store.yml
 # - name: myrtle-env-integration-configs
 #   type: git
 #   source:
@@ -164,3 +178,37 @@ jobs:
     params:
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
+
+- name: deploy-cf-with-created-nats
+  serial_groups: [myrtle]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+    - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [smoke-tests]
+    - get: myrtle-env-vars-store
+    - get: nats-release
+      trigger: true
+      passed: [smoke-tests]
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
+  - task: deploy-cf-with-created-nats
+    file: cf-deployment-concourse-tasks/bosh-deploy-with-created-release/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
+      release: nats-release
+      ops-files: cf-deployment
+      vars-store: myrtle-env-vars-store
+    params:
+      SYSTEM_DOMAIN: myrtle.cf-app.com
+    ensure:
+      put: myrtle-env-vars-store
+      params:
+        repository: updated-vars-store
+        rebase: true
