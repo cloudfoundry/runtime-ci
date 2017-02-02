@@ -1,0 +1,44 @@
+#!/bin/bash -exu
+
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state
+    BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_CA_CERT
+    BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_ENVIRONMENT
+    BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT
+    BOSH_CLIENT_SECRET=$(bbl director-password)
+    export BOSH_CLIENT_SECRET
+  popd
+  set -x
+}
+
+function create_latest_stemcell_opsfile() {
+  cat << EOF > latest_stemcell.yml
+---
+- type: replace
+  path: /name
+  value: cf-dry-run
+
+- type: replace
+  path: /stemcells/alias=default/version
+  value: latest
+EOF
+}
+
+function main() {
+  setup_bosh_env_vars
+  create_latest_stemcell_opsfile
+
+  bosh \
+    -n \
+    -d cf-dry-run \
+    deploy cf-deployment/cf-deployment.yml \
+    --dry-run \
+    -o latest_stemcell.yml \
+    -o cf-deployment/operations/gcp.yml
+}
+
+main
