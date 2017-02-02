@@ -7,12 +7,12 @@ groups:
   - delete-nats-standalone
   - deploy-cf-with-created-nats
   - cf-acceptance-tests
+  - delete-cf-deployment
   - create-final-release
 - name: infrastructure
   jobs:
   - setup-infrastructure
   - destroy-infrastructure
-
 
 resources:
 # Manifests and Releases
@@ -287,6 +287,26 @@ jobs:
     file: cats-concourse-task/task.yml
     params:
       CONFIG_FILE_PATH: cats_integration_config.json
+
+- name: delete-cf-deployment
+  public: true
+  serial_groups: [myrtle]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [cf-acceptance-tests]
+    - get: nats-release
+      trigger: true
+      passed: [cf-acceptance-tests]
+  - task: delete-cf-deployment
+    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
+    params:
+      DEPLOYMENT_NAME: cf
 
 - name: create-final-release
   public: true
