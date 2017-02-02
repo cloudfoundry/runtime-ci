@@ -2,7 +2,7 @@
 
 set -u
 
-EXCEPTION_TASKS=("scripts/ci/create-final-release-bucket/task.yml" "scripts/ci/run-errand-bbl-bosh-2-0/task.yml")
+EXCEPTION_TASKS=""
 
 pushd runtime-ci >> /dev/null
   FAIL=false
