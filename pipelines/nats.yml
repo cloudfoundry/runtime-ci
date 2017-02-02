@@ -78,18 +78,14 @@ resources:
     - cats_integration_config.json
 
 # Control
-# - name: weekly
-#   type: time
-#   source:
-#     start: 3:00 -0700
-#     stop: 3:30 -0700
-#     interval: 168h
-# - name: daily
-#   type: time
-#   source:
-#     start: 3:00 -0700
-#     stop: 3:30 -0700
-#     interval: 24h
+- name: weekly
+  type: time
+  source:
+    interval: 168h
+    location: US/Pacific
+    start: 9:00 AM
+    stop: 10:00 AM
+    days: [Tuesday]
 
 # Concourse Tasks
 - name: cf-deployment-concourse-tasks
@@ -131,6 +127,7 @@ jobs:
       put: myrtle-env-bbl-state
       params:
         repository: updated-bbl-state
+        rebase: true
 
 - name: destroy-infrastructure
   serial_groups: [myrtle]
@@ -164,6 +161,8 @@ jobs:
     - get: nats-release
       trigger: true
     - get: runtime-ci
+    - get: weekly
+      trigger: true
   - task: deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy-nats/task.yml
     input_mapping:
@@ -180,6 +179,9 @@ jobs:
       passed: [deploy-nats-standalone]
     - get: runtime-ci
     - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [deploy-nats-standalone]
+    - get: weekly
       trigger: true
       passed: [deploy-nats-standalone]
   - task: run-errand-smoke-tests
@@ -203,6 +205,9 @@ jobs:
     - get: nats-release
       trigger: true
       passed: [smoke-tests]
+    - get: weekly
+      trigger: true
+      passed: [smoke-tests]
   - task: delete-nats-standalone
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     input_mapping:
@@ -224,6 +229,9 @@ jobs:
     - get: myrtle-env-vars-store
     - get: myrtle-env-integration-configs
     - get: nats-release
+      trigger: true
+      passed: [smoke-tests]
+    - get: weekly
       trigger: true
       passed: [smoke-tests]
   - task: upload-stemcell
@@ -264,17 +272,20 @@ jobs:
     - get: cats-concourse-task
     - get: cf-acceptance-tests
     - get: cf-deployment
-      passed: [ deploy-cf-with-created-nats ]
+      passed: [deploy-cf-with-created-nats]
     - get: myrtle-env-bbl-state
       trigger: true
-      passed: [ deploy-cf-with-created-nats ]
+      passed: [deploy-cf-with-created-nats]
     - get: myrtle-env-vars-store
-      passed: [ deploy-cf-with-created-nats ]
+      passed: [deploy-cf-with-created-nats]
     - get: myrtle-env-integration-configs
     - get: cf-deployment-concourse-tasks
     - get: nats-release
-      passed: [ deploy-cf-with-created-nats ]
+      passed: [deploy-cf-with-created-nats]
       trigger: true
+    - get: weekly
+      trigger: true
+      passed: [deploy-cf-with-created-nats]
   - task: set-cats-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
@@ -301,6 +312,9 @@ jobs:
     - get: nats-release
       trigger: true
       passed: [cf-acceptance-tests]
+    - get: weekly
+      trigger: true
+      passed: [cf-acceptance-tests]
   - task: delete-cf-deployment
     file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
     input_mapping:
@@ -316,7 +330,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: nats-release
-      passed: [ cf-acceptance-tests ]
+      passed: [cf-acceptance-tests]
       trigger: true
     - get: nats-release-master
   - task: create-final-release
