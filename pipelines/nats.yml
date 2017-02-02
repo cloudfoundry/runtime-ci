@@ -4,6 +4,7 @@ groups:
   jobs:
   - deploy-nats-standalone
   - smoke-tests
+  - delete-nats-standalone
   - deploy-cf-with-created-nats
   - cf-acceptance-tests
   - create-final-release
@@ -188,6 +189,26 @@ jobs:
     params:
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
+
+- name: delete-nats-standalone
+  public: true
+  serial_groups: [myrtle]
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: myrtle-env-bbl-state
+      trigger: true
+      passed: [smoke-tests]
+    - get: nats-release
+      trigger: true
+      passed: [smoke-tests]
+  - task: delete-nats-standalone
+    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
+    params:
+      DEPLOYMENT_NAME: nats
 
 - name: deploy-cf-with-created-nats
   serial_groups: [myrtle]
