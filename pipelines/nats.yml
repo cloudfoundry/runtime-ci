@@ -19,12 +19,14 @@ resources:
   type: git
   source:
     branch: develop
-    uri: https://github.com/cloudfoundry/nats-release.git
+    private_key: {{nats_release_read_write_deploy_key}}
+    uri: git@github.com:cloudfoundry/nats-release.git
 - name: nats-release-master
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/nats-release.git
+    private_key: {{nats_release_read_write_deploy_key}}
+    uri: git@github.com:cloudfoundry/nats-release.git
 - name: cf-deployment
   type: git
   source:
