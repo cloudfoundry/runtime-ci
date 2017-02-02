@@ -4,11 +4,11 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: bosh/bosh-lite
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
+- name: bbl-state
 - name: runtime-ci
 
 run:
-  path: sleep
-  args: ["60"]
+  path: runtime-ci/tasks/bosh-dry-run/task
