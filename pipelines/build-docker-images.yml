@@ -1,14 +1,10 @@
 groups:
 - name: cf-deployment-concourse-tasks
   jobs:
-  - build-bosh-deploy-docker-image
-  - build-bosh-deploy-with-created-release-docker-image
-  - build-update-integration-configs-docker-image
-  - build-bosh-upload-stemcell-from-cf-deployment-docker-image
-  - build-bbl-up-docker-image
-  - build-bbl-destroy-docker-image
+  - build-cf-deployment-concourse-tasks-docker-image
+- name: cats-concourse-task
+  jobs:
   - build-cats-concourse-task-docker-image
-  - build-set-feature-flags-docker-image
 - name: runtime-ci-common-images
   jobs:
   - build-bosh-cli-docker-image
@@ -202,30 +198,18 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     paths: [bosh-deploy/Dockerfile]
-- name: cf-deployment-concourse-tasks-update-integration-configs
+- name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [update-integration-configs/Dockerfile]
-- name: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bosh-deploy-with-created-release/Dockerfile]
+    paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
 - name: runtime-ci-bosh-create-env
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bosh-create-env/Dockerfile]
-- name: cf-deployment-concourse-tasks-bosh-upload-stemcell-from-cf-deployment
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bosh-upload-stemcell-from-cf-deployment/Dockerfile]
 - name: runtime-ci-bosh-upload-stemcell
   type: git
   source:
@@ -310,12 +294,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/deprovision-bosh-lite/Dockerfile]
-- name: cf-deployment-concourse-tasks-set-feature-flags
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [set-feature-flags/Dockerfile]
 - name: runtime-ci-enable-docker-diego-1-0
   type: git
   source:
@@ -394,18 +372,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/validate-branch-freshness/Dockerfile]
-- name: cf-deployment-concourse-tasks-bbl-up
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bbl-up/Dockerfile]
-- name: cf-deployment-concourse-tasks-bbl-destroy
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bbl-destroy/Dockerfile]
 - name: runtime-ci-bind-elb-to-r53
   type: git
   source:
@@ -614,17 +580,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-deploy-with-created-release-pipeline-image
+- name: cf-deployment-concourse-tasks-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/bosh-deploy-with-created-release
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: update-integration-configs-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/update-integration-configs
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -635,13 +594,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-upload-stemcell-from-cf-deployment-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-upload-stemcell-from-cf-deployment
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-stemcell-integration+dockerhub-push-bot@pivotal.io
 - name: bosh-upload-stemcell-pipeline-image
   type: docker-image
   source:
@@ -740,13 +692,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: set-feature-flags-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/set-feature-flags
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: enable-docker-diego-1-0-pipeline-image
   type: docker-image
   source:
@@ -835,20 +780,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/validate-branch-freshness
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bbl-up-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bbl-up
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bbl-destroy-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bbl-destroy
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1064,24 +995,6 @@ jobs:
       params:
         build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
         push: true
-- name: build-bosh-deploy-with-created-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bosh-deploy-with-created-release
-        trigger: true
-    - put: bosh-deploy-with-created-release-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bosh-deploy-with-created-release/bosh-deploy-with-created-release
-        push: true
 - name: build-bosh-create-env-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1100,7 +1013,7 @@ jobs:
       params:
         build: runtime-ci-bosh-create-env/scripts/ci/bosh-create-env
         push: true
-- name: build-update-integration-configs-docker-image
+- name: build-cf-deployment-concourse-tasks-docker-image
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1112,11 +1025,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-update-integration-configs
+      - get: cf-deployment-concourse-tasks
         trigger: true
-    - put: update-integration-configs-pipeline-image
+    - put: cf-deployment-concourse-tasks-pipeline-image
       params:
-        build: cf-deployment-concourse-tasks-update-integration-configs/update-integration-configs
+        build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
         push: true
 - name: build-bosh-deploy-docker-image
   public: true
@@ -1135,24 +1048,6 @@ jobs:
     - put: bosh-deploy-pipeline-image
       params:
         build: cf-deployment-concourse-tasks-bosh-deploy/bosh-deploy
-        push: true
-- name: build-bosh-upload-stemcell-from-cf-deployment-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bosh-upload-stemcell-from-cf-deployment
-        trigger: true
-    - put: bosh-upload-stemcell-from-cf-deployment-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bosh-upload-stemcell-from-cf-deployment/bosh-upload-stemcell-from-cf-deployment
         push: true
 - name: build-bosh-upload-stemcell-docker-image
   public: true
@@ -1568,24 +1463,6 @@ jobs:
       params:
         build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
         push: true
-- name: build-set-feature-flags-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-set-feature-flags
-        trigger: true
-    - put: set-feature-flags-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-set-feature-flags/set-feature-flags
-        push: true
 - name: build-enable-docker-diego-1-0-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1823,42 +1700,6 @@ jobs:
     - put: validate-branch-freshness-pipeline-image
       params:
         build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
-        push: true
-- name: build-bbl-up-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bbl-up
-        trigger: true
-    - put: bbl-up-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bbl-up/bbl-up
-        push: true
-- name: build-bbl-destroy-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bbl-destroy
-        trigger: true
-    - put: bbl-destroy-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bbl-destroy/bbl-destroy
         push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
