@@ -25,7 +25,7 @@ pushd "${DIEGO_RELEASE_DIR}"
     -i "${IAAS_SETTINGS_FULL_PATH}" \
     -p "${PROPERTY_OVERRIDES_PATH}" \
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
-    $([ "${NETMAN_OVERRIDES_PATH}" != "" ] && echo "-N ${root_dir}/config/${NETMAN_OVERRIDES_PATH}") \
+    $([ "${CF_NETWORKING_OVERRIDES_PATH}" != "" ] && echo "-N ${root_dir}/config/${CF_NETWORKING_OVERRIDES_PATH}") \
     -v "${RELEASE_VERSIONS_PATH}" \
     -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \

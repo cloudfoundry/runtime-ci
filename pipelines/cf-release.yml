@@ -233,10 +233,10 @@ resources:
   source:
     repository: cloudfoundry/garden-runc-release
 
-- name: netman-release-tarball
+- name: cf-networking-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/netman-release
+    repository: cloudfoundry-incubator/cf-networking-release
 
 - name: cflinuxfs2-rootfs-release-tarball
   type: bosh-io-release
@@ -1275,7 +1275,7 @@ jobs:
       - get: garden-runc-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
-      - get: netman-release-tarball
+      - get: cf-networking-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
       - get: cflinuxfs2-rootfs-release-tarball
@@ -1294,7 +1294,7 @@ jobs:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
-        - netman-release-tarball/*.tgz
+        - cf-networking-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
       - task: write-target-file-bosh-director
@@ -1372,7 +1372,7 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
-      - get: netman-release-tarball
+      - get: cf-networking-release-tarball
         trigger: true
         passed: [ deploy-aws ]
         params:
@@ -1420,7 +1420,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: netman-release-tarball
+    - get: cf-networking-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1457,7 +1457,7 @@ jobs:
       PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
       INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
       RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
-      NETMAN_OVERRIDES_PATH: stubs/diego/netman.yml
+      CF_NETWORKING_OVERRIDES_PATH: stubs/diego/cf-networking.yml
       USE_ETCD: false
       USE_MYSQL: true
       DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-standalone-stubs/diego-property-overrides.yml
@@ -1681,7 +1681,7 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
-      - get: netman-release-tarball
+      - get: cf-networking-release-tarball
         trigger: true
         passed: [ aws-smoke-tests ]
         params:
@@ -1789,7 +1789,7 @@ jobs:
         - vsphere-acceptance-tests
         params:
           tarball: false
-      - get: netman-release-tarball
+      - get: cf-networking-release-tarball
         trigger: true
         passed:
         - aws-acceptance-tests

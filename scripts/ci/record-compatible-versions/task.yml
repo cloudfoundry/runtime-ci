@@ -15,7 +15,7 @@ inputs:
   - name: diego-release-tarball
   - name: garden-runc-release-tarball
   - name: cflinuxfs2-rootfs-release-tarball
-  - name: netman-release-tarball
+  - name: cf-networking-release-tarball
   - name: diego-cf-compatibility
   - name: aws-director-version
   - name: bosh-lite-director-version
