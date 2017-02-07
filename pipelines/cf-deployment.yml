@@ -333,6 +333,7 @@ jobs:
       put: luna-env-director-state
       params:
         repository: updated-bbl-state
+        rebase: true
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
