@@ -62,14 +62,14 @@ Does this cf-release SHA look good for the Loggregator team? Do the a1 logging m
 - **Comments**:
 
 ----
-@SocalNick, @utako:
+@zrob, @gerg:
 Does this cf-release SHA look good for the CAPI team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
 - **Comments**:
 
 ----
-@sclevine, @RochesterinNYC:
+@sclevine, @dgodd:
 Does this cf-release SHA look good for the Buildpacks and Stacks team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
