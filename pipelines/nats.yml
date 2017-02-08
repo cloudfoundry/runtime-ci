@@ -93,7 +93,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v0.*
+    tag_filter: v1.*
 - name: runtime-ci
   type: git
   source:
