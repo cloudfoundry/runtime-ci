@@ -28,10 +28,10 @@ resources:
     branch: master
     private_key: {{nats_release_read_write_deploy_key}}
     uri: git@github.com:cloudfoundry/nats-release.git
-- name: cf-deployment
+- name: cf-deployment-master
   type: git
   source:
-    branch: develop
+    branch: master
     uri: https://github.com/cloudfoundry/cf-deployment.git
 - name: cf-acceptance-tests
   type: git
@@ -222,7 +222,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: cf-deployment
+    - get: cf-deployment-master
     - get: myrtle-env-bbl-state
       trigger: true
       passed: [smoke-tests]
@@ -238,12 +238,14 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: myrtle-env-bbl-state
+      cf-deployment: cf-deployment-master
   - task: deploy-cf-with-created-nats
     file: cf-deployment-concourse-tasks/bosh-deploy-with-created-release/task.yml
     input_mapping:
       bbl-state: myrtle-env-bbl-state
+      cf-deployment: cf-deployment-master
       release: nats-release
-      ops-files: cf-deployment
+      ops-files: cf-deployment-master
       vars-store: myrtle-env-vars-store
     params:
       SYSTEM_DOMAIN: myrtle.cf-app.com
@@ -271,7 +273,7 @@ jobs:
   - aggregate:
     - get: cats-concourse-task
     - get: cf-acceptance-tests
-    - get: cf-deployment
+    - get: cf-deployment-master
       passed: [deploy-cf-with-created-nats]
     - get: myrtle-env-bbl-state
       trigger: true
