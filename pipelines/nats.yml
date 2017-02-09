@@ -199,6 +199,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: myrtle-env-bbl-state
       trigger: true
       passed: [smoke-tests]
@@ -209,7 +210,7 @@ jobs:
       trigger: true
       passed: [smoke-tests]
   - task: delete-nats-standalone
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: myrtle-env-bbl-state
     params:
@@ -308,6 +309,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: myrtle-env-bbl-state
       trigger: true
       passed: [cf-acceptance-tests]
@@ -318,11 +320,9 @@ jobs:
       trigger: true
       passed: [cf-acceptance-tests]
   - task: delete-cf-deployment
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: myrtle-env-bbl-state
-    params:
-      DEPLOYMENT_NAME: cf
 
 - name: create-final-release
   public: true
