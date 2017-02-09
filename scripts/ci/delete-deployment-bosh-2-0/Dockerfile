@@ -1,1 +1,0 @@
-FROM relintdockerhubpushbot/bosh-cli
