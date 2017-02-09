@@ -1,0 +1,39 @@
+---
+groups:
+- name: cf-smoke-tests-release
+  jobs:
+  - create-final-release
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: cf-smoke-tests-release
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-smoke-tests-release.git
+    private_key: {{cf_smoke_tests_readwrite_deploy_key}}
+    paths:
+    - src
+
+jobs:
+- name: create-final-release
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-smoke-tests-release
+      trigger: true
+  - task: create-final-release
+    file: runtime-ci/tasks/create-final-release/task.yml
+    input_mapping:
+      release-repo: cf-smoke-tests-release
+    params:
+      BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
+      BLOBS_BUCKET_SECRET_KEY: {{cf_release_blobs_buckets_secrect_access_key}}
+  - put: cf-smoke-tests-release
+    params:
+      repository: final-release-repo

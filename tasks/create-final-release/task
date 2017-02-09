@@ -1,0 +1,50 @@
+#!/bin/bash
+set -exu
+
+root_dir="${PWD}"
+
+function setup_aws_access() {
+  set +x
+  BLOBS_BUCKET_ACCESS_KEY_ID="${BLOBS_BUCKET_ACCESS_KEY_ID:?"\$BLOBS_BUCKET_ACCESS_KEY_ID not set"}"
+  BLOBS_BUCKET_SECRET_KEY="${BLOBS_BUCKET_SECRET_KEY:?"\$BLOBS_BUCKET_SECRET_KEY not set"}"
+  set -x
+}
+
+function write_config_private() {
+  set +x
+cat > "release-repo/config/private.yml" <<EOF
+---
+blobstore:
+  provider: s3
+  options:
+    access_key_id: ${BLOBS_BUCKET_SECRET_KEY}
+    secret_access_key: ${BLOBS_BUCKET_ACCESS_KEY_ID}
+EOF
+  set -x
+}
+
+function create_release() {
+  pushd release-repo > /dev/null
+    git config user.name "CF MEGA BOT"
+    git config user.email "cf-mega@pivotal.io"
+
+    bosh -n create-release --final
+
+    new_release_version=$(find releases -regex ".*${RELEASE_NAME}-[0-9]*.yml" | egrep -o "${RELEASE_NAME}-[0-9]+" | egrep -o "[0-9]+" | sort -n | tail -n 1)
+
+    git add .final_builds releases
+    git commit -m "Final release ${new_release_version}"
+  popd > /dev/null
+}
+
+function main() {
+  setup_aws_access
+
+  write_config_private
+
+  create_release
+
+  git clone release-repo final-release-repo
+}
+
+main
