@@ -442,7 +442,7 @@ jobs:
   - task: ensure-tcp-router-healthy
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
     params:
-      ENDPOINT: tcp.luna.cf-app.com:80/health
+      ENDPOINT: tcp.luna.cf-app.com:8080/health
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione]
