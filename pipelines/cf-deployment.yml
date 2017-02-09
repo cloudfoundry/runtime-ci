@@ -399,9 +399,7 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-    params:
-      DEPLOYMENT_NAME: cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: bosh-upload-stemcell-fresh
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -527,9 +525,7 @@ jobs:
     - task: guarantee-no-existing-cf-deployment
       input_mapping:
         bbl-state: snitch-env-director-state
-      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-      params:
-        DEPLOYMENT_NAME: cf
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -758,12 +754,11 @@ jobs:
         passed:
         - acceptance-tests-fresh
         - routing-acceptance-tests-fresh
+      - get: cf-deployment-concourse-tasks
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
-      file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-      params:
-        DEPLOYMENT_NAME: cf
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
 
 - name: destroy-infrastructure-upgrade
   serial_groups: [hermione]
@@ -777,9 +772,7 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: hermione-env-director-state
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-    params:
-      DEPLOYMENT_NAME: cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
@@ -809,9 +802,7 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
-    file: runtime-ci/scripts/ci/delete-deployment-bosh-2-0/task.yml
-    params:
-      DEPLOYMENT_NAME: cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
