@@ -17,8 +17,8 @@ cat > "release-repo/config/private.yml" <<EOF
 blobstore:
   provider: s3
   options:
-    access_key_id: ${BLOBS_BUCKET_SECRET_KEY}
-    secret_access_key: ${BLOBS_BUCKET_ACCESS_KEY_ID}
+    access_key_id: ${BLOBS_BUCKET_ACCESS_KEY_ID}
+    secret_access_key: ${BLOBS_BUCKET_SECRET_KEY}
 EOF
   set -x
 }
