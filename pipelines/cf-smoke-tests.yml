@@ -16,8 +16,9 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/cf-smoke-tests-release.git
     private_key: {{cf_smoke_tests_readwrite_deploy_key}}
-    paths:
-    - src
+    ignore_paths:
+    - releases/**
+    - .final_builds/**
 
 jobs:
 - name: create-final-release
@@ -37,3 +38,4 @@ jobs:
   - put: cf-smoke-tests-release
     params:
       repository: final-release-repo
+      rebase: true

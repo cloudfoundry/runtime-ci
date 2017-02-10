@@ -16,9 +16,9 @@ RUN \
 
 # bosh-cli
 RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.147-linux-amd64 --output-document="/usr/bin/bosh" && \
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.159-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "533342d7663c3e5dc731769e157608c74dd9eccb bosh" | sha1sum -c - && \
+  echo "bc8797a73e76ecb4cc684b32f410667d40560a7a bosh" | sha1sum -c - && \
   chmod +x bosh
 
 # bbl and dependencies
