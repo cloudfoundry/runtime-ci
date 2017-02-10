@@ -30,10 +30,9 @@ function create_release() {
 
     bosh -n create-release --final
 
-    new_release_version=$(find releases -regex ".*${RELEASE_NAME}-[0-9]*.yml" | egrep -o "${RELEASE_NAME}-[0-9]+" | egrep -o "[0-9]+" | sort -n | tail -n 1)
-
     git add .final_builds releases
-    git commit -m "Final release ${new_release_version}"
+
+    git commit -m "Final release."
   popd > /dev/null
 }
 
