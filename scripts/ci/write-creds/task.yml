@@ -10,14 +10,14 @@ inputs:
 - name: runtime-ci
 
 outputs:
-- name: bbl-state
+- name: username
+- name: password
 
 run:
   path: runtime-ci/scripts/ci/write-creds/task
 
 params:
-  BBL_STATE_DIR:
-  DIRECTOR_ADDRESS:
-  DIRECTOR_USERNAME:
-  DIRECTOR_PASSWORD:
-  DIRECTOR_CA_CERT:
+  USERNAME:
+  USERNAME_FILE: username
+  PASSWORD:
+  PASSWORD_FILE: password
