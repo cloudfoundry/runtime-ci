@@ -2,9 +2,16 @@
 
 set -eu
 
-echo "${USERNAME//\"}"  > "username/$USERNAME_FILE"
+mkdir -p bbl-state/${BBL_STATE_DIR}
 
 set +x
-echo "${PASSWORD//\"}"  > "password/$PASSWORD_FILE"
-
-echo 'echo "REDACTED"  > "password/$PASSWORD_FILE"'
+cat <<JSON > bbl-state/${BBL_STATE_DIR}/bbl-state.json
+{
+  "bosh": {
+    "directorUsername": "${DIRECTOR_USERNAME}",
+    "directorPassword": "${DIRECTOR_PASSWORD}",
+    "directorSSLCA": "${DIRECTOR_CA_CERT}",
+    "directorAddress": "${DIRECTOR_ADDRESS}"
+  }
+}
+JSON
