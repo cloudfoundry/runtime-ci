@@ -23,6 +23,7 @@ resources:
 jobs:
 - name: create-final-release
   build_logs_to_retain: 100
+  public: true
   plan:
   - aggregate:
     - get: runtime-ci
