@@ -13,7 +13,7 @@ inputs:
 - name: password
 
 run:
-  path: runtime-ci/scripts/ci/run-bosh-cleanup/task
+  path: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task
 
 params:
   TARGET_FILE_PATH: target
