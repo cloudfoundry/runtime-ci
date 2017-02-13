@@ -458,7 +458,7 @@ jobs:
               password: runtime-ci-password
         - task: run-bosh-cleanup-runtime-ci
           privileged: true
-          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          file: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task.yml
           input_mapping:
             target: runtime-ci-target-file
             username: runtime-ci-username
@@ -483,7 +483,7 @@ jobs:
               password: vsphere-password
         - task: run-bosh-cleanup-vsphere
           privileged: true
-          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          file: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task.yml
           tags: [vsphere]
           input_mapping:
             target: vsphere-target-file
@@ -507,7 +507,7 @@ jobs:
               password: minimal-password
         - task: run-bosh-cleanup-minimal
           privileged: true
-          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          file: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task.yml
           input_mapping:
             target: minimal-target-file
             username: minimal-username
@@ -530,7 +530,7 @@ jobs:
               password: a1-password
         - task: run-bosh-cleanup-a1
           privileged: true
-          file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+          file: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task.yml
           input_mapping:
             target: a1-target-file
             username: a1-username

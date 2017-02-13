@@ -29,6 +29,7 @@ groups:
   - build-record-compatible-versions-docker-image
   - build-request-pm-input-docker-image
   - build-run-bosh-cleanup-docker-image
+  - build-run-bosh-cleanup-1.0-docker-image
   - build-run-rats-docker-image
   - build-run-cf-release-unit-tests-docker-image
   - build-run-errand-docker-image
@@ -329,6 +330,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-bosh-cleanup/Dockerfile]
+- name: runtime-ci-run-bosh-cleanup-1.0
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/run-bosh-cleanup-1.0/Dockerfile]
 - name: runtime-ci-run-rats
   type: git
   source:
@@ -724,6 +731,13 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-bosh-cleanup
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: run-bosh-cleanup-1.0-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/run-bosh-cleanup-1.0
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1556,6 +1570,24 @@ jobs:
     - put: run-bosh-cleanup-pipeline-image
       params:
         build: runtime-ci-run-bosh-cleanup/scripts/ci/run-bosh-cleanup
+        push: true
+- name: build-run-bosh-cleanup-1.0-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly-1
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-run-bosh-cleanup-1.0
+        trigger: true
+    - put: run-bosh-cleanup-1.0-pipeline-image
+      params:
+        build: runtime-ci-run-bosh-cleanup-1.0/scripts/ci/run-bosh-cleanup-1.0
         push: true
 
 - name: build-run-rats-docker-image
