@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: bbl-state
 - name: cf-deployment
+- name: ops-files
 - name: runtime-ci
 
 run:

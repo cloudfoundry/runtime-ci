@@ -42,7 +42,7 @@ function main() {
     --var-errs-unused \
     -v system_domain="greengrass.cf-app.com" \
     -o latest_stemcell.yml \
-    -o cf-deployment/operations/gcp.yml > /dev/null
+    -o ops-files/operations/gcp.yml > /dev/null
 
   bosh \
     -n \
@@ -52,7 +52,7 @@ function main() {
     --vars-store="${vars_store}" \
     -v system_domain="greengrass.cf-app.com" \
     -o latest_stemcell.yml \
-    -o cf-deployment/operations/gcp.yml
+    -o ops-files/operations/gcp.yml
 }
 
 main

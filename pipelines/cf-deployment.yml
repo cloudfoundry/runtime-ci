@@ -986,6 +986,7 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
+      ops-files: cf-deployment-develop
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
