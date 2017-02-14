@@ -74,6 +74,15 @@ resources:
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
     - deployment-vars.yml
+- name: greengrass-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/greengrass-env.git
+    private_key: {{greengrass_env_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
 - name: weekly
   type: time
   source:
@@ -878,6 +887,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: hermione-env-director-state
+    - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: stemcell
       trigger: true
@@ -971,6 +981,10 @@ jobs:
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
     input_mapping:
       deployment-configuration: cf-deployment-develop
+  - task: bosh-dry-run
+    file: runtime-ci/scripts/ci/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
