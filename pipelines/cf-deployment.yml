@@ -985,7 +985,7 @@ jobs:
     file: runtime-ci/tasks/bosh-dry-run/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
+      cf-deployment: deployment-manifest
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
