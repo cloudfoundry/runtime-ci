@@ -587,6 +587,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: hermione-env-director-state
         trigger: true
@@ -624,6 +625,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
         trigger: true
@@ -663,6 +665,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
         trigger: true
