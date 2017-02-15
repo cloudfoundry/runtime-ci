@@ -605,12 +605,11 @@ jobs:
       params:
         TARGET: api.hermione.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-vars-store
     - task: run-cats
       input_mapping:
       - integration-config: hermione-env-integration-configs
@@ -643,10 +642,9 @@ jobs:
       params:
         TARGET: api.luna.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: luna-env-vars-store
+        vars-store: luna-env-vars-store
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
@@ -683,10 +681,9 @@ jobs:
       params:
         TARGET: api.snitch.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: snitch-env-vars-store
+        vars-store: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
@@ -722,12 +719,11 @@ jobs:
       params:
         TARGET: api.luna.cf-app.com
     - task: enable-docker-diego
-      file: runtime-ci/scripts/ci/enable-docker-diego/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: luna-env-vars-store
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        env-repo: luna-env-vars-store
     - task: run-rats
       input_mapping:
       - routing-release: routing-acceptance-tests

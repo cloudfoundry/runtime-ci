@@ -16,3 +16,5 @@ cf feature-flags
 
 echo "Enabling diego feature flag"
 cf enable-feature-flag diego_docker || true
+echo "Enabling task_creation feature flag"
+cf enable-feature-flag task_creation || true
