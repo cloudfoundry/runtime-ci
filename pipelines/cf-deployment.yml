@@ -448,10 +448,6 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: ensure-tcp-router-healthy
-    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
-    params:
-      ENDPOINT: tcp.luna.cf-app.com:8080/health
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione]
@@ -690,6 +686,7 @@ jobs:
     do:
     - aggregate:
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: routing-acceptance-tests
       - get: luna-env-director-state
         trigger: true
@@ -702,11 +699,11 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ deploy-releases-fresh ]
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
+    - task: ensure-tcp-router-healthy
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
       params:
-        TARGET: api.luna.cf-app.com
-    - task: enable-docker-diego
+        ENDPOINT: tcp.luna.cf-app.com:8080/health
+    - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: luna-env-vars-store
