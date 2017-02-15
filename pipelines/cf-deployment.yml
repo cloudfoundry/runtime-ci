@@ -586,7 +586,6 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: hermione-env-director-state
@@ -601,11 +600,7 @@ jobs:
         trigger: true
         passed: [ deploy-releases-upgrade ]
       - get: cats-concourse-task
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.hermione.cf-app.com
-    - task: enable-docker-diego
+    - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: hermione-env-vars-store
@@ -624,7 +619,6 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
@@ -639,11 +633,7 @@ jobs:
       - get: luna-env-integration-configs
         trigger: true
       - get: cats-concourse-task
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.luna.cf-app.com
-    - task: enable-docker-diego
+    - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: luna-env-vars-store
@@ -664,7 +654,6 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
@@ -679,11 +668,7 @@ jobs:
       - get: snitch-env-integration-configs
         trigger: true
       - get: cats-concourse-task
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.snitch.cf-app.com
-    - task: enable-docker-diego
+    - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: snitch-env-vars-store
