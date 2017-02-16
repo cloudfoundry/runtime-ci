@@ -6,8 +6,9 @@ RUN \
     build-essential \
     wget
 
+# bosh-cli
 RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.124-linux-amd64 --output-document="/usr/bin/bosh" && \
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.3-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "5065d3c8291abab1ffef1bac6de6cea8d514e319 bosh" | sha1sum -c - && \
+  echo "845b7a4e86208d492c55183a71961836f50f5c94 bosh" | sha1sum -c - && \
   chmod +x bosh
