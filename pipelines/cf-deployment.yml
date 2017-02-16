@@ -140,6 +140,12 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: cf-deployment-release-candidate
+  type: git
+  source:
+    branch: release-candidate
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{cf_deployment_private_key}}
 - name: routing-acceptance-tests
   type: git
   source:
@@ -856,9 +862,12 @@ jobs:
           - routing-acceptance-tests-fresh
           - acceptance-tests-lite
         - get: cf-deployment-master
-    - put: cf-deployment-master
+    - put: cf-deployment-release-candidate
       params:
         repository: cf-deployment-develop
+    - put: cf-deployment-master
+      params:
+        repository: cf-deployment-release-candidate
 
 - name: update-releases
   serial: true
