@@ -83,6 +83,7 @@ properties:
     include_route_services: true
     include_security_groups: true
     include_services: true
+    include_tasks: true
     include_v3: false
     include_sso: true
     include_privileged_container_support: true
