@@ -879,6 +879,7 @@ jobs:
         trigger: true
         passed: [ generate-minimal-manifest ]
       - get: aws-stemcell
+        passed: [ generate-minimal-manifest ]
         trigger: true
       - get: cf-release-tarball
         passed: [ generate-minimal-manifest ]
