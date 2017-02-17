@@ -857,7 +857,6 @@ jobs:
   plan:
     - do:
       - aggregate:
-        - get: runtime-ci
         - get: cf-deployment-develop
           trigger: true
           passed:
