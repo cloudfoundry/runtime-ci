@@ -250,6 +250,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
+- name: cf-smoke-tests-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-smoke-tests-release
 - name: snitch-env-vars-store
   type: git
   source:
@@ -964,6 +968,10 @@ jobs:
       params:
         tarball: false
     - get: statsd-injector-release
+      trigger: true
+      params:
+        tarball: false
+    - get: cf-smoke-tests-release
       trigger: true
       params:
         tarball: false
