@@ -7,39 +7,39 @@ image_resource:
     repository: relintdockerhubpushbot/create-binaries-manifest-section
 
 inputs:
-- name: runtime-ci
-- name: deployment-configuration
-- name: stemcell
-- name: capi-release
-- name: consul-release
-- name: etcd-release
-- name: diego-release
-- name: loggregator-release
-- name: cf-mysql-release
-- name: uaa-release
-- name: garden-runc-release
-- name: cflinuxfs2-rootfs-release
-- name: routing-release
-- name: nats-release
 - name: binary-buildpack-release
+- name: capi-release
+- name: cf-mysql-release
+- name: cflinuxfs2-rootfs-release
+- name: consul-release
+- name: deployment-configuration
+- name: diego-release
 - name: dotnet-core-buildpack-release
+- name: etcd-release
+- name: garden-runc-release
 - name: go-buildpack-release
 - name: java-buildpack-release
+- name: loggregator-release
+- name: nats-release
 - name: nodejs-buildpack-release
 - name: php-buildpack-release
 - name: python-buildpack-release
+- name: routing-release
 - name: ruby-buildpack-release
+- name: runtime-ci
 - name: staticfile-buildpack-release
 - name: statsd-injector-release
+- name: stemcell
+- name: uaa-release
 
 outputs:
-- name: deployment-manifest
 - name: commit-message
+- name: deployment-manifest
 
 run:
   path: runtime-ci/scripts/ci/create-binaries-manifest-section/task
 
 params:
-  DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
-  DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
   COMMIT_MESSAGE_PATH: commit-message.txt
+  DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
+  DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
