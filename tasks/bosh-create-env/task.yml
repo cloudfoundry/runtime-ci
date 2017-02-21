@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/bosh-create-env
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
 - name: runtime-ci
@@ -20,7 +20,7 @@ outputs:
 - name: ca-cert
 
 run:
-  path: runtime-ci/scripts/ci/bosh-create-env/task
+  path: runtime-ci/tasks/bosh-create-env/task
 
 params:
   VARS_FILE:

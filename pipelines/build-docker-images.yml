@@ -45,7 +45,6 @@ groups:
   - build-run-errand-bbl-bosh-2-0-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
-  - build-bosh-create-env-docker-image
   - build-bosh-upload-stemcell-docker-image
   - build-bosh-update-cloud-config-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
@@ -203,12 +202,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
-- name: runtime-ci-bosh-create-env
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-create-env/Dockerfile]
 - name: runtime-ci-bosh-upload-stemcell
   type: git
   source:
@@ -562,13 +555,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-creds
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-create-env-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-create-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -978,24 +964,6 @@ jobs:
     - put: verify-every-task-has-pipeline-image
       params:
         build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
-        push: true
-- name: build-bosh-create-env-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-create-env
-        trigger: true
-    - put: bosh-create-env-pipeline-image
-      params:
-        build: runtime-ci-bosh-create-env/scripts/ci/bosh-create-env
         push: true
 - name: build-cf-deployment-concourse-tasks-docker-image
   public: true

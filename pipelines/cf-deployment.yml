@@ -40,7 +40,7 @@ resources:
       region_name: us-west-1
       access_key_id: {{snitch_terraform_s3_access_key_id}}
       secret_access_key: {{snitch_terraform_s3_secret_key}}
-    terraform_source: github.com/cloudfoundry/runtime-ci//scripts/ci/bosh-create-env/terraform/bosh-lite/
+    terraform_source: github.com/cloudfoundry/runtime-ci//tasks/bosh-create-env/terraform/bosh-lite/
     vars:
       project: {{snitch_gcp_project}}
       region: us-central1
@@ -368,7 +368,7 @@ jobs:
       env_name: snitch
       delete_on_failure: true
   - task: bosh-create-env
-    file: runtime-ci/scripts/ci/bosh-create-env/task.yml
+    file: runtime-ci/tasks/bosh-create-env/task.yml
     input_mapping:
       env-repo: snitch-env-director-state
       terraform: snitch-terraform
