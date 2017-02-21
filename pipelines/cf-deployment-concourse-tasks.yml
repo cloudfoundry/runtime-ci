@@ -45,6 +45,7 @@ resources:
 
 jobs:
 - name: test-gcp
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -104,6 +105,7 @@ jobs:
           bbl-state: updated-bbl-state
 
 - name: test-aws
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
