@@ -65,7 +65,6 @@ groups:
   - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
   - build-bbl-state-from-vars-store-docker-image
-  - build-bosh-delete-env-docker-image
 
 resources:
 - name: runtime-ci
@@ -452,13 +451,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/bbl-state-from-vars-store/Dockerfile]
-
-- name: runtime-ci-bosh-delete-env
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-delete-env/Dockerfile]
 
 - name: cats-concourse-task
   type: git
@@ -880,14 +872,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bbl-state-from-vars-store
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: bosh-delete-env-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-delete-env
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1939,25 +1923,6 @@ jobs:
     - put: bbl-state-from-vars-store-pipeline-image
       params:
         build: runtime-ci-bbl-state-from-vars-store/scripts/ci/bbl-state-from-vars-store
-        push: true
-
-- name: build-bosh-delete-env-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-bosh-delete-env
-        trigger: true
-    - put: bosh-delete-env-pipeline-image
-      params:
-        build: runtime-ci-bosh-delete-env/scripts/ci/bosh-delete-env
         push: true
 
 - name: build-cats-concourse-task-docker-image

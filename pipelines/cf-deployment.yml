@@ -824,7 +824,7 @@ jobs:
     - get: bosh-deployment
     - get: snitch-env-director-state
   - task: bosh-delete-env-lite
-    file: runtime-ci/scripts/ci/bosh-delete-env/task.yml
+    file: runtime-ci/tasks/bosh-delete-env/task.yml
     input_mapping:
       env-repo: snitch-env-director-state
     input_mapping:

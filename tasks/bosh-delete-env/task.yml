@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/bosh-delete-env
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
 - name: runtime-ci
@@ -16,7 +16,7 @@ outputs:
 - name: updated-env-repo
 
 run:
-  path: runtime-ci/scripts/ci/bosh-delete-env/task
+  path: runtime-ci/tasks/bosh-delete-env/task
 
 params:
   GCP_PROJECTID:
