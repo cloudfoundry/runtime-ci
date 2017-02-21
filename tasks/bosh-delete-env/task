@@ -41,7 +41,7 @@ pushd env-repo
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
     git rm infrastructure/bosh/deployment-vars.yml
-    git add .
+    git add --all infrastructure/bosh/state.json
     git commit -m "Commit bosh state file, and remove bosh deployment vars"
   fi
 popd
