@@ -883,10 +883,11 @@ jobs:
         - get: cf-deployment-develop
           trigger: true
           passed:
-          - acceptance-tests-upgrade
           - acceptance-tests-fresh
-          - routing-acceptance-tests-fresh
           - acceptance-tests-lite
+          - acceptance-tests-upgrade
+          - routing-acceptance-tests-fresh
+          - smoke-tests-upgrade
         - get: cf-deployment-master
     - put: cf-deployment-release-candidate
       params:
