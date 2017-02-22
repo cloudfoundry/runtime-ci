@@ -34,6 +34,7 @@ jobs:
     input_mapping:
       release-repo: cf-smoke-tests-release
     params:
+      RELEASE_NAME: cf-smoke-tests
       BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
       BLOBS_BUCKET_SECRET_KEY: {{cf_release_blobs_buckets_secrect_access_key}}
   - put: cf-smoke-tests-release

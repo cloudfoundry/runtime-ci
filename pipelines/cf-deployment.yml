@@ -9,6 +9,7 @@ groups:
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
+  - smoke-tests-upgrade
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
   - bless-manifest
@@ -460,7 +461,7 @@ jobs:
         rebase: true
 
 - name: deploy-releases-upgrade
-  serial_groups: [hermione]
+  serial_groups: [hermione, hermione-smokes]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -616,6 +617,28 @@ jobs:
       input_mapping:
       - integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
+
+- name: smoke-tests-upgrade
+  serial_groups: [hermione-smokes]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 1h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: hermione-env-director-state
+        trigger: true
+        passed: [deploy-releases-upgrade]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [deploy-releases-upgrade]
+  - task: bosh-run-errand-smoke-tests
+    file: runtime-ci/tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: hermione-env-director-state
+    params:
+      ERRAND_NAME: smoke-tests
 
 - name: acceptance-tests-fresh
   serial_groups: [luna]
