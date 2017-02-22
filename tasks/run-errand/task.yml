@@ -14,5 +14,5 @@ run:
   path: runtime-ci/tasks/run-errand/task
 
 params:
-  DEPLOYMENT_NAME:
+  DEPLOYMENT_NAME: cf
   ERRAND_NAME:
