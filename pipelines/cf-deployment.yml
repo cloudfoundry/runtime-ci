@@ -1018,6 +1018,7 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
   - put: cf-deployment-develop
     params:
+      rebase: true
       repository: updated-repo
 
 - name: verify-nameserver-has-record
