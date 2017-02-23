@@ -2,6 +2,8 @@ package gatecrasher
 
 import "net/http"
 
+//go:generate counterfeiter . Logger
+
 type Logger interface {
 	Printf(format string, v ...interface{})
 }
