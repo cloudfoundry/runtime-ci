@@ -1,55 +1,80 @@
 package gatecrasher_test
 
 import (
-	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
-	"gopkg.in/jarcoal/httpmock.v1"
+	"fmt"
+	"net/http"
 
+	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
+
+	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher/gatecrasherfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
-type loggerMock struct {
-	Messages []interface{}
-}
-
-func (l *loggerMock) Printf(format string, v ...interface{}) {
-	l.Messages = append(l.Messages, []interface{}{format, v})
-}
-
-var ourLogger *loggerMock
 var _ = Describe("Gatecrasher", func() {
+	var fakeServer *ghttp.Server
+	var fakeLogger *gatecrasherfakes.FakeLogger
+	var goodUrl string
+	var badUrl string
+
 	BeforeEach(func() {
-		ourLogger = new(loggerMock)
+		fakeLogger = new(gatecrasherfakes.FakeLogger)
+		fakeServer = ghttp.NewServer()
+		goodUrl = fakeServer.URL() + "/v2/info"
+		badUrl = fakeServer.URL() + "/v2/bad-info"
 	})
+
+	AfterEach(func() {
+		fakeServer.Close()
+	})
+
 	Context("when the endpoint is good", func() {
+		BeforeEach(func() {
+			fakeServer.AppendHandlers(
+				ghttp.VerifyRequest("GET", "/v2/info"),
+				ghttp.RespondWith(http.StatusOK, ""),
+			)
+		})
 		It("makes an https request", func() {
-			url := "https://api.example.com/v2/info"
-			httpmock.RegisterResponder("GET", url,
-				httpmock.NewStringResponder(200, `[{"id": 1, "name": "ALL YOUR INFOS"}]`))
+			resp := gatecrasher.Run(goodUrl, fakeLogger)
 
-			resp := gatecrasher.Run(url, ourLogger)
-			Expect(len(ourLogger.Messages)).To(Equal(1))
+			Expect(fakeServer.ReceivedRequests()).Should(HaveLen(1))
+			Expect(len(fakeLogger.Invocations())).To(Equal(1))
 			Expect(resp).To(Equal(200))
 		})
-		It("logs the request", func() {
-			url := "https://api.example.com/v2/info"
-			httpmock.RegisterResponder("GET", url,
-				httpmock.NewStringResponder(200, `[{"id": 1, "name": "ALL YOUR INFOS"}]`))
 
-			resp := gatecrasher.Run(url, ourLogger)
-			Expect(len(ourLogger.Messages)).To(Equal(1))
+		It("logs the request", func() {
+			resp := gatecrasher.Run(goodUrl, fakeLogger)
+			Expect(len(fakeLogger.Invocations())).To(Equal(1))
 			Expect(resp).To(Equal(200))
+		})
+
+		It("logs the request in the correct format with necessary info", func() {
+			gatecrasher.Run(goodUrl, fakeLogger)
+			format, args := fakeLogger.PrintfArgsForCall(0)
+			fmt.Println("FORMAT:")
+			fmt.Println(format)
+			fmt.Println(len(args))
+			fmt.Println(fakeLogger.PrintfCallCount())
+			Expect(args[0].(string)).To(Equal("foo"))
 		})
 
 	})
-	Context("when the endpoint is bad", func() {
-		It("makes an https request", func() {
-			url := "https://api.example.com/v2/info"
-			httpmock.RegisterResponder("GET", url,
-				httpmock.NewStringResponder(502, `[{"id": 1, "name": "ALL YOUR INFOS"}]`))
 
-			resp := gatecrasher.Run(url, ourLogger)
-			Expect(len(ourLogger.Messages)).To(Equal(1))
+	Context("when the endpoint is bad", func() {
+		BeforeEach(func() {
+			fakeServer.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("GET", "/v2/bad-info"),
+					ghttp.RespondWith(http.StatusBadGateway, ""),
+				),
+			)
+		})
+
+		It("makes an https request", func() {
+			resp := gatecrasher.Run(badUrl, fakeLogger)
+			Expect(len(fakeLogger.Invocations())).To(Equal(1))
 			Expect(resp).To(Equal(502))
 		})
 	})

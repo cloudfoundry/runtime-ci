@@ -12,6 +12,6 @@ func Run(url string, logger Logger) int {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	logger.Printf("hey")
+	logger.Printf(string(resp.StatusCode))
 	return resp.StatusCode
 }
