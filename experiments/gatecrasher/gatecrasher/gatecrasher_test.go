@@ -1,7 +1,8 @@
 package gatecrasher_test
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
@@ -33,33 +34,30 @@ var _ = Describe("Gatecrasher", func() {
 		BeforeEach(func() {
 			fakeServer.AppendHandlers(
 				ghttp.VerifyRequest("GET", "/v2/info"),
-				ghttp.RespondWith(http.StatusOK, ""),
+				ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
 			)
 		})
 		It("makes an https request", func() {
 			resp := gatecrasher.Run(goodUrl, fakeLogger)
 
 			Expect(fakeServer.ReceivedRequests()).Should(HaveLen(1))
-			Expect(len(fakeLogger.Invocations())).To(Equal(1))
-			Expect(resp).To(Equal(200))
-		})
-
-		It("logs the request", func() {
-			resp := gatecrasher.Run(goodUrl, fakeLogger)
-			Expect(len(fakeLogger.Invocations())).To(Equal(1))
 			Expect(resp).To(Equal(200))
 		})
 
 		It("logs the request in the correct format with necessary info", func() {
+			loggedEvent := gatecrasher.EventLog{}
 			gatecrasher.Run(goodUrl, fakeLogger)
 			format, args := fakeLogger.PrintfArgsForCall(0)
-			fmt.Println("FORMAT:")
-			fmt.Println(format)
-			fmt.Println(len(args))
-			fmt.Println(fakeLogger.PrintfCallCount())
-			Expect(args[0].(string)).To(Equal("foo"))
-		})
+			Expect(format).To(Equal("%s"))
+			Expect(len(args)).To(Equal(1))
 
+			json.Unmarshal(args[0].([]uint8), &loggedEvent)
+			Expect(loggedEvent.URL).To(Equal(goodUrl))
+			Expect(loggedEvent.StatusCode).To(Equal(http.StatusOK))
+
+			flag := fakeLogger.SetFlagsArgsForCall(0)
+			Expect(flag).To(Equal(log.LstdFlags))
+		})
 	})
 
 	Context("when the endpoint is bad", func() {
@@ -74,7 +72,6 @@ var _ = Describe("Gatecrasher", func() {
 
 		It("makes an https request", func() {
 			resp := gatecrasher.Run(badUrl, fakeLogger)
-			Expect(len(fakeLogger.Invocations())).To(Equal(1))
 			Expect(resp).To(Equal(502))
 		})
 	})

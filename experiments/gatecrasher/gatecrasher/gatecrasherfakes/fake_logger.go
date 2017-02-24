@@ -14,6 +14,11 @@ type FakeLogger struct {
 		format string
 		v      []interface{}
 	}
+	SetFlagsStub        func(flag int)
+	setFlagsMutex       sync.RWMutex
+	setFlagsArgsForCall []struct {
+		flag int
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -43,11 +48,37 @@ func (fake *FakeLogger) PrintfArgsForCall(i int) (string, []interface{}) {
 	return fake.printfArgsForCall[i].format, fake.printfArgsForCall[i].v
 }
 
+func (fake *FakeLogger) SetFlags(flag int) {
+	fake.setFlagsMutex.Lock()
+	fake.setFlagsArgsForCall = append(fake.setFlagsArgsForCall, struct {
+		flag int
+	}{flag})
+	fake.recordInvocation("SetFlags", []interface{}{flag})
+	fake.setFlagsMutex.Unlock()
+	if fake.SetFlagsStub != nil {
+		fake.SetFlagsStub(flag)
+	}
+}
+
+func (fake *FakeLogger) SetFlagsCallCount() int {
+	fake.setFlagsMutex.RLock()
+	defer fake.setFlagsMutex.RUnlock()
+	return len(fake.setFlagsArgsForCall)
+}
+
+func (fake *FakeLogger) SetFlagsArgsForCall(i int) int {
+	fake.setFlagsMutex.RLock()
+	defer fake.setFlagsMutex.RUnlock()
+	return fake.setFlagsArgsForCall[i].flag
+}
+
 func (fake *FakeLogger) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.printfMutex.RLock()
 	defer fake.printfMutex.RUnlock()
+	fake.setFlagsMutex.RLock()
+	defer fake.setFlagsMutex.RUnlock()
 	return fake.invocations
 }
 
