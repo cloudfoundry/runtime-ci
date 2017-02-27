@@ -21,7 +21,7 @@ var _ = Describe("Gatecrasher", func() {
 
 	BeforeEach(func() {
 		fakeLogger = new(gatecrasherfakes.FakeLogger)
-		fakeServer = ghttp.NewServer()
+		fakeServer = ghttp.NewTLSServer()
 		goodUrl = fakeServer.URL() + "/v2/info"
 		badUrl = fakeServer.URL() + "/v2/bad-info"
 	})

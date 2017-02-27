@@ -1,6 +1,7 @@
 package gatecrasher
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -17,7 +18,12 @@ type Logger interface {
 }
 
 func Run(url string, logger Logger) int {
-	resp, err := http.Get(url)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		panic(err)
 	}
