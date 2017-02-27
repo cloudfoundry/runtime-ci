@@ -2,7 +2,6 @@ package gatecrasher_test
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
@@ -56,9 +55,6 @@ var _ = Describe("Gatecrasher", func() {
 			json.Unmarshal(args[0].([]byte), &loggedEvent)
 			Expect(loggedEvent.URL).To(Equal(goodUrl))
 			Expect(loggedEvent.StatusCode).To(Equal(http.StatusOK))
-
-			flag := fakeLogger.SetFlagsArgsForCall(0)
-			Expect(flag).To(Equal(log.LstdFlags))
 		})
 	})
 

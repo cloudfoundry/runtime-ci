@@ -3,10 +3,7 @@ package gatecrasher
 import (
 	"crypto/tls"
 	"encoding/json"
-	"io"
-	"log"
 	"net/http"
-	"os"
 )
 
 type EventLog struct {
@@ -17,7 +14,6 @@ type EventLog struct {
 type Logger interface {
 	Printf(format string, v ...interface{})
 	SetFlags(flag int)
-	SetOutput(writer io.Writer)
 }
 
 func Run(url string, logger Logger) int {
@@ -30,21 +26,22 @@ func Run(url string, logger Logger) int {
 	if err != nil {
 		panic(err)
 	}
+
 	err = resp.Body.Close()
 	if err != nil {
 		panic(err)
 	}
-	// Ensure our logging contains a timestamp
-	logger.SetOutput(os.Stdout)
-	logger.SetFlags(log.LstdFlags)
+
 	event := EventLog{
 		URL:        url,
 		StatusCode: resp.StatusCode,
 	}
+
 	jsonEvent, err := json.Marshal(event)
 	if err != nil {
 		panic(err)
 	}
+
 	logger.Printf("%s", jsonEvent)
 	return resp.StatusCode
 }
