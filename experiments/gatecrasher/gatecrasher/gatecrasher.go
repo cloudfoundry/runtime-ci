@@ -21,7 +21,10 @@ func Run(url string, logger Logger) int {
 	if err != nil {
 		panic(err)
 	}
-	resp.Body.Close()
+	err = resp.Body.Close()
+	if err != nil {
+		panic(err)
+	}
 	// Ensure our logging contains a timestamp
 	logger.SetFlags(log.LstdFlags)
 	event := EventLog{
