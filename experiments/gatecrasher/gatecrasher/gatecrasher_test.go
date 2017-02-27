@@ -33,15 +33,17 @@ var _ = Describe("Gatecrasher", func() {
 	Context("when the endpoint is good", func() {
 		BeforeEach(func() {
 			fakeServer.AppendHandlers(
-				ghttp.VerifyRequest("GET", "/v2/info"),
-				ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("GET", "/v2/info"),
+					ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
+				),
 			)
 		})
 		It("makes an https request", func() {
 			resp := gatecrasher.Run(goodUrl, fakeLogger)
 
 			Expect(fakeServer.ReceivedRequests()).Should(HaveLen(1))
-			Expect(resp).To(Equal(200))
+			Expect(resp).To(Equal(http.StatusOK))
 		})
 
 		It("logs the request in the correct format with necessary info", func() {
@@ -51,7 +53,7 @@ var _ = Describe("Gatecrasher", func() {
 			Expect(format).To(Equal("%s"))
 			Expect(len(args)).To(Equal(1))
 
-			json.Unmarshal(args[0].([]uint8), &loggedEvent)
+			json.Unmarshal(args[0].([]byte), &loggedEvent)
 			Expect(loggedEvent.URL).To(Equal(goodUrl))
 			Expect(loggedEvent.StatusCode).To(Equal(http.StatusOK))
 
@@ -72,7 +74,7 @@ var _ = Describe("Gatecrasher", func() {
 
 		It("makes an https request", func() {
 			resp := gatecrasher.Run(badUrl, fakeLogger)
-			Expect(resp).To(Equal(502))
+			Expect(resp).To(Equal(http.StatusBadGateway))
 		})
 	})
 })
