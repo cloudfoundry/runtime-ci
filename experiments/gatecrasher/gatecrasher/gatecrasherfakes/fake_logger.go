@@ -2,6 +2,7 @@
 package gatecrasherfakes
 
 import (
+	"io"
 	"sync"
 
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
@@ -18,6 +19,11 @@ type FakeLogger struct {
 	setFlagsMutex       sync.RWMutex
 	setFlagsArgsForCall []struct {
 		flag int
+	}
+	SetOutputStub        func(writer io.Writer)
+	setOutputMutex       sync.RWMutex
+	setOutputArgsForCall []struct {
+		writer io.Writer
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -72,6 +78,30 @@ func (fake *FakeLogger) SetFlagsArgsForCall(i int) int {
 	return fake.setFlagsArgsForCall[i].flag
 }
 
+func (fake *FakeLogger) SetOutput(writer io.Writer) {
+	fake.setOutputMutex.Lock()
+	fake.setOutputArgsForCall = append(fake.setOutputArgsForCall, struct {
+		writer io.Writer
+	}{writer})
+	fake.recordInvocation("SetOutput", []interface{}{writer})
+	fake.setOutputMutex.Unlock()
+	if fake.SetOutputStub != nil {
+		fake.SetOutputStub(writer)
+	}
+}
+
+func (fake *FakeLogger) SetOutputCallCount() int {
+	fake.setOutputMutex.RLock()
+	defer fake.setOutputMutex.RUnlock()
+	return len(fake.setOutputArgsForCall)
+}
+
+func (fake *FakeLogger) SetOutputArgsForCall(i int) io.Writer {
+	fake.setOutputMutex.RLock()
+	defer fake.setOutputMutex.RUnlock()
+	return fake.setOutputArgsForCall[i].writer
+}
+
 func (fake *FakeLogger) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -79,6 +109,8 @@ func (fake *FakeLogger) Invocations() map[string][][]interface{} {
 	defer fake.printfMutex.RUnlock()
 	fake.setFlagsMutex.RLock()
 	defer fake.setFlagsMutex.RUnlock()
+	fake.setOutputMutex.RLock()
+	defer fake.setOutputMutex.RUnlock()
 	return fake.invocations
 }
 

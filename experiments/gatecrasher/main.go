@@ -1,12 +1,13 @@
 package main
 
-type Config struct {
-}
+import (
+	"log"
 
-func parseConfig() (Config, error) {
-	return Config{}, nil
-}
+	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
+)
 
 func main() {
-	parseConfig()
+	logger := new(log.Logger)
+
+	gatecrasher.Run("https://api.hermione.cf-app.com/v2/info", logger)
 }
