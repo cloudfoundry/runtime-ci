@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"net/http"
+
+	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/config"
 )
 
 type EventLog struct {
@@ -16,32 +18,32 @@ type Logger interface {
 	SetFlags(flag int)
 }
 
-func Run(url string, logger Logger) int {
+func Run(config config.Config, logger Logger) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
+	for i := 0; i < config.Total_number_of_requests; i++ {
+		resp, err := client.Get(config.Target)
+		if err != nil {
+			panic(err)
+		}
 
-	resp, err := client.Get(url)
-	if err != nil {
-		panic(err)
+		err = resp.Body.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		event := EventLog{
+			URL:        config.Target,
+			StatusCode: resp.StatusCode,
+		}
+
+		jsonEvent, err := json.Marshal(event)
+		if err != nil {
+			panic(err)
+		}
+
+		logger.Printf("%s", jsonEvent)
 	}
-
-	err = resp.Body.Close()
-	if err != nil {
-		panic(err)
-	}
-
-	event := EventLog{
-		URL:        url,
-		StatusCode: resp.StatusCode,
-	}
-
-	jsonEvent, err := json.Marshal(event)
-	if err != nil {
-		panic(err)
-	}
-
-	logger.Printf("%s", jsonEvent)
-	return resp.StatusCode
 }
