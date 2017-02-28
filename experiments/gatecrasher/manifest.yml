@@ -1,0 +1,7 @@
+---
+applications:
+- name: gatecrasher
+  no_route: true
+  healthcheck: none
+  buildpack: binary_buildpack
+  command: ./main
