@@ -53,7 +53,7 @@ var _ = Describe("Gatecrasher", func() {
 			fakeServer.Close()
 		})
 
-		Context("when the configuration a negative run count", func() {
+		PContext("when the configuration a negative run count", func() {
 			It("runs many times, maybe forever", func() {
 				// We don't actually know how to test this well right now
 				// It does, though.

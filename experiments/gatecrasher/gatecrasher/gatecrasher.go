@@ -28,14 +28,14 @@ func Run(config config.Config, logger Logger) {
 	if config.Total_number_of_requests <= 0 {
 		for {
 			makeRequest(config.Target, client, logger)
-			time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
+			time.Sleep(time.Duration(config.Poll_interval_in_ms) * time.Millisecond)
 		}
 	}
 	for i := 0; i < config.Total_number_of_requests; i++ {
 		makeRequest(config.Target, client, logger)
 		// This is to avoid sleeping a second for every test case
 		if i+1 < config.Total_number_of_requests {
-			time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
+			time.Sleep(time.Duration(config.Poll_interval_in_ms) * time.Millisecond)
 		}
 	}
 }

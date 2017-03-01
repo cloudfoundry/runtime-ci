@@ -7,15 +7,15 @@ import (
 
 type Config struct {
 	Target                   string
-	Poll_interval_in_seconds int
+	Poll_interval_in_ms      int
 	Total_number_of_requests int
 }
 
 func Load() Config {
 	var config Config
 	config = Config{
-		Target: "example.com",
-		Poll_interval_in_seconds: 1,
+		Target:                   "example.com",
+		Poll_interval_in_ms:      1,
 		Total_number_of_requests: 10,
 	}
 
@@ -23,11 +23,11 @@ func Load() Config {
 		config.Target = targetString
 	}
 
-	if value, ok := os.LookupEnv("POLL_INTERVAL_IN_SECONDS"); ok {
+	if value, ok := os.LookupEnv("POLL_INTERVAL_IN_MS"); ok {
 		if numValue, err := strconv.Atoi(value); err != nil {
 			panic(err)
 		} else {
-			config.Poll_interval_in_seconds = numValue
+			config.Poll_interval_in_ms = numValue
 		}
 	}
 

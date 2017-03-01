@@ -29,7 +29,7 @@ Note that you will need to `cf login` first.
 
 ## Configuration
 These environment variables are currently respected:
-`POLL_INTERVAL_IN_SECONDS` is the time between requests.
+`POLL_INTERVAL_IN_MS` is the time between requests.
 `TARGET` is the full URL,
 including protocol,
 that requests are to be made against.
