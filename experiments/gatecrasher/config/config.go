@@ -16,7 +16,7 @@ type Config struct {
 func Load() Config {
 	var config Config
 	config = Config{
-		Target:                   "example.com",
+		Target:                   "http://example.com",
 		PollIntervalInMs:         1,
 		TotalNumberOfRequests:    10,
 		ReportIntervalInRequests: 5,
