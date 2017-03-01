@@ -153,7 +153,7 @@ var _ = Describe("Gatecrasher", func() {
 		AfterEach(func() {
 			fakeServer.Close()
 		})
-		Context("when all requests are good and summaries are configured", func() {
+		Context("summaries", func() {
 			BeforeEach(func() {
 				configStruct = config.Load()
 				configStruct.Target = goodUrl
@@ -193,6 +193,20 @@ var _ = Describe("Gatecrasher", func() {
 				Expect(loggedSummaryEvent.URL).To(Equal(goodUrl))
 				Expect(loggedSummaryEvent.IntervalSize).To(Equal(2))
 				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(0.5))
+			})
+
+			It("Suppresses individual event logs when configured to skip", func() {
+				configStruct.SkipIndividualRequests = true
+				addGoodHandlers(4, fakeServer)
+				loggedSummaryEvent := gatecrasher.SummaryEventLog{}
+
+				gatecrasher.Run(configStruct, fakeLogger)
+				format, args := fakeLogger.PrintfArgsForCall(0)
+				Expect(format).To(Equal("%s"))
+				Expect(len(args)).To(Equal(1))
+
+				json.Unmarshal(args[0].([]byte), &loggedSummaryEvent)
+				Expect(loggedSummaryEvent.Type).To(Equal("summary"))
 			})
 		})
 	})

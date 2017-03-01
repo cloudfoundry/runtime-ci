@@ -10,6 +10,7 @@ type Config struct {
 	PollIntervalInMs         int
 	TotalNumberOfRequests    int
 	ReportIntervalInRequests int
+	SkipIndividualRequests   bool
 }
 
 func Load() Config {
@@ -19,6 +20,7 @@ func Load() Config {
 		PollIntervalInMs:         1,
 		TotalNumberOfRequests:    10,
 		ReportIntervalInRequests: 5,
+		SkipIndividualRequests:   false,
 	}
 
 	if targetString, ok := os.LookupEnv("TARGET"); ok {
@@ -54,6 +56,14 @@ func Load() Config {
 			panic(err)
 		} else {
 			config.ReportIntervalInRequests = numValue
+		}
+	}
+
+	if value, ok := os.LookupEnv("SKIP_INDIVIDUAL_REQUESTS"); ok {
+		if boolValue, err := strconv.ParseBool(value); err != nil {
+			panic(err)
+		} else {
+			config.SkipIndividualRequests = boolValue
 		}
 	}
 

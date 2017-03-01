@@ -47,7 +47,10 @@ func Run(config config.Config, logger Logger) {
 			successCounter++
 		}
 
-		logJson(event, logger)
+		if config.SkipIndividualRequests != true {
+			logJson(event, logger)
+		}
+
 		time.Sleep(time.Duration(config.PollIntervalInMs) * time.Millisecond)
 		if i%config.ReportIntervalInRequests == 0 {
 			summaryEventLog := SummaryEventLog{
