@@ -884,7 +884,7 @@ jobs:
           trigger: true
           passed:
           - acceptance-tests-fresh
-#          - acceptance-tests-lite
+          - acceptance-tests-lite
           - acceptance-tests-upgrade
           - routing-acceptance-tests-fresh
           - smoke-tests-upgrade
