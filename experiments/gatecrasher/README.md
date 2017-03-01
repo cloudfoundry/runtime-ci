@@ -41,3 +41,5 @@ that will be made.
 If it is set to 0
 or less
 it will make an unlimited number of requests.
+`SKIP_INDIVIDUAL_REQUESTS` is the flag for suppressing
+logs coming from each request, and it is default to false.
