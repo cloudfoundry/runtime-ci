@@ -9,6 +9,7 @@ groups:
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
+  - windows-acceptance-tests-upgrade
   - smoke-tests-upgrade
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
@@ -152,6 +153,11 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/routing-release
+- name: windows-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/wats
 - name: cf-acceptance-tests
   type: git
   source:
@@ -617,6 +623,32 @@ jobs:
       input_mapping:
       - integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
+
+- name: windows-acceptance-tests-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: windows-acceptance-tests
+      - get: hermione-env-integration-configs
+        trigger: true
+      - get: hermione-env-director-state
+        trigger: true
+        passed: [ acceptance-tests-upgrade ]
+      - get: hermione-env-vars-store
+        trigger: true
+        passed: [ acceptance-tests-upgrade ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ acceptance-tests-upgrade ]
+    - task: run-wats
+      input_mapping:
+      - integration-config: hermione-env-integration-configs
+      file: runtime-ci/tasks/run-wats/task.yml
 
 - name: smoke-tests-upgrade
   serial_groups: [hermione-smokes]
