@@ -39,7 +39,9 @@ func Run(config config.Config, logger Logger) {
 	successCounter := 0
 	for i := 1; ; i++ {
 		if i > config.TotalNumberOfRequests {
-			return
+			if config.TotalNumberOfRequests != 0 && config.TotalNumberOfRequests != -1 {
+				return
+			}
 		}
 		event := makeRequest(config.Target, client, logger)
 
