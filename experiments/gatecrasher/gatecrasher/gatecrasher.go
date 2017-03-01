@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/config"
 )
@@ -27,10 +28,12 @@ func Run(config config.Config, logger Logger) {
 	if config.Total_number_of_requests <= 0 {
 		for {
 			makeRequest(config.Target, client, logger)
+			time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
 		}
 	}
 	for i := 0; i < config.Total_number_of_requests; i++ {
 		makeRequest(config.Target, client, logger)
+		time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
 	}
 }
 func makeRequest(url string, client *http.Client, logger Logger) {
@@ -55,5 +58,4 @@ func makeRequest(url string, client *http.Client, logger Logger) {
 	}
 
 	logger.Printf("%s", jsonEvent)
-
 }

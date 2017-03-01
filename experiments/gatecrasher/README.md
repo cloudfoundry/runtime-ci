@@ -28,7 +28,8 @@ as it's a "worker."
 Note that you will need to `cf login` first.
 
 ## Configuration
-Two environment variables are currently respected.
+These environment variables are currently respected:
+`POLL_INTERVAL_IN_SECONDS` is the time between requests.
 `TARGET` is the full URL,
 including protocol,
 that requests are to be made against.
