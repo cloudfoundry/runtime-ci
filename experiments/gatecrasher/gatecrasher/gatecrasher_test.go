@@ -13,6 +13,16 @@ import (
 	"github.com/onsi/gomega/ghttp"
 )
 
+func addGoodHandlers(number int, server *ghttp.Server) {
+	for i := 0; i < number; i++ {
+		server.AppendHandlers(
+			ghttp.CombineHandlers(
+				ghttp.VerifyRequest("GET", "/v2/info"),
+				ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
+			))
+	}
+}
+
 var _ = Describe("Gatecrasher", func() {
 	var fakeServer *ghttp.Server
 	var fakeLogger *gatecrasherfakes.FakeLogger
@@ -24,16 +34,7 @@ var _ = Describe("Gatecrasher", func() {
 		BeforeEach(func() {
 			fakeLogger = new(gatecrasherfakes.FakeLogger)
 			fakeServer = ghttp.NewTLSServer()
-			fakeServer.AppendHandlers(
-				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/v2/info"),
-					ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
-				))
-			fakeServer.AppendHandlers(
-				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/v2/info"),
-					ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
-				))
+			addGoodHandlers(2, fakeServer)
 			configStruct = config.Load()
 			configStruct.Target = fakeServer.URL() + "/v2/info"
 		})
