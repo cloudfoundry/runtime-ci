@@ -25,7 +25,7 @@ var _ = Describe("Config", func() {
 		})
 		It("generates a config struct from defaults", func() {
 			expectedConfig := config.Config{
-				Target:                   "example.com",
+				Target:                   "http://example.com",
 				PollIntervalInMs:         1,
 				TotalNumberOfRequests:    10,
 				ReportIntervalInRequests: 5,
