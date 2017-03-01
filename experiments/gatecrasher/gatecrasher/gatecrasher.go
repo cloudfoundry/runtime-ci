@@ -58,7 +58,7 @@ func Run(config config.Config, logger Logger) {
 			summaryEventLog := SummaryEventLog{
 				FinishTime:     time.Now(),
 				IntervalSize:   config.ReportIntervalInRequests,
-				PercentSuccess: float64(successCounter) / float64(config.ReportIntervalInRequests),
+				PercentSuccess: float64(successCounter) * 100.0 / float64(config.ReportIntervalInRequests),
 				StartTime:      startTime,
 				Type:           "summary",
 				URL:            config.Target,

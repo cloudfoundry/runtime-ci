@@ -174,7 +174,7 @@ var _ = Describe("Gatecrasher", func() {
 				Expect(loggedSummaryEvent.IntervalSize).To(Equal(2))
 				Expect(loggedSummaryEvent.StartTime).ToNot(Equal(time.Time{}))
 				Expect(loggedSummaryEvent.FinishTime).ToNot(Equal(time.Time{}))
-				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(1.0))
+				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(100.0))
 				Expect(loggedSummaryEvent.Type).To(Equal("summary"))
 			})
 
@@ -192,7 +192,7 @@ var _ = Describe("Gatecrasher", func() {
 				json.Unmarshal(args[0].([]byte), &loggedSummaryEvent)
 				Expect(loggedSummaryEvent.URL).To(Equal(goodUrl))
 				Expect(loggedSummaryEvent.IntervalSize).To(Equal(2))
-				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(0.5))
+				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(50.0))
 			})
 
 			It("Suppresses individual event logs when configured to skip", func() {
