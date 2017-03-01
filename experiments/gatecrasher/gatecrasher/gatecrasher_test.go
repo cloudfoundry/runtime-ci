@@ -132,4 +132,14 @@ var _ = Describe("Gatecrasher", func() {
 			})
 		})
 	})
+	Describe("request summaries", func() {
+		Context("when summaries are configured", func() {
+			BeforeEach(func() {
+				configStruct.Total_number_of_requests = 1
+			})
+
+			It("Logs a summary every configured interval", func() {
+			})
+		})
+	})
 })
