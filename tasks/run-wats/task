@@ -1,0 +1,16 @@
+#!/bin/bash
+set -xeu
+
+CF_GOPATH=/go/src/github.com/cloudfoundry/
+
+echo "Moving wats onto the gopath..."
+mkdir -p $CF_GOPATH
+cp -R windows-acceptance-tests/src/wats $CF_GOPATH
+
+root_dir=$PWD
+
+cp "${root_dir}/integration-config/${CONFIG_FILE_PATH}" windows-acceptance-tests/scripts/wats_int_conf.json
+cd windows-acceptance-tests/scripts
+./run_wats.sh wats_int_conf.json
+
+# CONFIG="${root_dir}/integration-config/${CONFIG_FILE_PATH}" ginkgo -r -slowSpecThreshold=120
