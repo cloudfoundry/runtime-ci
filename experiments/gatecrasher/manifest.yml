@@ -2,7 +2,7 @@
 applications:
 - name: gatecrasher
   no_route: true
-  healthcheck: none
+  health-check-type: none
   buildpack: binary_buildpack
   command: ./main
   env:
