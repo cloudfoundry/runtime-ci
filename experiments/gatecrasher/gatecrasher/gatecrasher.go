@@ -33,7 +33,10 @@ func Run(config config.Config, logger Logger) {
 	}
 	for i := 0; i < config.Total_number_of_requests; i++ {
 		makeRequest(config.Target, client, logger)
-		time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
+		// This is to avoid sleeping a second for every test case
+		if i+1 < config.Total_number_of_requests {
+			time.Sleep(time.Duration(config.Poll_interval_in_seconds) * time.Second)
+		}
 	}
 }
 func makeRequest(url string, client *http.Client, logger Logger) {
