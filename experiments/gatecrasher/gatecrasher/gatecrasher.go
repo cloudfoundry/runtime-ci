@@ -23,27 +23,37 @@ func Run(config config.Config, logger Logger) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	for i := 0; i < config.Total_number_of_requests; i++ {
-		resp, err := client.Get(config.Target)
-		if err != nil {
-			panic(err)
-		}
 
-		err = resp.Body.Close()
-		if err != nil {
-			panic(err)
+	if config.Total_number_of_requests <= 0 {
+		for {
+			makeRequest(config.Target, client, logger)
 		}
-
-		event := EventLog{
-			URL:        config.Target,
-			StatusCode: resp.StatusCode,
-		}
-
-		jsonEvent, err := json.Marshal(event)
-		if err != nil {
-			panic(err)
-		}
-
-		logger.Printf("%s", jsonEvent)
 	}
+	for i := 0; i < config.Total_number_of_requests; i++ {
+		makeRequest(config.Target, client, logger)
+	}
+}
+func makeRequest(url string, client *http.Client, logger Logger) {
+	resp, err := client.Get(url)
+	if err != nil {
+		panic(err)
+	}
+
+	err = resp.Body.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	event := EventLog{
+		URL:        url,
+		StatusCode: resp.StatusCode,
+	}
+
+	jsonEvent, err := json.Marshal(event)
+	if err != nil {
+		panic(err)
+	}
+
+	logger.Printf("%s", jsonEvent)
+
 }

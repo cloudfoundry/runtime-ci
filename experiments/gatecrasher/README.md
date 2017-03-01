@@ -26,3 +26,14 @@ and to have no healthcheck,
 as it's a "worker."
 
 Note that you will need to `cf login` first.
+
+## Configuration
+Two environment variables are currently respected.
+`TARGET` is the full URL,
+including protocol,
+that requests are to be made against.
+`TOTAL_NUMBER_OF_REQUESTS` is the number of requests
+that will be made.
+If it is set to 0
+or less
+it will make an unlimited number of requests.
