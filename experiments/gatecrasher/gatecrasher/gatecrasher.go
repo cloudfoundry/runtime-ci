@@ -10,8 +10,18 @@ import (
 )
 
 type EventLog struct {
-	URL        string `json:"url"`
 	StatusCode int    `json:"statusCode"`
+	Type       string `json:"type"`
+	URL        string `json:"url"`
+}
+
+type SummaryEventLog struct {
+	FinishTime     time.Time `json:"finishTime"`
+	IntervalSize   int       `json:"intervalSize"`
+	PercentSuccess float64   `json:"percentSuccess"`
+	StartTime      time.Time `json:"startTime"`
+	Type           string    `json:"type"`
+	URL            string    `json:"url"`
 }
 
 type Logger interface {
@@ -25,21 +35,37 @@ func Run(config config.Config, logger Logger) {
 	}
 	client := &http.Client{Transport: tr}
 
-	if config.Total_number_of_requests <= 0 {
-		for {
-			makeRequest(config.Target, client, logger)
-			time.Sleep(time.Duration(config.Poll_interval_in_ms) * time.Millisecond)
+	startTime := time.Now()
+	successCounter := 0
+	for i := 1; ; i++ {
+		if i > config.TotalNumberOfRequests {
+			return
 		}
-	}
-	for i := 0; i < config.Total_number_of_requests; i++ {
-		makeRequest(config.Target, client, logger)
-		// This is to avoid sleeping a second for every test case
-		if i+1 < config.Total_number_of_requests {
-			time.Sleep(time.Duration(config.Poll_interval_in_ms) * time.Millisecond)
+		event := makeRequest(config.Target, client, logger)
+
+		if event.StatusCode == http.StatusOK {
+			successCounter++
+		}
+
+		logJson(event, logger)
+		time.Sleep(time.Duration(config.PollIntervalInMs) * time.Millisecond)
+		if i%config.ReportIntervalInRequests == 0 {
+			summaryEventLog := SummaryEventLog{
+				FinishTime:     time.Now(),
+				IntervalSize:   config.ReportIntervalInRequests,
+				PercentSuccess: float64(successCounter) / float64(config.ReportIntervalInRequests),
+				StartTime:      startTime,
+				Type:           "summary",
+				URL:            config.Target,
+			}
+			logJson(summaryEventLog, logger)
+			startTime = time.Now()
+			successCounter = 0
 		}
 	}
 }
-func makeRequest(url string, client *http.Client, logger Logger) {
+
+func makeRequest(url string, client *http.Client, logger Logger) EventLog {
 	resp, err := client.Get(url)
 	if err != nil {
 		panic(err)
@@ -51,14 +77,17 @@ func makeRequest(url string, client *http.Client, logger Logger) {
 	}
 
 	event := EventLog{
-		URL:        url,
 		StatusCode: resp.StatusCode,
+		Type:       "request",
+		URL:        url,
 	}
+	return event
+}
 
-	jsonEvent, err := json.Marshal(event)
+func logJson(jsonObject interface{}, logger Logger) {
+	marshalledJson, err := json.Marshal(jsonObject)
 	if err != nil {
 		panic(err)
 	}
-
-	logger.Printf("%s", jsonEvent)
+	logger.Printf("%s", marshalledJson)
 }

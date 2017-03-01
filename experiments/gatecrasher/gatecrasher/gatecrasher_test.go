@@ -3,6 +3,7 @@ package gatecrasher_test
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/config"
 	"github.com/cloudfoundry/runtime-ci/experiments/gatecrasher/gatecrasher"
@@ -19,6 +20,16 @@ func addGoodHandlers(number int, server *ghttp.Server) {
 			ghttp.CombineHandlers(
 				ghttp.VerifyRequest("GET", "/v2/info"),
 				ghttp.RespondWithJSONEncoded(http.StatusOK, ""),
+			))
+	}
+}
+
+func addBadHandlers(number int, server *ghttp.Server) {
+	for i := 0; i < number; i++ {
+		server.AppendHandlers(
+			ghttp.CombineHandlers(
+				ghttp.VerifyRequest("GET", "/v2/info"),
+				ghttp.RespondWithJSONEncoded(http.StatusBadGateway, ""),
 			))
 	}
 }
@@ -41,7 +52,7 @@ var _ = Describe("Gatecrasher", func() {
 
 		Context("when the configuration specifies total run count", func() {
 			BeforeEach(func() {
-				configStruct.Total_number_of_requests = 2
+				configStruct.TotalNumberOfRequests = 2
 			})
 			It("runs the specified number of times", func() {
 				gatecrasher.Run(configStruct, fakeLogger)
@@ -69,7 +80,7 @@ var _ = Describe("Gatecrasher", func() {
 			goodUrl = fakeServer.URL() + "/v2/info"
 			badUrl = fakeServer.URL() + "/v2/bad-info"
 			configStruct = config.Load()
-			configStruct.Total_number_of_requests = 1
+			configStruct.TotalNumberOfRequests = 1
 		})
 
 		AfterEach(func() {
@@ -98,6 +109,7 @@ var _ = Describe("Gatecrasher", func() {
 				Expect(len(args)).To(Equal(1))
 
 				json.Unmarshal(args[0].([]byte), &loggedEvent)
+				Expect(loggedEvent.Type).To(Equal("request"))
 				Expect(loggedEvent.URL).To(Equal(goodUrl))
 				Expect(loggedEvent.StatusCode).To(Equal(http.StatusOK))
 			})
@@ -133,12 +145,54 @@ var _ = Describe("Gatecrasher", func() {
 		})
 	})
 	Describe("request summaries", func() {
-		Context("when summaries are configured", func() {
+		BeforeEach(func() {
+			fakeLogger = new(gatecrasherfakes.FakeLogger)
+			fakeServer = ghttp.NewTLSServer()
+			goodUrl = fakeServer.URL() + "/v2/info"
+		})
+		AfterEach(func() {
+			fakeServer.Close()
+		})
+		Context("when all requests are good and summaries are configured", func() {
 			BeforeEach(func() {
-				configStruct.Total_number_of_requests = 1
+				configStruct = config.Load()
+				configStruct.Target = goodUrl
+				configStruct.TotalNumberOfRequests = 4
+				configStruct.ReportIntervalInRequests = 2
 			})
 
 			It("Logs a summary every configured interval", func() {
+				addGoodHandlers(4, fakeServer)
+				loggedSummaryEvent := gatecrasher.SummaryEventLog{}
+				gatecrasher.Run(configStruct, fakeLogger)
+				format, args := fakeLogger.PrintfArgsForCall(2)
+				Expect(format).To(Equal("%s"))
+				Expect(len(args)).To(Equal(1))
+
+				json.Unmarshal(args[0].([]byte), &loggedSummaryEvent)
+				Expect(loggedSummaryEvent.URL).To(Equal(goodUrl))
+				Expect(loggedSummaryEvent.IntervalSize).To(Equal(2))
+				Expect(loggedSummaryEvent.StartTime).ToNot(Equal(time.Time{}))
+				Expect(loggedSummaryEvent.FinishTime).ToNot(Equal(time.Time{}))
+				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(1.0))
+				Expect(loggedSummaryEvent.Type).To(Equal("summary"))
+			})
+
+			It("Logs a summary of successes and failures", func() {
+				addGoodHandlers(1, fakeServer)
+				addBadHandlers(1, fakeServer)
+				addGoodHandlers(1, fakeServer)
+				addBadHandlers(1, fakeServer)
+				loggedSummaryEvent := gatecrasher.SummaryEventLog{}
+				gatecrasher.Run(configStruct, fakeLogger)
+				format, args := fakeLogger.PrintfArgsForCall(2)
+				Expect(format).To(Equal("%s"))
+				Expect(len(args)).To(Equal(1))
+
+				json.Unmarshal(args[0].([]byte), &loggedSummaryEvent)
+				Expect(loggedSummaryEvent.URL).To(Equal(goodUrl))
+				Expect(loggedSummaryEvent.IntervalSize).To(Equal(2))
+				Expect(loggedSummaryEvent.PercentSuccess).To(Equal(0.5))
 			})
 		})
 	})

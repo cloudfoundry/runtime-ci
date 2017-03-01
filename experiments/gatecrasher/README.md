@@ -33,6 +33,9 @@ These environment variables are currently respected:
 `TARGET` is the full URL,
 including protocol,
 that requests are to be made against.
+`REPORT_INTERVAL_IN_REQUESTS` is the number of requests
+that will be made between summary reports, which will
+summarize the percentage of success requests.
 `TOTAL_NUMBER_OF_REQUESTS` is the number of requests
 that will be made.
 If it is set to 0
