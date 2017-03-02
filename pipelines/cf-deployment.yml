@@ -444,7 +444,7 @@ jobs:
       vars-store: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "operations/gcp.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/use-postgres.yml operations/use-postgres-tcp-routing.yml"
+      OPS_FILES: "operations/gcp.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/workarounds/use-4-azs-for-router.yml operations/use-postgres.yml operations/use-postgres-tcp-routing.yml"
       REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
