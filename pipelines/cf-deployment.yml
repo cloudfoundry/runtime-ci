@@ -123,6 +123,8 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - integration_config.json
+    - wats_integration_config.json
+    - rats_integration_config.json
 - name: hermione-env-vars-store
   type: git
   source:
