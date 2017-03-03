@@ -29,14 +29,14 @@ Note that you will need to `cf login` first.
 
 ## Configuration
 These environment variables are currently respected:
-`POLL_INTERVAL_IN_MS` is the time between requests.
-`TARGET` is the full URL,
+- `POLL_INTERVAL_IN_MS` is the time between requests.
+- `TARGET` is the full URL,
 including protocol,
 that requests are to be made against.
-`REPORT_INTERVAL_IN_REQUESTS` is the number of requests
+- `REPORT_INTERVAL_IN_REQUESTS` is the number of requests
 that will be made between summary reports, which will
 summarize the percentage of success requests.
-`TOTAL_NUMBER_OF_REQUESTS` is the number of requests
+- `TOTAL_NUMBER_OF_REQUESTS` is the number of requests
 that will be made.
 If it is set to 0
 or less
