@@ -19,9 +19,11 @@ groups:
   - setup-infrastructure-upgrade
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
+  - create-env-lite
   - destroy-infrastructure-upgrade
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
+  - delete-env-lite
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
@@ -400,14 +402,22 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: runtime-ci
-  - get: bosh-deployment
-  - get: cf-deployment-develop
-  - get: snitch-env-director-state
   - put: snitch-terraform
     params:
       env_name: snitch
       delete_on_failure: true
+
+- name: create-env-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: bosh-deployment
+  - get: cf-deployment-develop
+  - get: snitch-env-director-state
+  - get: snitch-terraform
+    passed: [setup-infrastructure-lite]
   - task: bosh-create-env
     file: runtime-ci/tasks/bosh-create-env/task.yml
     input_mapping:
@@ -575,7 +585,7 @@ jobs:
         trigger: true
       - get: bosh-deployment
       - get: snitch-env-director-state
-        passed: [ setup-infrastructure-lite ]
+        passed: [ create-env-lite ]
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: guarantee-no-existing-cf-deployment
@@ -902,7 +912,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-lite
+- name: delete-env-lite
   serial_groups: [snitch]
   public: true
   build_logs_to_retain: 100
@@ -932,6 +942,15 @@ jobs:
     params:
       repository: updated-env-repo
       rebase: true
+
+
+- name: destroy-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: snitch-terraform
+    passed: [delete-env-lite]
   - put: snitch-terraform
     params:
       env_name: snitch
