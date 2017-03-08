@@ -12,7 +12,7 @@ go install github.com/onsi/ginkgo/ginkgo
 
 cd ${GOPATH}/src/code.cloudfoundry.org/routing-acceptance-tests
 
-packages=("http_routes" "tcp_routing")
+packages=("http_routes" "tcp_routing", "smoke_test")
 for i in "${packages[@]}"
 do
   ginkgo -r "$i" \
