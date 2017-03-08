@@ -9,7 +9,6 @@ image_resource:
 inputs:
 - name: binary-buildpack-release
 - name: capi-release
-- name: cf-mysql-release
 - name: cf-smoke-tests-release
 - name: cflinuxfs2-rootfs-release
 - name: consul-release

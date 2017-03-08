@@ -237,10 +237,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/loggregator
-- name: cf-mysql-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-mysql-release
+# - name: cf-mysql-release
+#   type: bosh-io-release
+#   source:
+#     repository: cloudfoundry/cf-mysql-release
 - name: uaa-release
   type: bosh-io-release
   source:
@@ -1023,10 +1023,10 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: cf-mysql-release
-      trigger: true
-      params:
-        tarball: false
+    # - get: cf-mysql-release
+    #   trigger: true
+    #   params:
+    #     tarball: false
     - get: uaa-release
       trigger: true
       params:
