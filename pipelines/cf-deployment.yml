@@ -548,7 +548,7 @@ jobs:
       vars-store: hermione-env-vars-store
     params:
       SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "operations/change-logging-port-for-aws-elb.yml operations/use-only-local-route-emitters.yml operations/scale-down-etcd-for-cluster-changes.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml"
+      OPS_FILES: "operations/change-logging-port-for-aws-elb.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml"
     ensure:
       put: hermione-env-vars-store
       params:
