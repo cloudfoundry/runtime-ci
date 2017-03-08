@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"regexp"
 
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section/manifest"
 
 	. "github.com/onsi/ginkgo"
@@ -58,6 +60,32 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("No release or stemcell version updates"))
+	})
+
+	It("when there exist update releases that are not in the manifest releases, it adds them to resulting list of releases", func() {
+		updateReleases := []string{"release1"}
+		buildDir := "fixtures/build"
+
+		cfDeploymentManifest := []byte(`
+name: my-deployment
+releases:
+  - name: fooRelease
+stemcells:
+`)
+		resultingManifest, _, err := manifest.UpdateReleasesAndStemcells(updateReleases, buildDir, cfDeploymentManifest)
+		Expect(err).ToNot(HaveOccurred())
+
+		var releasesAndStemcells manifest.Manifest
+		err = yaml.Unmarshal(resultingManifest, &releasesAndStemcells)
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(releasesAndStemcells.Releases).To(ContainElement(manifest.Release{
+			Name:    "release1",
+			URL:     "original-release1-url",
+			Version: "original-release1-version",
+			SHA1:    "original-release1-sha1",
+		}))
+
 	})
 
 	It("adds all the releases and stemcells to the commit message if no releases exist", func() {

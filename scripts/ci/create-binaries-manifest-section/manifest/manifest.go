@@ -30,6 +30,21 @@ type Manifest struct {
 	Stemcells []Stemcell `yaml:"stemcells"`
 }
 
+func mergeReleases(manifestReleases []Release, updatingReleases []string) []Release {
+	manifestReleaseMap := map[string]bool{}
+	for _, r := range manifestReleases {
+		manifestReleaseMap[r.Name] = true
+	}
+
+	allReleases := manifestReleases
+	for _, release := range updatingReleases {
+		if _, found := manifestReleaseMap[release]; !found {
+			allReleases = append(allReleases, Release{Name: release})
+		}
+	}
+	return allReleases
+}
+
 func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, string, error) {
 	changes := []string{}
 	r := regexp.MustCompile(`(?m:^releases:$)`)
@@ -73,35 +88,46 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		stemcellsVersions[stemcell.Alias] = stemcell.Version
 	}
 
+	releaseMap := map[string]bool{}
+	for _, r := range releases {
+		releaseMap[r] = true
+	}
+
+	releasesAndStemcells.Releases = mergeReleases(releasesAndStemcells.Releases, releases)
+
+	newRelease := Release{}
 	cfDeploymentReleasesAndStemcells := Manifest{}
-	for _, release := range releases {
-		releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release))
+	for _, release := range releasesAndStemcells.Releases {
+		if _, found := releaseMap[release.Name]; found {
+			releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release.Name))
 
-		sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
-		if err != nil {
-			return nil, "", err
+			sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
+			newRelease.SHA1 = strings.TrimSpace(string(sha1))
+			if err != nil {
+				return nil, "", err
+			}
+
+			newRelease.Name = release.Name
+			if releasesSHA1s[newRelease.Name] != strings.TrimSpace(string(sha1)) {
+				changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
+			}
+
+			url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
+			if err != nil {
+				return nil, "", err
+			}
+			newRelease.URL = strings.TrimSpace(string(url))
+
+			version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
+			if err != nil {
+				return nil, "", err
+			}
+			newRelease.Version = strings.TrimSpace(string(version))
+
+		} else {
+			newRelease = release
 		}
-
-		url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
-		if err != nil {
-			return nil, "", err
-		}
-
-		version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
-		if err != nil {
-			return nil, "", err
-		}
-
-		if releasesSHA1s[release] != strings.TrimSpace(string(sha1)) {
-			changes = append(changes, fmt.Sprintf("%s-release", release))
-		}
-
-		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, Release{
-			Name:    release,
-			SHA1:    strings.TrimSpace(string(sha1)),
-			Version: strings.TrimSpace(string(version)),
-			URL:     strings.TrimSpace(string(url)),
-		})
+		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, newRelease)
 	}
 
 	stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))

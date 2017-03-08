@@ -3,6 +3,10 @@ releases:
   url: original-release1-url
   version: original-release1-version
   sha1: original-release1-sha1
+- name: inert-release
+  url: original-inert-release-url
+  version: original-inert-release-version
+  sha1: original-inert-release-sha1
 - name: release2
   url: updated-release2-url
   version: updated-release2-version
