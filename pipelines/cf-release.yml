@@ -1462,6 +1462,7 @@ jobs:
       USE_ETCD: false
       USE_MYSQL: true
       DIEGO_MYSQL_OVERRIDES_PATH: deployments/a1-mysql-standalone-stubs/diego-property-overrides.yml
+      USE_GROOTFS: true
   - aggregate:
     - put: cf-a1-manifest
       params:

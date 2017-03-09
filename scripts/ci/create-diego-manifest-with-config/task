@@ -29,6 +29,7 @@ pushd "${DIEGO_RELEASE_DIR}"
     -v "${RELEASE_VERSIONS_PATH}" \
     -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
+    $([ "${USE_GROOTFS}" == "true" ] && echo "-G") \
     $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd

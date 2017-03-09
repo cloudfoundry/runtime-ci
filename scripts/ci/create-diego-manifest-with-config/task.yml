@@ -28,6 +28,7 @@ params:
   USE_ETCD: true
   USE_MYSQL: false
   DIEGO_MYSQL_OVERRIDES_PATH:
+  USE_GROOTFS: false
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest-with-config/task
