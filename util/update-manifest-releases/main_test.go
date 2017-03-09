@@ -67,7 +67,7 @@ var _ = Describe("main", func() {
 	BeforeEach(func() {
 		var err error
 
-		pathToBinary, err = gexec.Build("github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section")
+		pathToBinary, err = gexec.Build("github.com/cloudfoundry/runtime-ci/util/update-manifest-releases")
 		Expect(err).NotTo(HaveOccurred())
 
 		buildDir, err = ioutil.TempDir("", "")

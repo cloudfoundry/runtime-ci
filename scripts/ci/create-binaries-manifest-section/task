@@ -14,7 +14,7 @@ function main() {
   go get github.com/onsi/ginkgo/...
   go get github.com/golang/dep/...
 
-  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section"
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     dep ensure -update
 
     ginkgo -r -randomizeSuites -randomizeAllSpecs .

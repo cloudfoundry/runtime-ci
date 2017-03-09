@@ -7,7 +7,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section/manifest"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

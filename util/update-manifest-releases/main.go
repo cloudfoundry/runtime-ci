@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cloudfoundry/runtime-ci/scripts/ci/create-binaries-manifest-section/manifest"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 )
 
 func main() {
