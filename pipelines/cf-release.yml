@@ -238,6 +238,11 @@ resources:
   source:
     repository: cloudfoundry-incubator/cf-networking-release
 
+- name: grootfs-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/grootfs-release
+
 - name: cflinuxfs2-rootfs-release-tarball
   type: bosh-io-release
   source:
@@ -1282,6 +1287,9 @@ jobs:
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
+      - get: grootfs-release-tarball
+        passed: [ generate-aws-manifests ]
+        trigger: true
     - put: a1-deployment
       params:
         manifest: cf-a1-manifest/deployment.yml
@@ -1296,6 +1304,7 @@ jobs:
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
         - cf-networking-release-tarball/*.tgz
+        - grootfs-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
       - task: write-target-file-bosh-director
@@ -1422,6 +1431,10 @@ jobs:
       params:
         tarball: false
     - get: cf-networking-release-tarball
+      trigger: true
+      params:
+        tarball: false
+    - get: grootfs-release-tarball
       trigger: true
       params:
         tarball: false
