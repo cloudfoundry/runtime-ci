@@ -8,6 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: deployment-configuration
 - name: cf-mysql-release
 - name: stemcell
 
