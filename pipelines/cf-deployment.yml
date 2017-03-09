@@ -3,6 +3,7 @@ groups:
 - name: cf-deployment
   jobs:
   - update-releases
+  - update-release-mysql
   - deploy-releases-fresh
   - deploy-releases-lite
   - deploy-releases-upgrade
@@ -237,10 +238,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/loggregator
-# - name: cf-mysql-release
-#   type: bosh-io-release
-#   source:
-#     repository: cloudfoundry/cf-mysql-release
+- name: cf-mysql-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-mysql-release
 - name: uaa-release
   type: bosh-io-release
   source:
@@ -1085,6 +1086,47 @@ jobs:
         tarball: false
   - task: create-binaries-manifest-section
     file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+    input_mapping:
+      deployment-configuration: cf-deployment-develop
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: deployment-manifest
+      ops-files: cf-deployment-develop
+  - task: commit-generated-manifest
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      manifest: deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-release-mysql
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: hermione-env-director-state
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: stemcell
+      trigger: true
+      params:
+        tarball: false
+    - get: cf-mysql-release
+      trigger: true
+      params:
+        tarball: false
+  - task: update-release-mysql
+    file: runtime-ci/tasks/update-release-mysql/task.yml
     input_mapping:
       deployment-configuration: cf-deployment-develop
   - task: bosh-dry-run
