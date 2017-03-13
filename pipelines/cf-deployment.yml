@@ -41,25 +41,6 @@ groups:
   - smoke-tests-upgrade
   - routing-acceptance-tests-fresh
   - bless-manifest
-- name: fresh-pipeline
-  jobs:
-  - deploy-releases-fresh
-  - acceptance-tests-fresh
-  - routing-acceptance-tests-fresh
-  - post-delete-deployment-fresh
-  - bless-manifest
-- name: upgrade-pipeline
-  jobs:
-  - deploy-releases-upgrade
-  - acceptance-tests-upgrade
-  - windows-acceptance-tests-upgrade
-  - smoke-tests-upgrade
-  - bless-manifest
-- name: lite-pipeline
-  jobs:
-  - deploy-releases-lite
-  - acceptance-tests-lite
-  - bless-manifest
 
 resource_types:
 - name: terraform
