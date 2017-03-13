@@ -41,12 +41,19 @@ groups:
   - smoke-tests-upgrade
   - routing-acceptance-tests-fresh
   - bless-manifest
+- name: gcs-concourse-recourse
+  jobs:
+  - get-and-upload-mysql-release
 
 resource_types:
 - name: terraform
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
+- name: gcs-resource
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
 
 resources:
 - name: snitch-terraform
@@ -315,6 +322,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
+- name: mysql-release-gcs-bucket
+  type: gcs-resource
+  source:
+    bucket: uncompiled-mysql-release
+    json_key: {{snitch_gcp_service_account_json}}
+    regexp: uncompiled-mysql-release/mysql-release-(.*).tgz
 
 jobs:
 - name: setup-infrastructure-upgrade
@@ -1178,3 +1191,12 @@ jobs:
       file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
+
+- name: get-and-upload-mysql-release
+  plan:
+  - timeout: 2h
+    do:
+    - get: cf-mysql-release
+    - put: mysql-release-gcs-bucket
+      params:
+        file: cf-mysql-release/release.tgz
