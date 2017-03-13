@@ -1193,6 +1193,7 @@ jobs:
         bbl-state: snitch-env-director-state
 
 - name: get-and-upload-mysql-release
+  public: true
   plan:
   - timeout: 2h
     do:
