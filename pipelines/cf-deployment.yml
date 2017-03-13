@@ -453,7 +453,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
@@ -489,7 +488,7 @@ jobs:
         repository: updated-vars-store
         rebase: true
   - task: run-bosh-cleanup
-    file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
   - task: update-integration-configs
@@ -511,7 +510,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-develop
       trigger: true
@@ -550,7 +548,7 @@ jobs:
         repository: updated-vars-store
         rebase: true
   - task: run-bosh-cleanup
-    file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
   - task: update-integration-configs
@@ -610,7 +608,7 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
     - task: update-integration-configs
@@ -1166,12 +1164,12 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: hermione-env-director-state
       - get: daily
         trigger: true
     - task: run-bosh-cleanup
-      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
 
@@ -1183,12 +1181,12 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
       - get: snitch-env-director-state
       - get: daily
         trigger: true
     - task: run-bosh-cleanup
-      file: runtime-ci/scripts/ci/run-bosh-cleanup/task.yml
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
 
