@@ -73,6 +73,14 @@ resources:
       env_name: snitch
       dns_suffix: cf-app.com
       service_account_key: {{snitch_gcp_service_account_json}}
+- name: fresh-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/fresh
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
 - name: luna-env-director-state
   type: git
   source:
@@ -365,7 +373,7 @@ jobs:
       DOMAIN: hermione.cf-app.com
 
 - name: setup-infrastructure-fresh
-  serial_groups: [luna]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -448,7 +456,7 @@ jobs:
       CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
 - name: deploy-releases-fresh
-  serial_groups: [luna, luna-routing]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -460,6 +468,8 @@ jobs:
     - get: luna-env-integration-configs
     - get: luna-env-director-state
       passed: [ setup-infrastructure-fresh ]
+    - put: fresh-pool
+      params: {acquire: true}
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
@@ -711,27 +721,23 @@ jobs:
       ERRAND_NAME: smoke-tests
 
 - name: acceptance-tests-fresh
-  serial_groups: [luna]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
     - aggregate:
+      - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-      - get: cf-deployment-develop
-        trigger: true
-        passed: [ deploy-releases-fresh ]
-      - get: luna-env-director-state
-        trigger: true
-        passed: [ deploy-releases-fresh ]
       - get: luna-env-vars-store
+      - get: luna-env-integration-configs
+      - get: fresh-pool
         trigger: true
         passed: [ deploy-releases-fresh ]
-      - get: luna-env-integration-configs
-        trigger: true
-      - get: cats-concourse-task
+      - get: cf-deployment-develop
+        passed: [ deploy-releases-fresh ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -781,7 +787,7 @@ jobs:
       file: cats-concourse-task/task.yml
 
 - name: routing-acceptance-tests-fresh
-  serial_groups: [luna-routing]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -791,15 +797,11 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: routing-acceptance-tests
-      - get: luna-env-director-state
-        trigger: true
-        passed: [ deploy-releases-fresh ]
       - get: luna-env-vars-store
-        trigger: true
-        passed: [ deploy-releases-fresh ]
       - get: luna-env-integration-configs
-        trigger: true
       - get: cf-deployment-develop
+        passed: [ deploy-releases-fresh ]
+      - get: fresh-pool
         trigger: true
         passed: [ deploy-releases-fresh ]
     - task: ensure-tcp-router-healthy
@@ -819,39 +821,26 @@ jobs:
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: post-delete-deployment-fresh
-  serial_groups: [luna, luna-routing]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
     - aggregate:
-      - get: runtime-ci
-      - get: luna-env-director-state
-        trigger: true
-        passed:
-        - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
-      - get: cf-deployment-develop
-        trigger: true
-        passed:
-        - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
-      - get: luna-env-vars-store
-        trigger: true
-        passed:
-        - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
-      - get: luna-env-integration-configs
-        trigger: true
-        passed:
-        - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
       - get: cf-deployment-concourse-tasks
+      - get: luna-env-director-state
+      - get: fresh-pool
+        trigger: true
+        passed:
+        - acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    - put: fresh-pool
+      params: {release: fresh-pool}
 
 - name: destroy-infrastructure-upgrade
   serial_groups: [hermione]
@@ -884,7 +873,7 @@ jobs:
         repository: updated-bbl-state
 
 - name: destroy-infrastructure-fresh
-  serial_groups: [luna]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
