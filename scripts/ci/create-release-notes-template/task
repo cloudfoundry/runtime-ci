@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eux
 
-tag=v$(cat cf-final-bosh-release/version)
+tag=v$(($(cat cf-final-bosh-release/version)+1))
 release_notes_body="**Contents**
 - <a href='#notices'>Notices</a>
 - <a href='#job-spec-changes'>Job Spec Changes
