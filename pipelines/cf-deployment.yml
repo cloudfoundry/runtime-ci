@@ -4,6 +4,7 @@ groups:
   jobs:
   - update-releases
   - update-release-mysql
+  - acquire-fresh-pool
   - deploy-releases-fresh
   - deploy-releases-lite
   - deploy-releases-upgrade
@@ -455,21 +456,32 @@ jobs:
     params:
       CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
+- name: acquire-fresh-pool
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+    - put: fresh-pool
+      params: {acquire: true}
+
 - name: deploy-releases-fresh
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment-develop
+    - get: fresh-pool
       trigger: true
+      passed: [ acquire-fresh-pool ]
+    - get: cf-deployment-develop
+      passed: [ acquire-fresh-pool ]
+    - get: cf-deployment-concourse-tasks
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
       passed: [ setup-infrastructure-fresh ]
-    - put: fresh-pool
-      params: {acquire: true}
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
