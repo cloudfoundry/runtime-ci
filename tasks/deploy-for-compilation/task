@@ -40,10 +40,9 @@ function main() {
 
   bosh \
     -n \
-    -d cf-dry-run \
+    -d cf-compilation \
     deploy cf-deployment/cf-deployment.yml \
-    -o compilation.yml \
+    -o compilation.yml
 }
 
 main
-
