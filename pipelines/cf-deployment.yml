@@ -804,7 +804,6 @@ jobs:
 - name: routing-acceptance-tests-fresh
   serial: true
   public: true
-  serial_groups: [wait-for-rats]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -838,7 +837,6 @@ jobs:
 
 - name: post-delete-deployment-fresh
   serial: true
-  serial_groups: [wait-for-rats]
   public: true
   build_logs_to_retain: 100
   plan:
