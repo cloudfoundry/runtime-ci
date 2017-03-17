@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: pool-resource
+
+run:
+  path: runtime-ci/tasks/prepare-to-add-pool-resource/task
+
+params:
+  NAME:
+  METADATA:

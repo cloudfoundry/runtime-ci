@@ -1,0 +1,10 @@
+#!/bin/bash
+set -xeu
+
+export GOPATH=windows-acceptance-tests
+
+root_dir=$PWD
+
+cp "${root_dir}/integration-config/${CONFIG_FILE_PATH}" windows-acceptance-tests/scripts/wats_int_conf.json
+cd windows-acceptance-tests/scripts
+./run_wats.sh wats_int_conf.json
