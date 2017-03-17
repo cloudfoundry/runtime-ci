@@ -13,7 +13,7 @@ outputs:
 - name: pool-resource
 
 run:
-  path: runtime-ci/tasks/prepare-to-add-pool-resource/task
+  path: runtime-ci/tasks/prepare-to-modify-pool-resource/task
 
 params:
   NAME:
