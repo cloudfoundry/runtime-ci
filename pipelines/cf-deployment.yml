@@ -378,9 +378,12 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: runtime-ci
-  - get: luna-env-director-state
-  - get: cf-deployment-concourse-tasks
+  - aggregate:
+    - get: runtime-ci
+    - get: luna-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - put: fresh-pool
+      params: {acquire: true}
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -892,6 +895,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: fresh-pool
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
@@ -908,6 +912,8 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+  - put: fresh-pool
+    params: {release: fresh-pool}
 
 - name: delete-env-lite
   serial_groups: [snitch]
