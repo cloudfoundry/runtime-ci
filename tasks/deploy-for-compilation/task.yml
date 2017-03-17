@@ -12,4 +12,4 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/tasks/generate-compilation-manifest/task
+  path: runtime-ci/tasks/deploy-for-compilation/task
