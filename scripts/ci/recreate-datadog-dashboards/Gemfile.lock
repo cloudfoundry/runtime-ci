@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    dogapi (1.22.0)
+    dogapi (1.25.0)
       multi_json
     multi_json (1.12.1)
 
@@ -12,4 +12,4 @@ DEPENDENCIES
   dogapi
 
 BUNDLED WITH
-   1.12.4
+   1.12.5
