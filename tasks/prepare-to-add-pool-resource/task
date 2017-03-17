@@ -4,3 +4,4 @@ set -eux
 
 NAME="${NAME:?"NAME must be provided"}"
 echo "${NAME}" > pool-resource/name
+touch pool-resource/metadata
