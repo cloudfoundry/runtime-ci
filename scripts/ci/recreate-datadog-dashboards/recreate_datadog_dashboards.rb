@@ -51,7 +51,8 @@ end
 api_key=ENV.fetch('DATADOG_API_KEY')
 app_key=ENV.fetch('APP_KEY')
 
-dog = Dogapi::Client.new(api_key, app_key)
+                       #(api_key, application_key=nil, host=nil, device=nil, silent=true, timeout=nil, endpoint=nil)
+dog = Dogapi::Client.new(api_key, app_key,             nil,      nil,        false,       120,         nil)
 
 dashboards = dog.get_all_screenboards().last.fetch('screenboards')
 dashboards.each do |board|
