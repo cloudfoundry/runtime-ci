@@ -18,6 +18,7 @@ groups:
   - bless-manifest
 - name: infrastructure
   jobs:
+  - add-claimed-lock-fresh
   - setup-infrastructure-upgrade
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
@@ -25,6 +26,7 @@ groups:
   - destroy-infrastructure-upgrade
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
+  - remove-claimed-lock-fresh
   - delete-env-lite
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
@@ -373,6 +375,21 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
 
+- name: add-claimed-lock-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: luna
+    output_mapping:
+      pool-resource: fresh-pool
+  - put: fresh-pool
+    params: {add_claimed: fresh-pool}
+
 - name: setup-infrastructure-fresh
   serial: true
   public: true
@@ -382,8 +399,9 @@ jobs:
     - get: runtime-ci
     - get: luna-env-director-state
     - get: cf-deployment-concourse-tasks
-    - put: fresh-pool
-      params: {acquire: true}
+    - get: fresh-pool
+      trigger: true
+      passed: [ add-claimed-lock-fresh ]
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -403,6 +421,8 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+  - put: fresh-pool
+    params: {release: fresh-pool}
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -893,7 +913,8 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: fresh-pool
+    - put: fresh-pool
+      params: {claim: luna}
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
@@ -910,8 +931,24 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+
+- name: remove-claimed-lock-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: fresh-pool
+    passed: [ destroy-infrastructure-fresh ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: luna
+    output_mapping:
+      pool-resource: fresh-pool
   - put: fresh-pool
-    params: {release: fresh-pool}
+    params: {remove: fresh-pool}
 
 - name: delete-env-lite
   serial_groups: [snitch]
