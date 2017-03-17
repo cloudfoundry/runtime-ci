@@ -326,7 +326,6 @@ jobs:
 
 - name: create-final-release
   public: true
-  serial_groups: [myrtle]
   build_logs_to_retain: 100
   plan:
   - aggregate:
