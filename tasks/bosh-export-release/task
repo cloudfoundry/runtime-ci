@@ -21,10 +21,12 @@ function validate_variables() {
 }
 
 function export_release() {
-  STEMCELL_OS=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/stemcells/os=${STEMCELL_OS}/version")
-  BOSH_RELEASE_VERSION=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
+  local stemcell_os_version
+  stemcell_os_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/stemcells/os=${STEMCELL_OS}/version")
+  local bosh_release_version
+  bosh_release_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
   pushd exported-release
-    bosh export-release "${BOSH_RELEASE}/${BOSH_RELEASE_VERSION}" "${STEMCELL_OS}/${STEMCELL_OS_VERSION}"
+    bosh export-release "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
   popd
 }
 
