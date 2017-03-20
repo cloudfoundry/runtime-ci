@@ -15,6 +15,7 @@ outputs:
 params:
   BOSH_RELEASE:
   STEMCELL_OS: ubuntu-trusty
+  DEPLOYMENT_NAME: cf-compilation
 
 run:
   path: runtime-ci/tasks/bosh-export-release/task

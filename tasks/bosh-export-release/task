@@ -18,6 +18,7 @@ function setup_bosh_env_vars() {
 function validate_variables() {
   BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
   STEMCELL_OS="${STEMCELL_OS:?"STEMCELL_OS must be provided"}"
+  DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 }
 
 function export_release() {
@@ -26,7 +27,7 @@ function export_release() {
   local bosh_release_version
   bosh_release_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
   pushd exported-release
-    bosh export-release "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+    bosh export-release -d "${DEPLOYMENT_NAME}" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
   popd
 }
 
