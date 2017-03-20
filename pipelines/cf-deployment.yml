@@ -44,6 +44,7 @@ groups:
   - smoke-tests-upgrade
   - routing-acceptance-tests-fresh
   - bless-manifest
+  - ship-it-patch
 - name: gcs-concourse-recourse
   jobs:
   - get-and-upload-mysql-release
@@ -53,6 +54,7 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
+
 - name: gcs-resource
   type: docker-image
   source:
@@ -93,6 +95,7 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
+
 - name: luna-env-integration-configs
   type: git
   source:
@@ -339,6 +342,16 @@ resources:
     bucket: uncompiled-mysql-release
     json_key: {{snitch_gcp_service_account_json}}
     regexp: uncompiled-mysql-release/mysql-release-(.*).tgz
+
+- name: cf-deployment-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
+    branch: master
+    private_key: {{cf_relint_ci_semver_private_key}}
+    git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
+    file: cf-deployment-version
 
 jobs:
 - name: setup-infrastructure-upgrade
@@ -1001,23 +1014,17 @@ jobs:
   serial: true
   build_logs_to_retain: 100
   plan:
-    - do:
-      - aggregate:
-        - get: cf-deployment-develop
-          trigger: true
-          passed:
-          - acceptance-tests-fresh
-          - acceptance-tests-lite
-          - acceptance-tests-upgrade
-          - routing-acceptance-tests-fresh
-          - smoke-tests-upgrade
-        - get: cf-deployment-master
-    - put: cf-deployment-release-candidate
-      params:
-        repository: cf-deployment-develop
-    - put: cf-deployment-master
-      params:
-        repository: cf-deployment-release-candidate
+  - get: cf-deployment-develop
+    trigger: true
+    passed:
+    - acceptance-tests-fresh
+    - acceptance-tests-lite
+    - acceptance-tests-upgrade
+    - routing-acceptance-tests-fresh
+    - smoke-tests-upgrade
+  - put: cf-deployment-release-candidate
+    params:
+      repository: cf-deployment-develop
 
 - name: update-releases
   serial: true
@@ -1248,3 +1255,18 @@ jobs:
     - put: mysql-release-gcs-bucket
       params:
         file: cf-mysql-release/release.tgz
+
+- name: ship-it-patch
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - put: cf-deployment-version
+        params: { bump: patch }
+      - get: cf-deployment-release-candidate
+        passed: [bless-manifest]
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
