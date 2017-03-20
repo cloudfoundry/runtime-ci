@@ -23,10 +23,6 @@ function create_compilation_opsfile() {
   value: cf-compilation
 
 - type: replace
-  path: /stemcells/alias=default/version
-  value: latest
-
-- type: replace
   path: /instance_groups
   value: []
 

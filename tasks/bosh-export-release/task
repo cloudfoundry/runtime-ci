@@ -1,0 +1,37 @@
+#!/bin/bash -exu
+
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state
+    BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_CA_CERT
+    BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_ENVIRONMENT
+    BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT
+    BOSH_CLIENT_SECRET=$(bbl director-password)
+    export BOSH_CLIENT_SECRET
+  popd
+  set -x
+}
+
+function validate_variables() {
+  BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
+  STEMCELL_OS="${STEMCELL_OS:?"STEMCELL_OS must be provided"}"
+}
+
+function export_release() {
+  STEMCELL_OS=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/stemcells/os=${STEMCELL_OS}/version")
+  BOSH_RELEASE_VERSION=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
+  pushd exported-release
+    bosh export-release "${BOSH_RELEASE}/${BOSH_RELEASE_VERSION}" "${STEMCELL_OS}/${STEMCELL_OS_VERSION}"
+  popd
+}
+
+function main() {
+  setup_bosh_env_vars
+  validate_variables
+  export_release
+}
+
+main
