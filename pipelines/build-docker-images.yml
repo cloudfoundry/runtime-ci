@@ -977,9 +977,6 @@ jobs:
     - aggregate:
       - get: weekly
         trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
       - get: cf-deployment-concourse-tasks
         trigger: true
     - put: cf-deployment-concourse-tasks-pipeline-image
@@ -1889,10 +1886,6 @@ jobs:
         trigger: true
       - get: weekly
         trigger: true
-      - get: trigger-resource
-        passed:
-        - trigger-all-image-builds
-        trigger: true
       - get: cats-concourse-task
         trigger: true
       - get: cf-cli
@@ -1918,9 +1911,6 @@ jobs:
     - aggregate:
       - get: weekly
         trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
       - get: cf-deployment-dockerfiles-bosh-cli
         trigger: true
     - put: bosh-cli-image
@@ -1936,9 +1926,6 @@ jobs:
     - aggregate:
       - get: weekly
         trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
       - get: cf-deployment-dockerfiles-golang-17
         trigger: true
     - put: golang-17-image
