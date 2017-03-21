@@ -377,6 +377,7 @@ jobs:
       put: hermione-env-director-state
       params:
         repository: updated-bbl-state
+        rebase: true
   - task: bind-elb-to-r53
     file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
     input_mapping:
