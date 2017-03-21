@@ -100,3 +100,18 @@ jobs:
     file: runtime-ci/scripts/ci/announce-rc/task.yml
     params:
       GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
+
+- name: create-release-notes
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-final-bosh-release
+      trigger: true
+      params:
+        tarball: false
+    - get: runtime-ci
+  - task: create-release-notes-template
+    file: runtime-ci/scripts/ci/create-release-notes-template/task.yml
+    params:
+      GH_ACCESS_TOKEN: {{release_notes_bot_github_access_token}}
