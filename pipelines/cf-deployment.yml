@@ -45,9 +45,6 @@ groups:
   - routing-acceptance-tests-fresh
   - bless-manifest
   - ship-it-patch
-- name: gcs-concourse-recourse
-  jobs:
-  - get-and-upload-mysql-release
 
 resource_types:
 - name: terraform
@@ -336,12 +333,13 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
+
 - name: mysql-release-gcs-bucket
   type: gcs-resource
   source:
-    bucket: uncompiled-mysql-release
-    json_key: {{snitch_gcp_service_account_json}}
-    regexp: uncompiled-mysql-release/mysql-release-(.*).tgz
+    bucket: compiled-ubuntu-trusty-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cf-mysql/cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
 - name: cf-deployment-version
   type: semver
@@ -1160,6 +1158,7 @@ jobs:
     - get: runtime-ci
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: stemcell
       trigger: true
       params:
@@ -1178,11 +1177,28 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
       ops-files: cf-deployment-develop
+  - task: bosh-upload-stemcell-compilation
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+      bbl-state: greengrass-env-director-state
+    params:
+      INFRASTRUCTURE: google
   - task: deploy-for-compilation
     file: runtime-ci/tasks/deploy-for-compilation/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
+  - task: export-mysql-release
+    file: runtime-ci/tasks/bosh-export-release/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+      bbl-state: greengrass-env-director-state
+    params:
+      BOSH_RELEASE: cf-mysql
+  - put: mysql-release-gcs-bucket
+    params:
+      file: exported-release/*.tgz
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
@@ -1245,16 +1261,6 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
-
-- name: get-and-upload-mysql-release
-  public: true
-  plan:
-  - timeout: 2h
-    do:
-    - get: cf-mysql-release
-    - put: mysql-release-gcs-bucket
-      params:
-        file: cf-mysql-release/release.tgz
 
 - name: ship-it-patch
   public: true
