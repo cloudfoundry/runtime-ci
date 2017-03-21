@@ -29,6 +29,7 @@ release_notes_body="**Contents**
   - [cf-routing-release vRR](https://github.com/cloudfoundry-incubator/routing-release/releases/tag/vRR)
 - Loggregator:
   - [loggregator vLL](https://github.com/cloudfoundry/loggregator/releases/tag/vLL)
+  - [statsd-injector-release vLL](https://github.com/cloudfoundry/statsd-injector-release/releases/tag/vLL)
 - Java Buildpack:
   - [java-buildpack vRR](https://github.com/cloudfoundry/java-buildpack/releases/tag/vJJ)
 - Ruby Buildpack:
