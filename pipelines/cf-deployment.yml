@@ -917,6 +917,7 @@ jobs:
       put: hermione-env-director-state
       params:
         repository: updated-bbl-state
+        rebase: true
 
 - name: destroy-infrastructure-fresh
   serial: true
