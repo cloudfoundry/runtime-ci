@@ -26,7 +26,7 @@ release_notes_body="**Contents**
 - Identity:
   - [uaa-release vUU](https://github.com/cloudfoundry/uaa-release/releases/tag/vUU)
 - Routing:
-  - [cf-routing-release vRR](https://github.com/cloudfoundry-incubator/routing-release/releases/tag/vRR)
+  - [routing-release vRR](https://github.com/cloudfoundry-incubator/routing-release/releases/tag/vRR)
 - Loggregator:
   - [loggregator vLL](https://github.com/cloudfoundry/loggregator/releases/tag/vLL)
   - [statsd-injector-release vLL](https://github.com/cloudfoundry/statsd-injector-release/releases/tag/vLL)
