@@ -462,33 +462,23 @@ jobs:
       env_name: snitch
       delete_on_failure: true
 
-- name: add-claimed-lock-ops
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: trelawney
-    output_mapping:
-      pool-resource: ops-pool
-  - put: ops-pool
-    params: {add_claimed: ops-pool}
-
 - name: setup-infrastructure-ops
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: trelawney-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: ops-pool
-      trigger: true
-      passed: [ add-claimed-lock-ops ]
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: trelawney
+    output_mapping:
+      pool-resource: prepared-ops-pool
+  - put: ops-pool
+    params: {add_claimed: prepared-ops-pool}
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -1097,24 +1087,14 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-
-- name: remove-claimed-lock-ops
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: ops-pool
-    passed: [ destroy-infrastructure-ops ]
-    trigger: true
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
       NAME: trelawney
     output_mapping:
-      pool-resource: ops-pool
+      pool-resource: prepared-ops-pool
   - put: ops-pool
-    params: {remove: ops-pool}
+    params: {remove: prepared-ops-pool}
 
 - name: bless-manifest
   public: true
