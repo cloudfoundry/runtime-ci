@@ -19,13 +19,13 @@ groups:
 - name: infrastructure
   jobs:
   - add-claimed-lock-fresh
-  - setup-infrastructure-upgrade
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
+  - setup-infrastructure-upgrade
   - create-env-lite
-  - destroy-infrastructure-upgrade
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
+  - destroy-infrastructure-upgrade
   - remove-claimed-lock-fresh
   - delete-env-lite
   - verify-nameserver-has-record
