@@ -7,7 +7,8 @@ RUN \
     git \
     ruby \
     unzip \
-    wget
+    wget \
+    curl
 
 # jq
 RUN \
