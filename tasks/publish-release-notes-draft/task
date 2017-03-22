@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eux
+
+tag=v$(find release-repo-master/releases -regex ".*${RELEASE_NAME}-[0-9]*.yml" | egrep -o "${RELEASE_NAME}-[0-9]+" | egrep -o "[0-9]+" | sort -n | tail -n 1)
+echo "Finalizing release notes"
+set +x
+	curl -f "https://api.github.com/repos/cloudfoundry/cf-release/releases?access_token=${GH_ACCESS_TOKEN}" \
+		-X PATCH \
+		-d "{
+			\"tag_name\": \"${tag}\",
+			\"draft\": false,
+		   }"
+set -x
+echo "Succeeded creating release notes"
