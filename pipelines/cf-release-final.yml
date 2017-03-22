@@ -4,7 +4,7 @@ groups:
   - create-final-release
   - merge-master-into-develop
   - announce-rc
-  - create-release-notes
+  - create-release-notes-draft
 
 resources:
 - name: runtime-ci
@@ -67,6 +67,10 @@ jobs:
       repository: final-release-repo
       tag: final-release-repo/version_number
       tag_prefix: v
+  - task: publish-release-notes
+    file: runtime-ci/tasks/publish-release-notes/task.yml
+    params:
+      GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
 
 - name: merge-master-into-develop
   public: true
@@ -101,7 +105,7 @@ jobs:
     params:
       GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
 
-- name: create-release-notes
+- name: create-release-notes-draft
   public: true
   build_logs_to_retain: 100
   plan:
