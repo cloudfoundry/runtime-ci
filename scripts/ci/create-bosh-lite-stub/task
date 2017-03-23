@@ -37,6 +37,7 @@ create_stub() {
         'persistent_app_space' => 'CATS-persistent-space-dea',
         'persistent_app_quota_name' => 'CATS-persistent-quota-dea',
         'persistent_app_org' => 'CATS-persistent-org-dea',
+        'cf_dial_timeout_in_seconds' => 6,
       },
       'cc' => {
         'security_group_definitions' => [
