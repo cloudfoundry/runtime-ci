@@ -551,33 +551,44 @@ jobs:
     do:
     - aggregate:
       - get: bosh-lite
+        tags: [ bosh-lite-aws ]
       - get: runtime-ci
+        tags: [ bosh-lite-aws ]
       - get: cf-release-tarball
         passed: [generate-bosh-lite-manifests]
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: diego-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
+        tags: [ bosh-lite-aws ]
       - get: garden-runc-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
+        tags: [ bosh-lite-aws ]
       - get: cflinuxfs2-rootfs-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-manifest
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-diego-manifest
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
+        tags: [ bosh-lite-aws ]
       - get: bosh-lite-stemcell
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: cf-release
         resource: cf-release-develop
         passed: [generate-bosh-lite-manifests]
         params:
           submodules: none
+        tags: [ bosh-lite-aws ]
     - task: deprovision-bosh-lite
+      tags: [ bosh-lite-aws ]
       privileged: true
       file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
       params:
@@ -585,6 +596,7 @@ jobs:
         AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
     - task: provision-bosh-lite
+      tags: [ bosh-lite-aws ]
       privileged: true
       file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
       params:
@@ -596,22 +608,26 @@ jobs:
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
         SSH_KEY: {{bosh_lite_private_key}}
     - task: write-target-file
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
     - put: bosh-lite-deployment
+      tags: [ bosh-lite-aws ]
       params:
         target_file: target-file-dir/target
         manifest: cf-bosh-lite-manifest/deployment.yml
         stemcells: [bosh-lite-stemcell/*.tgz]
         releases: [ cf-release-tarball/*.tgz]
     - task: write-target-file
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
       output_mapping:
         target-file-dir: target-file-dir-diego
     - put: bosh-lite-deployment-diego
+      tags: [ bosh-lite-aws ]
       params:
         target_file: target-file-dir-diego/target
         manifest: cf-bosh-lite-diego-manifest/diego-deployment.yml
@@ -621,17 +637,20 @@ jobs:
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-rootfs-release-tarball/*.tgz
     - task: create-bosh-lite-creds
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
       output_mapping:
         bosh-user-file-dir: bosh-username
         bosh-password-file-dir: bosh-password
     - task: write-target-file
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
       output_mapping:
         target-file-dir: bosh-target
     - task: write-director-version
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       output_mapping:
         director-version: bosh-lite
@@ -640,6 +659,7 @@ jobs:
         BOSH_USER_FILE: username
         BOSH_PASSWORD_FILE: password
     - put: bosh-lite-director-version
+      tags: [ bosh-lite-aws ]
       params:
         file: bosh-lite/director_version
 - name: bosh-lite-smoke-tests
@@ -653,51 +673,65 @@ jobs:
     - aggregate:
       - get: bosh-lite-director-version
         passed: [ deploy-bosh-lite ]
+        tags: [ bosh-lite-aws ]
       - get: bosh-lite-stemcell
         passed: [deploy-bosh-lite]
         params:
           tarball: false
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: cf-release
         resource: cf-release-develop
         passed: [deploy-bosh-lite]
         params:
           submodules: none
+        tags: [ bosh-lite-aws ]
       - get: bosh-lite
         passed:
         - deploy-bosh-lite
+        tags: [ bosh-lite-aws ]
       - get: runtime-ci
+        tags: [ bosh-lite-aws ]
       - get: cf-release-tarball
         passed: [deploy-bosh-lite]
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: diego-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: garden-runc-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: cflinuxfs2-rootfs-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-manifest
         passed: [ deploy-bosh-lite ]
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-diego-manifest
         trigger: true
         passed: [ deploy-bosh-lite ]
+        tags: [ bosh-lite-aws ]
     - task: create-bosh-lite-creds
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
     - task: write-target-file
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-target-file/task.yml
       params:
         TARGET: {{bosh_lite_elastic_ip}}
     - task: run-errand-bbl-smoke-test
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
       params:
         BOSH_USER_FILE: bosh-user-file-dir/username
@@ -715,53 +749,66 @@ jobs:
     - aggregate:
       - get: bosh-lite-director-version
         passed: [ bosh-lite-smoke-tests ]
+        tags: [ bosh-lite-aws ]
       - get: bosh-lite-stemcell
         passed: [bosh-lite-smoke-tests]
         params:
           tarball: false
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: cf-release
         resource: cf-release-develop
         passed: [bosh-lite-smoke-tests]
         params:
           submodules: none
+        tags: [ bosh-lite-aws ]
       - get: runtime-ci
+        tags: [ bosh-lite-aws ]
       - get: bosh-lite
         passed:
         - bosh-lite-smoke-tests
+        tags: [ bosh-lite-aws ]
       - get: cf-release-tarball
         passed: [bosh-lite-smoke-tests]
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: diego-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: garden-runc-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: cflinuxfs2-rootfs-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
         params:
           tarball: false
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-manifest
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
+        tags: [ bosh-lite-aws ]
       - get: cf-bosh-lite-diego-manifest
         trigger: true
         passed: [ bosh-lite-smoke-tests ]
+        tags: [ bosh-lite-aws ]
     - aggregate:
       - do: # enable docker
         - task: write-target-file-api
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
             TARGET: api.bosh-lite.runtime-ci.cf-app.com
           output_mapping:
             target-file-dir: bosh-lite-api-target-file
         - task: enable-docker-diego-and-task-creation
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/enable-docker-diego-1-0/task.yml
           input_mapping:
             cf-target: bosh-lite-api-target-file
@@ -770,16 +817,19 @@ jobs:
             CF_PASSWORD: {{bosh_lite_cf_password}}
       - do: # bosh deploy bosh-lite-diego-cats
         - task: write-target-file-bosh
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
             TARGET: {{bosh_lite_elastic_ip}}
           output_mapping:
             target-file-dir: bosh-lite-target-file
         - task: create-bosh-lite-diego-cats-manifest
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
           input_mapping:
             cf-manifest: cf-bosh-lite-manifest
         - put: bosh-lite-diego-cats-deployment
+          tags: [ bosh-lite-aws ]
           params:
             manifest: bosh-lite-diego-cats-manifest/manifest.yml
             target_file: bosh-lite-target-file/target
@@ -788,14 +838,17 @@ jobs:
     - aggregate:
       - do:
         - task: create-bosh-lite-creds
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
             TARGET: {{bosh_lite_elastic_ip}}
           output_mapping:
             target-file-dir: bosh-lite-target-file
         - task: run-errand-bbl-acceptance-tests
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
             BOSH_TARGET_FILE: target
@@ -807,14 +860,17 @@ jobs:
             target-file-dir: bosh-lite-target-file
       - do:
         - task: create-bosh-lite-creds
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
         - task: write-target-file-bosh
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/write-target-file/task.yml
           params:
             TARGET: {{bosh_lite_elastic_ip}}
           output_mapping:
             target-file-dir: bosh-lite-target-file
         - task: run-errand-bbl-diego-acceptance-tests
+          tags: [ bosh-lite-aws ]
           file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
           params:
             BOSH_TARGET_FILE: target
@@ -825,11 +881,14 @@ jobs:
           input_mapping:
             target-file-dir: bosh-lite-target-file
     - put: acceptance-test-metadata
+      tags: [ bosh-lite-aws ]
     - task: write-build-url
+      tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/write-build-url/task.yml
       output_mapping:
         build_url: bosh-lite
     - put: bosh-lite-build-url
+      tags: [ bosh-lite-aws ]
       params:
         file: bosh-lite/build_url
 
