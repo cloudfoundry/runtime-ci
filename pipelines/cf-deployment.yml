@@ -204,7 +204,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-release
+    uri: https://github.com/cloudfoundry-incubator/routing-acceptance-tests
 - name: windows-acceptance-tests
   type: git
   source:
@@ -918,7 +918,6 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: routing-acceptance-tests
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
