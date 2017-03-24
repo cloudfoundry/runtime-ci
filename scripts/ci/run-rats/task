@@ -6,7 +6,7 @@ CONFIG="$PWD/integration-config/${CONFIG_FILE_PATH}"
 
 echo "Moving cf-routing-acceptance-tests onto the gopath..."
 mkdir -p "${GOPATH}/src/code.cloudfoundry.org/"
-cp -R routing-acceptance-tests $GOPATH/src/code.cloudfounry.org/
+cp -R routing-acceptance-tests $GOPATH/src/code.cloudfoundry.org/
 
 go install github.com/onsi/ginkgo/ginkgo
 
