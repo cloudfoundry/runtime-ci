@@ -203,7 +203,7 @@ resources:
 - name: github-routing-release
   type: git
   source:
-    branch: master
+    branch: develop
     uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: windows-acceptance-tests
   type: git
