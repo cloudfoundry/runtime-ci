@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: routing-acceptance-tests
+- name: routing-release
 - name: integration-config
 run:
   path: runtime-ci/scripts/ci/run-rats/task

@@ -24,13 +24,6 @@ RUN \
   mkdir $GOPATH && \
   rm -rf /tmp/*
 
-# Install Go RATs dependencies
-RUN \
-  git clone https://github.com/cloudfoundry-incubator/routing-release.git && \
-  cd routing-release && \
-  git submodule status | awk '{print $2}' | sed 's/src\///' | xargs go get -d && \
-  cd ..
-
 # Install the cf CLI
 RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.22.2&source=github-rel" && \
   dpkg -i cf.deb
