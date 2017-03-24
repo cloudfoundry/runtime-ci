@@ -11,6 +11,8 @@ cp -R routing-release/src $GOPATH
 go install github.com/onsi/ginkgo/ginkgo
 
 cd ${GOPATH}/src/code.cloudfoundry.org/routing-acceptance-tests
+git co master
+git pull
 
 packages=("http_routes" "tcp_routing" "smoke_test")
 for i in "${packages[@]}"
