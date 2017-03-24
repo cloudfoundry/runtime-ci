@@ -24,6 +24,11 @@ RUN \
   mkdir $GOPATH && \
   rm -rf /tmp/*
 
+# Install Ginkgo et al
+RUN \
+  go get github.com/onsi/ginkgo && \
+  go get github.com/onsi/gomega
+
 # Install the cf CLI
 RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.22.2&source=github-rel" && \
   dpkg -i cf.deb
