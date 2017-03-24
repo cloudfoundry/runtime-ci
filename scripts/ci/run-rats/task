@@ -6,13 +6,15 @@ CONFIG="$PWD/integration-config/${CONFIG_FILE_PATH}"
 
 echo "Moving cf-routing-acceptance-tests onto the gopath..."
 mkdir -p $GOPATH
+cd routing-release/src/code.cloudfoundry.org/routing-acceptance-tests
+rm -rf *
+git clone https://github.com/cloudfoundry-incubator/routing-acceptance-tests.git
+
 cp -R routing-release/src $GOPATH
 
 go install github.com/onsi/ginkgo/ginkgo
 
 cd ${GOPATH}/src/code.cloudfoundry.org/routing-acceptance-tests
-git co master
-git pull
 
 packages=("http_routes" "tcp_routing" "smoke_test")
 for i in "${packages[@]}"
