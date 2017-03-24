@@ -203,7 +203,7 @@ resources:
 - name: github-routing-release
   type: git
   source:
-    branch: develop
+    branch: master
     uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: windows-acceptance-tests
   type: git
@@ -890,6 +890,7 @@ jobs:
 
 - name: routing-acceptance-tests-fresh
   serial: true
+  serial_groups: [wait-for-rats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -924,6 +925,7 @@ jobs:
 
 - name: post-delete-deployment-fresh
   serial: true
+  serial_groups: [wait-for-rats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -936,7 +938,7 @@ jobs:
         trigger: true
         passed:
         - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
+        # - routing-acceptance-tests-fresh
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
