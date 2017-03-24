@@ -28,7 +28,7 @@ RUN \
 RUN \
   git clone https://github.com/cloudfoundry-incubator/routing-release.git && \
   cd routing-release && \
-  git submodule status | awk '{print $2}' | sed 's/src\///' | xargs go get && \
+  git submodule status | awk '{print $2}' | sed 's/src\///' | xargs go get -d && \
   cd ..
 
 # Install the cf CLI
