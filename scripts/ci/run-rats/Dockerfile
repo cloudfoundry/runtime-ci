@@ -24,10 +24,12 @@ RUN \
   mkdir $GOPATH && \
   rm -rf /tmp/*
 
-# Install Ginkgo et al
+# Install Go RATs dependencies
 RUN \
-  go get github.com/onsi/ginkgo && \
-  go get github.com/onsi/gomega
+  git clone https://github.com/cloudfoundry-incubator/routing-release.git && \
+  pushd routing-release && \
+  git submodule status | awk '{print $2}' | sed 's/src\///' | xargs go get && \
+  popd
 
 # Install the cf CLI
 RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.22.2&source=github-rel" && \
