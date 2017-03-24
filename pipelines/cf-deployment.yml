@@ -890,7 +890,6 @@ jobs:
 
 - name: routing-acceptance-tests-fresh
   serial: true
-  serial_groups: [wait-for-rats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -925,7 +924,6 @@ jobs:
 
 - name: post-delete-deployment-fresh
   serial: true
-  serial_groups: [wait-for-rats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -938,7 +936,7 @@ jobs:
         trigger: true
         passed:
         - acceptance-tests-fresh
-        # - routing-acceptance-tests-fresh
+        - routing-acceptance-tests-fresh
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
