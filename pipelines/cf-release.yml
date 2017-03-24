@@ -450,7 +450,7 @@ jobs:
           - task: write-target-file-runtime-ci
             file: runtime-ci/scripts/ci/write-target-file/task.yml
             params:
-              TARGET: https://bosh.runtime.ci.cf-app.com:25555
+              TARGET: https://52.7.171.48:25555
             output_mapping:
               target-file-dir: runtime-ci-target-file
           - task: write-creds-runtime-ci
