@@ -9,6 +9,7 @@ mkdir -p $GOPATH
 cd routing-release/src/code.cloudfoundry.org/routing-acceptance-tests
 rm -rf *
 git clone https://github.com/cloudfoundry-incubator/routing-acceptance-tests.git
+cd -
 
 cp -R routing-release/src $GOPATH
 
