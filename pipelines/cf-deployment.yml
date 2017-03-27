@@ -8,6 +8,7 @@ groups:
   - deploy-releases-fresh
   - deploy-releases-lite
   - deploy-releases-upgrade
+  - deploy-releases-ops
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
@@ -615,6 +616,35 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+
+- name: deploy-releases-ops
+  serial_groups: [trelawney]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-develop
+      trigger: true
+    - get: trelawney-env-director-state
+      passed: [ setup-infrastructure-ops ]
+  - task: bosh-upload-stemcell-ops
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+      bbl-state: trelawney-env-director-state
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-with-ops-cf
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+    # params:
+      # SYSTEM_DOMAIN: trelawney.cf-app.com
+      # OPS_FILES: "operations/scale-to-one-az.yml"
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione, hermione-smokes]

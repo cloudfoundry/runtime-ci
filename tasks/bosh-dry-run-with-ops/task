@@ -1,0 +1,56 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function create_dry_run_opsfile() {
+  # The ops file will be generated
+  # in the directory of the ops-files input.
+  # This could lead to a name collision,
+  # but it shouldn't and probably won't.
+  cat << EOF > ops-files/dry-run.yml
+---
+- type: replace
+  path: /name
+  value: cf-dry-run
+
+- type: replace
+  path: /stemcells/alias=default/version
+  value: latest
+EOF
+}
+
+function setup_interpolate_env_vars_for_dry_run() {
+  export MANIFEST_FILE
+  MANIFEST_FILE=cf-deployment.yml
+  export VARS_STORE_FILE
+  VARS_STORE_FILE="$(mktemp)"
+  export SYSTEM_DOMAIN
+  SYSTEM_DOMAIN=trelawney.cf-app.com
+  export OPS_FILES
+  OPS_FILES="dry-run.yml scale-to-one-az.yml"
+}
+
+function bosh_deploy_dry_run() {
+  local deployment_name
+  deployment_name=$(bosh interpolate "${INTERPOLATED_MANIFEST}" --path /name)
+
+  bosh \
+    -n \
+    -d "${deployment_name}" \
+    deploy \
+    --dry-run \
+    "${INTERPOLATED_MANIFEST}"
+}
+
+function main() {
+  setup_bosh_env_vars
+  setup_interpolate_env_vars_for_dry_run
+  create_dry_run_opsfile
+
+  bosh_interpolate
+  bosh_deploy_dry_run
+}
+
+main
