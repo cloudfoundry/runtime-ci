@@ -14,4 +14,4 @@ inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/tasks/bosh-dry-run/task
+  path: runtime-ci/tasks/bosh-dry-run-with-ops/task
