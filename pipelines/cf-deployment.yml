@@ -354,9 +354,9 @@ resources:
 - name: mysql-release-gcs-bucket
   type: gcs-resource
   source:
-    bucket: compiled-ubuntu-trusty-releases
+    bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
-    regexp: cf-mysql/cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+    regexp: cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
 - name: cf-deployment-version
   type: semver
