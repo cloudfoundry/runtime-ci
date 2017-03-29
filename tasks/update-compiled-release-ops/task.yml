@@ -13,7 +13,7 @@ inputs:
 - name: compiled-release-tarball
 
 outputs:
-- name: updated-ops-files
+- name: updated-compiled-releases-ops-file
 
 run:
   path: runtime-ci/tasks/update-compiled-release-ops/task

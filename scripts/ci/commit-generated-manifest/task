@@ -7,11 +7,13 @@ function main() {
   root_dir="${1}"
 
   cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
+  cp ./compiled-releases-ops-file/"${COMPILED_RELEASES_OPS_FILE_NAME}" ./repo/"${COMPILED_RELEASES_OPS_FILE_DESTINATION}"
   pushd repo > /dev/null
-    if [[ -n $(git status ${MANIFEST_DESTINATION} --porcelain) ]]; then
+    if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
 
+      git add ./"${COMPILED_RELEASES_OPS_FILE_DESTINATION}"
       git add ./"${MANIFEST_DESTINATION}"
 
       local commit_message

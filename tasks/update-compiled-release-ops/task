@@ -35,15 +35,7 @@ EOF
 }
 
 function main() {
-  git clone ops-files updated-ops-files
-
-  update_release $RELEASE_NAME ops-files/operations/use-compiled-releases.yml > updated-ops-files/operations/use-compiled-releases.yml
-
-  pushd updated-ops-files
-    if [[ -n $(git status --porcelain) ]]; then
-      git add operations/use-compiled-releases.yml
-    fi
-  popd
+  update_release $RELEASE_NAME ops-files/operations/use-compiled-releases.yml > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
 
 main
