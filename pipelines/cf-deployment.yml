@@ -1319,10 +1319,20 @@ jobs:
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
-  - task: commit-generated-manifest
+  - task: update-compiled-release-ops-file
+    file: runtime-ci/tasks/update-compiled-release-ops-file/task.yml
+    input_mapping:
+      compiled-release-tarball: exported-release
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-mysql-release
+    params:
+      RELEASE_NAME: cf-mysql
+    output_mapping:
+      updated-ops-files: cf-deployment-with-updated-ops
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
-      repo: cf-deployment-develop
+      repo: cf-deployment-develop-with-updated-ops
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
