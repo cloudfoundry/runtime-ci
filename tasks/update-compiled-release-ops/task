@@ -7,23 +7,27 @@ function update_release() {
   compiled_release_ops_file="$2"
   local release_sha
   release_sha=$(sha1sum compiled-release-tarball/*.tgz | awk '{print $1}')
+  local release_tarball
+  pushd compiled-release-tarball
+    release_tarball=$(ls *.tgz)
+  popd
   local release_version
   release_version=$(cat bosh-io-release/version)
 
   update_release_ops_file=$(mktemp)
 
 (
-cat <<'EOF'
+cat << EOF
 ---
 - type: replace
-  path: /path=~1releases~1name=$release_name/url
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/$release_tarball
+  path: /path=~1releases~1name=${release_name}/url
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
 - type: replace
-  path: /path=~1releases~1name=$release_name/version
-  value: "$release_version"
+  path: /path=~1releases~1name=${release_name}/version
+  value: "${release_version}"
 - type: replace
-  path: /path=~1releases~1name=$release_name/sha1
-  value: "$release_sha"
+  path: /path=~1releases~1name=${release_name}/sha1
+  value: "${release_sha}"
 EOF
 ) > $update_release_ops_file
 
