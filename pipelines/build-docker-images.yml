@@ -561,6 +561,14 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: cf-deployment-concourse-tasks-docker-image-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
+    branch: master
+    file: cf-deployment-concourse-tasks-docker-image-version
+    private_key: {{cf_deployment_concourse_tasks_docker_image_version_repo_private_key}}
 - name: cf-deployment-concourse-tasks-pipeline-image
   type: docker-image
   source:
@@ -979,9 +987,12 @@ jobs:
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
+      - get: cf-deployment-concourse-tasks-docker-image-version
     - put: cf-deployment-concourse-tasks-pipeline-image
       params:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
+        tag: cf-deployment-concourse-tasks-docker-image-version/version
+        tag_prefix: v
         push: true
 - name: build-bosh-deploy-docker-image
   public: true
