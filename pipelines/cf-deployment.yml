@@ -1259,10 +1259,13 @@ jobs:
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      compiled-releases-ops-file: cf-deployment-develop
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      COMPILED_RELEASES_OPS_FILE_NAME: operations/use-compiled-releases.yml
+      COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -1327,16 +1330,17 @@ jobs:
       bosh-io-release: cf-mysql-release
     params:
       RELEASE_NAME: cf-mysql
-    output_mapping:
-      cf-deployment-with-updated-ops: updated-ops-files
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
-      repo: cf-deployment-develop-with-updated-ops
+      repo: cf-deployment-develop
+      compiled-releases-ops-file: updated-compiled-releases-ops-file
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      COMPILED_RELEASES_OPS_FILE_NAME: use-compiled-releases.yml
+      COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
