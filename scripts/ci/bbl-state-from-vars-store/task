@@ -30,7 +30,7 @@ function create_bbl_state() {
 
   echo "writing bbl-state.json..."
   local bbl_state
-  bbl_state='{"bosh":{},"keyPair":{}}'
+  bbl_state='{"version":3,"bosh":{},"keyPair":{}}'
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorUsername=\"admin\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorPassword=\"${password}\"")
   bbl_state=$(echo "${bbl_state}" | jq ".bosh.directorAddress=\"https://${address}:25555\"")
