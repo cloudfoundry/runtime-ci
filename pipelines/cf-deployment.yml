@@ -337,7 +337,7 @@ resources:
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
     paths:
-    - infrastructure/*
+    - google_account_creds.json
     - bbl-state.json
 - name: bosh-deployment
   type: git
