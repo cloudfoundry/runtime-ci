@@ -24,7 +24,6 @@ groups:
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-upgrade
-  - create-env-lite
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
@@ -153,12 +152,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-- name: cf-deployment-concourse-tasks-bbl2
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v1.*
 - name: runtime-ci
   type: git
   source:
@@ -464,10 +457,30 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - put: snitch-terraform
+  - aggregate:
+    - get: runtime-ci
+    - get: bosh-deployment
+    - get: snitch-env-director-state
+  - task: setup-infrastructure
+    file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
-      env_name: snitch
-      delete_on_failure: true
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      LB_DOMAIN: snitch.cf-app.com
+      BBL_ENV_NAME: snitch-lite
+      OPS_FILES: "ops-files/bosh-lite.yml ops-files/bosh-lite-runc.yml ops-files/jumpbox-user.yml ops-files/gcp/bosh-lite-vm-type.yml"
+      IS_BOSH_LITE: true
+    input_mapping:
+      bbl-state: snitch-env-director-state
+      ops-files: bosh-deployment
+    ensure:
+      put: snitch-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: setup-infrastructure-ops
   serial: true
@@ -507,51 +520,6 @@ jobs:
         rebase: true
   - put: ops-pool
     params: {release: ops-pool}
-
-- name: create-env-lite
-  serial_groups: [snitch]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: bosh-deployment
-  - get: cf-deployment-develop
-  - get: snitch-env-director-state
-  - get: snitch-terraform
-    passed: [setup-infrastructure-lite]
-  - task: bosh-create-env
-    file: runtime-ci/tasks/bosh-create-env/task.yml
-    input_mapping:
-      env-repo: snitch-env-director-state
-      terraform: snitch-terraform
-    params:
-      STATE_FILE: infrastructure/bosh/state.json
-      VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml bosh-deployment/bosh-lite-runc.yml bosh-deployment/jumpbox-user.yml bosh-deployment/gcp/bosh-lite-vm-type.yml"
-      DIRECTOR_NAME: snitch
-      GCP_PROJECTID: {{snitch_gcp_project}}
-      GCP_CREDENTIALS: {{snitch_gcp_service_account_json}}
-      GCP_ZONE: us-central1-a
-  - put: snitch-env-director-state
-    params:
-      repository: updated-env-repo
-      rebase: true
-  - task: bbl-state-from-bosh-director-vars-store
-    file: runtime-ci/scripts/ci/bbl-state-from-vars-store/task.yml
-    input_mapping:
-      env-repo: snitch-env-director-state
-      terraform: snitch-terraform
-  - put: snitch-env-director-state
-    params:
-      repository: updated-env-repo
-      rebase: true
-  - task: bosh-update-cloud-config
-    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
-    input_mapping:
-      bbl-state: snitch-env-director-state
-      cloud-config: cf-deployment-develop
-    params:
-      CLOUD_CONFIG_FILE: bosh-lite/cloud-config.yml
 
 - name: acquire-fresh-pool
   serial: true
@@ -727,7 +695,7 @@ jobs:
         trigger: true
       - get: bosh-deployment
       - get: snitch-env-director-state
-        passed: [ create-env-lite ]
+        passed: [ setup-infrastructure-lite ]
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: guarantee-no-existing-cf-deployment
@@ -988,12 +956,11 @@ jobs:
   - aggregate:
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-bbl2
+    - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: hermione-env-director-state
-      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
-    file: cf-deployment-concourse-tasks-bbl2/bosh-delete-deployment/task.yml
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
@@ -1003,10 +970,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks-bbl2/bbl-destroy/task.yml
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
-      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
     ensure:
       put: hermione-env-director-state
       params:
@@ -1023,17 +989,15 @@ jobs:
       params: {claim: luna}
     - get: luna-env-director-state
     - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-bbl2
+    - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
-      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
-    file: cf-deployment-concourse-tasks-bbl2/bosh-delete-deployment/task.yml
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks-bbl2/bbl-destroy/task.yml
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
-      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
     ensure:
       put: luna-env-director-state
       params:
