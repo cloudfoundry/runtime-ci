@@ -78,6 +78,8 @@ function main() {
       name_flag="--name ${BBL_ENV_NAME}"
     fi
 
+    make_concatinated_operations_file
+
     local arguments
     arguments="--ops-file ${root_dir}/ops-files/concatinated-operations.yml"
 
