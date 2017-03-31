@@ -153,6 +153,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+- name: cf-deployment-concourse-tasks-bbl2
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v1.*
 - name: runtime-ci
   type: git
   source:
@@ -982,11 +988,12 @@ jobs:
   - aggregate:
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-bbl2
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: hermione-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
+    file: cf-deployment-concourse-tasks-bbl2/bosh-delete-deployment/task.yml
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
@@ -996,9 +1003,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    file: cf-deployment-concourse-tasks-bbl2/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
     ensure:
       put: hermione-env-director-state
       params:
@@ -1015,15 +1023,17 @@ jobs:
       params: {claim: luna}
     - get: luna-env-director-state
     - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-bbl2
   - task: guarantee-no-existing-cf-deployment
     input_mapping:
       bbl-state: luna-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
+    file: cf-deployment-concourse-tasks-bbl2/bosh-delete-deployment/task.yml
   - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    file: cf-deployment-concourse-tasks-bbl2/bbl-destroy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-bbl2
     ensure:
       put: luna-env-director-state
       params:
