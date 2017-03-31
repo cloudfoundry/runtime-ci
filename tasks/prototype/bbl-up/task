@@ -54,7 +54,7 @@ function make_concatinated_operations_file() {
   local root_dir
   root_dir="${1}"
   pushd "${root_dir}/ops-files"
-  cat $OPS_FILES | grep -v "---" > concatinated-operations.yml
+  cat $OPS_FILES | grep -v "\-\-\-" > concatinated-operations.yml
   popd
 }
 
