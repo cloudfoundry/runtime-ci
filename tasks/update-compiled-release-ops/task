@@ -5,17 +5,19 @@ function update_release() {
   release_name="$1"
   local compiled_release_ops_file
   compiled_release_ops_file="$2"
+  local output_file
+  output_file="$3"
   local release_sha
   release_sha=$(sha1sum compiled-release-tarball/*.tgz | awk '{print $1}')
   local release_tarball
   pushd compiled-release-tarball
+    # shellcheck disable=SC2035
     release_tarball=$(ls *.tgz)
   popd
   local release_version
   release_version=$(cat bosh-io-release/version)
 
   update_release_ops_file=$(mktemp)
-
 (
 cat << EOF
 ---
@@ -38,13 +40,14 @@ cat << EOF
     path: /releases/name=cf-mysql/sha1
     value: "${release_sha}"
 EOF
-) > $update_release_ops_file
+) > "${update_release_ops_file}"
 
-  bosh interpolate $compiled_release_ops_file -o $update_release_ops_file
+  bosh interpolate "${compiled_release_ops_file}" -o "${update_release_ops_file}" > "${output_file}"
 }
 
 function main() {
-  update_release $RELEASE_NAME ops-files/operations/use-compiled-releases.yml > updated-compiled-releases-ops-file/use-compiled-releases.yml
+  # shellcheck disable=SC2153
+  update_release "${RELEASE_NAME}" ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
 
 main
