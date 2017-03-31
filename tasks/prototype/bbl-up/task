@@ -51,7 +51,9 @@ function write_bbl_certs() {
 
 
 function make_concatinated_operations_file() {
-  pushd ops-files
+  local root_dir
+  root_dir="${1}"
+  pushd "${root_dir}/ops-files"
   cat $OPS_FILES | grep -v "---" > concatinated-operations.yml
   popd
 }
@@ -78,7 +80,7 @@ function main() {
       name_flag="--name ${BBL_ENV_NAME}"
     fi
 
-    make_concatinated_operations_file
+    make_concatinated_operations_file ${root_dir}
 
     local arguments
     arguments="--ops-file ${root_dir}/ops-files/concatinated-operations.yml"
