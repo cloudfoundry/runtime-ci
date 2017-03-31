@@ -29,7 +29,6 @@ groups:
   - destroy-infrastructure-ops
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-fresh
-  - delete-env-lite
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
@@ -60,23 +59,6 @@ resource_types:
     repository: frodenas/gcs-resource
 
 resources:
-- name: snitch-terraform
-  type: terraform
-  source:
-    storage:
-      bucket: runtimeci-tfstate
-      bucket_path: cf-deployment-bosh-lite/
-      region_name: us-west-1
-      access_key_id: {{snitch_terraform_s3_access_key_id}}
-      secret_access_key: {{snitch_terraform_s3_secret_key}}
-    terraform_source: github.com/cloudfoundry/runtime-ci//tasks/bosh-create-env/terraform/bosh-lite/
-    vars:
-      project: {{snitch_gcp_project}}
-      region: us-central1
-      zones: [us-central1-a]
-      env_name: snitch
-      dns_suffix: cf-app.com
-      service_account_key: {{snitch_gcp_service_account_json}}
 - name: fresh-pool
   type: pool
   source:
@@ -1022,50 +1004,28 @@ jobs:
   - put: fresh-pool
     params: {remove: fresh-pool}
 
-- name: delete-env-lite
-  serial_groups: [snitch]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: snitch-terraform
-    - get: bosh-deployment
-    - get: snitch-env-director-state
-  - task: bosh-delete-env-lite
-    file: runtime-ci/tasks/bosh-delete-env/task.yml
-    input_mapping:
-      env-repo: snitch-env-director-state
-    input_mapping:
-      env-repo: snitch-env-director-state
-      bosh-deployment: bosh-deployment
-      terraform: snitch-terraform
-    params:
-      STATE_FILE: infrastructure/bosh/state.json
-      VARS_FILE: infrastructure/bosh/deployment-vars.yml
-      OPS_FILES: "bosh-deployment/bosh-lite.yml"
-      DIRECTOR_NAME: snitch
-      GCP_PROJECTID: {{snitch_gcp_project}}
-      GCP_CREDENTIALS: {{snitch_gcp_service_account_json}}
-      GCP_ZONE: us-central1-a
-  - put: snitch-env-director-state
-    params:
-      repository: updated-env-repo
-      rebase: true
-
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: snitch-terraform
-    passed: [delete-env-lite]
-  - put: snitch-terraform
-    params:
-      env_name: snitch
-      action: destroy
-    get_params:
-      action: destroy
+  - aggregate:
+    - get: snitch-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: snitch-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: snitch-env-director-state
+    ensure:
+      put: snitch-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: destroy-infrastructure-ops
   serial: true
