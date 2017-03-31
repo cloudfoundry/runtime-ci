@@ -58,7 +58,9 @@ function main() {
   fi
 
   pushd "bbl-state/${BBL_STATE_DIR}"
-    write_bbl_certs
+    if [[ ${IS_BOSH_LITE} = false ]]; then
+      write_bbl_certs
+    fi
 
     bbl version
 
@@ -80,29 +82,31 @@ function main() {
 
     bbl --debug up ${name_flag} ${arguments} > "${root_dir}"/bbl_up.txt
 
-    local domain_flag
-    domain_flag=""
+    if [[ ${IS_BOSH_LITE} = false ]]; then
+      local domain_flag
+      domain_flag=""
 
-    if [ "${BBL_IAAS}" == "gcp" ]; then
-      domain_flag="--domain=${LB_DOMAIN}"
+      if [ "${BBL_IAAS}" == "gcp" ]; then
+        domain_flag="--domain=${LB_DOMAIN}"
+     fi
+
+      # The two commands below amount to "create or update"
+      bbl \
+        --debug \
+        create-lbs \
+        --type=cf \
+        --cert=/tmp/bbl-cert \
+        --key=/tmp/bbl-key \
+        --skip-if-exists \
+        ${domain_flag} > "${root_dir}"/bbl_create_lbs.txt
+
+      bbl \
+        --debug \
+        update-lbs \
+        --cert=/tmp/bbl-cert \
+        --key=/tmp/bbl-key \
+        ${domain_flag} > "${root_dir}"/bbl_update_lbs.txt
     fi
-
-    # The two commands below amount to "create or update"
-    bbl \
-      --debug \
-      create-lbs \
-      --type=cf \
-      --cert=/tmp/bbl-cert \
-      --key=/tmp/bbl-key \
-      --skip-if-exists \
-      ${domain_flag} > "${root_dir}"/bbl_create_lbs.txt
-
-    bbl \
-      --debug \
-      update-lbs \
-      --cert=/tmp/bbl-cert \
-      --key=/tmp/bbl-key \
-      ${domain_flag} > "${root_dir}"/bbl_update_lbs.txt
   popd
 }
 
