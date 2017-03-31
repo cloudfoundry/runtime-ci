@@ -21,13 +21,22 @@ cat << EOF
 ---
 - type: replace
   path: /path=~1releases~1name=${release_name}~1url
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
+  value:
+  - type: replace
+    path: /releases/name=cf-mysql/url
+    value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
 - type: replace
   path: /path=~1releases~1name=${release_name}~1version
-  value: "${release_version}"
+  value:
+  - type: replace
+    path: /releases/name=cf-mysql/version
+    value: "${release_version}"
 - type: replace
   path: /path=~1releases~1name=${release_name}~1sha1
-  value: "${release_sha}"
+  value:
+  - type: replace
+    path: /releases/name=cf-mysql/sha1
+    value: "${release_sha}"
 EOF
 ) > $update_release_ops_file
 
