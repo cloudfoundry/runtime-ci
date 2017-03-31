@@ -74,7 +74,7 @@ function main() {
 
     for op in ${OPS_FILES}
     do
-      arguments="${arguments} -o ops-files/${op}"
+      arguments="${arguments} --ops-file ops-files/${op}"
     done
 
 
