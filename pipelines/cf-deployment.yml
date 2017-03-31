@@ -200,10 +200,10 @@ resources:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: github-routing-release
+- name: github-routing-release-master
   type: git
   source:
-    branch: develop
+    branch: master
     uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: windows-acceptance-tests
   type: git
@@ -902,7 +902,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
-      - get: github-routing-release
+      - get: github-routing-release-master
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
@@ -922,7 +922,7 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: github-routing-release
+      - routing-release: github-routing-release-master
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
