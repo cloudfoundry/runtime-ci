@@ -443,6 +443,7 @@ jobs:
     - get: runtime-ci
     - get: bosh-deployment
     - get: snitch-env-director-state
+    - get: cf-deployment-develop
   - task: setup-infrastructure
     file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
@@ -463,6 +464,13 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+  - task: bosh-update-cloud-config
+    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+    input_mapping:
+      bbl-state: snitch-env-director-state
+      cloud-config: cf-deployment-develop
+    params:
+      CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
 
 - name: setup-infrastructure-ops
   serial: true
