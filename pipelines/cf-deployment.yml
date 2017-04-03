@@ -414,7 +414,7 @@ jobs:
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
-      NAME: luna
+      NAME: minerva
     output_mapping:
       pool-resource: migration-pool
   - put: migration-pool
