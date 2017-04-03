@@ -21,14 +21,18 @@ groups:
   jobs:
   - add-claimed-lock-fresh
   - setup-infrastructure-fresh
+  - add-claimed-lock-migration
+  - setup-infrastructure-migration
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-upgrade
   - destroy-infrastructure-fresh
+  - destroy-infrastructure-migration
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-fresh
+  - remove-claimed-lock-migration
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
@@ -66,6 +70,13 @@ resources:
     branch: master
     pool: cf-deployment/fresh
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
+- name: migration-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/migration
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
 - name: ops-pool
   type: pool
   source:
@@ -99,6 +110,15 @@ resources:
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
     - deployment-vars.yml
+- name: minerva-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
 - name: greengrass-env-director-state
   type: git
   source:
@@ -384,6 +404,53 @@ jobs:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
+
+- name: add-claimed-lock-migration
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: luna
+    output_mapping:
+      pool-resource: migration-pool
+  - put: migration-pool
+    params: {add_claimed: migration-pool}
+
+- name: setup-infrastructure-migration
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: minerva-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - get: migration-pool
+      trigger: true
+      passed: [ add-claimed-lock-migration ]
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
+      BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
+      BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+      BBL_ENV_NAME: minerva-upgrade
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    ensure:
+      put: minerva-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: migration-pool
+    params: {release: migration-pool}
 
 - name: add-claimed-lock-fresh
   serial: true
@@ -969,6 +1036,39 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-migration
+  serial_groups: [minerva]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: migration-pool
+      params: {claim: minerva}
+    - get: minerva-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: unbind-elb-from-r53
+    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
+    input_mapping:
+      env-repo: minerva-env-director-state
+    params:
+      AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
+      DOMAIN: minerva.cf-app.com
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    ensure:
+      put: minerva-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
 - name: destroy-infrastructure-fresh
   serial: true
   public: true
@@ -1011,6 +1111,24 @@ jobs:
       pool-resource: fresh-pool
   - put: fresh-pool
     params: {remove: fresh-pool}
+
+- name: remove-claimed-lock-migration
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: migration-pool
+    passed: [ destroy-infrastructure-migration ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: minerva
+    output_mapping:
+      pool-resource: migration-pool
+  - put: migration-pool
+    params: {remove: migration-pool}
 
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
