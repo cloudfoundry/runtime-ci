@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: release-repo-master
+- name: release-repo
 - name: runtime-ci
 
 params:

@@ -51,13 +51,13 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: release-repo
-      resource: cf-release-release-elect
+    - get: cf-release-release-elect
       trigger: true
-    - get: release-repo-master
-      resource: cf-release-master
+    - get: cf-release-master
   - task: create-final-release
     file: runtime-ci/scripts/ci/create-final-release/task.yml
+    input_mapping:
+      release-repo: cf-release-release-elect
     params:
       RELEASE_NAME: cf
       BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
@@ -68,7 +68,9 @@ jobs:
       tag: final-release-repo/version_number
       tag_prefix: v
   - task: publish-release-notes
-    file: runtime-ci/tasks/publish-release-notes/task.yml
+    file: runtime-ci/tasks/publish-release-notes-draft/task.yml
+    input_mapping:
+      release-repo: final-release-repo
     params:
       GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
 
