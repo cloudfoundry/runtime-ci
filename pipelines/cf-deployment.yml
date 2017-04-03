@@ -1463,3 +1463,18 @@ jobs:
           repository: cf-deployment-release-candidate
           tag: cf-deployment-version/version
           tag_prefix: v
+
+- name: ship-it-minor
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - put: cf-deployment-version
+        params: { bump: minor }
+      - get: cf-deployment-release-candidate
+        passed: [bless-manifest]
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
