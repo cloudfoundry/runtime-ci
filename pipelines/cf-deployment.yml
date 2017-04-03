@@ -1051,14 +1051,6 @@ jobs:
     input_mapping:
       bbl-state: minerva-env-director-state
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-  - task: unbind-elb-from-r53
-    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
-    input_mapping:
-      env-repo: minerva-env-director-state
-    params:
-      AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
-      DOMAIN: minerva.cf-app.com
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
