@@ -50,6 +50,7 @@ groups:
   - routing-acceptance-tests-fresh
   - bless-manifest
   - ship-it-patch
+  - ship-it-minor
 
 resource_types:
 - name: terraform
