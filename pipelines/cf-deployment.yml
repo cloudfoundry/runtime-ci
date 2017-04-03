@@ -970,7 +970,7 @@ jobs:
     - task: ensure-tcp-router-healthy
       file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
       params:
-        ENDPOINT: tcp.luna.cf-app.com:80/health
+        ENDPOINT: tcp.luna.cf-app.com:8080/health
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
