@@ -607,7 +607,7 @@ jobs:
   plan:
   - get: cf-deployment-transition
     trigger: true
-  - task: unit-test-transition-tools
+  - task: unit-test-var-store-templates
     config:
       platform: linux
       image_resource:
@@ -618,6 +618,17 @@ jobs:
       - name: cf-deployment-transition
       run:
         path: cf-deployment-transition/transition/test.sh
+  - task: test-ops-file
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/bosh-cli
+      inputs:
+      - name: cf-deployment-transition
+      run:
+        path: cf-deployment-transition/transition/test-transition-ops.sh
 
 - name: deploy-releases-fresh
   serial: true
