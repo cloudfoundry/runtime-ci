@@ -1380,6 +1380,7 @@ jobs:
       trigger: true
       params:
         tarball: false
+      passed: [ update-releases ]
     - get: cf-mysql-release
       trigger: true
       params:
