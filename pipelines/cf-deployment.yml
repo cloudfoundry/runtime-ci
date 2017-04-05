@@ -2,6 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
+  - unit-test-transition-tools
   - update-releases
   - update-release-mysql
   - acquire-fresh-pool
@@ -588,6 +589,23 @@ jobs:
       trigger: true
     - put: fresh-pool
       params: {acquire: true}
+
+- name: unit-test-transition-tools
+  serial: false
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-develop
+    trigger: true
+  - task: unit-test-transition-tools
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/create-diego-manifest
+      run:
+        path: cf-deployment-develop/transition/test.sh
 
 - name: deploy-releases-fresh
   serial: true
