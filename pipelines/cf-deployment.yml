@@ -604,6 +604,8 @@ jobs:
         type: docker-image
         source:
           repository: relintdockerhubpushbot/create-diego-manifest
+      inputs:
+      - name: cf-deployment-develop
       run:
         path: cf-deployment-develop/transition/test.sh
 
