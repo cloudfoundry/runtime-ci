@@ -198,6 +198,16 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+    ignore_paths:
+    - transition/*
+- name: cf-deployment-transition
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{cf_deployment_private_key}}
+    paths:
+    - transition/*
 - name: cf-deployment-release-candidate
   type: git
   source:
@@ -595,7 +605,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: cf-deployment-develop
+  - get: cf-deployment-transition
     trigger: true
   - task: unit-test-transition-tools
     config:
@@ -605,9 +615,9 @@ jobs:
         source:
           repository: relintdockerhubpushbot/create-diego-manifest
       inputs:
-      - name: cf-deployment-develop
+      - name: cf-deployment-transition
       run:
-        path: cf-deployment-develop/transition/test.sh
+        path: cf-deployment-transition/transition/test.sh
 
 - name: deploy-releases-fresh
   serial: true
