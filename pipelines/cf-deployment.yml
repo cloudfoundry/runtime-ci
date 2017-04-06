@@ -817,7 +817,7 @@ jobs:
         ops-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
-        OPS_FILES: "operations/bosh-lite.yml"
+        OPS_FILES: "operations/bosh-lite.yml operations/use-compiled-releases.yml"
       ensure:
         put: snitch-env-vars-store
         params:
