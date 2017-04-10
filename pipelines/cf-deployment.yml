@@ -322,7 +322,7 @@ resources:
 - name: cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/cflinuxfs2-rootfs-release
+    repository: cloudfoundry/cflinuxfs2-release
 - name: cf-smoke-tests-release
   type: bosh-io-release
   source:
