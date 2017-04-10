@@ -6,6 +6,7 @@ groups:
   - update-releases
   - update-release-mysql
   - acquire-fresh-pool
+  - deploy-legacy-cf
   - deploy-releases-fresh
   - deploy-releases-lite
   - deploy-releases-upgrade
@@ -65,6 +66,46 @@ resource_types:
     repository: frodenas/gcs-resource
 
 resources:
+
+- name: legacy-cf-bosh-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.minerva.cf-app.com:25555
+    username: {{minerva_bosh_username}}
+    password: {{minerva_bosh_password}}
+    deployment: cf
+    ignore_ssl: true
+
+- name: legacy-diego-bosh-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.minerva.cf-app.com:25555
+    username: {{minerva_bosh_username}}
+    password: {{minerva_bosh_password}}
+    deployment: diego
+    ignore_ssl: true
+
+- name: legacy-cf-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-release
+    version: "v255"
+- name: legacy-diego-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/diego-release
+    version: "v1.11.0"
+- name: legacy-garden-runc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/garden-runc-release
+    version: "v1.4.0"
+- name: legacy-cflinuxfs2-rootfs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
+    version: "v1.60.0"
+
 - name: fresh-pool
   type: pool
   source:
@@ -86,6 +127,12 @@ resources:
     branch: master
     pool: cf-deployment/ops
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
+- name: minerva-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_readwrite_deploy_key}}
 - name: luna-env-director-state
   type: git
   source:
@@ -322,7 +369,7 @@ resources:
 - name: cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/cflinuxfs2-release
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
 - name: cf-smoke-tests-release
   type: bosh-io-release
   source:
@@ -629,6 +676,30 @@ jobs:
       - name: cf-deployment-transition
       run:
         path: cf-deployment-transition/transition/test-transition-ops.sh
+
+- name: deploy-legacy-cf
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: minerva-env
+    - get: legacy-garden-runc-release
+    - get: legacy-diego-release
+    - get: legacy-cflinuxfs2-rootfs-release
+    - get: legacy-cf-release
+  - put: legacy-cf-bosh-deployment
+    params:
+      manifest: minerva-env/migration/cf-manifest.yml
+      releases:
+      - legacy-cf-release/release.tgz
+  - put: legacy-diego-bosh-deployment
+    params:
+      manifest: minerva-env/migration/diego-manifest.yml
+      releases:
+      - legacy-diego-release/release.tgz
+      - legacy-garden-runc-release/release.tgz
+      - legacy-cflinuxfs2-rootfs-release/release.tgz
 
 - name: deploy-releases-fresh
   serial: true
