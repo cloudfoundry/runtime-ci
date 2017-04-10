@@ -10,7 +10,7 @@ inputs:
 - name: binary-buildpack-release
 - name: capi-release
 - name: cf-smoke-tests-release
-- name: cflinuxfs2-rootfs-release
+- name: cflinuxfs2-release
 - name: consul-release
 - name: deployment-configuration
 - name: diego-release
