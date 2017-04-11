@@ -707,6 +707,12 @@ jobs:
       - legacy-diego-release/release.tgz
       - legacy-garden-runc-release/release.tgz
       - legacy-cflinuxfs2-rootfs-release/release.tgz
+  - task: bosh-run-errand-smoke-tests
+    file: runtime-ci/tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: minerva-env
+    params:
+      ERRAND_NAME: smoke-tests
 
 - name: deploy-releases-fresh
   serial: true
