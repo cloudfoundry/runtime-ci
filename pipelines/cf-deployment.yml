@@ -687,6 +687,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: runtime-ci
     - get: minerva-env
     - get: legacy-garden-runc-release
     - get: legacy-diego-release
