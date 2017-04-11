@@ -102,13 +102,6 @@ Can you provide a compatible grootfs-release SHA or final release version?
 - **Approval**: :+1: / :-1:
 - **Decider**:
 - **Comments**:
-
-----
-@fraenkel, @sykesm:
-Does this cf-release SHA look good for the DEA + HM9000 team?  Any bugs, regressions, or incomplete features of concern?
-- **Approval**: :+1: / :-1:
-- **Decider**:
-- **Comments**:
 "
 
 echo "Finding cf-final-release-election issue number"
