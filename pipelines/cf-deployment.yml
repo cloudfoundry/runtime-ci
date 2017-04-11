@@ -137,7 +137,6 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: "3363.14"
 - name: luna-env-director-state
   type: git
   source:
