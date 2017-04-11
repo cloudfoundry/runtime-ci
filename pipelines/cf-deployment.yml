@@ -133,11 +133,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
-- name: aws-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: "3363.14"
 - name: luna-env-director-state
   type: git
   source:
@@ -693,17 +688,14 @@ jobs:
     - get: legacy-diego-release
     - get: legacy-cflinuxfs2-rootfs-release
     - get: legacy-cf-release
-    - get: aws-stemcell
   - put: legacy-cf-bosh-deployment
     params:
       manifest: minerva-env/migration/cf-manifest.yml
-      stemcells: [aws-stemcell/*.tgz]
       releases:
       - legacy-cf-release/release.tgz
   - put: legacy-diego-bosh-deployment
     params:
       manifest: minerva-env/migration/diego-manifest.yml
-      stemcells: [aws-stemcell/*.tgz]
       releases:
       - legacy-diego-release/release.tgz
       - legacy-garden-runc-release/release.tgz
