@@ -5,7 +5,7 @@ tag=v$(($(cat cf-final-bosh-release/version)+1))
 release_notes_body="**Contents**
 - <a href='#notices'>Notices</a>
 - <a href='#job-spec-changes'>Job Spec Changes
-- <a href='#cves'>CVEs</a>
+- <a href='#security-notices'>Security Notices</a>
 - <a href='#compatible-releases-and-stemcells'>Compatible Releases and Stemcells</a>
 - <a href='#subcomponent-updates'>Subcomponent Updates</a>
 
@@ -15,7 +15,12 @@ release_notes_body="**Contents**
 ## <a name='job-spec-changes'></a> Job Spec Changes
 - Not yet updated
 
-## <a name='cves'></a>CVEs
+## <a name='security-notices'></a>Security Notices
+
+### Affecting ${tag}
+- None
+
+### Resolved in ${tag}
 - Not yet updated
 
 ## <a name='subcomponent-updates'></a>Subcomponent Updates
