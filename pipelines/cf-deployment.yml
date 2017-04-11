@@ -713,7 +713,7 @@ jobs:
     input_mapping:
       bbl-state: minerva-env
     params:
-      ERRAND_NAME: smoke-tests
+      ERRAND_NAME: smoke_tests
 
 - name: deploy-releases-fresh
   serial: true
