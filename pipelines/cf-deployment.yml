@@ -82,7 +82,7 @@ resources:
     target: https://bosh.minerva.cf-app.com:25555
     username: {{minerva_bosh_username}}
     password: {{minerva_bosh_password}}
-    deployment: diego
+    deployment: cf-diego
     ignore_ssl: true
 
 - name: legacy-cf-release
