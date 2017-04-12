@@ -669,6 +669,17 @@ jobs:
       - name: cf-deployment-transition
       run:
         path: cf-deployment-transition/transition/test.sh
+  - task: unit-test-default-values
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/create-diego-manifest
+      inputs:
+      - name: cf-deployment-transition
+      run:
+        path: cf-deployment-transition/transition/test-default-vars.sh
   - task: test-ops-file
     config:
       platform: linux
