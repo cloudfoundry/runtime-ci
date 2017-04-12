@@ -50,11 +50,20 @@ function write_bbl_certs() {
 }
 
 
-function make_concatinated_operations_file() {
+function make_concatenated_operations_file() {
   local root_dir
   root_dir="${1}"
   pushd "${root_dir}/ops-files"
-  cat $OPS_FILES | grep -v "\-\-\-" > concatinated-operations.yml
+  cat $OPS_FILES | grep -v "\-\-\-" > concatenated-operations.yml
+cat >> concatenated-operations.yml <<EOF
+- type: replace
+  path: /resource_pools/name=vms/cloud_properties?/root_disk_type
+  value: pd-ssd
+
+- type: replace
+  path: /disk_pools/name=disks/cloud_properties?/type
+  value: pd-ssd
+EOF
   popd
 }
 
@@ -80,10 +89,10 @@ function main() {
       name_flag="--name ${BBL_ENV_NAME}"
     fi
 
-    make_concatinated_operations_file ${root_dir}
+    make_concatenated_operations_file ${root_dir}
 
     local arguments
-    arguments="--ops-file ${root_dir}/ops-files/concatinated-operations.yml"
+    arguments="--ops-file ${root_dir}/ops-files/concatenated-operations.yml"
 
     bbl --debug up ${name_flag} ${arguments} > "${root_dir}"/bbl_up.txt
 
