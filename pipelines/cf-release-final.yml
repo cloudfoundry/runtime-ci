@@ -5,6 +5,7 @@ groups:
   - merge-master-into-develop
   - announce-rc
   - create-release-notes-draft
+  - publish-release-notes
 
 resources:
 - name: runtime-ci
@@ -58,6 +59,7 @@ jobs:
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     input_mapping:
       release-repo: cf-release-release-elect
+      release-repo-master: cf-release-master
     params:
       RELEASE_NAME: cf
       BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
@@ -67,10 +69,18 @@ jobs:
       repository: final-release-repo
       tag: final-release-repo/version_number
       tag_prefix: v
+
+- name: publish-release-notes
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-release-master
+    passed: [ create-final-release ]
+    trigger: true
   - task: publish-release-notes
     file: runtime-ci/tasks/publish-release-notes-draft/task.yml
     input_mapping:
-      release-repo: final-release-repo
+      release-repo-master: cf-release-master
     params:
       GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
 
