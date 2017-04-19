@@ -2,6 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
+  - lint-cf-deployment-manifest
   - unit-test-transition-tools
   - update-releases
   - update-release-mysql
@@ -662,6 +663,28 @@ jobs:
       trigger: true
     - put: fresh-pool
       params: {acquire: true}
+
+- name: lint-cf-deployment-manifest
+  serial: false
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-develop
+    trigger: true
+  - task: lint-manifest
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+      inputs:
+      - name: cf-deployment-develop
+      run:
+        args:
+        - -exc
+        - |
+          ruby -e "require 'yaml'; YAML.load_file('./cf-deployment-develop/cf-deployment.yml')"
 
 - name: unit-test-transition-tools
   serial: false
