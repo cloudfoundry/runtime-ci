@@ -668,8 +668,8 @@ jobs:
       inputs:
       - name: cf-deployment-transition
       run:
-        path: cf-deployment-transition/transition/test.sh
-  - task: unit-test-default-values
+        path: cf-deployment-transition/transition/test-expected-varstore.sh
+  - task: unit-test-ca-keys-required
     config:
       platform: linux
       image_resource:
@@ -679,7 +679,7 @@ jobs:
       inputs:
       - name: cf-deployment-transition
       run:
-        path: cf-deployment-transition/transition/test-default-vars.sh
+        path: cf-deployment-transition/transition/test-ca-keys-required.sh
   - task: test-ops-file
     config:
       platform: linux
