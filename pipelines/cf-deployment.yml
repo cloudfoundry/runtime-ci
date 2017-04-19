@@ -681,6 +681,7 @@ jobs:
       inputs:
       - name: cf-deployment-develop
       run:
+        path: /bin/bash
         args:
         - -exc
         - |
