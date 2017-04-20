@@ -38,7 +38,7 @@ class LoggregatorMonitor
     ENV.fetch("METRON_AGENT_CF_DEPLOYMENT_TAG")
   end
 
-  def monitoringAndMetrics_pagerduty
+  def loggregator_pagerduty
     'not production deployment'
   end
 
