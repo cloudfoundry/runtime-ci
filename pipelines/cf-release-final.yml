@@ -52,10 +52,14 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+      tags: [ bosh-lite-aws ]
     - get: cf-release-release-elect
+      tags: [ bosh-lite-aws ]
       trigger: true
     - get: cf-release-master
+      tags: [ bosh-lite-aws ]
   - task: create-final-release
+    tags: [ bosh-lite-aws ]
     file: runtime-ci/scripts/ci/create-final-release/task.yml
     input_mapping:
       release-repo: cf-release-release-elect
@@ -65,6 +69,7 @@ jobs:
       BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
       BLOBS_BUCKET_SECRET_KEY: {{cf_release_blobs_buckets_secrect_access_key}}
   - put: cf-release-master
+    tags: [ bosh-lite-aws ]
     params:
       repository: final-release-repo
       tag: final-release-repo/version_number
