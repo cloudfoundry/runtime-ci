@@ -273,6 +273,8 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
+    depth: 1
+    submodules: none
 - name: github-diego-release
   type: git
   source:
