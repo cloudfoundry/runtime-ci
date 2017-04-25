@@ -90,22 +90,22 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-release
-    version: "v255"
+    version: "v257"
 - name: legacy-diego-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/diego-release
-    version: "v1.11.0"
+    version: "v1.13.0"
 - name: legacy-garden-runc-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/garden-runc-release
-    version: "v1.4.0"
+    verson: "v1.5.0"
 - name: legacy-cflinuxfs2-rootfs-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-    version: "v1.60.0"
+    version: "v.1.60.0"
 
 - name: fresh-pool
   type: pool
@@ -276,18 +276,19 @@ resources:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: cf-release-develop
+- name: cf-release-master
   type: git
   source:
-    branch: develop
+    branch: master
     uri: https://github.com/cloudfoundry/cf-release.git
     depth: 1
     submodules: none
 - name: github-diego-release
   type: git
   source:
-    branch: develop
+    branch: master
     uri: https://github.com/cloudfoundry/diego-release.git
+    tag_filter: v1.13.0
 - name: github-routing-release-master
   type: git
   source:
@@ -747,7 +748,7 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-stubs
       trigger: true
-    - get: cf-release-develop
+    - get: cf-release-master
     - get: github-diego-release
     - get: legacy-garden-runc-release
     - get: legacy-diego-release
@@ -757,7 +758,7 @@ jobs:
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
-      release-repo: cf-release-develop
+      release-repo: cf-release-master
       stubs-repo: minerva-env-stubs
     params:
       INFRASTRUCTURE: aws
