@@ -241,6 +241,14 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-vars.yml
+- name: hermione-env-runtime-config
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - turbulence-runtime-config.yml
 - name: windows-stemcell
   type: s3
   source:
@@ -896,6 +904,8 @@ jobs:
     - get: hermione-env-director-state
       passed: [ setup-infrastructure-upgrade ]
     - get: hermione-env-integration-configs
+    - get: hermione-env-runtime-config
+      trigger: true
     - get: windows-stemcell
   - task: bosh-upload-stemcell-upgrade
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -911,6 +921,11 @@ jobs:
       bbl-state: hermione-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
+  - task: bosh-update-runtime-config
+    file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
+    input_mapping:
+      bbl-state: hermione-env-director-state
+      runtime-config: hermione-env-runtime-config
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
