@@ -3,19 +3,19 @@ set -eux
 
 tag=v$(($(cat cf-final-bosh-release/version)+1))
 release_notes_body="**Contents**
-- <a href='#notices'>Notices</a>
-- <a href='#job-spec-changes'>Job Spec Changes
-- <a href='#security-notices'>Security Notices</a>
-- <a href='#compatible-releases-and-stemcells'>Compatible Releases and Stemcells</a>
-- <a href='#subcomponent-updates'>Subcomponent Updates</a>
+- <a href='#${tag}-notices'>Notices</a>
+- <a href='#${tag}-job-spec-changes'>Job Spec Changes
+- <a href='#${tag}-security-notices'>Security Notices</a>
+- <a href='#${tag}-compatible-releases-and-stemcells'>Compatible Releases and Stemcells</a>
+- <a href='#${tag}-subcomponent-updates'>Subcomponent Updates</a>
 
-## <a name='notices'></a> Notices
+## <a name='${tag}-notices'></a> Notices
 - Not yet updated
 
-## <a name='job-spec-changes'></a> Job Spec Changes
+## <a name='${tag}-job-spec-changes'></a> Job Spec Changes
 - Not yet updated
 
-## <a name='security-notices'></a>Security Notices
+## <a name='${tag}-security-notices'></a>Security Notices
 
 ### Affecting ${tag}
 - None
@@ -23,7 +23,7 @@ release_notes_body="**Contents**
 ### Resolved in ${tag}
 - Not yet updated
 
-## <a name='subcomponent-updates'></a>Subcomponent Updates
+## <a name='${tag}-subcomponent-updates'></a>Subcomponent Updates
 - Cloud Controller and Service Broker API:
   - [capi-release vC1](https://github.com/cloudfoundry/capi-release/releases/tag/vC1)
   - [capi-release vC2](https://github.com/cloudfoundry/capi-release/releases/tag/vC2)
@@ -66,7 +66,7 @@ release_notes_body="**Contents**
 - DEA-Warden-HM9000:
   - Not yet updated.
 
-## <a name='compatible-releases-and-stemcells'></a>Compatible Releases and Stemcells
+## <a name='${tag}-compatible-releases-and-stemcells'></a>Compatible Releases and Stemcells
 - diego-release:
 - garden-runc-release:
 - cflinuxfs2-rootfs:
