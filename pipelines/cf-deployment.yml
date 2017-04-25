@@ -241,7 +241,7 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-vars.yml
-- name: hermione-env-runtime-config
+- name: hermione-env-runtime-configs
   type: git
   source:
     branch: master
@@ -904,7 +904,7 @@ jobs:
     - get: hermione-env-director-state
       passed: [ setup-infrastructure-upgrade ]
     - get: hermione-env-integration-configs
-    - get: hermione-env-runtime-config
+    - get: hermione-env-runtime-configs
       trigger: true
     - get: windows-stemcell
   - task: bosh-upload-stemcell-upgrade
@@ -925,7 +925,7 @@ jobs:
     file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
-      runtime-config: hermione-env-runtime-config
+      runtime-configs: hermione-env-runtime-configs
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
