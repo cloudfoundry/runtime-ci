@@ -17,8 +17,7 @@ go install github.com/onsi/ginkgo/ginkgo
 
 cd ${GOPATH}/src/code.cloudfoundry.org/routing-acceptance-tests
 
-packages=("http_routes" "tcp_routing" "smoke_tests")
-for i in "${packages[@]}"
+for i in ${PACKAGES}
 do
   ginkgo -r "$i" \
     -slowSpecThreshold=120 \

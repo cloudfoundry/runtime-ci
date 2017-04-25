@@ -16,3 +16,4 @@ run:
 params:
   NODES: 12
   CONFIG_FILE_PATH: rats_integration_config.json
+  PACKAGES: "http_routes tcp_routing smoke_tests"
