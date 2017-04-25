@@ -268,10 +268,10 @@ resources:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-- name: cf-release-master
+- name: cf-release-develop
   type: git
   source:
-    branch: master
+    branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
     depth: 1
     submodules: none
@@ -740,7 +740,7 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-stubs
       trigger: true
-    - get: cf-release-master
+    - get: cf-release-develop
     - get: github-diego-release
     - get: legacy-garden-runc-release
     - get: legacy-diego-release
@@ -750,7 +750,7 @@ jobs:
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
-      release-repo: cf-release-master
+      release-repo: cf-release-develop
       stubs-repo: minerva-env-stubs
     params:
       INFRASTRUCTURE: aws
