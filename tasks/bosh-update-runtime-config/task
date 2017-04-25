@@ -1,0 +1,19 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function bosh_update_runtime_config {
+  bosh \
+    -n \
+    update-runtime-config runtime-config
+}
+
+function main() {
+  setup_bosh_env_vars
+
+  bosh_update_runtime_config
+}
+
+main

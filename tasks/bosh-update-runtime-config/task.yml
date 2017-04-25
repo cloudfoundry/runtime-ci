@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: bbl-state
+- name: cf-deployment-concourse-tasks
+- name: runtime-config
+- name: runtime-ci
+
+run:
+  path: runtime-ci/tasks/bosh-update-runtime-config/task
+
+params:
+  BBL_STATE_DIR:
