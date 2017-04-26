@@ -17,3 +17,4 @@ run:
 
 params:
   BBL_STATE_DIR:
+  RUNTIME_CONFIG_FILE:
