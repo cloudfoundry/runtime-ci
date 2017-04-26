@@ -1213,10 +1213,6 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ acceptance-tests-lite ]
-    - task: ensure-tcp-router-healthy
-      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
-      params:
-        ENDPOINT: tcp.snitch.cf-app.com:8080/health
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1253,10 +1249,6 @@ jobs:
       - get: cf-deployment-develop
         trigger: true
         passed: [ windows-acceptance-tests-upgrade ]
-    - task: ensure-tcp-router-healthy
-      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
-      params:
-        ENDPOINT: tcp.hermione.cf-app.com:8080/health
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
