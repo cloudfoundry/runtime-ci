@@ -1,4 +1,4 @@
-package main_test
+package opsfile_test
 
 import (
 	"testing"

@@ -1,0 +1,149 @@
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: windows-cell
+    azs:
+    - z1
+    - z2
+    instances: 1
+    vm_type: r3.xlarge
+    vm_extensions:
+    - 100GB_ephemeral_disk
+    stemcell: windows
+    networks:
+    - name: default
+    jobs:
+    - name: consul_agent_windows
+      release: consul
+      consumes:
+        consul: {from: consul_server}
+      properties:
+        syslog_daemon_config:
+          enable: false
+    - name: garden-windows
+      release: garden-windows
+      properties:
+        syslog_daemon_config:
+          enable: false
+    - name: rep_windows
+      release: diego
+      properties:
+        syslog_daemon_config:
+          enable: false
+        diego:
+          executor:
+            ca_certs_for_downloads: "((blobstore_tls.ca))"
+          rep:
+            require_tls: true
+            ca_cert: "((diego_rep_agent.ca))"
+            server_cert: "((diego_rep_agent.certificate))"
+            server_key: "((diego_rep_agent.private_key))"
+            enable_legacy_api_endpoints: false
+            bbs:
+              ca_cert: "((diego_bbs_client.ca))"
+              client_cert: "((diego_bbs_client.certificate))"
+              client_key: "((diego_bbs_client.private_key))"
+            preloaded_rootfses:
+            - windows2012R2:/tmp/windows2012R2
+        tls:
+          ca_cert: "((diego_rep_agent.ca))"
+          cert: "((diego_rep_agent.certificate))"
+          key: "((diego_rep_agent.private_key))"
+    - name: metron_agent_windows
+      release: loggregator
+      properties:
+        syslog_daemon_config:
+          enable: false
+        metron_agent:
+          deployment: "((system_domain))"
+          etcd:
+            client_cert: "((etcd_client.certificate))"
+            client_key: "((etcd_client.private_key))"
+        metron_endpoint:
+          shared_secret: "((dropsonde_shared_secret))"
+        loggregator:
+          tls:
+            ca_cert: "((loggregator_tls_metron.ca))"
+            metron:
+              cert: "((loggregator_tls_metron.certificate))"
+              key: "((loggregator_tls_metron.private_key))"
+          etcd:
+            require_ssl: true
+            ca_cert: "((etcd_server.ca))"
+            machines:
+            - cf-etcd.service.cf.internal
+
+- type: replace
+  path: /releases/-
+  value:
+    name: release1-release
+    version: original-release1-version
+    url: original-release1-url
+    sha1: original-release1-sha1
+
+- type: replace
+  path: /releases/-
+  value:
+    name: release2-release
+    version: original-release2-version
+    url: original-release2-url
+    sha1: original-release2-sha1
+
+- type: replace
+  path: /releases/-
+  value:
+    name: missing-url-release
+    version: original-missing-url-version
+    url: original-missing-url-url
+    sha1: original-missing-url-sha1
+
+- type: replace
+  path: /releases/-
+  value:
+    name: missing-version-release
+    version: original-missing-version-version
+    url: original-missing-version-url
+    sha1: original-missing-version-sha1
+
+- type: replace
+  path: /releases/-
+  value:
+    name: missing-sha1-release
+    version: original-missing-sha1-version
+    url: original-missing-sha1-url
+    sha1: original-missing-sha1-sha1
+
+- type: replace
+  path: /stemcells/-
+  value:
+    alias: windows
+    os: windows2012R2
+    version: latest
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/stacks?
+  value:
+    - name: "cflinuxfs2"
+      description: "Cloud Foundry Linux-based filesystem"
+    - name: "windows2012R2"
+      description: "Windows Server 2012 R2"
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/install_buildpacks/-
+  value:
+    name: hwc_buildpack
+    package: hwc-buildpack
+
+- type: replace
+  path: /instance_groups/name=api/jobs/-
+  value:
+    name: hwc-buildpack
+    release: hwc-buildpack
+
+- type: replace
+  path: /releases/-
+  value:
+    name: hwc-buildpack
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/hwc-buildpack-release?v=2.3.3
+    version: 2.3.3
+    sha: bc04794bc651ba35ef95cc29d30a7ee88017c4ec
