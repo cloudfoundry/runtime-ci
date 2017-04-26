@@ -109,6 +109,12 @@ resources:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
     version: "v.1.60.0"
 
+- name: turbulence-github-release
+  type: git
+  source:
+    uri: https://github.com/cppforlife/turbulence-release.git
+    branch: master
+
 - name: fresh-pool
   type: pool
   source:
@@ -243,6 +249,14 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-vars.yml
+- name: hermione-env-turbulence-vars
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - turbulence-deployment-vars.yml
 - name: windows-stemcell
   type: s3
   source:
@@ -460,6 +474,8 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
+    - get: turbulence-github-release
+    - get: hermione-env-turbulence-vars
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -485,6 +501,23 @@ jobs:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       DOMAIN: hermione.cf-app.com
+  - task: deploy-turbulence-api-upgrade
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      cf-deployment: turbulence-github-release
+      vars-store: hermione-env-turbulence-vars
+      bbl-state: hermione-env-director-state
+      ops-files: runtime-ci
+    params:
+      MANIFEST_FILE: manifests/turbulence.yml
+      SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
+      VARS_STORE_FILE: turbulence-deployment-vars.yml
+      OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
+    ensure:
+      put: hermione-env-turbulence-vars
+      params:
+        repository: updated-vars-store
+        rebase: true
 
 - name: add-claimed-lock-migration
   serial: true
