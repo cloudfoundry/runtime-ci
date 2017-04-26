@@ -11,3 +11,5 @@ addons:
       api: {from: api, deployment: turbulence}
   include:
     deployments: [cf]
+    stemcell:
+    - os: ubuntu-trusty
