@@ -41,6 +41,25 @@ groups:
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
+- name: up
+  jobs:
+  - deploy-releases-upgrade
+  - acceptance-tests-upgrade
+  - windows-acceptance-tests-upgrade
+  - routing-http-acceptance-tests-upgrade
+  - smoke-tests-upgrade
+- name: fr
+  jobs:
+  - deploy-releases-fresh
+  - acceptance-tests-fresh
+  - routing-acceptance-tests-fresh
+  - post-delete-deployment-fresh
+- name: li
+  jobs:
+  - deploy-releases-lite
+  - acceptance-tests-lite
+  - routing-http-acceptance-tests-lite
+
 # For simpler visibility
 - name: pm-view
   jobs:
