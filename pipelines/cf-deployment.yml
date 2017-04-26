@@ -17,6 +17,7 @@ groups:
   - acceptance-tests-upgrade
   - windows-acceptance-tests-upgrade
   - smoke-tests-upgrade
+  - routing-http-acceptance-tests-upgrade
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
   - bless-manifest
@@ -1189,6 +1190,46 @@ jobs:
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
+- name: routing-http-acceptance-tests-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: github-routing-release-master
+      - get: hermione-env-integration-configs
+        trigger: true
+      - get: hermione-env-director-state
+        trigger: true
+        passed: [ windows-acceptance-tests-upgrade ]
+      - get: hermione-env-vars-store
+        trigger: true
+        passed: [ windows-acceptance-tests-upgrade ]
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [ windows-acceptance-tests-upgrade ]
+    - task: ensure-tcp-router-healthy
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+      params:
+        ENDPOINT: tcp.hermione.cf-app.com:8080/health
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: hermione-env-vars-store
+      params:
+        SYSTEM_DOMAIN: hermione.cf-app.com
+    - task: run-rats
+      input_mapping:
+      - routing-release: github-routing-release-master
+      - integration-config: hermione-env-integration-configs
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      params:
+        PACKAGES: "http_routes"
+
 - name: post-delete-deployment-fresh
   serial: true
   public: true
@@ -1395,6 +1436,7 @@ jobs:
     - acceptance-tests-fresh
     - acceptance-tests-lite
     - acceptance-tests-upgrade
+    - routing-http-acceptance-tests-upgrade
     - routing-acceptance-tests-fresh
     - smoke-tests-upgrade
     - deploy-releases-ops
