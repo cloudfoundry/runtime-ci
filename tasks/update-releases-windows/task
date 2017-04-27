@@ -2,6 +2,8 @@
 set -o pipefail
 
 function update_ops_file() {
+  local root_dir
+  root_dir="${1}"
   export GOPATH="${root_dir}/go"
   export PATH=$GOPATH/bin:$PATH
   export GO15VENDOREXPERIMENT=1
