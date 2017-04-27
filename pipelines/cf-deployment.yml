@@ -966,6 +966,13 @@ jobs:
       bbl-state: hermione-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
+  - task: bosh-update-runtime-config
+    file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
+    input_mapping:
+      bbl-state: hermione-env-director-state
+      runtime-configs: runtime-ci
+    params:
+      RUNTIME_CONFIG_FILE: experiments/runtime-configs/turbulence-runtime-config.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
