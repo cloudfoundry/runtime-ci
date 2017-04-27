@@ -1785,13 +1785,13 @@ jobs:
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      compiled-releases-ops-file: updated-compiled-releases-ops-file
+      compiled-releases-ops-file: cf-deployment-develop
       windows-ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
-      COMPILED_RELEASES_OPS_FILE_NAME: use-compiled-releases.yml
+      COMPILED_RELEASES_OPS_FILE_NAME: operations/use-compiled-releases.yml
       COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
       WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
   - put: cf-deployment-develop
