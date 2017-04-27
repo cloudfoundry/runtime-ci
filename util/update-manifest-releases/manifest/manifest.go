@@ -10,7 +10,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-var yamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
+var YamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
 
 type Stemcell struct {
 	Alias   string `yaml:"alias"`
@@ -147,7 +147,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		changes = append(changes, "ubuntu-trusty stemcell")
 	}
 
-	cfDeploymentReleasesAndStemcellsYaml, err := yamlMarshal(cfDeploymentReleasesAndStemcells)
+	cfDeploymentReleasesAndStemcellsYaml, err := YamlMarshal(cfDeploymentReleasesAndStemcells)
 	if err != nil {
 		return nil, "", err
 	}
