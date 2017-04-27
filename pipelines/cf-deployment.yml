@@ -6,6 +6,7 @@ groups:
   - unit-test-transition-tools
   - update-releases
   - update-release-mysql
+  - update-releases-windows
   - acquire-fresh-pool
   - deploy-legacy-cf
   - deploy-releases-fresh
@@ -429,6 +430,14 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-smoke-tests-release
+- name: hwc-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/hwc-buildpack-release
+- name: garden-windows-bosh-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/garden-windows-bosh-release
 - name: snitch-env-vars-store
   type: git
   source:
@@ -1740,6 +1749,38 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+
+- name: update-releases-windows
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+      trigger: true
+      params:
+        tarball: false
+    - get: garden-windows-bosh-release
+      trigger: true
+      params:
+        tarball: false
+    - get: hwc-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+  - task: update-releases-windows
+    file: runtime-ci/tasks/update-releases-windows/task.yml
+    input_mapping:
+      original-ops-file: cf-deployment-develop
+      garden-windows-release: garden-windows-bosh-release
+      hwc-buildpack-release: hwc-buildpack-release
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-ops-file
 
 - name: verify-nameserver-has-record
   public: true
