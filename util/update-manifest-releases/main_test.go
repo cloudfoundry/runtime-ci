@@ -83,14 +83,14 @@ var _ = Describe("main", func() {
 		BeforeEach(func() {
 			for _, dir := range []string{
 				"commit-message",
-				"original-ops-file-path",
-				"updated-ops-file-path",
+				"original-ops-file",
+				"updated-ops-file",
 			} {
 				err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file-path", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
+			err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
@@ -126,7 +126,7 @@ var _ = Describe("main", func() {
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file-path", "updated_ops_file.yml"))
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))

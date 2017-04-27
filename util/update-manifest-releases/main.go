@@ -49,7 +49,7 @@ func main() {
 		inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
 		outputPath = os.Getenv("UPDATED_OPS_FILE_PATH")
 
-		originalOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "original-ops-file-path", inputPath))
+		originalOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "original-ops-file", inputPath))
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -66,7 +66,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		if err := ioutil.WriteFile(filepath.Join(buildDir, "updated-ops-file-path", outputPath), updatedOpsFile, 0666); err != nil {
+		if err := ioutil.WriteFile(filepath.Join(buildDir, "updated-ops-file", outputPath), updatedOpsFile, 0666); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
