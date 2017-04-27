@@ -1793,7 +1793,7 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       COMPILED_RELEASES_OPS_FILE_NAME: operations/use-compiled-releases.yml
       COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-      WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
+      WINDOWS_OPS_FILE_NAME: windows-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true
