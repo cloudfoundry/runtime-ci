@@ -27,7 +27,7 @@ var _ = Describe("UpdateReleases", func() {
 
 		var err error
 
-		desiredOpsFile, err = ioutil.ReadFile("../fixtures/desired_ops_file.yml")
+		desiredOpsFile, err = ioutil.ReadFile("../fixtures/updated_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		originalOpsFile, err = ioutil.ReadFile("../fixtures/original_ops_file.yml")
