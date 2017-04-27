@@ -1663,12 +1663,14 @@ jobs:
     input_mapping:
       repo: cf-deployment-develop
       compiled-releases-ops-file: cf-deployment-develop
+      windows-ops-file: cf-deployment-develop
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
       COMPILED_RELEASES_OPS_FILE_NAME: operations/use-compiled-releases.yml
       COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -1739,12 +1741,14 @@ jobs:
     input_mapping:
       repo: cf-deployment-develop
       compiled-releases-ops-file: updated-compiled-releases-ops-file
+      windows-ops-file: cf-deployment-develop
       manifest: deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
       COMPILED_RELEASES_OPS_FILE_NAME: use-compiled-releases.yml
       COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -1777,6 +1781,23 @@ jobs:
       original-ops-file: cf-deployment-develop
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      compiled-releases-ops-file: updated-compiled-releases-ops-file
+      windows-ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMPILED_RELEASES_OPS_FILE_NAME: use-compiled-releases.yml
+      COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
   - put: cf-deployment-develop
     params:
       rebase: true
