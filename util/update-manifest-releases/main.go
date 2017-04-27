@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	yaml "gopkg.in/yaml.v2"
+
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
@@ -28,7 +31,7 @@ func getReleaseNames(buildDir string) ([]string, error) {
 	return releases, nil
 }
 
-type updateFunc func([]string, string, []byte) ([]byte, string, error)
+type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc) ([]byte, string, error)
 
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
 	originalFile, err := ioutil.ReadFile(filepath.Join(buildDir, inputDir, inputPath))
@@ -36,7 +39,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 		return err
 	}
 
-	updatedFile, commitMessage, err := f(releases, buildDir, originalFile)
+	updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
 	if err != nil {
 		return err
 	}

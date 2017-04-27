@@ -7,6 +7,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 
 	. "github.com/onsi/ginkgo"
@@ -35,14 +36,12 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		cfDeploymentManifest, err = ioutil.ReadFile("../fixtures/cf-deployment.yml")
 		Expect(err).NotTo(HaveOccurred())
-
-		manifest.ResetYAMLMarshal()
 	})
 
 	It("updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
 		releases := []string{"release1", "release2"}
 
-		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest)
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		r := regexp.MustCompile(`(?m:^releases:$)`)
@@ -61,7 +60,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 	It("provides a default commit message if no version updates were performed", func() {
 		releases := []string{"release1", "release2"}
-		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest)
+		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("No manifest release or stemcell version updates"))
@@ -75,14 +74,14 @@ releases:
   - name: fooRelease
 stemcells:
 `)
-		resultingManifest, _, err := manifest.UpdateReleasesAndStemcells(updateReleases, goodBuildDir, cfDeploymentManifest)
+		resultingManifest, _, err := manifest.UpdateReleasesAndStemcells(updateReleases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).ToNot(HaveOccurred())
 
 		var releasesAndStemcells manifest.Manifest
 		err = yaml.Unmarshal(resultingManifest, &releasesAndStemcells)
 		Expect(err).ToNot(HaveOccurred())
 
-		Expect(releasesAndStemcells.Releases).To(ContainElement(manifest.Release{
+		Expect(releasesAndStemcells.Releases).To(ContainElement(common.Release{
 			Name:    "release1",
 			URL:     "original-release1-url",
 			Version: "original-release1-version",
@@ -99,7 +98,7 @@ releases:
 stemcells:
 `)
 
-		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest)
+		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("Updated manifest with release1-release, release2-release, ubuntu-trusty stemcell"))
@@ -113,7 +112,7 @@ name:
 stemcells:
 other_key:
 `)
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError("releases was not found at the bottom of the manifest"))
 		})
 
@@ -125,7 +124,7 @@ stemcells:
 releases:
 other_key:
 `)
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError("stemcells was not found at the bottom of the manifest"))
 		})
 
@@ -137,14 +136,14 @@ releases:
 stemcells:
 other_key:
 `)
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, badManifest, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError(`found keys other than "releases" and "stemcells" at the bottom of the manifest`))
 		})
 
 		It("returns errors instead of panicking when url is missing", func() {
 			releases := []string{"missing-url"}
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-url-release/url: no such file or directory"))
 		})
@@ -152,7 +151,7 @@ other_key:
 		It("returns errors instead of panicking when version is missing", func() {
 			releases := []string{"missing-version"}
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-version-release/version: no such file or directory"))
 		})
@@ -160,7 +159,7 @@ other_key:
 		It("returns errors instead of panicking when sha1 is missing", func() {
 			releases := []string{"missing-sha1"}
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-sha1-release/sha1: no such file or directory"))
 		})
@@ -168,7 +167,7 @@ other_key:
 		It("returns errors instead of panicking when sha1 is missing", func() {
 			releases := []string{"good-release"}
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, brokenBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/stemcell/version: no such file or directory"))
 		})
@@ -180,7 +179,7 @@ other_key:
 releases:
 %%%
 `)
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
 		})
 
@@ -194,8 +193,8 @@ stemcells:
 - alias: my-stemcell
 `)
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest)
-			Expect(err).To(MatchError(ContainSubstring("`wrong type` into manifest.Release")))
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
+			Expect(err).To(MatchError(ContainSubstring("`wrong type` into common.Release")))
 		})
 
 		It("returns an error when the stemcells section is malformed", func() {
@@ -208,18 +207,28 @@ stemcells:
 - wrong type
 `)
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError(ContainSubstring("`wrong type` into manifest.Stemcell")))
 		})
 
 		It("returns an error when the yaml marshaller fails", func() {
-			manifest.SetYAMLMarshal(func(interface{}) ([]byte, error) {
+			marshalFailFunc := func(interface{}) ([]byte, error) {
 				return nil, errors.New("failed to marshal yaml")
-			})
+			}
 			releases := []string{"release1", "release2"}
 
-			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest)
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, marshalFailFunc, yaml.Unmarshal)
 			Expect(err).To(MatchError("failed to marshal yaml"))
+		})
+
+		It("returns an error when the yaml unmarshaller fails", func() {
+			unmarshalFailFunc := func([]byte, interface{}) error {
+				return errors.New("failed to unmarshal yaml")
+			}
+			releases := []string{"release1", "release2"}
+
+			_, _, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, unmarshalFailFunc)
+			Expect(err).To(MatchError("failed to unmarshal yaml"))
 		})
 	})
 })

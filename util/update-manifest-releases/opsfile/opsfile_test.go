@@ -4,8 +4,10 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -32,14 +34,12 @@ var _ = Describe("UpdateReleases", func() {
 
 		originalOpsFile, err = ioutil.ReadFile("../fixtures/original_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
-
-		manifest.ResetYAMLMarshal()
 	})
 
 	It("updates only releases with different shas without modifying the rest of the file", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, goodBuildDir, originalOpsFile)
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))
@@ -49,7 +49,7 @@ var _ = Describe("UpdateReleases", func() {
 	It("provides a default commit message if no version updates were performed", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		_, changes, err := opsfile.UpdateReleases(releaseNames, noChangesBuildDir, originalOpsFile)
+		_, changes, err := opsfile.UpdateReleases(releaseNames, noChangesBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("No opsfile release updates"))
@@ -59,7 +59,7 @@ var _ = Describe("UpdateReleases", func() {
 		It("returns errors instead of panicking when url is missing", func() {
 			releases := []string{"missing-url"}
 
-			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile)
+			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-url-release/url: no such file or directory"))
 		})
@@ -67,7 +67,7 @@ var _ = Describe("UpdateReleases", func() {
 		It("returns errors instead of panicking when version is missing", func() {
 			releases := []string{"missing-version"}
 
-			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile)
+			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-version-release/version: no such file or directory"))
 		})
@@ -75,7 +75,7 @@ var _ = Describe("UpdateReleases", func() {
 		It("returns errors instead of panicking when sha1 is missing", func() {
 			releases := []string{"missing-sha1"}
 
-			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile)
+			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 
 			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-sha1-release/sha1: no such file or directory"))
 		})
@@ -88,18 +88,28 @@ var _ = Describe("UpdateReleases", func() {
 releases:
 %%%
 `)
-			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile)
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
 		})
 
 		It("returns an error when the yaml marshaller fails", func() {
-			manifest.SetYAMLMarshal(func(interface{}) ([]byte, error) {
+			failingMarshalFunc := func(interface{}) ([]byte, error) {
 				return nil, errors.New("failed to marshal yaml")
-			})
+			}
 			releases := []string{"release1", "release2"}
 
-			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile)
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, failingMarshalFunc, yaml.Unmarshal)
 			Expect(err).To(MatchError("failed to marshal yaml"))
+		})
+
+		It("returns an error when the yaml unmarshaller fails", func() {
+			failingUnmarshalFunc := func([]byte, interface{}) error {
+				return errors.New("failed to unmarshal yaml")
+			}
+			releases := []string{"release1", "release2"}
+
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, failingUnmarshalFunc)
+			Expect(err).To(MatchError("failed to unmarshal yaml"))
 		})
 	})
 })

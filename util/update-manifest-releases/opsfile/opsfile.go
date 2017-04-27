@@ -6,9 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
-
-	yaml "gopkg.in/yaml.v2"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 )
 
 type Op struct {
@@ -17,11 +15,11 @@ type Op struct {
 	Value     interface{} `yaml:"value"`
 }
 
-func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]byte, string, error) {
+func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	var changes []string
 
 	var deserializedOpsFile []Op
-	if err := yaml.Unmarshal(opsFile, &deserializedOpsFile); err != nil {
+	if err := unmarshalFunc(opsFile, &deserializedOpsFile); err != nil {
 		return nil, "", err
 	}
 
@@ -47,7 +45,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]b
 		}
 	}
 
-	updatedOpsFile, err := manifest.YamlMarshal(&deserializedOpsFile)
+	updatedOpsFile, err := marshalFunc(&deserializedOpsFile)
 	if err != nil {
 		return nil, "", err
 	}
@@ -60,8 +58,8 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]b
 	return updatedOpsFile, changeMessage, nil
 }
 
-func getReleaseFromFile(buildDir, releaseName string) (*manifest.Release, error) {
-	newRelease := &manifest.Release{
+func getReleaseFromFile(buildDir, releaseName string) (*common.Release, error) {
+	newRelease := &common.Release{
 		Name: releaseName,
 	}
 	releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", releaseName))

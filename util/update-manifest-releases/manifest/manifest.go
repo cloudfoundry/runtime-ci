@@ -7,10 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	yaml "gopkg.in/yaml.v2"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 )
-
-var YamlMarshal func(interface{}) ([]byte, error) = yaml.Marshal
 
 type Stemcell struct {
 	Alias   string `yaml:"alias"`
@@ -18,19 +16,12 @@ type Stemcell struct {
 	Version string `yaml:"version"`
 }
 
-type Release struct {
-	Name    string `yaml:"name"`
-	URL     string `yaml:"url"`
-	Version string `yaml:"version"`
-	SHA1    string `yaml:"sha1"`
-}
-
 type Manifest struct {
-	Releases  []Release  `yaml:"releases"`
-	Stemcells []Stemcell `yaml:"stemcells"`
+	Releases  []common.Release `yaml:"releases"`
+	Stemcells []Stemcell       `yaml:"stemcells"`
 }
 
-func mergeReleases(manifestReleases []Release, updatingReleases []string) []Release {
+func mergeReleases(manifestReleases []common.Release, updatingReleases []string) []common.Release {
 	manifestReleaseMap := map[string]bool{}
 	for _, r := range manifestReleases {
 		manifestReleaseMap[r.Name] = true
@@ -39,13 +30,13 @@ func mergeReleases(manifestReleases []Release, updatingReleases []string) []Rele
 	allReleases := manifestReleases
 	for _, release := range updatingReleases {
 		if _, found := manifestReleaseMap[release]; !found {
-			allReleases = append(allReleases, Release{Name: release})
+			allReleases = append(allReleases, common.Release{Name: release})
 		}
 	}
 	return allReleases
 }
 
-func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte) ([]byte, string, error) {
+func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	changes := []string{}
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
@@ -61,7 +52,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	copy(cfDeploymentPreamble, cfDeploymentManifest[:cfDeploymentManifestReleasesIndex])
 
 	var deserializedManifestSuffix map[string]interface{}
-	if err := yaml.Unmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
+	if err := unmarshalFunc(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &deserializedManifestSuffix); err != nil {
 		return nil, "", err
 	}
 
@@ -74,7 +65,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	}
 
 	var releasesAndStemcells Manifest
-	if err := yaml.Unmarshal(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &releasesAndStemcells); err != nil {
+	if err := unmarshalFunc(cfDeploymentManifest[cfDeploymentManifestReleasesIndex:], &releasesAndStemcells); err != nil {
 		return nil, "", err
 	}
 
@@ -95,7 +86,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 
 	releasesAndStemcells.Releases = mergeReleases(releasesAndStemcells.Releases, releases)
 
-	newRelease := Release{}
+	newRelease := common.Release{}
 	cfDeploymentReleasesAndStemcells := Manifest{}
 	for _, release := range releasesAndStemcells.Releases {
 		if _, found := releaseMap[release.Name]; found {
@@ -147,7 +138,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		changes = append(changes, "ubuntu-trusty stemcell")
 	}
 
-	cfDeploymentReleasesAndStemcellsYaml, err := YamlMarshal(cfDeploymentReleasesAndStemcells)
+	cfDeploymentReleasesAndStemcellsYaml, err := marshalFunc(cfDeploymentReleasesAndStemcells)
 	if err != nil {
 		return nil, "", err
 	}
