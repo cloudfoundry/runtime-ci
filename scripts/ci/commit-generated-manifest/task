@@ -8,6 +8,7 @@ function main() {
 
   cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
   cp ./compiled-releases-ops-file/"${COMPILED_RELEASES_OPS_FILE_NAME}" ./repo/"${COMPILED_RELEASES_OPS_FILE_DESTINATION}"
+  cp ./windows-ops-file/"${WINDOWS_OPS_FILE_NAME}" ./repo/"${WINDOWS_OPS_FILE_DESTINATION}"
   pushd repo > /dev/null
     if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CF MEGA BOT"
@@ -15,6 +16,7 @@ function main() {
 
       git add ./"${COMPILED_RELEASES_OPS_FILE_DESTINATION}"
       git add ./"${MANIFEST_DESTINATION}"
+      git add ./"${WINDOWS_OPS_FILE_DESTINATION}"
 
       local commit_message
       commit_message=$(cat ${root_dir}/commit-message/${COMMIT_MESSAGE_PATH})
