@@ -1,9 +1,7 @@
 #!/bin/bash -exu
+set -o pipefail
 
-function main() {
-  local root_dir
-  root_dir="${1}"
-
+function update_ops_file() {
   export GOPATH="${root_dir}/go"
   export PATH=$GOPATH/bin:$PATH
   export GO15VENDOREXPERIMENT=1
@@ -21,6 +19,10 @@ function main() {
 
     go run main.go --build-dir "${root_dir}" --target "opsfile"
   popd
+}
+
+function main() {
+  update_ops_file "${1}"
 }
 
 main "${PWD}"
