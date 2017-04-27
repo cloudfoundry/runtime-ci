@@ -163,7 +163,7 @@ resources:
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
     paths:
-    - migration/stubs/*
+    - transition/stubs/*
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -817,7 +817,7 @@ jobs:
       stubs-repo: minerva-env-stubs
     params:
       INFRASTRUCTURE: aws
-      STUBS_PATH: migration/stubs/cf/cf-stub.yml
+      STUBS_PATH: transition/stubs/cf/cf-stub.yml
     output_mapping:
       manifest: cf-manifest
   - task: create-diego-manifest
@@ -831,11 +831,11 @@ jobs:
     output_mapping:
       generated-diego-manifest: diego-manifest
     params:
-      IAAS_SETTINGS_PATH: migration/stubs/diego/iaas-settings.yml
-      INSTANCE_COUNT_OVERRIDES_PATH: migration/stubs/diego/instance-count-overrides.yml
-      DIEGO_SQL_RESOURCE_PATH: property-overrides/migration/stubs/diego/postgres-overrides.yml
-      PROPERTY_OVERRIDES_PATH: migration/stubs/diego/property-overrides.yml
-      RELEASE_VERSIONS_PATH: migration/stubs/diego/release-versions.yml
+      IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
+      INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
+      DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
+      PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
+      RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
   - put: legacy-cf-bosh-deployment
     params:
       manifest: cf-manifest/deployment.yml
