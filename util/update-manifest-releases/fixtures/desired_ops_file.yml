@@ -76,35 +76,35 @@
 - type: replace
   path: /releases/-
   value:
-    name: release1-release
+    name: release1
     sha1: original-release1-sha1
     url: original-release1-url
     version: original-release1-version
 - type: replace
   path: /releases/-
   value:
-    name: release2-release
+    name: release2
     sha1: updated-release2-sha1
     url: updated-release2-url
     version: updated-release2-version
 - type: replace
   path: /releases/-
   value:
-    name: missing-url-release
+    name: missing-url
     sha1: original-missing-url-sha1
     url: original-missing-url-url
     version: original-missing-url-version
 - type: replace
   path: /releases/-
   value:
-    name: missing-version-release
+    name: missing-version
     sha1: original-missing-version-sha1
     url: original-missing-version-url
     version: original-missing-version-version
 - type: replace
   path: /releases/-
   value:
-    name: missing-sha1-release
+    name: missing-sha1
     sha1: original-missing-sha1-sha1
     url: original-missing-sha1-url
     version: original-missing-sha1-version

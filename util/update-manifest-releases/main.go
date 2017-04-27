@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
 
 func main() {
@@ -23,7 +24,43 @@ func main() {
 	flag.Parse()
 
 	if target == "opsfile" {
-		os.Exit(1)
+		inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
+		outputPath = os.Getenv("UPDATED_OPS_FILE_PATH")
+
+		files, err := ioutil.ReadDir(buildDir)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		releases := []string{}
+		for _, file := range files {
+			if strings.HasSuffix(file.Name(), "-release") {
+				releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
+			}
+		}
+
+		originalOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "original-ops-file-path", inputPath))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		updatedOpsFile, commitMessage, err := opsfile.UpdateReleases(releases, buildDir, originalOpsFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		if err := ioutil.WriteFile(filepath.Join(buildDir, "updated-ops-file-path", outputPath), updatedOpsFile, 0666); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 	} else {
 		inputPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 		outputPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")

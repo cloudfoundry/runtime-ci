@@ -29,22 +29,22 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]b
 		if op.Path == "/releases/-" {
 			valueMap := op.Value.(map[interface{}]interface{})
 			for _, releaseName := range releaseNames {
-				if valueMap["name"] == fmt.Sprintf("%s-release", releaseName) {
+				if valueMap["name"] == releaseName {
 					newRelease, err := getReleaseFromFile(buildDir, releaseName)
 					if err != nil {
 						return nil, "", err
 					}
+
 					if newRelease.SHA1 != strings.TrimSpace(valueMap["sha1"].(string)) {
 						changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
-						valueMap["sha1"] = newRelease.SHA1
-						valueMap["url"] = newRelease.URL
-						valueMap["version"] = newRelease.Version
 					}
+
+					valueMap["sha1"] = newRelease.SHA1
+					valueMap["url"] = newRelease.URL
+					valueMap["version"] = newRelease.Version
 				}
 			}
-
 		}
-
 	}
 
 	updatedOpsFile, err := manifest.YamlMarshal(&deserializedOpsFile)
