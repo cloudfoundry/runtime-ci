@@ -12,6 +12,22 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
 
+func getReleaseNames(buildDir string) ([]string, error) {
+	files, err := ioutil.ReadDir(buildDir)
+	if err != nil {
+		return nil, err
+
+	}
+
+	releases := []string{}
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), "-release") {
+			releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
+		}
+	}
+	return releases, nil
+}
+
 func main() {
 	var inputPath, outputPath string
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
@@ -23,22 +39,15 @@ func main() {
 	flag.StringVar(&target, "target", "manifest", "choose whether to update releases in manifest or opsfile")
 	flag.Parse()
 
+	releases, err := getReleaseNames(buildDir)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
 	if target == "opsfile" {
 		inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
 		outputPath = os.Getenv("UPDATED_OPS_FILE_PATH")
-
-		files, err := ioutil.ReadDir(buildDir)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		releases := []string{}
-		for _, file := range files {
-			if strings.HasSuffix(file.Name(), "-release") {
-				releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
-			}
-		}
 
 		originalOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "original-ops-file-path", inputPath))
 		if err != nil {
@@ -64,19 +73,6 @@ func main() {
 	} else {
 		inputPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
 		outputPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")
-
-		files, err := ioutil.ReadDir(buildDir)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		releases := []string{}
-		for _, file := range files {
-			if strings.HasSuffix(file.Name(), "-release") {
-				releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
-			}
-		}
 
 		cfDeploymentManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-configuration", inputPath))
 		if err != nil {
