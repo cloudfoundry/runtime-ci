@@ -142,7 +142,7 @@ var _ = Describe("main", func() {
 			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(string(commitMessage)).To(Equal("Updated release4-release"))
+			Expect(string(commitMessage)).To(Equal("Updated opsfile with release4-release"))
 		})
 
 		Context("failure cases", func() {
@@ -303,7 +303,7 @@ stemcells:
 			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(string(commitMessage)).To(Equal("Updated release3-release, ubuntu-trusty stemcell"))
+			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release, ubuntu-trusty stemcell"))
 		})
 
 		Context("failure cases", func() {

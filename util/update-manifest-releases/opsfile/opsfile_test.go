@@ -43,7 +43,7 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))
-		Expect(changes).To(Equal("Updated release2-release"))
+		Expect(changes).To(Equal("Updated opsfile with release2-release"))
 	})
 
 	It("provides a default commit message if no version updates were performed", func() {
@@ -52,7 +52,7 @@ var _ = Describe("UpdateReleases", func() {
 		_, changes, err := opsfile.UpdateReleases(releaseNames, noChangesBuildDir, originalOpsFile)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(changes).To(Equal("No release updates"))
+		Expect(changes).To(Equal("No opsfile release updates"))
 	})
 
 	Context("failure cases", func() {

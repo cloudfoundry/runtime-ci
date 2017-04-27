@@ -9,5 +9,5 @@ import (
 
 func TestMain(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "create-binaries-manifest-section")
+	RunSpecs(t, "main")
 }

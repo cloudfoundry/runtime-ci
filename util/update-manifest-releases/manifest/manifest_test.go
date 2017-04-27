@@ -56,7 +56,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
 		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
 
-		Expect(changes).To(Equal("Updated release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
 	})
 
 	It("provides a default commit message if no version updates were performed", func() {
@@ -64,7 +64,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(changes).To(Equal("No release or stemcell version updates"))
+		Expect(changes).To(Equal("No manifest release or stemcell version updates"))
 	})
 
 	It("when there exist update releases that are not in the manifest releases, it adds them to resulting list of releases", func() {
@@ -102,7 +102,7 @@ stemcells:
 		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(changes).To(Equal("Updated release1-release, release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release1-release, release2-release, ubuntu-trusty stemcell"))
 	})
 
 	Context("failure cases", func() {

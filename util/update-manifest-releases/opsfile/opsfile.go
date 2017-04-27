@@ -52,9 +52,9 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]b
 		return nil, "", err
 	}
 
-	changeMessage := "No release updates"
+	changeMessage := "No opsfile release updates"
 	if len(changes) > 0 {
-		changeMessage = fmt.Sprintf("Updated %s", strings.Join(changes, ", "))
+		changeMessage = fmt.Sprintf("Updated opsfile with %s", strings.Join(changes, ", "))
 	}
 
 	return updatedOpsFile, changeMessage, nil

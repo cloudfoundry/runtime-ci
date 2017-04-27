@@ -16,7 +16,6 @@ func getReleaseNames(buildDir string) ([]string, error) {
 	files, err := ioutil.ReadDir(buildDir)
 	if err != nil {
 		return nil, err
-
 	}
 
 	releases := []string{}
@@ -25,13 +24,35 @@ func getReleaseNames(buildDir string) ([]string, error) {
 			releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
 		}
 	}
+
 	return releases, nil
 }
 
-func main() {
-	var inputPath, outputPath string
-	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
+type updateFunc func([]string, string, []byte) ([]byte, string, error)
 
+func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
+	originalFile, err := ioutil.ReadFile(filepath.Join(buildDir, inputDir, inputPath))
+	if err != nil {
+		return err
+	}
+
+	updatedFile, commitMessage, err := f(releases, buildDir, originalFile)
+	if err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputPath), updatedFile, 0666); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func main() {
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 
@@ -45,53 +66,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 	if target == "opsfile" {
-		inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
-		outputPath = os.Getenv("UPDATED_OPS_FILE_PATH")
-
-		originalOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "original-ops-file", inputPath))
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		updatedOpsFile, commitMessage, err := opsfile.UpdateReleases(releases, buildDir, originalOpsFile)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		if err := ioutil.WriteFile(filepath.Join(buildDir, "updated-ops-file", outputPath), updatedOpsFile, 0666); err != nil {
+		if err = update(
+			releases,
+			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
+			os.Getenv("UPDATED_OPS_FILE_PATH"),
+			"original-ops-file",
+			"updated-ops-file",
+			buildDir,
+			commitMessagePath,
+			opsfile.UpdateReleases,
+		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
 	} else {
-		inputPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
-		outputPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")
-
-		cfDeploymentManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-configuration", inputPath))
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		updatedDeploymentManifest, commitMessage, err := manifest.UpdateReleasesAndStemcells(releases, buildDir, cfDeploymentManifest)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		if err := ioutil.WriteFile(filepath.Join(buildDir, "deployment-manifest", outputPath), updatedDeploymentManifest, 0666); err != nil {
+		if err = update(
+			releases,
+			os.Getenv("DEPLOYMENT_CONFIGURATION_PATH"),
+			os.Getenv("DEPLOYMENT_MANIFEST_PATH"),
+			"deployment-configuration",
+			"deployment-manifest",
+			buildDir,
+			commitMessagePath,
+			manifest.UpdateReleasesAndStemcells,
+		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
