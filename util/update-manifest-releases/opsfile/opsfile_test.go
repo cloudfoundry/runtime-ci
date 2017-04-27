@@ -1,6 +1,7 @@
 package opsfile_test
 
 import (
+	"errors"
 	"io/ioutil"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
@@ -89,6 +90,16 @@ releases:
 `)
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile)
 			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
+		})
+
+		It("returns an error when the yaml marshaller fails", func() {
+			manifest.SetYAMLMarshal(func(interface{}) ([]byte, error) {
+				return nil, errors.New("failed to marshal yaml")
+			})
+			releases := []string{"release1", "release2"}
+
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile)
+			Expect(err).To(MatchError("failed to marshal yaml"))
 		})
 	})
 })

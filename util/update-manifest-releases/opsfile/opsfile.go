@@ -47,7 +47,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte) ([]b
 
 	}
 
-	updatedOpsFile, err := yaml.Marshal(&deserializedOpsFile)
+	updatedOpsFile, err := manifest.YamlMarshal(&deserializedOpsFile)
 	if err != nil {
 		return nil, "", err
 	}
