@@ -1798,10 +1798,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-ops-file
 
 - name: verify-nameserver-has-record
   public: true
