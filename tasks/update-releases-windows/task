@@ -1,0 +1,26 @@
+#!/bin/bash -exu
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  export GOPATH="${root_dir}/go"
+  export PATH=$GOPATH/bin:$PATH
+  export GO15VENDOREXPERIMENT=1
+
+  mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
+  ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
+
+  go get github.com/onsi/ginkgo/...
+  go get github.com/golang/dep/...
+
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+    dep ensure -update
+
+    ginkgo -r -randomizeSuites -randomizeAllSpecs .
+
+    go run main.go --build-dir "${root_dir}" --target "opsfile"
+  popd
+}
+
+main "${PWD}"

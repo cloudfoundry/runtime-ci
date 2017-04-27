@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/golang-17
+
+inputs:
+- name: runtime-ci
+- name: original-ops-file
+- name: garden-windows-release
+- name: hwc-buildpack-release
+
+outputs:
+- name: commit-message
+- name: updated-ops-file
+
+run:
+  path: runtime-ci/tasks/update-releases-windows/task
+
+params:
+  COMMIT_MESSAGE_PATH: commit-message.txt
+  ORIGINAL_OPS_FILE_PATH: operations/windows-cell.yml
+  UPDATED_OPS_FILE_PATH: operations/windows-cell.yml
