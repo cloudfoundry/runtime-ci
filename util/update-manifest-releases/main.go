@@ -68,8 +68,8 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
+
 	if target == "opsfile" {
 		if err = update(
 			releases,

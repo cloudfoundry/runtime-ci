@@ -36,10 +36,39 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 
-	It("updates only releases with different shas without modifying the rest of the file", func() {
+	It("updates releases with different shas", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_sha_ops_file.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-sha", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))
+		Expect(changes).To(Equal("Updated opsfile with release2-release"))
+	})
+
+	It("updates releases with different versions", func() {
+		releaseNames := []string{"release1", "release2"}
+
+		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_version_ops_file.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-version", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))
+		Expect(changes).To(Equal("Updated opsfile with release2-release"))
+	})
+
+	It("updates releases with different urls", func() {
+		releaseNames := []string{"release1", "release2"}
+
+		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_url_ops_file.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-url", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))

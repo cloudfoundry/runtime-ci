@@ -37,7 +37,6 @@ func mergeReleases(manifestReleases []common.Release, updatingReleases []string)
 }
 
 func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	changes := []string{}
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
 	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))
@@ -69,9 +68,9 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", err
 	}
 
-	releasesSHA1s := map[string]string{}
+	releasesByName := make(map[string]common.Release)
 	for _, release := range releasesAndStemcells.Releases {
-		releasesSHA1s[release.Name] = release.SHA1
+		releasesByName[release.Name] = release
 	}
 
 	stemcellsVersions := map[string]string{}
@@ -86,21 +85,20 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 
 	releasesAndStemcells.Releases = mergeReleases(releasesAndStemcells.Releases, releases)
 
-	newRelease := common.Release{}
+	var changes []string
 	cfDeploymentReleasesAndStemcells := Manifest{}
 	for _, release := range releasesAndStemcells.Releases {
+		newRelease := common.Release{}
+
 		if _, found := releaseMap[release.Name]; found {
+			newRelease.Name = release.Name
+
 			releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release.Name))
 
 			sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
 			newRelease.SHA1 = strings.TrimSpace(string(sha1))
 			if err != nil {
 				return nil, "", err
-			}
-
-			newRelease.Name = release.Name
-			if releasesSHA1s[newRelease.Name] != strings.TrimSpace(string(sha1)) {
-				changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
 			}
 
 			url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
@@ -114,6 +112,10 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 				return nil, "", err
 			}
 			newRelease.Version = strings.TrimSpace(string(version))
+
+			if releasesByName[newRelease.Name] != newRelease {
+				changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
+			}
 
 		} else {
 			newRelease = release

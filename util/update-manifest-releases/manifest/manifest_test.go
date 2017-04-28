@@ -38,10 +38,56 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 
-	It("updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+	It("when the sha changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
 		releases := []string{"release1", "release2"}
+		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_sha_releases_and_stemcells.yml")
+		Expect(err).NotTo(HaveOccurred())
 
-		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, goodBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, "../fixtures/build-with-updated-sha", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+
+		r := regexp.MustCompile(`(?m:^releases:$)`)
+		updatedManifestReleasesIndex := r.FindSubmatchIndex([]byte(updatedManifest))[0]
+		cfDeploymentManifestReleasesIndex := r.FindSubmatchIndex([]byte(cfDeploymentManifest))[0]
+		cfDeploymentPreamble := cfDeploymentManifest[:cfDeploymentManifestReleasesIndex]
+		updatedManifestPreamble := updatedManifest[:updatedManifestReleasesIndex]
+
+		updatedManifestReleasesAndStemcells := updatedManifest[updatedManifestReleasesIndex:]
+
+		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
+		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
+
+		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
+	})
+
+	It("when the version changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+		releases := []string{"release1", "release2"}
+		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_version_releases_and_stemcells.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, "../fixtures/build-with-updated-version", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+
+		r := regexp.MustCompile(`(?m:^releases:$)`)
+		updatedManifestReleasesIndex := r.FindSubmatchIndex([]byte(updatedManifest))[0]
+		cfDeploymentManifestReleasesIndex := r.FindSubmatchIndex([]byte(cfDeploymentManifest))[0]
+		cfDeploymentPreamble := cfDeploymentManifest[:cfDeploymentManifestReleasesIndex]
+		updatedManifestPreamble := updatedManifest[:updatedManifestReleasesIndex]
+
+		updatedManifestReleasesAndStemcells := updatedManifest[updatedManifestReleasesIndex:]
+
+		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
+		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
+
+		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
+	})
+
+	It("when the url changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+		releases := []string{"release1", "release2"}
+		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_url_releases_and_stemcells.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(releases, "../fixtures/build-with-updated-url", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		r := regexp.MustCompile(`(?m:^releases:$)`)
