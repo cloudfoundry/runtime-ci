@@ -1,15 +1,2 @@
 ---
-releases:
-- {name: turbulence, version: 0.6}
-
-addons:
-- name: turbulence
-  jobs:
-  - name: turbulence_agent
-    release: turbulence
-    consumes:
-      api: {from: api, deployment: turbulence}
-  include:
-    deployments: [cf]
-    stemcell:
-    - os: ubuntu-trusty
+releases: []
