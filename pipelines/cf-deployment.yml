@@ -28,18 +28,18 @@ groups:
   jobs:
   - add-claimed-lock-fresh
   - setup-infrastructure-fresh
-  - add-claimed-lock-migration
-  - setup-infrastructure-migration
+  - add-claimed-lock-transition
+  - setup-infrastructure-transition
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-upgrade
   - destroy-infrastructure-fresh
-  - destroy-infrastructure-migration
+  - destroy-infrastructure-transition
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-fresh
-  - remove-claimed-lock-migration
+  - remove-claimed-lock-transition
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
@@ -143,12 +143,12 @@ resources:
     branch: master
     pool: cf-deployment/fresh
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
-- name: migration-pool
+- name: transition-pool
   type: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
-    pool: cf-deployment/migration
+    pool: cf-deployment/transition
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
 - name: ops-pool
   type: pool
@@ -548,7 +548,7 @@ jobs:
         repository: updated-vars-store
         rebase: true
 
-- name: add-claimed-lock-migration
+- name: add-claimed-lock-transition
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -559,11 +559,11 @@ jobs:
     params:
       NAME: minerva
     output_mapping:
-      pool-resource: migration-pool
-  - put: migration-pool
-    params: {add_claimed: migration-pool}
+      pool-resource: transition-pool
+  - put: transition-pool
+    params: {add_claimed: transition-pool}
 
-- name: setup-infrastructure-migration
+- name: setup-infrastructure-transition
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -572,9 +572,9 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: migration-pool
+    - get: transition-pool
       trigger: true
-      passed: [ add-claimed-lock-migration ]
+      passed: [ add-claimed-lock-transition ]
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -592,8 +592,8 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - put: migration-pool
-    params: {release: migration-pool}
+  - put: transition-pool
+    params: {release: transition-pool}
 
 - name: add-claimed-lock-fresh
   serial: true
@@ -810,7 +810,7 @@ jobs:
     - get: legacy-cflinuxfs2-rootfs-release
     - get: legacy-cf-release
     - get: aws-stemcell
-    - put: migration-pool
+    - put: transition-pool
       params: {claim: minerva}
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
@@ -867,7 +867,7 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-stubs
     - get: cf-deployment-release-candidate
-    - get: migration-pool
+    - get: transition-pool
       passed: [ deploy-legacy-cf ]
   - task: extract-vars-store
     file: runtime-ci/tasks/r2d2/task
@@ -1422,13 +1422,13 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-migration
+- name: destroy-infrastructure-transition
   serial_groups: [minerva]
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - put: migration-pool
+    - put: transition-pool
       params: {claim: minerva}
     - get: minerva-env-director-state
     - get: runtime-ci
@@ -1490,23 +1490,23 @@ jobs:
   - put: fresh-pool
     params: {remove: fresh-pool}
 
-- name: remove-claimed-lock-migration
+- name: remove-claimed-lock-transition
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: migration-pool
-    passed: [ destroy-infrastructure-migration ]
+  - get: transition-pool
+    passed: [ destroy-infrastructure-transition ]
     trigger: true
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
       NAME: minerva
     output_mapping:
-      pool-resource: migration-pool
-  - put: migration-pool
-    params: {remove: migration-pool}
+      pool-resource: transition-pool
+  - put: transition-pool
+    params: {remove: transition-pool}
 
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
