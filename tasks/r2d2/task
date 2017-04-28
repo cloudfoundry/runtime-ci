@@ -1,0 +1,40 @@
+#!/bin/bash -exu
+
+function setup_bosh_env_vars() {
+  set +x
+  pushd bbl-state
+    BOSH_CA_CERT="$(bbl director-ca-cert)"
+    export BOSH_CA_CERT
+    BOSH_ENVIRONMENT=$(bbl director-address)
+    export BOSH_ENVIRONMENT
+    BOSH_CLIENT=$(bbl director-username)
+    export BOSH_CLIENT
+    BOSH_CLIENT_SECRET=$(bbl director-password)
+    export BOSH_CLIENT_SECRET
+  popd
+  set -x
+}
+
+function download_legacy_manifests() {
+  bosh download-manifest -d cf > cf.yml
+  bosh download-manifest -d cf-diego > diego.yml
+}
+
+function extract_vars() {
+  ../cf-deployment/transition/transition.sh \
+  -cf cf.yml \
+  -d diego.yml \
+  -ca env_repo/transition/ca-keys-stub.yml
+}
+
+function main() {
+  pushd env_repo
+  setup_bosh_env_vars
+  download_legacy_manifests
+  extract_vars
+  popd
+
+  mv env_repo env_repo_with_vars_store
+}
+
+main

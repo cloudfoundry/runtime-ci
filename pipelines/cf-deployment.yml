@@ -13,6 +13,7 @@ groups:
   - deploy-releases-lite
   - deploy-releases-upgrade
   - deploy-releases-ops
+  - perform-r2d-transition
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
@@ -795,7 +796,6 @@ jobs:
         path: cf-deployment-transition/transition/test-transition-ops.sh
 
 - name: deploy-legacy-cf
-  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -810,6 +810,8 @@ jobs:
     - get: legacy-cflinuxfs2-rootfs-release
     - get: legacy-cf-release
     - get: aws-stemcell
+    - put: migration-pool
+      params: {claim: minerva}
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
@@ -856,6 +858,42 @@ jobs:
       bbl-state: minerva-env-stubs
     params:
       ERRAND_NAME: smoke_tests
+
+- name: perform-r2d-transition
+  # public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: minerva-env-stubs
+    - get: cf-deployment-release-candidate
+    - get: migration-pool
+      passed: [ deploy-legacy-cf ]
+  - task: extract-vars-store
+    file: runtime-ci/tasks/r2d2/task
+    input_mapping:
+    - cf-deployment: cf-deployment-release-candidate
+    - env_repo: minerva-env-stubs
+    output_mapping:
+    - env_repo_with_vars_store: vars-store
+  - task: bosh-deploy-cf
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: minerva-env-stubs
+      cf-deployment: cf-deployment-release-candidate
+      ops-files: cf-deployment-release-candidate
+    params:
+      SYSTEM_DOMAIN: minerva.cf-app.com
+      OPS_FILES: "operations/use-postgres.yml operations/cfr-to-cfd-transition.yml operations/aws.yml"
+    ensure:
+      put: minerva-env-stubs
+      params:
+        repository: updated-vars-store
+        rebase: true
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: minerva-env-stubs
 
 - name: deploy-releases-fresh
   serial: true
