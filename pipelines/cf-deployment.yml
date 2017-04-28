@@ -95,7 +95,7 @@ resources:
   type: bosh-deployment
   source:
     target: https://bosh.minerva.cf-app.com:25555
-    username: {{minerva_bosh_username}}
+    username: admin
     password: {{minerva_bosh_password}}
     deployment: cf
     ignore_ssl: true
@@ -104,7 +104,7 @@ resources:
   type: bosh-deployment
   source:
     target: https://bosh.minerva.cf-app.com:25555
-    username: {{minerva_bosh_username}}
+    username: admin
     password: {{minerva_bosh_password}}
     deployment: cf-diego
     ignore_ssl: true
