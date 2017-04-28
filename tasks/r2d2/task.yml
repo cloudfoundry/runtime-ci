@@ -7,10 +7,12 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
+- name: cf-deployment
 - name: env_repo
 - name: runtime-ci
 
 outputs:
 - name: env_repo_with_vars_store
+
 run:
   path: runtime-ci/tasks/r2d2/task
