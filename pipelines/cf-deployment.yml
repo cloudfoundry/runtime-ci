@@ -885,7 +885,7 @@ jobs:
       ops-files: cf-deployment-release-candidate
     params:
       SYSTEM_DOMAIN: minerva.cf-app.com
-      OPS_FILES: "operations/use-postgres.yml operations/cfr-to-cfd-transition.yml scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
+      OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
     ensure:
       put: minerva-env-stubs
       params:
