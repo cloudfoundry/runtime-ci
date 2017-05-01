@@ -25,5 +25,6 @@ pushd "${DIEGO_RELEASE_DIR}"
     -v "${RELEASE_VERSIONS_PATH}" \
     -s "${DIEGO_SQL_RESOURCE_PATH}" \
     -x \
+    -r \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd

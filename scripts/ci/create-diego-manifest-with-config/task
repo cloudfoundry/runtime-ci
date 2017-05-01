@@ -27,9 +27,9 @@ pushd "${DIEGO_RELEASE_DIR}"
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     $([ "${CF_NETWORKING_OVERRIDES_PATH}" != "" ] && echo "-N ${root_dir}/config/${CF_NETWORKING_OVERRIDES_PATH}") \
     -v "${RELEASE_VERSIONS_PATH}" \
-    -g \
     $([ "${USE_ETCD}" == "false" ] && echo "-x") \
     $([ "${USE_GROOTFS}" == "true" ] && echo "-G") \
     $([ "${USE_MYSQL}" == "true" ] && echo "-s ${DIEGO_MYSQL_OVERRIDES_PATH}") \
+    -r \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
