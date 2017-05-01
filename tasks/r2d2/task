@@ -27,14 +27,28 @@ function extract_vars() {
   -ca transition/ca-keys-stub.yml
 }
 
+function commit_vars_store_and_move_to_output() {
+  pushd env_repo
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CI Bot"
+      git config user.email "cf-release-integration@pivotal.io"
+      git add deployment-vars.yml
+      git commit -m "Update vars-store after extraction from legacy manifests"
+    fi
+  popd
+
+  git clone env_repo env_repo_with_vars_store
+}
+
 function main() {
   setup_bosh_env_vars
+
   pushd env_repo
   download_legacy_manifests
   extract_vars
   popd
 
-  cp -r env_repo env_repo_with_vars_store
+  commit_vars_store_and_move_to_output
 }
 
 main
