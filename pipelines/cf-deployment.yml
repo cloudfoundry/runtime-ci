@@ -870,7 +870,7 @@ jobs:
     - get: transition-pool
       passed: [ deploy-legacy-cf ]
   - task: extract-vars-store
-    file: runtime-ci/tasks/r2d2/task
+    file: runtime-ci/tasks/r2d2/task.yml
     input_mapping:
     - cf-deployment: cf-deployment-release-candidate
     - env_repo: minerva-env-stubs
