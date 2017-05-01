@@ -34,7 +34,7 @@ function main() {
   extract_vars
   popd
 
-  mv env_repo env_repo_with_vars_store
+  cp -r env_repo env_repo_with_vars_store
 }
 
 main
