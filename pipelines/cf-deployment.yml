@@ -865,6 +865,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: minerva-env-stubs
     - get: cf-deployment-release-candidate
     - get: transition-pool
