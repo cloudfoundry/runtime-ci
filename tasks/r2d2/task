@@ -2,7 +2,7 @@
 
 function setup_bosh_env_vars() {
   set +x
-  pushd bbl-state
+  pushd env_repo
     BOSH_CA_CERT="$(bbl director-ca-cert)"
     export BOSH_CA_CERT
     BOSH_ENVIRONMENT=$(bbl director-address)
