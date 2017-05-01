@@ -243,10 +243,10 @@ resources:
   source:
     repository: cloudfoundry/grootfs-release
 
-- name: cflinuxfs2-rootfs-release-tarball
+- name: cflinuxfs2-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry/cflinuxfs2-rootfs-release
+    repository: cloudfoundry/cflinuxfs2-release
 
 - name: bosh-lite
   type: git
@@ -566,7 +566,7 @@ jobs:
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
         tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ generate-bosh-lite-manifests ]
         tags: [ bosh-lite-aws ]
@@ -635,7 +635,7 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-release-tarball/*.tgz
+        - cflinuxfs2-release-tarball/*.tgz
     - task: create-bosh-lite-creds
       tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
@@ -708,7 +708,7 @@ jobs:
         params:
           tarball: false
         tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         passed: [ deploy-bosh-lite ]
         trigger: true
         params:
@@ -784,7 +784,7 @@ jobs:
         params:
           tarball: false
         tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         passed: [ bosh-lite-smoke-tests ]
         trigger: true
         params:
@@ -909,7 +909,7 @@ jobs:
         trigger: true
       - get: garden-runc-release-tarball
         trigger: true
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
       - get: diego-release-tarball
         trigger: true
@@ -951,7 +951,7 @@ jobs:
       - get: garden-runc-release-tarball
         passed: [ generate-minimal-manifest ]
         trigger: true
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         passed: [ generate-minimal-manifest ]
         trigger: true
       - get: diego-release-tarball
@@ -971,7 +971,7 @@ jobs:
           - cf-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-release-tarball/*.tgz
+          - cflinuxfs2-release-tarball/*.tgz
 
 - name: minimal-acceptance-tests
   public: true
@@ -1006,7 +1006,7 @@ jobs:
         passed: [ deploy-minimal ]
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ deploy-minimal ]
         params:
@@ -1073,7 +1073,7 @@ jobs:
         trigger: true
         tags: [vsphere]
         passed: [ generate-vsphere-manifests ]
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [ generate-vsphere-manifests ]
@@ -1117,7 +1117,7 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-release-tarball/*.tgz
+        - cflinuxfs2-release-tarball/*.tgz
     - task: write-director-version
       file: runtime-ci/scripts/ci/write-director-version/task.yml
       tags: [vsphere]
@@ -1188,7 +1188,7 @@ jobs:
         passed: [deploy-vsphere]
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [deploy-vsphere]
@@ -1255,7 +1255,7 @@ jobs:
         passed: [vsphere-smoke-tests]
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         tags: [vsphere]
         passed: [vsphere-smoke-tests]
@@ -1343,7 +1343,7 @@ jobs:
       - get: cf-networking-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
       - get: grootfs-release-tarball
@@ -1361,7 +1361,7 @@ jobs:
         releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-release-tarball/*.tgz
+        - cflinuxfs2-release-tarball/*.tgz
         - cf-networking-release-tarball/*.tgz
         - grootfs-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
@@ -1436,7 +1436,7 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ deploy-aws ]
         params:
@@ -1485,7 +1485,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: cflinuxfs2-rootfs-release-tarball
+    - get: cflinuxfs2-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1571,7 +1571,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: cflinuxfs2-rootfs-release-tarball
+    - get: cflinuxfs2-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1661,7 +1661,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: cflinuxfs2-rootfs-release-tarball
+    - get: cflinuxfs2-release-tarball
       tags: [vsphere]
       tragger: true
       params:
@@ -1750,7 +1750,7 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ aws-smoke-tests ]
         params:
@@ -1855,7 +1855,7 @@ jobs:
         trigger: true
         params:
           tarball: false
-      - get: cflinuxfs2-rootfs-release-tarball
+      - get: cflinuxfs2-release-tarball
         trigger: true
         passed:
         - aws-acceptance-tests
