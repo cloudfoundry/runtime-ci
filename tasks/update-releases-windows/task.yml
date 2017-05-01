@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/golang-17
+    repository: golang:1.8.1
 
 inputs:
 - name: runtime-ci
