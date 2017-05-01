@@ -1627,10 +1627,6 @@ jobs:
       trigger: true
       params:
         tarball: false
-    # - get: cf-mysql-release
-    #   trigger: true
-    #   params:
-    #     tarball: false
     - get: uaa-release
       trigger: true
       params:
