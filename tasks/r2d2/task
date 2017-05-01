@@ -24,7 +24,7 @@ function extract_vars() {
   ../cf-deployment/transition/transition.sh \
   -cf cf.yml \
   -d diego.yml \
-  -ca env_repo/transition/ca-keys-stub.yml
+  -ca transition/ca-keys-stub.yml
 }
 
 function main() {
