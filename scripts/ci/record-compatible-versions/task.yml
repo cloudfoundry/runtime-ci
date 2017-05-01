@@ -32,7 +32,7 @@ params:
   BOSH_PASSWORD:
   BOSH_USER:
   BOSH_TARGET:
-  COMPATIBILITY_FILE: compatibility-v9.csv
+  COMPATIBILITY_FILE: compatibility-v10.csv
 
 run:
   path: runtime-ci/scripts/ci/record-compatible-versions/task
