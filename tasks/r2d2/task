@@ -28,8 +28,8 @@ function extract_vars() {
 }
 
 function main() {
-  pushd env_repo
   setup_bosh_env_vars
+  pushd env_repo
   download_legacy_manifests
   extract_vars
   popd
