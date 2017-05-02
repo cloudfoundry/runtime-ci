@@ -448,7 +448,7 @@ resources:
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
     paths: [Dockerfile]
 
-- name: cf-deployment-dockerfiles-bosh-cli
+- name: runtime-ci-bosh-cli
   type: git
   source:
     branch: master
@@ -1922,11 +1922,11 @@ jobs:
     - aggregate:
       - get: weekly
         trigger: true
-      - get: cf-deployment-dockerfiles-bosh-cli
+      - get: runtime-ci-bosh-cli
         trigger: true
     - put: bosh-cli-image
       params:
-        build: cf-deployment-dockerfiles-bosh-cli/dockerfiles/bosh-cli/
+        build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
 - name: build-bosh-and-spiff-docker-image
   public: true
