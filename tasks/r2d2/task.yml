@@ -7,9 +7,10 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-and-spiff
 
 inputs:
+- name: bbl-state
 - name: cf-deployment
-- name: env_repo
 - name: runtime-ci
+- name: vars-store
 
 outputs:
 - name: env_repo_with_vars_store

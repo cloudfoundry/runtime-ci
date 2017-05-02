@@ -2,7 +2,7 @@
 
 function setup_bosh_env_vars() {
   set +x
-  pushd env_repo
+  pushd bbl-state
     BOSH_CA_CERT="$(bbl director-ca-cert)"
     export BOSH_CA_CERT
     BOSH_ENVIRONMENT=$(bbl director-address)
@@ -16,19 +16,23 @@ function setup_bosh_env_vars() {
 }
 
 function download_legacy_manifests() {
-  bosh download-manifest -d cf > cf.yml
-  bosh download-manifest -d cf-diego > diego.yml
+  pushd vars-store
+    bosh download-manifest -d cf > cf.yml
+    bosh download-manifest -d cf-diego > diego.yml
+  popd
 }
 
 function extract_vars() {
-  ../cf-deployment/transition/transition.sh \
-  -cf cf.yml \
-  -d diego.yml \
-  -ca transition/ca-keys-stub.yml
+  pushd vars-store
+    ../cf-deployment/transition/transition.sh \
+    -cf cf.yml \
+    -d diego.yml \
+    -ca transition/ca-keys-stub.yml
+  popd
 }
 
 function commit_vars_store_and_move_to_output() {
-  pushd env_repo
+  pushd vars-store
     if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CI Bot"
       git config user.email "cf-release-integration@pivotal.io"
@@ -37,16 +41,14 @@ function commit_vars_store_and_move_to_output() {
     fi
   popd
 
-  git clone env_repo env_repo_with_vars_store
+  git clone vars-store updated_vars_store
 }
 
 function main() {
   setup_bosh_env_vars
 
-  pushd env_repo
   download_legacy_manifests
   extract_vars
-  popd
 
   commit_vars_store_and_move_to_output
 }

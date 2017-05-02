@@ -873,16 +873,17 @@ jobs:
   - task: extract-vars-store
     file: runtime-ci/tasks/r2d2/task.yml
     input_mapping:
+    - bbl-state: minerva-env-stubs
     - cf-deployment: cf-deployment-release-candidate
-    - env_repo: minerva-env-stubs
+    - vars-store: minerva-env-stubs
     output_mapping:
-    - env_repo_with_vars_store: vars-store
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
       bbl-state: minerva-env-stubs
       cf-deployment: cf-deployment-release-candidate
       ops-files: cf-deployment-release-candidate
+      vars-store: updated-vars-store
     params:
       SYSTEM_DOMAIN: minerva.cf-app.com
       OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
