@@ -3,6 +3,7 @@ groups:
 - name: cf-deployment
   jobs:
   - lint-cf-deployment-manifest
+  - unit-test-ops-files
   - unit-test-transition-tools
   - update-releases
   - update-release-mysql
@@ -753,6 +754,25 @@ jobs:
         - -exc
         - |
           ruby -e "require 'yaml'; YAML.load_file('./cf-deployment-develop/cf-deployment.yml')"
+
+- name: unit-test-ops-files
+  serial: false
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-develop
+    trigger: true
+  - task: unit-test-ops-files
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/bosh-cli
+      inputs:
+      - name: cf-deployment-develop
+      run:
+        path: cf-deployment-develop/scripts/test
 
 - name: unit-test-transition-tools
   serial: false
