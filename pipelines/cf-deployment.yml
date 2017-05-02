@@ -124,11 +124,11 @@ resources:
   source:
     repository: cloudfoundry/garden-runc-release
     verson: "v1.5.0"
-- name: legacy-cflinuxfs2-rootfs-release
+- name: legacy-cflinuxfs2-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/cflinuxfs2-rootfs-release
-    version: "v.1.60.0"
+    repository: cloudfoundry/cflinuxfs2-release
+    version: "1.116.0"
 
 - name: turbulence-github-release
   type: git
@@ -807,7 +807,7 @@ jobs:
     - get: github-diego-release
     - get: legacy-garden-runc-release
     - get: legacy-diego-release
-    - get: legacy-cflinuxfs2-rootfs-release
+    - get: legacy-cflinuxfs2-release
     - get: legacy-cf-release
     - get: aws-stemcell
     - put: transition-pool
@@ -851,7 +851,7 @@ jobs:
       releases:
       - legacy-diego-release/release.tgz
       - legacy-garden-runc-release/release.tgz
-      - legacy-cflinuxfs2-rootfs-release/release.tgz
+      - legacy-cflinuxfs2-release/release.tgz
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
