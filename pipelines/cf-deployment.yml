@@ -15,6 +15,7 @@ groups:
   - deploy-releases-upgrade
   - deploy-releases-ops
   - perform-r2d-transition
+  - acceptance-tests-legacy
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
@@ -1137,6 +1138,32 @@ jobs:
       file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
       params:
         ENDPOINT: api.snitch.cf-app.com
+
+- name: acceptance-tests-legacy
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+      - get: minerva-env-stubs
+      - get: cf-deployment-release-candidate
+        passed: [ perform-r2d-transition ]
+      - get: cats-concourse-task
+      - get: transition-pool
+        passed: [ perform-r2d-transition ]
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: minerva-env-stubs
+      params:
+        SYSTEM_DOMAIN: minerva.cf-app.com
+    - task: run-cats
+      input_mapping:
+      - integration-config: minerva-env-stubs
+      file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-upgrade
   serial_groups: [hermione]
