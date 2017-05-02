@@ -891,6 +891,7 @@ jobs:
     - get: cf-deployment-release-candidate
     - get: transition-pool
       passed: [ deploy-legacy-cf ]
+      trigger: true
   - task: extract-vars-store
     file: runtime-ci/tasks/r2d2/task.yml
     input_mapping:
@@ -1154,6 +1155,7 @@ jobs:
       - get: cats-concourse-task
       - get: transition-pool
         passed: [ perform-r2d-transition ]
+        trigger: true
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
