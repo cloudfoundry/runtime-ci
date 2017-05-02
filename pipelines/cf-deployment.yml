@@ -983,7 +983,7 @@ jobs:
       ops-files: cf-deployment-develop
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml"
+      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml"
 
 - name: deploy-releases-upgrade
   serial_groups: [hermione, hermione-smokes]
