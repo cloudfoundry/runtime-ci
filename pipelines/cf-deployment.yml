@@ -860,7 +860,7 @@ jobs:
       ERRAND_NAME: smoke_tests
 
 - name: perform-r2d-transition
-  # public: true
+  public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
