@@ -8,7 +8,6 @@ groups:
 - name: runtime-ci-common-images
   jobs:
   - build-bosh-cli-docker-image
-  - build-golang-17-docker-image
   - build-bosh-and-spiff-docker-image
 - name: build-docker-images
   jobs:
@@ -449,13 +448,6 @@ resources:
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
     paths: [Dockerfile]
 
-- name: cf-deployment-dockerfiles-golang-17
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [dockerfiles/golang-17/Dockerfile]
-
 - name: cf-deployment-dockerfiles-bosh-cli
   type: git
   source:
@@ -886,13 +878,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-cf-cli-json
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: golang-17-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/golang-17
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1942,21 +1927,6 @@ jobs:
     - put: bosh-cli-image
       params:
         build: cf-deployment-dockerfiles-bosh-cli/dockerfiles/bosh-cli/
-        push: true
-- name: build-golang-17-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: cf-deployment-dockerfiles-golang-17
-        trigger: true
-    - put: golang-17-image
-      params:
-        build: cf-deployment-dockerfiles-golang-17/dockerfiles/golang-17/
         push: true
 - name: build-bosh-and-spiff-docker-image
   public: true
