@@ -1,19 +1,8 @@
 #!/bin/bash -exu
 
-function setup_bosh_env_vars() {
-  set +x
-  pushd bbl-state
-    BOSH_CA_CERT="$(bbl director-ca-cert)"
-    export BOSH_CA_CERT
-    BOSH_ENVIRONMENT=$(bbl director-address)
-    export BOSH_ENVIRONMENT
-    BOSH_CLIENT=$(bbl director-username)
-    export BOSH_CLIENT
-    BOSH_CLIENT_SECRET=$(bbl director-password)
-    export BOSH_CLIENT_SECRET
-  popd
-  set -x
-}
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function create_compilation_opsfile() {
   cat << EOF > compilation.yml
