@@ -1819,6 +1819,11 @@ jobs:
     - get: runtime-ci
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
+    - get: stemcell
+      trigger: true
+      params:
+        tarball: false
+      passed: [ update-releases ]
     - get: capi-release
       trigger: true
       params:
