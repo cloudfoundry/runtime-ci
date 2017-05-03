@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: binary-buildpack-release
-- name: capi-release
 - name: cf-smoke-tests-release
 - name: cflinuxfs2-release
 - name: consul-release
