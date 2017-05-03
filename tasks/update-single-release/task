@@ -7,6 +7,8 @@ function main() {
   export GOPATH="${root_dir}/go"
   export PATH=$GOPATH/bin:$PATH
 
+  ln -s release "${RELEASE_NAME}-release"
+
   mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 
