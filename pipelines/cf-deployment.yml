@@ -18,7 +18,7 @@ groups:
   - deploy-releases-ops
   - perform-r2d-transition
   - post-delete-deployment-transition
-  - acceptance-tests-legacy
+  - acceptance-tests-transition
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
@@ -1179,7 +1179,7 @@ jobs:
       params:
         ENDPOINT: api.snitch.cf-app.com
 
-- name: acceptance-tests-legacy
+- name: acceptance-tests-transition
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1216,7 +1216,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: transition-pool
-        passed: [ acceptance-tests-legacy ]
+        passed: [ acceptance-tests-transition ]
         trigger: true
   - task: delete-deployment-cf
     input_mapping:
