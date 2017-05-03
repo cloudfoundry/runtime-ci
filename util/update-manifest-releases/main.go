@@ -59,15 +59,23 @@ func main() {
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 
+	var release string
+	flag.StringVar(&release, "release", "", "name of release, without -release suffix")
+
 	var target string
 	flag.StringVar(&target, "target", "manifest", "choose whether to update releases in manifest or opsfile")
 	flag.Parse()
 
-	releases, err := getReleaseNames(buildDir)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+	var err error
+	releases := []string{release}
+	if release == "" {
+		releases, err = getReleaseNames(buildDir)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 	}
+
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
 	if target == "opsfile" {

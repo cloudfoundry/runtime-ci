@@ -212,13 +212,38 @@ releases:
   url: new-release3-url
   version: new-release3-version
   sha1: new-release3-sha
+- name: release4
+  url: new-release4-url
+  version: new-release4-version
+  sha1: new-release4-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
   version: updated-stemcell-version
 `
 
-			releaseAndStemcellStub string = `
+			expectedSingleReleaseAndStemcells string = `
+name: cf-deployment
+releases:
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
+- name: release3
+  url: new-release3-url
+  version: new-release3-version
+  sha1: new-release3-sha
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: updated-stemcell-version
+`
+
+			originalManifest string = `
 name: cf-deployment
 releases:
 - name: release1
@@ -247,13 +272,14 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "deployment-configuration", "original-manifest.yml"), []byte(releaseAndStemcellStub), os.ModePerm)
+			err = ioutil.WriteFile(filepath.Join(buildDir, "deployment-configuration", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
 				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
 				{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
 				{"name": "release3", "version": "new-release3-version", "url": "new-release3-url", "sha1": "new-release3-sha"},
+				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha1": "new-release4-sha"},
 			} {
 				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 				err = os.Mkdir(releaseDir, os.ModePerm)
@@ -280,6 +306,19 @@ stemcells:
 			os.Setenv("DEPLOYMENT_MANIFEST_PATH", outputPath)
 		})
 
+		It("only updates the manifest with the release passed in", func() {
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--release", "release3"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-manifest", "updated-manifest.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedManifest).To(MatchYAML(expectedSingleReleaseAndStemcells))
+		})
+
 		It("updates the given manifest with new releases and stemcells", func() {
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -303,7 +342,7 @@ stemcells:
 			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release, ubuntu-trusty stemcell"))
+			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release, release4-release, ubuntu-trusty stemcell"))
 		})
 
 		Context("failure cases", func() {
