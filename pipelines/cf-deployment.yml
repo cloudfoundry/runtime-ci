@@ -10,6 +10,7 @@ groups:
   - update-release-capi
   - update-releases-windows
   - acquire-fresh-pool
+  - acquire-transition-pool
   - deploy-legacy-cf
   - deploy-releases-fresh
   - deploy-releases-lite
@@ -818,6 +819,18 @@ jobs:
       run:
         path: cf-deployment-transition/transition/test-transition-ops.sh
 
+- name: acquire-transition-pool
+  serial: true
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-develop
+        trigger: true
+      - put: transition-pool
+        params: {claim: minerva}
+
 - name: deploy-legacy-cf
   public: true
   build_logs_to_retain: 100
@@ -833,8 +846,9 @@ jobs:
     - get: legacy-cflinuxfs2-release
     - get: legacy-cf-release
     - get: aws-stemcell
-    - put: transition-pool
-      params: {claim: minerva}
+    - get: transition-pool
+      passed: [ acquire-transition-pool ]
+      trigger: true
   - task: generate-release-manifest-cf
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
