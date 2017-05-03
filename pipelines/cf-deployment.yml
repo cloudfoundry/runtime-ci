@@ -845,6 +845,7 @@ jobs:
 
 - name: deploy-legacy-cf
   public: true
+  serial: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -852,7 +853,6 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: minerva-env-stubs-and-vars
-        trigger: true
       - get: minerva-env-director-state
       - get: cf-release-develop
       - get: github-diego-release
