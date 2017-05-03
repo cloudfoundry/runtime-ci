@@ -884,6 +884,7 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: minerva-env-stubs
+    - get: minerva-env-director-state
     - get: cf-deployment-release-candidate
     - get: transition-pool
       passed: [ deploy-legacy-cf ]
@@ -895,21 +896,28 @@ jobs:
     - cf-deployment: cf-deployment-release-candidate
     - vars-store: minerva-env-stubs
     output_mapping:
-  - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: minerva-env-stubs
-      cf-deployment: cf-deployment-release-candidate
-      ops-files: cf-deployment-release-candidate
-      vars-store: updated-vars-store
-    params:
-      SYSTEM_DOMAIN: minerva.cf-app.com
-      OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
-    ensure:
-      put: minerva-env-stubs
+  - aggregate:
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: minerva-env-stubs
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: cf-deployment-release-candidate
+        vars-store: updated-vars-store
       params:
-        repository: updated-vars-store
-        rebase: true
+        SYSTEM_DOMAIN: minerva.cf-app.com
+        OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
+      ensure:
+        put: minerva-env-stubs
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: delete-rump-diego
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        DEPLOYMENT_NAME: cf-diego
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
