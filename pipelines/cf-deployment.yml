@@ -828,8 +828,20 @@ jobs:
     - aggregate:
       - get: cf-deployment-develop
         trigger: true
+      - get: minerva-env-director-state
+      - get: cf-deployment-concourse-tasks
       - put: transition-pool
         params: {claim: minerva}
+    - task: guarantee-no-existing-cf-deployment
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    - task: guarantee-no-existing-diego-deployment
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        DEPLOYMENT_NAME: cf-diego
 
 - name: deploy-legacy-cf
   public: true
