@@ -15,7 +15,7 @@ function main() {
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     ginkgo -r -randomizeSuites -randomizeAllSpecs .
 
-    go run main.go --build-dir "${root_dir}"
+    go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}"
   popd
 }
 

@@ -1823,10 +1823,13 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: create-binaries-manifest-section
-    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+  - task: update-release-capi
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
+      release: capi-release
       deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: capi
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run/task.yml
     input_mapping:
@@ -1871,9 +1874,12 @@ jobs:
       params:
         tarball: false
   - task: update-release-mysql
-    file: runtime-ci/tasks/update-release-mysql/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
+      release: cf-mysql-release
       deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-mysql
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run/task.yml
     input_mapping:

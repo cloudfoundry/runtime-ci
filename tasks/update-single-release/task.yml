@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: deployment-configuration
-- name: cf-mysql-release
+- name: release
 - name: stemcell
 
 outputs:
@@ -17,9 +17,10 @@ outputs:
 - name: deployment-manifest
 
 run:
-  path: runtime-ci/tasks/update-release-mysql/task
+  path: runtime-ci/tasks/update-single-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
   DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
   DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  RELEASE_NAME: 
