@@ -15,6 +15,7 @@ groups:
   - deploy-releases-upgrade
   - deploy-releases-ops
   - perform-r2d-transition
+  - post-delete-deployment-transition
   - acceptance-tests-legacy
   - acceptance-tests-fresh
   - acceptance-tests-lite
@@ -1170,6 +1171,25 @@ jobs:
       input_mapping:
       - integration-config: minerva-env-stubs
       file: cats-concourse-task/task.yml
+
+- name: post-delete-deployment-transition
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: minerva-env-director-state
+      - get: transition-pool
+        passed: [ acceptance-tests-legacy ]
+        trigger: true
+  - task: delete-deployment-cf
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - put: transition-pool
+    params: {release: transition-pool}
 
 - name: acceptance-tests-upgrade
   serial_groups: [hermione]
