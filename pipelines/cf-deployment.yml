@@ -915,7 +915,6 @@ jobs:
     - bbl-state: minerva-env-stubs
     - cf-deployment: cf-deployment-release-candidate
     - vars-store: minerva-env-stubs
-    output_mapping:
   - aggregate:
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -923,7 +922,7 @@ jobs:
         bbl-state: minerva-env-stubs
         cf-deployment: cf-deployment-release-candidate
         ops-files: cf-deployment-release-candidate
-        vars-store: updated-vars-store
+        vars-store: extracted-vars-store
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
         OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
