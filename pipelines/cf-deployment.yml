@@ -345,10 +345,6 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-- name: capi-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/capi-release
 - name: nats-release
   type: bosh-io-release
   source:
@@ -1646,10 +1642,6 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: stemcell
-      trigger: true
-      params:
-        tarball: false
-    - get: capi-release
       trigger: true
       params:
         tarball: false
