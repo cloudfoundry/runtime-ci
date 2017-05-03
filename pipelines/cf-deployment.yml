@@ -847,112 +847,116 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: minerva-env-stubs-and-vars
-      trigger: true
-    - get: minerva-env-director-state
-    - get: cf-release-develop
-    - get: github-diego-release
-    - get: legacy-garden-runc-release
-    - get: legacy-diego-release
-    - get: legacy-cflinuxfs2-release
-    - get: legacy-cf-release
-    - get: aws-stemcell
-    - get: transition-pool
-      passed: [ acquire-transition-pool ]
-      trigger: true
-  - task: generate-release-manifest-cf
-    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
-    input_mapping:
-      release-repo: cf-release-develop
-      stubs-repo: minerva-env-stubs-and-vars
-    params:
-      INFRASTRUCTURE: aws
-      STUBS_PATH: transition/stubs/cf/cf-stub.yml
-    output_mapping:
-      manifest: cf-manifest
-  - task: create-diego-manifest
-    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-    input_mapping:
-      diego-release: github-diego-release
-      iaas-settings: minerva-env-stubs-and-vars
-      property-overrides: minerva-env-stubs-and-vars
-      instance-count-overrides: minerva-env-stubs-and-vars
-      release-versions: minerva-env-stubs-and-vars
-    output_mapping:
-      generated-diego-manifest: diego-manifest
-    params:
-      IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
-      INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
-      DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
-      PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
-      RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
-  - put: legacy-cf-bosh-deployment
-    params:
-      manifest: cf-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-      - legacy-cf-release/release.tgz
-  - put: legacy-diego-bosh-deployment
-    params:
-      manifest: diego-manifest/diego-deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-      - legacy-diego-release/release.tgz
-      - legacy-garden-runc-release/release.tgz
-      - legacy-cflinuxfs2-release/release.tgz
-  - task: bosh-run-errand-smoke-tests
-    file: runtime-ci/tasks/run-errand/task.yml
-    input_mapping:
-      bbl-state: minerva-env-director-state
-    params:
-      ERRAND_NAME: smoke_tests
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: minerva-env-stubs-and-vars
+        trigger: true
+      - get: minerva-env-director-state
+      - get: cf-release-develop
+      - get: github-diego-release
+      - get: legacy-garden-runc-release
+      - get: legacy-diego-release
+      - get: legacy-cflinuxfs2-release
+      - get: legacy-cf-release
+      - get: aws-stemcell
+      - get: transition-pool
+        passed: [ acquire-transition-pool ]
+        trigger: true
+    - task: generate-release-manifest-cf
+      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
+      input_mapping:
+        release-repo: cf-release-develop
+        stubs-repo: minerva-env-stubs-and-vars
+      params:
+        INFRASTRUCTURE: aws
+        STUBS_PATH: transition/stubs/cf/cf-stub.yml
+      output_mapping:
+        manifest: cf-manifest
+    - task: create-diego-manifest
+      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+      input_mapping:
+        diego-release: github-diego-release
+        iaas-settings: minerva-env-stubs-and-vars
+        property-overrides: minerva-env-stubs-and-vars
+        instance-count-overrides: minerva-env-stubs-and-vars
+        release-versions: minerva-env-stubs-and-vars
+      output_mapping:
+        generated-diego-manifest: diego-manifest
+      params:
+        IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
+        INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
+        DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
+        PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
+        RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+    - put: legacy-cf-bosh-deployment
+      params:
+        manifest: cf-manifest/deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+        - legacy-cf-release/release.tgz
+    - put: legacy-diego-bosh-deployment
+      params:
+        manifest: diego-manifest/diego-deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+        - legacy-diego-release/release.tgz
+        - legacy-garden-runc-release/release.tgz
+        - legacy-cflinuxfs2-release/release.tgz
+    - task: bosh-run-errand-smoke-tests
+      file: runtime-ci/tasks/run-errand/task.yml
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      params:
+        ERRAND_NAME: smoke_tests
 
 - name: perform-r2d-transition
   public: true
   build_logs_to_retain: 100
   plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-    - get: minerva-env-stubs-and-vars
-    - get: minerva-env-director-state
-    - get: cf-deployment-release-candidate
-    - get: transition-pool
-      passed: [ deploy-legacy-cf ]
-      trigger: true
-  - task: extract-vars-store
-    file: runtime-ci/tasks/r2d2/task.yml
-    input_mapping:
-    - bbl-state: minerva-env-director-state
-    - cf-deployment: cf-deployment-release-candidate
-    - vars-store: minerva-env-stubs-and-vars
-  - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: minerva-env-director-state
-      cf-deployment: cf-deployment-release-candidate
-      ops-files: cf-deployment-release-candidate
-      vars-store: extracted-vars-store
-    params:
-      SYSTEM_DOMAIN: minerva.cf-app.com
-      OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
-    ensure:
-      put: minerva-env-stubs-and-vars
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: minerva-env-stubs-and-vars
+      - get: minerva-env-director-state
+      - get: cf-deployment-release-candidate
+      - get: transition-pool
+        passed: [ deploy-legacy-cf ]
+        trigger: true
+    - task: extract-vars-store
+      file: runtime-ci/tasks/r2d2/task.yml
+      input_mapping:
+      - bbl-state: minerva-env-director-state
+      - cf-deployment: cf-deployment-release-candidate
+      - vars-store: minerva-env-stubs-and-vars
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: minerva-env-director-state
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: cf-deployment-release-candidate
+        vars-store: extracted-vars-store
       params:
-        repository: updated-vars-store
-        rebase: true
-  - task: delete-rump-diego
-    input_mapping:
-      bbl-state: minerva-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    params:
-      DEPLOYMENT_NAME: cf-diego
-  - task: run-bosh-cleanup
-    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-    input_mapping:
-      bbl-state: minerva-env-stubs-and-vars
+        SYSTEM_DOMAIN: minerva.cf-app.com
+        OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
+      ensure:
+        put: minerva-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: delete-rump-diego
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        DEPLOYMENT_NAME: cf-diego
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: minerva-env-stubs-and-vars
 
 - name: deploy-releases-fresh
   serial: true
