@@ -7,6 +7,7 @@ groups:
   - unit-test-transition-tools
   - update-releases
   - update-release-mysql
+  - update-release-capi
   - update-releases-windows
   - acquire-fresh-pool
   - deploy-legacy-cf
@@ -370,6 +371,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/loggregator
+- name: capi-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/capi-release
 - name: cf-mysql-release
   type: bosh-io-release
   source:
@@ -1750,6 +1755,47 @@ jobs:
       params:
         tarball: false
     - get: cf-smoke-tests-release
+      trigger: true
+      params:
+        tarball: false
+  - task: create-binaries-manifest-section
+    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+    input_mapping:
+      deployment-configuration: cf-deployment-develop
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: deployment-manifest
+      ops-files: cf-deployment-develop
+  - task: commit-generated-manifest
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      compiled-releases-ops-file: cf-deployment-develop
+      windows-ops-file: cf-deployment-develop
+      manifest: deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMPILED_RELEASES_OPS_FILE_NAME: operations/use-compiled-releases.yml
+      COMPILED_RELEASES_OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      WINDOWS_OPS_FILE_NAME: operations/windows-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-release-capi
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: capi-release
       trigger: true
       params:
         tarball: false
