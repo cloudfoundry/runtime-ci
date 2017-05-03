@@ -162,7 +162,7 @@ resources:
     branch: master
     pool: cf-deployment/ops
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
-- name: minerva-env-stubs
+- name: minerva-env-stubs-and-vars
   type: git
   source:
     branch: master
@@ -849,8 +849,9 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: minerva-env-stubs
+    - get: minerva-env-stubs-and-vars
       trigger: true
+    - get: minerva-env-director-state
     - get: cf-release-develop
     - get: github-diego-release
     - get: legacy-garden-runc-release
@@ -865,7 +866,7 @@ jobs:
     file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
     input_mapping:
       release-repo: cf-release-develop
-      stubs-repo: minerva-env-stubs
+      stubs-repo: minerva-env-stubs-and-vars
     params:
       INFRASTRUCTURE: aws
       STUBS_PATH: transition/stubs/cf/cf-stub.yml
@@ -875,10 +876,10 @@ jobs:
     file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
     input_mapping:
       diego-release: github-diego-release
-      iaas-settings: minerva-env-stubs
-      property-overrides: minerva-env-stubs
-      instance-count-overrides: minerva-env-stubs
-      release-versions: minerva-env-stubs
+      iaas-settings: minerva-env-stubs-and-vars
+      property-overrides: minerva-env-stubs-and-vars
+      instance-count-overrides: minerva-env-stubs-and-vars
+      release-versions: minerva-env-stubs-and-vars
     output_mapping:
       generated-diego-manifest: diego-manifest
     params:
@@ -904,7 +905,7 @@ jobs:
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
-      bbl-state: minerva-env-stubs
+      bbl-state: minerva-env-director-state
     params:
       ERRAND_NAME: smoke_tests
 
@@ -915,7 +916,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: minerva-env-stubs
+    - get: minerva-env-stubs-and-vars
     - get: minerva-env-director-state
     - get: cf-deployment-release-candidate
     - get: transition-pool
@@ -924,13 +925,13 @@ jobs:
   - task: extract-vars-store
     file: runtime-ci/tasks/r2d2/task.yml
     input_mapping:
-    - bbl-state: minerva-env-stubs
+    - bbl-state: minerva-env-director-state
     - cf-deployment: cf-deployment-release-candidate
-    - vars-store: minerva-env-stubs
+    - vars-store: minerva-env-stubs-and-vars
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      bbl-state: minerva-env-stubs
+      bbl-state: minerva-env-director-state
       cf-deployment: cf-deployment-release-candidate
       ops-files: cf-deployment-release-candidate
       vars-store: extracted-vars-store
@@ -938,7 +939,7 @@ jobs:
       SYSTEM_DOMAIN: minerva.cf-app.com
       OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
     ensure:
-      put: minerva-env-stubs
+      put: minerva-env-stubs-and-vars
       params:
         repository: updated-vars-store
         rebase: true
@@ -951,7 +952,7 @@ jobs:
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      bbl-state: minerva-env-stubs
+      bbl-state: minerva-env-stubs-and-vars
 
 - name: deploy-releases-fresh
   serial: true
@@ -1183,7 +1184,7 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-      - get: minerva-env-stubs
+      - get: minerva-env-stubs-and-vars
       - get: cf-deployment-release-candidate
         passed: [ perform-r2d-transition ]
       - get: cats-concourse-task
@@ -1193,12 +1194,12 @@ jobs:
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
-        vars-store: minerva-env-stubs
+        vars-store: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: minerva-env-stubs
+      - integration-config: minerva-env-stubs-and-vars
       file: cats-concourse-task/task.yml
 
 - name: post-delete-deployment-transition
