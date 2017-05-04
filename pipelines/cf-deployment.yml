@@ -170,6 +170,7 @@ resources:
     private_key: {{minerva_env_readwrite_deploy_key}}
     paths:
     - transition/stubs/*
+    - deployment-vars.yml
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
