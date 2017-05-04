@@ -857,7 +857,6 @@ jobs:
       - get: minerva-env-stubs-and-vars
       - get: minerva-env-director-state
       - get: cf-release-develop
-      - get: cf-deployment-release-candidate
       - get: github-diego-release
       - get: legacy-garden-runc-release
       - get: legacy-diego-release
@@ -893,13 +892,6 @@ jobs:
         DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
         PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
         RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
-    - task: bosh-upload-stemcell
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-release-candidate
-        bbl-state: minerva-env-director-state
-      params:
-        INFRASTRUCTURE: aws
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
