@@ -13,3 +13,6 @@ inputs:
 
 run:
   path: runtime-ci/tasks/deploy-for-compilation/task
+
+params:
+  RELEASE_NAME:

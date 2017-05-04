@@ -9,7 +9,7 @@ function create_compilation_opsfile() {
 ---
 - type: replace
   path: /name
-  value: cf-compilation
+  value: cf-compilation-${RELEASE_NAME}
 
 - type: replace
   path: /instance_groups
@@ -25,7 +25,7 @@ function main() {
 
   bosh \
     -n \
-    -d cf-compilation \
+    -d cf-compilation-${RELEASE_NAME} \
     deploy cf-deployment/cf-deployment.yml \
     -o compilation.yml
 }

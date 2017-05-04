@@ -1932,6 +1932,8 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
+    params:
+      RELEASE_NAME: cf-mysql
   - task: export-mysql-release
     file: runtime-ci/tasks/bosh-export-release/task.yml
     input_mapping:
@@ -1939,6 +1941,7 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       BOSH_RELEASE: cf-mysql
+      DEPLOYMENT_NAME: cf-compilation-cf-mysql
   - put: mysql-release-gcs-bucket
     params:
       file: exported-release/*.tgz
