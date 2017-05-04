@@ -1929,7 +1929,7 @@ jobs:
   - task: export-mysql-release
     file: runtime-ci/tasks/bosh-export-release/task.yml
     input_mapping:
-      cf-deployment: cf-deployment-develop
+      cf-deployment: deployment-manifest
       bbl-state: greengrass-env-director-state
     params:
       BOSH_RELEASE: cf-mysql
