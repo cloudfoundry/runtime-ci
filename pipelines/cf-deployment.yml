@@ -823,6 +823,7 @@ jobs:
 - name: acquire-transition-pool
   serial: true
   public: true
+  build_logs_to_retain: 10
   plan:
   - timeout: 4h
     do:
