@@ -10,13 +10,10 @@ groups:
   - update-release-capi
   - update-releases-windows
   - acquire-fresh-pool
-  - acquire-transition-pool
-  - deploy-legacy-cf
   - deploy-releases-fresh
   - deploy-releases-lite
   - deploy-releases-upgrade
   - deploy-releases-ops
-  - perform-r2d-transition
   - post-delete-deployment-transition
   - acceptance-tests-transition
   - acceptance-tests-fresh
@@ -29,7 +26,8 @@ groups:
   - routing-acceptance-tests-fresh
   - post-delete-deployment-fresh
   - bless-manifest
-- name: infrastructure
+  - perform-r2d-transition
+- name: infra
   jobs:
   - add-claimed-lock-fresh
   - setup-infrastructure-fresh
@@ -48,6 +46,9 @@ groups:
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
+  - acquire-transition-pool
+  - ensure-transition-env-is-clean
+  - deploy-legacy-cf
 - name: up
   jobs:
   - deploy-releases-upgrade
@@ -821,8 +822,8 @@ jobs:
         path: cf-deployment-transition/transition/test-transition-ops.sh
 
 - name: acquire-transition-pool
-  serial: true
   public: true
+  serial: true
   build_logs_to_retain: 10
   plan:
   - timeout: 4h
@@ -830,25 +831,38 @@ jobs:
     - aggregate:
       - get: cf-deployment-develop
         trigger: true
-      - get: minerva-env-director-state
-      - get: cf-deployment-concourse-tasks
       - put: transition-pool
         params: {claim: minerva}
-    - task: guarantee-no-existing-cf-deployment
-      input_mapping:
-        bbl-state: minerva-env-director-state
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    - task: guarantee-no-existing-diego-deployment
-      input_mapping:
-        bbl-state: minerva-env-director-state
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-      params:
-        DEPLOYMENT_NAME: cf-diego
+
+- name: ensure-transition-env-is-clean
+  public: true
+  serial: true
+  build_logs_to_retain: 10
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: transition-pool
+        passed: [ acquire-transition-pool ]
+        trigger: true
+      - get: minerva-env-director-state
+    - aggregate:
+      - task: guarantee-no-existing-cf-deployment
+        input_mapping:
+          bbl-state: minerva-env-director-state
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      - task: guarantee-no-existing-diego-deployment
+        input_mapping:
+          bbl-state: minerva-env-director-state
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf-diego
 
 - name: deploy-legacy-cf
   public: true
   serial: true
-  build_logs_to_retain: 100
+  build_logs_to_retain: 10
   plan:
   - timeout: 4h
     do:
@@ -864,7 +878,7 @@ jobs:
       - get: legacy-cf-release
       - get: aws-stemcell
       - get: transition-pool
-        passed: [ acquire-transition-pool ]
+        passed: [ ensure-transition-env-is-clean ]
         trigger: true
     - task: generate-release-manifest-cf
       file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
