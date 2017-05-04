@@ -30,7 +30,7 @@ function commit_vars_store_and_move_to_output() {
     fi
   popd
 
-  git clone vars-store updated_vars_store
+  git clone vars-store extracted-vars-store
 }
 
 function main() {
