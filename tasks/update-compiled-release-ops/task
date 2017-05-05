@@ -7,6 +7,7 @@ function release_present() {
   compiled_release_ops_file="$2"
 
   grep "releases\/name=${release_name}\/" "${compiled_release_ops_file}"
+  echo $?
 }
 
 function update_release() {
@@ -97,7 +98,7 @@ function main() {
   local is_release_present
   is_release_present=$(release_present $release_name ops-files/operations/use-compiled-releases.yml)
 
-  if [[ "${is_release_present}" -eq 0 ]]; then
+  if [[ "${is_release_present}" -eq "0" ]]; then
     update_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
   else
     append_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
