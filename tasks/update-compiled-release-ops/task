@@ -6,7 +6,7 @@ function release_present() {
   local compiled_release_ops_file
   compiled_release_ops_file="$2"
 
-  grep "releases\/name=${release_name}\/" "${compiled_release_ops_file}"
+  grep "releases\/name=${release_name}\/" "${compiled_release_ops_file}" > /dev/null
   echo $?
 }
 
