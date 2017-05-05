@@ -1862,6 +1862,7 @@ jobs:
     - get: runtime-ci
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: stemcell
       trigger: true
       params:
