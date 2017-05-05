@@ -95,7 +95,7 @@ function main() {
 
   # shellcheck disable=SC2153
   local is_release_present
-  is_release_present=release_present $release_name ops-files/operations/use-compiled-releases.yml
+  is_release_present=$(release_present $release_name ops-files/operations/use-compiled-releases.yml)
 
   if [[ "${is_release_present}" -eq 0 ]]; then
     update_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
