@@ -1,5 +1,14 @@
 #!/bin/bash -exu
 
+function release_present() {
+  local release_name
+  release_name="$1"
+  local compiled_release_ops_file
+  compiled_release_ops_file="$2"
+
+  grep "releases\/name=${release_name}\/" "${compiled_release_ops_file}"
+}
+
 function update_release() {
   local release_name
   release_name="$1"
@@ -25,19 +34,19 @@ cat << EOF
   path: /path=~1releases~1name=${release_name}~1url
   value:
     type: replace
-    path: /releases/name=cf-mysql/url
+    path: /releases/name=${release_name}/url
     value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
 - type: replace
   path: /path=~1releases~1name=${release_name}~1version
   value:
     type: replace
-    path: /releases/name=cf-mysql/version
+    path: /releases/name=${release_name}/version
     value: "${release_version}"
 - type: replace
   path: /path=~1releases~1name=${release_name}~1sha1
   value:
     type: replace
-    path: /releases/name=cf-mysql/sha1
+    path: /releases/name=${release_name}/sha1
     value: "${release_sha}"
 EOF
 ) > "${update_release_ops_file}"
@@ -45,9 +54,54 @@ EOF
   bosh interpolate "${compiled_release_ops_file}" -o "${update_release_ops_file}" > "${output_file}"
 }
 
+function append_release() {
+  local release_name
+  release_name="$1"
+  local compiled_release_ops_file
+  compiled_release_ops_file="$2"
+  local output_file
+  output_file="$3"
+  local release_sha
+  release_sha=$(sha1sum compiled-release-tarball/*.tgz | awk '{print $1}')
+  local release_tarball
+  pushd compiled-release-tarball
+    # shellcheck disable=SC2035
+    release_tarball=$(ls *.tgz)
+  popd
+  local release_version
+  release_version=$(cat bosh-io-release/version)
+
+  new_release_file=$(mktemp)
+(
+cat << EOF
+- path: /releases/name=${release_name}/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
+- path: /releases/name=${release_name}/version
+  type: replace
+  value: ${release_version}
+- path: /releases/name=${release_name}/sha1
+  type: replace
+  value: ${release_sha}
+EOF
+) > "${new_release_file}"
+
+cat "${compiled_release_ops_file}" "${new_release_file}" > "${output_file}"
+}
+
 function main() {
+  local release_name
+  release_name="${RELEASE_NAME}"
+
   # shellcheck disable=SC2153
-  update_release "${RELEASE_NAME}" ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
+  local is_release_present
+  is_release_present=release_present $release_name ops-files/operations/use-compiled-releases.yml
+
+  if [[ "${is_release_present}" -eq 0 ]]; then
+    update_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
+  elif
+    append_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
+  fi
 }
 
 main
