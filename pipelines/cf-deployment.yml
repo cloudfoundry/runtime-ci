@@ -14,8 +14,6 @@ groups:
   - deploy-releases-lite
   - deploy-releases-upgrade
   - deploy-releases-ops
-  - post-delete-deployment-transition
-  - acceptance-tests-transition
   - acceptance-tests-fresh
   - acceptance-tests-lite
   - acceptance-tests-upgrade
@@ -27,6 +25,8 @@ groups:
   - post-delete-deployment-fresh
   - bless-manifest
   - perform-r2d-transition
+  - acceptance-tests-transition
+  - post-delete-deployment-transition
 - name: infra
   jobs:
   - add-claimed-lock-fresh
@@ -67,6 +67,14 @@ groups:
   - deploy-releases-lite
   - acceptance-tests-lite
   - routing-http-acceptance-tests-lite
+- name: tr
+  jobs:
+  - acquire-transition-pool
+  - ensure-transition-env-is-clean
+  - deploy-legacy-cf
+  - perform-r2d-transition
+  - acceptance-tests-transition
+  - post-delete-deployment-transition
 
 # For simpler visibility
 - name: pm-view
