@@ -99,7 +99,7 @@ function main() {
 
   if [[ "${is_release_present}" -eq 0 ]]; then
     update_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
-  elif
+  else
     append_release $release_name ops-files/operations/use-compiled-releases.yml updated-compiled-releases-ops-file/use-compiled-releases.yml
   fi
 }
