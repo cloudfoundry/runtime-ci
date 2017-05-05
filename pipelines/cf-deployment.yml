@@ -1923,7 +1923,7 @@ jobs:
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      compiled-releases-ops-file: cf-deployment-develop
+      compiled-releases-ops-file: updated-compiled-releases-ops-file
       windows-ops-file: cf-deployment-develop
       manifest: deployment-manifest
     params:
