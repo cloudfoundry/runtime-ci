@@ -1364,8 +1364,6 @@ jobs:
     - task: run-cats
       input_mapping:
       - integration-config: luna-env-integration-configs
-      params:
-        NODES: 6
       file: cats-concourse-task/task.yml
 
 - name: acceptance-tests-lite
@@ -1508,6 +1506,7 @@ jobs:
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
         PACKAGES: "http_routes"
+        NODES: 2
 
 - name: post-delete-deployment-fresh
   serial: true
