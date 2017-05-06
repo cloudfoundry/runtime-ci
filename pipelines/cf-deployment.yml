@@ -1056,6 +1056,10 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: ensure-api-healthy
+    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+    params:
+      ENDPOINT: api.luna.cf-app.com
 
 - name: deploy-releases-ops
   serial_groups: [trelawney]
