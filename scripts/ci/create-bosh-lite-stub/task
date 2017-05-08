@@ -4,10 +4,7 @@ set -exu
 BOSH_LITE_IP="${BOSH_LITE_IP:?"\$BOSH_LITE_IP not set"}"
 
 create_stub() {
-  bosh -t "${BOSH_LITE_IP}" login admin admin
-  DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
   ruby -ryaml -e "puts ({
-    'director_uuid' => ENV['DIRECTOR_UUID'],
     'properties' => {
       'login' => {
         'saml' => {
