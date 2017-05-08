@@ -26,6 +26,7 @@ groups:
   - bless-manifest
   - perform-r2d-transition
   - acceptance-tests-transition
+  - record-r2d2-compatible-versions
   - post-delete-deployment-transition
 - name: infra
   jobs:
@@ -74,6 +75,7 @@ groups:
   - deploy-legacy-cf
   - perform-r2d-transition
   - acceptance-tests-transition
+  - record-r2d2-compatible-versions
   - post-delete-deployment-transition
 
 # For simpler visibility
@@ -1266,7 +1268,7 @@ jobs:
       - integration-config: minerva-env-stubs-and-vars
       file: cats-concourse-task/task.yml
 
-- name: record-compatible-versions
+- name: record-r2d2-compatible-versions
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1284,7 +1286,7 @@ jobs:
       - get: cf-deployment-release-candidate
         passed: [ acceptance-tests-transition ]
         trigger: true
-    - task: record-versions
+    - task: record-compatible-versions
       file: runtime-ci/tasks/record-r2d2-compatible-versions/task.yml
       input_mapping:
         cf-release: legacy-cf-release
