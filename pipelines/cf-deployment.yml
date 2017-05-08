@@ -958,6 +958,14 @@ jobs:
       - get: transition-pool
         passed: [ deploy-legacy-cf ]
         trigger: true
+      - get: legacy-cf-release
+        passed: [ deploy-legacy-cf ]
+      - get: legacy-diego-release
+        passed: [ deploy-legacy-cf ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ deploy-legacy-cf ]
+      - get: legacy-garden-runc-release
+        passed: [ deploy-legacy-cf ]
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
@@ -1239,6 +1247,14 @@ jobs:
       - get: transition-pool
         passed: [ perform-r2d-transition ]
         trigger: true
+      - get: legacy-cf-release
+        passed: [ perform-r2d-transition ]
+      - get: legacy-diego-release
+        passed: [ perform-r2d-transition ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ perform-r2d-transition ]
+      - get: legacy-garden-runc-release
+        passed: [ perform-r2d-transition ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1249,6 +1265,37 @@ jobs:
       input_mapping:
       - integration-config: minerva-env-stubs-and-vars
       file: cats-concourse-task/task.yml
+
+- name: record-compatible-versions
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: legacy-cf-release
+        passed: [ acceptance-tests-transition ]
+      - get: legacy-diego-release
+        passed: [ acceptance-tests-transition ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ acceptance-tests-transition ]
+      - get: legacy-garden-runc-release
+        passed: [ acceptance-tests-transition ]
+      - get: cf-deployment-release-candidate
+        passed: [ acceptance-tests-transition ]
+        trigger: true
+    - task: record-versions
+      file: runtime-ci/tasks/record-r2d2-compatible-versions/task.yml
+      input_mapping:
+        cf-release: legacy-cf-release
+        diego-release: legacy-diego-release
+        cflinuxfs2-release: legacy-cflinuxfs2-release
+        garden-runc-release: legacy-garden-runc-release
+        cf-deployment: cf-deployment-release-candidate
+    - put: cf-deployment-develop
+      params:
+        repository: updated-r2d2-compatibility
+        rebase: true
 
 - name: post-delete-deployment-transition
   public: true

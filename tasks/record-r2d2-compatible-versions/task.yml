@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+  - name: cf-release
+  - name: diego-release
+  - name: cflinuxfs2-release
+  - name: graden-runc-release
+  - name: cf-deployment
+
+output:
+  - name: updated-r2d2-compatibility
+
+params:
+  COMPATIBILITY_FILE: transition/transition-compatibility.csv
+
+run:
+  path: runtime-ci/tasks/record-r2d2-compatible-versions/task

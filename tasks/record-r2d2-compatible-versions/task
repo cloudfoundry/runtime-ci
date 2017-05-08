@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -exu
+
+function get_row() {
+  cf_release_version=$(cd cf-release; cat version)
+  diego_release_version=$(cd diego-release; cat version)
+  cflinuxfs2_release_version=$(cd cflinuxfs2-release; cat version)
+  garden_runc_release_version=$(cd garden-runc-release; cat version)
+  cf_deployment_sha=$(cd cf-deployment; git rev-parse HEAD)
+
+  new_row="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha}"
+  echo "${new_row}"
+}
+
+function commit_compatibility_and_move_to_output() {
+  local new_row
+  new_row="$1"
+  if grep "$new_row" "cf-deployment/$COMPATIBILITY_FILE"; then
+    echo "No changes to be made"
+  else
+    pushd cf-deployment > /dev/null
+      if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
+        echo "cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha" > "$COMPATIBILITY_FILE"
+      fi
+      echo "${new_row}" >> "$COMPATIBILITY_FILE"
+
+      git config user.email "cf-release-integration@pivotal.io"
+      git config user.name "CI (automated)"
+
+      git add "$COMPATIBILITY_FILE"
+      git commit -m "Update ${COMPATIBILITY_FILE}"
+    popd > /dev/null
+  fi
+
+  cp -R cf-deployment/* updated-r2d2-compatibility
+}
+
+function main() {
+  local new_row
+  new_row=$(get_row)
+
+  commit_compatibility_and_move_to_output $new_row
+}
+
+main
