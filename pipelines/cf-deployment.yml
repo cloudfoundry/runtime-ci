@@ -1009,6 +1009,7 @@ jobs:
     - get: cf-deployment-develop
       passed: [ acquire-fresh-pool ]
     - get: cf-deployment-concourse-tasks
+    - get: runtime-ci
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
