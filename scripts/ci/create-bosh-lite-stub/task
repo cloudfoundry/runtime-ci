@@ -5,7 +5,7 @@ BOSH_LITE_IP="${BOSH_LITE_IP:?"\$BOSH_LITE_IP not set"}"
 
 create_stub() {
   ruby -ryaml -e "puts ({
-    'director_uuid' => 'not-a-thing',
+    'director_uuid' => 'f314cc48-5260-4d52-968d-bcec8f8eff0f',
     'properties' => {
       'login' => {
         'saml' => {
