@@ -33,7 +33,7 @@ function commit_compatibility_and_move_to_output() {
     popd > /dev/null
   fi
 
-  cp -R cf-deployment/* updated-r2d2-compatibility
+  git clone cf-deployment updated-r2d2-compatibility
 }
 
 function main() {
