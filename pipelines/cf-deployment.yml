@@ -2095,7 +2095,6 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-      trigger: true
       params:
         tarball: false
     - get: garden-windows-bosh-release
