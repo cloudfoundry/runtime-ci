@@ -557,6 +557,7 @@ jobs:
       vars-store: hermione-env-turbulence-vars
       bbl-state: hermione-env-director-state
       ops-files: runtime-ci
+      vars-files: hermione-env-turbulence-vars
     params:
       MANIFEST_FILE: manifests/turbulence.yml
       SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
@@ -988,6 +989,7 @@ jobs:
         cf-deployment: cf-deployment-release-candidate
         ops-files: cf-deployment-release-candidate
         vars-store: extracted-vars-store
+        vars-files: extracted-vars-store
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
         OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
@@ -1042,6 +1044,7 @@ jobs:
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
       vars-store: luna-env-vars-store
+      vars-files: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: "operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/use-postgres.yml operations/bypass-cc-bridge.yml operations/bypass-cc-bridge-privileged-containers.yml"
@@ -1144,6 +1147,7 @@ jobs:
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
       vars-store: hermione-env-vars-store
+      vars-files: hermione-env-vars-store
     params:
       SYSTEM_DOMAIN: hermione.cf-app.com
       OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle-aws.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml"
@@ -1204,6 +1208,7 @@ jobs:
         cf-deployment: cf-deployment-develop
         vars-store: snitch-env-vars-store
         ops-files: cf-deployment-develop
+        vars-files: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: "operations/bosh-lite.yml"
