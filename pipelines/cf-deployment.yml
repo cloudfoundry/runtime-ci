@@ -1146,7 +1146,7 @@ jobs:
       vars-store: hermione-env-vars-store
     params:
       SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle-aws.yml operations/use-s3-blobstore.yml"
+      OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle-aws.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml"
     ensure:
       put: hermione-env-vars-store
       params:
