@@ -7,6 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 
 inputs:
+  - name: runtime-ci
   - name: cf-release
   - name: diego-release
   - name: cflinuxfs2-release
