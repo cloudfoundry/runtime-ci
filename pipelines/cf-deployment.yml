@@ -1275,6 +1275,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
+      - get: runtime-ci
       - get: legacy-cf-release
         passed: [ acceptance-tests-transition ]
       - get: legacy-diego-release

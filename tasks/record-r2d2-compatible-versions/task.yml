@@ -13,7 +13,7 @@ inputs:
   - name: graden-runc-release
   - name: cf-deployment
 
-output:
+outputs:
   - name: updated-r2d2-compatibility
 
 params:
