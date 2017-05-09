@@ -10,7 +10,7 @@ inputs:
   - name: cf-release
   - name: diego-release
   - name: cflinuxfs2-release
-  - name: graden-runc-release
+  - name: garden-runc-release
   - name: cf-deployment
 
 outputs:

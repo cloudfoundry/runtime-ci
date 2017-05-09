@@ -1278,12 +1278,20 @@ jobs:
       - get: runtime-ci
       - get: legacy-cf-release
         passed: [ acceptance-tests-transition ]
+        params:
+          tarball: false
       - get: legacy-diego-release
         passed: [ acceptance-tests-transition ]
+        params:
+          tarball: false
       - get: legacy-cflinuxfs2-release
         passed: [ acceptance-tests-transition ]
+        params:
+          tarball: false
       - get: legacy-garden-runc-release
         passed: [ acceptance-tests-transition ]
+        params:
+          tarball: false
       - get: cf-deployment-release-candidate
         passed: [ acceptance-tests-transition ]
         trigger: true
