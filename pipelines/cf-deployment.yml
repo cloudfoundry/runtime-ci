@@ -3,6 +3,7 @@ groups:
 - name: cf-deployment
   jobs:
   - lint-cf-deployment-manifest
+  - branch-freshness
   - unit-test-ops-files
   - unit-test-transition-tools
   - update-releases
@@ -318,6 +319,11 @@ resources:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
+- name: cf-deployment-all-branches
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-deployment.git
 - name: cf-release-master
   type: git
   source:
@@ -514,6 +520,19 @@ resources:
     file: cf-deployment-version
 
 jobs:
+- name: branch-freshness
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-all-branches
+      trigger: true
+    - get: runtime-ci
+  - task: validate-branch-freshness
+    file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
+    input_mapping:
+      repo: cf-deployment-all-branches
+
 - name: setup-infrastructure-upgrade
   serial_groups: [hermione]
   public: true
