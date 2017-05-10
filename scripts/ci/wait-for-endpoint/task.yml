@@ -15,3 +15,6 @@ run:
 params:
   ENDPOINT:
   TIMEOUT: 60
+  DD_API_KEY:
+  METRIC_NAME:
+  ENV_NAME:

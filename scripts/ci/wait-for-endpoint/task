@@ -4,6 +4,24 @@ set -exu
 # Inputs
 ENDPOINT="${ENDPOINT:?"\$ENDPOINT not set"}"
 
+function send_datadog() {
+  echo "Posting $1 result to DataDog ..."
+  local currenttime
+  currenttime=$(date +%s)
+  curl  -X POST -H "Content-type: application/json" \
+  -d "{ \"series\" :
+           [{\"metric\":\"test.metric.$2.$1\",
+            \"points\":[[$currenttime, $3]],
+            \"type\":\"gauge\",
+            \"host\":\"ord.example.com\",
+            \"tags\":[\"environment:test\"]}
+          ]
+      }" \
+  "https://app.datadoghq.com/api/v1/series?api_key=$DD_API_KEY"
+  echo
+  echo
+}
+
 function main() {
   for i in $(seq 1 $TIMEOUT); do
     set +e
@@ -11,6 +29,7 @@ function main() {
     curl --fail "${ENDPOINT}"
     rc="${?}"
     if [ "${rc}" -eq "0" ]; then
+      send_datadog $METRIC_NAME $ENV_NAME $i
       exit 0
     fi
     set -e
@@ -18,6 +37,7 @@ function main() {
   done
 
   echo "timeout exceeded"
+  send_datadog $METRIC_NAME $ENV_NAME -1
   exit 1
 }
 

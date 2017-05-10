@@ -1074,6 +1074,9 @@ jobs:
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
     params:
       ENDPOINT: api.luna.cf-app.com
+      DD_API_KEY: {{datadog_api_key}}
+      METRIC_NAME: time-to-healthy-router
+      ENV_NAME: luna
 
 - name: deploy-releases-ops
   serial_groups: [trelawney]
@@ -1238,6 +1241,9 @@ jobs:
       file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
       params:
         ENDPOINT: api.snitch.cf-app.com
+        DD_API_KEY: {{datadog_api_key}}
+        METRIC_NAME: time-to-healthy-router
+        ENV_NAME: snitch
 
 - name: acceptance-tests-transition
   public: true
