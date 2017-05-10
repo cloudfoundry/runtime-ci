@@ -5,6 +5,7 @@ set -exu
 ENDPOINT="${ENDPOINT:?"\$ENDPOINT not set"}"
 
 function send_datadog() {
+  set +x
   echo "Posting $1 result to DataDog ..."
   local currenttime
   currenttime=$(date +%s)
@@ -20,6 +21,7 @@ function send_datadog() {
   "https://app.datadoghq.com/api/v1/series?api_key=$DD_API_KEY"
   echo
   echo
+  set -x
 }
 
 function main() {
