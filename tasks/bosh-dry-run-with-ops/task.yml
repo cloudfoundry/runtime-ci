@@ -11,6 +11,7 @@ inputs:
 - name: cf-deployment
 - name: cf-deployment-concourse-tasks
 - name: ops-files
+- name: vars-files
 - name: runtime-ci
 
 run:
@@ -18,3 +19,4 @@ run:
 
 params:
   BBL_STATE_DIR:
+  VARS_FILES:
