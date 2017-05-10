@@ -1900,6 +1900,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
       ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
   - task: commit-generated-manifest
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
@@ -1950,6 +1951,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
       ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
   - task: bosh-upload-stemcell-compilation
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2034,6 +2036,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: deployment-manifest
       ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
   - task: bosh-upload-stemcell-compilation
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
