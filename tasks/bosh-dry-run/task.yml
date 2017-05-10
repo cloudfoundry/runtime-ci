@@ -10,7 +10,11 @@ inputs:
 - name: bbl-state
 - name: cf-deployment
 - name: ops-files
+- name: vars-files
 - name: runtime-ci
 
 run:
   path: runtime-ci/tasks/bosh-dry-run/task
+
+params:
+  VARS_FILES:
