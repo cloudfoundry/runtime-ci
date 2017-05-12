@@ -1233,7 +1233,7 @@ jobs:
         vars-files: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
-        OPS_FILES: "operations/bosh-lite.yml operations/enable-privileged-container-support.yml"
+        OPS_FILES: "operations/bosh-lite.yml"
       ensure:
         put: snitch-env-vars-store
         params:
