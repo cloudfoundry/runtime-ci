@@ -26,7 +26,8 @@ function commit_vars_store_and_move_to_output() {
       git config user.name "CI Bot"
       git config user.email "cf-release-integration@pivotal.io"
       git add deployment-vars.yml
-      git commit -m "Update vars-store after extraction from legacy manifests"
+      git commit --allow-empty \
+      -m "Update vars-store after extraction from legacy manifests"
     fi
   popd
 
