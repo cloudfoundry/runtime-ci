@@ -179,6 +179,7 @@ resources:
     paths:
     - transition/stubs/*
     - deployment-vars.yml
+    - s3-vars.yml
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -1008,10 +1009,11 @@ jobs:
         cf-deployment: cf-deployment-release-candidate
         ops-files: cf-deployment-release-candidate
         vars-store: extracted-vars-store
-        vars-files: extracted-vars-store
+        vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
         OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
+        VARS_FILES: "s3-vars.yml"
       ensure:
         put: minerva-env-stubs-and-vars
         params:
