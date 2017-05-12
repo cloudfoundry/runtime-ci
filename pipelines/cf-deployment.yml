@@ -347,7 +347,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/wats
+    uri: https://github.com/ChunyiLyu/wats
 - name: cf-acceptance-tests
   type: git
   source:
@@ -1406,13 +1406,13 @@ jobs:
         trigger: true
       - get: hermione-env-director-state
         trigger: true
-        passed: [ acceptance-tests-upgrade ]
+        passed: [ deploy-releases-upgrade ]
       - get: hermione-env-vars-store
         trigger: true
-        passed: [ acceptance-tests-upgrade ]
+        passed: [ deploy-releases-upgrade ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ acceptance-tests-upgrade ]
+        passed: [ deploy-releases-upgrade ]
     - task: run-wats
       input_mapping:
       - integration-config: hermione-env-integration-configs
