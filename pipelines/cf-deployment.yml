@@ -1817,6 +1817,15 @@ jobs:
     - routing-acceptance-tests-fresh
     - smoke-tests-upgrade
     - deploy-releases-ops
+  # we're triggering off the RC branch here to trigger blessing
+  # whenever we update RC by other means. Generally, this should only mean
+  # cherry-picks from develop.
+  # This:
+  # - allows cf-deployment-release-candidate to always go to the latest
+  # for jobs (such sd the transition testing) that have a passed constraint
+  # on bless-manifest.
+  - get: cf-deployment-release-candidate
+    trigger: true
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
