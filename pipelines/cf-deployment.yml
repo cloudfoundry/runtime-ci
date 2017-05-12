@@ -1393,7 +1393,6 @@ jobs:
       file: cats-concourse-task/task.yml
 
 - name: windows-acceptance-tests-upgrade
-  serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
   plan:
