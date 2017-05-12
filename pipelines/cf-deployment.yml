@@ -1829,6 +1829,7 @@ jobs:
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
+      rebase: true
 
 - name: update-releases
   serial: true
