@@ -10,25 +10,25 @@ groups:
   - update-release-mysql
   - update-release-capi
   - update-releases-windows
-  - acquire-fresh-pool
-  - deploy-releases-fresh
-  - deploy-releases-lite
-  - deploy-releases-upgrade
-  - deploy-releases-ops
-  - acceptance-tests-fresh
-  - acceptance-tests-lite
-  - acceptance-tests-upgrade
-  - windows-acceptance-tests-upgrade
-  - smoke-tests-upgrade
-  - routing-http-acceptance-tests-lite
-  - routing-http-acceptance-tests-upgrade
-  - routing-acceptance-tests-fresh
-  - post-delete-deployment-fresh
+  - fresh-acquire-pool
+  - fresh-deploy
+  - lite-deploy
+  - upgrade-deploy
+  - ops-test
+  - fresh-cats
+  - lite-cats
+  - upgrade-cats
+  - upgrade-wats
+  - upgrade-smoke-tests
+  - lite-http-rats
+  - upgrade-http-rats
+  - fresh-rats
+  - fresh-delete-deployment
   - bless-manifest
-  - perform-r2d-transition
-  - acceptance-tests-transition
-  - record-r2d2-compatible-versions
-  - post-delete-deployment-transition
+  - transition-deploy
+  - transition-cats
+  - transition-record-compatible-versions
+  - transition-delete-deployment
 - name: infra
   jobs:
   - add-claimed-lock-fresh
@@ -48,49 +48,49 @@ groups:
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
-  - acquire-transition-pool
+  - transition-acquire-pool
   - ensure-transition-env-is-clean
-  - deploy-legacy-cf
+  - legacy-deploy
 - name: up
   jobs:
-  - deploy-releases-upgrade
-  - acceptance-tests-upgrade
-  - windows-acceptance-tests-upgrade
-  - routing-http-acceptance-tests-upgrade
-  - smoke-tests-upgrade
+  - upgrade-deploy
+  - upgrade-cats
+  - upgrade-wats
+  - upgrade-http-rats
+  - upgrade-smoke-tests
 - name: fr
   jobs:
-  - deploy-releases-fresh
-  - acceptance-tests-fresh
-  - routing-acceptance-tests-fresh
-  - post-delete-deployment-fresh
+  - fresh-deploy
+  - fresh-cats
+  - fresh-rats
+  - fresh-delete-deployment
 - name: li
   jobs:
-  - deploy-releases-lite
-  - acceptance-tests-lite
-  - routing-http-acceptance-tests-lite
+  - lite-deploy
+  - lite-cats
+  - lite-http-rats
 - name: tr
   jobs:
-  - acquire-transition-pool
+  - transition-acquire-pool
   - ensure-transition-env-is-clean
-  - deploy-legacy-cf
-  - perform-r2d-transition
-  - acceptance-tests-transition
-  - record-r2d2-compatible-versions
-  - post-delete-deployment-transition
+  - legacy-deploy
+  - transition-deploy
+  - transition-cats
+  - transition-record-compatible-versions
+  - transition-delete-deployment
 
 # For simpler visibility
 - name: pm-view
   jobs:
-  - deploy-releases-fresh
-  - deploy-releases-lite
-  - deploy-releases-upgrade
-  - acceptance-tests-fresh
-  - acceptance-tests-lite
-  - acceptance-tests-upgrade
-  - windows-acceptance-tests-upgrade
-  - smoke-tests-upgrade
-  - routing-acceptance-tests-fresh
+  - fresh-deploy
+  - lite-deploy
+  - upgrade-deploy
+  - fresh-cats
+  - lite-cats
+  - upgrade-cats
+  - upgrade-wats
+  - upgrade-smoke-tests
+  - fresh-rats
   - bless-manifest
   - ship-it-patch
   - ship-it-minor
@@ -762,7 +762,7 @@ jobs:
   - put: ops-pool
     params: {release: ops-pool}
 
-- name: acquire-fresh-pool
+- name: fresh-acquire-pool
   serial: true
   public: true
   plan:
@@ -855,7 +855,7 @@ jobs:
       run:
         path: cf-deployment-transition/transition/test-transition-ops.sh
 
-- name: acquire-transition-pool
+- name: transition-acquire-pool
   public: true
   serial: true
   build_logs_to_retain: 10
@@ -883,7 +883,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: transition-pool
-        passed: [ acquire-transition-pool ]
+        passed: [ transition-acquire-pool ]
         trigger: true
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
@@ -897,7 +897,7 @@ jobs:
         params:
           DEPLOYMENT_NAME: cf-diego
 
-- name: deploy-legacy-cf
+- name: legacy-deploy
   public: true
   serial: true
   build_logs_to_retain: 10
@@ -965,7 +965,7 @@ jobs:
       params:
         ERRAND_NAME: smoke_tests
 
-- name: perform-r2d-transition
+- name: transition-deploy
   public: true
   build_logs_to_retain: 100
   plan:
@@ -979,16 +979,16 @@ jobs:
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
       - get: transition-pool
-        passed: [ deploy-legacy-cf ]
+        passed: [ legacy-deploy ]
         trigger: true
       - get: legacy-cf-release
-        passed: [ deploy-legacy-cf ]
+        passed: [ legacy-deploy ]
       - get: legacy-diego-release
-        passed: [ deploy-legacy-cf ]
+        passed: [ legacy-deploy ]
       - get: legacy-cflinuxfs2-release
-        passed: [ deploy-legacy-cf ]
+        passed: [ legacy-deploy ]
       - get: legacy-garden-runc-release
-        passed: [ deploy-legacy-cf ]
+        passed: [ legacy-deploy ]
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
@@ -1030,7 +1030,7 @@ jobs:
       input_mapping:
         bbl-state: minerva-env-stubs-and-vars
 
-- name: deploy-releases-fresh
+- name: fresh-deploy
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1038,9 +1038,9 @@ jobs:
   - aggregate:
     - get: fresh-pool
       trigger: true
-      passed: [ acquire-fresh-pool ]
+      passed: [ fresh-acquire-pool ]
     - get: cf-deployment-develop
-      passed: [ acquire-fresh-pool ]
+      passed: [ fresh-acquire-pool ]
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: luna-env-vars-store
@@ -1099,7 +1099,7 @@ jobs:
       METRIC_NAME: time-to-healthy-router
       ENV_NAME: luna
 
-- name: deploy-releases-ops
+- name: ops-test
   serial_groups: [trelawney]
   public: true
   build_logs_to_retain: 100
@@ -1129,7 +1129,7 @@ jobs:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml"
 
-- name: deploy-releases-upgrade
+- name: upgrade-deploy
   serial_groups: [hermione, hermione-smokes]
   public: true
   build_logs_to_retain: 100
@@ -1198,7 +1198,7 @@ jobs:
         repository: updated-integration-configs
         rebase: true
 
-- name: deploy-releases-lite
+- name: lite-deploy
   public: true
   serial_groups: [snitch]
   build_logs_to_retain: 100
@@ -1265,7 +1265,7 @@ jobs:
         METRIC_NAME: time-to-healthy-router
         ENV_NAME: snitch
 
-- name: acceptance-tests-transition
+- name: transition-cats
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1276,19 +1276,19 @@ jobs:
       - get: cf-acceptance-tests
       - get: minerva-env-stubs-and-vars
       - get: cf-deployment-release-candidate
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
       - get: cats-concourse-task
       - get: transition-pool
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
         trigger: true
       - get: legacy-cf-release
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
       - get: legacy-diego-release
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
       - get: legacy-cflinuxfs2-release
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
       - get: legacy-garden-runc-release
-        passed: [ perform-r2d-transition ]
+        passed: [ transition-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1300,7 +1300,7 @@ jobs:
       - integration-config: minerva-env-stubs-and-vars
       file: cats-concourse-task/task.yml
 
-- name: record-r2d2-compatible-versions
+- name: transition-record-compatible-versions
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1309,23 +1309,23 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         trigger: true
     - task: record-compatible-versions
       file: runtime-ci/tasks/record-r2d2-compatible-versions/task.yml
@@ -1340,7 +1340,7 @@ jobs:
         repository: updated-r2d2-compatibility
         rebase: true
 
-- name: post-delete-deployment-transition
+- name: transition-delete-deployment
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1350,7 +1350,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: transition-pool
-        passed: [ acceptance-tests-transition ]
+        passed: [ transition-cats ]
         trigger: true
   - task: delete-deployment-cf
     input_mapping:
@@ -1359,7 +1359,7 @@ jobs:
   - put: transition-pool
     params: {release: transition-pool}
 
-- name: acceptance-tests-upgrade
+- name: upgrade-cats
   serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
@@ -1371,15 +1371,15 @@ jobs:
       - get: cf-acceptance-tests
       - get: hermione-env-director-state
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
       - get: hermione-env-integration-configs
         trigger: true
       - get: hermione-env-vars-store
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
       - get: cats-concourse-task
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
@@ -1392,7 +1392,7 @@ jobs:
       - integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
 
-- name: windows-acceptance-tests-upgrade
+- name: upgrade-wats
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1405,19 +1405,19 @@ jobs:
         trigger: true
       - get: hermione-env-director-state
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
       - get: hermione-env-vars-store
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ deploy-releases-upgrade ]
+        passed: [ upgrade-deploy ]
     - task: run-wats
       input_mapping:
       - integration-config: hermione-env-integration-configs
       file: runtime-ci/tasks/run-wats/task.yml
 
-- name: smoke-tests-upgrade
+- name: upgrade-smoke-tests
   serial_groups: [hermione-smokes]
   public: true
   build_logs_to_retain: 100
@@ -1428,10 +1428,10 @@ jobs:
       - get: runtime-ci
       - get: hermione-env-director-state
         trigger: true
-        passed: [deploy-releases-upgrade]
+        passed: [upgrade-deploy]
       - get: cf-deployment-develop
         trigger: true
-        passed: [deploy-releases-upgrade]
+        passed: [upgrade-deploy]
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
@@ -1439,7 +1439,7 @@ jobs:
     params:
       ERRAND_NAME: smoke-tests
 
-- name: acceptance-tests-fresh
+- name: fresh-cats
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1454,9 +1454,9 @@ jobs:
       - get: luna-env-integration-configs
       - get: fresh-pool
         trigger: true
-        passed: [ deploy-releases-fresh ]
+        passed: [ fresh-deploy ]
       - get: cf-deployment-develop
-        passed: [ deploy-releases-fresh ]
+        passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1468,7 +1468,7 @@ jobs:
       - integration-config: luna-env-integration-configs
       file: cats-concourse-task/task.yml
 
-- name: acceptance-tests-lite
+- name: lite-cats
   serial_groups: [snitch]
   public: true
   build_logs_to_retain: 100
@@ -1480,13 +1480,13 @@ jobs:
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
         trigger: true
-        passed: [ deploy-releases-lite ]
+        passed: [ lite-deploy ]
       - get: snitch-env-director-state
         trigger: true
-        passed: [ deploy-releases-lite ]
+        passed: [ lite-deploy ]
       - get: snitch-env-vars-store
         trigger: true
-        passed: [ deploy-releases-lite ]
+        passed: [ lite-deploy ]
       - get: snitch-env-integration-configs
         trigger: true
       - get: cats-concourse-task
@@ -1503,7 +1503,7 @@ jobs:
         NODES: 4
       file: cats-concourse-task/task.yml
 
-- name: routing-acceptance-tests-fresh
+- name: fresh-rats
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1517,10 +1517,10 @@ jobs:
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
-        passed: [ deploy-releases-fresh ]
+        passed: [ fresh-deploy ]
       - get: fresh-pool
         trigger: true
-        passed: [ deploy-releases-fresh ]
+        passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1533,7 +1533,7 @@ jobs:
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
-- name: routing-http-acceptance-tests-lite
+- name: lite-http-rats
   serial_groups: [snitch]
   public: true
   build_logs_to_retain: 100
@@ -1548,13 +1548,13 @@ jobs:
         trigger: true
       - get: snitch-env-director-state
         trigger: true
-        passed: [ acceptance-tests-lite ]
+        passed: [ lite-cats ]
       - get: snitch-env-vars-store
         trigger: true
-        passed: [ acceptance-tests-lite ]
+        passed: [ lite-cats ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ acceptance-tests-lite ]
+        passed: [ lite-cats ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1569,7 +1569,7 @@ jobs:
       params:
         PACKAGES: "http_routes"
 
-- name: routing-http-acceptance-tests-upgrade
+- name: upgrade-http-rats
   serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
@@ -1584,13 +1584,13 @@ jobs:
         trigger: true
       - get: hermione-env-director-state
         trigger: true
-        passed: [ windows-acceptance-tests-upgrade ]
+        passed: [ upgrade-wats ]
       - get: hermione-env-vars-store
         trigger: true
-        passed: [ windows-acceptance-tests-upgrade ]
+        passed: [ upgrade-wats ]
       - get: cf-deployment-develop
         trigger: true
-        passed: [ windows-acceptance-tests-upgrade ]
+        passed: [ upgrade-wats ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1606,7 +1606,7 @@ jobs:
         PACKAGES: "http_routes"
         NODES: 2
 
-- name: post-delete-deployment-fresh
+- name: fresh-delete-deployment
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1619,8 +1619,8 @@ jobs:
       - get: fresh-pool
         trigger: true
         passed:
-        - acceptance-tests-fresh
-        - routing-acceptance-tests-fresh
+        - fresh-cats
+        - fresh-rats
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
@@ -1809,14 +1809,14 @@ jobs:
   - get: cf-deployment-develop
     trigger: true
     passed:
-    - acceptance-tests-fresh
-    - acceptance-tests-lite
-    - acceptance-tests-upgrade
-    - routing-http-acceptance-tests-lite
-    - routing-http-acceptance-tests-upgrade
-    - routing-acceptance-tests-fresh
-    - smoke-tests-upgrade
-    - deploy-releases-ops
+    - fresh-cats
+    - lite-cats
+    - upgrade-cats
+    - lite-http-rats
+    - upgrade-http-rats
+    - fresh-rats
+    - upgrade-smoke-tests
+    - ops-test
   # we're triggering off the RC branch here to trigger blessing
   # whenever we update RC by other means. Generally, this should only mean
   # cherry-picks from develop.
