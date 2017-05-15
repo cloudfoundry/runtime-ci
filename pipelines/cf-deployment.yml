@@ -12,6 +12,8 @@ groups:
   - update-releases-windows
   - fresh-acquire-pool
   - fresh-deploy
+  - lite-acquire-pool
+  - lite-release-pool
   - lite-deploy
   - upgrade-acquire-pool
   - upgrade-release-pool
@@ -33,10 +35,12 @@ groups:
   - transition-delete-deployment
   - upgrade-release-pool-manual
   - fresh-release-pool-manual
+  - lite-release-pool-manual
 - name: infra
   jobs:
   - add-claimed-lock-fresh
   - add-claimed-lock-upgrade
+  - add-claimed-lock-lite
   - setup-infrastructure-fresh
   - add-claimed-lock-transition
   - setup-infrastructure-transition
@@ -160,6 +164,14 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: lite-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/lite
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
 
 - name: upgrade-pool
@@ -659,6 +671,21 @@ jobs:
   - put: upgrade-pool
     params: {add_claimed: upgrade-pool}
 
+- name: add-claimed-lock-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {add_claimed: lite-pool}
+
 - name: setup-infrastructure-upgrade
   serial_groups: [hermione]
   public: true
@@ -729,6 +756,9 @@ jobs:
     - get: bosh-deployment
     - get: snitch-env-director-state
     - get: cf-deployment-develop
+    - get: lite-pool
+      trigger: true
+      passed: [ add-claimed-lock-lite ]
   - task: setup-infrastructure
     file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
@@ -756,6 +786,8 @@ jobs:
       cloud-config: cf-deployment-develop
     params:
       CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
+  - put: lite-pool
+    params: {release: lite-pool}
 
 - name: setup-infrastructure-ops
   serial: true
@@ -804,6 +836,16 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
     - put: fresh-pool
+      params: {acquire: true}
+
+- name: lite-acquire-pool
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+    - put: lite-pool
       params: {acquire: true}
 
 - name: lint-cf-deployment-manifest
@@ -1182,6 +1224,16 @@ jobs:
     - put: upgrade-pool
       params: {release: upgrade-pool}
 
+- name: lite-release-pool
+  public: true
+  plan:
+  - aggregate:
+    - get: lite-pool
+      passed: [ lite-cats, lite-http-rats ]
+      trigger: true
+    - put: lite-pool
+      params: {release: lite-pool}
+
 - name: upgrade-release-pool-manual
   public: true
   plan:
@@ -1193,6 +1245,12 @@ jobs:
   plan:
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: lite-release-pool-manual
+  public: true
+  plan:
+  - put: lite-pool
+    params: {release: lite-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
@@ -1272,7 +1330,7 @@ jobs:
 
 - name: lite-deploy
   public: true
-  serial_groups: [snitch]
+  serial_groups: [ snitch-cats, snitch-rats ]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -1281,11 +1339,14 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
-        trigger: true
+        passed: [ lite-acquire-pool ]
       - get: bosh-deployment
       - get: snitch-env-director-state
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
+      - get: lite-pool
+        trigger: true
+        passed: [ lite-acquire-pool ]
     - task: guarantee-no-existing-cf-deployment
       input_mapping:
         bbl-state: snitch-env-director-state
@@ -1550,7 +1611,7 @@ jobs:
       file: cats-concourse-task/task.yml
 
 - name: lite-cats
-  serial_groups: [snitch]
+  serial_groups: [ snitch-cats ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1560,17 +1621,16 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
-        trigger: true
         passed: [ lite-deploy ]
       - get: snitch-env-director-state
-        trigger: true
         passed: [ lite-deploy ]
       - get: snitch-env-vars-store
-        trigger: true
         passed: [ lite-deploy ]
       - get: snitch-env-integration-configs
-        trigger: true
       - get: cats-concourse-task
+      - get: lite-pool
+        trigger: true
+        passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1615,7 +1675,7 @@ jobs:
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: lite-http-rats
-  serial_groups: [snitch]
+  serial_groups: [ snitch-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1626,16 +1686,15 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: snitch-env-integration-configs
-        trigger: true
       - get: snitch-env-director-state
-        trigger: true
-        passed: [ lite-cats ]
+        passed: [ lite-deploy ]
       - get: snitch-env-vars-store
-        trigger: true
-        passed: [ lite-cats ]
+        passed: [ lite-deploy ]
       - get: cf-deployment-develop
+        passed: [ lite-deploy ]
+      - get: lite-pool
         trigger: true
-        passed: [ lite-cats ]
+        passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
