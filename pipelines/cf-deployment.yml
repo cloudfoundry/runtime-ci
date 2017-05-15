@@ -31,6 +31,8 @@ groups:
   - transition-cats
   - transition-record-compatible-versions
   - transition-delete-deployment
+  - upgrade-release-pool-manual
+  - fresh-release-pool-manual
 - name: infra
   jobs:
   - add-claimed-lock-fresh
@@ -1179,6 +1181,18 @@ jobs:
       trigger: true
     - put: upgrade-pool
       params: {release: upgrade-pool}
+
+- name: upgrade-release-pool-manual
+  public: true
+  plan:
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
+
+- name: fresh-release-pool-manual
+  public: true
+  plan:
+  - put: fresh-pool
+    params: {release: fresh-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
