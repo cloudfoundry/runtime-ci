@@ -13,6 +13,8 @@ groups:
   - fresh-acquire-pool
   - fresh-deploy
   - lite-deploy
+  - upgrade-acquire-pool
+  - upgrade-release-pool
   - upgrade-deploy
   - ops-test
   - fresh-cats
@@ -156,6 +158,15 @@ resources:
     branch: master
     pool: cf-deployment/fresh
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: upgrade-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/upgrade
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
 - name: transition-pool
   type: pool
   source:
@@ -534,61 +545,6 @@ jobs:
     input_mapping:
       repo: cf-deployment-all-branches
 
-- name: setup-infrastructure-upgrade
-  serial_groups: [hermione]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: cf-deployment-concourse-tasks
-    - get: hermione-env-director-state
-    - get: runtime-ci
-    - get: turbulence-github-release
-    - get: hermione-env-turbulence-vars
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_IAAS: aws
-      BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
-      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-      BBL_ENV_NAME: hermione-upgrade
-    input_mapping:
-      bbl-state: hermione-env-director-state
-    ensure:
-      put: hermione-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - task: bind-elb-to-r53
-    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
-    input_mapping:
-      env-repo: updated-bbl-state
-    params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      DOMAIN: hermione.cf-app.com
-  - task: deploy-turbulence-api-upgrade
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      cf-deployment: turbulence-github-release
-      vars-store: hermione-env-turbulence-vars
-      bbl-state: hermione-env-director-state
-      ops-files: runtime-ci
-      vars-files: hermione-env-turbulence-vars
-    params:
-      MANIFEST_FILE: manifests/turbulence.yml
-      SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
-      VARS_STORE_FILE: turbulence-deployment-vars.yml
-      OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
-    ensure:
-      put: hermione-env-turbulence-vars
-      params:
-        repository: updated-vars-store
-        rebase: true
-
 - name: add-claimed-lock-transition
   serial: true
   public: true
@@ -684,6 +640,81 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: add-claimed-lock-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: hermione
+    output_mapping:
+      pool-resource: upgrade-pool
+  - put: upgrade-pool
+    params: {add_claimed: upgrade-pool}
+
+- name: setup-infrastructure-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: hermione-env-director-state
+    - get: runtime-ci
+    - get: turbulence-github-release
+    - get: hermione-env-turbulence-vars
+    - get: upgrade-pool
+      trigger: true
+      passed: [ add-claimed-lock-upgrade ]
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      BBL_ENV_NAME: hermione-upgrade
+    input_mapping:
+      bbl-state: hermione-env-director-state
+    ensure:
+      put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-bbl-state
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      DOMAIN: hermione.cf-app.com
+  - task: deploy-turbulence-api-upgrade
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      cf-deployment: turbulence-github-release
+      vars-store: hermione-env-turbulence-vars
+      bbl-state: hermione-env-director-state
+      ops-files: runtime-ci
+      vars-files: hermione-env-turbulence-vars
+    params:
+      MANIFEST_FILE: manifests/turbulence.yml
+      SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
+      VARS_STORE_FILE: turbulence-deployment-vars.yml
+      OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
+    ensure:
+      put: hermione-env-turbulence-vars
+      params:
+        repository: updated-vars-store
+        rebase: true
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -1129,74 +1160,100 @@ jobs:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml"
 
+- name: upgrade-acquire-pool
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+    - put: upgrade-pool
+      params: {acquire: true}
+
+- name: upgrade-release-pool
+  public: true
+  plan:
+  - aggregate:
+    - get: upgrade-pool
+      passed: [ upgrade-http-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
+      trigger: true
+    - put: upgrade-pool
+      params: {release: upgrade-pool}
+
 - name: upgrade-deploy
-  serial_groups: [hermione, hermione-smokes]
+  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment-develop
-      trigger: true
-    - get: hermione-env-vars-store
-    - get: hermione-env-director-state
-      passed: [ setup-infrastructure-upgrade ]
-    - get: hermione-env-integration-configs
-    - get: windows-stemcell
-  - task: bosh-upload-stemcell-upgrade
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-      bbl-state: hermione-env-director-state
-    params:
-      INFRASTRUCTURE: aws
-  - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: windows-stemcell
-      bbl-state: hermione-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
-  - task: bosh-update-runtime-config
-    file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
-    input_mapping:
-      bbl-state: hermione-env-director-state
-      runtime-configs: runtime-ci
-    params:
-      RUNTIME_CONFIG_FILE: experiments/runtime-configs/turbulence-runtime-config.yml
-  - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: hermione-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-      vars-store: hermione-env-vars-store
-      vars-files: hermione-env-vars-store
-    params:
-      SYSTEM_DOMAIN: hermione.cf-app.com
-      OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle-aws.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/test/alter-ssh-proxy-redirect-uri.yml"
-    ensure:
-      put: hermione-env-vars-store
+  - on_failure:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: upgrade-pool
+        trigger: true
+        passed: [ upgrade-acquire-pool ]
+      - get: cf-deployment-develop
+        passed: [ upgrade-acquire-pool ]
+      - get: hermione-env-vars-store
+      - get: hermione-env-director-state
+        passed: [ setup-infrastructure-upgrade ]
+      - get: hermione-env-integration-configs
+      - get: windows-stemcell
+    - task: bosh-upload-stemcell-upgrade
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        bbl-state: hermione-env-director-state
       params:
-        repository: updated-vars-store
-        rebase: true
-  - task: run-bosh-cleanup
-    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-    input_mapping:
-      bbl-state: hermione-env-director-state
-  - task: update-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    params:
-      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
-    input_mapping:
-      vars-store: hermione-env-vars-store
-      integration-configs: hermione-env-integration-configs
-    ensure:
-      put: hermione-env-integration-configs
+        INFRASTRUCTURE: aws
+    - task: bosh-upload-windows-stemcell
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: windows-stemcell
+        bbl-state: hermione-env-director-state
       params:
-        repository: updated-integration-configs
-        rebase: true
+        STEMCELL_NAME: '*.tgz'
+    - task: bosh-update-runtime-config
+      file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        runtime-configs: runtime-ci
+      params:
+        RUNTIME_CONFIG_FILE: experiments/runtime-configs/turbulence-runtime-config.yml
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        cf-deployment: cf-deployment-develop
+        ops-files: cf-deployment-develop
+        vars-store: hermione-env-vars-store
+        vars-files: hermione-env-vars-store
+      params:
+        SYSTEM_DOMAIN: hermione.cf-app.com
+        OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle-aws.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/test/alter-ssh-proxy-redirect-uri.yml"
+      ensure:
+        put: hermione-env-vars-store
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: hermione-env-vars-store
+        integration-configs: hermione-env-integration-configs
+      ensure:
+        put: hermione-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
 
 - name: lite-deploy
   public: true
@@ -1360,27 +1417,29 @@ jobs:
     params: {release: transition-pool}
 
 - name: upgrade-cats
-  serial_groups: [hermione]
+  serial_groups: [ hermione-cats ]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
+    on_failure:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
     do:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: hermione-env-director-state
-        trigger: true
         passed: [ upgrade-deploy ]
       - get: hermione-env-integration-configs
-        trigger: true
       - get: hermione-env-vars-store
-        trigger: true
         passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
-        trigger: true
         passed: [ upgrade-deploy ]
       - get: cats-concourse-task
+      - get: upgrade-pool
+        trigger: true
+        passed: [ upgrade-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1394,22 +1453,25 @@ jobs:
 
 - name: upgrade-wats
   public: true
+  serial_groups: [ hermione-wats ]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
+    on_failure:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
     do:
     - aggregate:
       - get: runtime-ci
       - get: windows-acceptance-tests
       - get: hermione-env-integration-configs
-        trigger: true
       - get: hermione-env-director-state
-        trigger: true
         passed: [ upgrade-deploy ]
       - get: hermione-env-vars-store
-        trigger: true
         passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
+        passed: [ upgrade-deploy ]
+      - get: upgrade-pool
         trigger: true
         passed: [ upgrade-deploy ]
     - task: run-wats
@@ -1423,13 +1485,17 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 1h
+    on_failure:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
     do:
     - aggregate:
       - get: runtime-ci
       - get: hermione-env-director-state
-        trigger: true
         passed: [upgrade-deploy]
       - get: cf-deployment-develop
+        passed: [upgrade-deploy]
+      - get: upgrade-pool
         trigger: true
         passed: [upgrade-deploy]
   - task: bosh-run-errand-smoke-tests
@@ -1570,27 +1636,29 @@ jobs:
         PACKAGES: "http_routes"
 
 - name: upgrade-http-rats
-  serial_groups: [hermione]
+  serial_groups: [ hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
+    on_failure:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
     do:
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: hermione-env-integration-configs
-        trigger: true
       - get: hermione-env-director-state
-        trigger: true
-        passed: [ upgrade-wats ]
+        passed: [ upgrade-deploy ]
       - get: hermione-env-vars-store
-        trigger: true
-        passed: [ upgrade-wats ]
+        passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
+        passed: [ upgrade-deploy ]
+      - get: upgrade-pool
         trigger: true
-        passed: [ upgrade-wats ]
+        passed: [upgrade-deploy]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
