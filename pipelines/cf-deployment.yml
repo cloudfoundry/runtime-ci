@@ -1217,12 +1217,11 @@ jobs:
 - name: upgrade-release-pool
   public: true
   plan:
-  - aggregate:
-    - get: upgrade-pool
-      passed: [ upgrade-http-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
-      trigger: true
-    - put: upgrade-pool
-      params: {release: upgrade-pool}
+  - get: upgrade-pool
+    passed: [ upgrade-http-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
+    trigger: true
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
 
 - name: lite-release-pool
   public: true
@@ -1869,6 +1868,24 @@ jobs:
   - put: fresh-pool
     params: {remove: fresh-pool}
 
+- name: remove-claimed-lock-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: lite-pool
+    passed: [ destroy-infrastructure-lite ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {remove: lite-pool}
+
 - name: remove-claimed-lock-transition
   serial: true
   public: true
@@ -1893,6 +1910,8 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - put: lite-pool
+      params: {claim: snitch}
     - get: snitch-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
