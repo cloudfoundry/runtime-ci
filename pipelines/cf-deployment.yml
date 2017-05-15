@@ -53,6 +53,7 @@ groups:
   - destroy-infrastructure-ops
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-fresh
+  - remove-claimed-lock-lite
   - remove-claimed-lock-transition
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
