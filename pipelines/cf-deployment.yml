@@ -1876,8 +1876,8 @@ jobs:
   plan:
   - get: runtime-ci
   - get: lite-pool
-    passed: [ destroy-infrastructure-lite ]
-    trigger: true
+    # passed: [ destroy-infrastructure-lite ]
+    # trigger: true
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
