@@ -2,41 +2,90 @@
 groups:
 - name: cf-deployment
   jobs:
-  - lint-cf-deployment-manifest
-  - branch-freshness
-  - unit-test-ops-files
-  - unit-test-transition-tools
-  - update-releases
-  - update-release-mysql
-  - update-release-capi
-  - update-releases-windows
-  - fresh-acquire-pool
   - fresh-deploy
-  - lite-acquire-pool
-  - lite-release-pool
   - lite-deploy
-  - upgrade-acquire-pool
-  - upgrade-release-pool
+  - transition-deploy
   - upgrade-deploy
-  - ops-test
+
+  - lint-cf-deployment-manifest
   - fresh-cats
   - lite-cats
+  - transition-cats
   - upgrade-cats
-  - upgrade-wats
   - upgrade-smoke-tests
+  - upgrade-wats
+  - fresh-rats
   - lite-http-rats
   - upgrade-http-rats
-  - fresh-rats
-  - fresh-delete-deployment
+  - ops-test
+  - unit-test-ops-files
+  - unit-test-transition-tools
+
   - bless-manifest
-  - transition-deploy
-  - transition-cats
-  - transition-record-compatible-versions
-  - transition-delete-deployment
-  - upgrade-release-pool-manual
+  - ship-it-minor
+  - ship-it-patch
+- name: dev
+  jobs:
+  - add-claimed-lock-fresh
+  - add-claimed-lock-lite
+  - add-claimed-lock-transition
+  - add-claimed-lock-upgrade
+  - bless-manifest
+  - branch-freshness
+  - destroy-infrastructure-fresh
+  - destroy-infrastructure-lite
+  - destroy-infrastructure-ops
+  - destroy-infrastructure-transition
+  - destroy-infrastructure-upgrade
+  - ensure-transition-env-is-clean
+  - fresh-acquire-pool
+  - fresh-cats
+  - fresh-delete-deployment
+  - fresh-deploy
+  - fresh-rats
   - fresh-release-pool-manual
+  - legacy-deploy
+  - lint-cf-deployment-manifest
+  - lite-acquire-pool
+  - lite-cats
+  - lite-deploy
+  - lite-http-rats
+  - lite-release-pool
   - lite-release-pool-manual
-- name: infra
+  - ops-test
+  - remove-claimed-lock-fresh
+  - remove-claimed-lock-lite
+  - remove-claimed-lock-transition
+  - run-bosh-cleanup-lite
+  - run-bosh-cleanup-upgrade
+  - setup-infrastructure-fresh
+  - setup-infrastructure-lite
+  - setup-infrastructure-ops
+  - setup-infrastructure-transition
+  - setup-infrastructure-upgrade
+  - ship-it-minor
+  - ship-it-patch
+  - transition-acquire-pool
+  - transition-cats
+  - transition-delete-deployment
+  - transition-deploy
+  - transition-record-compatible-versions
+  - unit-test-ops-files
+  - unit-test-transition-tools
+  - update-release-capi
+  - update-release-mysql
+  - update-releases
+  - update-releases-windows
+  - upgrade-acquire-pool
+  - upgrade-cats
+  - upgrade-deploy
+  - upgrade-http-rats
+  - upgrade-release-pool
+  - upgrade-release-pool-manual
+  - upgrade-smoke-tests
+  - upgrade-wats
+  - verify-nameserver-has-record
+- name: inf
   jobs:
   - add-claimed-lock-fresh
   - add-claimed-lock-upgrade
@@ -63,32 +112,43 @@ groups:
   - legacy-deploy
 - name: up
   jobs:
-  - upgrade-deploy
+  - upgrade-acquire-pool
   - upgrade-cats
-  - upgrade-wats
+  - upgrade-deploy
   - upgrade-http-rats
+  - upgrade-release-pool
+  - upgrade-release-pool-manual
   - upgrade-smoke-tests
+  - upgrade-wats
+  - bless-manifest
 - name: fr
   jobs:
-  - fresh-deploy
+  - fresh-acquire-pool
   - fresh-cats
-  - fresh-rats
   - fresh-delete-deployment
+  - fresh-deploy
+  - fresh-rats
+  - fresh-release-pool-manual
+  - bless-manifest
 - name: li
   jobs:
-  - lite-deploy
+  - lite-acquire-pool
   - lite-cats
+  - lite-deploy
   - lite-http-rats
+  - lite-release-pool
+  - lite-release-pool-manual
+  - bless-manifest
 - name: tr
   jobs:
-  - transition-acquire-pool
   - ensure-transition-env-is-clean
   - legacy-deploy
-  - transition-deploy
+  - transition-acquire-pool
   - transition-cats
-  - transition-record-compatible-versions
   - transition-delete-deployment
-
+  - transition-deploy
+  - transition-record-compatible-versions
+  - bless-manifest
 # For simpler visibility
 - name: pm-view
   jobs:
