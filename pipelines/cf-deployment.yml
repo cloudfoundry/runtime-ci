@@ -155,21 +155,6 @@ groups:
   - transition-deploy
   - transition-record-compatible-versions
   - bless-manifest
-# For simpler visibility
-- name: pm-view
-  jobs:
-  - fresh-deploy
-  - lite-deploy
-  - upgrade-deploy
-  - fresh-cats
-  - lite-cats
-  - upgrade-cats
-  - upgrade-wats
-  - upgrade-smoke-tests
-  - fresh-rats
-  - bless-manifest
-  - ship-it-patch
-  - ship-it-minor
 
 resource_types:
 - name: terraform
