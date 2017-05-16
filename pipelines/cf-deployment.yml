@@ -1141,8 +1141,8 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/use-postgres.yml operations/test/cfr-to-cfd-transition.yml operations/use-s3-blobstore.yml operations/scale-down-etcd-for-cluster-changes.yml operations/aws.yml"
-        VARS_FILES: "s3-vars.yml"
+        OPS_FILES: "operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml"
+        VARS_FILES: "rds-vars.yml s3-vars.yml"
       ensure:
         put: minerva-env-stubs-and-vars
         params:
