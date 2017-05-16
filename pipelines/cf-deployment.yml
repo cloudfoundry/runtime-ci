@@ -1237,18 +1237,21 @@ jobs:
 - name: upgrade-release-pool-manual
   public: true
   plan:
+  - get: upgrade-pool
   - put: upgrade-pool
     params: {release: upgrade-pool}
 
 - name: fresh-release-pool-manual
   public: true
   plan:
+  - get: fresh-pool
   - put: fresh-pool
     params: {release: fresh-pool}
 
 - name: lite-release-pool-manual
   public: true
   plan:
+  - get: lite-pool
   - put: lite-pool
     params: {release: lite-pool}
 
