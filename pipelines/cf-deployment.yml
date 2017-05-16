@@ -24,6 +24,12 @@ groups:
   - bless-manifest
   - ship-it-minor
   - ship-it-patch
+- name: releases
+  jobs:
+  - update-release-capi
+  - update-release-mysql
+  - update-releases
+  - update-releases-windows
 - name: dev
   jobs:
   - add-claimed-lock-fresh
