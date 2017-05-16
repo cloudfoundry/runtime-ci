@@ -1108,6 +1108,7 @@ jobs:
       - get: minerva-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
+      - get: cf-deployment-develop
       - get: transition-pool
         passed: [ legacy-deploy ]
         trigger: true
