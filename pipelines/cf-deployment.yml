@@ -1293,12 +1293,11 @@ jobs:
 - name: lite-release-pool
   public: true
   plan:
-  - aggregate:
-    - get: lite-pool
-      passed: [ lite-cats, lite-http-rats ]
-      trigger: true
-    - put: lite-pool
-      params: {release: lite-pool}
+  - get: lite-pool
+    passed: [ lite-cats, lite-http-rats ]
+    trigger: true
+  - put: lite-pool
+    params: {release: lite-pool}
 
 - name: upgrade-release-pool-manual
   public: true
