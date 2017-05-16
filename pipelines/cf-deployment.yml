@@ -1070,7 +1070,7 @@ jobs:
       params:
         IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
         INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
-        DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
+        DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/rds-overrides.yml
         PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
         RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
     - put: legacy-cf-bosh-deployment
