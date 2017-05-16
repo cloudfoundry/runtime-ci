@@ -272,6 +272,7 @@ resources:
     paths:
     - transition/stubs/*
     - deployment-vars.yml
+    - integration_config.json
     - s3-vars.yml
 - name: aws-stemcell
   type: bosh-io-stemcell
