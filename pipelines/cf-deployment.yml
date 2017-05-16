@@ -259,6 +259,7 @@ resources:
     - deployment-vars.yml
     - integration_config.json
     - s3-vars.yml
+    - rds-vars.yml
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
