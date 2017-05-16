@@ -1917,7 +1917,6 @@ jobs:
     - put: lite-pool
       params: {claim: snitch}
     - get: snitch-env-director-state
-      passed: [ setup-infrastructure-lite ]
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
