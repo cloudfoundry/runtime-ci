@@ -1137,7 +1137,7 @@ jobs:
       input_mapping:
         bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
-        ops-files: cf-deployment-release-candidate
+        ops-files: cf-deployment-develop
         vars-store: extracted-vars-store
         vars-files: minerva-env-stubs-and-vars
       params:
