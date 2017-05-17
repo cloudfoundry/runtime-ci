@@ -90,7 +90,6 @@ groups:
   - upgrade-deploy
   - upgrade-http-rats
   - upgrade-release-pool
-  - upgrade-release-pool-manual
   - upgrade-smoke-tests
   - upgrade-wats
   - verify-nameserver-has-record
@@ -128,7 +127,6 @@ groups:
   - upgrade-deploy
   - upgrade-http-rats
   - upgrade-release-pool
-  - upgrade-release-pool-manual
   - upgrade-smoke-tests
   - upgrade-wats
   - bless-manifest
@@ -1330,13 +1328,6 @@ jobs:
     trigger: true
   - put: lite-pool
     params: {release: lite-pool}
-
-- name: upgrade-release-pool-manual
-  public: true
-  plan:
-  - get: upgrade-pool
-  - put: upgrade-pool
-    params: {release: upgrade-pool}
 
 - name: fresh-release-pool-manual
   public: true
