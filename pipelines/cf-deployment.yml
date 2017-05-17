@@ -2231,6 +2231,8 @@ jobs:
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: README.md # This is a dummy value that we have to pass in for the script to work
+      OPS_FILE_DESTINATION: README.md
   - put: cf-deployment-develop
     params:
       rebase: true
