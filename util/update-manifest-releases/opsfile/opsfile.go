@@ -12,7 +12,7 @@ import (
 type Op struct {
 	TypeField string      `yaml:"type"`
 	Path      string      `yaml:"path"`
-	Value     interface{} `yaml:"value"`
+	Value     interface{} `yaml:"value,omitempty"`
 }
 
 func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {

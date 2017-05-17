@@ -121,6 +121,19 @@ releases:
 			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
 		})
 
+		It("does add a `value: null` field to remove operations", func() {
+			releases := []string{"release1"}
+
+			originalOpsFile := []byte(`
+- type: remove
+  path: /stemcell
+`)
+			updatedOpsFile, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(updatedOpsFile).ToNot(ContainSubstring("null"))
+		})
+
 		It("returns an error when the yaml marshaller fails", func() {
 			failingMarshalFunc := func(interface{}) ([]byte, error) {
 				return nil, errors.New("failed to marshal yaml")
