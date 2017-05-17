@@ -64,6 +64,7 @@ groups:
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-upgrade
+  - setup-infrastructure-compile
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
   - setup-infrastructure-ops
@@ -96,6 +97,7 @@ groups:
   - add-claimed-lock-fresh
   - add-claimed-lock-upgrade
   - add-claimed-lock-lite
+  - setup-infrastructure-compile
   - setup-infrastructure-fresh
   - add-claimed-lock-transition
   - setup-infrastructure-transition
@@ -715,6 +717,35 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: setup-infrastructure-compile
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{greengrass_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{greengrass_cf_ssl_cert}}
+      BBL_LB_KEY: {{greengrass_cf_ssl_cert_private_key}}
+      LB_DOMAIN: greengrass.cf-app.com
+      BBL_ENV_NAME: greengrass-compile
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    ensure:
+      put: greengrass-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: add-claimed-lock-upgrade
   serial: true
