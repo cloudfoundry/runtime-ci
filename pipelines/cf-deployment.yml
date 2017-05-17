@@ -1518,7 +1518,7 @@ jobs:
       - get: legacy-garden-runc-release
         passed: [ transition-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks-temp-old/set-feature-flags/task.yml
       input_mapping:
         vars-store: minerva-env-stubs-and-vars
         cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-temp-old
