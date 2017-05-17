@@ -2260,8 +2260,8 @@ jobs:
     params:
       RELEASE_NAME: postgres
       TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operation/use-postgres.yml
-      UPDATED_OPS_FILE_PATH: operation/use-postgres.yml
+      ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
+      UPDATED_OPS_FILE_PATH: operations/use-postgres.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
