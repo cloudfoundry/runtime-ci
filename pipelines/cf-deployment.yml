@@ -1521,6 +1521,7 @@ jobs:
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: minerva-env-stubs-and-vars
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-temp-old
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
     - task: run-cats
