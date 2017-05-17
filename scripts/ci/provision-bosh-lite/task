@@ -37,6 +37,7 @@ properties:
     include_sso: true
     include_security_groups: true
     include_internet_dependent: true
+    include_backend_compatibility: true
     include_services: true
   cc:
     security_group_definitions:
