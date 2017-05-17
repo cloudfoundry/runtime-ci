@@ -33,7 +33,7 @@ inputs:
 
 outputs:
 - name: commit-message
-- name: deployment-manifest
+- name: updated-deployment-manifest
 
 run:
   path: runtime-ci/scripts/ci/create-binaries-manifest-section/task

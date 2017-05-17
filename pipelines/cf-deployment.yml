@@ -2151,7 +2151,7 @@ jobs:
     file: runtime-ci/tasks/bosh-dry-run/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: deployment-manifest
+      cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: commit-generated-manifest
@@ -2160,7 +2160,7 @@ jobs:
       repo: cf-deployment-develop
       compiled-releases-ops-file: cf-deployment-develop
       windows-ops-file: cf-deployment-develop
-      manifest: deployment-manifest
+      manifest: updated-deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
