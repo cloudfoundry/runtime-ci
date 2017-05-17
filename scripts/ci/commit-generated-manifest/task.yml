@@ -10,8 +10,7 @@ inputs:
 - name: runtime-ci
 - name: repo
 - name: manifest
-- name: compiled-releases-ops-file
-- name: windows-ops-file
+- name: ops-file
 - name: commit-message
 
 outputs:
@@ -22,9 +21,7 @@ run:
 
 params:
   MANIFEST_NAME:
-  COMPILED_RELEASES_OPS_FILE_NAME:
-  COMPILED_RELEASES_OPS_FILE_DESTINATION:
-  WINDOWS_OPS_FILE_NAME:
-  WINDOWS_OPS_FILE_DESTINATION: operations/windows-cell.yml
+  OPS_FILE_NAME:
+  OPS_FILE_DESTINATION:
   MANIFEST_DESTINATION:
   COMMIT_MESSAGE_PATH: commit-message.txt

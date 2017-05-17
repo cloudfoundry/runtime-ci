@@ -15,6 +15,7 @@ inputs:
 outputs:
 - name: commit-message
 - name: updated-deployment-manifest
+- name: updated-ops-file
 
 run:
   path: runtime-ci/tasks/update-single-release/task
@@ -24,3 +25,6 @@ params:
   ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   RELEASE_NAME: 
+  TARGET: manifest
+  ORIGINAL_OPS_FILE_PATH:
+  UPDATED_OPS_FILE_PATH:
