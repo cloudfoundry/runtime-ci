@@ -265,7 +265,7 @@ stemcells:
 			for _, dir := range []string{
 				"commit-message",
 				"deployment-configuration",
-				"deployment-manifest",
+				"updated-deployment-manifest",
 				"stemcell",
 			} {
 				err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
@@ -294,16 +294,16 @@ stemcells:
 			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			inputPath = os.Getenv("DEPLOYMENT_CONFIGURATION_PATH")
-			outputPath = os.Getenv("DEPLOYMENT_MANIFEST_PATH")
+			inputPath = os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
+			outputPath = os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH")
 
-			os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", "original-manifest.yml")
-			os.Setenv("DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
+			os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", "original-manifest.yml")
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
 		})
 
 		AfterEach(func() {
-			os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", inputPath)
-			os.Setenv("DEPLOYMENT_MANIFEST_PATH", outputPath)
+			os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", inputPath)
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", outputPath)
 		})
 
 		It("only updates the manifest with the release passed in", func() {
@@ -313,7 +313,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-manifest", "updated-manifest.yml"))
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedSingleReleaseAndStemcells))
@@ -326,7 +326,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "deployment-manifest", "updated-manifest.yml"))
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
@@ -358,7 +358,7 @@ stemcells:
 			})
 
 			It("errors when the deployment manifest does not exist", func() {
-				os.Setenv("DEPLOYMENT_CONFIGURATION_PATH", emptyDir)
+				os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", emptyDir)
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
@@ -382,7 +382,7 @@ stemcells:
 			})
 
 			It("errors when the directory to write out the updated manifest does not exist", func() {
-				os.Setenv("DEPLOYMENT_MANIFEST_PATH", filepath.Join(emptyDir, "doesnt-exist"))
+				os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join(emptyDir, "doesnt-exist"))
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())

@@ -14,13 +14,13 @@ inputs:
 
 outputs:
 - name: commit-message
-- name: deployment-manifest
+- name: updated-deployment-manifest
 
 run:
   path: runtime-ci/tasks/update-single-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
-  DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   RELEASE_NAME: 

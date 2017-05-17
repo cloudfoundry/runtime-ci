@@ -95,10 +95,10 @@ func main() {
 	} else {
 		if err = update(
 			releases,
-			os.Getenv("DEPLOYMENT_CONFIGURATION_PATH"),
-			os.Getenv("DEPLOYMENT_MANIFEST_PATH"),
+			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),
+			os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH"),
 			"deployment-configuration",
-			"deployment-manifest",
+			"updated-deployment-manifest",
 			buildDir,
 			commitMessagePath,
 			manifest.UpdateReleasesAndStemcells,
