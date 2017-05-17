@@ -40,5 +40,5 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  DEPLOYMENT_CONFIGURATION_PATH: cf-deployment.yml
-  DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
