@@ -8,7 +8,8 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: deployment-configuration
+- name: original-ops-file
+- name: deployment-configuration # repo containing the original manifest
 - name: release
 - name: stemcell
 
@@ -26,5 +27,12 @@ params:
   UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   RELEASE_NAME: 
   TARGET: manifest
+  # Either `manifest` or `opsfile`
+  # If `manifest` is specified, then the following needs to be filled:
+  #   ORIGINAL_DEPLOYMENT_MANIFEST_PATH
+  #   UPDATED_DEPLOYMENT_MANIFEST_PATH
+  # If `opsfile` is specified then the following needs to be filled:
+  #   ORIGINAL_OPS_FILE_PATH
+  #   UPDATED_OPS_FILE_PATH
   ORIGINAL_OPS_FILE_PATH:
   UPDATED_OPS_FILE_PATH:

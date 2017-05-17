@@ -2256,6 +2256,7 @@ jobs:
     input_mapping:
       release: postgres-release
       deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: postgres
       TARGET: opsfile
