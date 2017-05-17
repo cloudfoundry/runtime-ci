@@ -2302,6 +2302,7 @@ jobs:
     input_mapping:
       release: capi-release
       deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: capi
   - task: bosh-dry-run
@@ -2385,6 +2386,7 @@ jobs:
     input_mapping:
       release: cf-mysql-release
       deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-mysql
   - task: bosh-dry-run
@@ -2432,7 +2434,7 @@ jobs:
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops_file: updated-compiled-releases-ops-file
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
