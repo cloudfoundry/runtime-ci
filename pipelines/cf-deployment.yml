@@ -38,6 +38,7 @@ groups:
   - add-claimed-lock-upgrade
   - bless-manifest
   - branch-freshness
+  - destroy-infrastructure-compile
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
@@ -104,6 +105,7 @@ groups:
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-upgrade
+  - destroy-infrastructure-compile
   - destroy-infrastructure-fresh
   - destroy-infrastructure-transition
   - destroy-infrastructure-lite
@@ -1915,6 +1917,29 @@ jobs:
       bbl-state: minerva-env-director-state
     ensure:
       put: minerva-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-compile
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: greengrass-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    ensure:
+      put: greengrass-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
