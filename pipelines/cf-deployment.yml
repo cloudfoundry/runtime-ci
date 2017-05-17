@@ -334,6 +334,12 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+- name: cf-deployment-concourse-tasks-temp-old
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v3.0
 - name: runtime-ci
   type: git
   source:
@@ -1461,7 +1467,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-temp-old
       - get: cf-acceptance-tests
       - get: minerva-env-stubs-and-vars
       - get: cf-deployment-release-candidate
