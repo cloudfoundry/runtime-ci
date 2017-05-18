@@ -1304,6 +1304,7 @@ jobs:
 
 - name: upgrade-acquire-pool
   public: true
+  serial: true
   plan:
   - aggregate:
     - get: cf-deployment-develop
