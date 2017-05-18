@@ -393,10 +393,13 @@ resources:
   type: git
   source:
     branch: develop
-    uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
-    paths:
-    - transition/*
+    uri: git@github.com:cloudfoundry/cf-deployment-transition.git
+- name: cf-deployment-transition-compatability
+  type: git
+  source:
+    branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment-transition-compatibility.git
+    private_key: {{cf_deployment_transition_compatibility_private_key}}
 - name: cf-deployment-release-candidate
   type: git
   source:
@@ -987,7 +990,7 @@ jobs:
   plan:
   - get: cf-deployment-transition
     trigger: true
-  - task: unit-test-var-store-templates
+  - task: unit-test-suite
     config:
       platform: linux
       image_resource:
@@ -997,29 +1000,7 @@ jobs:
       inputs:
       - name: cf-deployment-transition
       run:
-        path: cf-deployment-transition/transition/test-expected-varstore.sh
-  - task: unit-test-ca-keys-required
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: relintdockerhubpushbot/bosh-and-spiff
-      inputs:
-      - name: cf-deployment-transition
-      run:
-        path: cf-deployment-transition/transition/test-ca-keys-required.sh
-  - task: test-ops-file
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: relintdockerhubpushbot/bosh-and-spiff
-      inputs:
-      - name: cf-deployment-transition
-      run:
-        path: cf-deployment-transition/transition/test-transition-ops.sh
+        path: cf-deployment-transition/test-suite.sh
 
 - name: transition-acquire-pool
   public: true
@@ -1081,6 +1062,7 @@ jobs:
       - get: legacy-cflinuxfs2-release
       - get: legacy-cf-release
       - get: aws-stemcell
+      - get: cf-deployment-transition
       - get: transition-pool
         passed: [ ensure-transition-env-is-clean ]
         trigger: true
@@ -1144,7 +1126,6 @@ jobs:
       - get: minerva-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
-      - get: cf-deployment-develop
       - get: transition-pool
         passed: [ legacy-deploy ]
         trigger: true
@@ -1156,6 +1137,7 @@ jobs:
         passed: [ legacy-deploy ]
       - get: legacy-garden-runc-release
         passed: [ legacy-deploy ]
+      - get: cf-deployment-transition
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
@@ -1169,17 +1151,26 @@ jobs:
         bbl-state: minerva-env-director-state
       params:
         INFRASTRUCTURE: aws
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-release-candidate
+        new-ops-files: cf-deployment-transition
+      params:
+        BASE_OPS_FILE_DIR: "operations"
+        NEW_OPS_FILES:
+        - "cfr-to-cfd.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
-        ops-files: cf-deployment-develop
+        ops-files: collected-ops-files
         vars-store: extracted-vars-store
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/test/cfr-to-cfd-transition.yml operations/scale-down-etcd-for-cluster-changes.yml"
+        OPS_FILES: "operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml"
       ensure:
         put: minerva-env-stubs-and-vars
@@ -1512,6 +1503,9 @@ jobs:
         passed: [ transition-deploy ]
       - get: legacy-garden-runc-release
         passed: [ transition-deploy ]
+      - get: cf-deployment-transition
+        passed: [ transition-deploy ]
+        trigger: true
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1537,19 +1531,26 @@ jobs:
           tarball: false
       - get: legacy-diego-release
         passed: [ transition-cats ]
+        trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
         passed: [ transition-cats ]
+        trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
         passed: [ transition-cats ]
+        trigger: true
         params:
           tarball: false
       - get: cf-deployment-release-candidate
         passed: [ transition-cats ]
         trigger: true
+      - get: cf-deployment-transition
+        passed: [ transition-cats ]
+        trigger: true
+      - get: cf-deployment-transition-compatability
     - task: record-compatible-versions
       file: runtime-ci/tasks/record-r2d2-compatible-versions/task.yml
       input_mapping:
@@ -1558,7 +1559,7 @@ jobs:
         cflinuxfs2-release: legacy-cflinuxfs2-release
         garden-runc-release: legacy-garden-runc-release
         cf-deployment: cf-deployment-release-candidate
-    - put: cf-deployment-develop
+    - put: cf-deployment-transition-compatability
       params:
         repository: updated-r2d2-compatibility
         rebase: true

@@ -8,21 +8,28 @@ function get_row() {
   cflinuxfs2_release_version=$(cd cflinuxfs2-release; cat version)
   garden_runc_release_version=$(cd garden-runc-release; cat version)
   cf_deployment_sha=$(cd cf-deployment; git rev-parse HEAD)
+  cf_deployment_transition_sha=$(cd cf-deployment-transition; git rev-parse HEAD)
 
-  new_row="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha}"
+  new_row="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha}"
   echo "${new_row}"
 }
 
 function commit_compatibility_and_move_to_output() {
   local new_row
   new_row="$1"
-  if grep "$new_row" "cf-deployment/$COMPATIBILITY_FILE"; then
+  if grep "$new_row" "cf-deployment-transition-compatibility/$COMPATIBILITY_FILE"; then
     echo "No changes to be made"
   else
-    pushd cf-deployment > /dev/null
+    pushd cf-deployment-transition-compatibility > /dev/null
+      local header
+      header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha"
       if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
-        echo "cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha" > "$COMPATIBILITY_FILE"
+        echo "${header}" > $COMPATIBILITY_FILE
       fi
+
+      # Ensure the first line is always the header
+      sed -i '1 s/.*/$header/' $COMPATIBILITY_FILE
+
       echo "${new_row}" >> "$COMPATIBILITY_FILE"
 
       git config user.email "cf-release-integration@pivotal.io"
@@ -33,7 +40,7 @@ function commit_compatibility_and_move_to_output() {
     popd > /dev/null
   fi
 
-  git clone cf-deployment updated-r2d2-compatibility
+  git clone cf-deployment-transition-compatibility updated-r2d2-compatibility
 }
 
 function main() {
