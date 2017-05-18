@@ -1334,15 +1334,19 @@ jobs:
   public: true
   plan:
   - get: fresh-pool
-  - put: fresh-pool
-    params: {release: fresh-pool}
+  ensure:
+    try:
+      put: fresh-pool
+      params: {release: fresh-pool}
 
 - name: lite-release-pool-manual
   public: true
   plan:
   - get: lite-pool
-  - put: lite-pool
-    params: {release: lite-pool}
+  ensure:
+    try:
+      put: lite-pool
+      params: {release: lite-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
