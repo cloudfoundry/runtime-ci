@@ -1514,6 +1514,8 @@ jobs:
     - task: run-cats
       input_mapping:
       - integration-config: minerva-env-stubs-and-vars
+      params:
+        NODES: 9
       file: cats-concourse-task/task.yml
 
 - name: transition-record-compatible-versions
