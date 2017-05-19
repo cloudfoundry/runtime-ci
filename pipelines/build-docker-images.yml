@@ -28,7 +28,6 @@ groups:
   - build-merge-master-into-develop-docker-image
   - build-provision-bosh-lite-docker-image
   - build-record-compatible-versions-docker-image
-  - build-request-pm-input-docker-image
   - build-run-bosh-cleanup-1.0-docker-image
   - build-run-rats-docker-image
   - build-run-cf-release-unit-tests-docker-image
@@ -310,12 +309,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/record-compatible-versions/Dockerfile]
-- name: runtime-ci-request-pm-input
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/request-pm-input/Dockerfile]
 - name: runtime-ci-run-bosh-cleanup-1.0
   type: git
   source:
@@ -706,13 +699,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/record-compatible-versions
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: request-pm-input-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/request-pm-input
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1497,24 +1483,6 @@ jobs:
     - put: record-compatible-versions-pipeline-image
       params:
         build: runtime-ci-record-compatible-versions/scripts/ci/record-compatible-versions
-        push: true
-- name: build-request-pm-input-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-request-pm-input
-        trigger: true
-    - put: request-pm-input-pipeline-image
-      params:
-        build: runtime-ci-request-pm-input/scripts/ci/request-pm-input
         push: true
 - name: build-run-bosh-cleanup-1.0-docker-image
   public: true
