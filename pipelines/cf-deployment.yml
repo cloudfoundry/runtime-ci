@@ -150,6 +150,7 @@ groups:
   - bless-manifest
 - name: tr
   jobs:
+  - transition-release-pool-manual
   - ensure-transition-env-is-clean
   - legacy-deploy
   - transition-acquire-pool
@@ -1331,6 +1332,15 @@ jobs:
     try:
       put: lite-pool
       params: {release: lite-pool}
+
+- name: transition-release-pool-manual
+  public: true
+  plan:
+  - get: transition-pool
+  ensure:
+    try:
+      put: transition-pool
+      params: {release: transition-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
