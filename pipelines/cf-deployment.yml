@@ -1142,7 +1142,6 @@ jobs:
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
       - bbl-state: minerva-env-director-state
-      - cf-deployment: cf-deployment-release-candidate
       - vars-store: minerva-env-stubs-and-vars
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
