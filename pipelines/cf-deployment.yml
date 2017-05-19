@@ -393,7 +393,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: git@github.com:cloudfoundry/cf-deployment-transition.git
+    uri: https://github.com/cloudfoundry/cf-deployment-transition.git
 - name: cf-deployment-transition-compatability
   type: git
   source:
