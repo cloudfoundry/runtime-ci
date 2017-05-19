@@ -63,8 +63,6 @@ release_notes_body="**Contents**
   - [nats-release vNN](https://github.com/cloudfoundry/nats-release/releases/tag/vNN)
 - Postgres:
   - [postgres-release vPP](https://github.com/cloudfoundry/postgres-release/releases/tag/vPP)
-- DEA-Warden-HM9000:
-  - Not yet updated.
 
 ## <a name='${tag}-compatible-releases-and-stemcells'></a>Compatible Releases and Stemcells
 - diego-release:
