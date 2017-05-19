@@ -1158,8 +1158,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES:
-        - "cfr-to-cfd.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
