@@ -1001,7 +1001,7 @@ jobs:
       inputs:
       - name: cf-deployment-transition
       run:
-        path: cf-deployment-transition/test-suite.sh
+        path: cf-deployment-transition/test/test-suite.sh
 
 - name: transition-acquire-pool
   public: true
