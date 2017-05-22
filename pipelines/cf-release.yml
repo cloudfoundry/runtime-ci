@@ -808,6 +808,11 @@ jobs:
     - task: create-bosh-lite-creds
       tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
+    - task: write-target-file
+      tags: [ bosh-lite-aws ]
+      file: runtime-ci/scripts/ci/write-target-file/task.yml
+      params:
+        TARGET: {{bosh_lite_elastic_ip}}
     - task: run-errand-acceptance-tests
       tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
@@ -816,9 +821,7 @@ jobs:
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
         DEPLOYMENT_NAME: cf-warden
-        ERRAND_NAME: acceptance-tests
-      input_mapping:
-        target-file-dir: bosh-lite-target-file
+        ERRAND_NAME: acceptance_tests
     - put: acceptance-test-metadata
       tags: [ bosh-lite-aws ]
     - task: write-build-url
