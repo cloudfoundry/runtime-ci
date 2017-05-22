@@ -67,33 +67,4 @@ jobs:
     release: cf
   instances: 1
   lifecycle: errand
-
-properties:
-  acceptance_tests:
-    admin_password: admin
-    admin_user: admin
-    api: api.bosh-lite.runtime-ci.cf-app.com
-    apps_domain: bosh-lite.runtime-ci.cf-app.com
-    backend: diego
-    client_secret: gorouter-secret
-    include_backend_compatibility: true
-    include_internet_dependent: true
-    include_diego_docker: true
-    include_diego_ssh: true
-    include_route_services: true
-    include_security_groups: true
-    include_services: true
-    include_tasks: true
-    include_v3: false
-    include_sso: true
-    include_privileged_container_support: true
-    nodes: 4
-    skip_diego_unsupported_tests: false
-    system_domain: bosh-lite.runtime-ci.cf-app.com
-    use_http: true
-    skip_ssl_validation: true
-    persistent_app_host: CATS-persistent-app-diego
-    persistent_app_space: CATS-persistent-space-diego
-    persistent_app_quota_name: CATS-persistent-quota-diego
-    persistent_app_org: CATS-persistent-org-diego
 EOF
