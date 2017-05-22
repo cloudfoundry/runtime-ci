@@ -304,14 +304,6 @@ resources:
     deployment: cf-warden
     ignore_ssl: true
 
-- name: bosh-lite-diego-cats-deployment
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: bosh-lite-diego-cats
-    ignore_ssl: true
-
 - name: bosh-lite-deployment-diego
   type: bosh-deployment
   source:
@@ -813,27 +805,6 @@ jobs:
       params:
         CF_USER: {{bosh_lite_cf_user}}
         CF_PASSWORD: {{bosh_lite_cf_password}}
-    - task: write-target-file-bosh
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-      output_mapping:
-        target-file-dir: bosh-lite-target-file
-    - task: create-bosh-lite-diego-cats-manifest
-      file: runtime-ci/scripts/ci/create-bosh-lite-diego-cats-manifest/task.yml
-      input_mapping:
-        cf-manifest: cf-bosh-lite-manifest
-      tags:
-      - bosh-lite-aws
-    - put: bosh-lite-diego-cats-deployment
-      params:
-        manifest: bosh-lite-diego-cats-manifest/manifest.yml
-        releases: []
-        stemcells: []
-        target_file: bosh-lite-target-file/target
-      tags:
-      - bosh-lite-aws
     - task: create-bosh-lite-creds
       tags: [ bosh-lite-aws ]
       file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
@@ -844,8 +815,8 @@ jobs:
         BOSH_TARGET_FILE: target
         BOSH_USER_FILE: bosh-user-file-dir/username
         BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-        DEPLOYMENT_NAME: bosh-lite-diego-cats
-        ERRAND_NAME: diego-cats
+        DEPLOYMENT_NAME: cf-warden
+        ERRAND_NAME: acceptance-tests
       input_mapping:
         target-file-dir: bosh-lite-target-file
     - put: acceptance-test-metadata
