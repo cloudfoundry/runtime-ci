@@ -53,8 +53,6 @@ release_notes_body="**Contents**
   - [binary-buildpack vBB](https://github.com/cloudfoundry/binary-buildpack/releases/tag/vBB)
 - .Net Core Buildpack:
   - [dotnet-core-buildpack vDD](https://github.com/cloudfoundry/dotnet-core-buildpack/releases/tag/vDD)
-- Stacks:
-  - [stacks vSS](https://github.com/cloudfoundry/stacks/releases/tag/vSS)
 - Consul:
   - [consul-release vCC](https://github.com/cloudfoundry-incubator/consul-release/releases/tag/vCC)
 - Etcd:
