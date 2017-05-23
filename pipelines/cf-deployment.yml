@@ -480,6 +480,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/postgres-release
+- name: cf-networking-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/cf-networking-release
 - name: cf-mysql-release
   type: bosh-io-release
   source:
@@ -2265,6 +2269,48 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-postgres.yml
       OPS_FILE_DESTINATION: operations/use-postgres.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-release-cf-networking
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-networking-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+  - task: update-release-cf-networking
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-networking-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-networking
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-cf-networking.yml
+      UPDATED_OPS_FILE_PATH: use-cf-networking.yml
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-cf-networking.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-cf-networking.yml
   - put: cf-deployment-develop
     params:
       rebase: true
