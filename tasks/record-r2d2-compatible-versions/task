@@ -3,9 +3,6 @@
 set -exu
 
 get_row() {
-  local cf_release_version, diego_release_version, cflinuxfs2_release_version, \
-    garden_runc_release_version, cf_deployment_sha, cf_deployment_transition_sha
-
   cf_release_version=$(cd cf-release; cat version)
   diego_release_version=$(cd diego-release; cat version)
   cflinuxfs2_release_version=$(cd cflinuxfs2-release; cat version)
