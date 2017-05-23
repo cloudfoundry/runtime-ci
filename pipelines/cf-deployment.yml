@@ -27,6 +27,8 @@ groups:
 - name: releases
   jobs:
   - update-release-capi
+  - update-release-cf-networking
+  - update-release-grootfs
   - update-release-postgres
   - update-release-mysql
   - update-releases
