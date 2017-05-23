@@ -1,3 +1,0 @@
-#!/bin/bash -exu
-
-jq -n --arg version $(cat cf-cli/version) '{version: $version}' > cf-cli-version/version.json
