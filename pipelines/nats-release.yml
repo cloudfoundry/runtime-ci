@@ -265,6 +265,10 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: myrtle-env-bbl-state
 
 - name: cf-acceptance-tests
   serial_groups: [myrtle]
