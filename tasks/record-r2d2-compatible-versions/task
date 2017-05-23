@@ -2,7 +2,10 @@
 
 set -exu
 
-function get_row() {
+get_row() {
+  local cf_release_version, diego_release_version, cflinuxfs2_release_version, \
+    garden_runc_release_version, cf_deployment_sha, cf_deployment_transition_sha
+
   cf_release_version=$(cd cf-release; cat version)
   diego_release_version=$(cd diego-release; cat version)
   cflinuxfs2_release_version=$(cd cflinuxfs2-release; cat version)
@@ -10,32 +13,32 @@ function get_row() {
   cf_deployment_sha=$(cd cf-deployment; git rev-parse HEAD)
   cf_deployment_transition_sha=$(cd cf-deployment-transition; git rev-parse HEAD)
 
-  new_row="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha}"
-  echo "${new_row}"
+  export NEW_ROW="${cf_release_version},${diego_release_version},\
+    ${cflinuxfs2_release_version},${garden_runc_release_version},\
+    ${cf_deployment_sha},${cf_deployment_transition_sha}"
 }
 
-function commit_compatibility_and_move_to_output() {
-  local new_row
-  new_row="$1"
-  if grep "$new_row" "cf-deployment-transition-compatibility/$COMPATIBILITY_FILE"; then
+commit_compatibility_and_move_to_output() {
+  if [ grep "${NEW_ROW}" "cf-deployment-transition-compatibility/$COMPATIBILITY_FILE" 2> /dev/null ]; then
     echo "No changes to be made"
   else
     pushd cf-deployment-transition-compatibility > /dev/null
       local header
       header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha"
+
       if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
         echo "${header}" > $COMPATIBILITY_FILE
       fi
 
-      # Ensure the first line is always the header
-      sed -i '1 s/.*/$header/' $COMPATIBILITY_FILE
+      # Upsert the current `header`
+      sed -i "1 s/.*/${header}/" "${COMPATIBILITY_FILE}"
 
-      echo "${new_row}" >> "$COMPATIBILITY_FILE"
+      echo "${NEW_ROW}" >> "${COMPATIBILITY_FILE}"
 
       git config user.email "cf-release-integration@pivotal.io"
-      git config user.name "CI (automated)"
+      git config user.name  "CI (automated)"
 
-      git add "$COMPATIBILITY_FILE"
+      git add "${COMPATIBILITY_FILE}"
       git commit -m "Update ${COMPATIBILITY_FILE}"
     popd > /dev/null
   fi
@@ -43,11 +46,10 @@ function commit_compatibility_and_move_to_output() {
   git clone cf-deployment-transition-compatibility updated-r2d2-compatibility
 }
 
-function main() {
-  local new_row
-  new_row=$(get_row)
-
-  commit_compatibility_and_move_to_output $new_row
+main() {
+  get_row
+  commit_compatibility_and_move_to_output
+  unset NEW_ROW
 }
 
 main
