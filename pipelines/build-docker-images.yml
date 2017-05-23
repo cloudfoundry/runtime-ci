@@ -465,7 +465,7 @@ resources:
 - name: terraform-github-release
   type: github-release
   source:
-    owner: hashicorp
+    user: hashicorp
     repository: terraform
     access_token: {{release_integration_download_bot_access_token}}
 
@@ -976,11 +976,13 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
+      - get: runtime-ci
       - get: weekly
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
       - get: cf-deployment-concourse-tasks-docker-image-version
+      - get: runtime-ci-create-version-json
       - get: terraform-github-release
         trigger: true
     - put: create-version-json-pipeline-image
@@ -997,6 +999,7 @@ jobs:
         tag: cf-deployment-concourse-tasks-docker-image-version/version
         tag_prefix: v
         push: true
+        build_args_file: version-json/version.json
 - name: build-bosh-deploy-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1879,7 +1882,6 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: runtime-ci-create-version-json
-        trigger: true
       - get: weekly
         trigger: true
       - get: cats-concourse-task
