@@ -93,7 +93,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v2.*
+    tag_filter: v3.*
 - name: runtime-ci
   type: git
   source:
@@ -248,6 +248,7 @@ jobs:
       release: nats-release
       ops-files: cf-deployment-master
       vars-store: myrtle-env-vars-store
+      vars-files: myrtle-env-vars-store
     params:
       SYSTEM_DOMAIN: myrtle.cf-app.com
     ensure:
