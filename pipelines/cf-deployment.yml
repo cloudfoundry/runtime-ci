@@ -1567,6 +1567,7 @@ jobs:
         cflinuxfs2-release: legacy-cflinuxfs2-release
         garden-runc-release: legacy-garden-runc-release
         cf-deployment: cf-deployment-release-candidate
+        cf-deployment-transition-compatibility: cf-deployment-transition-compatability
     - put: cf-deployment-transition-compatability
       params:
         repository: updated-r2d2-compatibility
