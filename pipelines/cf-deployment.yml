@@ -388,8 +388,6 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: {{cf_deployment_private_key}}
-    ignore_paths:
-    - transition/*
 - name: cf-deployment-transition
   type: git
   source:
