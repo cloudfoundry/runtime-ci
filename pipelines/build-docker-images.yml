@@ -7,6 +7,7 @@ groups:
   - build-cats-concourse-task-docker-image
 - name: runtime-ci-common-images
   jobs:
+  - build-relint-base-docker-image
   - build-bosh-cli-docker-image
   - build-bosh-and-spiff-docker-image
 - name: build-docker-images
@@ -441,12 +442,20 @@ resources:
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
     paths: [Dockerfile]
 
+- name: runtime-ci-relint-base
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [dockerfiles/relint-base/Dockerfile]
+
 - name: runtime-ci-bosh-cli
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
+
 
 - name: runtime-ci-bosh-and-spiff
   type: git
@@ -467,6 +476,13 @@ resources:
   source:
     user: hashicorp
     repository: terraform
+    access_token: {{release_integration_download_bot_access_token}}
+
+- name: bbl-github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: bosh-bootloader
     access_token: {{release_integration_download_bot_access_token}}
 
   # All the docker images
@@ -874,6 +890,13 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+- name: relint-base-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: bosh-cli-image
   type: docker-image
   source:
@@ -969,6 +992,24 @@ jobs:
       params:
         build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
         push: true
+
+- name: ensure-major-bbl-release
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: bbl-github-release
+        trigger: true
+    - task: ensure-major-bbl-release
+      file: runtime-ci/tasks/ensure-resource-major-version/task.yml
+      input_mapping:
+        release: bbl-github-release
+      params:
+        CURRENT_MAJOR_VERSION: 3
+
 - name: build-cf-deployment-concourse-tasks-docker-image
   public: true
   build_logs_to_retain: 100
@@ -989,6 +1030,9 @@ jobs:
       - get: runtime-ci-create-version-json
       - get: terraform-github-release
         trigger: true
+     # - get: bbl-github-release
+     #   passed: [ ensure-major-bbl-release ]
+     #   trigger: true
     - put: create-version-json-pipeline-image
       params:
         build: runtime-ci-create-version-json/scripts/ci/create-version-json
@@ -1002,6 +1046,7 @@ jobs:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
         push: true
         build_args_file: version-json/version.json
+
 - name: build-bosh-deploy-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1904,6 +1949,24 @@ jobs:
         push: true
         build_args_file: version-json/version.json
     timeout: 4h
+
+- name: build-relint-base-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: runtime-ci-relint-base
+        trigger: true
+    - put: relint-base-image
+      params:
+        build: runtime-ci-relint-base/dockerfiles/relint-base/
+        push: true
+
+
 - name: build-bosh-cli-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1919,6 +1982,7 @@ jobs:
       params:
         build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
+
 - name: build-bosh-and-spiff-docker-image
   public: true
   build_logs_to_retain: 100
