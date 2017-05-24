@@ -981,6 +981,10 @@ jobs:
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
+      # We aren't using cf-deployment-concourse-tasks-docker-image-version
+      # but we want to keep it here for use in a future workflow
+      # where we semantically version the docker image, so we need to `get`
+      # the resource somewhere or concourse will complain.
       - get: cf-deployment-concourse-tasks-docker-image-version
       - get: runtime-ci-create-version-json
       - get: terraform-github-release
@@ -996,8 +1000,6 @@ jobs:
     - put: cf-deployment-concourse-tasks-pipeline-image
       params:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
-        tag: cf-deployment-concourse-tasks-docker-image-version/version
-        tag_prefix: v
         push: true
         build_args_file: version-json/version.json
 - name: build-bosh-deploy-docker-image
