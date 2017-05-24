@@ -14,7 +14,7 @@ get_row() {
 }
 
 commit_compatibility_and_move_to_output() {
-  if [ grep "${NEW_ROW}" "cf-deployment-transition-compatibility/$COMPATIBILITY_FILE" 2> /dev/null ]; then
+  if grep -q "${NEW_ROW}" "cf-deployment-transition-compatibility/$COMPATIBILITY_FILE"; then
     echo "No changes to be made"
   else
     pushd cf-deployment-transition-compatibility > /dev/null
