@@ -31,6 +31,7 @@ groups:
   - update-release-grootfs
   - update-release-postgres
   - update-release-mysql
+  - update-release-stemcell
   - update-releases
   - update-releases-windows
 - name: dev
@@ -2364,6 +2365,29 @@ jobs:
       rebase: true
       repository: updated-repo
 
+- name: update-release-stemcell
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: stemcell
+      passed: [ update-releases ]
+      trigger: true
+      params:
+        tarball: false
+  - task: bosh-upload-stemcell-compilation
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+      bbl-state: greengrass-env-director-state
+    params:
+      INFRASTRUCTURE: google
+
 - name: update-release-capi
   serial: true
   public: true
@@ -2375,10 +2399,10 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: stemcell
+      passed: [ update-release-stemcell ]
       trigger: true
       params:
         tarball: false
-      passed: [ update-releases ]
     - get: capi-release
       trigger: true
       params:
@@ -2398,13 +2422,6 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: bosh-upload-stemcell-compilation
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-      bbl-state: greengrass-env-director-state
-    params:
-      INFRASTRUCTURE: google
   - task: deploy-for-compilation
     file: runtime-ci/tasks/deploy-for-compilation/task.yml
     input_mapping:
@@ -2459,10 +2476,10 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: stemcell
+      passed: [ update-release-stemcell ]
       trigger: true
       params:
         tarball: false
-      passed: [ update-releases ]
     - get: cf-mysql-release
       trigger: true
       params:
@@ -2482,13 +2499,6 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: bosh-upload-stemcell-compilation
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-      bbl-state: greengrass-env-director-state
-    params:
-      INFRASTRUCTURE: google
   - task: deploy-for-compilation
     file: runtime-ci/tasks/deploy-for-compilation/task.yml
     input_mapping:
