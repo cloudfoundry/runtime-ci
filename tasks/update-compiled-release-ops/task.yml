@@ -11,6 +11,7 @@ inputs:
 - name: runtime-ci
 - name: bosh-io-release
 - name: compiled-release-tarball
+- name: stemcell
 
 outputs:
 - name: updated-compiled-releases-ops-file

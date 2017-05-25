@@ -26,6 +26,8 @@ function update_release() {
   popd
   local release_version
   release_version=$(cat bosh-io-release/version)
+  local stemcell_version
+  stemcell_version=$(cat stemcell/version)
 
   update_release_ops_file=$(mktemp)
 (
@@ -42,7 +44,7 @@ cat << EOF
   value:
     type: replace
     path: /releases/name=${release_name}/version
-    value: "${release_version}"
+    value: "${release_version}+${stemcell_version}"
 - type: replace
   path: /path=~1releases~1name=${release_name}~1sha1
   value:
