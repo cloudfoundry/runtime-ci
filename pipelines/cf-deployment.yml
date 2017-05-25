@@ -1808,6 +1808,7 @@ jobs:
         trigger: true
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
+      attempts: 10
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: snitch-env-vars-store
