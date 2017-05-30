@@ -9,7 +9,6 @@ image_resource:
 inputs:
 - name: bbl-state
 - name: cf-deployment
-- name: cf-deployment-concourse-tasks
 - name: ops-files
 - name: vars-files
 - name: runtime-ci

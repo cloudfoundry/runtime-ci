@@ -2,7 +2,7 @@
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source cf-deployment-concourse-tasks/shared-functions
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function bosh_update_runtime_config {
   bosh \
