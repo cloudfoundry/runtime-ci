@@ -1284,17 +1284,28 @@ jobs:
       bbl-state: trelawney-env-director-state
     params:
       INFRASTRUCTURE: google
-  - task: bosh-dry-run-with-ops-cf
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: trelawney-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-      vars-files: trelawney-env-director-state
-    params:
-      SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-cf-networking.yml"
-
+  - aggregate:
+    - task: bosh-dry-run-with-ops-cf-internal-persistence
+      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+      input_mapping:
+        bbl-state: trelawney-env-director-state
+        cf-deployment: cf-deployment-develop
+        ops-files: cf-deployment-develop
+        vars-files: cf-deployment-develop
+      params:
+        SYSTEM_DOMAIN: trelawney.cf-app.com
+        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-cf-networking.yml"
+    - task: bosh-dry-run-with-ops-cf-external-persistence
+      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+      input_mapping:
+        bbl-state: trelawney-env-director-state
+        cf-deployment: cf-deployment-develop
+        ops-files: cf-deployment-develop
+        vars-files: cf-deployment-develop
+      params:
+        SYSTEM_DOMAIN: trelawney.cf-app.com
+        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/locket-postgres.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml"
+        VARS_FILES: "operations/example-vars-files/vars-file-use-s3-blobstore.yml operations/example-vars-files/vars-file-use-external-dbs.yml operations/example-vars-files/vars-file-use-external-cf-networking-dbs.yml"
 - name: upgrade-acquire-pool
   public: true
   serial: true
