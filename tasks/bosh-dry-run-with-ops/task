@@ -13,7 +13,7 @@ function create_dry_run_opsfile() {
 ---
 - type: replace
   path: /name
-  value: cf-dry-run
+  value: cf-dry-run-${DEPLOYMENT_NAME_SUFFIX}
 
 - type: replace
   path: /stemcells/alias=default/version
