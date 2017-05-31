@@ -747,6 +747,14 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-bbl-state
+    params:
+      AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      DOMAIN: dumbledore.cf-app.com
   - put: complex-pool
     params: {release: complex-pool}
 
