@@ -39,6 +39,7 @@ groups:
   - add-claimed-lock-fresh
   - add-claimed-lock-lite
   - add-claimed-lock-transition
+  - add-claimed-lock-complex
   - add-claimed-lock-upgrade
   - bless-manifest
   - branch-freshness
@@ -47,6 +48,7 @@ groups:
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
   - destroy-infrastructure-transition
+  - destroy-infrastructure-complex
   - destroy-infrastructure-upgrade
   - ensure-transition-env-is-clean
   - fresh-acquire-pool
@@ -64,6 +66,7 @@ groups:
   - lite-release-pool
   - lite-release-pool-manual
   - ops-test
+  - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
   - remove-claimed-lock-transition
@@ -74,6 +77,7 @@ groups:
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-transition
+  - setup-infrastructure-complex
   - setup-infrastructure-upgrade
   - ship-it-minor
   - ship-it-patch
@@ -100,20 +104,24 @@ groups:
   jobs:
   - add-claimed-lock-fresh
   - add-claimed-lock-upgrade
+  - add-claimed-lock-complex
   - add-claimed-lock-lite
   - setup-infrastructure-compile
   - setup-infrastructure-fresh
   - add-claimed-lock-transition
   - setup-infrastructure-transition
+  - setup-infrastructure-complex
   - setup-infrastructure-lite
   - setup-infrastructure-ops
   - setup-infrastructure-upgrade
   - destroy-infrastructure-compile
   - destroy-infrastructure-fresh
   - destroy-infrastructure-transition
+  - destroy-infrastructure-complex
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
   - destroy-infrastructure-upgrade
+  - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
   - remove-claimed-lock-transition
@@ -241,6 +249,13 @@ resources:
     pool: cf-deployment/upgrade
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
 
+- name: complex-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/complex
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
 - name: transition-pool
   type: pool
   source:
@@ -305,7 +320,14 @@ resources:
     private_key: {{minerva_env_readwrite_deploy_key}}
     paths:
     - bbl-state.json
-    - google_account_creds.json
+- name: dumbledore-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    # paths:
+    # - bbl-state.json
 - name: greengrass-env-director-state
   type: git
   source:
@@ -680,6 +702,53 @@ jobs:
         rebase: true
   - put: transition-pool
     params: {release: transition-pool}
+
+- name: add-claimed-lock-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: complex-pool
+  - put: complex-pool
+    params: {add_claimed: complex-pool}
+
+- name: setup-infrastructure-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: dumbledore-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - get: complex-pool
+      trigger: true
+      passed: [ add-claimed-lock-complex ]
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+      BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+      BBL_ENV_NAME: dumbledore-upgrade
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: complex-pool
+    params: {release: complex-pool}
 
 - name: add-claimed-lock-fresh
   serial: true
@@ -1952,6 +2021,31 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-complex
+  serial_groups: [dumbledore]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: complex-pool
+      params: {claim: dumbledore}
+    - get: dumbledore-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
 - name: destroy-infrastructure-compile
   serial: true
   public: true
@@ -1999,6 +2093,25 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+
+- name: remove-claimed-lock-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: complex-pool
+    passed: [ destroy-infrastructure-complex ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: complex-pool
+  - put: complex-pool
+    params: {remove: complex-pool}
+
 
 - name: remove-claimed-lock-fresh
   serial: true
