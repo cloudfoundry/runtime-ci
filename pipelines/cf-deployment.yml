@@ -1382,7 +1382,7 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/use-postgres.yml operations/experimental/use-cf-networking.yml operations/experimental/use-cf-networking-postgres.yml"
+        OPS_FILES: "operations/experimental/use-cf-networking.yml operations/use-postgres.yml operations/experimental/use-cf-networking-postgres.yml"
         DEPLOYMENT_NAME_SUFFIX: cf-networking
     - task: bosh-dry-run-with-ops-cf-external-persistence
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
