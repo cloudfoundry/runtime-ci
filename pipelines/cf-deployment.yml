@@ -2,6 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
+  - complex-deploy
   - fresh-deploy
   - lite-deploy
   - transition-deploy
@@ -83,6 +84,7 @@ groups:
   - ship-it-minor
   - ship-it-patch
   - complex-acquire-pool
+  - complex-deploy
   - transition-acquire-pool
   - transition-cats
   - transition-delete-deployment
@@ -166,6 +168,11 @@ groups:
   - bless-manifest
 - name: tr
   jobs:
+  - ensure-complex-env-is-clean
+  - complex-legacy-deploy
+  - complex-acquire-pool
+  - complex-deploy
+
   - transition-release-pool-manual
   - ensure-transition-env-is-clean
   - legacy-deploy
@@ -321,10 +328,10 @@ resources:
     private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
     - stubs/*
-   # - deployment-vars.yml
-   # - integration_config.json
-   # - s3-vars.yml
-   # - rds-vars.yml
+    - deployment-vars.yml
+    - integration_config.json
+    - s3-vars.yml
+    - rds-vars.yml
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -1247,7 +1254,7 @@ jobs:
         stubs-repo: dumbledore-env-stubs-and-vars
       params:
         INFRASTRUCTURE: aws
-        STUBS_PATH: stubs/cf/cf-stub.yml
+        STUBS_PATH: transition/stubs/cf/cf-stub.yml
       output_mapping:
         manifest: cf-manifest
     - task: create-diego-manifest
@@ -1259,14 +1266,14 @@ jobs:
       output_mapping:
         generated-diego-manifest: diego-manifest
       params:
-        IAAS_SETTINGS_PATH: stubs/diego/iaas-settings.yml
-        PROPERTY_OVERRIDES_PATH: stubs/diego/property-overrides.yml
-        INSTANCE_COUNT_OVERRIDES_PATH: stubs/diego/instance-count-overrides.yml
-        RELEASE_VERSIONS_PATH: stubs/diego/release-versions.yml
-        CF_NETWORKING_OVERRIDES_PATH: stubs/diego/cf-networking.yml
+        IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
+        PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
+        INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
+        RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+        CF_NETWORKING_OVERRIDES_PATH: transition/stubs/diego/cf-networking.yml
         USE_ETCD: false
         USE_MYSQL: true
-        DIEGO_MYSQL_OVERRIDES_PATH: stubs/diego/rds-overrides.yml
+        DIEGO_MYSQL_OVERRIDES_PATH: transition/stubs/diego/rds-overrides.yml
         USE_GROOTFS: true
     - put: complex-legacy-cf-bosh-deployment
       params:
@@ -1359,6 +1366,89 @@ jobs:
         bbl-state: minerva-env-director-state
       params:
         ERRAND_NAME: smoke_tests
+
+- name: complex-deploy
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-stubs-and-vars
+      - get: dumbledore-env-director-state
+      # to test I'm pulling from develop for now but this really needs to be cf-d develop
+      - get: cf-deployment-develop
+        output_mapping:
+          cf-deployment-develop: cf-deployment-develop
+      # - get: cf-deployment-release-candidate
+      #   passed: [ bless-manifest ]
+      - get: complex-pool
+        passed: [ complex-legacy-deploy ]
+        trigger: true
+      - get: legacy-cf-release
+        passed: [ complex-legacy-deploy ]
+      - get: legacy-diego-release
+        passed: [ complex-legacy-deploy ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ complex-legacy-deploy ]
+      - get: legacy-garden-runc-release
+        passed: [ complex-legacy-deploy ]
+      - get: legacy-cf-networking-release
+        passed: [ complex-legacy-deploy ]
+      - get: legacy-grootfs-release
+        passed: [ complex-legacy-deploy ]
+      - get: cf-deployment-transition
+    - task: extract-vars-store
+      file: runtime-ci/tasks/r2d2/task.yml
+      input_mapping:
+      - bbl-state: dumbledore-env-director-state
+      - vars-store: dumbledore-env-stubs-and-vars
+      params:
+        EXTRACT_CF_NETWORKING: true
+    - task: bosh-upload-stemcell
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-develop
+        bbl-state: dumbledore-env-director-state
+      params:
+        INFRASTRUCTURE: aws
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-develop
+        new-ops-files: cf-deployment-transition
+      params:
+        BASE_OPS_FILE_DIR: "operations"
+        NEW_OPS_FILES: "cfr-to-cfd.yml"
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+        cf-deployment: cf-deployment-develop
+        ops-files: collected-ops-files
+        vars-store: extracted-vars-store
+        vars-files: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+        OPS_FILES: "operations/aws.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml"
+        VARS_FILES: "rds-vars.yml s3-vars.yml"
+      ensure:
+        put: dumbledore-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: delete-rump-diego
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        DEPLOYMENT_NAME: cf-diego
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: dumbledore-env-stubs-and-vars
 
 - name: transition-deploy
   public: true
