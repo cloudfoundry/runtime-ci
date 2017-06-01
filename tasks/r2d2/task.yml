@@ -17,3 +17,6 @@ outputs:
 
 run:
   path: runtime-ci/tasks/r2d2/task
+
+params:
+  EXTRACT_CF_NETWORKING: false

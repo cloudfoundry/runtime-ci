@@ -16,6 +16,7 @@ function extract_vars() {
     ../cf-deployment-transition/transition.sh \
     -cf cf.yml \
     -d diego.yml \
+    $([ "${EXTRACT_CF_NETWORKING}" == "true" ] && echo "-N") \
     -ca transition/ca-keys-stub.yml
   popd
 }
