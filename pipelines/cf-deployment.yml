@@ -1378,12 +1378,8 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-stubs-and-vars
       - get: dumbledore-env-director-state
-      # to test I'm pulling from develop for now but this really needs to be cf-d develop
-      - get: cf-deployment-develop
-        output_mapping:
-          cf-deployment-develop: cf-deployment-develop
-      # - get: cf-deployment-release-candidate
-      #   passed: [ bless-manifest ]
+      - get: cf-deployment-release-candidate
+        passed: [ bless-manifest ]
       - get: complex-pool
         passed: [ complex-legacy-deploy ]
         trigger: true
