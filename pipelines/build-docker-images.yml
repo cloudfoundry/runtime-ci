@@ -57,7 +57,6 @@ groups:
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-commit-generated-manifest-docker-image
-  - build-recreate-database-docker-image
   - build-create-final-release-bucket-docker-image
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
@@ -400,13 +399,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release-bucket/Dockerfile]
-
-- name: runtime-ci-recreate-database
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/recreate-database/Dockerfile]
 
 - name: runtime-ci-write-build-url
   type: git
@@ -823,14 +815,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/commit-generated-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: recreate-database-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/recreate-database
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1808,24 +1792,6 @@ jobs:
     - put: commit-generated-manifest-pipeline-image
       params:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
-        push: true
-
-- name: build-recreate-database-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-recreate-database
-        trigger: true
-    - put: recreate-database-pipeline-image
-      params:
-        build: runtime-ci-recreate-database/scripts/ci/recreate-database
         push: true
 
 - name: build-create-final-release-bucket-docker-image
