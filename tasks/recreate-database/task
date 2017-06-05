@@ -24,10 +24,12 @@ function execute_sql() {
   local cmd
   cmd=${1}
   set +x
-  ssh \
+  &> ssh_output.txt \
+    ssh \
     -i ${bosh_ssh_key} \
+    -o "VerifyHostKeyDNS yes" \
     ${BOSH_GW_USER}@$(get_bosh_gateway_host) \
-    "/var/vcap/packages/mysql/bin/mysql -h ${DB_HOST} -u ${DB_USER} --password=${DB_PASSWORD} -e '${cmd}'" &> ssh_output.txt
+    "/var/vcap/packages/mysql/bin/mysql -h ${DB_HOST} -u ${DB_USER} --password=${DB_PASSWORD} -e '${cmd}'"
 }
 
 function main() {
