@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 run:
-  path: scripts/ci/recreate-database/task
+  path: runtime-ci/scripts/ci/recreate-database/task
 
 params:
   HOST:
