@@ -1222,6 +1222,49 @@ jobs:
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
+    - aggregate:
+      - get: runtime-ci
+        tags: [ bosh-lite-aws ]
+      - task: recreate-uaadb
+        tags: [ bosh-lite-aws ]
+        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        params:
+          HOST: {{dumbledore_uaadb_host}}
+          USER: {{dumbledore_uaadb_user}}
+          PASSWORD: {{dumbledore_uaadb_password}}
+          DB_NAME: {{dumbledore_uaadb_db_name}}
+      - task: recreate-ccdb
+        tags: [ bosh-lite-aws ]
+        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        params:
+          HOST: {{dumbledore_ccdb_host}}
+          USER: {{dumbledore_ccdb_user}}
+          PASSWORD: {{dumbledore_ccdb_password}}
+          DB_NAME: {{dumbledore_ccdb_db_name}}
+      - task: recreate-npdb
+        tags: [ bosh-lite-aws ]
+        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        params:
+          HOST: {{dumbledore_npdb_host}}
+          USER: {{dumbledore_npdb_user}}
+          PASSWORD: {{dumbledore_npdb_password}}
+          DB_NAME: {{dumbledore_npdb_db_name}}
+      - task: recreate-ncdb
+        tags: [ bosh-lite-aws ]
+        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        params:
+          HOST: {{dumbledore_ncdb_host}}
+          USER: {{dumbledore_ncdb_user}}
+          PASSWORD: {{dumbledore_ncdb_password}}
+          DB_NAME: {{dumbledore_ncdb_db_name}}
+      - task: recreate-bbsdb
+        tags: [ bosh-lite-aws ]
+        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        params:
+          HOST: {{dumbledore_bbsdb_host}}
+          USER: {{dumbledore_bbsdb_user}}
+          PASSWORD: {{dumbledore_bbsdb_password}}
+          DB_NAME: {{dumbledore_bbsdb_db_name}}
 
 - name: complex-legacy-deploy
   public: true
@@ -1275,42 +1318,6 @@ jobs:
         USE_MYSQL: true
         DIEGO_MYSQL_OVERRIDES_PATH: transition/stubs/diego/rds-overrides.yml
         USE_GROOTFS: true
-    - aggregate:
-      - task: recreate-uaadb
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
-        params:
-          HOST: {{dumbledore_uaadb_host}}
-          USER: {{dumbledore_uaadb_user}}
-          PASSWORD: {{dumbledore_uaadb_password}}
-          DB_NAME: {{dumbledore_uaadb_db_name}}
-      - task: recreate-ccdb
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
-        params:
-          HOST: {{dumbledore_ccdb_host}}
-          USER: {{dumbledore_ccdb_user}}
-          PASSWORD: {{dumbledore_ccdb_password}}
-          DB_NAME: {{dumbledore_ccdb_db_name}}
-      - task: recreate-npdb
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
-        params:
-          HOST: {{dumbledore_npdb_host}}
-          USER: {{dumbledore_npdb_user}}
-          PASSWORD: {{dumbledore_npdb_password}}
-          DB_NAME: {{dumbledore_npdb_db_name}}
-      - task: recreate-ncdb
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
-        params:
-          HOST: {{dumbledore_ncdb_host}}
-          USER: {{dumbledore_ncdb_user}}
-          PASSWORD: {{dumbledore_ncdb_password}}
-          DB_NAME: {{dumbledore_ncdb_db_name}}
-      - task: recreate-bbsdb
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
-        params:
-          HOST: {{dumbledore_bbsdb_host}}
-          USER: {{dumbledore_bbsdb_user}}
-          PASSWORD: {{dumbledore_bbsdb_password}}
-          DB_NAME: {{dumbledore_bbsdb_db_name}}
     - put: complex-legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
