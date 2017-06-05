@@ -57,7 +57,7 @@ groups:
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-commit-generated-manifest-docker-image
-  - build-drop-all-tables-docker-image
+  - build-recreate-database-docker-image
   - build-create-final-release-bucket-docker-image
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
@@ -401,12 +401,12 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release-bucket/Dockerfile]
 
-- name: runtime-ci-drop-all-tables
+- name: runtime-ci-recreate-database
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/drop-all-tables/Dockerfile]
+    paths: [scripts/ci/recreate-database/Dockerfile]
 
 - name: runtime-ci-write-build-url
   type: git
@@ -827,10 +827,10 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: drop-all-tables-pipeline-image
+- name: recreate-database-pipeline-image
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/drop-all-tables
+    repository: relintdockerhubpushbot/recreate-database
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1810,7 +1810,7 @@ jobs:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
         push: true
 
-- name: build-drop-all-tables-docker-image
+- name: build-recreate-database-docker-image
   public: true
   plan:
   - timeout: 4h
@@ -1821,11 +1821,11 @@ jobs:
       - get: trigger-resource
         trigger: true
         passed: [trigger-all-image-builds]
-      - get: runtime-ci-drop-all-tables
+      - get: runtime-ci-recreate-database
         trigger: true
-    - put: drop-all-tables-pipeline-image
+    - put: recreate-database-pipeline-image
       params:
-        build: runtime-ci-drop-all-tables/scripts/ci/drop-all-tables
+        build: runtime-ci-recreate-database/scripts/ci/recreate-database
         push: true
 
 - name: build-create-final-release-bucket-docker-image

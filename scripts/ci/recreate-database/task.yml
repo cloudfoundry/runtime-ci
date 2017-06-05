@@ -4,12 +4,12 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/drop-all-tables
+    repository: relintdockerhubpushbot/recreate-database
 
 inputs:
 - name: runtime-ci
 run:
-  path: scripts/ci/drop-all-tables/task
+  path: scripts/ci/recreate-database/task
 
 params:
   HOST:

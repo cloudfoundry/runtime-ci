@@ -1,0 +1,23 @@
+#!/bin/bash
+set -eu
+
+function execute_sql() {
+  local cmd
+  cmd=${1}
+  mysql -h ${HOST} -u ${USER} --password=${USER} -e "${cmd}"
+}
+
+function drop_database() {
+  execute_sql "DROP DATABASE ${DB_NAME}"
+}
+
+function create_database() {
+  execute_sql "CREATE DATABASE ${DB_NAME}"
+}
+
+function main() {
+  drop_database
+  create_database
+}
+
+main
