@@ -1278,38 +1278,38 @@ jobs:
     - task: recreate-uaadb
       file: runtime-ci/scripts/ci/recreate-database/task.yml
       params:
-        HOST: {{uaadb_host}}
-        USER: {{uaadb_user}}
-        PASSWORD: {{uaadb_password}}
-        DB_NAME: {{uaadb_db_name}}
+        HOST: {{dumbledore_uaadb_host}}
+        USER: {{dumbledore_uaadb_user}}
+        PASSWORD: {{dumbledore_uaadb_password}}
+        DB_NAME: {{dumbledore_uaadb_db_name}}
     - task: recreate-ccdb
       file: runtime-ci/scripts/ci/recreate-database/task.yml
       params:
-        HOST: {{ccdb_host}}
-        USER: {{ccdb_user}}
-        PASSWORD: {{ccdb_password}}
-        DB_NAME: {{ccdb_db_name}}
+        HOST: {{dumbledore_ccdb_host}}
+        USER: {{dumbledore_ccdb_user}}
+        PASSWORD: {{dumbledore_ccdb_password}}
+        DB_NAME: {{dumbledore_ccdb_db_name}}
     - task: recreate-npdb
       file: runtime-ci/scripts/ci/recreate-database/task.yml
       params:
-        HOST: {{npdb_host}}
-        USER: {{npdb_user}}
-        PASSWORD: {{npdb_password}}
-        DB_NAME: {{npdb_db_name}}
+        HOST: {{dumbledore_npdb_host}}
+        USER: {{dumbledore_npdb_user}}
+        PASSWORD: {{dumbledore_npdb_password}}
+        DB_NAME: {{dumbledore_npdb_db_name}}
     - task: recreate-ncdb
       file: runtime-ci/scripts/ci/recreate-database/task.yml
       params:
-        HOST: {{ncdb_host}}
-        USER: {{ncdb_user}}
-        PASSWORD: {{ncdb_password}}
-        DB_NAME: {{ncdb_db_name}}
+        HOST: {{dumbledore_ncdb_host}}
+        USER: {{dumbledore_ncdb_user}}
+        PASSWORD: {{dumbledore_ncdb_password}}
+        DB_NAME: {{dumbledore_ncdb_db_name}}
     - task: recreate-bbsdb
       file: runtime-ci/scripts/ci/recreate-database/task.yml
       params:
-        HOST: {{bbsdb_host}}
-        USER: {{bbsdb_user}}
-        PASSWORD: {{bbsdb_password}}
-        DB_NAME: {{bbsdb_db_name}}
+        HOST: {{dumbledore_bbsdb_host}}
+        USER: {{dumbledore_bbsdb_user}}
+        PASSWORD: {{dumbledore_bbsdb_password}}
+        DB_NAME: {{dumbledore_bbsdb_db_name}}
     - put: complex-legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
