@@ -4,19 +4,19 @@ set -eu
 function setup_bosh_ssh_key() {
   set +x
   chmod 0600 ${bosh_ssh_key}
-  pushd bbl-state
+  pushd bbl-state > /dev/null
     bbl ssh-key > ${bosh_ssh_key}
-  popd
+  popd > /dev/null
 }
 
 function get_bosh_gateway_host() {
   set +x
   local director_ip_address
-  pushd bbl-state
+  pushd bbl-state > /dev/null
     director_ip_address=$(bbl director-address)
     director_ip_address=${director_ip_address%:25555}
     director_ip_address=${director_ip_address#https://}
-  popd
+  popd > /dev/null
   echo -n ${director_ip_address}
 }
 
