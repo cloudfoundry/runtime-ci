@@ -1222,9 +1222,9 @@ jobs:
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
+    - get: runtime-ci
+      tags: [ bosh-lite-aws ]
     - aggregate:
-      - get: runtime-ci
-        tags: [ bosh-lite-aws ]
       - task: recreate-uaadb
         tags: [ bosh-lite-aws ]
         file: runtime-ci/scripts/ci/recreate-database/task.yml
