@@ -13,7 +13,7 @@ function get_bosh_gateway_host() {
   set +x
   local director_ip_address
   pushd bbl-state
-    director_ip_address=bbl director-address
+    director_ip_address=$(bbl director-address)
     director_ip_address=${director_ip_address%:25555}
     director_ip_address=${director_ip_address#https://}
   popd
