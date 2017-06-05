@@ -1226,6 +1226,8 @@ jobs:
     - aggregate:
       - task: recreate-uaadb
         file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
         params:
           HOST: {{dumbledore_uaadb_host}}
           USER: {{dumbledore_uaadb_user}}
@@ -1233,6 +1235,8 @@ jobs:
           DB_NAME: {{dumbledore_uaadb_db_name}}
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
         params:
           HOST: {{dumbledore_ccdb_host}}
           USER: {{dumbledore_ccdb_user}}
@@ -1240,6 +1244,8 @@ jobs:
           DB_NAME: {{dumbledore_ccdb_db_name}}
       - task: recreate-npdb
         file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
         params:
           HOST: {{dumbledore_npdb_host}}
           USER: {{dumbledore_npdb_user}}
@@ -1247,6 +1253,8 @@ jobs:
           DB_NAME: {{dumbledore_npdb_db_name}}
       - task: recreate-ncdb
         file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
         params:
           HOST: {{dumbledore_ncdb_host}}
           USER: {{dumbledore_ncdb_user}}
@@ -1254,6 +1262,8 @@ jobs:
           DB_NAME: {{dumbledore_ncdb_db_name}}
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
         params:
           HOST: {{dumbledore_bbsdb_host}}
           USER: {{dumbledore_bbsdb_user}}
