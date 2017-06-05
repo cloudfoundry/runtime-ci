@@ -4,15 +4,17 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/recreate-database
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
 - name: runtime-ci
+- name: bbl-state
 run:
-  path: runtime-ci/scripts/ci/recreate-database/task
+  path: runtime-ci/tasks/recreate-database/task
 
 params:
   HOST:
   USER:
   PASSWORD:
   DB_NAME:
+  BOSH_GW_USER: vcap

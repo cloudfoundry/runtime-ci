@@ -1,23 +1,41 @@
 #!/bin/bash
 set -eu
 
+function setup_bosh_ssh_key() {
+  set +x
+  chmod 0600 ${bosh_ssh_key}
+  pushd bbl-state
+    bbl ssh-key > ${bosh_ssh_key}
+  popd
+}
+
+function get_bosh_gateway_host() {
+  set +x
+  local director_ip_address
+  pushd bbl-state
+    director_ip_address=bbl director-address
+    director_ip_address=${director_ip_address%:25555}
+    director_ip_address=${director_ip_address#https://}
+  popd
+  echo -n ${director_ip_address}
+}
+
 function execute_sql() {
   local cmd
   cmd=${1}
-  mysql -h ${HOST} -u ${USER} --password=${USER} -e "${cmd}"
-}
-
-function drop_database() {
-  execute_sql "DROP DATABASE ${DB_NAME}"
-}
-
-function create_database() {
-  execute_sql "CREATE DATABASE ${DB_NAME}"
+  set +x
+  ssh \
+    -i ${bosh_ssh_key} \
+    ${BOSH_GW_USER}@$(get_bosh_gateway_host) \
+    -c "/var/vcap/packages/mysql/bin/mysql -h ${HOST} -u ${USER} --password=${USER} -e '${cmd}'"
 }
 
 function main() {
-  drop_database
-  create_database
+  export bosh_ssh_key=$(mktemp)
+  setup_bosh_ssh_key ${bosh_ssh_key}
+
+  execute_sql "DROP DATABASE ${DB_NAME}"
+  execute_sql "CREATE DATABASE ${DB_NAME}"
 }
 
 main
