@@ -13,8 +13,8 @@ run:
   path: runtime-ci/tasks/recreate-database/task
 
 params:
-  HOST:
-  USER:
-  PASSWORD:
+  DB_HOST:
+  DB_USER:
+  DB_PASSWORD:
   DB_NAME:
   BOSH_GW_USER: vcap

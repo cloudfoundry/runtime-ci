@@ -1229,45 +1229,45 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          HOST: {{dumbledore_uaadb_host}}
-          USER: {{dumbledore_uaadb_user}}
-          PASSWORD: {{dumbledore_uaadb_password}}
+          DB_HOST: {{dumbledore_uaadb_host}}
+          DB_USER: {{dumbledore_uaadb_user}}
+          DB_PASSWORD: {{dumbledore_uaadb_password}}
           DB_NAME: {{dumbledore_uaadb_db_name}}
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          HOST: {{dumbledore_ccdb_host}}
-          USER: {{dumbledore_ccdb_user}}
-          PASSWORD: {{dumbledore_ccdb_password}}
+          DB_HOST: {{dumbledore_ccdb_host}}
+          DB_USER: {{dumbledore_ccdb_user}}
+          DB_PASSWORD: {{dumbledore_ccdb_password}}
           DB_NAME: {{dumbledore_ccdb_db_name}}
       - task: recreate-npdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          HOST: {{dumbledore_npdb_host}}
-          USER: {{dumbledore_npdb_user}}
-          PASSWORD: {{dumbledore_npdb_password}}
+          DB_HOST: {{dumbledore_npdb_host}}
+          DB_USER: {{dumbledore_npdb_user}}
+          DB_PASSWORD: {{dumbledore_npdb_password}}
           DB_NAME: {{dumbledore_npdb_db_name}}
       - task: recreate-ncdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          HOST: {{dumbledore_ncdb_host}}
-          USER: {{dumbledore_ncdb_user}}
-          PASSWORD: {{dumbledore_ncdb_password}}
+          DB_HOST: {{dumbledore_ncdb_host}}
+          DB_USER: {{dumbledore_ncdb_user}}
+          DB_PASSWORD: {{dumbledore_ncdb_password}}
           DB_NAME: {{dumbledore_ncdb_db_name}}
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          HOST: {{dumbledore_bbsdb_host}}
-          USER: {{dumbledore_bbsdb_user}}
-          PASSWORD: {{dumbledore_bbsdb_password}}
+          DB_HOST: {{dumbledore_bbsdb_host}}
+          DB_USER: {{dumbledore_bbsdb_user}}
+          DB_PASSWORD: {{dumbledore_bbsdb_password}}
           DB_NAME: {{dumbledore_bbsdb_db_name}}
 
 - name: complex-legacy-deploy

@@ -27,7 +27,7 @@ function execute_sql() {
   ssh \
     -i ${bosh_ssh_key} \
     ${BOSH_GW_USER}@$(get_bosh_gateway_host) \
-    -c "/var/vcap/packages/mysql/bin/mysql -h ${HOST} -u ${USER} --password=${USER} -e '${cmd}'"
+    "/var/vcap/packages/mysql/bin/mysql -h ${DB_HOST} -u ${DB_USER} --password=${DB_PASSWORD} -e '${cmd}'" &> ssh_output.txt
 }
 
 function main() {
