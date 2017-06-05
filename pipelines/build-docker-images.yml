@@ -57,6 +57,7 @@ groups:
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-create-binaries-manifest-section-docker-image
   - build-commit-generated-manifest-docker-image
+  - build-drop-all-tables-docker-image
   - build-create-final-release-bucket-docker-image
   - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
@@ -399,6 +400,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release-bucket/Dockerfile]
+
+- name: runtime-ci-drop-all-tables
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [scripts/ci/drop-all-tables/Dockerfile]
 
 - name: runtime-ci-write-build-url
   type: git
@@ -815,6 +823,14 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/commit-generated-manifest
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: drop-all-tables-pipeline-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/drop-all-tables
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1792,6 +1808,24 @@ jobs:
     - put: commit-generated-manifest-pipeline-image
       params:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
+        push: true
+
+- name: build-drop-all-tables-docker-image
+  public: true
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly-2
+        trigger: true
+      - get: trigger-resource
+        trigger: true
+        passed: [trigger-all-image-builds]
+      - get: runtime-ci-drop-all-tables
+        trigger: true
+    - put: drop-all-tables-pipeline-image
+      params:
+        build: runtime-ci-drop-all-tables/scripts/ci/drop-all-tables
         push: true
 
 - name: build-create-final-release-bucket-docker-image
