@@ -1208,6 +1208,7 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
+      - get: runtime-ci
       - get: complex-pool
         passed: [ complex-acquire-pool ]
         trigger: true
@@ -1222,44 +1223,37 @@ jobs:
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
-    - get: runtime-ci
-      tags: [ bosh-lite-aws ]
     - aggregate:
       - task: recreate-uaadb
-        tags: [ bosh-lite-aws ]
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        file: runtime-ci/tasks/recreate-database/task.yml
         params:
           HOST: {{dumbledore_uaadb_host}}
           USER: {{dumbledore_uaadb_user}}
           PASSWORD: {{dumbledore_uaadb_password}}
           DB_NAME: {{dumbledore_uaadb_db_name}}
       - task: recreate-ccdb
-        tags: [ bosh-lite-aws ]
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        file: runtime-ci/tasks/recreate-database/task.yml
         params:
           HOST: {{dumbledore_ccdb_host}}
           USER: {{dumbledore_ccdb_user}}
           PASSWORD: {{dumbledore_ccdb_password}}
           DB_NAME: {{dumbledore_ccdb_db_name}}
       - task: recreate-npdb
-        tags: [ bosh-lite-aws ]
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        file: runtime-ci/tasks/recreate-database/task.yml
         params:
           HOST: {{dumbledore_npdb_host}}
           USER: {{dumbledore_npdb_user}}
           PASSWORD: {{dumbledore_npdb_password}}
           DB_NAME: {{dumbledore_npdb_db_name}}
       - task: recreate-ncdb
-        tags: [ bosh-lite-aws ]
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        file: runtime-ci/tasks/recreate-database/task.yml
         params:
           HOST: {{dumbledore_ncdb_host}}
           USER: {{dumbledore_ncdb_user}}
           PASSWORD: {{dumbledore_ncdb_password}}
           DB_NAME: {{dumbledore_ncdb_db_name}}
       - task: recreate-bbsdb
-        tags: [ bosh-lite-aws ]
-        file: runtime-ci/scripts/ci/recreate-database/task.yml
+        file: runtime-ci/tasks/recreate-database/task.yml
         params:
           HOST: {{dumbledore_bbsdb_host}}
           USER: {{dumbledore_bbsdb_user}}
