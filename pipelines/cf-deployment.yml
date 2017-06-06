@@ -1453,14 +1453,14 @@ jobs:
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
-        cf-deployment: cf-deployment-develop
+        cf-deployment: cf-deployment-release-candidate
         bbl-state: dumbledore-env-director-state
       params:
         INFRASTRUCTURE: aws
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
-        base-ops-files: cf-deployment-develop
+        base-ops-files: cf-deployment-release-candidate
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
@@ -1469,7 +1469,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: dumbledore-env-director-state
-        cf-deployment: cf-deployment-develop
+        cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: extracted-vars-store
         vars-files: dumbledore-env-stubs-and-vars
