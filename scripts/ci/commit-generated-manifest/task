@@ -6,16 +6,34 @@ function main() {
   local root_dir
   root_dir="${1}"
 
-  cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
-  cp ./ops-file/"${OPS_FILE_NAME}" ./repo/"${OPS_FILE_DESTINATION}"
+  local copy_manifest
+  copy_manifest=false
+
+  local copy_ops
+  copy_ops=false
+
+  if [ ! -z "${MANIFEST_NAME}" ] && [ ! -z "${MANIFEST_DESTINATION}" ] ; then
+    cp ./manifest/"${MANIFEST_NAME}" ./repo/"${MANIFEST_DESTINATION}"
+    copy_manifest=true
+  fi
+
+  if [ ! -z "${OPS_FILE_NAME}" ] && [ ! -z "${OPS_FILE_DESTINATION}" ]; then
+    cp ./ops-file/"${OPS_FILE_NAME}" ./repo/"${OPS_FILE_DESTINATION}"
+    copy_ops=true
+  fi
 
   pushd repo > /dev/null
     if [[ -n $(git status --porcelain) ]]; then
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
 
-      git add ./"${MANIFEST_DESTINATION}"
-      git add ./"${OPS_FILE_DESTINATION}"
+      if [ copy_manifest = true ]; then
+        git add ./"${MANIFEST_DESTINATION}"
+      fi
+
+      if [ copy_ops = true ]; then
+        git add ./"${OPS_FILE_DESTINATION}"
+      fi
 
       local commit_message
       commit_message=$(cat ${root_dir}/commit-message/${COMMIT_MESSAGE_PATH})
