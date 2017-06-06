@@ -27,11 +27,11 @@ function main() {
       git config user.name "CF MEGA BOT"
       git config user.email "cf-mega@pivotal.io"
 
-      if [ copy_manifest = true ]; then
+      if [ "${copy_manifest}" = true ]; then
         git add ./"${MANIFEST_DESTINATION}"
       fi
 
-      if [ copy_ops = true ]; then
+      if [ "${copy_ops}" = true ]; then
         git add ./"${OPS_FILE_DESTINATION}"
       fi
 
