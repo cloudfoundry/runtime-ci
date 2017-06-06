@@ -2700,8 +2700,6 @@ jobs:
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: README.md # This is a dummy value that we have to pass in for the script to work
-      OPS_FILE_DESTINATION: README.md
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -2740,8 +2738,6 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-postgres.yml
       OPS_FILE_DESTINATION: operations/use-postgres.yml
   - put: cf-deployment-develop
@@ -2782,8 +2778,6 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-grootfs.yml
       OPS_FILE_DESTINATION: operations/experimental/use-grootfs.yml
   - put: cf-deployment-develop
@@ -2824,8 +2818,6 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-cf-networking.yml
       OPS_FILE_DESTINATION: operations/experimental/use-cf-networking.yml
   - put: cf-deployment-develop
@@ -3043,8 +3035,6 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: windows-cell.yml
       OPS_FILE_DESTINATION: operations/windows-cell.yml
   - put: cf-deployment-develop
