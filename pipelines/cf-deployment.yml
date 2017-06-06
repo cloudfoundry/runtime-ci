@@ -327,7 +327,7 @@ resources:
     uri: git@github.com:cloudfoundry/dumbledore-env.git
     private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
-    - stubs/*
+    - transition/stubs/*
     - deployment-vars.yml
     - integration_config.json
     - s3-vars.yml
