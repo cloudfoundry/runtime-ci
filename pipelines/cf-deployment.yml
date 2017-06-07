@@ -792,7 +792,7 @@ jobs:
       trigger: true
       passed: [ add-claimed-lock-complex ]
   - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    file: runtime-ci/tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
