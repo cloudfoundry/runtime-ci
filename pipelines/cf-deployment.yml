@@ -1317,7 +1317,7 @@ jobs:
           DB_HOST: {{dumbledore_routingapidb_address}}
           DB_USER: {{dumbledore_routingapidb_name}}
           DB_PASSWORD: {{dumbledore_routingapidb_password}}
-          DB_NAME: {{dumbledore_routingapidb_db_name}}
+          DB_NAME: {{dumbledore_routingapidbdb_name}}
 
 - name: complex-legacy-deploy
   public: true
