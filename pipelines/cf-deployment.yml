@@ -9,6 +9,7 @@ groups:
   - upgrade-deploy
 
   - lint-cf-deployment-manifest
+  - complex-cats
   - fresh-cats
   - lite-cats
   - transition-cats
@@ -85,6 +86,7 @@ groups:
   - ship-it-patch
   - complex-acquire-pool
   - complex-deploy
+  - complex-cats
   - transition-acquire-pool
   - transition-cats
   - transition-delete-deployment
@@ -172,6 +174,7 @@ groups:
   - complex-legacy-deploy
   - complex-acquire-pool
   - complex-deploy
+  - complex-cats
 
   - transition-release-pool-manual
   - ensure-transition-env-is-clean
@@ -332,6 +335,14 @@ resources:
     - integration_config.json
     - s3-vars.yml
     - rds-vars.yml
+- name: dumbledore-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -1521,6 +1532,18 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: dumbledore-env-stubs-and-vars
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: dumbledore-env-vars-store
+        integration-configs: dumbledore-env-integration-configs
+      ensure:
+        put: dumbledore-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
 
 - name: transition-deploy
   public: true
@@ -1918,6 +1941,46 @@ jobs:
         DD_API_KEY: {{datadog_api_key}}
         METRIC_NAME: time-to-healthy-router
         ENV_NAME: snitch
+
+- name: complex-cats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+      - get: dumbledore-env-stubs-and-vars
+      - get: cf-deployment-release-candidate
+        passed: [ complex-deploy ]
+      - get: cats-concourse-task
+      - get: complex-pool
+        passed: [ complex-deploy ]
+        trigger: true
+      - get: legacy-cf-release
+        passed: [ complex-deploy ]
+      - get: legacy-diego-release
+        passed: [ complex-deploy ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ complex-deploy ]
+      - get: legacy-garden-runc-release
+        passed: [ complex-deploy ]
+      - get: cf-deployment-transition
+        passed: [ complex-deploy ]
+        trigger: true
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+    - task: run-cats
+      input_mapping:
+      - integration-config: dumbledore-env-stubs-and-vars
+      params:
+        NODES: 9
+      file: cats-concourse-task/task.yml
 
 - name: transition-cats
   public: true
