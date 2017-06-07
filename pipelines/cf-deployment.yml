@@ -1202,6 +1202,7 @@ jobs:
           DB_USER: {{minerva_uaadb_user}}
           DB_PASSWORD: {{minerva_uaadb_password}}
           DB_NAME: {{minerva_uaadb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1211,6 +1212,7 @@ jobs:
           DB_USER: {{minerva_ccdb_user}}
           DB_PASSWORD: {{minerva_ccdb_password}}
           DB_NAME: {{minerva_ccdb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1220,6 +1222,7 @@ jobs:
           DB_USER: {{minerva_bbsdb_user}}
           DB_PASSWORD: {{minerva_bbsdb_password}}
           DB_NAME: {{minerva_bbsdb_db_name}}
+          BOSH_GW_USER: vcap
 
 - name: complex-acquire-pool
   public: true
