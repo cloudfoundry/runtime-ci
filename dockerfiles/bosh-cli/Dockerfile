@@ -9,17 +9,17 @@ RUN \
 
 # bbl and dependencies
 RUN \
-  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v2.1.1/bbl-v2.1.1_linux_x86-64 -P /tmp && \
+  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v3.2.3/bbl-v3.2.3_linux_x86-64 -P /tmp && \
   mv /tmp/bbl-* /usr/local/bin/bbl && \
   cd /usr/local/bin && \
-  echo "020e37c53fd9f8370c7d3f3cd69b2607ef814b45 bbl" | sha1sum -c - && \
+  echo "5a9bac2994011439ed2d17aeb67d6316ac638ada bbl" | sha1sum -c - && \
   chmod +x bbl
 
 RUN \
-  wget https://releases.hashicorp.com/terraform/0.8.4/terraform_0.8.4_linux_amd64.zip -P /tmp && \
+  wget https://releases.hashicorp.com/terraform/0.9.7/terraform_0.9.7_linux_amd64.zip -P /tmp && \
   cd /tmp && \
-  echo "190b2d404cc30227f7dec429d1f643d92fce8072 terraform_0.8.4_linux_amd64.zip" | sha1sum -c - && \
-  unzip /tmp/terraform_0.8.4_linux_amd64.zip -d /tmp && \
+  echo "f7d9d2110acccb5b24fec86f2651f3f07af493c9 terraform_0.9.7_linux_amd64.zip" | sha1sum -c - && \
+  unzip /tmp/terraform_0.9.7_linux_amd64.zip -d /tmp && \
   mv /tmp/terraform /usr/local/bin/terraform && \
   cd /usr/local/bin && \
   chmod +x terraform && \
