@@ -1309,6 +1309,15 @@ jobs:
           DB_USER: {{dumbledore_bbsdb_user}}
           DB_PASSWORD: {{dumbledore_bbsdb_password}}
           DB_NAME: {{dumbledore_bbsdb_db_name}}
+      - task: recreate-routingapidb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
+        params:
+          DB_HOST: {{dumbledore_routingapidb_address}}
+          DB_USER: {{dumbledore_routingapidb_name}}
+          DB_PASSWORD: {{dumbledore_routingapidb_password}}
+          DB_NAME: {{dumbledore_routingapidb_db_name}}
 
 - name: complex-legacy-deploy
   public: true
