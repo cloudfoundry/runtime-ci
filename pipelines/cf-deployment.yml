@@ -85,6 +85,7 @@ groups:
   - ship-it-minor
   - ship-it-patch
   - complex-acquire-pool
+  - complex-release-pool-manual
   - complex-deploy
   - complex-cats
   - transition-acquire-pool
@@ -170,6 +171,7 @@ groups:
   - bless-manifest
 - name: tr
   jobs:
+  - complex-release-pool-manual
   - ensure-complex-env-is-clean
   - complex-legacy-deploy
   - complex-acquire-pool
@@ -1807,6 +1809,15 @@ jobs:
     try:
       put: transition-pool
       params: {release: transition-pool}
+
+- name: complex-release-pool-manual
+  public: true
+  plan:
+  - get: complex-pool
+  ensure:
+    try:
+      put: complex-pool
+      params: {release: complex-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
