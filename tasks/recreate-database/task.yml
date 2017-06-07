@@ -17,4 +17,4 @@ params:
   DB_USER:
   DB_PASSWORD:
   DB_NAME:
-  BOSH_GW_USER: vcap
+  BOSH_GW_USER: jumpbox
