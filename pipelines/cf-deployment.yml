@@ -1312,8 +1312,8 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
-          DB_HOST: {{dumbledore_routingapidb_address}}
-          DB_USER: {{dumbledore_routingapidb_name}}
+          DB_HOST: {{dumbledore_routingapidb_host}}
+          DB_USER: {{dumbledore_routingapidb_username}}
           DB_PASSWORD: {{dumbledore_routingapidb_password}}
           DB_NAME: {{dumbledore_routingapidb_name}}
 
