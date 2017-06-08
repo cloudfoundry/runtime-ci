@@ -89,11 +89,10 @@ function main() {
     fi
 
     local domain_flag
-    domain_flag=""
+    domain_flag="--domain=${LB_DOMAIN}"
 
     if [ "${BBL_IAAS}" == "gcp" ]; then
       write_service_account_key
-      domain_flag="--domain=${LB_DOMAIN}"
     fi
 
     local terraform_flag
