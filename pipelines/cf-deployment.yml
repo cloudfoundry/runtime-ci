@@ -1471,6 +1471,7 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-stubs-and-vars
+      - get: dumbledore-env-integration-configs
       - get: dumbledore-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
@@ -1544,7 +1545,7 @@ jobs:
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: dumbledore-env-vars-store
+        vars-store: updated-vars-store
         integration-configs: dumbledore-env-integration-configs
       ensure:
         put: dumbledore-env-integration-configs
