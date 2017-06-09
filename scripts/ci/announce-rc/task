@@ -134,7 +134,7 @@ else
 	echo "Succeeded posting cf-final-release-election issue comment"
 fi
 
-issue_url=$(echo $output | jq .url)
+issue_url=$(echo $output | jq .html_url)
 echo "Hey there <@dsabeti> <@staylor>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/release-integration
 echo "Hey there <@efarrar> <@genevieve>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/infrastructure
 echo "Hey there <@valepert> <@smoser>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/postgres-release
