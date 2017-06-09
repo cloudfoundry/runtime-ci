@@ -5,6 +5,14 @@ groups:
   - merge-master-into-develop
   - announce-rc
   - create-release-notes-draft
+  - notify-electors-on-slack
+
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
 
 resources:
 - name: runtime-ci
@@ -42,8 +50,74 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-release
+- name: rc-notification
+  type: slack-notification
+  source:
+    url: https://hooks.slack.com/services/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
 
 jobs:
+- name: notify-electors-on-slack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: rc-notification
+      params:
+        text: "Hey there <@dsabeti> <@staylor>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#release-integration"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@efarrar> <@genevieve>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#infrastructure"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@valepert> <@smoser>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#postgres-release"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@shannon> <@sreddy>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#routing"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@stummidi> <@jeremy>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#uaa"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@hev> <@jasonkeene>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#loggregator"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@zach> <@gerg>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#capi"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@slevine> <@dgoddard>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#buildpacks"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@emalm> <@jvshahid>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#diego"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@uramachandran> <@ldunkelberger>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#container-networking"
+        always_notify: true
+    - put: rc-notification
+      params:
+        text: "Hey there <@glestaris> <@gareth>. Could you please take a look at the latest release candidate: https://github.com/cloudfoundry/cf-final-release-election/issues/37 cc <@dsabeti>"
+        channel: "#grootfs"
+        always_notify: true
+
+
 - name: create-final-release
   public: true
   serial: true
