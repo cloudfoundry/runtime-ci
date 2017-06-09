@@ -11,6 +11,9 @@ inputs:
 - name: cf-release-release-candidate
 - name: runtime-ci
 
+outputs:
+- name: slack-messages
+
 params:
   GH_ACCESS_TOKEN: ~
 
