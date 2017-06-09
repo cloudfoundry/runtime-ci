@@ -1271,6 +1271,7 @@ jobs:
           DB_USER: {{dumbledore_uaadb_user}}
           DB_PASSWORD: {{dumbledore_uaadb_password}}
           DB_NAME: {{dumbledore_uaadb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1280,6 +1281,7 @@ jobs:
           DB_USER: {{dumbledore_ccdb_user}}
           DB_PASSWORD: {{dumbledore_ccdb_password}}
           DB_NAME: {{dumbledore_ccdb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-npdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1289,6 +1291,7 @@ jobs:
           DB_USER: {{dumbledore_npdb_user}}
           DB_PASSWORD: {{dumbledore_npdb_password}}
           DB_NAME: {{dumbledore_npdb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-ncdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1298,6 +1301,7 @@ jobs:
           DB_USER: {{dumbledore_ncdb_user}}
           DB_PASSWORD: {{dumbledore_ncdb_password}}
           DB_NAME: {{dumbledore_ncdb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1307,6 +1311,7 @@ jobs:
           DB_USER: {{dumbledore_bbsdb_user}}
           DB_PASSWORD: {{dumbledore_bbsdb_password}}
           DB_NAME: {{dumbledore_bbsdb_db_name}}
+          BOSH_GW_USER: vcap
       - task: recreate-routingapidb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
@@ -1316,6 +1321,7 @@ jobs:
           DB_USER: {{dumbledore_routingapidb_username}}
           DB_PASSWORD: {{dumbledore_routingapidb_password}}
           DB_NAME: {{dumbledore_routingapidb_name}}
+          BOSH_GW_USER: vcap
 
 - name: complex-legacy-deploy
   public: true
