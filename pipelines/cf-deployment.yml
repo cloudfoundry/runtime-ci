@@ -274,7 +274,7 @@ resources:
 - name: legacy-routing-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/routing-release
+    repository: cloudfoundry-incubator/cf-routing-release
 
 - name: turbulence-github-release
   type: git
@@ -1350,6 +1350,7 @@ jobs:
       - get: dumbledore-env-director-state
       - get: cf-release-master
       - get: github-diego-release
+      - get: github-routing-release-master
       - get: legacy-garden-runc-release
       - get: legacy-diego-release
       - get: legacy-cflinuxfs2-release
@@ -1393,7 +1394,7 @@ jobs:
     - task: generate-routing-manifest
       file: runtime-ci/tasks/generate-routing-manifest/task.yml
       input_mapping:
-        routing-release: legacy-routing-release
+        routing-release: github-routing-release-master
         stubs-repo: dumbledore-env-stubs-and-vars
       params:
         CF_MANIFEST_PATH: cf-manifest/deployment.yml
