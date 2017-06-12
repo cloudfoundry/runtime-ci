@@ -1758,6 +1758,7 @@ jobs:
 
 - name: run-bosh-cleanup-ops
   build_logs_to_retain: 100
+  public: true
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
