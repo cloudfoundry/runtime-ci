@@ -135,6 +135,7 @@ groups:
   - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
+  - run-bosh-cleanup-ops
   - transition-acquire-pool
   - ensure-transition-env-is-clean
   - legacy-deploy
@@ -1755,6 +1756,21 @@ jobs:
         OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml"
         VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml operations/example-vars-files/vars-use-external-cf-networking-dbs.yml"
         DEPLOYMENT_NAME_SUFFIX: external-persistence
+
+- name: run-bosh-cleanup-ops
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: trelawney-env-director-state
+      passed: [ setup-infrastructure-ops ]
+    - get: weekly
+      trigger: true
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+
 - name: upgrade-acquire-pool
   public: true
   serial: true
