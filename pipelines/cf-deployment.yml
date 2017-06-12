@@ -1721,41 +1721,40 @@ jobs:
       bbl-state: trelawney-env-director-state
     params:
       INFRASTRUCTURE: google
-  - aggregate:
-    - task: bosh-dry-run-with-ops-cf-internal-mysql
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-cf-networking.yml"
-        DEPLOYMENT_NAME_SUFFIX: internal-mysql
-    - task: bosh-dry-run-with-ops-cf-internal-postgres
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/experimental/use-cf-networking.yml operations/experimental/locket.yml operations/use-postgres.yml operations/experimental/use-cf-networking-postgres.yml operations/experimental/locket-postgres.yml"
-        DEPLOYMENT_NAME_SUFFIX: internal-postgres
-    - task: bosh-dry-run-with-ops-cf-external-persistence
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml"
-        VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml operations/example-vars-files/vars-use-external-cf-networking-dbs.yml"
-        DEPLOYMENT_NAME_SUFFIX: external-persistence
+  - task: bosh-dry-run-with-ops-cf-internal-mysql
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-files: cf-deployment-develop
+    params:
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-cf-networking.yml"
+      DEPLOYMENT_NAME_SUFFIX: internal-mysql
+  - task: bosh-dry-run-with-ops-cf-internal-postgres
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-files: cf-deployment-develop
+    params:
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      OPS_FILES: "operations/experimental/use-cf-networking.yml operations/experimental/locket.yml operations/use-postgres.yml operations/experimental/use-cf-networking-postgres.yml operations/experimental/locket-postgres.yml"
+      DEPLOYMENT_NAME_SUFFIX: internal-postgres
+  - task: bosh-dry-run-with-ops-cf-external-persistence
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-files: cf-deployment-develop
+    params:
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml"
+      VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml operations/example-vars-files/vars-use-external-cf-networking-dbs.yml"
+      DEPLOYMENT_NAME_SUFFIX: external-persistence
 
 - name: run-bosh-cleanup-ops
   build_logs_to_retain: 100
