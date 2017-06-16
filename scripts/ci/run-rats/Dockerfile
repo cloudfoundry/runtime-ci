@@ -19,13 +19,13 @@ RUN \
 ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 RUN \
-  wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.7.4.linux-amd64.tar.gz -C /usr/local && \
+  wget https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz -P /tmp && \
+  tar xzvf /tmp/go1.8.3.linux-amd64.tar.gz -C /usr/local && \
   mkdir $GOPATH && \
   rm -rf /tmp/*
 
 # Install the cf CLI
-RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.25.0&source=github-rel" && \
+RUN wget -q -O cf.deb "https://cli.run.pivotal.io/stable?release=debian64&version=6.27.0&source=github-rel" && \
   dpkg -i cf.deb
 
 # Install the container networking CLI plugin
