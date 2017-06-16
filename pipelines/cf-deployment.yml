@@ -1431,6 +1431,13 @@ jobs:
         bbl-state: dumbledore-env-director-state
       params:
         ERRAND_NAME: smoke_tests
+    - task: run-routing-smoke-tests
+      input_mapping:
+      - routing-release: github-routing-release-master
+      - integration-config: dumbledore-env-stubs-and-vars
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      params:
+        PACKAGES: "smoke_tests"
 
 - name: legacy-deploy
   public: true
