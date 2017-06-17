@@ -747,13 +747,13 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: transition-pool
+    trigger: true
+    passed: [ add-claimed-lock-transition ]
   - aggregate:
     - get: runtime-ci
     - get: minerva-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: transition-pool
-      trigger: true
-      passed: [ add-claimed-lock-transition ]
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -794,13 +794,13 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: complex-pool
+    trigger: true
+    passed: [ add-claimed-lock-complex ]
   - aggregate:
     - get: runtime-ci
     - get: dumbledore-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: complex-pool
-      trigger: true
-      passed: [ add-claimed-lock-complex ]
   - task: setup-infrastructure
     file: runtime-ci/tasks/bbl-up/task.yml
     params:
@@ -842,13 +842,13 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: fresh-pool
+    trigger: true
+    passed: [ add-claimed-lock-fresh ]
   - aggregate:
     - get: runtime-ci
     - get: luna-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: fresh-pool
-      trigger: true
-      passed: [ add-claimed-lock-fresh ]
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -935,15 +935,15 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: upgrade-pool
+    trigger: true
+    passed: [ add-claimed-lock-upgrade ]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
     - get: turbulence-github-release
     - get: hermione-env-turbulence-vars
-    - get: upgrade-pool
-      trigger: true
-      passed: [ add-claimed-lock-upgrade ]
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -995,14 +995,14 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: lite-pool
+    trigger: true
+    passed: [ add-claimed-lock-lite ]
   - aggregate:
     - get: runtime-ci
     - get: bosh-deployment
     - get: snitch-env-director-state
     - get: cf-deployment-develop
-    - get: lite-pool
-      trigger: true
-      passed: [ add-claimed-lock-lite ]
   - task: setup-infrastructure
     file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
@@ -1177,13 +1177,13 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: transition-pool
+      passed: [ transition-acquire-pool ]
+      trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: runtime-ci
-      - get: transition-pool
-        passed: [ transition-acquire-pool ]
-        trigger: true
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
         input_mapping:
@@ -1251,13 +1251,13 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: complex-pool
+      passed: [ complex-acquire-pool ]
+      trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
       - get: runtime-ci
-      - get: complex-pool
-        passed: [ complex-acquire-pool ]
-        trigger: true
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
         input_mapping:
@@ -1338,6 +1338,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: complex-pool
+      passed: [ ensure-complex-env-is-clean ]
+      trigger: true
     - aggregate:
       - get: runtime-ci
       - get: dumbledore-env-stubs-and-vars
@@ -1354,9 +1357,6 @@ jobs:
       - get: legacy-routing-release
       - get: aws-stemcell
       - get: cf-deployment-transition
-      - get: complex-pool
-        passed: [ ensure-complex-env-is-clean ]
-        trigger: true
     - task: generate-release-manifest-cf
       file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
       input_mapping:
@@ -1440,6 +1440,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: transition-pool
+      passed: [ ensure-transition-env-is-clean ]
+      trigger: true
     - aggregate:
       - get: runtime-ci
       - get: minerva-env-stubs-and-vars
@@ -1452,9 +1455,6 @@ jobs:
       - get: legacy-cf-release
       - get: aws-stemcell
       - get: cf-deployment-transition
-      - get: transition-pool
-        passed: [ ensure-transition-env-is-clean ]
-        trigger: true
     - task: generate-release-manifest-cf
       file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
       input_mapping:
@@ -1508,6 +1508,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: complex-pool
+      passed: [ complex-legacy-deploy ]
+      trigger: true
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -1516,9 +1519,6 @@ jobs:
       - get: dumbledore-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
-      - get: complex-pool
-        passed: [ complex-legacy-deploy ]
-        trigger: true
       - get: legacy-cf-release
         passed: [ complex-legacy-deploy ]
       - get: legacy-diego-release
@@ -1600,6 +1600,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: transition-pool
+      passed: [ legacy-deploy ]
+      trigger: true
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -1607,9 +1610,6 @@ jobs:
       - get: minerva-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
-      - get: transition-pool
-        passed: [ legacy-deploy ]
-        trigger: true
       - get: legacy-cf-release
         passed: [ legacy-deploy ]
       - get: legacy-diego-release
@@ -1672,10 +1672,10 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: fresh-pool
+    trigger: true
+    passed: [ fresh-acquire-pool ]
   - aggregate:
-    - get: fresh-pool
-      trigger: true
-      passed: [ fresh-acquire-pool ]
     - get: cf-deployment-develop
       passed: [ fresh-acquire-pool ]
     - get: cf-deployment-concourse-tasks
@@ -1878,12 +1878,12 @@ jobs:
       put: upgrade-pool
       params: {release: upgrade-pool}
     do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-acquire-pool ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
-      - get: upgrade-pool
-        trigger: true
-        passed: [ upgrade-acquire-pool ]
       - get: cf-deployment-develop
         passed: [ upgrade-acquire-pool ]
       - get: hermione-env-vars-store
@@ -1952,6 +1952,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: lite-pool
+      trigger: true
+      passed: [ lite-acquire-pool ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -1961,9 +1964,6 @@ jobs:
       - get: snitch-env-director-state
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
-      - get: lite-pool
-        trigger: true
-        passed: [ lite-acquire-pool ]
     - task: guarantee-no-existing-cf-deployment
       input_mapping:
         bbl-state: snitch-env-director-state
@@ -2021,6 +2021,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: complex-pool
+      passed: [ complex-deploy ]
+      trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
@@ -2028,9 +2031,6 @@ jobs:
       - get: cf-deployment-release-candidate
         passed: [ complex-deploy ]
       - get: cats-concourse-task
-      - get: complex-pool
-        passed: [ complex-deploy ]
-        trigger: true
       - get: legacy-cf-release
         passed: [ complex-deploy ]
       - get: legacy-diego-release
@@ -2061,6 +2061,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: transition-pool
+      passed: [ transition-deploy ]
+      trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
@@ -2068,9 +2071,6 @@ jobs:
       - get: cf-deployment-release-candidate
         passed: [ transition-deploy ]
       - get: cats-concourse-task
-      - get: transition-pool
-        passed: [ transition-deploy ]
-        trigger: true
       - get: legacy-cf-release
         passed: [ transition-deploy ]
       - get: legacy-diego-release
@@ -2149,12 +2149,12 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: transition-pool
+      passed: [ transition-cats ]
+      trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
-      - get: transition-pool
-        passed: [ transition-cats ]
-        trigger: true
   - task: delete-deployment-cf
     input_mapping:
       bbl-state: minerva-env-director-state
@@ -2172,6 +2172,9 @@ jobs:
       put: upgrade-pool
       params: {release: upgrade-pool}
     do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
@@ -2183,9 +2186,6 @@ jobs:
       - get: cf-deployment-develop
         passed: [ upgrade-deploy ]
       - get: cats-concourse-task
-      - get: upgrade-pool
-        trigger: true
-        passed: [ upgrade-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -2207,6 +2207,9 @@ jobs:
       put: upgrade-pool
       params: {release: upgrade-pool}
     do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-deploy ]
     - aggregate:
       - get: runtime-ci
       - get: windows-acceptance-tests
@@ -2216,9 +2219,6 @@ jobs:
       - get: hermione-env-vars-store
         passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
-        passed: [ upgrade-deploy ]
-      - get: upgrade-pool
-        trigger: true
         passed: [ upgrade-deploy ]
     - task: run-wats
       input_mapping:
@@ -2235,14 +2235,14 @@ jobs:
       put: upgrade-pool
       params: {release: upgrade-pool}
     do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-deploy]
     - aggregate:
       - get: runtime-ci
       - get: hermione-env-director-state
         passed: [upgrade-deploy]
       - get: cf-deployment-develop
-        passed: [upgrade-deploy]
-      - get: upgrade-pool
-        trigger: true
         passed: [upgrade-deploy]
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
@@ -2258,15 +2258,15 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: fresh-pool
+      trigger: true
+      passed: [ fresh-deploy ]
     - aggregate:
       - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
-      - get: fresh-pool
-        trigger: true
-        passed: [ fresh-deploy ]
       - get: cf-deployment-develop
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
@@ -2287,6 +2287,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: lite-pool
+      trigger: true
+      passed: [ lite-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
@@ -2298,9 +2301,6 @@ jobs:
         passed: [ lite-deploy ]
       - get: snitch-env-integration-configs
       - get: cats-concourse-task
-      - get: lite-pool
-        trigger: true
-        passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       attempts: 10
@@ -2322,6 +2322,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: fresh-pool
+      trigger: true
+      passed: [ fresh-deploy ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -2329,9 +2332,6 @@ jobs:
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
-        passed: [ fresh-deploy ]
-      - get: fresh-pool
-        trigger: true
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
@@ -2352,6 +2352,9 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: lite-pool
+      trigger: true
+      passed: [ lite-deploy ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -2362,9 +2365,6 @@ jobs:
       - get: snitch-env-vars-store
         passed: [ lite-deploy ]
       - get: cf-deployment-develop
-        passed: [ lite-deploy ]
-      - get: lite-pool
-        trigger: true
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
       attempts: 10
@@ -2391,6 +2391,9 @@ jobs:
       put: upgrade-pool
       params: {release: upgrade-pool}
     do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-deploy]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -2402,9 +2405,6 @@ jobs:
         passed: [ upgrade-deploy ]
       - get: cf-deployment-develop
         passed: [ upgrade-deploy ]
-      - get: upgrade-pool
-        trigger: true
-        passed: [upgrade-deploy]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -2427,14 +2427,14 @@ jobs:
   plan:
   - timeout: 4h
     do:
+    - get: fresh-pool
+      trigger: true
+      passed:
+      - fresh-cats
+      - fresh-rats
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
-      - get: fresh-pool
-        trigger: true
-        passed:
-        - fresh-cats
-        - fresh-rats
     - task: delete-deployment-cf
       input_mapping:
         bbl-state: luna-env-director-state
