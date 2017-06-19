@@ -2,7 +2,7 @@
 groups:
 - name: cf-deployment
   jobs:
-  - complex-deploy
+  - complex-transition-deploy
   - fresh-deploy
   - lite-deploy
   - transition-deploy
@@ -86,7 +86,7 @@ groups:
   - ship-it-patch
   - complex-acquire-pool
   - complex-release-pool-manual
-  - complex-deploy
+  - complex-transition-deploy
   - complex-cats
   - transition-acquire-pool
   - transition-cats
@@ -176,7 +176,7 @@ groups:
   - ensure-complex-env-is-clean
   - complex-legacy-deploy
   - complex-acquire-pool
-  - complex-deploy
+  - complex-transition-deploy
   - complex-cats
 
   - transition-release-pool-manual
@@ -1502,7 +1502,7 @@ jobs:
       params:
         ERRAND_NAME: smoke_tests
 
-- name: complex-deploy
+- name: complex-transition-deploy
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2022,25 +2022,25 @@ jobs:
   - timeout: 4h
     do:
     - get: complex-pool
-      passed: [ complex-deploy ]
+      passed: [ complex-transition-deploy ]
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: dumbledore-env-stubs-and-vars
       - get: cf-deployment-release-candidate
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
       - get: cats-concourse-task
       - get: legacy-cf-release
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
       - get: legacy-diego-release
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
       - get: legacy-cflinuxfs2-release
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
       - get: legacy-garden-runc-release
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
       - get: cf-deployment-transition
-        passed: [ complex-deploy ]
+        passed: [ complex-transition-deploy ]
         trigger: true
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
