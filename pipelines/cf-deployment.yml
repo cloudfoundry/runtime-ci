@@ -465,6 +465,7 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - deployment-vars.yml
+    - datadog-deployment-vars.yml
 - name: hermione-env-turbulence-vars
   type: git
   source:
