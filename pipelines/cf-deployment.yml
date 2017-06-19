@@ -1430,6 +1430,8 @@ jobs:
       input_mapping:
       - routing-release: github-routing-release-master
       - integration-config: dumbledore-env-stubs-and-vars
+      params:
+        NODES: 1
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: legacy-deploy
