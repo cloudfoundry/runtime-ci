@@ -20,3 +20,4 @@ run:
 
 params:
   EXTRACT_CF_NETWORKING: false
+  EXTRACT_ROUTING: false
