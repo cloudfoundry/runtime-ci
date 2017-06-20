@@ -7,10 +7,13 @@ get_row() {
   diego_release_version=$(cd diego-release; cat version)
   cflinuxfs2_release_version=$(cd cflinuxfs2-release; cat version)
   garden_runc_release_version=$(cd garden-runc-release; cat version)
+  routing_release_version=$(cd routing-release; cat version)
+  cf_networking_release_version=$(cd cf-networking-release; cat version)
+  grootfs_release_version=$(cd grootfs-release; cat version)
   cf_deployment_sha=$(cd cf-deployment; git rev-parse HEAD)
   cf_deployment_transition_sha=$(cd cf-deployment-transition; git rev-parse HEAD)
 
-  export NEW_ROW="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha}"
+  export NEW_ROW="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha},${routing_release_version},${cf_networking_release_version},${grootfs_release_version}"
 }
 
 commit_compatibility_and_move_to_output() {
@@ -19,7 +22,7 @@ commit_compatibility_and_move_to_output() {
   else
     pushd cf-deployment-transition-compatibility > /dev/null
       local header
-      header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha"
+      header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha,routing-release-version,cf-networking-release-version,grootfs-release-version"
 
       if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
         echo "${header}" > $COMPATIBILITY_FILE

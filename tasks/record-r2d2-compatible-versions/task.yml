@@ -14,6 +14,9 @@ inputs:
   - name: garden-runc-release
   - name: cf-deployment
   - name: cf-deployment-transition
+  - name: routing-release
+  - name: cf-networking-release
+  - name: grootfs-release
   - name: cf-deployment-transition-compatibility
 
 outputs:
