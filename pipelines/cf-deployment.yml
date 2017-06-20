@@ -111,39 +111,37 @@ groups:
   - verify-nameserver-has-record
 - name: inf
   jobs:
-  - add-claimed-lock-fresh
-  - add-claimed-lock-upgrade
   - add-claimed-lock-complex
+  - add-claimed-lock-fresh
   - add-claimed-lock-lite
-  - setup-infrastructure-compile
-  - setup-infrastructure-fresh
+  - add-claimed-lock-upgrade
   - add-claimed-lock-transition
-  - setup-infrastructure-transition
+  - setup-infrastructure-compile
   - setup-infrastructure-complex
+  - setup-infrastructure-fresh
   - setup-infrastructure-lite
   - setup-infrastructure-ops
+  - setup-infrastructure-transition
   - setup-infrastructure-upgrade
   - destroy-infrastructure-compile
-  - destroy-infrastructure-fresh
-  - destroy-infrastructure-transition
   - destroy-infrastructure-complex
+  - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
+  - destroy-infrastructure-transition
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
   - remove-claimed-lock-transition
-  - verify-nameserver-has-record
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-ops
-  - transition-acquire-pool
-  - ensure-transition-env-is-clean
-  - legacy-deploy
   - complex-acquire-pool
+  - transition-acquire-pool
   - ensure-complex-env-is-clean
-  - complex-legacy-deploy
+  - ensure-transition-env-is-clean
+  - verify-nameserver-has-record
 - name: up
   jobs:
   - upgrade-acquire-pool
