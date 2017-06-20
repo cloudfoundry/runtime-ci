@@ -1270,6 +1270,12 @@ jobs:
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
+      - task: guarantee-no-existing-routing-deployment
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf-routing
     - aggregate:
       - task: recreate-uaadb
         file: runtime-ci/tasks/recreate-database/task.yml
@@ -1566,7 +1572,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml"
+        OPS_FILES: "operations/aws.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml"
       ensure:
         put: dumbledore-env-stubs-and-vars
