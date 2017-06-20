@@ -1564,6 +1564,7 @@ jobs:
       - vars-store: dumbledore-env-stubs-and-vars
       params:
         EXTRACT_CF_NETWORKING: true
+        EXTRACT_ROUTING: true
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
