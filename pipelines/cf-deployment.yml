@@ -9,7 +9,7 @@ groups:
   - upgrade-deploy
 
   - lint-cf-deployment-manifest
-  - complex-cats
+  - complex-transition-cats
   - fresh-cats
   - lite-cats
   - transition-cats
@@ -87,7 +87,7 @@ groups:
   - complex-acquire-pool
   - complex-release-pool-manual
   - complex-transition-deploy
-  - complex-cats
+  - complex-transition-cats
   - transition-acquire-pool
   - transition-cats
   - transition-delete-deployment
@@ -177,7 +177,7 @@ groups:
   - complex-legacy-deploy
   - complex-acquire-pool
   - complex-transition-deploy
-  - complex-cats
+  - complex-transition-cats
 
   - transition-release-pool-manual
   - ensure-transition-env-is-clean
@@ -2018,7 +2018,7 @@ jobs:
         METRIC_NAME: time-to-healthy-router
         ENV_NAME: snitch
 
-- name: complex-cats
+- name: complex-transition-cats
   public: true
   build_logs_to_retain: 100
   plan:
