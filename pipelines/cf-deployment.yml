@@ -1585,6 +1585,12 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       params:
         DEPLOYMENT_NAME: cf-diego
+    - task: delete-rump-routing
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        DEPLOYMENT_NAME: cf-routing
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
