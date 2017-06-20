@@ -1546,16 +1546,32 @@ jobs:
         passed: [ bless-manifest ]
       - get: legacy-cf-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: legacy-diego-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: legacy-cflinuxfs2-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: legacy-garden-runc-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: legacy-cf-networking-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: legacy-grootfs-release
         passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
+      - get: legacy-routing-release
+        passed: [ complex-legacy-deploy ]
+        params:
+          tarball: false
       - get: cf-deployment-transition
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
@@ -1640,6 +1656,18 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
+      - get: legacy-routing-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-cf-networking-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-grootfs-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
       - get: dumbledore-env-stubs-and-vars
       - get: dumbledore-env-integration-configs
       - get: cf-deployment-release-candidate
@@ -2105,6 +2133,18 @@ jobs:
         passed: [ complex-transition-deploy ]
       - get: legacy-garden-runc-release
         passed: [ complex-transition-deploy ]
+      - get: legacy-routing-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-cf-networking-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-grootfs-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
       - get: cf-deployment-transition
         passed: [ complex-transition-deploy ]
         trigger: true
@@ -2170,29 +2210,41 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         trigger: true
         params:
           tarball: false
+      - get: legacy-routing-release
+        passed: [ complex-transition-cats, complex-transition-rats ]
+        params:
+          tarball: false
+      - get: legacy-cf-networking-release
+        passed: [ complex-transition-cats, complex-transition-rats ]
+        params:
+          tarball: false
+      - get: legacy-grootfs-release
+        passed: [ complex-transition-cats, complex-transition-rats ]
+        params:
+          tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats ]
+        passed: [ transition-cats, complex-transition-cats ]
         trigger: true
       - get: cf-deployment-transition-compatability
     - task: record-compatible-versions
@@ -2202,6 +2254,9 @@ jobs:
         diego-release: legacy-diego-release
         cflinuxfs2-release: legacy-cflinuxfs2-release
         garden-runc-release: legacy-garden-runc-release
+        routing-release: legacy-routing-release
+        cf-networking-release: legacy-cf-networking-release
+        grootfs-release: legacy-grootfs-release
         cf-deployment: cf-deployment-release-candidate
         cf-deployment-transition-compatibility: cf-deployment-transition-compatability
     - put: cf-deployment-transition-compatability
