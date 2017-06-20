@@ -16,6 +16,7 @@ groups:
   - upgrade-cats
   - upgrade-smoke-tests
   - upgrade-wats
+  - complex-transition-rats
   - fresh-rats
   - lite-http-rats
   - upgrade-http-rats
@@ -88,6 +89,7 @@ groups:
   - complex-release-pool-manual
   - complex-transition-deploy
   - complex-transition-cats
+  - complex-transition-rats
   - transition-acquire-pool
   - transition-cats
   - transition-delete-deployment
@@ -178,6 +180,7 @@ groups:
   - complex-acquire-pool
   - complex-transition-deploy
   - complex-transition-cats
+  - complex-transition-rats
 
   - transition-release-pool-manual
   - ensure-transition-env-is-clean
@@ -1607,6 +1610,39 @@ jobs:
         params:
           repository: updated-integration-configs
           rebase: true
+
+- name: complex-transition-rats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: complex-pool
+      trigger: true
+      passed: [ complex-transition-deploy ]
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: github-routing-release-master
+      - get: dumbledore-env-stubs-and-vars
+      - get: dumbledore-env-integration-configs
+      - get: cf-deployment-release-candidate
+        passed: [ complex-transition-deploy ]
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+    - task: run-rats
+      input_mapping:
+      - routing-release: github-routing-release-master
+      - integration-config: dumbledore-env-integration-configs
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      params:
+        NODES: 1
+        PACKAGES: "http_routes tcp_routing"
 
 - name: transition-deploy
   public: true
