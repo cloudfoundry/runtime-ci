@@ -1386,7 +1386,7 @@ jobs:
         INFRASTRUCTURE: aws
         STUBS_PATH: transition/stubs/cf/cf-stub.yml
       output_mapping:
-        manifest: cf-manifest-with-routing
+        manifest: cf-manifest
     - task: create-diego-manifest
       file: runtime-ci/scripts/ci/create-diego-manifest-with-config/task.yml
       input_mapping:
@@ -1441,7 +1441,7 @@ jobs:
         - legacy-routing-release/release.tgz
     - put: complex-legacy-cf-bosh-deployment
       params:
-        manifest: cf-manifest-with-routing/deployment.yml
+        manifest: cf-manifest/deployment.yml
         stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-cf-release/release.tgz
