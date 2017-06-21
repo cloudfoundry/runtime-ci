@@ -401,6 +401,14 @@ resources:
     private_key: {{bellatrix_env_readwrite_deploy_key}}
     paths:
     - deployment-vars.yml
+- name: bellatrix-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
 - name: luna-env-director-state
   type: git
   source:
@@ -2014,7 +2022,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: cf-deployment-develop
+    - get: cf-deployment-master
       trigger: true
     - put: stable-pool
       params: {acquire: true}
