@@ -75,6 +75,7 @@ groups:
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
+  - remove-claimed-lock-stable
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-upgrade
@@ -144,6 +145,7 @@ groups:
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
+  - remove-claimed-lock-stable
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-ops
@@ -2944,6 +2946,23 @@ jobs:
   - put: complex-pool
     params: {remove: complex-pool}
 
+- name: remove-claimed-lock-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: stable-pool
+    passed: [ destroy-infrastructure-stable ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {remove: stable-pool}
 
 - name: remove-claimed-lock-fresh
   serial: true
