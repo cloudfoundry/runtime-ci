@@ -1811,6 +1811,12 @@ jobs:
         - aws-acceptance-tests
         params:
           tarball: false
+      - get: grootfs-release-tarball
+        trigger: true
+        passed:
+        - aws-acceptance-tests
+        params:
+          tarball: false
       - get: vsphere-director-version
         passed: [ vsphere-acceptance-tests ]
       - get: aws-director-version
