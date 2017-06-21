@@ -1388,6 +1388,11 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
+      - get: grootfs-release-tarball
+        trigger: true
+        passed: [ deploy-aws ]
+        params:
+          tarball: false
     - task: run-errand-smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -1698,6 +1703,11 @@ jobs:
         params:
           tarball: false
       - get: cf-networking-release-tarball
+        trigger: true
+        passed: [ aws-smoke-tests ]
+        params:
+          tarball: false
+      - get: grootfs-release-tarball
         trigger: true
         passed: [ aws-smoke-tests ]
         params:
