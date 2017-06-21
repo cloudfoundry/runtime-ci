@@ -22,7 +22,7 @@ commit_compatibility_and_move_to_output() {
   else
     pushd cf-deployment-transition-compatibility > /dev/null
       local header
-      header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha,routing-release-version,cf-networking-release-version,grootfs-release-version,cf-deployment-version"
+      header="cf-release-version,diego-release-version,cflinuxfs2-release-version,garden-runc-release-version,cf-deployment-commit-sha,cf-deployment-transition-commit-sha,routing-release-version,cf-networking-release-version,grootfs-release-version"
 
       if [[ ! -e "$COMPATIBILITY_FILE" ]]; then
         echo "${header}" > $COMPATIBILITY_FILE
