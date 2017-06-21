@@ -44,6 +44,7 @@ groups:
   - add-claimed-lock-transition
   - add-claimed-lock-complex
   - add-claimed-lock-upgrade
+  - add-claimed-lock-stable
   - bless-manifest
   - branch-freshness
   - destroy-infrastructure-compile
@@ -53,6 +54,7 @@ groups:
   - destroy-infrastructure-transition
   - destroy-infrastructure-complex
   - destroy-infrastructure-upgrade
+  - destroy-infrastructure-stable
   - ensure-transition-env-is-clean
   - ensure-complex-env-is-clean
   - fresh-acquire-pool
@@ -76,6 +78,7 @@ groups:
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-upgrade
+  - run-bosh-cleanup-stable
   - setup-infrastructure-compile
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
@@ -83,6 +86,7 @@ groups:
   - setup-infrastructure-transition
   - setup-infrastructure-complex
   - setup-infrastructure-upgrade
+  - setup-infrastructure-stable
   - ship-it-minor
   - ship-it-patch
   - complex-acquire-pool
@@ -108,19 +112,25 @@ groups:
   - upgrade-release-pool
   - upgrade-smoke-tests
   - upgrade-wats
+  - stable-acquire-pool
+  - stable-deploy
+  - stable-release-pool
+  - stable-smoke-tests
   - verify-nameserver-has-record
 - name: inf
   jobs:
   - add-claimed-lock-complex
   - add-claimed-lock-fresh
   - add-claimed-lock-lite
-  - add-claimed-lock-upgrade
+  - add-claimed-lock-stable
   - add-claimed-lock-transition
+  - add-claimed-lock-upgrade
   - setup-infrastructure-compile
   - setup-infrastructure-complex
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
   - setup-infrastructure-ops
+  - setup-infrastructure-stable
   - setup-infrastructure-transition
   - setup-infrastructure-upgrade
   - destroy-infrastructure-compile
@@ -128,15 +138,17 @@ groups:
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
+  - destroy-infrastructure-stable
   - destroy-infrastructure-transition
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
   - remove-claimed-lock-transition
-  - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-ops
+  - run-bosh-cleanup-stable
+  - run-bosh-cleanup-upgrade
   - complex-acquire-pool
   - transition-acquire-pool
   - ensure-complex-env-is-clean
@@ -189,6 +201,12 @@ groups:
   - transition-deploy
   - transition-record-compatible-versions
   - bless-manifest
+- name: st
+  jobs:
+  - stable-acquire-pool
+  - stable-deploy
+  - stable-release-pool
+  - stable-smoke-tests
 
 resource_types:
 - name: terraform
@@ -307,6 +325,14 @@ resources:
     pool: cf-deployment/upgrade
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
 
+- name: stable-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/stable
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
 - name: complex-pool
   type: pool
   source:
@@ -358,6 +384,23 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+- name: bellatrix-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+- name: bellatrix-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - deployment-vars.yml
 - name: luna-env-director-state
   type: git
   source:
@@ -873,6 +916,40 @@ jobs:
   - put: fresh-pool
     params: {release: fresh-pool}
 
+- name: setup-infrastructure-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: stable-pool
+    trigger: true
+    passed: [ add-claimed-lock-stable ]
+  - aggregate:
+    - get: runtime-ci
+    - get: bellatrix-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{bellatrix_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
+      BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+      LB_DOMAIN: bellatrix.cf-app.com
+      BBL_ENV_NAME: bellatrix-stable
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    ensure:
+      put: bellatrix-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: stable-pool
+    params: {release: stable-pool}
+
 - name: setup-infrastructure-compile
   serial: true
   public: true
@@ -916,6 +993,21 @@ jobs:
       pool-resource: upgrade-pool
   - put: upgrade-pool
     params: {add_claimed: upgrade-pool}
+
+- name: add-claimed-lock-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {add_claimed: stable-pool}
 
 - name: add-claimed-lock-lite
   serial: true
@@ -1917,6 +2009,25 @@ jobs:
   - put: upgrade-pool
     params: {release: upgrade-pool}
 
+- name: stable-acquire-pool
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+    - put: stable-pool
+      params: {acquire: true}
+
+- name: stable-release-pool
+  public: true
+  plan:
+  - get: stable-pool
+    passed: [ stable-smoke-tests ]
+    trigger: true
+  - put: stable-pool
+    params: {release: stable-pool}
+
 - name: lite-release-pool
   public: true
   plan:
@@ -2035,6 +2146,74 @@ jobs:
         integration-configs: hermione-env-integration-configs
       ensure:
         put: hermione-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
+
+- name: stable-deploy
+  serial_groups: [ bellatrix-smokes ]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - on_failure:
+      put: stable-pool
+      params: {release: stable-pool}
+    do:
+    - get: stable-pool
+      trigger: true
+      passed: [ stable-acquire-pool ]
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-master
+        passed: [ stable-acquire-pool ]
+      - get: bellatrix-env-vars-store
+      - get: bellatrix-env-director-state
+        passed: [ setup-infrastructure-stable ]
+      - get: bellatrix-env-integration-configs
+      - get: windows-stemcell
+    - task: bosh-upload-stemcell-stable
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-master
+        bbl-state: bellatrix-env-director-state
+      params:
+        INFRASTRUCTURE: google
+    - task: bosh-upload-windows-stemcell
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: windows-stemcell
+        bbl-state: bellatrix-env-director-state
+      params:
+        STEMCELL_NAME: '*.tgz'
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: bellatrix-env-director-state
+        cf-deployment: cf-deployment-master
+        ops-files: cf-deployment-master
+        vars-store: bellatrix-env-vars-store
+        vars-files: bellatrix-env-vars-store
+      params:
+        SYSTEM_DOMAIN: bellatrix.cf-app.com
+      ensure:
+        put: bellatrix-env-vars-store
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: bellatrix-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: bellatrix-env-vars-store
+        integration-configs: bellatrix-env-integration-configs
+      ensure:
+        put: bellatrix-env-integration-configs
         params:
           repository: updated-integration-configs
           rebase: true
@@ -2372,6 +2551,32 @@ jobs:
     params:
       ERRAND_NAME: smoke-tests
 
+- name: stable-smoke-tests
+  serial_groups: [bellatrix-smokes]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 1h
+    on_failure:
+      put: stable-pool
+      params: {release: stable-pool}
+    do:
+    - get: stable-pool
+      trigger: true
+      passed: [stable-deploy]
+    - aggregate:
+      - get: runtime-ci
+      - get: bellatrix-env-director-state
+        passed: [stable-deploy]
+      - get: cf-deployment-master
+        passed: [stable-deploy]
+  - task: bosh-run-errand-smoke-tests
+    file: runtime-ci/tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    params:
+      ERRAND_NAME: smoke-tests
+
 - name: fresh-cats
   serial: true
   public: true
@@ -2690,6 +2895,31 @@ jobs:
       bbl-state: luna-env-director-state
     ensure:
       put: luna-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: stable-pool
+      params: {claim: bellatrix}
+    - get: bellatrix-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    ensure:
+      put: bellatrix-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
@@ -3333,6 +3563,23 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
+
+- name: run-bosh-cleanup-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: bellatrix-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: bellatrix-env-director-state
 
 - name: run-bosh-cleanup-lite
   serial: true
