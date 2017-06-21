@@ -372,14 +372,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
     private_key: {{dumbledore_env_readwrite_deploy_key}}
-- name: dumbledore-env-integration-configs
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
-    paths:
-    - integration_config.json
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -1644,7 +1636,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-stubs-and-vars
-      - get: dumbledore-env-integration-configs
       - get: dumbledore-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
@@ -1739,9 +1730,9 @@ jobs:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
         vars-store: updated-vars-store
-        integration-configs: dumbledore-env-integration-configs
+        integration-configs: dumbledore-env-stubs-and-vars
       ensure:
-        put: dumbledore-env-integration-configs
+        put: dumbledore-env-stubs-and-vars
         params:
           repository: updated-integration-configs
           rebase: true
@@ -1773,7 +1764,6 @@ jobs:
         params:
           tarball: false
       - get: dumbledore-env-stubs-and-vars
-      - get: dumbledore-env-integration-configs
       - get: cf-deployment-release-candidate
         passed: [ complex-transition-deploy ]
     - task: enable-docker-and-tasks
@@ -1785,7 +1775,7 @@ jobs:
     - task: run-rats
       input_mapping:
       - routing-release: github-routing-release-master
-      - integration-config: dumbledore-env-integration-configs
+      - integration-config: dumbledore-env-stubs-and-vars
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
         NODES: 1
