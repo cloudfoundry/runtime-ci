@@ -10,13 +10,13 @@ cf_deployment_version="v$(cat cf-deployment-version/version)"
 
 existing_row_for_version=$(awk -F"," "BEGIN {OFS=\",\"} \$10 == \"${cf_deployment_version}\" { print \$0 }" cf-deployment-transition-compatibility/transition-compatibility.csv)
 if [ -n "${existing_row_for_version}" ];then
-  echo "There is already a row in this cf-deployment-transition-compatibility matrix for version ${cf_deployment_version}; aborting"
+  echo "[ERROR] There is already a row in this cf-deployment-transition-compatibility matrix for version ${cf_deployment_version}; aborting"
   exit 1
 fi
 
 updated_row=$(awk -F"," "BEGIN {OFS=\",\"} \$5 == \"${git_sha}\" { \$5=\"\"; \$10=\"${cf_deployment_version}\"; print \$0 }" cf-deployment-transition-compatibility/transition-compatibility.csv)
 if [ -z "${updated_row}" ]; then
-  echo "Unable to find match in cf-deployment-transition-compatibility table for sha ${git_sha}.  Skipping update."
+  echo "[WARN] Unable to find match in cf-deployment-transition-compatibility table for sha ${git_sha}.  Skipping update."
   exit 0
 fi
 
