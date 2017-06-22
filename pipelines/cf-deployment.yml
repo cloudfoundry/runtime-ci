@@ -2047,7 +2047,7 @@ jobs:
   public: true
   plan:
   - get: stable-pool
-    passed: [ stable-smoke-tests ]
+    passed: [ stable-smoke-tests, stable-cats ]
     trigger: true
   - put: stable-pool
     params: {release: stable-pool}
