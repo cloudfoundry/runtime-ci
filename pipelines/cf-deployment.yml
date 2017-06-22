@@ -1768,6 +1768,24 @@ jobs:
       - get: dumbledore-env-stubs-and-vars
       - get: cf-deployment-release-candidate
         passed: [ complex-transition-deploy ]
+      - get: legacy-cf-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-diego-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-cflinuxfs2-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: legacy-garden-runc-release
+        passed: [ complex-transition-deploy ]
+        params:
+          tarball: false
+      - get: cf-deployment-transition
+        passed: [ complex-transition-deploy ]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -2393,21 +2411,21 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
@@ -2424,10 +2442,10 @@ jobs:
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats, complex-transition-cats ]
+        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
       - get: cf-deployment-transition-compatability
     - task: record-compatible-versions
