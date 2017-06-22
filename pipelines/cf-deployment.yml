@@ -3683,11 +3683,18 @@ jobs:
         params: { bump: patch }
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
+      - get: cf-deployment-transition-compatability
       - put: cf-deployment-master
         params:
           repository: cf-deployment-release-candidate
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: record-transition-version
+        file: runtime-ci/tasks/record-transition-version/task.yml
+      - put: cf-deployment-transition-compatability
+        params:
+          repository: updated-cf-deployment-transition-compatibility
+          rebase: true
 
 - name: ship-it-minor
   public: true
@@ -3698,8 +3705,15 @@ jobs:
         params: { bump: minor }
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
+      - get: cf-deployment-transition-compatability
       - put: cf-deployment-master
         params:
           repository: cf-deployment-release-candidate
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: record-transition-version
+        file: runtime-ci/tasks/record-transition-version/task.yml
+      - put: cf-deployment-transition-compatability
+        params:
+          repository: updated-cf-deployment-transition-compatibility
+          rebase: true
