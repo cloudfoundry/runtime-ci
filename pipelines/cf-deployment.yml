@@ -542,7 +542,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-transition.git
-- name: cf-deployment-transition-compatability
+- name: cf-deployment-transition-compatibility
   type: git
   source:
     branch: master
@@ -2453,7 +2453,7 @@ jobs:
       - get: cf-deployment-transition
         passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
         trigger: true
-      - get: cf-deployment-transition-compatability
+      - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
       file: runtime-ci/tasks/record-r2d2-compatible-versions/task.yml
       input_mapping:
@@ -2465,8 +2465,7 @@ jobs:
         cf-networking-release: legacy-cf-networking-release
         grootfs-release: legacy-grootfs-release
         cf-deployment: cf-deployment-release-candidate
-        cf-deployment-transition-compatibility: cf-deployment-transition-compatability
-    - put: cf-deployment-transition-compatability
+    - put: cf-deployment-transition-compatibility
       params:
         repository: updated-r2d2-compatibility
         rebase: true
