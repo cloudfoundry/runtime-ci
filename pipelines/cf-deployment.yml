@@ -477,6 +477,10 @@ resources:
     start: 3:00 -0700
     stop: 3:30 -0700
     interval: 24h
+- name: half-hourly
+  type: time
+  source:
+    interval: 30m
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -2611,6 +2615,8 @@ jobs:
     - get: stable-pool
       trigger: true
       passed: [ stable-deploy ]
+    - get: half-hourly
+      trigger: true
     - aggregate:
       - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
