@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment
+- name: cf-acceptance-tests
+
+outputs:
+- name: branched-cats
+
+run:
+  path: runtime-ci/tasks/update-cats-branch-with-cf-deployment-version/task
+
+params:
+  DEPLOY_KEY:
+

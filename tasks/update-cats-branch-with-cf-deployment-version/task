@@ -1,0 +1,81 @@
+#!/bin/bash
+set -eux
+
+get_git_sha() {
+  local repo
+  repo=${1}
+  pushd ${repo} > /dev/null
+    git rev-parse HEAD
+  popd > /dev/null
+}
+
+get_git_tag() {
+  local repo
+  repo=${1}
+  pushd ${repo} > /dev/null
+    git describe --tags
+  popd > /dev/null
+}
+
+branch_exists() {
+  local repo
+  repo=${1}
+
+  local branch_name
+  branch_name=${2}
+
+  local result
+  pushd ${repo} > /dev/null
+    if [ -n "$(git branch --list ${branch_name})" ]
+      then echo true
+    else
+      echo false
+    fi
+  popd > /dev/null
+}
+
+clone_git_repo() {
+  local destination
+  destination=${1}
+  set +x
+  deploy_key_location=$(mktemp)
+  echo "${DEPLOY_KEY}" > ${deploy_key_location}
+  chmod 0600 ${deploy_key_location}
+  eval "$(ssh-agent -s)"
+  ssh-add ${deploy_key_location}
+  rm ${deploy_key_location}
+  mkdir -p ${HOME}/.ssh
+  ssh-keyscan github.com >> ${HOME}/.ssh/known_hosts
+  set -x
+  git clone git@github.com:cloudfoundry/cf-acceptance-tests.git ${destination}
+}
+
+main() {
+  build_dir=$PWD
+  local cf_deployment_tag
+  cf_deployment_tag=$(get_git_tag cf-deployment)
+
+  local cats_branch_name
+  cats_branch_name="cfd-${cf_deployment_tag}"
+
+  local cf_acceptance_tests_sha
+  cf_acceptance_tests_sha=$(get_git_sha cf-acceptance-tests)
+
+  # cats_to_branch=$(mktemp -d)
+  cats_to_branch=${build_dir}/branched-cats
+  clone_git_repo ${cats_to_branch}
+  pushd ${cats_to_branch} > /dev/null
+    if $(branch_exists . ${cats_branch_name}) ; then
+      git checkout ${cats_branch_name}
+    else
+      git checkout -b ${cats_branch_name}
+      git push -u origin ${cats_branch_name}
+    fi
+    git remote add master-cats ${build_dir}/cf-acceptance-tests
+    git remote update
+    git merge --ff-only master-cats/master
+    git push
+  popd > /dev/null
+}
+
+main
