@@ -26,7 +26,7 @@ branch_exists() {
 
   local result
   pushd ${repo} > /dev/null
-    if [ -n "$(git branch --list ${branch_name})" ]
+    if [ -n "$(git branch -r --list origin/${branch_name})" ]
       then echo true
     else
       echo false
