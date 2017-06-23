@@ -115,9 +115,10 @@ groups:
   - upgrade-wats
   - stable-acquire-pool
   - stable-deploy
-  - stable-release-pool
   - stable-smoke-tests
-  - stable-cats
+  - stable-semihourly-pool-acquisition
+  - stable-periodic-cats
+  - stable-update-cats-cfd-branch
   - verify-nameserver-has-record
 - name: inf
   jobs:
@@ -208,9 +209,10 @@ groups:
   jobs:
   - stable-acquire-pool
   - stable-deploy
-  - stable-release-pool
   - stable-smoke-tests
-  - stable-cats
+  - stable-semihourly-pool-acquisition
+  - stable-periodic-cats
+  - stable-update-cats-cfd-branch
 
 resource_types:
 - name: terraform
@@ -2049,15 +2051,6 @@ jobs:
     - put: stable-pool
       params: {acquire: true}
 
-- name: stable-release-pool
-  public: true
-  plan:
-  - get: stable-pool
-    passed: [ stable-smoke-tests, stable-cats ]
-    trigger: true
-  - put: stable-pool
-    params: {release: stable-pool}
-
 - name: lite-release-pool
   public: true
   plan:
@@ -2586,7 +2579,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 1h
-    on_failure:
+    ensure:
       put: stable-pool
       params: {release: stable-pool}
     do:
@@ -2606,18 +2599,31 @@ jobs:
     params:
       ERRAND_NAME: smoke-tests
 
-- name: stable-cats
+- name: stable-semihourly-pool-acquisition
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: stable-pool
-      trigger: true
-      passed: [ stable-deploy ]
     - get: half-hourly
       trigger: true
+    - put: stable-pool
+      params: {claim: bellatrix}
+
+- name: stable-periodic-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    on_failure:
+      put: stable-pool
+      params: {release: stable-pool}
+    do:
+    - get: stable-pool
+      trigger: true
+      passed: [ stable-semihourly-pool-acquisition ]
     - aggregate:
       - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
@@ -2636,6 +2642,31 @@ jobs:
       input_mapping:
       - integration-config: bellatrix-env-integration-configs
       file: cats-concourse-task/task.yml
+
+- name: stable-update-cats-cfd-branch
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    ensure:
+      put: stable-pool
+      params: {release: stable-pool}
+    do:
+    - get: stable-pool
+      trigger: true
+      passed: [ stable-periodic-cats ]
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-master
+        passed: [ stable-periodic-cats ]
+      - get: cf-acceptance-tests
+        passed: [ stable-periodic-cats ]
+    - task: update-branch
+      file: runtime-ci/tasks/update-cats-branch-with-cf-deployment-version/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-master
+      params:
+        DEPLOY_KEY: {{cf_deployment_private_key}}
 
 - name: fresh-cats
   serial: true
