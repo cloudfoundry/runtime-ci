@@ -587,7 +587,8 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-acceptance-tests
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: {{cf_acceptance_tests_private_key}}
 - name: cf-deployment-master
   type: git
   source:
