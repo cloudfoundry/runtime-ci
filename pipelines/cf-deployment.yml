@@ -1710,7 +1710,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
+        OPS_FILES: "operations/aws.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml"
       ensure:
         put: dumbledore-env-stubs-and-vars
@@ -1919,7 +1919,7 @@ jobs:
       vars-files: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "operations/use-compiled-releases.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml operations/bypass-cc-bridge.yml operations/experimental/use-cf-networking.yml"
+      OPS_FILES: "operations/use-compiled-releases.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml operations/bypass-cc-bridge.yml"
       REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
@@ -1978,7 +1978,7 @@ jobs:
       vars-files: cf-deployment-develop
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-cf-networking.yml"
+      OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml"
       DEPLOYMENT_NAME_SUFFIX: internal-mysql
   - task: bosh-dry-run-with-ops-cf-internal-postgres
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1989,7 +1989,7 @@ jobs:
       vars-files: cf-deployment-develop
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILES: "operations/experimental/use-cf-networking.yml operations/experimental/locket.yml operations/use-postgres.yml operations/experimental/use-cf-networking-postgres.yml operations/experimental/locket-postgres.yml"
+      OPS_FILES: "operations/experimental/locket.yml operations/use-postgres.yml operations/experimental/locket-postgres.yml"
       DEPLOYMENT_NAME_SUFFIX: internal-postgres
   - task: bosh-dry-run-with-ops-cf-external-persistence
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2000,7 +2000,7 @@ jobs:
       vars-files: cf-deployment-develop
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-cf-networking.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml"
+      OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/enable-local-route-emitter-tcp.yml operations/experimental/enable-loggregator-v2-diego-cell.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml"
       VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml operations/example-vars-files/vars-use-external-cf-networking-dbs.yml"
       DEPLOYMENT_NAME_SUFFIX: external-persistence
 
@@ -2155,7 +2155,7 @@ jobs:
         vars-files: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/experimental/use-cf-networking.yml"
+        OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/use-compiled-releases.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml"
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
       ensure:
         put: hermione-env-vars-store
@@ -2287,7 +2287,7 @@ jobs:
         vars-files: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
-        OPS_FILES: "operations/bosh-lite.yml operations/experimental/use-cf-networking-postgres.yml"
+        OPS_FILES: "operations/bosh-lite.yml"
       ensure:
         put: snitch-env-vars-store
         params:
