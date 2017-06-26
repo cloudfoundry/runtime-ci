@@ -3405,18 +3405,15 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-networking
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-cf-networking.yml
-      UPDATED_OPS_FILE_PATH: use-cf-networking.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
+      ops-file: cf-deployment-develop
+      manifest: updated-deployment-manifest
     params:
-      OPS_FILE_NAME: use-cf-networking.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-cf-networking.yml
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
   - put: cf-deployment-develop
     params:
       rebase: true
