@@ -68,6 +68,7 @@ main() {
     if $(branch_exists . ${cats_branch_name}) ; then
       git checkout ${cats_branch_name}
     else
+      git checkout ${cf_acceptance_tests_sha}
       git checkout -b ${cats_branch_name}
       git push -u origin ${cats_branch_name}
     fi
