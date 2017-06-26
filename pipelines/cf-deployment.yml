@@ -2614,7 +2614,7 @@ jobs:
 - name: stable-periodic-cats
   serial: true
   public: true
-  build_logs_to_retain: 100
+  build_logs_to_retain: 2000
   plan:
   - timeout: 4h
     on_failure:
