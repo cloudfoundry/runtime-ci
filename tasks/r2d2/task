@@ -13,7 +13,7 @@ function download_legacy_manifests() {
 
 function extract_vars() {
   pushd vars-store
-    ../cf-deployment-transition/transition.sh \
+    ../cf-deployment-transition/extract-vars-store-from-manifests.sh \
     -cf cf.yml \
     -d diego.yml \
     $([ "${EXTRACT_CF_NETWORKING}" == "true" ] && echo "-N") \
