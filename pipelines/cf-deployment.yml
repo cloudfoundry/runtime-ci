@@ -95,6 +95,7 @@ groups:
   - complex-transition-deploy
   - complex-transition-cats
   - complex-transition-rats
+  - complex-transition-delete-deployment
   - transition-acquire-pool
   - transition-cats
   - transition-delete-deployment
@@ -195,6 +196,7 @@ groups:
   - complex-transition-deploy
   - complex-transition-cats
   - complex-transition-rats
+  - complex-transition-delete-deployment
 
   - transition-release-pool-manual
   - ensure-transition-env-is-clean
@@ -1810,6 +1812,25 @@ jobs:
       params:
         NODES: 1
         PACKAGES: "http_routes tcp_routing"
+
+- name: complex-transition-delete-deployment
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: complex-pool
+      passed: [ complex-transition-cats, complex-transition-rats ]
+      trigger: true
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-director-state
+  - task: delete-deployment-cf
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - put: complex-pool
+    params: {release: complex-pool}
 
 - name: transition-deploy
   public: true
