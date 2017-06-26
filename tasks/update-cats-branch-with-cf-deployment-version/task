@@ -56,7 +56,7 @@ main() {
   cf_deployment_tag=$(get_git_tag cf-deployment)
 
   local cats_branch_name
-  cats_branch_name="cfd-${cf_deployment_tag}"
+  cats_branch_name="cfd-$(echo ${cf_deployment_tag} | sed -e 's/^\(v[[:digit:]]\.[[:digit:]]\).*/\1/')"
 
   local cf_acceptance_tests_sha
   cf_acceptance_tests_sha=$(get_git_sha cf-acceptance-tests)
