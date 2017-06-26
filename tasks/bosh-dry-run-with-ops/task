@@ -25,7 +25,8 @@ function setup_interpolate_env_vars_for_dry_run() {
   export MANIFEST_FILE
   MANIFEST_FILE=cf-deployment.yml
   export VARS_STORE_FILE
-  VARS_STORE_FILE="$(mktemp)"
+  VARS_STORE_FILE="empty-vars-store"
+  echo "" > "vars-store/${VARS_STORE_FILE}"
   OPS_FILES="$OPS_FILES operations/dry-run.yml"
 }
 
