@@ -1866,7 +1866,7 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml"
+        OPS_FILES: "operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml operations/remove-cf-networking.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml"
       ensure:
         put: minerva-env-stubs-and-vars
