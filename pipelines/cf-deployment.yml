@@ -1855,7 +1855,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-api-for-transition.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-api-for-transition.yml remove-cf-networking.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
