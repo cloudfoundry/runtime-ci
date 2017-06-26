@@ -38,6 +38,7 @@ function bosh_deploy_dry_run() {
     -d "${deployment_name}" \
     deploy \
     --dry-run \
+    --vars-store $(mktemp) \
     "${INTERPOLATED_MANIFEST}"
 }
 
