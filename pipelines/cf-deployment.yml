@@ -3715,7 +3715,7 @@ jobs:
         params: { bump: patch }
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
-      - get: cf-deployment-transition-compatability
+      - get: cf-deployment-transition-compatibility
       - put: cf-deployment-master
         params:
           repository: cf-deployment-release-candidate
@@ -3723,7 +3723,7 @@ jobs:
           tag_prefix: v
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
-      - put: cf-deployment-transition-compatability
+      - put: cf-deployment-transition-compatibility
         params:
           repository: updated-cf-deployment-transition-compatibility
           rebase: true
@@ -3737,7 +3737,7 @@ jobs:
         params: { bump: minor }
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
-      - get: cf-deployment-transition-compatability
+      - get: cf-deployment-transition-compatibility
       - put: cf-deployment-master
         params:
           repository: cf-deployment-release-candidate
@@ -3745,7 +3745,7 @@ jobs:
           tag_prefix: v
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
-      - put: cf-deployment-transition-compatability
+      - put: cf-deployment-transition-compatibility
         params:
           repository: updated-cf-deployment-transition-compatibility
           rebase: true
