@@ -569,8 +569,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-release.git
-    depth: 1
-    submodules: none
 - name: github-diego-release
   type: git
   source:
@@ -1455,6 +1453,9 @@ jobs:
       - get: dumbledore-env-stubs-and-vars
       - get: dumbledore-env-director-state
       - get: cf-release-master
+        params:
+          depth: 1
+          submodules: none
       - get: github-diego-release
       - get: github-routing-release-master
       - get: legacy-garden-runc-release
@@ -1574,6 +1575,9 @@ jobs:
       - get: minerva-env-stubs-and-vars
       - get: minerva-env-director-state
       - get: cf-release-master
+        params:
+          depth: 1
+          submodules: none
       - get: github-diego-release
       - get: legacy-garden-runc-release
       - get: legacy-diego-release
