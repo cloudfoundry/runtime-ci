@@ -15,8 +15,6 @@ function main() {
   go get github.com/golang/dep/...
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    dep ensure -update
-
     ginkgo -r -randomizeSuites -randomizeAllSpecs .
 
     go run main.go --build-dir "${root_dir}"
