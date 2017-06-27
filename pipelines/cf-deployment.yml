@@ -3503,6 +3503,7 @@ jobs:
     input_mapping:
       ops-files: cf-deployment-develop
       bosh-io-release: capi-release
+      compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: capi
   - put: capi-release-gcs
@@ -3573,6 +3574,8 @@ jobs:
     input_mapping:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-mysql-release
+      compiled-release-tarball: exported-release
+    params:
     params:
       RELEASE_NAME: cf-mysql
   - put: mysql-release-gcs
