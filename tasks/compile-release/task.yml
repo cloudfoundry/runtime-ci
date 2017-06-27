@@ -10,11 +10,8 @@ inputs:
 - name: bbl-state
 - name: cf-deployment
 - name: runtime-ci
-- name: ops-files
-- name: bosh-io-release
 
 outputs:
-- name: updated-compiled-releases-ops-file
 - name: exported-release
 
 run:

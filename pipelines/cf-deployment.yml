@@ -3494,12 +3494,17 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      bosh-io-release: capi-release
     params:
       RELEASE_NAME: capi
       BOSH_RELEASE: capi
       DEPLOYMENT_NAME: cf-compilation-capi
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: capi-release
+    params:
+      RELEASE_NAME: capi
   - put: capi-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3559,12 +3564,17 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-mysql-release
     params:
       RELEASE_NAME: cf-mysql
       BOSH_RELEASE: cf-mysql
       DEPLOYMENT_NAME: cf-compilation-cf-mysql
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-mysql-release
+    params:
+      RELEASE_NAME: cf-mysql
   - put: mysql-release-gcs
     params:
       file: exported-release/*.tgz
