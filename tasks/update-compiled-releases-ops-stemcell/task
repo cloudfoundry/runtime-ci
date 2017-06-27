@@ -33,12 +33,11 @@ cat << EOF
     path: /releases/name=${release_name}/sha1
     value: "${release_sha}"
 EOF
-
 }
 
 main() {
-  local ops_file
-  ops_file=$(mktemp)
+  local update_release_ops_file
+  update_release_ops_file=$(mktemp)
   echo "---" > ${ops_file}
   ops_file_to_update capi >> ${ops_file}
   ops_file_to_update cf-mysql >> ${ops_file}
