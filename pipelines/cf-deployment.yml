@@ -3495,7 +3495,6 @@ jobs:
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-mysql
   - aggregate:
-    do:
     - put: capi-release-gcs
       params:
         file: exported-release-capi/*.tgz
