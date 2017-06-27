@@ -39,8 +39,8 @@ main() {
   local update_release_ops_file
   update_release_ops_file=$(mktemp)
   echo "---" > ${update_release_ops_file}
-  ops_file_to_update capi >> ${ops_file}
-  ops_file_to_update cf-mysql >> ${ops_file}
+  ops_file_to_update capi >> ${update_release_ops_file}
+  ops_file_to_update cf-mysql >> ${update_release_ops_file}
   bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" \
     > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
