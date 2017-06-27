@@ -3207,7 +3207,7 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: stemcell
-      trigger: true
+      passed: [ update-release-stemcell ]
       params:
         tarball: false
     - get: nats-release
@@ -3330,6 +3330,7 @@ jobs:
     - get: stemcell
       params:
         tarball: false
+      passed: [ update-release-stemcell ]
   - task: update-release-postgres
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
@@ -3370,6 +3371,7 @@ jobs:
     - get: stemcell
       params:
         tarball: false
+      passed: [ update-release-stemcell ]
   - task: update-release-grootfs
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
@@ -3410,6 +3412,7 @@ jobs:
     - get: stemcell
       params:
         tarball: false
+      passed: [ update-release-stemcell ]
   - task: update-release-cf-networking
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
@@ -3442,18 +3445,80 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
+    - get: capi-release
+      params:
+        tarball: false
+    - get: cf-mysql-release
+      params:
+        tarball: false
     - get: stemcell
-      passed: [ update-releases ]
       trigger: true
       params:
         tarball: false
+  - task: create-binaries-manifest-section
+    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+    input_mapping:
+      deployment-configuration: cf-deployment-develop
   - task: bosh-upload-stemcell-compilation
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      cf-deployment: cf-deployment-develop
+      cf-deployment: updated-deployment-manifest
       bbl-state: greengrass-env-director-state
     params:
       INFRASTRUCTURE: google
+  - task: compile-release-capi
+    file: runtime-ci/tasks/compile-release/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+    output_mapping:
+      exported-release: exported-release-capi
+    params:
+      RELEASE_NAME: capi
+      BOSH_RELEASE: capi
+      DEPLOYMENT_NAME: cf-compilation-capi
+  - task: compile-release-mysql
+    file: runtime-ci/tasks/compile-release/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+    output_mapping:
+      exported-release: exported-release-mysql
+    params:
+      RELEASE_NAME: cf-mysql
+      BOSH_RELEASE: cf-mysql
+      DEPLOYMENT_NAME: cf-compilation-cf-mysql
+  - task: update-compiled-releases-ops-stemcell
+    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      capi-release-tarball: exported-release-capi
+      cf-mysql-release-tarball: exported-release-mysql
+  - aggregate:
+    do:
+    - put: capi-release-gcs
+      params:
+        file: exported-release/*.tgz
+        predefined_acl: publicRead
+    - put: mysql-release-gcs
+      params:
+        file: exported-release/*.tgz
+        predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: operations/use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 
 - name: update-release-capi
   serial: true
@@ -3467,7 +3532,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: stemcell
       passed: [ update-release-stemcell ]
-      trigger: true
       params:
         tarball: false
     - get: capi-release
@@ -3538,7 +3602,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: stemcell
       passed: [ update-release-stemcell ]
-      trigger: true
       params:
         tarball: false
     - get: cf-mysql-release
@@ -3575,7 +3638,6 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-mysql-release
       compiled-release-tarball: exported-release
-    params:
     params:
       RELEASE_NAME: cf-mysql
   - put: mysql-release-gcs

@@ -1,0 +1,51 @@
+#!/bin/bash -exu
+
+update_release() {
+  local release_name
+  release_name="${1}"
+  local release_sha
+  release_sha=$(sha1sum ${release_name}-release-tarball/*.tgz | awk '{print $1}')
+  local release_tarball
+  pushd ${release_name}-release-tarball
+    # shellcheck disable=SC2035
+    release_tarball=$(ls *.tgz)
+  popd
+  local release_version
+  release_version=$(cat ${release_name}-release/version)
+
+  update_release_ops_file=$(mktemp)
+(
+cat << EOF
+---
+- type: replace
+  path: /path=~1releases~1name=${release_name}~1url?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/url
+    value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
+- type: replace
+  path: /path=~1releases~1name=${release_name}~1version?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/version
+    value: "${release_version}"
+- type: replace
+  path: /path=~1releases~1name=${release_name}~1sha1?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/sha1
+    value: "${release_sha}"
+EOF
+) > "${update_release_ops_file}"
+
+  bosh interpolate - -o "${update_release_ops_file}"
+}
+
+main() {
+  mkdir -p updated-compiled-releases-ops-file/operations/
+  cat ops-files/operations/use-compiled-releases.yml |
+    update_release capi |
+    update_release cf-mysql > updated-compiled-releases-ops-file/operations/use-compiled-releases.yml
+}
+
+main

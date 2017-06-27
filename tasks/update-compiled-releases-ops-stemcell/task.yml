@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: ops-files
+- name: runtime-ci
+- name: capi-release
+- name: capi-release-tarball
+- name: cf-mysql-release
+- name: cf-mysql-release-tarball
+
+outputs:
+- name: updated-compiled-releases-ops-file
+
+run:
+  path: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task
