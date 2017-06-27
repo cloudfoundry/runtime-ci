@@ -48,7 +48,7 @@ Does this cf-release SHA look good for the routing team?  Any bugs, regressions,
 - **Comments**:
 
 ----
-@sreetummidi, @plfx:
+@sreetummidi, @jhamon:
 Does this cf-release SHA look good for the identity team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
@@ -139,7 +139,7 @@ echo "Hey there <@dsabeti> <@staylor>. Could you please take a look at the lates
 echo "Hey there <@efarrar> <@genevieve>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/infrastructure
 echo "Hey there <@valepert> <@smoser>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/postgres-release
 echo "Hey there <@shannon> <@sreddy>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/routing
-echo "Hey there <@stummidi> <@jeremy>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/uaa
+echo "Hey there <@stummidi> <@jhamon>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/uaa
 echo "Hey there <@hev> <@jasonkeene>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/loggregator
 echo "Hey there <@zach> <@gerg>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/capi
 echo "Hey there <@slevine> <@dgoddard>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/buildpacks
