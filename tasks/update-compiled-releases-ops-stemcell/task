@@ -1,6 +1,6 @@
 #!/bin/bash -exu
 
-update_release() {
+ops_file_to_update() {
   local release_name
   release_name="${1}"
   local release_sha
@@ -13,10 +13,7 @@ update_release() {
   local release_version
   release_version=$(cat ${release_name}-release/version)
 
-  update_release_ops_file=$(mktemp)
-(
 cat << EOF
----
 - type: replace
   path: /path=~1releases~1name=${release_name}~1url?
   value:
@@ -36,16 +33,17 @@ cat << EOF
     path: /releases/name=${release_name}/sha1
     value: "${release_sha}"
 EOF
-) > "${update_release_ops_file}"
 
-  bosh interpolate - -o "${update_release_ops_file}"
 }
 
 main() {
-  mkdir -p updated-compiled-releases-ops-file/operations/
-  cat ops-files/operations/use-compiled-releases.yml |
-    update_release capi |
-    update_release cf-mysql > updated-compiled-releases-ops-file/operations/use-compiled-releases.yml
+  local ops_file
+  ops_file=$(mktemp)
+  echo "---" > ${ops_file}
+  ops_file_to_update capi >> ${ops_file}
+  ops_file_to_update cf-mysql >> ${ops_file}
+  bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" \
+    > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
 
 main

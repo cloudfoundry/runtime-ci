@@ -3513,7 +3513,7 @@ jobs:
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
