@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+
+validate_variables() {
+  BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
+  STEMCELL_OS="${STEMCELL_OS:?"STEMCELL_OS must be provided"}"
+  DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
+}
+
+deploy_for_compilation() {
+  cat << EOF > compilation.yml
+---
+- type: replace
+  path: /name
+  value: cf-compilation-${RELEASE_NAME}
+
+- type: replace
+  path: /instance_groups
+  value: []
+
+EOF
+  bosh \
+    -n \
+    -d cf-compilation-${RELEASE_NAME} \
+    deploy cf-deployment/cf-deployment.yml \
+    -o compilation.yml
+}
+
+export_release() {
+  local stemcell_os_version
+  stemcell_os_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/stemcells/os=${STEMCELL_OS}/version")
+  local bosh_release_version
+  bosh_release_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
+  pushd exported-release
+    bosh export-release -d "${DEPLOYMENT_NAME}" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+  popd
+}
+
+update_release() {
+  local release_sha
+  release_sha=$(sha1sum exported-release/*.tgz | awk '{print $1}')
+  local release_tarball
+  pushd exported-release
+    # shellcheck disable=SC2035
+    release_tarball=$(ls *.tgz)
+  popd
+  local release_version
+  release_version=$(cat bosh-io-release/version)
+
+  update_release_ops_file=$(mktemp)
+(
+cat << EOF
+---
+- type: replace
+  path: /path=~1releases~1name=${RELEASE_NAME}~1url?
+  value:
+    type: replace
+    path: /releases/name=${RELEASE_NAME}/url
+    value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
+- type: replace
+  path: /path=~1releases~1name=${RELEASE_NAME}~1version?
+  value:
+    type: replace
+    path: /releases/name=${RELEASE_NAME}/version
+    value: "${release_version}"
+- type: replace
+  path: /path=~1releases~1name=${RELEASE_NAME}~1sha1?
+  value:
+    type: replace
+    path: /releases/name=${RELEASE_NAME}/sha1
+    value: "${release_sha}"
+EOF
+) > "${update_release_ops_file}"
+
+  bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" > updated-compiled-releases-ops-file/use-compiled-releases.yml
+}
+
+main() {
+  validate_variables
+  setup_bosh_env_vars
+
+  deploy_for_compilation
+
+  export_release
+
+  update_release
+}
+
+main

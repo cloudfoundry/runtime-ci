@@ -3575,33 +3575,21 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: deploy-for-compilation
-    file: runtime-ci/tasks/deploy-for-compilation/task.yml
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-mysql-release
     params:
       RELEASE_NAME: cf-mysql
-  - task: export-mysql-release
-    file: runtime-ci/tasks/bosh-export-release/task.yml
-    input_mapping:
-      cf-deployment: updated-deployment-manifest
-      bbl-state: greengrass-env-director-state
-    params:
       BOSH_RELEASE: cf-mysql
       DEPLOYMENT_NAME: cf-compilation-cf-mysql
   - put: mysql-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      compiled-release-tarball: exported-release
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-mysql-release
-    params:
-      RELEASE_NAME: cf-mysql
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
