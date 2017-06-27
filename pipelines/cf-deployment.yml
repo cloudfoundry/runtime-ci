@@ -3455,8 +3455,8 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: create-binaries-manifest-section
-    file: runtime-ci/scripts/ci/create-binaries-manifest-section/task.yml
+  - task: update-stemcell-manifest-section
+    file: runtime-ci/tasks/update-stemcell-manifest-section/task.yml
     input_mapping:
       deployment-configuration: cf-deployment-develop
   - task: bosh-upload-stemcell-compilation
