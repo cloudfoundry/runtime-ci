@@ -3504,7 +3504,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
-      bosh-io-release: capi
+      bosh-io-release: capi-release
     params:
       RELEASE_NAME: capi
       BOSH_RELEASE: capi
