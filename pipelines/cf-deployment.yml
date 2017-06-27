@@ -3730,6 +3730,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
+      - get: runtime-ci
       - put: cf-deployment-version
         params: { bump: patch }
       - get: cf-deployment-release-candidate
@@ -3752,6 +3753,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
+      - get: runtime-ci
       - put: cf-deployment-version
         params: { bump: minor }
       - get: cf-deployment-release-candidate
