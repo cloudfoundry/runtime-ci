@@ -5,7 +5,7 @@ function setup_bosh_ssh_key() {
   set +x
   chmod 0600 ${bosh_ssh_key}
   pushd bbl-state > /dev/null
-    cat bbl-state.json | jq -r '.keyPair.privateKey' > ${bosh_ssh_key}
+    bbl ssh-key > ${bosh_ssh_key}
   popd > /dev/null
 }
 
