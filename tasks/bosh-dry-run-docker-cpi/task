@@ -20,7 +20,7 @@ function main() {
   create_latest_stemcell_opsfile
   vars_store="$(mktemp)"
 
-  bosh -n upload-stemcell stemcell/*.tgz
+  bosh -n upload-stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=$(cat stemcell/version)
 
   bosh \
     -n \

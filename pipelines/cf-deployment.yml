@@ -4377,6 +4377,8 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: stemcell
       passed: [ update-release-stemcell ]
+      params:
+        tarball: false
     - get: capi-release
       trigger: true
       params:
@@ -4391,11 +4393,13 @@ jobs:
       RELEASE_NAME: capi
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-docker-cpi/task.yml
+    privileged: true
     input_mapping:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
   - task: compile-release
     file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
     input_mapping:
       cf-deployment: updated-deployment-manifest
     params:

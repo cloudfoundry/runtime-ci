@@ -41,7 +41,7 @@ main() {
   start-bosh
   source /tmp/local-bosh/director/env
 
-  bosh -n upload-stemcell stemcell/*.tgz
+  bosh -n upload-stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=$(cat stemcell/version)
 
   deploy_for_compilation
 
