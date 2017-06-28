@@ -4395,11 +4395,12 @@ jobs:
     params:
       RELEASE_NAME: capi
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-docker-cpi/task.yml
-    privileged: true
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
     privileged: true
@@ -4471,9 +4472,8 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release/task.yml
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-mysql
