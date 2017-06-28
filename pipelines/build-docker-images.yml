@@ -55,7 +55,6 @@ groups:
   - build-unbind-elb-from-r53-docker-image
   - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
-  - build-create-binaries-manifest-section-docker-image
   - build-commit-generated-manifest-docker-image
   - build-create-final-release-bucket-docker-image
   - build-verify-nameserver-has-record-docker-image
@@ -378,13 +377,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/extend-bosh-lite-diego-stub/Dockerfile]
-
-- name: runtime-ci-create-binaries-manifest-section
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-binaries-manifest-section/Dockerfile]
 
 - name: runtime-ci-commit-generated-manifest
   type: git
@@ -799,14 +791,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/extend-bosh-lite-diego-stub
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: create-binaries-manifest-section-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-binaries-manifest-section
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1754,25 +1738,6 @@ jobs:
     - put: extend-bosh-lite-diego-stub-pipeline-image
       params:
         build: runtime-ci-extend-bosh-lite-diego-stub/scripts/ci/extend-bosh-lite-diego-stub
-        push: true
-
-- name: build-create-binaries-manifest-section-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-binaries-manifest-section
-        trigger: true
-    - put: create-binaries-manifest-section-pipeline-image
-      params:
-        build: runtime-ci-create-binaries-manifest-section/scripts/ci/create-binaries-manifest-section
         push: true
 
 - name: build-commit-generated-manifest-docker-image
