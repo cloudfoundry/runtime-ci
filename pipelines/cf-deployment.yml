@@ -4378,8 +4378,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: stemcell
       passed: [ update-release-stemcell ]
-      params:
-        tarball: false
     - get: capi-release
       trigger: true
       params:
@@ -4400,9 +4398,8 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release/task.yml
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: capi

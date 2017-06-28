@@ -1,0 +1,51 @@
+#!/bin/bash
+
+validate_variables() {
+  BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
+  STEMCELL_OS="${STEMCELL_OS:?"STEMCELL_OS must be provided"}"
+  DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
+}
+
+deploy_for_compilation() {
+  cat << EOF > compilation.yml
+---
+- type: replace
+  path: /name
+  value: cf-compilation
+
+- type: replace
+  path: /instance_groups
+  value: []
+
+EOF
+  bosh \
+    -n \
+    -d cf-compilation \
+    deploy cf-deployment/cf-deployment.yml \
+    -o compilation.yml
+}
+
+export_release() {
+  local stemcell_os_version
+  stemcell_os_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/stemcells/os=${STEMCELL_OS}/version")
+  local bosh_release_version
+  bosh_release_version=$(bosh interpolate cf-deployment/cf-deployment.yml --path "/releases/name=${BOSH_RELEASE}/version")
+  pushd exported-release
+    bosh export-release -d "cf-compilation" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+  popd
+}
+
+main() {
+  validate_variables
+
+  start-bosh
+  source /tmp/local-bosh/director/env
+
+  bosh -n upload-stemcell stemcell/*.tgz
+
+  deploy_for_compilation
+
+  export_release
+}
+
+main
