@@ -21,6 +21,7 @@ function main() {
   vars_store="$(mktemp)"
 
   bosh -n upload-stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=$(cat stemcell/version)
+  bosh -n update-cloud-config cf-deployment/bosh-lite/cloud-config.yml
 
   bosh \
     -n \
