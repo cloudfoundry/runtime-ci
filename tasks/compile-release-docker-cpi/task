@@ -3,7 +3,6 @@
 validate_variables() {
   BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
   STEMCELL_OS="${STEMCELL_OS:?"STEMCELL_OS must be provided"}"
-  DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?"DEPLOYMENT_NAME must be provided"}"
 }
 
 deploy_for_compilation() {
