@@ -813,6 +813,12 @@ resources:
     json_key: {{concourse_gcp_service_account_json}}
     regexp: binary-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
+- name: cf-networking-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cf-networking-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
 - name: cf-deployment-version
   type: semver
@@ -4298,15 +4304,37 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-networking
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-networking
+      BOSH_RELEASE: cf-networking
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-networking
+  - put: cf-networking-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
