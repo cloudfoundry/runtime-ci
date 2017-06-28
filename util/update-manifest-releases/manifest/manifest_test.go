@@ -57,7 +57,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
 		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
 
-		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release2-release original-release2-version, ubuntu-trusty stemcell updated-stemcell-version"))
 	})
 
 	It("when the version changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
@@ -79,7 +79,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
 		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
 
-		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release2-release updated-release2-version, ubuntu-trusty stemcell updated-stemcell-version"))
 	})
 
 	It("when the url changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
@@ -101,7 +101,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(string(cfDeploymentPreamble)).To(Equal(string(updatedManifestPreamble)), "the preamble was changed by running the program")
 		Expect(string(updatedManifestReleasesAndStemcells)).To(Equal(string(updatedReleasesAndStemcellsFixture)))
 
-		Expect(changes).To(Equal("Updated manifest with release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release2-release original-release2-version, ubuntu-trusty stemcell updated-stemcell-version"))
 	})
 
 	It("provides a default commit message if no version updates were performed", func() {
@@ -147,7 +147,7 @@ stemcells:
 		_, changes, err := manifest.UpdateReleasesAndStemcells(releases, noChangesBuildDir, cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(changes).To(Equal("Updated manifest with release1-release, release2-release, ubuntu-trusty stemcell"))
+		Expect(changes).To(Equal("Updated manifest with release1-release original-release1-version, release2-release original-release2-version, ubuntu-trusty stemcell original-stemcell-version"))
 	})
 
 	Context("failure cases", func() {

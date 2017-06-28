@@ -114,7 +114,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 			newRelease.Version = strings.TrimSpace(string(version))
 
 			if releasesByName[newRelease.Name] != newRelease {
-				changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
+				changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
 			}
 
 		} else {
@@ -127,17 +127,18 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	if err != nil {
 		return nil, "", err
 	}
+	trimmedStemcellVersion := strings.TrimSpace(string(stemcellVersion))
 
 	cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
 		{
 			Alias:   "default",
 			OS:      "ubuntu-trusty",
-			Version: strings.TrimSpace(string(stemcellVersion)),
+			Version: trimmedStemcellVersion,
 		},
 	}
 
-	if stemcellsVersions["default"] != strings.TrimSpace(string(stemcellVersion)) {
-		changes = append(changes, "ubuntu-trusty stemcell")
+	if stemcellsVersions["default"] != trimmedStemcellVersion {
+		changes = append(changes, fmt.Sprintf("ubuntu-trusty stemcell %s", trimmedStemcellVersion))
 	}
 
 	cfDeploymentReleasesAndStemcellsYaml, err := marshalFunc(cfDeploymentReleasesAndStemcells)

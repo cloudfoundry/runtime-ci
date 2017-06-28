@@ -39,7 +39,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 					}
 
 					if newRelease != oldRelease {
-						changes = append(changes, fmt.Sprintf("%s-release", newRelease.Name))
+						changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
 					}
 
 					valueMap["sha1"] = newRelease.SHA1
