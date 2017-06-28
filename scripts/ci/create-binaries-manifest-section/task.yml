@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: binary-buildpack-release
-- name: cf-smoke-tests-release
 - name: cflinuxfs2-release
 - name: consul-release
 - name: deployment-configuration
@@ -26,8 +25,6 @@ inputs:
 - name: routing-release
 - name: ruby-buildpack-release
 - name: runtime-ci
-- name: staticfile-buildpack-release
-- name: statsd-injector-release
 - name: stemcell
 - name: uaa-release
 
