@@ -10,7 +10,7 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment
 - name: ops-files
-# - name: stemcell
+- name: stemcell
 
 run:
   path: runtime-ci/tasks/bosh-dry-run-docker-cpi/task
