@@ -4367,7 +4367,6 @@ jobs:
       repository: updated-repo
 
 - name: update-release-capi
-  serial_groups: [releases]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4391,12 +4390,10 @@ jobs:
     params:
       RELEASE_NAME: capi
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-docker-cpi/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
     input_mapping:
