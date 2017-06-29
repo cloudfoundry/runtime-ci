@@ -820,6 +820,153 @@ resources:
     json_key: {{concourse_gcp_service_account_json}}
     regexp: cf-networking-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
+- name: cf-smoke-tests-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cf-smoke-tests-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: cflinuxfs2-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cflinuxfs2-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: consul-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: consul-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: diego-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: diego-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: dotnet-core-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: dotnet-core-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: etcd-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: etcd-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: garden-runc-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: garden-runc-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: go-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: go-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: grootfs-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: grootfs-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: java-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: java-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: loggregator-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: loggregator-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: nats-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: nats-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: nodejs-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: nodejs-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: php-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: php-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: postgres-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: postgres-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: python-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: python-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: routing-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: routing-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: ruby-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: ruby-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: staticfile-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: staticfile-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: statsd-injector-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: statsd-injector-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
+- name: uaa-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
 - name: cf-deployment-version
   type: semver
   source:
@@ -3257,7 +3404,7 @@ jobs:
       repository: cf-deployment-develop
 
 - name: update-release-nats
-  serial_groups: [releases]
+  serial_groups: [update-release-nats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3288,22 +3435,45 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+      MANIFEST_DESTINATION: cf-deployment.yml
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: nats
+      BOSH_RELEASE: nats
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nats-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nats
+  - put: nats-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-routing
-  serial_groups: [releases]
+  serial_groups: [update-release-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3334,22 +3504,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: routing
+      BOSH_RELEASE: routing
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: routing-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: routing
+  - put: routing-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-consul
-  serial_groups: [releases]
+  serial_groups: [update-release-consul]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3380,22 +3572,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: consul
+      BOSH_RELEASE: consul
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: consul-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: consul
+  - put: consul-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-etcd
-  serial_groups: [releases]
+  serial_groups: [update-release-etcd]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3426,22 +3640,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: etcd
+      BOSH_RELEASE: etcd
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: etcd-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: etcd
+  - put: etcd-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-diego
-  serial_groups: [releases]
+  serial_groups: [update-release-diego]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3472,22 +3708,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: diego
+      BOSH_RELEASE: diego
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: diego-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: diego
+  - put: diego-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-loggregator
-  serial_groups: [releases]
+  serial_groups: [update-release-loggregator]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3518,22 +3776,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: loggregator
+      BOSH_RELEASE: loggregator
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: loggregator-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: loggregator
+  - put: loggregator-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-uaa
-  serial_groups: [releases]
+  serial_groups: [update-release-uaa]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3564,22 +3844,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: uaa
+      BOSH_RELEASE: uaa
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: uaa-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: uaa
+  - put: uaa-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-garden-runc
-  serial_groups: [releases]
+  serial_groups: [update-release-garden-runc]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3610,22 +3912,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: garden-runc
+      BOSH_RELEASE: garden-runc
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: garden-runc-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: garden-runc
+  - put: garden-runc-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-cflinuxfs2
-  serial_groups: [releases]
+  serial_groups: [update-release-cflinuxfs2]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3656,15 +3980,37 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cflinuxfs2
+      BOSH_RELEASE: cflinuxfs2
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cflinuxfs2-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cflinuxfs2
+  - put: cflinuxfs2-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -3739,7 +4085,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-dotnet-core-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-dotnet-core-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3770,22 +4116,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+      BOSH_RELEASE: dotnet-core-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: dotnet-core-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+  - put: dotnet-core-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-go-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-go-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3816,22 +4184,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: go-buildpack
+      BOSH_RELEASE: go-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: go-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: go-buildpack
+  - put: go-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-java-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-java-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3862,22 +4252,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: java-buildpack
+      BOSH_RELEASE: java-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: java-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: java-buildpack
+  - put: java-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-nodejs-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-nodejs-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3908,22 +4320,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: nodejs-buildpack
+      BOSH_RELEASE: nodejs-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nodejs-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nodejs-buildpack
+  - put: nodejs-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-php-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-php-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3954,22 +4388,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: php-buildpack
+      BOSH_RELEASE: php-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: php-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: php-buildpack
+  - put: php-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-python-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-python-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4000,22 +4456,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: python-buildpack
+      BOSH_RELEASE: python-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: python-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: python-buildpack
+  - put: python-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-ruby-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-ruby-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4046,22 +4524,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: ruby-buildpack
+      BOSH_RELEASE: ruby-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: ruby-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: ruby-buildpack
+  - put: ruby-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-staticfile-buildpack
-  serial_groups: [releases]
+  serial_groups: [update-release-staticfile-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4092,22 +4592,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: staticfile-buildpack
+      BOSH_RELEASE: staticfile-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: staticfile-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: staticfile-buildpack
+  - put: staticfile-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-statsd-injector
-  serial_groups: [releases]
+  serial_groups: [update-release-statsd-injector]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4138,22 +4660,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: statsd-injector
+      BOSH_RELEASE: statsd-injector
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: statsd-injector-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: statsd-injector
+  - put: statsd-injector-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-cf-smoke-tests
-  serial_groups: [releases]
+  serial_groups: [update-release-cf-smoke-tests]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4184,22 +4728,44 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
-  - task: commit-generated-manifest
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      BOSH_RELEASE: cf-smoke-tests
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-smoke-tests
+  - put: cf-smoke-tests-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
-      ops-file: cf-deployment-develop
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
 - name: update-release-postgres
-  serial_groups: [releases]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4240,7 +4806,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-grootfs
-  serial_groups: [releases]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4281,7 +4847,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-cf-networking
-  serial_groups: [releases]
+  serial_groups: [update-release-cf-networking]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4304,6 +4870,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-networking
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
     privileged: true
@@ -4343,8 +4916,29 @@ jobs:
 - name: update-release-stemcell
   serial_groups:
   - releases
-  - update-release-capi
   - update-release-binary-buildpack
+  - update-release-capi
+  - update-release-cf-networking
+  - update-release-cf-smoke-tests
+  - update-release-cflinuxfs2
+  - update-release-consul
+  - update-release-diego
+  - update-release-dotnet-core-buildpack
+  - update-release-etcd
+  - update-release-garden-runc
+  - update-release-go-buildpack
+  - update-release-java-buildpack
+  - update-release-loggregator
+  - update-release-mysql
+  - update-release-nats
+  - update-release-nodejs-buildpack
+  - update-release-php-buildpack
+  - update-release-python-buildpack
+  - update-release-routing
+  - update-release-ruby-buildpack
+  - update-release-staticfile-buildpack
+  - update-release-statsd-injector
+  - update-release-uaa
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4497,7 +5091,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-mysql
-  serial_groups: [releases]
+  serial_groups: [update-release-mysql]
   public: true
   build_logs_to_retain: 100
   plan:
