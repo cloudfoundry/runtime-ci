@@ -4902,7 +4902,6 @@ jobs:
 
 - name: update-release-stemcell
   serial_groups:
-  - releases
   - update-release-binary-buildpack
   - update-release-capi
   - update-release-cf-networking
@@ -5147,7 +5146,7 @@ jobs:
       repository: updated-repo
 
 - name: update-releases-windows
-  serial_groups: [releases]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
