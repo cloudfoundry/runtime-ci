@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -exu
 
 validate_variables() {
   BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
