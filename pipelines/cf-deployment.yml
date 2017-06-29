@@ -4839,6 +4839,7 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+    - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-networking-release
       trigger: true
