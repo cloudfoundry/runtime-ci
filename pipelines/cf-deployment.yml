@@ -5112,6 +5112,7 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    privileged: true
     input_mapping:
       cf-deployment: updated-deployment-manifest
     params:
