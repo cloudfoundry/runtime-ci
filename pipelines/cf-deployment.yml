@@ -876,13 +876,6 @@ resources:
     json_key: {{concourse_gcp_service_account_json}}
     regexp: go-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
-- name: grootfs-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: grootfs-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-
 - name: java-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -917,13 +910,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
     regexp: php-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-
-- name: postgres-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: postgres-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
 - name: python-buildpack-release-gcs
   type: gcs-resource
