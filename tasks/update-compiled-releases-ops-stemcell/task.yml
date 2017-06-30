@@ -7,12 +7,55 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: ops-files
 - name: runtime-ci
+- name: ops-files
+
+- name: binary-buildpack-release
+- name: binary-buildpack-release-tarball
 - name: capi-release
 - name: capi-release-tarball
 - name: cf-mysql-release
 - name: cf-mysql-release-tarball
+- name: cf-networking-release
+- name: cf-networking-release-tarball
+- name: cf-smoke-tests-release
+- name: cf-smoke-tests-release-tarball
+- name: cflinuxfs2-release
+- name: cflinuxfs2-release-tarball
+- name: consul-release
+- name: consul-release-tarball
+- name: diego-release
+- name: diego-release-tarball
+- name: dotnet-core-buildpack-release
+- name: dotnet-core-buildpack-release-tarball
+- name: etcd-release
+- name: etcd-release-tarball
+- name: garden-runc-release
+- name: garden-runc-release-tarball
+- name: go-buildpack-release
+- name: go-buildpack-release-tarball
+- name: grootfs-release
+- name: grootfs-release-tarball
+- name: java-buildpack-release
+- name: java-buildpack-release-tarball
+- name: loggregator-release
+- name: loggregator-release-tarball
+- name: nats-release
+- name: nats-release-tarball
+- name: nodejs-release
+- name: nodejs-release-tarball
+- name: php-buildpack-release
+- name: php-buildpack-release-tarball
+- name: python-buildpack-release
+- name: python-buildpack-release-tarball
+- name: routing-release
+- name: routing-release-tarball
+- name: ruby-buildpack-release
+- name: ruby-buildpack-release-tarball
+- name: staticfile-buildpack-release
+- name: staticfile-buildpack-release-tarball
+- name: statsd-injector-release
+- name: statsd-injector-release-tarball
 
 outputs:
 - name: updated-compiled-releases-ops-file

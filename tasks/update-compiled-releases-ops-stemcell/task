@@ -41,6 +41,29 @@ main() {
   echo "---" > ${update_release_ops_file}
   ops_file_to_update capi >> ${update_release_ops_file}
   ops_file_to_update cf-mysql >> ${update_release_ops_file}
+  ops_file_to_update binary-buildpack >> ${update_release_ops_file}
+  ops_file_to_update cf-networking >> ${update_release_ops_file}
+  ops_file_to_update cf-smoke-tests >> ${update_release_ops_file}
+  ops_file_to_update cflinuxfs2 >> ${update_release_ops_file}
+  ops_file_to_update consul >> ${update_release_ops_file}
+  ops_file_to_update diego >> ${update_release_ops_file}
+  ops_file_to_update dotnet-core-buildpack >> ${update_release_ops_file}
+  ops_file_to_update etcd >> ${update_release_ops_file}
+  ops_file_to_update garden-runc >> ${update_release_ops_file}
+  ops_file_to_update go-buildpack >> ${update_release_ops_file}
+  ops_file_to_update grootfs >> ${update_release_ops_file}
+  ops_file_to_update java-buildpack >> ${update_release_ops_file}
+  ops_file_to_update loggregator >> ${update_release_ops_file}
+  ops_file_to_update nats >> ${update_release_ops_file}
+  ops_file_to_update nodejs >> ${update_release_ops_file}
+  ops_file_to_update php-buildpack >> ${update_release_ops_file}
+  ops_file_to_update python-buildpack >> ${update_release_ops_file}
+  ops_file_to_update routing >> ${update_release_ops_file}
+  ops_file_to_update ruby-buildpack >> ${update_release_ops_file}
+  ops_file_to_update cf-mysql >> ${update_release_ops_file}
+  ops_file_to_update staticfile-buildpack >> ${update_release_ops_file}
+  ops_file_to_update statsd-injector >> ${update_release_ops_file}
+
   bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" \
     > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
