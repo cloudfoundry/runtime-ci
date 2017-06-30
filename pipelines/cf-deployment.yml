@@ -3417,7 +3417,7 @@ jobs:
       repository: cf-deployment-develop
 
 - name: update-release-nats
-  serial_groups: [releases, update-release-nats]
+  serial_groups: [update-release-nats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3486,7 +3486,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-routing
-  serial_groups: [releases, update-release-routing]
+  serial_groups: [update-release-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3554,7 +3554,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-consul
-  serial_groups: [releases, update-release-consul]
+  serial_groups: [update-release-consul]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3622,7 +3622,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-etcd
-  serial_groups: [releases, update-release-etcd]
+  serial_groups: [update-release-etcd]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3690,7 +3690,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-diego
-  serial_groups: [releases, update-release-diego]
+  serial_groups: [update-release-diego]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3758,7 +3758,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-loggregator
-  serial_groups: [releases, update-release-loggregator]
+  serial_groups: [update-release-loggregator]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3826,7 +3826,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-uaa
-  serial_groups: [releases, update-release-uaa]
+  serial_groups: [update-release-uaa]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3894,7 +3894,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-garden-runc
-  serial_groups: [releases, update-release-garden-runc]
+  serial_groups: [update-release-garden-runc]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3962,7 +3962,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-cflinuxfs2
-  serial_groups: [releases, update-release-cflinuxfs2]
+  serial_groups: [update-release-cflinuxfs2]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4030,7 +4030,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-binary-buildpack
-  serial_groups: [releases, update-release-binary-buildpack]
+  serial_groups: [update-release-binary-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4098,7 +4098,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-dotnet-core-buildpack
-  serial_groups: [releases, update-release-dotnet-core-buildpack]
+  serial_groups: [update-release-dotnet-core-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4166,7 +4166,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-go-buildpack
-  serial_groups: [releases, update-release-go-buildpack]
+  serial_groups: [update-release-go-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4234,7 +4234,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-java-buildpack
-  serial_groups: [releases, update-release-java-buildpack]
+  serial_groups: [update-release-java-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4302,7 +4302,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-nodejs-buildpack
-  serial_groups: [releases, update-release-nodejs-buildpack]
+  serial_groups: [update-release-nodejs-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4370,7 +4370,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-php-buildpack
-  serial_groups: [releases, update-release-php-buildpack]
+  serial_groups: [update-release-php-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4438,7 +4438,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-python-buildpack
-  serial_groups: [releases, update-release-python-buildpack]
+  serial_groups: [update-release-python-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4506,7 +4506,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-ruby-buildpack
-  serial_groups: [releases, update-release-ruby-buildpack]
+  serial_groups: [update-release-ruby-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4574,7 +4574,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-staticfile-buildpack
-  serial_groups: [releases, update-release-staticfile-buildpack]
+  serial_groups: [update-release-staticfile-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4642,7 +4642,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-statsd-injector
-  serial_groups: [releases, update-release-statsd-injector]
+  serial_groups: [update-release-statsd-injector]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4710,7 +4710,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-cf-smoke-tests
-  serial_groups: [releases, update-release-cf-smoke-tests]
+  serial_groups: [update-release-cf-smoke-tests]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4860,7 +4860,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-cf-networking
-  serial_groups: [releases, update-release-cf-networking]
+  serial_groups: [update-release-cf-networking]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -5035,7 +5035,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-capi
-  serial_groups: [releases, update-release-capi]
+  serial_groups: [update-release-capi]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -5104,7 +5104,7 @@ jobs:
       repository: updated-repo
 
 - name: update-release-mysql
-  serial_groups: [releases, update-release-mysql]
+  serial_groups: [update-release-mysql]
   public: true
   build_logs_to_retain: 100
   plan:
