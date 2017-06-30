@@ -4974,13 +4974,6 @@ jobs:
     file: runtime-ci/tasks/update-stemcell-manifest-section/task.yml
     input_mapping:
       deployment-configuration: cf-deployment-develop
-  - task: bosh-upload-stemcell-compilation
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: updated-deployment-manifest
-      bbl-state: greengrass-env-director-state
-    params:
-      INFRASTRUCTURE: google
   - aggregate:
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
