@@ -4981,28 +4981,237 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       INFRASTRUCTURE: google
-  - task: compile-release-capi
-    file: runtime-ci/tasks/compile-release/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-    output_mapping:
-      exported-release: exported-release-capi
-    params:
-      RELEASE_NAME: capi
-      BOSH_RELEASE: capi
-      DEPLOYMENT_NAME: cf-compilation-capi
-  - task: compile-release-mysql
-    file: runtime-ci/tasks/compile-release/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-    output_mapping:
-      exported-release: exported-release-mysql
-    params:
-      RELEASE_NAME: cf-mysql
-      BOSH_RELEASE: cf-mysql
-      DEPLOYMENT_NAME: cf-compilation-cf-mysql
+  - aggregate:
+    - task: compile-release-capi
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-capi
+      params:
+        RELEASE_NAME: capi
+        BOSH_RELEASE: capi
+    - task: compile-release-mysql
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-mysql
+      params:
+        RELEASE_NAME: cf-mysql
+        BOSH_RELEASE: cf-mysql
+    - task: compile-release-nats
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-nats
+      params:
+        RELEASE_NAME: nats
+        BOSH_RELEASE: nats
+    - task: compile-release-routing
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-routing
+      params:
+        RELEASE_NAME: routing
+        BOSH_RELEASE: routing
+    - task: compile-release-consul
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-consul
+      params:
+        RELEASE_NAME: consul
+        BOSH_RELEASE: consul
+    - task: compile-release-etcd
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-etcd
+      params:
+        RELEASE_NAME: etcd
+        BOSH_RELEASE: etcd
+    - task: compile-release-diego
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-diego
+      params:
+        RELEASE_NAME: diego
+        BOSH_RELEASE: diego
+    - task: compile-release-loggregator
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-loggregator
+      params:
+        RELEASE_NAME: loggregator
+        BOSH_RELEASE: loggregator
+    - task: compile-release-uaa
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-uaa
+      params:
+        RELEASE_NAME: uaa
+        BOSH_RELEASE: uaa
+    - task: compile-release-garden-runc
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-garden-runc
+      params:
+        RELEASE_NAME: garden-runc
+        BOSH_RELEASE: garden-runc
+    - task: compile-release-cflinuxfs2
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cflinuxfs2
+      params:
+        RELEASE_NAME: cflinuxfs2
+        BOSH_RELEASE: cflinuxfs2
+    - task: compile-release-binary-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-binary-buildpack
+      params:
+        RELEASE_NAME: binary-buildpack
+        BOSH_RELEASE: binary-buildpack
+    - task: compile-release-dotnet-core-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-dotnet-core-buildpack
+      params:
+        RELEASE_NAME: dotnet-core-buildpack
+        BOSH_RELEASE: dotnet-core-buildpack
+    - task: compile-release-go-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-go-buildpack
+      params:
+        RELEASE_NAME: go-buildpack
+        BOSH_RELEASE: go-buildpack
+    - task: compile-release-java-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-java-buildpack
+      params:
+        RELEASE_NAME: java-buildpack
+        BOSH_RELEASE: java-buildpack
+    - task: compile-release-nodejs-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-nodejs-buildpack
+      params:
+        RELEASE_NAME: nodejs-buildpack
+        BOSH_RELEASE: nodejs-buildpack
+    - task: compile-release-php-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-php-buildpack
+      params:
+        RELEASE_NAME: php-buildpack
+        BOSH_RELEASE: php-buildpack
+    - task: compile-release-python-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-python-buildpack
+      params:
+        RELEASE_NAME: python-buildpack
+        BOSH_RELEASE: python-buildpack
+    - task: compile-release-ruby-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-ruby-buildpack
+      params:
+        RELEASE_NAME: ruby-buildpack
+        BOSH_RELEASE: ruby-buildpack
+    - task: compile-release-staticfile-buildpack
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-staticfile-buildpack
+      params:
+        RELEASE_NAME: staticfile-buildpack
+        BOSH_RELEASE: staticfile-buildpack
+    - task: compile-release-statsd-injector
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-statsd-injector
+      params:
+        RELEASE_NAME: statsd-injector
+        BOSH_RELEASE: statsd-injector
+    - task: compile-release-cf-smoke-tests
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-smoke-tests
+      params:
+        RELEASE_NAME: cf-smoke-tests
+        BOSH_RELEASE: cf-smoke-tests
+    - task: compile-release-cf-networking
+      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      privileged: true
+      input_mapping:
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-networking
+      params:
+        RELEASE_NAME: cf-networking
+        BOSH_RELEASE: cf-networking
   - task: update-compiled-releases-ops-stemcell
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
     input_mapping:
@@ -5013,6 +5222,86 @@ jobs:
     - put: capi-release-gcs
       params:
         file: exported-release-capi/*.tgz
+        predefined_acl: publicRead
+    - put: mysql-release-gcs
+      params:
+        file: exported-release-mysql/*.tgz
+        predefined_acl: publicRead
+    - put: binary-buildpack-release-gcs
+      params:
+        file: exported-release-binary-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: cf-networking-release-gcs
+      params:
+        file: exported-release-cf-networking/*.tgz
+        predefined_acl: publicRead
+    - put: cf-smoke-tests-release-gcs
+      params:
+        file: exported-release-cf-smoke-tests/*.tgz
+        predefined_acl: publicRead
+    - put: cflinuxfs2-release-gcs
+      params:
+        file: exported-release-consul/*.tgz
+        predefined_acl: publicRead
+    - put: diego-release-gcs
+      params:
+        file: exported-release-diego/*.tgz
+        predefined_acl: publicRead
+    - put: dotnet-core-buildpack-release-gcs
+      params:
+        file: exported-release-dotnet-core-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: etcd-release-gcs
+      params:
+        file: exported-release-etcd/*.tgz
+        predefined_acl: publicRead
+    - put: garden-runc-release-gcs
+      params:
+        file: exported-release-garden-runc/*.tgz
+        predefined_acl: publicRead
+    - put: go-buildpack-release-gcs
+      params:
+        file: exported-release-go-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: java-buildpack-release-gcs
+      params:
+        file: exported-release-java-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: loggregator-release-gcs
+      params:
+        file: exported-release-loggregator/*.tgz
+        predefined_acl: publicRead
+    - put: nats-release-gcs
+      params:
+        file: exported-release-nats/*.tgz
+        predefined_acl: publicRead
+    - put: nodejs-buildpack-release-gcs
+      params:
+        file: exported-release-nodejs-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: php-buildpack-release-gcs
+      params:
+        file: exported-release-php-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: python-buildpack-release-gcs
+      params:
+        file: exported-release-python-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: routing-release-gcs
+      params:
+        file: exported-release-routing-release/*.tgz
+        predefined_acl: publicRead
+    - put: ruby-buildpack-release-gcs
+      params:
+        file: exported-release-ruby-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: staticfile-buildpack-release-gcs
+      params:
+        file: exported-release-staticfile-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: statsd-injector-release-gcs
+      params:
+        file: exported-release-statsd-injector/*.tgz
         predefined_acl: publicRead
     - put: mysql-release-gcs
       params:
