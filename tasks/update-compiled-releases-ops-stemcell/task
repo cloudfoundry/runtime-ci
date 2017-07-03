@@ -51,7 +51,6 @@ main() {
   ops_file_to_update etcd >> ${update_release_ops_file}
   ops_file_to_update garden-runc >> ${update_release_ops_file}
   ops_file_to_update go-buildpack >> ${update_release_ops_file}
-  ops_file_to_update grootfs >> ${update_release_ops_file}
   ops_file_to_update java-buildpack >> ${update_release_ops_file}
   ops_file_to_update loggregator >> ${update_release_ops_file}
   ops_file_to_update nats >> ${update_release_ops_file}
