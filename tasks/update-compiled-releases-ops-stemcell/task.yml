@@ -41,7 +41,7 @@ inputs:
 - name: nats-release
 - name: nats-release-tarball
 - name: nodejs-buildpack-release
-- name: nodejs-release-buildpack-tarball
+- name: nodejs-buildpack-release-tarball
 - name: php-buildpack-release
 - name: php-buildpack-release-tarball
 - name: python-buildpack-release
