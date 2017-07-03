@@ -3450,12 +3450,14 @@ jobs:
       vars-files: greengrass-env-director-state
       MANIFEST_DESTINATION: cf-deployment.yml
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: nats
+      DEPLOYMENT_NAME: cf-deployment-nats
       BOSH_RELEASE: nats
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3518,12 +3520,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: routing
+      DEPLOYMENT_NAME: cf-deployment-routing
       BOSH_RELEASE: routing
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3586,12 +3590,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: consul
+      DEPLOYMENT_NAME: cf-deployment-consul
       BOSH_RELEASE: consul
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3654,12 +3660,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: etcd
+      DEPLOYMENT_NAME: cf-deployment-etcd
       BOSH_RELEASE: etcd
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3722,12 +3730,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: diego
+      DEPLOYMENT_NAME: cf-deployment-diego
       BOSH_RELEASE: diego
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3790,12 +3800,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: loggregator
+      DEPLOYMENT_NAME: cf-deployment-loggregator
       BOSH_RELEASE: loggregator
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3858,12 +3870,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: uaa
+      DEPLOYMENT_NAME: cf-deployment-uaa
       BOSH_RELEASE: uaa
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3926,12 +3940,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: garden-runc
+      DEPLOYMENT_NAME: cf-deployment-garden-runc
       BOSH_RELEASE: garden-runc
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -3994,12 +4010,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: cflinuxfs2
+      DEPLOYMENT_NAME: cf-deployment-cflinuxfs2
       BOSH_RELEASE: cflinuxfs2
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4062,12 +4080,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: binary-buildpack
+      DEPLOYMENT_NAME: cf-deployment-binary-buildpack
       BOSH_RELEASE: binary-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4130,12 +4150,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: dotnet-core-buildpack
+      DEPLOYMENT_NAME: cf-deployment-dotnet-core-buildpack
       BOSH_RELEASE: dotnet-core-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4198,12 +4220,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: go-buildpack
+      DEPLOYMENT_NAME: cf-deployment-go-buildpack
       BOSH_RELEASE: go-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4266,12 +4290,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: java-buildpack
+      DEPLOYMENT_NAME: cf-deployment-java-buildpack
       BOSH_RELEASE: java-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4334,12 +4360,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: nodejs-buildpack
+      DEPLOYMENT_NAME: cf-deployment-nodejs-buildpack
       BOSH_RELEASE: nodejs-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4402,12 +4430,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: php-buildpack
+      DEPLOYMENT_NAME: cf-deployment-php-buildpack
       BOSH_RELEASE: php-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4470,12 +4500,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: python-buildpack
+      DEPLOYMENT_NAME: cf-deployment-python-buildpack
       BOSH_RELEASE: python-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4538,12 +4570,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: ruby-buildpack
+      DEPLOYMENT_NAME: cf-deployment-ruby-buildpack
       BOSH_RELEASE: ruby-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4606,12 +4640,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: staticfile-buildpack
+      DEPLOYMENT_NAME: cf-deployment-staticfile-buildpack
       BOSH_RELEASE: staticfile-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4674,12 +4710,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: statsd-injector
+      DEPLOYMENT_NAME: cf-deployment-statsd-injector
       BOSH_RELEASE: statsd-injector
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4742,12 +4780,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-smoke-tests
+      DEPLOYMENT_NAME: cf-deployment-cf-smoke-tests
       BOSH_RELEASE: cf-smoke-tests
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -4892,12 +4932,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-networking
+      DEPLOYMENT_NAME: cf-deployment-cf-networking
       BOSH_RELEASE: cf-networking
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -5039,268 +5081,283 @@ jobs:
       deployment-configuration: cf-deployment-develop
   - aggregate:
     - task: compile-release-capi
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-capi
       params:
         RELEASE_NAME: capi
+        DEPLOYMENT_NAME: cf-deployment-capi
         BOSH_RELEASE: capi
     - task: compile-release-mysql
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-mysql
       params:
         RELEASE_NAME: cf-mysql
+        DEPLOYMENT_NAME: cf-deployment-cf-mysql
         BOSH_RELEASE: cf-mysql
-  - aggregate:
     - task: compile-release-nats
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-nats
       params:
         RELEASE_NAME: nats
+        DEPLOYMENT_NAME: cf-deployment-nats
         BOSH_RELEASE: nats
     - task: compile-release-routing
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-routing
       params:
         RELEASE_NAME: routing
+        DEPLOYMENT_NAME: cf-deployment-routing
         BOSH_RELEASE: routing
-  - aggregate:
     - task: compile-release-consul
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-consul
       params:
         RELEASE_NAME: consul
+        DEPLOYMENT_NAME: cf-deployment-consul
         BOSH_RELEASE: consul
     - task: compile-release-etcd
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-etcd
       params:
         RELEASE_NAME: etcd
+        DEPLOYMENT_NAME: cf-deployment-etcd
         BOSH_RELEASE: etcd
-  - aggregate:
     - task: compile-release-diego
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-diego
       params:
         RELEASE_NAME: diego
+        DEPLOYMENT_NAME: cf-deployment-diego
         BOSH_RELEASE: diego
     - task: compile-release-loggregator
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-loggregator
       params:
         RELEASE_NAME: loggregator
+        DEPLOYMENT_NAME: cf-deployment-loggregator
         BOSH_RELEASE: loggregator
-  - aggregate:
     - task: compile-release-uaa
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-uaa
       params:
         RELEASE_NAME: uaa
+        DEPLOYMENT_NAME: cf-deployment-uaa
         BOSH_RELEASE: uaa
     - task: compile-release-garden-runc
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-garden-runc
       params:
         RELEASE_NAME: garden-runc
+        DEPLOYMENT_NAME: cf-deployment-garden-runc
         BOSH_RELEASE: garden-runc
-  - aggregate:
     - task: compile-release-cflinuxfs2
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cflinuxfs2
       params:
         RELEASE_NAME: cflinuxfs2
+        DEPLOYMENT_NAME: cf-deployment-cflinuxfs2
         BOSH_RELEASE: cflinuxfs2
     - task: compile-release-binary-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-binary-buildpack
       params:
         RELEASE_NAME: binary-buildpack
+        DEPLOYMENT_NAME: cf-deployment-binary-buildpack
         BOSH_RELEASE: binary-buildpack
-  - aggregate:
     - task: compile-release-dotnet-core-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
-      attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-dotnet-core-buildpack
       params:
         RELEASE_NAME: dotnet-core-buildpack
+        DEPLOYMENT_NAME: cf-deployment-dotnet-core-buildpack
         BOSH_RELEASE: dotnet-core-buildpack
     - task: compile-release-go-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       attempts: 3
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-go-buildpack
       params:
         RELEASE_NAME: go-buildpack
+        DEPLOYMENT_NAME: cf-deployment-go-buildpack
         BOSH_RELEASE: go-buildpack
-  - aggregate:
     - task: compile-release-java-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-java-buildpack
       params:
         RELEASE_NAME: java-buildpack
+        DEPLOYMENT_NAME: cf-deployment-java-buildpack
         BOSH_RELEASE: java-buildpack
     - task: compile-release-nodejs-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      file: runtime-ci/tasks/compile-release/task.yml
       attempts: 3
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-nodejs-buildpack
       params:
         RELEASE_NAME: nodejs-buildpack
+        DEPLOYMENT_NAME: cf-deployment-nodejs-buildpack
         BOSH_RELEASE: nodejs-buildpack
-  - aggregate:
     - task: compile-release-php-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-php-buildpack
       params:
         RELEASE_NAME: php-buildpack
+        DEPLOYMENT_NAME: cf-deployment-php-buildpack
         BOSH_RELEASE: php-buildpack
     - task: compile-release-python-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-python-buildpack
       params:
         RELEASE_NAME: python-buildpack
+        DEPLOYMENT_NAME: cf-deployment-python-buildpack
         BOSH_RELEASE: python-buildpack
-  - aggregate:
     - task: compile-release-ruby-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-ruby-buildpack
       params:
         RELEASE_NAME: ruby-buildpack
+        DEPLOYMENT_NAME: cf-deployment-ruby-buildpack
         BOSH_RELEASE: ruby-buildpack
     - task: compile-release-staticfile-buildpack
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-staticfile-buildpack
       params:
         RELEASE_NAME: staticfile-buildpack
+        DEPLOYMENT_NAME: cf-deployment-staticfile-buildpack
         BOSH_RELEASE: staticfile-buildpack
-  - aggregate:
     - task: compile-release-statsd-injector
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-statsd-injector
       params:
         RELEASE_NAME: statsd-injector
+        DEPLOYMENT_NAME: cf-deployment-statsd-injector
         BOSH_RELEASE: statsd-injector
     - task: compile-release-cf-smoke-tests
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-smoke-tests
       params:
         RELEASE_NAME: cf-smoke-tests
+        DEPLOYMENT_NAME: cf-deployment-cf-smoke-tests
         BOSH_RELEASE: cf-smoke-tests
-  - aggregate:
     - task: compile-release-cf-networking
-      file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
-      attempts: 3
+      file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
+        bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-networking
       params:
         RELEASE_NAME: cf-networking
+        DEPLOYMENT_NAME: cf-deployment-cf-networking
         BOSH_RELEASE: cf-networking
   - task: update-compiled-releases-ops-stemcell
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
@@ -5331,112 +5388,90 @@ jobs:
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
     - put: capi-release-gcs
-      attempts: 3
       params:
         file: exported-release-capi/*.tgz
         predefined_acl: publicRead
     - put: mysql-release-gcs
-      attempts: 3
       params:
         file: exported-release-mysql/*.tgz
         predefined_acl: publicRead
     - put: binary-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-binary-buildpack/*.tgz
         predefined_acl: publicRead
     - put: cf-networking-release-gcs
-      attempts: 3
       params:
         file: exported-release-cf-networking/*.tgz
         predefined_acl: publicRead
     - put: cf-smoke-tests-release-gcs
-      attempts: 3
       params:
         file: exported-release-cf-smoke-tests/*.tgz
         predefined_acl: publicRead
     - put: cflinuxfs2-release-gcs
-      attempts: 3
       params:
         file: exported-release-consul/*.tgz
         predefined_acl: publicRead
     - put: diego-release-gcs
-      attempts: 3
       params:
         file: exported-release-diego/*.tgz
         predefined_acl: publicRead
     - put: dotnet-core-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-dotnet-core-buildpack/*.tgz
         predefined_acl: publicRead
     - put: etcd-release-gcs
-      attempts: 3
       params:
         file: exported-release-etcd/*.tgz
         predefined_acl: publicRead
     - put: garden-runc-release-gcs
-      attempts: 3
       params:
         file: exported-release-garden-runc/*.tgz
         predefined_acl: publicRead
     - put: go-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-go-buildpack/*.tgz
         predefined_acl: publicRead
     - put: java-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-java-buildpack/*.tgz
         predefined_acl: publicRead
     - put: loggregator-release-gcs
-      attempts: 3
       params:
         file: exported-release-loggregator/*.tgz
         predefined_acl: publicRead
     - put: nats-release-gcs
-      attempts: 3
       params:
         file: exported-release-nats/*.tgz
         predefined_acl: publicRead
     - put: nodejs-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-nodejs-buildpack/*.tgz
         predefined_acl: publicRead
     - put: php-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-php-buildpack/*.tgz
         predefined_acl: publicRead
     - put: python-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-python-buildpack/*.tgz
         predefined_acl: publicRead
     - put: routing-release-gcs
-      attempts: 3
       params:
         file: exported-release-routing-release/*.tgz
         predefined_acl: publicRead
     - put: ruby-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-ruby-buildpack/*.tgz
         predefined_acl: publicRead
     - put: staticfile-buildpack-release-gcs
-      attempts: 3
       params:
         file: exported-release-staticfile-buildpack/*.tgz
         predefined_acl: publicRead
     - put: statsd-injector-release-gcs
-      attempts: 3
       params:
         file: exported-release-statsd-injector/*.tgz
         predefined_acl: publicRead
     - put: mysql-release-gcs
-      attempts: 3
       params:
         file: exported-release-mysql/*.tgz
         predefined_acl: publicRead
@@ -5490,12 +5525,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: capi
+      DEPLOYMENT_NAME: cf-deployment-capi
       BOSH_RELEASE: capi
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -5559,12 +5596,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+    file: runtime-ci/tasks/compile-release/task.yml
     privileged: true
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-mysql
+      DEPLOYMENT_NAME: cf-deployment-cf-mysql
       BOSH_RELEASE: cf-mysql
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
