@@ -4966,6 +4966,69 @@ jobs:
     - get: cf-mysql-release
       params:
         tarball: false
+    - get: nats-release
+      params:
+        tarball: false
+    - get: routing-release
+      params:
+        tarball: false
+    - get: consul-release
+      params:
+        tarball: false
+    - get: etcd-release
+      params:
+        tarball: false
+    - get: diego-release
+      params:
+        tarball: false
+    - get: loggregator-release
+      params:
+        tarball: false
+    - get: uaa-release
+      params:
+        tarball: false
+    - get: garden-runc-release
+      params:
+        tarball: false
+    - get: cflinuxfs2-release
+      params:
+        tarball: false
+    - get: binary-buildpack-release
+      params:
+        tarball: false
+    - get: dotnet-core-buildpack-release
+      params:
+        tarball: false
+    - get: go-buildpack-release
+      params:
+        tarball: false
+    - get: java-buildpack-release
+      params:
+        tarball: false
+    - get: nodejs-buildpack-release
+      params:
+        tarball: false
+    - get: php-buildpack-release
+      params:
+        tarball: false
+    - get: python-buildpack-release
+      params:
+        tarball: false
+    - get: ruby-buildpack-release
+      params:
+        tarball: false
+    - get: staticfile-buildpack-release
+      params:
+        tarball: false
+    - get: statsd-injector-release
+      params:
+        tarball: false
+    - get: cf-smoke-tests-release
+      params:
+        tarball: false
+    - get: cf-networking-release
+      params:
+        tarball: false
     - get: stemcell
       trigger: true
       params:
@@ -4978,6 +5041,7 @@ jobs:
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -4988,6 +5052,7 @@ jobs:
     - task: compile-release-mysql
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -4995,9 +5060,11 @@ jobs:
       params:
         RELEASE_NAME: cf-mysql
         BOSH_RELEASE: cf-mysql
+  - aggregate:
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5008,6 +5075,7 @@ jobs:
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5015,9 +5083,11 @@ jobs:
       params:
         RELEASE_NAME: routing
         BOSH_RELEASE: routing
+  - aggregate:
     - task: compile-release-consul
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5028,6 +5098,7 @@ jobs:
     - task: compile-release-etcd
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5035,9 +5106,11 @@ jobs:
       params:
         RELEASE_NAME: etcd
         BOSH_RELEASE: etcd
+  - aggregate:
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5048,6 +5121,7 @@ jobs:
     - task: compile-release-loggregator
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5055,9 +5129,11 @@ jobs:
       params:
         RELEASE_NAME: loggregator
         BOSH_RELEASE: loggregator
+  - aggregate:
     - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5068,6 +5144,7 @@ jobs:
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5075,8 +5152,10 @@ jobs:
       params:
         RELEASE_NAME: garden-runc
         BOSH_RELEASE: garden-runc
+  - aggregate:
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5088,6 +5167,7 @@ jobs:
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5095,9 +5175,11 @@ jobs:
       params:
         RELEASE_NAME: binary-buildpack
         BOSH_RELEASE: binary-buildpack
+  - aggregate:
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5108,6 +5190,7 @@ jobs:
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
       privileged: true
+      attempts: 3
       input_mapping:
         cf-deployment: updated-deployment-manifest
       output_mapping:
@@ -5115,8 +5198,10 @@ jobs:
       params:
         RELEASE_NAME: go-buildpack
         BOSH_RELEASE: go-buildpack
+  - aggregate:
     - task: compile-release-java-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5127,6 +5212,7 @@ jobs:
         BOSH_RELEASE: java-buildpack
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5135,8 +5221,10 @@ jobs:
       params:
         RELEASE_NAME: nodejs-buildpack
         BOSH_RELEASE: nodejs-buildpack
+  - aggregate:
     - task: compile-release-php-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5147,6 +5235,7 @@ jobs:
         BOSH_RELEASE: php-buildpack
     - task: compile-release-python-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5155,8 +5244,10 @@ jobs:
       params:
         RELEASE_NAME: python-buildpack
         BOSH_RELEASE: python-buildpack
+  - aggregate:
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5167,6 +5258,7 @@ jobs:
         BOSH_RELEASE: ruby-buildpack
     - task: compile-release-staticfile-buildpack
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5175,8 +5267,10 @@ jobs:
       params:
         RELEASE_NAME: staticfile-buildpack
         BOSH_RELEASE: staticfile-buildpack
+  - aggregate:
     - task: compile-release-statsd-injector
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5187,6 +5281,7 @@ jobs:
         BOSH_RELEASE: statsd-injector
     - task: compile-release-cf-smoke-tests
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5195,8 +5290,10 @@ jobs:
       params:
         RELEASE_NAME: cf-smoke-tests
         BOSH_RELEASE: cf-smoke-tests
+  - aggregate:
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-docker-cpi/task.yml
+      attempts: 3
       privileged: true
       input_mapping:
         cf-deployment: updated-deployment-manifest
@@ -5211,92 +5308,135 @@ jobs:
       ops-files: cf-deployment-develop
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-mysql
+      nats-release-tarball: exported-release-nats
+      routing-release-tarball: exported-release-routing
+      consul-release-tarball: exported-release-consul
+      etcd-release-tarball: exported-release-etcd
+      diego-release-tarball: exported-release-diego
+      loggregator-release-tarball: exported-release-loggregator
+      uaa-release-tarball: exported-release-uaa
+      garden-runc-release-tarball: exported-release-garden-runc
+      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
+      binary-buildpack-release-tarball: exported-release-binary-buildpack
+      dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
+      go-buildpack-release-tarball: exported-release-binary-buildpack
+      java-buildpack-release-tarball: exported-release-java-buildpack
+      nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
+      php-buildpack-release-tarball: exported-release-php-buildpack
+      python-buildpack-release-tarball: exported-release-python-buildpack
+      ruby-buildpack-release-tarball: exported-release-ruby-buildpack
+      staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
+      statsd-injector-release-tarball: exported-release-statsd-injector
+      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
+      cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
     - put: capi-release-gcs
+      attempts: 3
       params:
         file: exported-release-capi/*.tgz
         predefined_acl: publicRead
     - put: mysql-release-gcs
+      attempts: 3
       params:
         file: exported-release-mysql/*.tgz
         predefined_acl: publicRead
     - put: binary-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-binary-buildpack/*.tgz
         predefined_acl: publicRead
     - put: cf-networking-release-gcs
+      attempts: 3
       params:
         file: exported-release-cf-networking/*.tgz
         predefined_acl: publicRead
     - put: cf-smoke-tests-release-gcs
+      attempts: 3
       params:
         file: exported-release-cf-smoke-tests/*.tgz
         predefined_acl: publicRead
     - put: cflinuxfs2-release-gcs
+      attempts: 3
       params:
         file: exported-release-consul/*.tgz
         predefined_acl: publicRead
     - put: diego-release-gcs
+      attempts: 3
       params:
         file: exported-release-diego/*.tgz
         predefined_acl: publicRead
     - put: dotnet-core-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-dotnet-core-buildpack/*.tgz
         predefined_acl: publicRead
     - put: etcd-release-gcs
+      attempts: 3
       params:
         file: exported-release-etcd/*.tgz
         predefined_acl: publicRead
     - put: garden-runc-release-gcs
+      attempts: 3
       params:
         file: exported-release-garden-runc/*.tgz
         predefined_acl: publicRead
     - put: go-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-go-buildpack/*.tgz
         predefined_acl: publicRead
     - put: java-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-java-buildpack/*.tgz
         predefined_acl: publicRead
     - put: loggregator-release-gcs
+      attempts: 3
       params:
         file: exported-release-loggregator/*.tgz
         predefined_acl: publicRead
     - put: nats-release-gcs
+      attempts: 3
       params:
         file: exported-release-nats/*.tgz
         predefined_acl: publicRead
     - put: nodejs-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-nodejs-buildpack/*.tgz
         predefined_acl: publicRead
     - put: php-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-php-buildpack/*.tgz
         predefined_acl: publicRead
     - put: python-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-python-buildpack/*.tgz
         predefined_acl: publicRead
     - put: routing-release-gcs
+      attempts: 3
       params:
         file: exported-release-routing-release/*.tgz
         predefined_acl: publicRead
     - put: ruby-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-ruby-buildpack/*.tgz
         predefined_acl: publicRead
     - put: staticfile-buildpack-release-gcs
+      attempts: 3
       params:
         file: exported-release-staticfile-buildpack/*.tgz
         predefined_acl: publicRead
     - put: statsd-injector-release-gcs
+      attempts: 3
       params:
         file: exported-release-statsd-injector/*.tgz
         predefined_acl: publicRead
     - put: mysql-release-gcs
+      attempts: 3
       params:
         file: exported-release-mysql/*.tgz
         predefined_acl: publicRead
