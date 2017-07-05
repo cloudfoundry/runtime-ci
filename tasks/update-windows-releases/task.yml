@@ -17,7 +17,7 @@ outputs:
 - name: updated-ops-file
 
 run:
-  path: runtime-ci/tasks/update-releases-windows/task
+  path: runtime-ci/tasks/update-windows-releases/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
