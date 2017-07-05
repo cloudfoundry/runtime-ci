@@ -113,6 +113,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/garden-runc-release
+- name: garden-windows-bosh-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/garden-windows-bosh-release
 - name: go-buildpack-release
   type: bosh-io-release
   source:
