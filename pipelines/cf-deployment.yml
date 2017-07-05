@@ -105,6 +105,7 @@ groups:
   - stable-smoke-tests
   - stable-semihourly-pool-acquisition
   - stable-periodic-cats
+  - stable-release-pool-manual
   - stable-update-cats-cfd-branch
   - verify-nameserver-has-record
 - name: inf
@@ -199,6 +200,7 @@ groups:
   - stable-smoke-tests
   - stable-semihourly-pool-acquisition
   - stable-periodic-cats
+  - stable-release-pool-manual
   - stable-update-cats-cfd-branch
 
 resource_types:
@@ -1929,6 +1931,15 @@ jobs:
     try:
       put: complex-pool
       params: {release: complex-pool}
+
+- name: stable-release-pool-manual
+  public: true
+  plan:
+  - get: stable-pool
+  ensure:
+    try:
+      put: stable-pool
+      params: {release: stable-pool}
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
