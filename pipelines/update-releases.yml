@@ -39,11 +39,12 @@ resource_types:
   source:
     repository: frodenas/gcs-resource
 resources:
-- name: runtime-ci
+- name: cf-deployment-develop
   type: git
   source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
+    branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{cf_deployment_private_key}}
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -58,85 +59,84 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
-- name: cf-deployment-develop
+- name: runtime-ci
   type: git
   source:
-    branch: develop
-    uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 - name: stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
-- name: nats-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/nats-release
-- name: routing-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/cf-routing-release
-- name: consul-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/consul-release
-- name: etcd-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/etcd-release
-- name: diego-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/diego-release
-- name: loggregator-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/loggregator
-- name: capi-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/capi-release
-- name: postgres-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/postgres-release
-- name: cf-networking-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/cf-networking-release
-- name: grootfs-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/grootfs-release
-- name: cf-mysql-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-mysql-release
-- name: uaa-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/uaa-release
-- name: garden-runc-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/garden-runc-release
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/binary-buildpack-release
+- name: capi-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/capi-release
+- name: cf-mysql-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-mysql-release
+- name: cf-networking-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/cf-networking-release
+- name: cf-smoke-tests-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-smoke-tests-release
+- name: cflinuxfs2-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-release
+- name: consul-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/consul-release
+- name: diego-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/diego-release
 - name: dotnet-core-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/dotnet-core-buildpack-release
+- name: etcd-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+- name: garden-runc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/garden-runc-release
 - name: go-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/go-buildpack-release
+- name: grootfs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/grootfs-release
+- name: hwc-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/hwc-buildpack-release
 - name: java-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/java-buildpack-release
+- name: loggregator-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/loggregator
+- name: nats-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nats-release
 - name: nodejs-buildpack-release
   type: bosh-io-release
   source:
@@ -145,10 +145,18 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/php-buildpack-release
+- name: postgres-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/postgres-release
 - name: python-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/python-buildpack-release
+- name: routing-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/cf-routing-release
 - name: ruby-buildpack-release
   type: bosh-io-release
   source:
@@ -161,41 +169,29 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/statsd-injector-release
-- name: cflinuxfs2-release
+- name: uaa-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/cflinuxfs2-release
-- name: cf-smoke-tests-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-smoke-tests-release
-- name: hwc-buildpack-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/hwc-buildpack-release
-- name: garden-windows-bosh-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/garden-windows-bosh-release
+    repository: cloudfoundry/uaa-release
 
-- name: mysql-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-- name: capi-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: capi-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
     regexp: binary-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: capi-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: capi-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: cf-mysql-release-gcs
+  type: gcs-resourc
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-networking-release-gcs
   type: gcs-resource
   source:
@@ -737,7 +733,7 @@ jobs:
       params:
         file: exported-release-capi/*.tgz
         predefined_acl: publicRead
-    - put: mysql-release-gcs
+    - put: cf-mysql-release-gcs
       params:
         file: exported-release-mysql/*.tgz
         predefined_acl: publicRead
@@ -817,10 +813,76 @@ jobs:
       params:
         file: exported-release-statsd-injector/*.tgz
         predefined_acl: publicRead
-    - put: mysql-release-gcs
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-release-binary-buildpack
+  serial_groups: [update-release-binary-buildpack]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: binary-buildpack-release
+      trigger: true
       params:
-        file: exported-release-mysql/*.tgz
-        predefined_acl: publicRead
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-binary-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: binary-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: binary-buildpack
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release/task.yml
+    privileged: true
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: binary-buildpack
+      DEPLOYMENT_NAME: cf-compilation-binary-buildpack
+      BOSH_RELEASE: binary-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: binary-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: binary-buildpack
+  - put: binary-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
@@ -908,6 +970,146 @@ jobs:
       rebase: true
       repository: updated-repo
 
+- name: update-release-cf-networking
+  serial_groups: [update-release-cf-networking]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-networking-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-networking
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-networking-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-networking
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release/task.yml
+    privileged: true
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-networking
+      DEPLOYMENT_NAME: cf-compilation-cf-networking
+      BOSH_RELEASE: cf-networking
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-networking
+  - put: cf-networking-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-release-cf-smoke-tests
+  serial_groups: [update-release-cf-smoke-tests]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: cf-smoke-tests-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-smoke-tests
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-smoke-tests-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-smoke-tests
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release/task.yml
+    privileged: true
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      DEPLOYMENT_NAME: cf-compilation-cf-smoke-tests
+      BOSH_RELEASE: cf-smoke-tests
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-smoke-tests
+  - put: cf-smoke-tests-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
 - name: update-release-mysql
   serial_groups: [update-release-mysql]
   public: true
@@ -959,7 +1161,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cf-mysql
-  - put: mysql-release-gcs
+  - put: cf-mysql-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -1610,76 +1812,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-binary-buildpack
-  serial_groups: [update-release-binary-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: binary-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-binary-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: binary-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: binary-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-    params:
-      RELEASE_NAME: binary-buildpack
-      DEPLOYMENT_NAME: cf-compilation-binary-buildpack
-      BOSH_RELEASE: binary-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: binary-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: binary-buildpack
-  - put: binary-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
 - name: update-release-dotnet-core-buildpack
   serial_groups: [update-release-dotnet-core-buildpack]
   public: true
@@ -2310,76 +2442,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-cf-smoke-tests
-  serial_groups: [update-release-cf-smoke-tests]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-smoke-tests-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-smoke-tests
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: cf-smoke-tests-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-smoke-tests
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-smoke-tests
-      DEPLOYMENT_NAME: cf-compilation-cf-smoke-tests
-      BOSH_RELEASE: cf-smoke-tests
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-smoke-tests-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-smoke-tests
-  - put: cf-smoke-tests-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
 - name: update-release-postgres
   serial: true
   public: true
@@ -2457,76 +2519,6 @@ jobs:
     params:
       OPS_FILE_NAME: use-grootfs.yml
       OPS_FILE_DESTINATION: operations/experimental/use-grootfs.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-release-cf-networking
-  serial_groups: [update-release-cf-networking]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: greengrass-env-director-state
-    - get: cf-deployment-develop
-    - get: cf-networking-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-networking
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: cf-networking-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-networking
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-networking
-      DEPLOYMENT_NAME: cf-compilation-cf-networking
-      BOSH_RELEASE: cf-networking
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-networking-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-networking
-  - put: cf-networking-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
