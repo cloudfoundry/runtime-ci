@@ -1,0 +1,58 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+
+validate_variables() {
+  BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
+}
+
+MANIFEST_PATH=cf-deployment/cf-deployment.yml
+
+deploy_for_compilation() {
+  cat << EOF > compilation-manifest.yml
+---
+instance_groups: []
+name: cf-compilation-${BOSH_RELEASE}
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1
+  update_watch_time: 1
+releases:
+- name: $(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${BOSH_RELEASE}/name)
+  sha1: $(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${BOSH_RELEASE}/sha1)
+  url: $(    bosh interpolate ${MANIFEST_PATH} --path /releases/name=${BOSH_RELEASE}/url)
+  version: $(bosh interpolate ${MANIFEST_PATH} --path /releases/name=${BOSH_RELEASE}/version)
+stemcells:
+$(bosh interpolate ${MANIFEST_PATH} --path /stemcells)
+
+EOF
+
+  bosh \
+    -n \
+    -d cf-compilation-${RELEASE_NAME} \
+    deploy compilation-manifest.yml
+}
+
+export_release() {
+  local stemcell_os_version
+  stemcell_os_version=$(bosh interpolate ${MANIFEST_PATH} --path "/stemcells/os=${STEMCELL_OS}/version")
+  local bosh_release_version
+  bosh_release_version=$(bosh interpolate ${MANIFEST_PATH} --path "/releases/name=${BOSH_RELEASE}/version")
+  pushd exported-release
+  bosh export-release -d "cf-compilation-${RELEASE_NAME}" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+  popd
+}
+
+main() {
+  validate_variables
+  setup_bosh_env_vars
+
+  deploy_for_compilation
+
+  export_release
+}
+
+main
