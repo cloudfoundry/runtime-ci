@@ -38,7 +38,6 @@ groups:
   - add-claimed-lock-stable
   - bless-manifest
   - branch-freshness
-  - destroy-infrastructure-compile
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
   - destroy-infrastructure-ops
@@ -72,7 +71,6 @@ groups:
   - run-bosh-cleanup-lite
   - run-bosh-cleanup-upgrade
   - run-bosh-cleanup-stable
-  - setup-infrastructure-compile
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
   - setup-infrastructure-ops
@@ -117,7 +115,6 @@ groups:
   - add-claimed-lock-stable
   - add-claimed-lock-transition
   - add-claimed-lock-upgrade
-  - setup-infrastructure-compile
   - setup-infrastructure-complex
   - setup-infrastructure-fresh
   - setup-infrastructure-lite
@@ -125,7 +122,6 @@ groups:
   - setup-infrastructure-stable
   - setup-infrastructure-transition
   - setup-infrastructure-upgrade
-  - destroy-infrastructure-compile
   - destroy-infrastructure-complex
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
