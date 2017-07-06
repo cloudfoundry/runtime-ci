@@ -350,6 +350,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -binary-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -418,6 +420,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -capi
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -485,6 +489,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -cf-networking
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -552,6 +558,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -cf-smoke-tests
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -619,6 +627,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -cflinuxfs2
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -686,6 +696,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -consul
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -753,6 +765,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -diego
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -820,6 +834,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -dotnet-core-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -887,6 +903,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -etcd
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -954,6 +972,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -garden-runc
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1021,6 +1041,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -go-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1129,6 +1151,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -java-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1196,6 +1220,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -loggregator
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1264,6 +1290,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -cf-mysql
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1332,6 +1360,8 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
       MANIFEST_DESTINATION: cf-deployment.yml
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -nats
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1399,6 +1429,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -nodejs-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1466,6 +1498,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -php-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1574,6 +1608,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -python-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1641,6 +1677,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -routing
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1708,6 +1746,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -ruby-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1775,6 +1815,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -staticfile-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1842,6 +1884,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -statsd-injector
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1909,6 +1953,8 @@ jobs:
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -uaa
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
