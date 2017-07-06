@@ -2102,7 +2102,7 @@ jobs:
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
         bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
+        manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-binary-buildpack
       params:
