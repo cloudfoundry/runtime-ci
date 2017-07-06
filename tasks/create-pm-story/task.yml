@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/tasks/create-pm-story/task
+
+params:
+  TRACKER_PROJECT_ID: 1382120
+  TRACKER_API_TOKEN:
+  TRACKER_STORY_NAME_PREFIX: "Nagbot Says:"
+  TRACKER_STORY_NAME:
+  TRACKER_STORY_STATE: unscheduled
+  TRACKER_STORY_TYPE: feature

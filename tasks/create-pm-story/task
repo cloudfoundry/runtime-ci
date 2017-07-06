@@ -1,0 +1,19 @@
+#!/bin/bash -exu
+
+create_tracker_request_body() {
+  cat << EOF
+{
+  "name": "${TRACKER_STORY_NAME_PREFIX} ${TRACKER_STORY_NAME}",
+  "story_type": "${TRACKER_STORY_TYPE}",
+  "current_state": "${TRACKER_STORY_STATE}",
+  "labels": ["needs-pm"]
+}
+EOF
+}
+
+my_body=$(create_tracker_request_body)
+
+curl -X POST -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d "${my_body}" \
+  "https://www.pivotaltracker.com/services/v5/projects/${TRACKER_PROJECT_ID}/stories"
