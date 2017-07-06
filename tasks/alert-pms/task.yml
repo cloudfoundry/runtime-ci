@@ -16,4 +16,4 @@ params:
   GH_ACCESS_TOKEN: ~
 
 run:
-  path: runtime-ci/scripts/ci/announce-rc/task
+  path: runtime-ci/tasks/alert-pms/task
