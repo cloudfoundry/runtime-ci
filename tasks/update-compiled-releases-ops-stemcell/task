@@ -54,7 +54,7 @@ main() {
   ops_file_to_update java-buildpack >> ${update_release_ops_file}
   ops_file_to_update loggregator >> ${update_release_ops_file}
   ops_file_to_update nats >> ${update_release_ops_file}
-  ops_file_to_update nodejs >> ${update_release_ops_file}
+  ops_file_to_update nodejs-buildpack >> ${update_release_ops_file}
   ops_file_to_update php-buildpack >> ${update_release_ops_file}
   ops_file_to_update python-buildpack >> ${update_release_ops_file}
   ops_file_to_update routing >> ${update_release_ops_file}
