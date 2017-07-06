@@ -343,15 +343,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: binary-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -binary-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -827,15 +818,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: dotnet-core-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -dotnet-core-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1034,15 +1016,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: go-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -go-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1144,15 +1117,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: java-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -java-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1422,15 +1386,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: nodejs-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -nodejs-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1491,15 +1446,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: php-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -php-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1601,15 +1547,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: python-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -python-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1739,15 +1676,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: ruby-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -ruby-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1808,15 +1736,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: staticfile-buildpack
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -staticfile-buildpack
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
