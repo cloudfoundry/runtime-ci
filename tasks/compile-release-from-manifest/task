@@ -8,7 +8,7 @@ validate_variables() {
   BOSH_RELEASE="${BOSH_RELEASE:?"BOSH_RELEASE must be provided"}"
 }
 
-MANIFEST_PATH=cf-deployment/cf-deployment.yml
+MANIFEST_PATH=manifest/${MANIFEST_FILENAME}
 
 deploy_for_compilation() {
   cat << EOF > compilation-manifest.yml

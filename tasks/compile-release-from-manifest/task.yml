@@ -19,4 +19,5 @@ run:
 
 params:
   BOSH_RELEASE:
+  MANIFEST_FILENAME: cf-deployment.yml
   STEMCELL_OS: ubuntu-trusty
