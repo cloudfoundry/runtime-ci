@@ -191,7 +191,7 @@ resources:
     json_key: {{concourse_gcp_service_account_json}}
     regexp: capi-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-mysql-release-gcs
-  type: gcs-resourc
+  type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
@@ -2451,7 +2451,7 @@ jobs:
         predefined_acl: publicRead
     - put: routing-release-gcs
       params:
-        file: exported-release-routing-release/*.tgz
+        file: exported-release-routing/*.tgz
         predefined_acl: publicRead
     - put: ruby-buildpack-release-gcs
       params:
