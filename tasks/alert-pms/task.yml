@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+
+outputs:
+- name: slack-messages
+
+params:
+  GH_ACCESS_TOKEN: ~
+
+run:
+  path: runtime-ci/scripts/ci/announce-rc/task
