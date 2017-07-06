@@ -18,3 +18,4 @@ run:
 
 params:
   VARS_FILES:
+  DEPLOYMENT_NAME_SUFFIX: ""

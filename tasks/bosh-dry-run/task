@@ -9,7 +9,7 @@ function create_latest_stemcell_opsfile() {
 ---
 - type: replace
   path: /name
-  value: cf-dry-run
+  value: cf-dry-run${DEPLOYMENT_NAME_SUFFIX}
 
 - type: replace
   path: /stemcells/alias=default/version
@@ -24,7 +24,7 @@ function main() {
 
   bosh \
     -n \
-    -d cf-dry-run \
+    -d cf-dry-run${DEPLOYMENT_NAME_SUFFIX} \
     interpolate cf-deployment/cf-deployment.yml \
     --vars-store "${vars_store}" \
     --var-errs \
@@ -35,7 +35,7 @@ function main() {
 
   bosh \
     -n \
-    -d cf-dry-run \
+    -d cf-dry-run${DEPLOYMENT_NAME_SUFFIX} \
     deploy cf-deployment/cf-deployment.yml \
     --dry-run \
     --vars-store="${vars_store}" \
