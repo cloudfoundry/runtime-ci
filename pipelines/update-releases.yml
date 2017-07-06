@@ -2,32 +2,32 @@
 groups:
 - name: update-releases
   jobs:
-  - update-release-binary-buildpack
-  - update-release-capi
-  - update-release-cf-networking
-  - update-release-cf-smoke-tests
-  - update-release-cflinuxfs2
-  - update-release-consul
-  - update-release-diego
-  - update-release-dotnet-core-buildpack
-  - update-release-etcd
-  - update-release-garden-runc
-  - update-release-go-buildpack
-  - update-release-grootfs
-  - update-release-java-buildpack
-  - update-release-loggregator
-  - update-release-mysql
-  - update-release-nats
-  - update-release-nodejs-buildpack
-  - update-release-php-buildpack
-  - update-release-postgres
-  - update-release-python-buildpack
-  - update-release-routing
-  - update-release-ruby-buildpack
-  - update-release-staticfile-buildpack
-  - update-release-statsd-injector
+  - update-binary-buildpack
+  - update-capi
+  - update-cf-networking
+  - update-cf-smoke-tests
+  - update-cflinuxfs2
+  - update-consul
+  - update-diego
+  - update-dotnet-core-buildpack
+  - update-etcd
+  - update-garden-runc
+  - update-go-buildpack
+  - update-grootfs
+  - update-java-buildpack
+  - update-loggregator
+  - update-mysql
+  - update-nats
+  - update-nodejs-buildpack
+  - update-php-buildpack
+  - update-postgres
+  - update-python-buildpack
+  - update-routing
+  - update-ruby-buildpack
+  - update-staticfile-buildpack
+  - update-statsd-injector
   - update-stemcell-and-recompile-releases
-  - update-release-uaa
+  - update-uaa
   - update-windows-releases
 - name: infrastructure
   jobs:
@@ -318,8 +318,8 @@ resources:
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 
 jobs:
-- name: update-release-binary-buildpack
-  serial_groups: [update-release-binary-buildpack]
+- name: update-binary-buildpack
+  serial_groups: [update-binary-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -385,8 +385,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-capi
-  serial_groups: [update-release-capi]
+- name: update-capi
+  serial_groups: [update-capi]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -453,8 +453,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-cf-networking
-  serial_groups: [update-release-cf-networking]
+- name: update-cf-networking
+  serial_groups: [update-cf-networking]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -520,8 +520,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-cf-smoke-tests
-  serial_groups: [update-release-cf-smoke-tests]
+- name: update-cf-smoke-tests
+  serial_groups: [update-cf-smoke-tests]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -587,8 +587,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-cflinuxfs2
-  serial_groups: [update-release-cflinuxfs2]
+- name: update-cflinuxfs2
+  serial_groups: [update-cflinuxfs2]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -654,8 +654,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-consul
-  serial_groups: [update-release-consul]
+- name: update-consul
+  serial_groups: [update-consul]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -721,8 +721,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-diego
-  serial_groups: [update-release-diego]
+- name: update-diego
+  serial_groups: [update-diego]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -788,8 +788,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-dotnet-core-buildpack
-  serial_groups: [update-release-dotnet-core-buildpack]
+- name: update-dotnet-core-buildpack
+  serial_groups: [update-dotnet-core-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -855,8 +855,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-etcd
-  serial_groups: [update-release-etcd]
+- name: update-etcd
+  serial_groups: [update-etcd]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -922,8 +922,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-garden-runc
-  serial_groups: [update-release-garden-runc]
+- name: update-garden-runc
+  serial_groups: [update-garden-runc]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -989,8 +989,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-go-buildpack
-  serial_groups: [update-release-go-buildpack]
+- name: update-go-buildpack
+  serial_groups: [update-go-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1056,7 +1056,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-grootfs
+- name: update-grootfs
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1097,8 +1097,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-java-buildpack
-  serial_groups: [update-release-java-buildpack]
+- name: update-java-buildpack
+  serial_groups: [update-java-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1164,8 +1164,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-loggregator
-  serial_groups: [update-release-loggregator]
+- name: update-loggregator
+  serial_groups: [update-loggregator]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1231,8 +1231,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-mysql
-  serial_groups: [update-release-mysql]
+- name: update-mysql
+  serial_groups: [update-mysql]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1299,8 +1299,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-nats
-  serial_groups: [update-release-nats]
+- name: update-nats
+  serial_groups: [update-nats]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1367,8 +1367,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-nodejs-buildpack
-  serial_groups: [update-release-nodejs-buildpack]
+- name: update-nodejs-buildpack
+  serial_groups: [update-nodejs-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1434,8 +1434,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-php-buildpack
-  serial_groups: [update-release-php-buildpack]
+- name: update-php-buildpack
+  serial_groups: [update-php-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1501,7 +1501,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-postgres
+- name: update-postgres
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1542,8 +1542,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-python-buildpack
-  serial_groups: [update-release-python-buildpack]
+- name: update-python-buildpack
+  serial_groups: [update-python-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1609,8 +1609,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-routing
-  serial_groups: [update-release-routing]
+- name: update-routing
+  serial_groups: [update-routing]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1676,8 +1676,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-ruby-buildpack
-  serial_groups: [update-release-ruby-buildpack]
+- name: update-ruby-buildpack
+  serial_groups: [update-ruby-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1743,8 +1743,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-staticfile-buildpack
-  serial_groups: [update-release-staticfile-buildpack]
+- name: update-staticfile-buildpack
+  serial_groups: [update-staticfile-buildpack]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1810,8 +1810,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-statsd-injector
-  serial_groups: [update-release-statsd-injector]
+- name: update-statsd-injector
+  serial_groups: [update-statsd-injector]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1877,8 +1877,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-release-uaa
-  serial_groups: [update-release-uaa]
+- name: update-uaa
+  serial_groups: [update-uaa]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1947,29 +1947,29 @@ jobs:
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
-  - update-release-binary-buildpack
-  - update-release-capi
-  - update-release-cf-networking
-  - update-release-cf-smoke-tests
-  - update-release-cflinuxfs2
-  - update-release-consul
-  - update-release-diego
-  - update-release-dotnet-core-buildpack
-  - update-release-etcd
-  - update-release-garden-runc
-  - update-release-go-buildpack
-  - update-release-java-buildpack
-  - update-release-loggregator
-  - update-release-mysql
-  - update-release-nats
-  - update-release-nodejs-buildpack
-  - update-release-php-buildpack
-  - update-release-python-buildpack
-  - update-release-routing
-  - update-release-ruby-buildpack
-  - update-release-staticfile-buildpack
-  - update-release-statsd-injector
-  - update-release-uaa
+  - update-binary-buildpack
+  - update-capi
+  - update-cf-networking
+  - update-cf-smoke-tests
+  - update-cflinuxfs2
+  - update-consul
+  - update-diego
+  - update-dotnet-core-buildpack
+  - update-etcd
+  - update-garden-runc
+  - update-go-buildpack
+  - update-java-buildpack
+  - update-loggregator
+  - update-mysql
+  - update-nats
+  - update-nodejs-buildpack
+  - update-php-buildpack
+  - update-python-buildpack
+  - update-routing
+  - update-ruby-buildpack
+  - update-staticfile-buildpack
+  - update-statsd-injector
+  - update-uaa
   build_logs_to_retain: 100
   plan:
   - aggregate:
