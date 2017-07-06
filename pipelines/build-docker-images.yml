@@ -1030,6 +1030,13 @@ jobs:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
         push: true
         build_args_file: version-json/version.json
+    - task: create-pm-story
+      file: runtime-ci/tasks/create-pm-story/task.yml
+      params:
+        TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
+        TRACKER_STORY_STATE: delivered
+        TRACKER_API_TOKEN: {{cf_mega_api_token}}
+
 
 - name: build-bosh-deploy-docker-image
   public: true
