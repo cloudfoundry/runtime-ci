@@ -352,7 +352,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -423,7 +422,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -493,7 +491,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -563,7 +560,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -633,7 +629,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -703,7 +698,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -773,7 +767,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -843,7 +836,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -913,7 +905,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -983,7 +974,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1053,7 +1043,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1164,7 +1153,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1234,7 +1222,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1305,7 +1292,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1376,7 +1362,6 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1446,7 +1431,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1516,7 +1500,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1627,7 +1610,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1697,7 +1679,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1767,7 +1748,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1837,7 +1817,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1907,7 +1886,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1977,7 +1955,6 @@ jobs:
       vars-files: greengrass-env-director-state
   - task: compile-release
     file: runtime-ci/tasks/compile-release/task.yml
-    privileged: true
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -2123,7 +2100,6 @@ jobs:
   - aggregate:
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2135,7 +2111,6 @@ jobs:
         BOSH_RELEASE: binary-buildpack
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2147,7 +2122,6 @@ jobs:
         BOSH_RELEASE: capi
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2159,7 +2133,6 @@ jobs:
         BOSH_RELEASE: cf-networking
     - task: compile-release-cf-smoke-tests
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2171,7 +2144,6 @@ jobs:
         BOSH_RELEASE: cf-smoke-tests
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2183,7 +2155,6 @@ jobs:
         BOSH_RELEASE: cflinuxfs2
     - task: compile-release-consul
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2195,7 +2166,6 @@ jobs:
         BOSH_RELEASE: consul
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2207,7 +2177,6 @@ jobs:
         BOSH_RELEASE: diego
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2219,7 +2188,6 @@ jobs:
         BOSH_RELEASE: dotnet-core-buildpack
     - task: compile-release-etcd
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2231,7 +2199,6 @@ jobs:
         BOSH_RELEASE: etcd
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2243,7 +2210,6 @@ jobs:
         BOSH_RELEASE: garden-runc
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2255,7 +2221,6 @@ jobs:
         BOSH_RELEASE: go-buildpack
     - task: compile-release-java-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2267,7 +2232,6 @@ jobs:
         BOSH_RELEASE: java-buildpack
     - task: compile-release-loggregator
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2279,7 +2243,6 @@ jobs:
         BOSH_RELEASE: loggregator
     - task: compile-release-mysql
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2291,7 +2254,6 @@ jobs:
         BOSH_RELEASE: cf-mysql
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2303,7 +2265,6 @@ jobs:
         BOSH_RELEASE: nats
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2315,7 +2276,6 @@ jobs:
         BOSH_RELEASE: nodejs-buildpack
     - task: compile-release-php-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2327,7 +2287,6 @@ jobs:
         BOSH_RELEASE: php-buildpack
     - task: compile-release-python-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2339,7 +2298,6 @@ jobs:
         BOSH_RELEASE: python-buildpack
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2351,7 +2309,6 @@ jobs:
         BOSH_RELEASE: routing
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2363,7 +2320,6 @@ jobs:
         BOSH_RELEASE: ruby-buildpack
     - task: compile-release-staticfile-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2375,7 +2331,6 @@ jobs:
         BOSH_RELEASE: staticfile-buildpack
     - task: compile-release-statsd-injector
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
@@ -2387,7 +2342,6 @@ jobs:
         BOSH_RELEASE: statsd-injector
     - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
