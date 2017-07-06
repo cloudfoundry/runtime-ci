@@ -13,7 +13,7 @@ get_row() {
   cf_deployment_sha=$(cd cf-deployment; git rev-parse HEAD)
   cf_deployment_transition_sha=$(cd cf-deployment-transition; git rev-parse HEAD)
 
-  export NEW_ROW="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha},${routing_release_version},${cf_networking_release_version},${grootfs_release_version}"
+  export NEW_ROW="${cf_release_version},${diego_release_version},${cflinuxfs2_release_version},${garden_runc_release_version},${cf_deployment_sha},${cf_deployment_transition_sha},${routing_release_version},${cf_networking_release_version},${grootfs_release_version},"
 }
 
 commit_compatibility_and_move_to_output() {
