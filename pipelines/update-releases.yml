@@ -2046,43 +2046,37 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
+    - get: binary-buildpack-release
+      params:
+        tarball: false
     - get: capi-release
       params:
         tarball: false
     - get: cf-mysql-release
       params:
         tarball: false
-    - get: nats-release
+    - get: cf-networking-release
       params:
         tarball: false
-    - get: routing-release
-      params:
-        tarball: false
-    - get: consul-release
-      params:
-        tarball: false
-    - get: etcd-release
-      params:
-        tarball: false
-    - get: diego-release
-      params:
-        tarball: false
-    - get: loggregator-release
-      params:
-        tarball: false
-    - get: uaa-release
-      params:
-        tarball: false
-    - get: garden-runc-release
+    - get: cf-smoke-tests-release
       params:
         tarball: false
     - get: cflinuxfs2-release
       params:
         tarball: false
-    - get: binary-buildpack-release
+    - get: consul-release
+      params:
+        tarball: false
+    - get: diego-release
       params:
         tarball: false
     - get: dotnet-core-buildpack-release
+      params:
+        tarball: false
+    - get: etcd-release
+      params:
+        tarball: false
+    - get: garden-runc-release
       params:
         tarball: false
     - get: go-buildpack-release
@@ -2091,13 +2085,16 @@ jobs:
     - get: java-buildpack-release
       params:
         tarball: false
+    - get: loggregator-release
+      params:
+        tarball: false
+    - get: nats-release
+      params:
+        tarball: false
     - get: nodejs-buildpack-release
       params:
         tarball: false
-    - get: php-buildpack-release
-      params:
-        tarball: false
-    - get: python-buildpack-release
+    - get: routing-release
       params:
         tarball: false
     - get: ruby-buildpack-release
@@ -2109,10 +2106,10 @@ jobs:
     - get: statsd-injector-release
       params:
         tarball: false
-    - get: cf-smoke-tests-release
+    - get: php-buildpack-release
       params:
         tarball: false
-    - get: cf-networking-release
+    - get: python-buildpack-release
       params:
         tarball: false
     - get: stemcell
@@ -2124,138 +2121,6 @@ jobs:
     input_mapping:
       deployment-configuration: cf-deployment-develop
   - aggregate:
-    - task: compile-release-capi
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-capi
-      params:
-        RELEASE_NAME: capi
-        DEPLOYMENT_NAME: cf-compilation-capi
-        BOSH_RELEASE: capi
-    - task: compile-release-mysql
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-mysql
-      params:
-        RELEASE_NAME: cf-mysql
-        DEPLOYMENT_NAME: cf-compilation-cf-mysql
-        BOSH_RELEASE: cf-mysql
-    - task: compile-release-nats
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-nats
-      params:
-        RELEASE_NAME: nats
-        DEPLOYMENT_NAME: cf-compilation-nats
-        BOSH_RELEASE: nats
-    - task: compile-release-routing
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-routing
-      params:
-        RELEASE_NAME: routing
-        DEPLOYMENT_NAME: cf-compilation-routing
-        BOSH_RELEASE: routing
-    - task: compile-release-consul
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-consul
-      params:
-        RELEASE_NAME: consul
-        DEPLOYMENT_NAME: cf-compilation-consul
-        BOSH_RELEASE: consul
-    - task: compile-release-etcd
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-etcd
-      params:
-        RELEASE_NAME: etcd
-        DEPLOYMENT_NAME: cf-compilation-etcd
-        BOSH_RELEASE: etcd
-    - task: compile-release-diego
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-diego
-      params:
-        RELEASE_NAME: diego
-        DEPLOYMENT_NAME: cf-compilation-diego
-        BOSH_RELEASE: diego
-    - task: compile-release-loggregator
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-loggregator
-      params:
-        RELEASE_NAME: loggregator
-        DEPLOYMENT_NAME: cf-compilation-loggregator
-        BOSH_RELEASE: loggregator
-    - task: compile-release-uaa
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-uaa
-      params:
-        RELEASE_NAME: uaa
-        DEPLOYMENT_NAME: cf-compilation-uaa
-        BOSH_RELEASE: uaa
-    - task: compile-release-garden-runc
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-garden-runc
-      params:
-        RELEASE_NAME: garden-runc
-        DEPLOYMENT_NAME: cf-compilation-garden-runc
-        BOSH_RELEASE: garden-runc
-    - task: compile-release-cflinuxfs2
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-cflinuxfs2
-      params:
-        RELEASE_NAME: cflinuxfs2
-        DEPLOYMENT_NAME: cf-compilation-cflinuxfs2
-        BOSH_RELEASE: cflinuxfs2
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
@@ -2268,6 +2133,78 @@ jobs:
         RELEASE_NAME: binary-buildpack
         DEPLOYMENT_NAME: cf-compilation-binary-buildpack
         BOSH_RELEASE: binary-buildpack
+    - task: compile-release-capi
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-capi
+      params:
+        RELEASE_NAME: capi
+        DEPLOYMENT_NAME: cf-compilation-capi
+        BOSH_RELEASE: capi
+    - task: compile-release-cf-networking
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-networking
+      params:
+        RELEASE_NAME: cf-networking
+        DEPLOYMENT_NAME: cf-compilation-cf-networking
+        BOSH_RELEASE: cf-networking
+    - task: compile-release-cf-smoke-tests
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-smoke-tests
+      params:
+        RELEASE_NAME: cf-smoke-tests
+        DEPLOYMENT_NAME: cf-compilation-cf-smoke-tests
+        BOSH_RELEASE: cf-smoke-tests
+    - task: compile-release-cflinuxfs2
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cflinuxfs2
+      params:
+        RELEASE_NAME: cflinuxfs2
+        DEPLOYMENT_NAME: cf-compilation-cflinuxfs2
+        BOSH_RELEASE: cflinuxfs2
+    - task: compile-release-consul
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-consul
+      params:
+        RELEASE_NAME: consul
+        DEPLOYMENT_NAME: cf-compilation-consul
+        BOSH_RELEASE: consul
+    - task: compile-release-diego
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-diego
+      params:
+        RELEASE_NAME: diego
+        DEPLOYMENT_NAME: cf-compilation-diego
+        BOSH_RELEASE: diego
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
@@ -2280,6 +2217,30 @@ jobs:
         RELEASE_NAME: dotnet-core-buildpack
         DEPLOYMENT_NAME: cf-compilation-dotnet-core-buildpack
         BOSH_RELEASE: dotnet-core-buildpack
+    - task: compile-release-etcd
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-etcd
+      params:
+        RELEASE_NAME: etcd
+        DEPLOYMENT_NAME: cf-compilation-etcd
+        BOSH_RELEASE: etcd
+    - task: compile-release-garden-runc
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-garden-runc
+      params:
+        RELEASE_NAME: garden-runc
+        DEPLOYMENT_NAME: cf-compilation-garden-runc
+        BOSH_RELEASE: garden-runc
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
@@ -2304,6 +2265,42 @@ jobs:
         RELEASE_NAME: java-buildpack
         DEPLOYMENT_NAME: cf-compilation-java-buildpack
         BOSH_RELEASE: java-buildpack
+    - task: compile-release-loggregator
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-loggregator
+      params:
+        RELEASE_NAME: loggregator
+        DEPLOYMENT_NAME: cf-compilation-loggregator
+        BOSH_RELEASE: loggregator
+    - task: compile-release-mysql
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-mysql
+      params:
+        RELEASE_NAME: cf-mysql
+        DEPLOYMENT_NAME: cf-compilation-cf-mysql
+        BOSH_RELEASE: cf-mysql
+    - task: compile-release-nats
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-nats
+      params:
+        RELEASE_NAME: nats
+        DEPLOYMENT_NAME: cf-compilation-nats
+        BOSH_RELEASE: nats
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
@@ -2340,6 +2337,18 @@ jobs:
         RELEASE_NAME: python-buildpack
         DEPLOYMENT_NAME: cf-compilation-python-buildpack
         BOSH_RELEASE: python-buildpack
+    - task: compile-release-routing
+      file: runtime-ci/tasks/compile-release/task.yml
+      privileged: true
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        cf-deployment: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-routing
+      params:
+        RELEASE_NAME: routing
+        DEPLOYMENT_NAME: cf-compilation-routing
+        BOSH_RELEASE: routing
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
@@ -2376,30 +2385,18 @@ jobs:
         RELEASE_NAME: statsd-injector
         DEPLOYMENT_NAME: cf-compilation-statsd-injector
         BOSH_RELEASE: statsd-injector
-    - task: compile-release-cf-smoke-tests
+    - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release/task.yml
       privileged: true
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
-        exported-release: exported-release-cf-smoke-tests
+        exported-release: exported-release-uaa
       params:
-        RELEASE_NAME: cf-smoke-tests
-        DEPLOYMENT_NAME: cf-compilation-cf-smoke-tests
-        BOSH_RELEASE: cf-smoke-tests
-    - task: compile-release-cf-networking
-      file: runtime-ci/tasks/compile-release/task.yml
-      privileged: true
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        cf-deployment: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-cf-networking
-      params:
-        RELEASE_NAME: cf-networking
-        DEPLOYMENT_NAME: cf-compilation-cf-networking
-        BOSH_RELEASE: cf-networking
+        RELEASE_NAME: uaa
+        DEPLOYMENT_NAME: cf-compilation-uaa
+        BOSH_RELEASE: uaa
   - task: update-compiled-releases-ops-stemcell
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
     input_mapping:
@@ -2428,6 +2425,10 @@ jobs:
       cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
+    - put: binary-buildpack-release-gcs
+      params:
+        file: exported-release-binary-buildpack/*.tgz
+        predefined_acl: publicRead
     - put: capi-release-gcs
       params:
         file: exported-release-capi/*.tgz
@@ -2435,10 +2436,6 @@ jobs:
     - put: cf-mysql-release-gcs
       params:
         file: exported-release-mysql/*.tgz
-        predefined_acl: publicRead
-    - put: binary-buildpack-release-gcs
-      params:
-        file: exported-release-binary-buildpack/*.tgz
         predefined_acl: publicRead
     - put: cf-networking-release-gcs
       params:
