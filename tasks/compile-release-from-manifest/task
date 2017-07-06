@@ -32,7 +32,7 @@ EOF
 
   bosh \
     -n \
-    -d cf-compilation-${RELEASE_NAME} \
+    -d cf-compilation-${BOSH_RELEASE} \
     deploy compilation-manifest.yml
 }
 
@@ -42,7 +42,7 @@ export_release() {
   local bosh_release_version
   bosh_release_version=$(bosh interpolate ${MANIFEST_PATH} --path "/releases/name=${BOSH_RELEASE}/version")
   pushd exported-release
-  bosh export-release -d "cf-compilation-${RELEASE_NAME}" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+  bosh export-release -d "cf-compilation-${BOSH_RELEASE}" "${BOSH_RELEASE}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
   popd
 }
 
