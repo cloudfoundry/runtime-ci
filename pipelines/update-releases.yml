@@ -2099,15 +2099,13 @@ jobs:
       deployment-configuration: cf-deployment-develop
   - aggregate:
     - task: compile-release-binary-buildpack
-      file: runtime-ci/tasks/compile-release/task.yml
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
         bbl-state: greengrass-env-director-state
         cf-deployment: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-binary-buildpack
       params:
-        RELEASE_NAME: binary-buildpack
-        DEPLOYMENT_NAME: cf-compilation-binary-buildpack
         BOSH_RELEASE: binary-buildpack
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release/task.yml
