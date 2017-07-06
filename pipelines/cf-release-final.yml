@@ -4,6 +4,7 @@ groups:
   - create-final-release
   - merge-master-into-develop
   - announce-rc
+  - announce-rc-slack
   - create-release-notes-draft
 
 resource_types:
@@ -115,6 +116,23 @@ jobs:
         tarball: false
   - task: announce-rc
     file: runtime-ci/scripts/ci/announce-rc/task.yml
+    params:
+      GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
+
+- name: announce-rc-slack
+  public: true
+  build_logs_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-release-release-candidate
+      passed:
+      - announce-rc
+      trigger: true
+      params:
+        submodules: none
+  - task: alert-pms
+    file: runtime-ci/tasks/alert-pms/task.yml
     params:
       GH_ACCESS_TOKEN: {{release_candidate_bot_github_access_token}}
   - aggregate:
