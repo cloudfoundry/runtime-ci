@@ -173,6 +173,11 @@ jobs:
         text_file: slack-messages/grootfs
         channel: "#grootfs"
         always_notify: true
+    - put: rc-notification
+      params:
+        text_file: slack-messages/java-buildpack
+        channel: "#java-buildpack"
+        always_notify: true
 
 - name: create-release-notes-draft
   public: true
