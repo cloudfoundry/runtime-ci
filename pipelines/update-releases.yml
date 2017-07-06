@@ -351,7 +351,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -419,7 +419,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -486,7 +486,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -553,7 +553,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -620,7 +620,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -687,7 +687,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -754,7 +754,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -821,7 +821,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -888,7 +888,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -955,7 +955,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1022,7 +1022,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1130,7 +1130,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1197,7 +1197,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1265,7 +1265,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1333,7 +1333,7 @@ jobs:
       vars-files: greengrass-env-director-state
       MANIFEST_DESTINATION: cf-deployment.yml
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1400,7 +1400,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1467,7 +1467,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1575,7 +1575,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1642,7 +1642,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1709,7 +1709,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1776,7 +1776,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1843,7 +1843,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
@@ -1910,7 +1910,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
   - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/gctask.yml
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
