@@ -4,14 +4,24 @@ groups:
   jobs:
   - deploy-updated-smokes
   - run-smokes-errand
+  - delete-smokes-deployment
   - create-final-release
 
 resources:
+# Concourse Tasks
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v3.*
 - name: runtime-ci
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+
+# Releases
 - name: cf-smoke-tests-release
   type: git
   source:
@@ -21,6 +31,8 @@ resources:
     ignore_paths:
     - releases/**
     - .final_builds/**
+
+# ENV
 - name: bellatrix-env-director-state
   type: git
   source:
@@ -73,6 +85,21 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf-smoke-tests
       ERRAND_NAME: smoke-tests
+
+- name: delete-smokes-deployment
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: cf-smoke-tests-release
+      passed: [run-smokes-errand]
+      trigger: true
+    - get: bellatrix-env-director-state
+  - task: delete-smoke-tests-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-smoke-tests
 
 
 - name: create-final-release
