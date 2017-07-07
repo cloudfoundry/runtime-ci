@@ -55,10 +55,11 @@ EOF
 
     bosh \
       -n \
+      deploy \
       -d "${RELEASE_NAME}" \
       --vars-store "vars-store/${VARS_STORE_FILE}" \
-      -v system_domain=${SYSTEM_DOMAIN} \
-      deploy create-smokes-dev-release.yml \
+      -v system_domain="${SYSTEM_DOMAIN}" \
+      create-smokes-dev-release.yml \
   popd
 }
 
