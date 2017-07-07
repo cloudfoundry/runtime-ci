@@ -4,6 +4,7 @@
 source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function bosh_deploy() {
+  local root_dir=$PWD
   pushd cf-smoke-tests-release
     cat << EOF > smokes-dev-release.yml
 ---
@@ -57,7 +58,7 @@ EOF
       -n \
       -d "${RELEASE_NAME}" \
       interpolate smokes-dev-release.yml \
-      --vars-store "vars-store/${VARS_STORE_FILE}" \
+      --vars-store "${root_dir}/vars-store/${VARS_STORE_FILE}" \
       -v system_domain="${SYSTEM_DOMAIN}" > interpolated-manifest.yml
 
     bosh \
