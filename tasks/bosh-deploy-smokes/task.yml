@@ -7,6 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
+- name: bbl-state
 - name: vars-store
 - name: cf-smoke-tests-release
 - name: runtime-ci
