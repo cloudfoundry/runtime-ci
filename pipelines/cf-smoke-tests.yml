@@ -2,6 +2,8 @@
 groups:
 - name: cf-smoke-tests-release
   jobs:
+  - deploy-updated-smokes
+  - run-smokes-errand
   - create-final-release
 
 resources:
@@ -19,8 +21,60 @@ resources:
     ignore_paths:
     - releases/**
     - .final_builds/**
+- name: bellatrix-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+
+- name: bellatrix-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - deployment-vars.yml
 
 jobs:
+- name: deploy-updated-smokes
+  build_logs_to_retain: 100
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-smoke-tests-release
+      trigger: true
+    - get: bellatrix-env-director-state
+    - get: bellatrix-env-vars-store
+  - task: deploy-smoke-tests-errand
+    file: runtime-ci/tasks/bosh-deploy-smokes/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+      vars-store: bellatrix-env-vars-store
+    params:
+     SYSTEM_DOMAIN: bellatrix.cf-app.com
+     ETCD_IP_ADDRESS: cf-etcd.service.cf.internal
+
+- name: run-smokes-errand
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-smoke-tests-release
+      passed: [deploy-updated-smokes]
+      trigger: true
+    - get: bellatrix-env-director-state
+  - task: run-smokes
+    file: runtime-ci/tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-smoke-tests
+      ERRAND_NAME: smoke-tests
+
+
 - name: create-final-release
   build_logs_to_retain: 100
   public: true
@@ -29,6 +83,7 @@ jobs:
     - get: runtime-ci
     - get: cf-smoke-tests-release
       trigger: true
+      passed: [run-smokes-errand]
   - task: create-final-release
     file: runtime-ci/tasks/create-final-release/task.yml
     input_mapping:
