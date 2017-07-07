@@ -5,19 +5,12 @@ require 'net/http'
 require 'json'
 require_relative './release_team_collection.rb'
 require_relative './release_team_list.rb'
+require_relative './alert_message_writer.rb'
 
 def filter_approved_releases(issue_body)
   teams = issue_body.split('----')
   teams.select do |team|
     /\:\-1\:/ =~ team
-  end
-end
-
-def write_alert_message(team_section, release_teams, issue_url)
-  pm_github, anchor_github = team_section.split("\r\n")[1].gsub(':', '').split(', ')
-  team = release_teams.find_team_by_github_handles(anchor_github, pm_github)
-  open(File.join("slack-messages", team.name), 'w') do |file|
-    file.puts "Hey there <#{team.pm_slack}> <#{team.anchor_slack}>. Could you please take a look at the latest release candidate: #{issue_url} cc <@dsabeti>"
   end
 end
 
@@ -27,8 +20,10 @@ response_body = Net::HTTP.get(uri)
 response_json = JSON.parse(response_body)
 issue_url = response_json[0].fetch('html_url')
 
+alert_message_writer = AlertMessageWriter.new(release_teams, issue_url)
+
 issue_body = response_json[0].fetch('body')
 waiting_approval = filter_approved_releases(issue_body)
 waiting_approval.each do |team_section|
-  write_alert_message(team_section, release_teams, issue_url)
+  alert_message_writer.write!(team_section)
 end
