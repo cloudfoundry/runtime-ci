@@ -1,0 +1,70 @@
+#!/bin/bash -exu
+
+# shellcheck disable=SC1091
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+
+function bosh_deploy() {
+  pushd cf-smoke-tests-release
+    cat << EOF > create-smokes-dev-release.yml
+---
+name: cf-smoke-tests
+update:
+  canaries: 1
+  canary_watch_time: 30000-1200000
+  max_in_flight: 5
+  serial: false
+  update_watch_time: 5000-1200000
+instance_groups:
+- name: smoke-tests
+  lifecycle: errand
+  azs:
+  - z1
+  instances: 1
+  vm_type: m3.medium
+  stemcell: default
+  update:
+    max_in_flight: 1
+    serial: true
+  networks:
+  - name: default
+  jobs:
+  - name: smoke_tests
+    release: cf-smoke-tests
+    properties:
+      smoke_tests:
+        api: "https://api.((system_domain))"
+        apps_domain: "((system_domain))"
+        user: admin
+        password: "((cf_admin_password))"
+        org: cf_smoke_tests_org
+        space: cf_smoke_tests_space
+        cf_dial_timeout_in_seconds: 300
+        skip_ssl_validation: true
+        enable_etcd_cluster_check_tests: true
+        etcd_ip_address: ${ETCD_IP_ADDRESS}
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+releases:
+- name: cf-smoke-tests
+  version: create
+  url: file://.
+EOF
+
+    bosh \
+      -n \
+      -d "${RELEASE_NAME}" \
+      --vars-store "vars-store/${VARS_STORE_FILE}" \
+      -v system_domain=${SYSTEM_DOMAIN} \
+      deploy create-smokes-dev-release.yml \
+  popd
+}
+
+function main() {
+  setup_bosh_env_vars
+  bosh_deploy
+}
+
+main

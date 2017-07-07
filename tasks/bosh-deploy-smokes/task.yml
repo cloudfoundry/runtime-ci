@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: vars-store
+- name: cf-smoke-tests-release
+- name: runtime-ci
+
+run:
+  path: runtime-ci/tasks/bosh-deploy-smokes/task
+
+params:
+  VARS_STORE_FILE: deployment-vars.yml
+  RELEASE_NAME: cf-smoke-tests
+  SYSTEM_DOMAIN:
+  ETCD_IP_ADDRESS:
