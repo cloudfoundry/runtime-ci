@@ -55,11 +55,16 @@ EOF
 
     bosh \
       -n \
+      -d "${RELEASE_NAME}" \
+      interpolate smokes-dev-release.yml \
+      --vars-store "vars-store/${VARS_STORE_FILE}" \
+      -v system_domain="${SYSTEM_DOMAIN}" > interpolated-manifest.yml
+
+    bosh \
+      -n \
       deploy \
       -d "${RELEASE_NAME}" \
-      --vars-store "vars-store/${VARS_STORE_FILE}" \
-      -v system_domain="${SYSTEM_DOMAIN}" \
-      smokes-dev-release.yml
+      interpolated-manifest.yml
 
   popd
 }
