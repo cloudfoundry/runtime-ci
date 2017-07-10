@@ -71,6 +71,9 @@ jobs:
      ETCD_IP_ADDRESS: {{bellatrix_etcd_ip_address}}
 
 - name: run-smokes-errand
+  build_logs_to_retain: 100
+  serial: true
+  public: true
   plan:
   - aggregate:
     - get: runtime-ci
@@ -87,6 +90,9 @@ jobs:
       ERRAND_NAME: smoke-tests
 
 - name: delete-smokes-deployment
+  build_logs_to_retain: 100
+  serial: true
+  public: true
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
