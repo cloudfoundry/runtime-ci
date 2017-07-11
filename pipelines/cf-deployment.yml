@@ -622,6 +622,12 @@ resources:
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-deployment-version
 
+- name: sync-integration-tests
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/sync-integration-tests.git
+
 jobs:
 - name: branch-freshness
   public: true
@@ -2629,6 +2635,35 @@ jobs:
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
+- name: upgrade-sits
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - timeout: 4h
+      do:
+      - get: fresh-pool
+        trigger: true
+        passed: [ fresh-deploy ]
+      - aggregate:
+        - get: sync-integration-tests
+        - get: luna-env-director-state
+        - get: luna-env-vars-store
+      - task: sync-integration-tests
+        file: sync-integration-tests/concourse/task_with_vars_store.yml
+        input_mapping:
+          environment: luna-env-director-state
+          vars-store: luna-env-vars-store
+        params:
+          BOSH_DEPLOYMENT_NAME: cf
+          BOSH_API_INSTANCE: api/0
+          CF_API_TARGET: https://api.luna.cf-app.com
+          CF_SKIP_SSL_VALIDATION: true
+          CF_APPS_DOMAIN: luna.cf-app.com
+          BBL_STATE_DIR: "."
+          VARS_STORE_PATH: "deployment-vars.yml"
+          USE_CF_DEPLOYMENT_VARS: "true"
+
 - name: lite-http-rats
   serial_groups: [ snitch-rats ]
   public: true
@@ -3022,6 +3057,7 @@ jobs:
     - lite-http-rats
     - upgrade-http-rats
     - fresh-rats
+    - upgrade-sits
     - upgrade-smoke-tests
     - fresh-smoke-tests
     - ops-test
