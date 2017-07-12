@@ -7,6 +7,7 @@ groups:
   - lite-deploy
   - transition-deploy
   - upgrade-deploy
+  - upgrade-deploy-uptimer
 
   - lint-cf-deployment-manifest
   - complex-transition-cats
@@ -96,6 +97,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
+  - upgrade-deploy-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -149,6 +151,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
+  - upgrade-deploy-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
