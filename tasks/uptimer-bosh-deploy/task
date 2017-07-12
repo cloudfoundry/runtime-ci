@@ -1,0 +1,42 @@
+#!/bin/bash -eux
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+write_uptimer_config() {
+  echo '{}' | jq --arg cf_api api.${SYSTEM_DOMAIN} \
+    --arg admin_password $(bosh int --path=/cf_admin_password vars-store/deployment-vars.yml) \
+    --arg app_domain ${SYSTEM_DOMAIN} \
+    --arg interpolated_manifest \
+    --arg deployment_name \
+    '{
+      "while": {
+        "command":"bosh",
+        "command_args":["-d",$deployment_name,"deploy",$interpolated_manifest]
+      },
+      "cf": {
+        "api": $cf_api,
+        "app_domain": $app_domain,
+        "admin_user": "admin",
+        "admin_password": $admin_password,
+        "app_path": "cf-acceptance-tests/assets/dora"
+      }
+    }'
+}
+
+function main() {
+  check_input_params
+  setup_bosh_env_vars
+  if ${REGENERATE_VARS_STORE}; then
+    remove_vars_store
+  fi
+  bosh_interpolate
+  uptimer_config=$(mktemp)
+  write_uptimer_config > ${uptimer_config}
+  go get -u github.com/cloudfoundry/uptimer
+  uptimer -configFile ${uptimer_config}
+}
+
+trap commit_vars_store EXIT
+
+main
