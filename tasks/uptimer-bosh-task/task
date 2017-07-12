@@ -1,5 +1,4 @@
 #!/bin/bash -x
-set +e
 
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
@@ -30,7 +29,7 @@ function main() {
   uptimer_config=$(mktemp)
   write_uptimer_config > ${uptimer_config}
   go get -u github.com/cloudfoundry/uptimer
-  uptimer -configFile ${uptimer_config}
+  uptimer -configFile ${uptimer_config} || true # ignore failure
 }
 
 main
