@@ -13,6 +13,7 @@ inputs:
 - name: vars-store # - The BOSH deployment's vars-store yaml file
 - name: ops-files # - Operations files to be made available
 - name: vars-files # - Variable files to be made available
+- name: cf-deployment-concourse-tasks
 - name: cf-acceptance-tests
 
 outputs:
