@@ -1926,7 +1926,7 @@ jobs:
       params:
         tarball: false
   - task: update-windows-stemcell-ops
-    file: tasks/update-windows-stemcell-ops/task.yml
+    file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
   - task: commit-generated-manifest-and-ops
