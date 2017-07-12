@@ -26,9 +26,9 @@ EOF
 output_commit_message() {
   current_stemcell_version=$(bosh interpolate ops-files/operations/windows-cell.yml --path=/path=~1stemcells~1-/value/version)
   if [ "${current_stemcell_version}" == "$(cat windows-stemcell/version)" ]; then
-    echo "Windows stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
-  else
     echo "No windows stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
+  else
+    echo "Windows stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
   fi
 }
 
