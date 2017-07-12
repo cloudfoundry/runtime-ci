@@ -13,11 +13,6 @@ inputs:
 - name: cf-deployment-concourse-tasks
 - name: cf-acceptance-tests
 
-outputs:
-- name: updated-vars-store
-  # The vars-store resource, with changes git committed,
-  # ready to be `put` to a git resource.
-
 run:
   path: runtime-ci/tasks/uptimer-bosh-task/task
 

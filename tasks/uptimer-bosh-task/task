@@ -36,6 +36,4 @@ function main() {
   uptimer -configFile ${uptimer_config}
 }
 
-trap commit_vars_store EXIT
-
 main
