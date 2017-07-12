@@ -31,3 +31,9 @@ RUN \
   cd /usr/local/bin && \
   echo "00ccaf07a11bd8206407f83f1e606e16f3475bf3 bosh-init" | sha1sum -c - && \
   chmod +x bosh-init
+
+RUN \
+  wget -q -O cf.deb \
+  "https://cli.run.pivotal.io/stable?release=debian64&version=6.28.0&source=github-rel"
+
+RUN dpkg -i cf.deb
