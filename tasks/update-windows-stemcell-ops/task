@@ -1,0 +1,30 @@
+#!/bin/bash -exu
+
+update_windows_cell() {
+  local windows_cell_version
+  windows_cell_version=$(cat windows-stemcell/version)
+
+  update_windows_cell_ops_file=$(mktemp)
+(
+cat << EOF
+---
+- type: replace
+  path: /path=~1stemcells~1-
+  value:
+    type: replace
+    path: /stemcells/-
+    value:
+      alias: windows
+      os: windows2012R2
+      version: "${windows_cell_version}"
+EOF
+) > "${update_windows_cell_ops_file}"
+
+  bosh interpolate ops-files/operations/windows-cell.yml -o "${update_windows_cell_ops_file}" > updated-stemcell-ops-file/windows-cell.yml
+}
+
+main() {
+  update_windows_cell
+}
+
+main

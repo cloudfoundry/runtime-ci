@@ -29,6 +29,7 @@ groups:
   - update-stemcell-and-recompile-releases
   - update-uaa
   - update-windows-releases
+  - update-windows-stemcell
 - name: infrastructure
   jobs:
   - setup-infrastructure-compilation
@@ -64,10 +65,15 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+
 - name: stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+- name: windows-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-windows2012R2-go_agent
 
 - name: binary-buildpack-release
   type: bosh-io-release
@@ -1904,6 +1910,34 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-windows-stemcell
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: windows-stemcell
+      params:
+        tarball: false
+  - task: update-windows-stemcell-ops
+    file: tasks/update-windows-stemcell-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-stemcell-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: windows-cell.yml
+      OPS_FILE_DESTINATION: operations/windows-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true

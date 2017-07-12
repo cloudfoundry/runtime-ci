@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: ops-files
+- name: windows-stemcell
+
+outputs:
+- name: updated-stemcell-ops-file
+
+run:
+  path: runtime-ci/tasks/update-windows-stemcell-ops/task
