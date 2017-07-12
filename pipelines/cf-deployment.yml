@@ -1965,6 +1965,8 @@ jobs:
       input_mapping:
         bbl-state: hermione-env-director-state
         vars-store: hermione-env-vars-store
+      params:
+        SYSTEM_DOMAIN: hermione.cf-app.com
 
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
