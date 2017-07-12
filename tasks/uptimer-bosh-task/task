@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -x +e
 
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
