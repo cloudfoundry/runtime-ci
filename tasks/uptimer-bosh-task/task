@@ -26,10 +26,6 @@ write_uptimer_config() {
 
 function main() {
   setup_bosh_env_vars
-  if ${REGENERATE_VARS_STORE}; then
-    remove_vars_store
-  fi
-  bosh_interpolate
   uptimer_config=$(mktemp)
   write_uptimer_config > ${uptimer_config}
   go get -u github.com/cloudfoundry/uptimer
