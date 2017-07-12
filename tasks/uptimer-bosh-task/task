@@ -25,7 +25,6 @@ write_uptimer_config() {
 }
 
 function main() {
-  check_input_params
   setup_bosh_env_vars
   if ${REGENERATE_VARS_STORE}; then
     remove_vars_store
