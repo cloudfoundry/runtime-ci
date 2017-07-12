@@ -9,9 +9,6 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: bbl-state # - The Director's `bbl-state.json`
-- name: cf-deployment # - The cf-deployment manifest
-- name: vars-store # - The BOSH deployment's vars-store yaml file
-- name: ops-files # - Operations files to be made available
 - name: vars-files # - Variable files to be made available
 - name: cf-deployment-concourse-tasks
 - name: cf-acceptance-tests
@@ -22,7 +19,7 @@ outputs:
   # ready to be `put` to a git resource.
 
 run:
-  path: runtime-ci/tasks/uptimer-bosh-deploy/task
+  path: runtime-ci/tasks/uptimer-bosh-task/task
 
 params:
   BBL_STATE_DIR:

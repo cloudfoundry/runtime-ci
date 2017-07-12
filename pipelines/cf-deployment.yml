@@ -1962,7 +1962,6 @@ jobs:
       - get: hermione-env-director-state
         passed: [ setup-infrastructure-upgrade ]
       - get: hermione-env-integration-configs
-      - get: cf-acceptance-tests
       - get: windows-stemcell
     - task: bosh-upload-stemcell-upgrade
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -1986,7 +1985,7 @@ jobs:
       params:
         RUNTIME_CONFIG_FILE: experiments/runtime-configs/turbulence-runtime-config.yml
     - task: bosh-deploy-cf
-      file: runtime-ci/tasks/uptimer-bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
