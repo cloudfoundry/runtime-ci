@@ -12,7 +12,7 @@ write_uptimer_config() {
     '{
       "while": {
         "command":"bosh",
-        "command_args":["-d",$deployment_name,"deploy",$interpolated_manifest]
+        "command_args":["-n", "-d",$deployment_name,"deploy",$interpolated_manifest]
       },
       "cf": {
         "api": $cf_api,
