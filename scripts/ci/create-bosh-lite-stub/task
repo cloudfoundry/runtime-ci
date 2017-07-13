@@ -17,7 +17,7 @@ create_stub() {
       'system_domain' => 'bosh-lite.runtime-ci.cf-app.com',
       'apps_domain' => 'bosh-lite.runtime-ci.cf-app.com',
       'acceptance_tests' => {
-        'nodes' => 8,
+        'nodes' => 4,
         'api' => 'api.bosh-lite.runtime-ci.cf-app.com',
         'apps_domain' => 'bosh-lite.runtime-ci.cf-app.com',
         'include_sso' => true,
