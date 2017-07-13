@@ -7,7 +7,7 @@ groups:
   - lite-deploy
   - transition-deploy
   - upgrade-deploy
-  - upgrade-deploy-uptimer
+  - upgrade-uptimer
 
   - lint-cf-deployment-manifest
   - complex-transition-cats
@@ -97,7 +97,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-deploy-uptimer
+  - upgrade-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -151,7 +151,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-deploy-uptimer
+  - upgrade-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -1944,7 +1944,7 @@ jobs:
       put: stable-pool
       params: {release: stable-pool}
 
-- name: upgrade-deploy-uptimer
+- name: upgrade-uptimer
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
   build_logs_to_retain: 500
@@ -1959,7 +1959,6 @@ jobs:
         passed: [ setup-infrastructure-upgrade ]
       - get: hermione-env-vars-store
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
     - task: run-uptimer
       file: runtime-ci/tasks/uptimer-bosh-task/task.yml
       input_mapping:
@@ -2368,7 +2367,7 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-deploy, upgrade-deploy-uptimer ]
+      passed: [ upgrade-deploy, upgrade-uptimer ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests

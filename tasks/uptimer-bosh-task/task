@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
@@ -17,8 +17,7 @@ write_uptimer_config() {
         "api": $cf_api,
         "app_domain": $app_domain,
         "admin_user": "admin",
-        "admin_password": $admin_password,
-        "app_path": "cf-acceptance-tests/assets/dora"
+        "admin_password": $admin_password
       }
     }'
   set -x
@@ -29,6 +28,10 @@ function main() {
   uptimer_config=$(mktemp)
   write_uptimer_config > ${uptimer_config}
   go get -u github.com/cloudfoundry/uptimer
+  go get -u github.com/onsi/ginkgo
+  pushd ${GOPATH}/src/github.com/cloudfoundry/uptimer
+    ginkgo -r
+  popd
   uptimer -configFile ${uptimer_config} || true # ignore failure
 }
 
