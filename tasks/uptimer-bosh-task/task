@@ -29,9 +29,15 @@ function main() {
   write_uptimer_config > ${uptimer_config}
   go get -u github.com/cloudfoundry/uptimer
   go get -u github.com/onsi/ginkgo/...
+
   pushd ${GOPATH}/src/github.com/cloudfoundry/uptimer
     ginkgo -r -randomizeSuites -randomizeAllSpecs
   popd
+
+  pushd ${GOPATH}/src/github.com/cloudfoundry/uptimer/app
+    go build
+  popd
+
   uptimer -configFile ${uptimer_config} || true # ignore failure
 }
 
