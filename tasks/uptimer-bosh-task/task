@@ -34,10 +34,6 @@ function main() {
     ginkgo -r -randomizeSuites -randomizeAllSpecs
   popd
 
-  pushd ${GOPATH}/src/github.com/cloudfoundry/uptimer/app
-    go build
-  popd
-
   uptimer -configFile ${uptimer_config} || true # ignore failure
 }
 
