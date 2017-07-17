@@ -7,7 +7,6 @@ groups:
   - lite-deploy
   - transition-deploy
   - upgrade-deploy
-  - upgrade-uptimer
 
   - lint-cf-deployment-manifest
   - complex-transition-cats
@@ -97,7 +96,6 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -151,7 +149,6 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-uptimer
   - upgrade-http-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -1944,29 +1941,6 @@ jobs:
       put: stable-pool
       params: {release: stable-pool}
 
-- name: upgrade-uptimer
-  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
-  public: true
-  build_logs_to_retain: 500
-  plan:
-  - do:
-    - get: upgrade-pool
-      trigger: true
-      passed: [ upgrade-acquire-pool ]
-    - aggregate:
-      - get: runtime-ci
-      - get: hermione-env-director-state
-        passed: [ setup-infrastructure-upgrade ]
-      - get: hermione-env-vars-store
-      - get: cf-deployment-concourse-tasks
-    - task: run-uptimer
-      file: runtime-ci/tasks/uptimer-bosh-task/task.yml
-      input_mapping:
-        bbl-state: hermione-env-director-state
-        vars-store: hermione-env-vars-store
-      params:
-        SYSTEM_DOMAIN: hermione.cf-app.com
-
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
@@ -2022,6 +1996,7 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml"
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: hermione-env-vars-store
         params:
@@ -2367,7 +2342,7 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-deploy, upgrade-uptimer ]
+      passed: [ upgrade-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
