@@ -16,6 +16,7 @@ RUN \
   wget https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz -P /tmp && \
   tar xzvf /tmp/go1.8.3.linux-amd64.tar.gz -C /usr/local && \
   mkdir $GOPATH && \
+  go get -u github.com/onsi/ginkgo/... && \
   rm -rf /tmp/*
 
 # jq
