@@ -19,7 +19,6 @@ groups:
   - upgrade-wats
   - complex-transition-rats
   - fresh-rats
-  - fresh-sits
   - lite-http-rats
   - upgrade-http-rats
   - ops-test
@@ -53,7 +52,6 @@ groups:
   - fresh-delete-deployment
   - fresh-deploy
   - fresh-rats
-  - fresh-sits
   - fresh-smoke-tests
   - fresh-release-pool-manual
   - legacy-deploy
@@ -163,7 +161,6 @@ groups:
   - fresh-delete-deployment
   - fresh-deploy
   - fresh-rats
-  - fresh-sits
   - fresh-release-pool-manual
   - fresh-smoke-tests
   - bless-manifest
@@ -2622,37 +2619,6 @@ jobs:
       - integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
-- name: fresh-sits
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-    - timeout: 4h
-      do:
-      - get: fresh-pool
-        trigger: true
-        passed: [ fresh-deploy ]
-      - aggregate:
-        - get: runtime-ci
-        - get: sync-integration-tests
-        - get: luna-env-director-state
-        - get: luna-env-vars-store
-        - get: cf-deployment-develop
-          passed: [ fresh-deploy ]
-      - task: sync-integration-tests
-        file: runtime-ci/tasks/run-sits/task.yml
-        input_mapping:
-          environment: luna-env-director-state
-          vars-store: luna-env-vars-store
-        params:
-          BOSH_DEPLOYMENT_NAME: cf
-          BOSH_API_INSTANCE: api/0
-          CF_API_TARGET: https://api.luna.cf-app.com
-          CF_SKIP_SSL_VALIDATION: true
-          CF_APPS_DOMAIN: luna.cf-app.com
-          VARS_STORE_PATH: "deployment-vars.yml"
-          USE_CF_DEPLOYMENT_VARS: "true"
-
 - name: lite-http-rats
   serial_groups: [ snitch-rats ]
   public: true
@@ -2740,7 +2706,6 @@ jobs:
       passed:
       - fresh-cats
       - fresh-rats
-      - fresh-sits
       - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
@@ -3047,7 +3012,6 @@ jobs:
     - lite-http-rats
     - upgrade-http-rats
     - fresh-rats
-    - fresh-sits
     - upgrade-smoke-tests
     - fresh-smoke-tests
     - ops-test
