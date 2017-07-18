@@ -629,7 +629,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: git@github.com:cloudfoundry/sync-integration-tests.git
+    uri: https://github.com/cloudfoundry/sync-integration-tests.git
 
 jobs:
 - name: branch-freshness
