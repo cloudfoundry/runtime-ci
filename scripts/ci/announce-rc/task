@@ -41,7 +41,7 @@ Does this cf-release SHA look good for the postgres-release team?  Any bugs, reg
 - **Comments**:
 
 ----
-@shalako, @shashwathi:
+@shalako, @aaronshurley:
 Does this cf-release SHA look good for the routing team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:

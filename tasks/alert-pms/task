@@ -10,7 +10,7 @@ set -x
 echo "Hey there <@dsabeti> <@staylor>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/release-integration
 echo "Hey there <@efarrar> <@genevieve>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/infrastructure
 echo "Hey there <@valepert> <@smoser>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/postgres-release
-echo "Hey there <@shannon> <@sreddy>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/routing
+echo "Hey there <@shannon> <@ahurley>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/routing
 echo "Hey there <@stummidi> <@jhamon>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/uaa
 echo "Hey there <@hev> <@jasonkeene>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/loggregator
 echo "Hey there <@zach> <@gerg>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/capi
