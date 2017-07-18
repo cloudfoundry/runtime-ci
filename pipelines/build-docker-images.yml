@@ -201,6 +201,11 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
     paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
+- name: uptimer
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/uptimer.git
 - name: runtime-ci-bosh-upload-stemcell
   type: git
   source:
@@ -1003,6 +1008,8 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: weekly
+        trigger: true
+      - get: uptimer
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
