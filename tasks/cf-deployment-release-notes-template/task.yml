@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment-release-candidate
+- name: cf-deployment-master
+
+outputs:
+- name: release-notes-template
+
+params:
+  GH_ACCESS_TOKEN: ~
+
+run:
+  path: runtime-ci/tasks/cf-deployment-release-notes-template/task.rb
