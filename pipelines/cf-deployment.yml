@@ -2633,13 +2633,14 @@ jobs:
         trigger: true
         passed: [ fresh-deploy ]
       - aggregate:
+        - get: runtime-ci
         - get: sync-integration-tests
         - get: luna-env-director-state
         - get: luna-env-vars-store
         - get: cf-deployment-develop
           passed: [ fresh-deploy ]
       - task: sync-integration-tests
-        file: sync-integration-tests/concourse/task_with_vars_store.yml
+        file: runtime-ci/tasks/run-sits/task.yml
         input_mapping:
           environment: luna-env-director-state
           vars-store: luna-env-vars-store
@@ -2649,7 +2650,6 @@ jobs:
           CF_API_TARGET: https://api.luna.cf-app.com
           CF_SKIP_SSL_VALIDATION: true
           CF_APPS_DOMAIN: luna.cf-app.com
-          BBL_STATE_DIR: "."
           VARS_STORE_PATH: "deployment-vars.yml"
           USE_CF_DEPLOYMENT_VARS: "true"
 

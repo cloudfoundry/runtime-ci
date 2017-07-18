@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/cats-concourse-task
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
   - name: sync-integration-tests
