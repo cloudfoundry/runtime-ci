@@ -622,12 +622,6 @@ resources:
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-deployment-version
 
-- name: sync-integration-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/sync-integration-tests.git
-
 jobs:
 - name: branch-freshness
   public: true
