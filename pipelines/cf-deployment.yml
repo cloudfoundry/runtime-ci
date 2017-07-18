@@ -2740,6 +2740,7 @@ jobs:
       passed:
       - fresh-cats
       - fresh-rats
+      - fresh-sits
       - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
