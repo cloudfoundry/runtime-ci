@@ -1,0 +1,28 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cats-concourse-task
+
+inputs:
+  - name: sync-integration-tests
+  - name: environment
+  - name: vars-store
+
+run:
+  path: sync-integration-tests/concourse/task.sh
+
+params:
+  NODES: 3
+  BOSH_DEPLOYMENT:
+  BOSH_API_INSTANCE: api
+  BOSH_BINARY: bosh
+  BOSH_DEPLOYMENT_NAME:
+  CF_API_TARGET:
+  CF_SKIP_SSL_VALIDATION: false
+  CF_APPS_DOMAIN:
+  BBL_STATE_DIR:
+  VARS_STORE_PATH:
+  USE_CF_DEPLOYMENT_VARS:
