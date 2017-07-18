@@ -2636,6 +2636,8 @@ jobs:
         - get: sync-integration-tests
         - get: luna-env-director-state
         - get: luna-env-vars-store
+        - get: cf-deployment-develop
+          passed: [ fresh-deploy ]
       - task: sync-integration-tests
         file: sync-integration-tests/concourse/task_with_vars_store.yml
         input_mapping:
