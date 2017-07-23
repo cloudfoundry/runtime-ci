@@ -86,4 +86,10 @@ class ReleaseUpdates
       yield release_name, release_update
     end
   end
+
+  def merge!(updates2)
+    updates2.each do |release_name, release_update|
+      @updates[release_name] = release_update
+    end
+  end
 end

@@ -308,4 +308,26 @@ HEREDOC
       end
     end
   end
+
+  describe '#merge!' do
+    it 'merges two sets of release updates' do
+      updates1 = ReleaseUpdates.new
+      updates2 = ReleaseUpdates.new
+
+      updates1.load_change(['-', '', {"name"=>"release", "version" => 1}])
+      updates1.load_change(['+', '', {"name"=>"release", "version" => 2}])
+
+      updates2.load_change(['-', '', {"name" => "stemcell", "version" => 1}])
+
+      updates1.merge!(updates2)
+
+      release_update = updates1.get_update_by_name("release")
+      expect(release_update.old_version).to eq 1
+      expect(release_update.new_version).to eq 2
+
+      stemcell_update = updates1.get_update_by_name("stemcell")
+      expect(stemcell_update.old_version).to eq 1
+      expect(stemcell_update.new_version).to be_nil
+    end
+  end
 end
