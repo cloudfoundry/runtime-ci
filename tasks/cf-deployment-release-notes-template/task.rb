@@ -5,7 +5,15 @@ require 'yaml'
 require_relative './release_changes.rb'
 require_relative './renderer.rb'
 
-release_updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
-puts Renderer.new.render(release_updates: release_updates)
-release_updates = ReleaseUpdates.load_from_files('operations/windows-cell.yml', opsfile: true)
-puts Renderer.new.render(release_updates: release_updates)
+updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
+
+opsfile_list = Dir.glob(File.join("cf-deployment-release-candidate", "operations", "*"))
+opsfile_list.select! { |opsfile| File.file?(opsfile) }
+opsfile_list.map! { |opsfile| opsfile.gsub!('cf-deployment-release-candidate/', '') }
+
+opsfile_list.each do |opsfile|
+  opsfile_updates = ReleaseUpdates.load_from_files(opsfile, opsfile: true)
+  updates.merge!(opsfile_updates)
+end
+
+puts Renderer.new.render(release_updates: updates)
