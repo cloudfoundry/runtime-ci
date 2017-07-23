@@ -1,7 +1,54 @@
 require 'rspec'
+require 'fileutils'
 require_relative './release_changes.rb'
 
 describe 'ReleaseUpdates' do
+  describe 'load_from_files' do
+    before(:all) do
+      FileUtils.mkdir_p('cf-deployment-master')
+      FileUtils.mkdir_p('cf-deployment-release-candidate')
+    end
+
+    let(:filename) { 'cf-deployment.yml' }
+    before do
+      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
+        f.write(
+<<-HEREDOC
+releases:
+- name: release-1
+  version: 1.1.0
+- name: release-2
+  version: 2.1.0
+HEREDOC
+        )
+      end
+
+      File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
+        f.write(
+<<-HEREDOC
+releases:
+- name: release-1
+  version: 1.2.0
+- name: release-2
+  version: 2.2.0
+HEREDOC
+        )
+      end
+    end
+
+    it 'reads the given file in the two inputs, and returns the release updates' do
+      updates = ReleaseUpdates.load_from_files(filename)
+      release_1_update = updates.get_update_by_name('release-1')
+      release_2_update = updates.get_update_by_name('release-2')
+
+      expect(release_1_update.old_version).to eq '1.1.0'
+      expect(release_1_update.new_version).to eq '1.2.0'
+
+      expect(release_2_update.old_version).to eq '2.1.0'
+      expect(release_2_update.new_version).to eq '2.2.0'
+    end
+  end
+
   describe '#load_change' do
     subject(:updates) { ReleaseUpdates.new }
 

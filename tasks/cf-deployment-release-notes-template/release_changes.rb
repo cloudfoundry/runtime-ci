@@ -1,8 +1,27 @@
+require 'yaml'
+require 'hashdiff'
+
 class ReleaseUpdate
   attr_accessor :old_version, :new_version
 end
 
 class ReleaseUpdates
+  def self.load_from_files(filename)
+    release_candidate_text = File.read(File.join('cf-deployment-release-candidate', filename))
+    release_candidate = YAML.load(release_candidate_text)
+
+    master_text = File.read(File.join('cf-deployment-master', filename))
+    master = YAML.load(master_text)
+
+    release_updates = ReleaseUpdates.new
+    changeSet = HashDiff.diff(master['releases'], release_candidate['releases'])
+    changeSet.each do |change|
+      release_updates.load_change(change)
+    end
+
+    release_updates
+  end
+
   def initialize
     @updates = {}
   end
