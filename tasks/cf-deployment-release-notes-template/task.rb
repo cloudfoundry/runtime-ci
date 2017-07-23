@@ -7,3 +7,5 @@ require_relative './renderer.rb'
 
 release_updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
 puts Renderer.new.render(release_updates: release_updates)
+release_updates = ReleaseUpdates.load_from_files('operations/windows-cell.yml', opsfile: true)
+puts Renderer.new.render(release_updates: release_updates)

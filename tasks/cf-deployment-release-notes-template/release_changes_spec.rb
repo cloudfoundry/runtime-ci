@@ -5,14 +5,27 @@ require_relative './release_changes.rb'
 describe 'ReleaseUpdates' do
   describe 'load_from_files' do
     before(:all) do
-      FileUtils.mkdir_p('cf-deployment-master')
-      FileUtils.mkdir_p('cf-deployment-release-candidate')
+      FileUtils.mkdir_p('cf-deployment-master/operations')
+      FileUtils.mkdir_p('cf-deployment-release-candidate/operations')
+    end
+
+    subject(:updates) do
+      ReleaseUpdates.load_from_files(filename, opsfile: opsfile)
+    end
+
+    before do
+      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
+        f.write(file_contents_master)
+      end
+
+      File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
+        f.write(file_contents_rc)
+      end
     end
 
     let(:filename) { 'cf-deployment.yml' }
-    before do
-      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
-        f.write(
+    let(:opsfile) { false }
+    let(:file_contents_master) do
 <<-HEREDOC
 releases:
 - name: release-1
@@ -20,11 +33,9 @@ releases:
 - name: release-2
   version: 2.1.0
 HEREDOC
-        )
-      end
+    end
 
-      File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
-        f.write(
+    let(:file_contents_rc) do
 <<-HEREDOC
 releases:
 - name: release-1
@@ -32,12 +43,9 @@ releases:
 - name: release-2
   version: 2.2.0
 HEREDOC
-        )
-      end
     end
 
     it 'reads the given file in the two inputs, and returns the release updates' do
-      updates = ReleaseUpdates.load_from_files(filename)
       release_1_update = updates.get_update_by_name('release-1')
       release_2_update = updates.get_update_by_name('release-2')
 
@@ -46,6 +54,56 @@ HEREDOC
 
       expect(release_2_update.old_version).to eq '2.1.0'
       expect(release_2_update.new_version).to eq '2.2.0'
+    end
+
+    context('when the file is an ops-file') do
+      let(:filename) { 'operations/ops-file.yml' }
+      let(:opsfile) { true }
+      let(:file_contents_master) do
+<<-HEREDOC
+- type: replace
+  path: /releases/-
+  value:
+    name: garden-windows
+    version: 0.6.0
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/stacks?
+- type: replace
+  path: /releases/-
+  value:
+    name: hwc-buildpack
+    version: 2.3.4
+HEREDOC
+      end
+
+      let(:file_contents_rc) do
+<<-HEREDOC
+- type: replace
+  path: /releases/-
+  value:
+    name: garden-windows
+    version: 0.7.0
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/stacks?
+- type: replace
+  path: /releases/-
+  value:
+    name: hwc-buildpack
+    version: 2.4.0
+
+HEREDOC
+      end
+
+      it 'reads the given file in the two inputs, and returns the release updates' do
+        release_1_update = updates.get_update_by_name('garden-windows')
+        release_2_update = updates.get_update_by_name('hwc-buildpack')
+
+        expect(release_1_update.old_version).to eq '0.6.0'
+        expect(release_1_update.new_version).to eq '0.7.0'
+
+        expect(release_2_update.old_version).to eq '2.3.4'
+        expect(release_2_update.new_version).to eq '2.4.0'
+      end
     end
   end
 

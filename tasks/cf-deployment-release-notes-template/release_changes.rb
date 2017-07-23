@@ -6,20 +6,43 @@ class ReleaseUpdate
 end
 
 class ReleaseUpdates
-  def self.load_from_files(filename)
-    release_candidate_text = File.read(File.join('cf-deployment-release-candidate', filename))
-    release_candidate = YAML.load(release_candidate_text)
+  class << self
+    def load_from_files(filename, opsfile: false)
+      release_candidate_text = File.read(File.join('cf-deployment-release-candidate', filename))
+      release_candidate = YAML.load(release_candidate_text)
 
-    master_text = File.read(File.join('cf-deployment-master', filename))
-    master = YAML.load(master_text)
+      master_text = File.read(File.join('cf-deployment-master', filename))
+      master = YAML.load(master_text)
 
-    release_updates = ReleaseUpdates.new
-    changeSet = HashDiff.diff(master['releases'], release_candidate['releases'])
-    changeSet.each do |change|
-      release_updates.load_change(change)
+      if opsfile
+        master_releases_list = filter_release_changes(master)
+        release_candidate_releases_list = filter_release_changes(release_candidate)
+      else
+        master_releases_list = master['releases']
+        release_candidate_releases_list = release_candidate['releases']
+      end
+
+      release_updates = ReleaseUpdates.new
+      changeSet = HashDiff.diff(master_releases_list, release_candidate_releases_list)
+      changeSet.each do |change|
+        release_updates.load_change(change)
+      end
+
+      release_updates
     end
 
-    release_updates
+    private
+
+    def filter_release_changes(ops_list)
+      ops_list.select do |op|
+        op['type'] == 'replace' && op['path'] == '/releases/-'
+      end.collect do |op|
+        {
+          "name" => op["value"]["name"],
+          "version" => op["value"]["version"]
+        }
+      end
+    end
   end
 
   def initialize
