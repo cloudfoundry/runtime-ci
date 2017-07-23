@@ -133,6 +133,116 @@ HEREDOC
         expect(stemcell_update.new_version).to eq 2
       end
     end
+
+    context 'when the old version of the file is empty' do
+      let(:file_contents_master) { "" }
+      context 'and the new version is not empty' do
+        let(:file_contents_rc) do
+<<-HEREDOC
+releases:
+- name: release-1
+  version: 1.2.0
+stemcells:
+- os: ubuntu-trusty
+  version: 2
+HEREDOC
+        end
+
+        it 'views the newly-introduced releases as additive updates' do
+          stemcell_update = updates.get_update_by_name('ubuntu-trusty')
+          expect(stemcell_update.old_version).to eq nil
+          expect(stemcell_update.new_version).to eq 2
+
+          release_update = updates.get_update_by_name('release-1')
+          expect(release_update.old_version).to eq nil
+          expect(release_update.new_version).to eq "1.2.0"
+        end
+      end
+
+      context 'and the new version is empty' do
+        let(:file_contents_rc) { "" }
+
+        it 'includes no information about the release' do
+          expect(updates.get_update_by_name('ubuntu-trusty')).to be_nil
+          expect(updates.get_update_by_name('release-1')).to be_nil
+        end
+      end
+    end
+
+    context 'when the new version of the file is empty' do
+      let(:file_contents_rc) { "" }
+      context 'and the old version is not empty' do
+        let(:file_contents_master) do
+<<-HEREDOC
+releases:
+- name: release-1
+  version: 1.2.0
+stemcells:
+- os: ubuntu-trusty
+  version: 2
+HEREDOC
+        end
+
+        it 'views the removed releases as negative updates' do
+          stemcell_update = updates.get_update_by_name('ubuntu-trusty')
+          expect(stemcell_update.old_version).to eq 2
+          expect(stemcell_update.new_version).to eq nil
+
+          release_update = updates.get_update_by_name('release-1')
+          expect(release_update.old_version).to eq "1.2.0"
+          expect(release_update.new_version).to eq nil
+        end
+      end
+
+      context 'and the new version is empty' do
+        let(:file_contents_master) { "" }
+
+        it 'includes no information about the release' do
+          expect(updates.get_update_by_name('ubuntu-trusty')).to be_nil
+          expect(updates.get_update_by_name('release-1')).to be_nil
+        end
+      end
+    end
+
+    context 'when the old version of the file does not exist' do
+      before do
+        File.delete(File.join('cf-deployment-master', filename))
+
+        File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
+          f.write(file_contents_rc)
+        end
+      end
+
+      it 'treats the release as having a new version' do
+          stemcell_update = updates.get_update_by_name('ubuntu-trusty')
+          expect(stemcell_update.old_version).to eq nil
+          expect(stemcell_update.new_version).to eq 2
+
+          release_update = updates.get_update_by_name('release-1')
+          expect(release_update.old_version).to eq nil
+          expect(release_update.new_version).to eq "1.2.0"
+      end
+    end
+
+    context 'when the new version of the file does not exist' do
+      before do
+        File.delete(File.join('cf-deployment-release-candidate', filename))
+
+        File.open(File.join('cf-deployment-master', filename), 'w') do |f|
+          f.write(file_contents_master)
+        end
+      end
+
+      it 'treats the release as having been deleted' do
+          stemcell_update = updates.get_update_by_name('ubuntu-trusty')
+          expect(stemcell_update.old_version).to eq 1
+          expect(stemcell_update.new_version).to eq nil
+
+          release_update = updates.get_update_by_name('release-1')
+          expect(release_update.old_version).to eq "1.1.0"
+          expect(release_update.new_version).to eq nil
+      end
+    end
   end
 
   describe '#load_change' do

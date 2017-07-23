@@ -8,11 +8,21 @@ end
 class ReleaseUpdates
   class << self
     def load_from_files(filename, opsfile: false)
-      release_candidate_text = File.read(File.join('cf-deployment-release-candidate', filename))
-      release_candidate = YAML.load(release_candidate_text)
+      release_candidate_file = File.join('cf-deployment-release-candidate', filename)
+      if File.exists? release_candidate_file
+        release_candidate_text = File.read(release_candidate_file)
+        release_candidate = YAML.load(release_candidate_text)
+      else
+        release_candidate = nil
+      end
 
-      master_text = File.read(File.join('cf-deployment-master', filename))
-      master = YAML.load(master_text)
+      master_file = File.join('cf-deployment-master', filename)
+      if File.exists? master_file
+        master_text = File.read(master_file)
+        master = YAML.load(master_text)
+      else
+        master = nil
+      end
 
       master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
       release_candidate_releases_list = collect_releases_and_stemcells(release_candidate, opsfile: opsfile)
@@ -29,6 +39,7 @@ class ReleaseUpdates
     private
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
+      return [] unless manifest
       return manifest['releases'] + manifest['stemcells'] unless opsfile
 
       manifest.select do |op|
