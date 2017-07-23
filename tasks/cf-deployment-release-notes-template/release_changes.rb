@@ -41,7 +41,7 @@ class ReleaseUpdates
         op['type'] == 'replace' && (op['path'] == '/releases/-' || op['path'] == '/stemcells/-')
       end.collect do |op|
         {
-          "name" => op["value"]["name"],
+          "name" => op["value"]["name"] || op['value']['os'],
           "version" => op["value"]["version"]
         }
       end
