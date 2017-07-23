@@ -8,24 +8,11 @@ end
 class ReleaseUpdates
   class << self
     def load_from_files(filename, opsfile: false)
-      release_candidate_file = File.join('cf-deployment-release-candidate', filename)
-      if File.exists? release_candidate_file
-        release_candidate_text = File.read(release_candidate_file)
-        release_candidate = YAML.load(release_candidate_text)
-      else
-        release_candidate = nil
-      end
-
-      master_file = File.join('cf-deployment-master', filename)
-      if File.exists? master_file
-        master_text = File.read(master_file)
-        master = YAML.load(master_text)
-      else
-        master = nil
-      end
-
-      master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
+      release_candidate = load_yaml_file('cf-deployment-release-candidate', filename)
       release_candidate_releases_list = collect_releases_and_stemcells(release_candidate, opsfile: opsfile)
+
+      master = load_yaml_file('cf-deployment-master', filename)
+      master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
       changeSet = HashDiff.diff(master_releases_list, release_candidate_releases_list)
@@ -37,6 +24,14 @@ class ReleaseUpdates
     end
 
     private
+
+    def load_yaml_file(input_name, filename)
+      filepath = File.join(input_name, filename)
+      if File.exists? filepath
+        file_text = File.read(filepath)
+        YAML.load(file_text)
+      end
+    end
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
       return [] unless manifest
