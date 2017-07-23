@@ -14,27 +14,11 @@ class ReleaseUpdates
       master_text = File.read(File.join('cf-deployment-master', filename))
       master = YAML.load(master_text)
 
-      if opsfile
-        master_releases_list = filter_release_changes(master)
-        release_candidate_releases_list = filter_release_changes(release_candidate)
-
-        master_stemcells_list = filter_stemcell_changes(master)
-        release_candidate_stemcells_list = filter_stemcell_changes(release_candidate)
-      else
-        master_releases_list = master['releases']
-        release_candidate_releases_list = release_candidate['releases']
-
-        master_stemcells_list = master['stemcells']
-        release_candidate_stemcells_list = release_candidate['stemcells']
-      end
+      master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
+      release_candidate_releases_list = collect_releases_and_stemcells(release_candidate, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
       changeSet = HashDiff.diff(master_releases_list, release_candidate_releases_list)
-      changeSet.each do |change|
-        release_updates.load_change(change)
-      end
-
-      changeSet = HashDiff.diff(master_stemcells_list, release_candidate_stemcells_list)
       changeSet.each do |change|
         release_updates.load_change(change)
       end
@@ -44,20 +28,11 @@ class ReleaseUpdates
 
     private
 
-    def filter_release_changes(ops_list)
-      ops_list.select do |op|
-        op['type'] == 'replace' && op['path'] == '/releases/-'
-      end.collect do |op|
-        {
-          "name" => op["value"]["name"],
-          "version" => op["value"]["version"]
-        }
-      end
-    end
+    def collect_releases_and_stemcells(manifest, opsfile: false)
+      return manifest['releases'] + manifest['stemcells'] unless opsfile
 
-    def filter_stemcell_changes(ops_list)
-      ops_list.select do |op|
-        op['type'] == 'replace' && op['path'] == '/stemcells/-'
+      manifest.select do |op|
+        op['type'] == 'replace' && (op['path'] == '/releases/-' || op['path'] == '/stemcells/-')
       end.collect do |op|
         {
           "name" => op["value"]["name"],
