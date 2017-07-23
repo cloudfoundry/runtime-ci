@@ -17,13 +17,24 @@ class ReleaseUpdates
       if opsfile
         master_releases_list = filter_release_changes(master)
         release_candidate_releases_list = filter_release_changes(release_candidate)
+
+        master_stemcells_list = filter_stemcell_changes(master)
+        release_candidate_stemcells_list = filter_stemcell_changes(release_candidate)
       else
         master_releases_list = master['releases']
         release_candidate_releases_list = release_candidate['releases']
+
+        master_stemcells_list = master['stemcells']
+        release_candidate_stemcells_list = release_candidate['stemcells']
       end
 
       release_updates = ReleaseUpdates.new
       changeSet = HashDiff.diff(master_releases_list, release_candidate_releases_list)
+      changeSet.each do |change|
+        release_updates.load_change(change)
+      end
+
+      changeSet = HashDiff.diff(master_stemcells_list, release_candidate_stemcells_list)
       changeSet.each do |change|
         release_updates.load_change(change)
       end
@@ -43,6 +54,17 @@ class ReleaseUpdates
         }
       end
     end
+
+    def filter_stemcell_changes(ops_list)
+      ops_list.select do |op|
+        op['type'] == 'replace' && op['path'] == '/stemcells/-'
+      end.collect do |op|
+        {
+          "name" => op["value"]["name"],
+          "version" => op["value"]["version"]
+        }
+      end
+    end
   end
 
   def initialize
@@ -51,7 +73,11 @@ class ReleaseUpdates
 
   def load_change(change)
     op = change[0]
-    name = change[2]['name']
+    if op == "~"
+      return
+    end
+
+    name = change[2]['name'] || change[2]['os']
     version = change[2]['version']
 
     release_update = @updates[name] || ReleaseUpdate.new

@@ -32,6 +32,9 @@ releases:
   version: 1.1.0
 - name: release-2
   version: 2.1.0
+stemcells:
+- os: ubuntu-trusty
+  version: 1
 HEREDOC
     end
 
@@ -42,6 +45,9 @@ releases:
   version: 1.2.0
 - name: release-2
   version: 2.2.0
+stemcells:
+- os: ubuntu-trusty
+  version: 2
 HEREDOC
     end
 
@@ -54,6 +60,12 @@ HEREDOC
 
       expect(release_2_update.old_version).to eq '2.1.0'
       expect(release_2_update.new_version).to eq '2.2.0'
+    end
+
+    it 'reads the inputs, and returns a list of stemcell updates' do
+      stemcell_update = updates.get_update_by_name('ubuntu-trusty')
+      expect(stemcell_update.old_version).to eq 1
+      expect(stemcell_update.new_version).to eq 2
     end
 
     context('when the file is an ops-file') do
@@ -73,6 +85,11 @@ HEREDOC
   value:
     name: hwc-buildpack
     version: 2.3.4
+- type: replace
+  path: /stemcells/-
+  value:
+    name: windows2012R2
+    version: 1
 HEREDOC
       end
 
@@ -90,6 +107,11 @@ HEREDOC
   value:
     name: hwc-buildpack
     version: 2.4.0
+- type: replace
+  path: /stemcells/-
+  value:
+    name: windows2012R2
+    version: 2
 
 HEREDOC
       end
@@ -103,6 +125,12 @@ HEREDOC
 
         expect(release_2_update.old_version).to eq '2.3.4'
         expect(release_2_update.new_version).to eq '2.4.0'
+      end
+
+      it 'reads the inputs, and returns a list of stemcell updates' do
+        stemcell_update = updates.get_update_by_name('windows2012R2')
+        expect(stemcell_update.old_version).to eq 1
+        expect(stemcell_update.new_version).to eq 2
       end
     end
   end
