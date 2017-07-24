@@ -18,4 +18,4 @@ params:
   GH_ACCESS_TOKEN: ~
 
 run:
-  path: runtime-ci/tasks/cf-deployment-release-notes-template/task.rb
+  path: runtime-ci/tasks/cf-deployment-release-notes-template/task

@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    hashdiff (0.3.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  hashdiff
+
+BUNDLED WITH
+   1.13.1
