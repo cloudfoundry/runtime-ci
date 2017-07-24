@@ -1,5 +1,10 @@
 #!/bin/bash
 set -exu
 
-BUNDLE_GEMFILE=runtime-ci/tasks/cf-deployment-release-notes-template/Gemfile \
-  bundle exec ruby runtime-ci/tasks/cf-deployment-release-notes-template/task.rb
+SCRIPT_DIR=runtime-ci/tasks/cf-deployment-release-notes-template
+pushd $SCRIPT_DIR
+  bundle install
+popd
+
+BUNDLE_GEMFILE=$SCRIPT_DIR/Gemfile \
+  bundle exec ruby $SCRIPT_DIR/task.rb
