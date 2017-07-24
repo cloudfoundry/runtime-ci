@@ -28,6 +28,7 @@ groups:
   - bless-manifest
   - ship-it-minor
   - ship-it-patch
+  - release-notes-template
 - name: dev
   jobs:
   - add-claimed-lock-fresh
@@ -3079,6 +3080,20 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
+
+- name: release-notes-template
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-master
+    - get: cf-deployment-release-candidate
+      passed:
+      - bless-manifest
+      trigger: true
+  - task: generate-cf-deployment-release-notes-template
+    file: runtime-ci/tasks/cf-deployment-release-notes-template/task.yml
 
 - name: ship-it-patch
   public: true
