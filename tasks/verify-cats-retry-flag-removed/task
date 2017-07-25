@@ -4,7 +4,7 @@
 export STOP=1503614317
 export DATE=`date +%s`
 
-if !((DATE < STOP)); then
+if ((DATE < STOP)); then
   echo "The appointed hour has not yet come. CATs may live with their perfidity and vice."
   exit 0
 fi
