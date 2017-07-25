@@ -1,16 +1,18 @@
 #!/bin/bash
 
-#! Based on the date, return 'true' if we have not hit the date
-#! If past date, validate if the parameter has been removed
-#! -flakeAttempts 2
-
+# STOP is being assigned to the UNIX timestamp for Thu Aug 24 16:06:38 PDT 2017... ish
 export STOP=1503614317
 export DATE=`date +%s`
 
 if !((DATE < STOP)); then
+  echo "The appointed hour has not yet come. CATs may live with their perfidity and vice."
   exit 0
 fi
 
 if (grep flakeAttempts $PWD/cats-concourse-task/task.yml -E); then
+  echo "Error: -flakeAttempts flag should be removed from the cats-concourse-task by now."
+  echo "Go revert commit, and then delete this concourse task."
   exit 1
 fi
+
+echo "Flake attempts has been removed! Please remove this task."
