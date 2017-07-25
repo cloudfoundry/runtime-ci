@@ -7,3 +7,4 @@ run:
   path: runtime-ci/tasks/verify-cats-retry-flag-removed/task
 inputs:
 - name: runtime-ci
+- name: cats-concourse-task
