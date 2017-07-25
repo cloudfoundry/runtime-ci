@@ -9,7 +9,7 @@ if !((DATE < STOP)); then
   exit 0
 fi
 
-if (grep flakeAttempts $PWD/cats-concourse-task/task.yml -E); then
+if grep flakeAttempts $PWD/cats-concourse-task/task; then
   echo "Error: -flakeAttempts flag should be removed from the cats-concourse-task by now."
   echo "Go revert commit, and then delete this concourse task."
   exit 1
