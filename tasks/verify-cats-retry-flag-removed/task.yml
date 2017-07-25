@@ -6,4 +6,4 @@ image_resource:
 run:
   path: runtime-ci/tasks/verify-cats-retry-flag-removed/task
 inputs:
-- runtime-ci
+- name: runtime-ci
