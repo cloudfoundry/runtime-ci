@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#! Based on the date, return 'true' if we have not hit the date
+#! If past date, validate if the parameter has been removed
+#! -flakeAttempts 2
+
+export STOP=1503614317
+export DATE=`date +%s`
+
+if !((DATE < STOP)); then
+  exit 0
+fi
+
+if (grep flakeAttempts $PWD/cats-concourse-task/task.yml -E); then
+  exit 1
+fi
