@@ -20,7 +20,7 @@ resources:
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
 - name: periodically
   type: time
-  source: {interval: 1m}
+  source: {interval: 24h}
 
 jobs:
 - name: all-jobs-public
