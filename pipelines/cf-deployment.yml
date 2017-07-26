@@ -11,7 +11,6 @@ groups:
   - lint-cf-deployment-manifest
   - complex-transition-cats
   - fresh-cats
-  - fresh-smoke-tests
   - lite-cats
   - transition-cats
   - upgrade-cats
@@ -53,7 +52,6 @@ groups:
   - fresh-delete-deployment
   - fresh-deploy
   - fresh-rats
-  - fresh-smoke-tests
   - fresh-release-pool-manual
   - legacy-deploy
   - lint-cf-deployment-manifest
@@ -163,7 +161,6 @@ groups:
   - fresh-deploy
   - fresh-rats
   - fresh-release-pool-manual
-  - fresh-smoke-tests
   - bless-manifest
 - name: li
   jobs:
@@ -2498,28 +2495,6 @@ jobs:
       params:
         DEPLOY_KEY: {{cf_acceptance_tests_private_key}}
 
-- name: fresh-smoke-tests
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 1h
-    do:
-    - get: fresh-pool
-      trigger: true
-      passed: [fresh-deploy]
-    - aggregate:
-      - get: runtime-ci
-      - get: luna-env-director-state
-        passed: [fresh-deploy]
-      - get: cf-deployment-develop
-        passed: [fresh-deploy]
-  - task: bosh-run-errand-smoke-tests
-    file: runtime-ci/tasks/run-errand/task.yml
-    input_mapping:
-      bbl-state: luna-env-director-state
-    params:
-      ERRAND_NAME: smoke-tests
-
 - name: fresh-cats
   serial: true
   public: true
@@ -2701,7 +2676,6 @@ jobs:
       passed:
       - fresh-cats
       - fresh-rats
-      - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
@@ -3008,7 +2982,6 @@ jobs:
     - upgrade-http-rats
     - fresh-rats
     - upgrade-smoke-tests
-    - fresh-smoke-tests
     - ops-test
   - put: cf-deployment-release-candidate
     params:
