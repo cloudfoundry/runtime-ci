@@ -908,7 +908,7 @@ jobs:
       ops-files: runtime-ci
       vars-files: hermione-env-turbulence-vars
     params:
-      MANIFEST_FILE: manifests/turbulence.yml
+      MANIFEST_FILE: manifests/example.yml
       SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
       VARS_STORE_FILE: turbulence-deployment-vars.yml
       OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
