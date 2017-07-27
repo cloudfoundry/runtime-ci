@@ -293,11 +293,6 @@ resources:
   source:
     repository: cloudfoundry-incubator/cf-routing-release
 
-- name: turbulence-release
-  type: bosh-io-release
-  source:
-    repository: cppforlife/turbulence-release
-
 - name: fresh-pool
   type: pool
   source:
@@ -511,6 +506,14 @@ resources:
     private_key: {{hermione_env_private_key}}
     paths:
     - turbulence-deployment-vars.yml
+- name: hermione-env-turbulence-manifest
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - turbulence.yml
 - name: cf-deployment-develop
   type: git
   source:
@@ -868,8 +871,8 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: turbulence-release
     - get: hermione-env-turbulence-vars
+    - get: hermione-env-turbulence-manifest
     - get: bosh-deployment
   - task: setup-infrastructure
     file: runtime-ci/tasks/prototype/bbl-up/task.yml
@@ -901,13 +904,13 @@ jobs:
   - task: deploy-turbulence-api-upgrade
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      cf-deployment: turbulence-release
+      cf-deployment: hermione-env-turbulence-manifest
       vars-store: hermione-env-turbulence-vars
       bbl-state: hermione-env-director-state
       ops-files: runtime-ci
       vars-files: hermione-env-turbulence-vars
     params:
-      MANIFEST_FILE: manifests/turbulence.yml
+      MANIFEST_FILE: turbulence.yml
       SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
       VARS_STORE_FILE: turbulence-deployment-vars.yml
       OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
