@@ -297,11 +297,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cppforlife/turbulence-release
-- name: turbulence-github-release
-  type: git
-  source:
-    uri: https://github.com/cppforlife/turbulence-release.git
-    branch: master
 
 - name: fresh-pool
   type: pool
