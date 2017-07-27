@@ -55,6 +55,8 @@ function make_concatenated_operations_file() {
   root_dir="${1}"
   pushd "${root_dir}/ops-files"
   cat $OPS_FILES | grep -v "\-\-\-" > concatenated-operations.yml
+
+  if [ "${BBL_IAAS}" == "gcp" ] && [ "${IS_BOSH_LITE}" == "true" ]; then
 cat >> concatenated-operations.yml <<EOF
 - type: replace
   path: /resource_pools/name=vms/cloud_properties?/root_disk_type
@@ -64,6 +66,7 @@ cat >> concatenated-operations.yml <<EOF
   path: /disk_pools/name=disks/cloud_properties?/type
   value: pd-ssd
 EOF
+  fi
   popd
 }
 
