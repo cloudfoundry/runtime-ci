@@ -1923,6 +1923,7 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-develop
     - get: windows-stemcell
+      trigger: true
       params:
         tarball: false
   - task: update-windows-stemcell-ops
