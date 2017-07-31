@@ -1,0 +1,38 @@
+---
+groups:
+- name: infrastructure
+  jobs:
+  - add-claimed-lock
+  # - setup-infrastructure
+  # - destroy-infrastructure
+  # - run-bosh-cleanup
+
+resources:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+- name: bbr-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: bbr
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+jobs:
+- name: add-claimed-lock
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: baba-yaga
+    output_mapping:
+      pool-resource: bbr-pool
+  - put: bbr-pool
+    params: {add_claimed: bbr-pool}
