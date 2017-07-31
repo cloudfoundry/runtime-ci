@@ -106,7 +106,6 @@ groups:
   - stable-periodic-cats
   - stable-release-pool-manual
   - stable-update-cats-cfd-branch
-  - verify-nameserver-has-record
 - name: inf
   jobs:
   - add-claimed-lock-complex
@@ -142,7 +141,6 @@ groups:
   - transition-acquire-pool
   - ensure-complex-env-is-clean
   - ensure-transition-env-is-clean
-  - verify-nameserver-has-record
 - name: up
   jobs:
   - upgrade-acquire-pool
@@ -2987,22 +2985,6 @@ jobs:
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
-
-- name: verify-nameserver-has-record
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: runtime-ci
-    - get: weekly
-      trigger: true
-    - task: verify-nameserver-has-record
-      file: runtime-ci/scripts/ci/verify-nameserver-has-record/task.yml
-      params:
-        AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-        DOMAIN: hermione.cf-app.com
 
 - name: run-bosh-cleanup-upgrade
   serial: true

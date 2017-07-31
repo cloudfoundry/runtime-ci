@@ -57,7 +57,6 @@ groups:
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-commit-generated-manifest-docker-image
   - build-create-final-release-bucket-docker-image
-  - build-verify-nameserver-has-record-docker-image
   - build-write-build-url-docker-image
   - build-write-director-version-docker-image
   - build-untar-release-docker-image
@@ -403,13 +402,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-build-url/Dockerfile]
-
-- name: runtime-ci-verify-nameserver-has-record
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/verify-nameserver-has-record/Dockerfile]
 
 - name: runtime-ci-write-director-version
   type: git
@@ -820,14 +812,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/write-build-url
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: verify-nameserver-has-record-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/verify-nameserver-has-record
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1807,24 +1791,6 @@ jobs:
     - put: write-build-url-pipeline-image
       params:
         build: runtime-ci-write-build-url/scripts/ci/write-build-url
-        push: true
-
-- name: build-verify-nameserver-has-record-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-verify-nameserver-has-record
-        trigger: true
-    - put: verify-nameserver-has-record-pipeline-image
-      params:
-        build: runtime-ci-verify-nameserver-has-record/scripts/ci/verify-nameserver-has-record
         push: true
 
 - name: build-write-director-version-docker-image
