@@ -9,6 +9,7 @@ function create_dry_run_opsfile() {
   # in the directory of the ops-files input.
   # This could lead to a name collision,
   # but it shouldn't and probably won't.
+  mkdir -p ops-files/operations
   cat << EOF > ops-files/operations/dry-run.yml
 ---
 - type: replace
