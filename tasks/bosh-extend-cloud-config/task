@@ -1,0 +1,13 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+
+function main() {
+  setup_bosh_env_vars
+
+  bosh update-cloud-config <(bosh int <(bosh cloud-config) -o ${OPS_FILE_PATH})
+}
+
+main
