@@ -2051,6 +2051,12 @@ jobs:
     file: runtime-ci/tasks/update-stemcell-manifest-section/task.yml
     input_mapping:
       deployment-configuration: cf-deployment-develop
+  - task: upload-updated-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: updated-deployment-manifest
+    params:
+      INFRASTRUCTURE: google
   - aggregate:
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
