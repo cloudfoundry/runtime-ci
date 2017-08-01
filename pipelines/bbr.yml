@@ -3,7 +3,7 @@ groups:
 - name: infrastructure
   jobs:
   - add-claimed-lock
-  # - setup-infrastructure
+  - setup-infrastructure
   # - destroy-infrastructure
   # - run-bosh-cleanup
 
@@ -20,6 +20,20 @@ resources:
     branch: master
     pool: bbr
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
+- name: baba-yaga-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/baba-yaga-env.git
+    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 jobs:
 - name: add-claimed-lock
@@ -36,3 +50,37 @@ jobs:
       pool-resource: bbr-pool
   - put: bbr-pool
     params: {add_claimed: bbr-pool}
+- name: setup-infrastructure
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: bbr-pool
+    trigger: true
+    passed: [ add-claimed-lock ]
+  - aggregate:
+    - get: runtime-ci
+    - get: baba-yaga-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{baba_yaga_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{baba_yaga_cf_ssl_cert}}
+      BBL_LB_KEY: {{baba_yaga_cf_ssl_cert_private_key}}
+      LB_DOMAIN: baba-yaga.cf-app.com
+      BBL_ENV_NAME: baba-yaga-bbr
+    input_mapping:
+      bbl-state: baba-yaga-env-director-state
+    ensure:
+      put: baba-yaga-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: stable-pool
+    params: {release: stable-pool}
+
