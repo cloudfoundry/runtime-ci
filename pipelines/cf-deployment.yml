@@ -233,7 +233,7 @@ resources:
 - name: complex-legacy-diego-bosh-deployment
   type: bosh2-deployment
   source:
-    target: https://bosh.dumbledore.cf-app.com:25555
+    target: https://54.69.92.136:25555
     client: admin
     client_secret: {{dumbledore_bosh_password}}
     deployment: cf-diego
