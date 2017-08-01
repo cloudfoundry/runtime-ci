@@ -2054,6 +2054,7 @@ jobs:
   - task: upload-updated-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       INFRASTRUCTURE: google
