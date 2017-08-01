@@ -204,10 +204,6 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
-- name: bosh2-deployment
-  type: docker-image
-  source:
-    repository: cloudfoundry/bosh-deployment-resource
 
 resources:
 - name: complex-legacy-cf-bosh-deployment
@@ -231,13 +227,13 @@ resources:
     name: bosh-google-kvm-windows2012R2-go_agent
 
 - name: complex-legacy-diego-bosh-deployment
-  type: bosh2-deployment
+  type: bosh-deployment
   source:
-    target: https://54.69.92.136:25555
-    client: admin
-    client_secret: {{dumbledore_bosh_password}}
+    target: https://bosh.dumbledore.cf-app.com:25555
+    username: admin
+    password: {{dumbledore_bosh_password}}
     deployment: cf-diego
-    ca_cert: {{dumbledore_director_ca}}
+    ignore_ssl: true
 
 - name: complex-legacy-routing-bosh-deployment
   type: bosh-deployment
