@@ -1,11 +1,17 @@
 ---
 groups:
+- name: bbr
+  jobs:
+  - acquire-pool
+  - deploy
+
 - name: infrastructure
   jobs:
   - add-claimed-lock
+  - remove-claimed-lock
   - setup-infrastructure
-  # - destroy-infrastructure
-  # - run-bosh-cleanup
+  - destroy-infrastructure
+  - run-bosh-cleanup
 
 resources:
 - name: runtime-ci
@@ -29,11 +35,39 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
+- name: baba-yaga-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/baba-yaga-env.git
+    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
+- name: baba-yaga-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/baba-yaga-env.git
+    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    paths:
+    - deployment-vars.yml
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+- name: cf-deployment-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment.git
+
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
 
 jobs:
 - name: add-claimed-lock
@@ -85,3 +119,131 @@ jobs:
   - put: bbr-pool
     params: {release: bbr-pool}
 
+- name: destroy-infrastructure
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: bbr-pool
+      params: {claim: baba-yaga}
+    - get: baba-yaga-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: baba-yaga-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: baba-yaga-env-director-state
+    ensure:
+      put: baba-yaga-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: remove-claimed-lock
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: bbr-pool
+    passed: [ destroy-infrastructure ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: baba-yaga
+    output_mapping:
+      pool-resource: bbr-pool
+  - put: bbr-pool
+    params: {remove: bbr-pool}
+
+- name: run-bosh-cleanup
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: baba-yaga-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+
+- name: acquire-pool
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-master
+      trigger: true
+    - put: bbr-pool
+      params: {acquire: true}
+
+- name: deploy
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - ensure:
+      put: bbr-pool
+      params: {release: bbr-pool}
+    do:
+    - get: bbr-pool
+      trigger: true
+      passed: [ acquire-pool ]
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-master
+      - get: baba-yaga-env-vars-store
+      - get: baba-yaga-env-director-state
+        passed: [ setup-infrastructure ]
+      - get: baba-yaga-env-integration-configs
+    - task: bosh-upload-stemcell
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-master
+        bbl-state: baba-yaga-env-director-state
+      params:
+        INFRASTRUCTURE: google
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+        cf-deployment: cf-deployment-master
+        ops-files: cf-deployment-master
+        vars-store: baba-yaga-env-vars-store
+        vars-files: baba-yaga-env-vars-store
+      params:
+        SYSTEM_DOMAIN: baba-yaga.cf-app.com
+        OPS_FILES: "operations/use-compiled-releases.yml operations/experimental/add-bbr.yml"
+      ensure:
+        put: baba-yaga-env-vars-store
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: baba-yaga-env-vars-store
+        integration-configs: baba-yaga-env-integration-configs
+      ensure:
+        put: baba-yaga-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
