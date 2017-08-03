@@ -61,6 +61,12 @@ resources:
     paths:
     - bbl-state.json
     - google_account_creds.json
+- name: greengrass-env-ops-files
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/greengrass-env.git
+    private_key: {{greengrass_env_deploy_key}}
 - name: runtime-ci
   type: git
   source:
@@ -2516,6 +2522,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: greengrass-env-director-state
+    - get: greengrass-env-ops-files
   - task: setup-infrastructure
     file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
@@ -2531,7 +2538,7 @@ jobs:
       OPS_FILES: "scale-up-for-compilation.yml"
     input_mapping:
       bbl-state: greengrass-env-director-state
-      ops-files: greengrass-env-director-state
+      ops-files: greengrass-env-ops-files
     ensure:
       put: greengrass-env-director-state
       params:
@@ -2540,7 +2547,7 @@ jobs:
   - task: extend-cloud-config-for-credhub-dry-run
     file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
     input_mapping:
-      ops-file: greengrass-env-director-state
+      ops-file: greengrass-env-ops-files
       bbl-state: greengrass-env-director-state
     params:
       OPS_FILE_PATH: add-credhub-lb.yml
