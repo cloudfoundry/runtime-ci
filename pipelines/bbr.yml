@@ -50,6 +50,7 @@ jobs:
       pool-resource: bbr-pool
   - put: bbr-pool
     params: {add_claimed: bbr-pool}
+
 - name: setup-infrastructure
   serial: true
   public: true
@@ -81,6 +82,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - put: stable-pool
-    params: {release: stable-pool}
+  - put: bbr-pool
+    params: {release: bbr-pool}
 
