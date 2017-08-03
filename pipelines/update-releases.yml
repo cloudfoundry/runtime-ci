@@ -14,6 +14,7 @@ groups:
   - update-garden-runc
   - update-go-buildpack
   - update-grootfs
+  - update-credhub
   - update-java-buildpack
   - update-loggregator
   - update-mysql
@@ -127,6 +128,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/go-buildpack-release
+- name: credhub-release
+  type: bosh-io-release
+  source:
+    repository: pivotal-cf/credhub-release
 - name: grootfs-release
   type: bosh-io-release
   source:
@@ -1093,6 +1098,67 @@ jobs:
     params:
       OPS_FILE_NAME: use-grootfs.yml
       OPS_FILE_DESTINATION: operations/experimental/use-grootfs.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-credhub
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - get: credhub-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-credhub
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: credhub-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: grootfs
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
+      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/bypass-cc-bridge.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -credhub
+      OPS_FILES: "bypass-cc-bridge.yml base-ops-files/secure-service-credentials.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: secure-service-credentials.yml
+      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -2450,9 +2516,8 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    file: runtime-ci/tasks/prototype/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -2463,13 +2528,23 @@ jobs:
       BBL_LB_KEY: {{greengrass_cf_ssl_cert_private_key}}
       LB_DOMAIN: greengrass.cf-app.com
       BBL_ENV_NAME: greengrass-compile
+      OPS_FILES: "scale-up-for-compilation.yml"
     input_mapping:
       bbl-state: greengrass-env-director-state
+      ops-files: greengrass-env-director-state
     ensure:
       put: greengrass-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
+  - task: extend-cloud-config-for-credhub-dry-run
+    file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
+    input_mapping:
+      ops-file: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
+    params:
+      OPS_FILE_PATH: add-credhub-lb.yml
+
 
 - name: destroy-infrastructure-compilation
   serial: true
