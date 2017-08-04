@@ -2555,11 +2555,12 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: greengrass-env-director-state
     - get: greengrass-env-ops-files
   - task: setup-infrastructure
-    file: runtime-ci/tasks/prototype/bbl-up/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
