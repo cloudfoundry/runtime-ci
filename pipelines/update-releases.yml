@@ -422,7 +422,7 @@ jobs:
     params:
       RELEASE_NAME: capi
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -430,6 +430,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -capi
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -491,7 +493,7 @@ jobs:
     params:
       RELEASE_NAME: cf-networking
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -499,6 +501,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-networking
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -560,7 +564,7 @@ jobs:
     params:
       RELEASE_NAME: cf-smoke-tests
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -568,6 +572,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-smoke-tests
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -629,7 +635,7 @@ jobs:
     params:
       RELEASE_NAME: cflinuxfs2
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -637,6 +643,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cflinuxfs2
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -698,7 +706,7 @@ jobs:
     params:
       RELEASE_NAME: consul
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -706,6 +714,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -consul
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -767,7 +777,7 @@ jobs:
     params:
       RELEASE_NAME: diego
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -775,6 +785,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -diego
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -896,7 +908,7 @@ jobs:
     params:
       RELEASE_NAME: etcd
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -904,6 +916,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -etcd
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -965,7 +979,7 @@ jobs:
     params:
       RELEASE_NAME: garden-runc
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -973,6 +987,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -garden-runc
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1109,67 +1125,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-credhub
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: credhub-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-credhub
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: credhub-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: grootfs
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
-      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/bypass-cc-bridge.yml"
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -credhub
-      OPS_FILES: "bypass-cc-bridge.yml base-ops-files/secure-service-credentials.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: secure-service-credentials.yml
-      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
 - name: update-java-buildpack
   serial_groups: [update-java-buildpack]
   public: true
@@ -1256,7 +1211,7 @@ jobs:
     params:
       RELEASE_NAME: loggregator
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1264,6 +1219,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -loggregator
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1326,7 +1283,7 @@ jobs:
     params:
       RELEASE_NAME: cf-mysql
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1334,6 +1291,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-mysql
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1395,7 +1354,7 @@ jobs:
     params:
       RELEASE_NAME: nats
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1404,6 +1363,8 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
     params:
       DEPLOYMENT_NAME_SUFFIX: -nats
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1686,7 +1647,7 @@ jobs:
     params:
       RELEASE_NAME: routing
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1694,6 +1655,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -routing
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1875,7 +1838,7 @@ jobs:
     params:
       RELEASE_NAME: statsd-injector
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1883,6 +1846,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -statsd-injector
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1944,7 +1909,7 @@ jobs:
     params:
       RELEASE_NAME: uaa
   - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
@@ -1952,6 +1917,8 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -uaa
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2509,6 +2476,67 @@ jobs:
     params:
       OPS_FILE_NAME: windows-cell.yml
       OPS_FILE_DESTINATION: operations/windows-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-credhub
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - get: credhub-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-credhub
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: credhub-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: grootfs
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
+      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/bypass-cc-bridge.yml operations/experimental/deploy-bosh-backup-restore.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -credhub
+      OPS_FILES: "deploy-bosh-backup-restore.yml bypass-cc-bridge.yml base-ops-files/secure-service-credentials.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: secure-service-credentials.yml
+      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
   - put: cf-deployment-develop
     params:
       rebase: true
