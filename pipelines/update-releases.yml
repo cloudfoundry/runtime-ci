@@ -35,6 +35,7 @@ groups:
   jobs:
   - setup-infrastructure-compilation
   - destroy-infrastructure-compilation
+  - run-bosh-cleanup-compilation
 resource_types:
 - name: gcs-resource
   type: docker-image
@@ -333,6 +334,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
 
 jobs:
 - name: update-binary-buildpack
@@ -2603,4 +2610,21 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+
+- name: run-bosh-cleanup-compilation
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: greengrass-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
 
