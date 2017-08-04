@@ -24,11 +24,6 @@ groups:
   jobs:
   - a1-runtime-smokes
   - a1-loggregator-smokes
-- name: minimal
-  jobs:
-  - generate-minimal-manifest
-  - deploy-minimal
-  - minimal-acceptance-tests
 
 
 resource_types:
@@ -63,14 +58,6 @@ resources:
   type: s3
   source:
     bucket: cf-a1-manifest
-    versioned_file: deployment.yml
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: cf-minimal-manifest
-  type: s3
-  source:
-    bucket: cf-minimal-manifest
     versioned_file: deployment.yml
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
@@ -128,13 +115,6 @@ resources:
     branch: master
     private_key: {{cf_release_cat_env}}
     uri: git@github.com:cloudfoundry/cat-env.git
-
-- name: minimal-env
-  type: git
-  source:
-    branch: master
-    private_key: {{cf_release_minimal_env}}
-    uri: git@github.com:cloudfoundry/minimal-env.git
 
 - name: smoke-tests
   type: git
@@ -321,15 +301,6 @@ resources:
     deployment: cf-a1-diego
     ignore_ssl: true
 
-- name: minimal-deployment
-  type: bosh-deployment
-  source:
-    target: https://54.165.111.247:25555
-    username: {{minimal_bosh_username}}
-    password: {{minimal_bosh_password}}
-    deployment: cf
-    ignore_ssl: true
-
 - name: acceptance-test-metadata
   type: build-metadata-resource
 
@@ -486,29 +457,6 @@ jobs:
             target: vsphere-target-file
             username: vsphere-username
             password: vsphere-password
-      - do:
-        - aggregate:
-          - task: write-target-file-minimal
-            file: runtime-ci/scripts/ci/write-target-file/task.yml
-            params:
-              TARGET: https://54.165.111.247:25555
-            output_mapping:
-              target-file-dir: minimal-target-file
-          - task: write-creds-minimal
-            file: runtime-ci/scripts/ci/write-creds/task.yml
-            params:
-              USERNAME: {{minimal_bosh_username}}
-              PASSWORD: {{minimal_bosh_password}}
-            output_mapping:
-              username: minimal-username
-              password: minimal-password
-        - task: run-bosh-cleanup-minimal
-          privileged: true
-          file: runtime-ci/scripts/ci/run-bosh-cleanup-1.0/task.yml
-          input_mapping:
-            target: minimal-target-file
-            username: minimal-username
-            password: minimal-password
       - do:
         - aggregate:
           - task: write-target-file-a1
@@ -834,147 +782,6 @@ jobs:
       params:
         file: bosh-lite/build_url
 
-- name: generate-minimal-manifest
-  public: true
-  serial: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: aws-stemcell
-        trigger: true
-        params:
-          tarball: false
-      - get: cf-release-tarball
-        passed: [create-release]
-        trigger: true
-      - get: garden-runc-release-tarball
-        trigger: true
-      - get: cflinuxfs2-release-tarball
-        trigger: true
-      - get: diego-release-tarball
-        trigger: true
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [create-release]
-        params:
-          submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
-      - get: runtime-ci
-      - get: deployments
-        resource: minimal-env
-        trigger: true
-    - task: create-minimal-cf-release-manifest
-      privileged: true
-      file: runtime-ci/scripts/ci/create-minimal-cf-release-manifest/task.yml
-    - put: cf-minimal-manifest
-      params:
-        file: manifest/deployment.yml
-
-- name: deploy-minimal
-  public: true
-  serial: true
-  serial_groups:
-  - minimal
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: cf-minimal-manifest
-        trigger: true
-        passed: [ generate-minimal-manifest ]
-      - get: aws-stemcell
-        passed: [ generate-minimal-manifest ]
-        trigger: true
-      - get: cf-release-tarball
-        passed: [ generate-minimal-manifest ]
-        trigger: true
-      - get: garden-runc-release-tarball
-        passed: [ generate-minimal-manifest ]
-        trigger: true
-      - get: cflinuxfs2-release-tarball
-        passed: [ generate-minimal-manifest ]
-        trigger: true
-      - get: diego-release-tarball
-        passed: [ generate-minimal-manifest ]
-        trigger: true
-      - get: cf-release
-        passed: [ generate-minimal-manifest ]
-        resource: cf-release-develop
-        params:
-          submodules: none
-      - get: runtime-ci
-    - put: minimal-deployment
-      params:
-        manifest: cf-minimal-manifest/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
-        releases:
-          - cf-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-runc-release-tarball/*.tgz
-          - cflinuxfs2-release-tarball/*.tgz
-
-- name: minimal-acceptance-tests
-  public: true
-  serial_groups:
-  - minimal
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-minimal-manifest
-        trigger: true
-        passed: [ deploy-minimal ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [ deploy-minimal ]
-        params:
-          submodules: ['src/github.com/cloudfoundry/cf-acceptance-tests']
-      - get: aws-stemcell
-        passed: [ deploy-minimal ]
-        trigger: true
-        params:
-          tarball: false
-      - get: diego-release-tarball
-        trigger: true
-        passed: [ deploy-minimal ]
-        params:
-          tarball: false
-      - get: garden-runc-release-tarball
-        trigger: true
-        passed: [ deploy-minimal ]
-        params:
-          tarball: false
-      - get: cflinuxfs2-release-tarball
-        trigger: true
-        passed: [ deploy-minimal ]
-        params:
-          tarball: false
-      - get: cf-release-tarball
-        passed: [ deploy-minimal ]
-        trigger: true
-      - get: minimal-env
-      - get: cats-concourse-task
-    - task: write-target-file-api
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.minimal-aws.cf-app.com
-    - task: enable-docker-diego-and-task-creation
-      file: runtime-ci/scripts/ci/enable-docker-diego-1-0/task.yml
-      input_mapping:
-        cf-target: target-file-dir
-      params:
-        CF_USER: {{minimal_cf_admin_username}}
-        CF_PASSWORD: {{minimal_cf_admin_password}}
-    - task: cats-from-cf-release
-      file: cats-concourse-task/cats-from-cf-release/task.yml
-    - task: run-cats
-      input_mapping:
-      - integration-config: minimal-env
-      file: cats-concourse-task/task.yml
 - name: deploy-vsphere
   public: true
   serial_groups:
