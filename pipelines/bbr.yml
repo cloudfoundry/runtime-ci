@@ -116,6 +116,7 @@ jobs:
       BBL_ENV_NAME: baba-yaga-bbr
     input_mapping:
       bbl-state: baba-yaga-env-director-state
+      ops-files: baba-yaga-env-director-state
     ensure:
       put: baba-yaga-env-director-state
       params:
