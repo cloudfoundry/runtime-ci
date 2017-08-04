@@ -25,8 +25,8 @@ def release_teams
     ),
     ReleaseTeam.new(
       name: "routing",
-      anchor_github: '@shashwathi',
-      anchor_slack:  '@sreddy',
+      anchor_github: '@aaronshurley',
+      anchor_slack:  '@ahurley',
       pm_github:     '@shalako',
       pm_slack:      '@shannon'
     ),
