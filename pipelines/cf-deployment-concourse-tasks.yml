@@ -70,6 +70,7 @@ jobs:
         BBL_ENV_NAME: cf-deployment-concourse-tasks
       input_mapping:
         bbl-state: greengrass-env-google-creds
+        ops-files: greengrass-env-google-creds
     - do:
       - task: upload-stemcell
         file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -129,6 +130,7 @@ jobs:
         BBL_ENV_NAME: cf-deployment-concourse-tasks-aws
       input_mapping:
         bbl-state: greengrass-env-google-creds
+        ops-files: greengrass-env-google-creds
     - do:
       - task: upload-stemcell
         file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml

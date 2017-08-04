@@ -123,6 +123,7 @@ jobs:
       BBL_ENV_NAME: myrtle-nats
     input_mapping:
       bbl-state: myrtle-env-bbl-state
+      ops-files: myrtle-env-bbl-state
     ensure:
       put: myrtle-env-bbl-state
       params:

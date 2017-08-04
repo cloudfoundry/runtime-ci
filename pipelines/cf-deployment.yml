@@ -673,6 +673,7 @@ jobs:
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
       bbl-state: minerva-env-director-state
+      ops-files: minerva-env-director-state
     ensure:
       put: minerva-env-director-state
       params:
@@ -721,6 +722,7 @@ jobs:
       BBL_ENV_NAME: dumbledore-upgrade
     input_mapping:
       bbl-state: dumbledore-env-director-state
+      ops-files: dumbledore-env-director-state
     ensure:
       put: dumbledore-env-director-state
       params:
@@ -770,6 +772,7 @@ jobs:
       BBL_ENV_NAME: luna-fresh
     input_mapping:
       bbl-state: luna-env-director-state
+      ops-files: luna-env-director-state
     ensure:
       put: luna-env-director-state
       params:
@@ -804,6 +807,7 @@ jobs:
       BBL_ENV_NAME: bellatrix-stable
     input_mapping:
       bbl-state: bellatrix-env-director-state
+      ops-files: bellatrix-env-director-state
     ensure:
       put: bellatrix-env-director-state
       params:
@@ -994,6 +998,7 @@ jobs:
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
       bbl-state: trelawney-env-director-state
+      ops-files: trelawney-env-director-state
     ensure:
       put: trelawney-env-director-state
       params:
