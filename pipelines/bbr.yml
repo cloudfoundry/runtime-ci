@@ -61,11 +61,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment.git
-- name: cf-deployment-develop
-  type: git
-  source:
-    branch: develop
-    uri: https://github.com/cloudfoundry/cf-deployment.git
 
 - name: daily
   type: time
@@ -210,7 +205,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-master
-      - get: cf-deployment-develop
       - get: baba-yaga-env-vars-store
       - get: baba-yaga-env-director-state
         passed: [ setup-infrastructure ]
@@ -227,7 +221,7 @@ jobs:
       input_mapping:
         bbl-state: baba-yaga-env-director-state
         cf-deployment: cf-deployment-master
-        ops-files: cf-deployment-develop
+        ops-files: cf-deployment-master
         vars-store: baba-yaga-env-vars-store
         vars-files: baba-yaga-env-vars-store
       params:
