@@ -26,7 +26,7 @@ resources:
       base: develop
 jobs:
   - name: fail-prs-to-cf-deployment-master
-    public: false
+    public: true
     build_logs_to_retain: 100
     plan:
       - get: cf-deployment-master
@@ -41,7 +41,7 @@ jobs:
           status: failure
           context: {{pr_context}}
   - name: pass-prs-to-cf-deployment-develop
-    public: false
+    public: true
     build_logs_to_retain: 100
     plan:
       - get: cf-deployment-develop
