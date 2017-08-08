@@ -1,3 +1,9 @@
+groups:
+- name: cf-deployment
+  jobs:
+  - fail-prs-to-cf-deployment-master
+  - pass-prs-to-cf-deployment-develop
+
 resource_types:
   - name: pull-request
     type: docker-image
