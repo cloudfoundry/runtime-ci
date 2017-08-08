@@ -1,0 +1,51 @@
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+      tag: v25
+
+resources:
+  - name: cf-deployment-master
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-deployment
+      base: master
+  - name: cf-deployment-develop
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-deployment
+      base: develop
+jobs:
+  - name: fail-prs-to-cf-deployment-master
+    public: false
+    build_logs_to_retain: 100
+    plan:
+      - get: cf-deployment-master
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: cf-deployment-master
+        params:
+          path: cf-deployment-master
+          status: failure
+          context: base-branch-should-be-develop
+  - name: pass-prs-to-cf-deployment-develop
+    public: false
+    build_logs_to_retain: 100
+    plan:
+      - get: cf-deployment-develop
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: cf-deployment-develop
+        params:
+          path: cf-deployment-develop
+          status: success
+          context: base-branch-should-be-develop
