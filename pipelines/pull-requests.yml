@@ -39,7 +39,7 @@ jobs:
         params:
           path: cf-deployment-master
           status: failure
-          context: base-branch-should-be-develop
+          context: {{pr_context}}
   - name: pass-prs-to-cf-deployment-develop
     public: false
     build_logs_to_retain: 100
@@ -54,4 +54,4 @@ jobs:
         params:
           path: cf-deployment-develop
           status: success
-          context: base-branch-should-be-develop
+          context: {{pr_context}}
