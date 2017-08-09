@@ -70,8 +70,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: cf-deployment-master
         params:
           path: cf-deployment-master
@@ -85,8 +86,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: cf-deployment-develop
         params:
           path: cf-deployment-develop
@@ -101,8 +103,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: cf-release-master
         params:
           path: cf-release-master
@@ -116,8 +119,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: cf-release-develop
         params:
           path: cf-release-develop
@@ -132,8 +136,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: nats-release-master
         params:
           path: nats-release-master
@@ -147,8 +152,9 @@ jobs:
         trigger: true
         version: every
         params:
-          git.submodules: none
-          git.depth: 1
+          git:
+            submodules: none
+            depth: 1
       - put: nats-release-develop
         params:
           path: nats-release-develop
