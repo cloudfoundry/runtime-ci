@@ -4,6 +4,16 @@ groups:
   - fail-prs-to-cf-deployment-master
   - pass-prs-to-cf-deployment-develop
 
+- name: cf-release
+  jobs:
+  - fail-prs-to-cf-release-master
+  - pass-prs-to-cf-release-develop
+
+- name: nats-release
+  jobs:
+  - fail-prs-to-nats-release-master
+  - pass-prs-to-nats-release-develop
+
 resource_types:
   - name: pull-request
     type: docker-image
@@ -24,6 +34,33 @@ resources:
       access_token: {{github_status_bot_repo_access_token}}
       repo: cloudfoundry/cf-deployment
       base: develop
+
+  - name: cf-release-master
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-release
+      base: master
+  - name: cf-release-develop
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-release
+      base: develop
+
+  - name: nats-release-master
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/nats-release
+      base: master
+  - name: nats-release-develop
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/nats-release
+      base: develop
+
 jobs:
   - name: fail-prs-to-cf-deployment-master
     public: true
@@ -53,5 +90,67 @@ jobs:
       - put: cf-deployment-develop
         params:
           path: cf-deployment-develop
+          status: success
+          context: {{pr_context}}
+
+  - name: fail-prs-to-cf-release-master
+    public: true
+    build_logs_to_retain: 100
+    plan:
+      - get: cf-release-master
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: cf-release-master
+        params:
+          path: cf-release-master
+          status: failure
+          context: {{pr_context}}
+  - name: pass-prs-to-cf-release-develop
+    public: true
+    build_logs_to_retain: 100
+    plan:
+      - get: cf-release-develop
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: cf-release-develop
+        params:
+          path: cf-release-develop
+          status: success
+          context: {{pr_context}}
+
+  - name: fail-prs-to-nats-release-master
+    public: true
+    build_logs_to_retain: 100
+    plan:
+      - get: nats-release-master
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: nats-release-master
+        params:
+          path: nats-release-master
+          status: failure
+          context: {{pr_context}}
+  - name: pass-prs-to-nats-release-develop
+    public: true
+    build_logs_to_retain: 100
+    plan:
+      - get: nats-release-develop
+        trigger: true
+        version: every
+        params:
+          git.submodules: none
+          git.depth: 1
+      - put: nats-release-develop
+        params:
+          path: nats-release-develop
           status: success
           context: {{pr_context}}
