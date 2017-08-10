@@ -218,7 +218,7 @@ resources:
 - name: windows-stemcell
   type: s3
   source:
-    bucket: bosh-windows-stemcells
+    bucket: bosh-windows-stemcells-production
     regexp: light-bosh-stemcell-(.*)-aws-xen-hvm-windows2012R2-go_agent.tgz
 
 - name: windows-google-stemcell
