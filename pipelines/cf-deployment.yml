@@ -215,11 +215,10 @@ resources:
     deployment: cf
     ignore_ssl: true
 
-- name: windows-stemcell
-  type: s3
+- name: windows-stemcell-bosh-release
+  type: bosh-io-stemcell
   source:
-    bucket: bosh-windows-stemcells-production
-    regexp: light-bosh-stemcell-(.*)-aws-xen-hvm-windows2012R2-go_agent.tgz
+    name: bosh-aws-xen-hvm-windows2012R2-go_agent
 
 - name: windows-google-stemcell
   type: bosh-io-stemcell
@@ -1949,7 +1948,7 @@ jobs:
       - get: hermione-env-director-state
         passed: [ setup-infrastructure-upgrade ]
       - get: hermione-env-integration-configs
-      - get: windows-stemcell
+      - get: windows-stemcell-bosh-release
     - task: bosh-upload-stemcell-upgrade
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -1960,7 +1959,7 @@ jobs:
     - task: bosh-upload-windows-stemcell
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
-        stemcell: windows-stemcell
+        stemcell: windows-stemcell-bosh-release
         bbl-state: hermione-env-director-state
       params:
         STEMCELL_NAME: '*.tgz'
