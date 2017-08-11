@@ -416,6 +416,7 @@ resources:
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
     - deployment-vars.yml
+    - deployment-name.yml
 - name: minerva-env-director-state
   type: git
   source:
@@ -495,6 +496,7 @@ resources:
     - deployment-vars.yml
     - datadog-deployment-vars.yml
     - rds-vars.yml
+    - network-name.yml
 - name: hermione-env-turbulence-vars
   type: git
   source:
@@ -1747,7 +1749,8 @@ jobs:
       vars-files: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "operations/use-compiled-releases.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml operations/bypass-cc-bridge.yml"
+      OPS_FILES: "operations/use-compiled-releases.yml operations/rename-deployment.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml operations/bypass-cc-bridge.yml"
+      VARS_FILES: "deployment-name.yml"
       REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
