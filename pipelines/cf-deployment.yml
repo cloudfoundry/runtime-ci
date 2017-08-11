@@ -1537,6 +1537,7 @@ jobs:
         OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml"
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: dumbledore-env-stubs-and-vars
         params:
@@ -1698,6 +1699,7 @@ jobs:
         SYSTEM_DOMAIN: minerva.cf-app.com
         OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml operations/remove-cf-networking-for-transition.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml"
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: minerva-env-stubs-and-vars
         params:
