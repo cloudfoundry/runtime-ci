@@ -204,6 +204,10 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
+- name: bosh-deployment
+  type: docker-image
+  source:
+    repository: concourse/bosh-deployment-resource
 
 resources:
 - name: complex-legacy-cf-bosh-deployment
