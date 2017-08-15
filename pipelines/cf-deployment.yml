@@ -1529,7 +1529,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml hold-static-ips.yml"
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1540,8 +1540,8 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
-        VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
+        VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml static_ips.yml"
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
       ensure:
         put: dumbledore-env-stubs-and-vars
@@ -1691,7 +1691,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-api-for-transition.yml remove-cf-networking-for-transition.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-api-for-transition.yml remove-cf-networking-for-transition.yml hold-static-ips.yml"
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1702,8 +1702,8 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml operations/remove-cf-networking-for-transition.yml"
-        VARS_FILES: "rds-vars.yml s3-vars.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml operations/remove-cf-networking-for-transition.yml"
+        VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
       ensure:
         put: minerva-env-stubs-and-vars
         params:
