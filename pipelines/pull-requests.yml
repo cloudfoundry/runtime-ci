@@ -162,7 +162,7 @@ jobs:
         input_mapping:
             cf-release-develop: cf-release-all-branches
         params:
-          CF_RELEASE_DIR: 'cf-release-all-branches'
+          CF_RELEASE_DIR: 'cf-release-develop'
         on_failure:
           put: cf-release-all-branches
           params:
