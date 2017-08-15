@@ -4,6 +4,7 @@ groups:
   jobs:
   - fail-prs-to-cf-deployment-master
   - pass-prs-to-cf-deployment-develop
+  - run-unit-tests-on-all-cf-deployment-prs
 
 - name: cf-release
   jobs:
@@ -30,6 +31,11 @@ resources:
       branch: master
       uri: https://github.com/cloudfoundry/runtime-ci.git
 
+  - name: cf-deployment-all-branches
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-deployment
   - name: cf-deployment-master
     type: pull-request
     source:
@@ -107,6 +113,46 @@ jobs:
           path: cf-deployment-develop
           status: success
           context: {{pr_context}}
+
+  - name: run-unit-tests-on-all-cf-deployment-prs
+    public: true
+    build_logs_to_retain: 100
+    plan:
+    - timeout: 4h
+      do:
+      - aggregate:
+        - get: runtime-ci
+        - get: cf-deployment-all-branches
+          trigger: true
+          version: every
+      - put: cf-deployment-all-branches
+        params:
+          path: cf-deployment-all-branches
+          status: pending
+          context: {{unit_tests_context}}
+      - task: unit-test-ops-files
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: relintdockerhubpushbot/bosh-cli
+          inputs:
+          - name: cf-deployment-all-branches
+          run:
+            path: cf-deployment-all-branches/scripts/test
+        on_failure:
+          put: cf-deployment-all-branches
+          params:
+            path: cf-deployment-all-branches
+            status: failure
+            context: {{unit_tests_context}}
+        on_success:
+          put: cf-deployment-all-branches
+          params:
+            path: cf-deployment-all-branches
+            status: success
+            context: {{unit_tests_context}}
 
   - name: fail-prs-to-cf-release-master
     public: true
