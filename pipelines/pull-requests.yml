@@ -8,6 +8,7 @@ groups:
   jobs:
   - fail-prs-to-cf-release-master
   - pass-prs-to-cf-release-develop
+  - run-unit-tests-on-all-cf-release-prs
 
 - name: nats-release
   jobs:
@@ -22,6 +23,12 @@ resource_types:
       tag: v25
 
 resources:
+  - name: runtime-ci
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/cloudfoundry/runtime-ci.git
+
   - name: cf-deployment-master
     type: pull-request
     source:
@@ -35,6 +42,11 @@ resources:
       repo: cloudfoundry/cf-deployment
       base: develop
 
+  - name: cf-release-all-branches
+    type: pull-request
+    source:
+      access_token: {{github_status_bot_repo_access_token}}
+      repo: cloudfoundry/cf-release
   - name: cf-release-master
     type: pull-request
     source:
@@ -127,6 +139,42 @@ jobs:
           path: cf-release-develop
           status: success
           context: {{pr_context}}
+
+  - name: run-unit-tests-on-all-cf-release-prs
+    public: true
+    build_logs_to_retain: 100
+    plan:
+    - timeout: 4h
+      do:
+      - aggregate:
+        - get: runtime-ci
+        - get: cf-release-all-branches
+          trigger: true
+          version: every
+      - put: cf-release-all-branches
+          params:
+            path: cf-release-all-branches
+            status: pending
+            context: {{unit_tests_context}}
+      - task: run-cf-release-unit-tests
+        privileged: true
+        file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
+        input_mapping:
+            cf-release-develop: cf-release-all-branches
+        params:
+          CF_RELEASE_DIR: 'cf-release-all-branches'
+        on_failure:
+          put: cf-release-all-branches
+          params:
+            path: cf-release-all-branches
+            status: failure
+            context: {{unit_tests_context}}
+        on_success:
+          put: cf-release-all-branches
+          params:
+            path: cf-release-all-branches
+            status: success
+            context: {{unit_tests_context}}
 
   - name: fail-prs-to-nats-release-master
     public: true
