@@ -52,7 +52,7 @@ resources:
 jobs:
 - name: deploy-updated-smokes
   build_logs_to_retain: 100
-  serial: true
+  serial_groups: [smoke_tests]
   public: true
   plan:
   - aggregate:
@@ -72,7 +72,7 @@ jobs:
 
 - name: run-smokes-errand
   build_logs_to_retain: 100
-  serial: true
+  serial_groups: [smoke_tests]
   public: true
   plan:
   - aggregate:
@@ -91,7 +91,7 @@ jobs:
 
 - name: delete-smokes-deployment
   build_logs_to_retain: 100
-  serial: true
+  serial_groups: [smoke_tests]
   public: true
   plan:
   - aggregate:
@@ -110,6 +110,7 @@ jobs:
 
 - name: create-final-release
   build_logs_to_retain: 100
+  serial: true
   public: true
   plan:
   - aggregate:
