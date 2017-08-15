@@ -152,10 +152,10 @@ jobs:
           trigger: true
           version: every
       - put: cf-release-all-branches
-          params:
-            path: cf-release-all-branches
-            status: pending
-            context: {{unit_tests_context}}
+        params:
+          path: cf-release-all-branches
+          status: pending
+          context: {{unit_tests_context}}
       - task: run-cf-release-unit-tests
         privileged: true
         file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
