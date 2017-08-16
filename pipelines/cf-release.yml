@@ -1032,7 +1032,7 @@ jobs:
       file: cats-concourse-task/cats-from-cf-release/task.yml
     - task: run-cats
       input_mapping:
-        - integration-config: cat-env
+        integration-config: cat-env
       file: cats-concourse-task/task.yml
       tags: [ vsphere ]
     - aggregate:

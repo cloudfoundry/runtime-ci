@@ -303,7 +303,7 @@ jobs:
       SYSTEM_DOMAIN: myrtle.cf-app.com
   - task: run-cats
     input_mapping:
-    - integration-config: myrtle-env-integration-configs
+      integration-config: myrtle-env-integration-configs
     file: cats-concourse-task/task.yml
     params:
       CONFIG_FILE_PATH: cats_integration_config.json
