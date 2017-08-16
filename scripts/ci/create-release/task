@@ -18,9 +18,6 @@ else
   cd release-repo
 fi
 
-echo "Running scripts/update"
-./scripts/update
-
 COMMIT_SHA=$(git rev-parse HEAD)
 
 RELEASE_OUT="../create-release.out"
