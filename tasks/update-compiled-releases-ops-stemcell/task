@@ -37,8 +37,11 @@ cat << EOF
 - type: replace
   path: /path=~1releases~1name=${release_name}~1stemcell?
   value:
-    os: ubuntu-trusty
-    version: "${stemcell_version}"
+    type: replace
+    path: /releases/name=${release_name}/stemcell
+    value:
+      os: ubuntu-trusty
+      version: "${stemcell_version}"
 EOF
 }
 
