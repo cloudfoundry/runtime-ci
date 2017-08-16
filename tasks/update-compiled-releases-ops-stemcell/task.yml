@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: ops-files
+- name: stemcell
 
 - name: binary-buildpack-release
 - name: binary-buildpack-release-tarball

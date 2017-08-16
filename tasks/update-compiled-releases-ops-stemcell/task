@@ -12,6 +12,8 @@ ops_file_to_update() {
   popd > /dev/null
   local release_version
   release_version=$(cat ${release_name}-release/version)
+  local stemcell_version
+  stemcell_version=$(cat stemcell/version)
 
 cat << EOF
 - type: replace
@@ -32,6 +34,11 @@ cat << EOF
     type: replace
     path: /releases/name=${release_name}/sha1
     value: "${release_sha}"
+- type: replace
+  path: /path=~1releases~1name=${release_name}~1stemcell?
+  value:
+    os: ubuntu-trusty
+    version: "${stemcell_version}"
 EOF
 }
 
