@@ -62,6 +62,7 @@ main() {
   ops_file_to_update cf-mysql >> ${update_release_ops_file}
   ops_file_to_update staticfile-buildpack >> ${update_release_ops_file}
   ops_file_to_update statsd-injector >> ${update_release_ops_file}
+  ops_file_to_update uaa >> ${update_release_ops_file}
 
   bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" \
     > updated-compiled-releases-ops-file/use-compiled-releases.yml
