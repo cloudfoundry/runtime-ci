@@ -2071,6 +2071,12 @@ jobs:
     - get: nodejs-buildpack-release
       params:
         tarball: false
+    - get: php-buildpack-release
+      params:
+        tarball: false
+    - get: python-buildpack-release
+      params:
+        tarball: false
     - get: routing-release
       params:
         tarball: false
@@ -2083,10 +2089,7 @@ jobs:
     - get: statsd-injector-release
       params:
         tarball: false
-    - get: php-buildpack-release
-      params:
-        tarball: false
-    - get: python-buildpack-release
+    - get: uaa-release
       params:
         tarball: false
     - get: stemcell
