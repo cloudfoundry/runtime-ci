@@ -1383,8 +1383,8 @@ jobs:
         ERRAND_NAME: smoke_tests
     - task: run-routing-smoke-tests
       input_mapping:
-      - routing-release: github-routing-release-master
-      - integration-config: dumbledore-env-stubs-and-vars
+        routing-release: github-routing-release-master
+        integration-config: dumbledore-env-stubs-and-vars
       params:
         NODES: 1
         PACKAGES: "smoke_tests"
@@ -1510,8 +1510,8 @@ jobs:
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
-      - bbl-state: dumbledore-env-director-state
-      - vars-store: dumbledore-env-stubs-and-vars
+        bbl-state: dumbledore-env-director-state
+        vars-store: dumbledore-env-stubs-and-vars
       params:
         EXTRACT_CF_NETWORKING: true
         EXTRACT_ROUTING: true
@@ -1620,8 +1620,8 @@ jobs:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: github-routing-release-master
-      - integration-config: dumbledore-env-stubs-and-vars
+        routing-release: github-routing-release-master
+        integration-config: dumbledore-env-stubs-and-vars
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
         NODES: 1
@@ -1675,8 +1675,8 @@ jobs:
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
-      - bbl-state: minerva-env-director-state
-      - vars-store: minerva-env-stubs-and-vars
+        bbl-state: minerva-env-director-state
+        vars-store: minerva-env-stubs-and-vars
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -2197,7 +2197,7 @@ jobs:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: dumbledore-env-stubs-and-vars
+        integration-config: dumbledore-env-stubs-and-vars
       params:
         NODES: 9
       file: cats-concourse-task/task.yml
@@ -2237,7 +2237,7 @@ jobs:
         SYSTEM_DOMAIN: minerva.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: minerva-env-stubs-and-vars
+        integration-config: minerva-env-stubs-and-vars
       params:
         NODES: 9
       file: cats-concourse-task/task.yml
@@ -2355,7 +2355,7 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: hermione-env-integration-configs
+        integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
 
 - name: upgrade-wats
@@ -2383,7 +2383,7 @@ jobs:
         passed: [ upgrade-deploy ]
     - task: run-wats
       input_mapping:
-      - integration-config: hermione-env-integration-configs
+        integration-config: hermione-env-integration-configs
       file: runtime-ci/tasks/run-wats/task.yml
 
 - name: upgrade-smoke-tests
@@ -2479,7 +2479,7 @@ jobs:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: bellatrix-env-integration-configs
+        integration-config: bellatrix-env-integration-configs
       file: cats-concourse-task/task.yml
 
 - name: stable-update-cats-cfd-branch
@@ -2533,7 +2533,7 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: luna-env-integration-configs
+        integration-config: luna-env-integration-configs
       file: cats-concourse-task/task.yml
 
 - name: lite-cats
@@ -2566,7 +2566,7 @@ jobs:
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
       input_mapping:
-      - integration-config: snitch-env-integration-configs
+        integration-config: snitch-env-integration-configs
       params:
         NODES: 4
       file: cats-concourse-task/task.yml
@@ -2597,8 +2597,8 @@ jobs:
         SYSTEM_DOMAIN: luna.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: github-routing-release-master
-      - integration-config: luna-env-integration-configs
+        routing-release: github-routing-release-master
+        integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: lite-http-rats
@@ -2631,8 +2631,8 @@ jobs:
         SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: github-routing-release-master
-      - integration-config: snitch-env-integration-configs
+        routing-release: github-routing-release-master
+        integration-config: snitch-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
         PACKAGES: "http_routes"
@@ -2669,8 +2669,8 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: run-rats
       input_mapping:
-      - routing-release: github-routing-release-master
-      - integration-config: hermione-env-integration-configs
+        routing-release: github-routing-release-master
+        integration-config: hermione-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
         PACKAGES: "http_routes"
