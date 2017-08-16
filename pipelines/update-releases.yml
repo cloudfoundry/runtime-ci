@@ -2329,7 +2329,7 @@ jobs:
       cflinuxfs2-release-tarball: exported-release-cflinuxfs2
       binary-buildpack-release-tarball: exported-release-binary-buildpack
       dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
-      go-buildpack-release-tarball: exported-release-binary-buildpack
+      go-buildpack-release-tarball: exported-release-go-buildpack
       java-buildpack-release-tarball: exported-release-java-buildpack
       nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
       php-buildpack-release-tarball: exported-release-php-buildpack
@@ -2338,6 +2338,7 @@ jobs:
       staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
       statsd-injector-release-tarball: exported-release-statsd-injector
       cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
+      uaa-release-tarball: exported-release-uaa
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
     - put: binary-buildpack-release-gcs

@@ -54,6 +54,8 @@ inputs:
 - name: staticfile-buildpack-release-tarball
 - name: statsd-injector-release
 - name: statsd-injector-release-tarball
+- name: uaa-release
+- name: uaa-release-tarball
 
 outputs:
 - name: updated-compiled-releases-ops-file
