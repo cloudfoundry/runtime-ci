@@ -43,11 +43,11 @@ append_stemcell_to_compiled() {
  stemcell_version=$(cat stemcell/version)
 
 cat << EOF
- - type: replace
-   path: /releases/name=${release_name}/stemcell?
-   value:
-     os: ubuntu-trusty
-     version: "${stemcell_version}"
+- path: /releases/name=${release_name}/stemcell?
+  type: replace
+  value:
+    os: ubuntu-trusty
+    version: "${stemcell_version}"
 EOF
 }
 
