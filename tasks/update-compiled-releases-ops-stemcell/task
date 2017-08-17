@@ -16,23 +16,23 @@ ops_file_to_update() {
 
 cat << EOF
 - type: replace
- path: /path=~1releases~1name=${release_name}~1url?
- value:
-   type: replace
-   path: /releases/name=${release_name}/url
-   value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
+  path: /path=~1releases~1name=${release_name}~1url?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/url
+    value: https://storage.googleapis.com/cf-deployment-compiled-releases/${release_tarball}
 - type: replace
- path: /path=~1releases~1name=${release_name}~1version?
- value:
-   type: replace
-   path: /releases/name=${release_name}/version
-   value: "${release_version}"
+  path: /path=~1releases~1name=${release_name}~1version?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/version
+    value: "${release_version}"
 - type: replace
- path: /path=~1releases~1name=${release_name}~1sha1?
- value:
-   type: replace
-   path: /releases/name=${release_name}/sha1
-   value: "${release_sha}"
+  path: /path=~1releases~1name=${release_name}~1sha1?
+  value:
+    type: replace
+    path: /releases/name=${release_name}/sha1
+    value: "${release_sha}"
 EOF
 }
 
