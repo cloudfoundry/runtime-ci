@@ -4,7 +4,7 @@ ops_file_to_update() {
  local release_name
  release_name=${1}
  local release_sha
- release_sha=$(sha1sum ${release_name}-release-tarball/*.tgz | awk ‘{print $1}‘)
+ release_sha=$(sha1sum ${release_name}-release-tarball/*.tgz | awk '{print $1}')
  local release_tarball
  pushd ${release_name}-release-tarball > /dev/null
    # shellcheck disable=SC2035
@@ -26,13 +26,13 @@ cat << EOF
  value:
    type: replace
    path: /releases/name=${release_name}/version
-   value: “${release_version}”
+   value: "${release_version}"
 - type: replace
  path: /path=~1releases~1name=${release_name}~1sha1?
  value:
    type: replace
    path: /releases/name=${release_name}/sha1
-   value: “${release_sha}”
+   value: "${release_sha}"
 EOF
 }
 
@@ -47,7 +47,7 @@ cat << EOF
    path: /releases/name=${release_name}/stemcell?
    value:
      os: ubuntu-trusty
-     version: “${stemcell_version}”
+     version: "${stemcell_version}"
 EOF
 }
 
@@ -82,7 +82,7 @@ main() {
 
  local update_release_ops_file
  update_release_ops_file=$(mktemp)
- echo “---” > ${update_release_ops_file}
+ echo "---" > ${update_release_ops_file}
 
  for release in ${releases[@]}; do
    ops_file_to_update ${release} >> ${update_release_ops_file}
@@ -90,9 +90,9 @@ main() {
 
  local truncated_compiled_release_ops_file
  truncated_compiled_release_ops_file=$(mktemp)
- sed -n ‘/stemcell/q;p’ ops-files/operations/use-compiled-releases.yml > ${truncated_compiled_release_ops_file}
+ sed -n '/stemcell/q;p' ops-files/operations/use-compiled-releases.yml > ${truncated_compiled_release_ops_file}
 
- bosh interpolate “${truncated_compiled_release_ops_file}” -o “${update_release_ops_file}” \
+ bosh interpolate "${truncated_compiled_release_ops_file}" -o "${update_release_ops_file}" \
    > updated-compiled-releases-ops-file/use-compiled-releases.yml
 
  for release in ${releases[@]}; do
