@@ -20,7 +20,7 @@ write_uptimer_deploy_config() {
       "while": [
         {
           "command":"bosh",
-          "command_args":["-n", "deploy", $manifest, "-d", $deployment_name]
+          "command_args":["-n", "deploy", $manifest, "--tty", "-d", $deployment_name]
         },
         (split(" ") | .[] |
           {
