@@ -25,5 +25,6 @@ do
     -randomizeAllSpecs \
     -skipPackage=helpers \
     -slowSpecThreshold=120 \
+    -flakeAttempts=2 \
     -nodes="${NODES}"
 done
