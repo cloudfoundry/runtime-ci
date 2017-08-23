@@ -19,12 +19,12 @@ cd ${GOPATH}/src/code.cloudfoundry.org/routing-acceptance-tests
 
 for i in ${PACKAGES}
 do
-  ginkgo -r "$i" \
+  ginkgo -r \
     -slowSpecThreshold=120 \
     -keepGoing \
     -randomizeAllSpecs \
     -skipPackage=helpers \
-    -slowSpecThreshold=120 \
     -flakeAttempts=2 \
-    -nodes="${NODES}"
+    -nodes="${NODES}" \
+    "$i"
 done
