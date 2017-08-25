@@ -64,7 +64,7 @@ uptimer_bosh_deploy() {
   exit $exitStatus
 }
 
-print_instancs() {
+print_instances() {
   echo "Running bosh instances:"
   bosh instances
   echo ""
