@@ -1054,6 +1054,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
+      passed: [unit-test-ops-files]
     - put: fresh-pool
       params: {acquire: true}
 
@@ -1064,6 +1065,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
+      passed: [unit-test-ops-files]
     - put: lite-pool
       params: {acquire: true}
 
@@ -1759,7 +1761,6 @@ jobs:
     passed: [ fresh-acquire-pool ]
   - aggregate:
     - get: cf-deployment-develop
-      passed: [unit-test-ops-files]
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: luna-env-vars-store
@@ -1897,6 +1898,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
+      passed: [unit-test-ops-files]
     - put: upgrade-pool
       params: {acquire: true}
 
@@ -1989,7 +1991,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
-        passed: [unit-test-ops-files]
       - get: hermione-env-vars-store
       - get: hermione-env-director-state
         passed: [ setup-infrastructure-upgrade ]
@@ -2132,7 +2133,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
-        passed: [unit-test-ops-files]
       - get: bosh-deployment
       - get: snitch-env-director-state
       - get: snitch-env-vars-store
