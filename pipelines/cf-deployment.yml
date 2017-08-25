@@ -79,6 +79,7 @@ groups:
   - setup-infrastructure-stable
   - ship-it-minor
   - ship-it-patch
+  - update-infrastructure-fresh
   - complex-acquire-pool
   - complex-release-pool-manual
   - complex-transition-deploy
@@ -121,6 +122,7 @@ groups:
   - setup-infrastructure-stable
   - setup-infrastructure-transition
   - setup-infrastructure-upgrade
+  - update-infrastructure-fresh
   - destroy-infrastructure-complex
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
@@ -782,6 +784,42 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: update-infrastructure-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: fresh-pool
+        params: {claim: fresh-pool}
+      - get: runtime-ci
+      - get: luna-env-director-state
+      - get: cf-deployment-concourse-tasks
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: gcp
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
+        BBL_GCP_REGION: us-central1
+        BBL_GCP_ZONE: us-central1-a
+        BBL_LB_CERT: {{luna_cf_ssl_cert}}
+        BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+        LB_DOMAIN: luna.cf-app.com
+        BBL_ENV_NAME: luna-fresh
+      input_mapping:
+        bbl-state: luna-env-director-state
+        ops-files: luna-env-director-state
+      ensure:
+        put: luna-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: fresh-pool
+      params: {release: fresh-pool}
 
 - name: setup-infrastructure-stable
   serial: true
