@@ -64,14 +64,22 @@ uptimer_bosh_deploy() {
   exit $exitStatus
 }
 
-function main() {
+print_instancs() {
+  echo "Running bosh instances:"
+  bosh instances
+  echo ""
+}
+
+main() {
   check_input_params
   setup_bosh_env_vars
   if ${REGENERATE_VARS_STORE}; then
     remove_vars_store
   fi
-  bosh_interpolate
-  uptimer_bosh_deploy
+  print_instances
+    bosh_interpolate
+    uptimer_bosh_deploy
+  print_instances
 }
 
 trap commit_vars_store EXIT
