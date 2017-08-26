@@ -53,7 +53,12 @@ uptimer_bosh_deploy() {
   set +e
   local exitStatus
   uptimer -configFile ${uptimer_config}
-  exitStatus=$?
+  return $?
+}
+
+exit_properly() {
+  local exitStatus
+  exitStatus="${1}"
   set -e
 
   # exitStatus 64 means that there was downtime, but the deployment was successful
@@ -79,7 +84,10 @@ main() {
   print_instances
     bosh_interpolate
     uptimer_bosh_deploy
+    exitStatus=$?
   print_instances
+
+  exit_properly $exitStatus
 }
 
 trap commit_vars_store EXIT
