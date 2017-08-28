@@ -32,6 +32,7 @@ groups:
   jobs:
   - add-claimed-lock-fresh
   - add-claimed-lock-lite
+  - add-claimed-lock-ops
   - add-claimed-lock-transition
   - add-claimed-lock-complex
   - add-claimed-lock-upgrade
@@ -65,6 +66,7 @@ groups:
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
+  - remove-claimed-lock-ops
   - remove-claimed-lock-stable
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
@@ -112,6 +114,7 @@ groups:
   - add-claimed-lock-complex
   - add-claimed-lock-fresh
   - add-claimed-lock-lite
+  - add-claimed-lock-ops
   - add-claimed-lock-stable
   - add-claimed-lock-transition
   - add-claimed-lock-upgrade
@@ -133,6 +136,7 @@ groups:
   - remove-claimed-lock-complex
   - remove-claimed-lock-fresh
   - remove-claimed-lock-lite
+  - remove-claimed-lock-ops
   - remove-claimed-lock-stable
   - remove-claimed-lock-transition
   - run-bosh-cleanup-lite
@@ -901,6 +905,21 @@ jobs:
   - put: lite-pool
     params: {add_claimed: lite-pool}
 
+- name: add-claimed-lock-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: trelawney
+    output_mapping:
+      pool-resource: ops-pool
+  - put: ops-pool
+    params: {add_claimed: ops-pool}
+
 - name: setup-infrastructure-upgrade
   serial_groups: [hermione]
   public: true
@@ -1012,18 +1031,13 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
+  - get: ops-pool
+    trigger: true
+    passed: [ add-claimed-lock-ops ]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: trelawney-env-director-state
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: trelawney
-    output_mapping:
-      pool-resource: prepared-ops-pool
-  - put: ops-pool
-    params: {add_claimed: prepared-ops-pool}
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -2986,6 +3000,24 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: remove-claimed-lock-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: ops-pool
+    passed: [ destroy-infrastructure-ops ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: trelawney
+    output_mapping:
+      pool-resource: ops-pool
+  - put: ops-pool
+    params: {remove: ops-pool}
+
 - name: destroy-infrastructure-ops
   serial: true
   public: true
@@ -2997,10 +3029,6 @@ jobs:
     - get: trelawney-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-  - task: guarantee-no-existing-cf-deployment
-    input_mapping:
-      bbl-state: trelawney-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
@@ -3010,14 +3038,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: trelawney
-    output_mapping:
-      pool-resource: prepared-ops-pool
-  - put: ops-pool
-    params: {remove: prepared-ops-pool}
 
 - name: bless-manifest
   public: true
