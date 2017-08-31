@@ -43,8 +43,8 @@ write_uptimer_deploy_config() {
       "allowed_failures": {
         "app_pushability": 1,
         "http_availability": 0,
-        "recent_logs": 0,
-        "streaming_logs": 1
+        "recent_logs": 2,
+        "streaming_logs": 2
       }
     }'
   set -x
