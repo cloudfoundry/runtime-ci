@@ -1318,6 +1318,15 @@ jobs:
           DB_USER: {{dumbledore_routingapidb_username}}
           DB_PASSWORD: {{dumbledore_routingapidb_password}}
           DB_NAME: {{dumbledore_routingapidb_name}}
+      - task: recreate-locketdb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
+        params:
+          DB_HOST: {{dumbledore_locketdb_host}}
+          DB_USER: {{dumbledore_locketdb_username}}
+          DB_PASSWORD: {{dumbledore_locketdb_password}}
+          DB_NAME: {{dumbledore_locketdb_name}}
 
 - name: complex-legacy-deploy
   public: true
