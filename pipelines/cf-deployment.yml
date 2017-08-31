@@ -2055,7 +2055,6 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: "operations/aws.yml operations/use-only-local-route-emitters.yml operations/windows-cell.yml operations/enable-local-route-emitters-windows-cell.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/test/add-bosh-dns-to-cells.yml operations/test/use-bosh-dns-for-containers.yml"
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
-        FAIL_ON_DOWNTIME: true
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: hermione-env-vars-store
