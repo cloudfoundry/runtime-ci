@@ -67,8 +67,8 @@ def release_teams
     ),
     ReleaseTeam.new(
       name: "container-networking",
-      anchor_github: '@jaydunk',
-      anchor_slack:  '@ldunkelberger',
+      anchor_github: '@chinangela',
+      anchor_slack:  '@achin',
       pm_github:     '@rusha19',
       pm_slack:      '@uramachandran'
     ),
