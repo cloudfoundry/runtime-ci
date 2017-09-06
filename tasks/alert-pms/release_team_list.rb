@@ -74,8 +74,8 @@ def release_teams
     ),
     ReleaseTeam.new(
       name: "grootfs",
-      anchor_github: '@spikymonkey',
-      anchor_slack:  '@gareth',
+      anchor_github: '@tscolari',
+      anchor_slack:  '@tscolari',
       pm_github:     '@glestaris',
       pm_slack:      '@glestaris'
     ),
