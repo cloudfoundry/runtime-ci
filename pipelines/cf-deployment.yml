@@ -2029,7 +2029,7 @@ jobs:
       - get: hermione-env-director-state
         passed: [ setup-infrastructure-upgrade ]
       - get: hermione-env-integration-configs
-      - get: windows-stemcell-bosh-release
+      - get: windows-google-stemcell
     - task: bosh-upload-stemcell-upgrade
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -2040,7 +2040,7 @@ jobs:
     - task: bosh-upload-windows-stemcell
       file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
-        stemcell: windows-stemcell-bosh-release
+        stemcell: windows-google-stemcell
         bbl-state: hermione-env-director-state
       params:
         STEMCELL_NAME: '*.tgz'
