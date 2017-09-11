@@ -24,7 +24,6 @@ do
     -keepGoing \
     -randomizeAllSpecs \
     -skipPackage=helpers \
-    -flakeAttempts=2 \
     -nodes="${NODES}" \
     "$i"
 done
