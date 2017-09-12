@@ -933,7 +933,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: hermione-env-turbulence-manifest
     - get: bosh-deployment
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
@@ -2000,6 +1999,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
       - get: hermione-env-vars-store
+      - get: hermione-env-turbulence-manifest
       - get: hermione-env-turbulence-vars
       - get: hermione-env-director-state
         passed: [ setup-infrastructure-upgrade ]
