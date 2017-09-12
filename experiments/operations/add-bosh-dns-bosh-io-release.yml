@@ -4,5 +4,5 @@
   value:
     name: bosh-dns
     url: https://bosh.io/d/github.com/cloudfoundry/dns-release?v=0.0.8
-    version: "0.8"
+    version: "0.0.8"
     sha1: f43c79eea8115915f507ba3dd2936cb1ec33fdf4
