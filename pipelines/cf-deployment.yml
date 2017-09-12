@@ -2019,6 +2019,13 @@ jobs:
         bbl-state: hermione-env-director-state
       params:
         STEMCELL_NAME: '*.tgz'
+    - task: bosh-update-runtime-config
+      file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        runtime-configs: hermione-env-vars-store
+      params:
+        RUNTIME_CONFIG_FILE: runtime-config.yml
     - task: deploy-turbulence-api-upgrade
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -2031,37 +2038,23 @@ jobs:
         MANIFEST_FILE: turbulence.yml
         SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
         VARS_STORE_FILE: turbulence-deployment-vars.yml
-        OPS_FILES: experiments/operations/add-turbulence-bosh-io-release.yml
+        OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml experiments/operations/add-bosh-dns-bosh-io-release.yml"
       ensure:
         put: hermione-env-turbulence-vars
         params:
           repository: updated-vars-store
           rebase: true
-    - task: bosh-update-runtime-config
-      file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
-      input_mapping:
-        bbl-state: hermione-env-director-state
-        runtime-configs: hermione-env-vars-store
-      params:
-        RUNTIME_CONFIG_FILE: runtime-config.yml
-    - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-      input_mapping:
-        base-ops-files: cf-deployment-develop
-        new-ops-files: runtime-ci
-      params:
-        NEW_OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
-        ops-files: collected-ops-files
+        ops-files: cf-deployment-develop
         vars-store: hermione-env-vars-store
         vars-files: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/windows-cell.yml operations/test/disable_windows_consul_agent_nameserver_overwriting.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml experiments/operations/add-bosh-dns-bosh-io-release.yml"
+        OPS_FILES: "operations/aws.yml operations/windows-cell.yml operations/test/disable_windows_consul_agent_nameserver_overwriting.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml"
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
