@@ -937,7 +937,7 @@ jobs:
     - get: hermione-env-turbulence-manifest
     - get: bosh-deployment
   - task: setup-infrastructure
-    file: runtime-ci/tasks/prototype/bbl-up/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
