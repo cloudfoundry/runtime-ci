@@ -18,8 +18,8 @@ groups:
   - upgrade-wats
   - complex-transition-rats
   - fresh-rats
-  - lite-http-rats
-  - upgrade-http-rats
+  - lite-rats
+  - upgrade-rats
   - ops-test
   - unit-test-ops-files
   - unit-test-transition-tools
@@ -59,7 +59,7 @@ groups:
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
-  - lite-http-rats
+  - lite-rats
   - lite-release-pool
   - lite-release-pool-manual
   - ops-test
@@ -98,7 +98,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-http-rats
+  - upgrade-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
   - upgrade-wats
@@ -152,7 +152,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-http-rats
+  - upgrade-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
   - upgrade-wats
@@ -171,7 +171,7 @@ groups:
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
-  - lite-http-rats
+  - lite-rats
   - lite-release-pool
   - lite-release-pool-manual
   - bless-manifest
@@ -1913,7 +1913,7 @@ jobs:
   public: true
   plan:
   - get: upgrade-pool
-    passed: [ upgrade-http-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
+    passed: [ upgrade-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
@@ -1932,7 +1932,7 @@ jobs:
   public: true
   plan:
   - get: lite-pool
-    passed: [ lite-cats, lite-http-rats ]
+    passed: [ lite-cats, lite-rats ]
     trigger: true
   - put: lite-pool
     params: {release: lite-pool}
@@ -2666,7 +2666,7 @@ jobs:
         integration-config: luna-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
 
-- name: lite-http-rats
+- name: lite-rats
   serial_groups: [ snitch-rats ]
   public: true
   build_logs_to_retain: 100
@@ -2699,10 +2699,8 @@ jobs:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
-      params:
-        PACKAGES: "http_routes"
 
-- name: upgrade-http-rats
+- name: upgrade-rats
   serial_groups: [ hermione-rats ]
   public: true
   build_logs_to_retain: 100
@@ -2738,7 +2736,6 @@ jobs:
         integration-config: hermione-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
-        PACKAGES: "http_routes"
         NODES: 2
 
 - name: fresh-delete-deployment
@@ -3063,8 +3060,8 @@ jobs:
     - fresh-cats
     - lite-cats
     - upgrade-cats
-    - lite-http-rats
-    - upgrade-http-rats
+    - lite-rats
+    - upgrade-rats
     - fresh-rats
     - upgrade-smoke-tests
     - ops-test
