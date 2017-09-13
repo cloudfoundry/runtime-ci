@@ -1734,7 +1734,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-api-for-transition.yml remove-cf-networking-for-transition.yml hold-static-ips.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-components-for-transition.yml remove-cf-networking-for-transition.yml hold-static-ips.yml"
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1745,7 +1745,7 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-api-for-transition.yml operations/remove-cf-networking-for-transition.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/scale-down-etcd-for-cluster-changes.yml operations/remove-routing-components-for-transition.yml operations/remove-cf-networking-for-transition.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
         FAIL_ON_DOWNTIME: true
       ensure:
