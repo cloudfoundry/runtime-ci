@@ -82,6 +82,7 @@ groups:
   - ship-it-minor
   - ship-it-patch
   - update-infrastructure-fresh
+  - update-infrastructure-upgrade
   - complex-acquire-pool
   - complex-release-pool-manual
   - complex-transition-deploy
@@ -126,6 +127,7 @@ groups:
   - setup-infrastructure-transition
   - setup-infrastructure-upgrade
   - update-infrastructure-fresh
+  - update-infrastructure-upgrade
   - destroy-infrastructure-complex
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
@@ -826,6 +828,42 @@ jobs:
     - put: fresh-pool
       params: {release: fresh-pool}
 
+- name: update-infrastructure-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: upgrade-pool
+        params: {claim: upgrade-pool}
+      - get: hermione-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+        BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+        BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+        LB_DOMAIN: hermione.cf-app.com
+        BBL_ENV_NAME: hermione-upgrade
+        OPS_FILES: "local-dns.yml"
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: hermione-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: upgrade-pool
+      params: {release: upgrade-pool}
+
 - name: setup-infrastructure-stable
   serial: true
   public: true
@@ -943,6 +981,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
       OPS_FILES: "local-dns.yml"
     input_mapping:
