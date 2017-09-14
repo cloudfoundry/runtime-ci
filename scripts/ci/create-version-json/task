@@ -4,9 +4,8 @@
 # make sure we didn't break anything, then add a new task to the pipeline to stick the bbl version in there.
 # NB: we probably need to figure out how to pass SHAs to this thing as well
 
-if [ -e version-json/version.json ]; then
-  cat version-json/version.json | jq '. + {"'$key'": "'$(cat version/version)'"}' > version-json/version-update.json
-  mv version-json/version-update.json version-json/version.json
+if [ -e input-version-json/version.json ]; then
+  cat input-version-json/version.json | jq '. + {"'$key'": "'$(cat version/version)'"}' > version-json/version.json
 else
   echo '{"'$key'": "'$(cat version/version)'"}' | jq . > version-json/version.json
 fi

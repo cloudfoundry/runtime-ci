@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: version
+- name: input-version-json
 
 outputs:
 - name: version-json
