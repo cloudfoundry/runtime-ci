@@ -801,7 +801,7 @@ jobs:
     do:
     - aggregate:
       - put: fresh-pool
-        params: {claim: fresh-pool}
+        params: {acquire: true}
       - get: runtime-ci
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
@@ -837,7 +837,7 @@ jobs:
     do:
     - aggregate:
       - put: upgrade-pool
-        params: {claim: upgrade-pool}
+        params: {acquire: true}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: bosh-deployment
