@@ -467,12 +467,12 @@ resources:
     repository: terraform
     access_token: {{release_integration_download_bot_access_token}}
 
-# - name: bbl-github-release
-#   type: github-release
-#   source:
-#     user: cloudfoundry
-#     repository: bosh-bootloader
-#     access_token: {{release_integration_download_bot_access_token}}
+- name: bbl-github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: bosh-bootloader
+    access_token: {{release_integration_download_bot_access_token}}
 
   # All the docker images
 - name: create-diego-iaas-settings-pipeline-image
@@ -966,22 +966,22 @@ jobs:
         build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
         push: true
 
-# - name: ensure-major-bbl-release
-#   public: true
-#   build_logs_to_retain: 100
-#   plan:
-#   - timeout: 4h
-#     do:
-#     - aggregate:
-#       - get: runtime-ci
-#       - get: bbl-github-release
-#         trigger: true
-#     - task: ensure-major-bbl-release
-#       file: runtime-ci/tasks/ensure-resource-major-version/task.yml
-#       input_mapping:
-#         release: bbl-github-release
-#       params:
-#         CURRENT_MAJOR_VERSION: 4
+- name: ensure-major-bbl-release
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: bbl-github-release
+        trigger: true
+    - task: ensure-major-bbl-release
+      file: runtime-ci/tasks/ensure-resource-major-version/task.yml
+      input_mapping:
+        release: bbl-github-release
+      params:
+        CURRENT_MAJOR_VERSION: 4
 
 - name: build-cf-deployment-concourse-tasks-docker-image
   public: true
@@ -1005,9 +1005,9 @@ jobs:
       - get: runtime-ci-create-version-json
       - get: terraform-github-release
         trigger: true
-      # - get: bbl-github-release
-      #   passed: [ ensure-major-bbl-release ]
-      #   trigger: true
+      - get: bbl-github-release
+        passed: [ ensure-major-bbl-release ]
+        trigger: true
     - put: create-version-json-pipeline-image
       params:
         build: runtime-ci-create-version-json/scripts/ci/create-version-json
@@ -1016,14 +1016,14 @@ jobs:
       file: runtime-ci/scripts/ci/create-version-json/task.yml
       input_mapping:
         version: terraform-github-release
-      # params:
-      #   tag: terraform_version
-    # - task: create-bbl-json
-      # file: runtime-ci/scripts/ci/create-version-json/task.yml
-      # input_mapping:
-      #   version: bbl-github-release
-      # params:
-      #   tag: bbl_version
+      params:
+        tag: terraform_version
+    - task: create-bbl-json
+      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      input_mapping:
+        version: bbl-github-release
+      params:
+        tag: bbl_version
     - put: cf-deployment-concourse-tasks-pipeline-image
       params:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
