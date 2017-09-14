@@ -800,7 +800,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: fresh-pool
+      - put: fresh-pool
         params: {claim: fresh-pool}
       - get: runtime-ci
       - get: luna-env-director-state
@@ -836,7 +836,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - get: upgrade-pool
+      - put: upgrade-pool
         params: {claim: upgrade-pool}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
