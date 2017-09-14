@@ -17,4 +17,4 @@ run:
   path: runtime-ci/scripts/ci/create-version-json/task
 
 params:
-  tag: version
+  key: version
