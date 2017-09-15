@@ -37,7 +37,8 @@ EOF
       -n \
       -d "${deployment_name}" \
       deploy example-manifests/nats.yml \
-      -o create-nats-dev-release.yml
+      -o create-nats-dev-release.yml \
+      --vars-store vars.yml
   popd
 }
 
