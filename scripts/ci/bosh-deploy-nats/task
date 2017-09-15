@@ -33,7 +33,7 @@ function bosh_deploy() {
     url: file://.
 EOF
 
-  interpolated_manifest=$(mktmp)
+  interpolated_manifest=$(mktemp)
 
   bosh \
     -n \
