@@ -5,7 +5,6 @@ groups:
   - verify-every-task-has-correct-docker-image
   - verify-every-task-has-docker-build
   - verify-every-task-is-used-in-a-pipeline
-  - verify-cats-retry-flag-removed
 
 resources:
 - name: runtime-ci
@@ -13,14 +12,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-- name: cats-concourse-task
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cats-concourse-task.git
-- name: periodically
-  type: time
-  source: {interval: 24h}
 
 jobs:
 - name: all-jobs-public
@@ -62,16 +53,3 @@ jobs:
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/scripts/ci/verify-every-task-is-used-in-a-pipeline/task.yml
-
-- name: verify-cats-retry-flag-removed
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: cats-concourse-task
-      trigger: true
-    - get: periodically
-      trigger: true
-    - get: runtime-ci
-  - task: verify-cats-retry-flag-removed
-    file: runtime-ci/tasks/verify-cats-retry-flag-removed/task.yml
