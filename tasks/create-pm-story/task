@@ -7,13 +7,14 @@ create_tracker_request_body() {
   "story_type": "${TRACKER_STORY_TYPE}",
   "current_state": "${TRACKER_STORY_STATE}",
   "estimate": ${TRACKER_STORY_ESTIMATE},
-  "labels": ["needs-pm"]
-}
+  "labels": ["needs-pm"],
+  "description": "$1"
 EOF
 }
 
 set +x
-my_body=$(create_tracker_request_body)
+description_text=$(cat $DESCRIPTION_FILE)
+my_body=$(create_tracker_request_body $description_text)
 
 curl -f -X POST -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
   -H "Content-Type: application/json" \
