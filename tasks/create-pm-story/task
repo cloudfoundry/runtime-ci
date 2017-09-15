@@ -8,17 +8,15 @@ create_tracker_request_body() {
   "current_state": "${TRACKER_STORY_STATE}",
   "estimate": ${TRACKER_STORY_ESTIMATE},
   "labels": ["needs-pm"],
-  "description": "$1"
+  "description": "$(jq -r 'keys[] as $k | "\($k): \(.[$k] | .)"' input-description/$DESCRIPTION_FILE)"
 }
 EOF
 }
 
 set +x
-# piping to xargs turns what might be a multiline file into a single line of text
-description_text="$(cat input-description/$DESCRIPTION_FILE)"
-my_body=$(create_tracker_request_body $description_text)
 
-curl -f -X POST -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
+curl -f \
+  -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "${my_body}" \
+  -d "$(create_tracker_request_body)" \
   "https://www.pivotaltracker.com/services/v5/projects/${TRACKER_PROJECT_ID}/stories"
