@@ -9,6 +9,7 @@ create_tracker_request_body() {
   "estimate": ${TRACKER_STORY_ESTIMATE},
   "labels": ["needs-pm"],
   "description": "$1"
+}
 EOF
 }
 
