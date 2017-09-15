@@ -47,6 +47,7 @@ EOF
     -n \
     -d "${deployment_name}" \
     deploy $interpolated_manifest \
+    --vars-store vars.yml \
     -o create-nats-dev-release.yml
 
   popd
