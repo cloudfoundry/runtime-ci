@@ -8,6 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: input-description
 
 run:
   path: runtime-ci/tasks/create-pm-story/task
