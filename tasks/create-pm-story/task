@@ -14,7 +14,7 @@ EOF
 
 set +x
 # piping to xargs turns what might be a multiline file into a single line of text
-description_text=$(cat input-description/$DESCRIPTION_FILE | xargs)
+description_text="$(cat input-description/$DESCRIPTION_FILE)"
 my_body=$(create_tracker_request_body $description_text)
 
 curl -f -X POST -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
