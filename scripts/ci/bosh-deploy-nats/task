@@ -35,10 +35,18 @@ EOF
 
     bosh \
       -n \
+      interpolate \
+      --vars-store vars.yml \
+      --var-errs \
+      example-manifests/nats.yml > /dev/null
+
+    bosh \
+      -n \
       -d "${deployment_name}" \
       deploy example-manifests/nats.yml \
       -o create-nats-dev-release.yml \
       --vars-store vars.yml
+
   popd
 }
 
