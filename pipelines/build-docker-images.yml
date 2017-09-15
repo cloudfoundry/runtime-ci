@@ -1020,7 +1020,7 @@ jobs:
     - task: create-pm-story
       file: runtime-ci/tasks/create-pm-story/task.yml
       input_mapping:
-        input_description: version-json
+        input-description: version-json
       params:
         TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
         TRACKER_STORY_STATE: delivered
