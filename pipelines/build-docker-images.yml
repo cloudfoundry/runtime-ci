@@ -1025,7 +1025,7 @@ jobs:
         TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
         TRACKER_STORY_STATE: delivered
         TRACKER_API_TOKEN: {{cf_mega_api_token}}
-        DESCRIPTION_FILE: version-json/version.json
+        DESCRIPTION_FILE: version.json
 
 - name: build-bosh-deploy-docker-image
   public: true

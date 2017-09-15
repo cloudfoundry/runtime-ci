@@ -13,7 +13,7 @@ EOF
 }
 
 set +x
-description_text=$(cat $DESCRIPTION_FILE)
+description_text=$(cat input-description/$DESCRIPTION_FILE)
 my_body=$(create_tracker_request_body $description_text)
 
 curl -f -X POST -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
