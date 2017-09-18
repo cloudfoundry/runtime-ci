@@ -316,6 +316,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cats-concourse-task.git
 
+- name: deliver-tracker-story
+  type: tracker
+  source:
+    token: {{cf_mega_api_token}}
+    project_id: 1382120
+    tracker_url: https://www.pivotaltracker.com
+
 jobs:
 - name: unit-tests
   public: true
@@ -1658,6 +1665,10 @@ jobs:
           params:
             repository: updated-diego-cf-compatibility
             rebase: true
+      - put: deliver-tracker-story
+        params:
+          repos:
+          - cf-release
 
 - name: a1-runtime-smokes
   public: true
