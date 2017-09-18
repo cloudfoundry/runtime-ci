@@ -1077,6 +1077,7 @@ jobs:
           submodules: none
       - get: runtime-ci
       - get: aws-stemcell
+        trigger: true
       - get: cf-a1-manifest
         trigger: true
         passed: [ generate-aws-manifests ]
@@ -1417,7 +1418,7 @@ jobs:
         tarball: false
     - get: cflinuxfs2-release-tarball
       tags: [vsphere]
-      tragger: true
+      trigger: true
       params:
         tarball: false
   - task: generate-release-manifest-cf
