@@ -7,8 +7,7 @@ create_tracker_request_body() {
   "story_type": "${TRACKER_STORY_TYPE}",
   "current_state": "${TRACKER_STORY_STATE}",
   "estimate": ${TRACKER_STORY_ESTIMATE},
-  "labels": ["needs-pm"],
-  "description": "$(jq -r 'keys[] as $k | "\($k): \(.[$k] | .)"' input-description/$DESCRIPTION_FILE)"
+  "labels": ["needs-pm"]
 }
 EOF
 }
