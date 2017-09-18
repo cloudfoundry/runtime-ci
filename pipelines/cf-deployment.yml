@@ -631,6 +631,13 @@ resources:
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-deployment-version
 
+- name: deliver-tracker-story
+  type: tracker
+  source:
+    token: {{cf_mega_api_token}}
+    project_id: 1382120
+    tracker_url: https://www.pivotaltracker.com
+
 jobs:
 - name: branch-freshness
   public: true
@@ -3107,6 +3114,10 @@ jobs:
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
+  - put: deliver-tracker-story
+    params:
+      repos:
+        - cf-deployment-develop
 
 - name: run-bosh-cleanup-upgrade
   serial: true
