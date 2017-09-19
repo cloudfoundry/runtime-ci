@@ -1585,18 +1585,13 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed:
-        - bosh-lite-acceptance-tests
         - aws-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
           submodules: none
       - get: bosh-lite
-        passed:
-        - bosh-lite-acceptance-tests
       - get: bosh-lite-stemcell
-        passed:
-        - bosh-lite-acceptance-tests
         trigger: true
       - get: vsphere-stemcell
         passed:
@@ -1609,7 +1604,6 @@ jobs:
       - get: diego-release-tarball
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
@@ -1617,7 +1611,6 @@ jobs:
       - get: garden-runc-release-tarball
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
@@ -1626,7 +1619,6 @@ jobs:
         trigger: true
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         params:
           tarball: false
@@ -1647,13 +1639,11 @@ jobs:
       - get: aws-director-version
         passed: [ aws-acceptance-tests ]
       - get: bosh-lite-director-version
-        passed: [ bosh-lite-acceptance-tests ]
       - get: vsphere-build-url
         passed: [ vsphere-acceptance-tests ]
       - get: aws-build-url
         passed: [ aws-acceptance-tests ]
       - get: bosh-lite-build-url
-        passed: [ bosh-lite-acceptance-tests ]
     - aggregate:
       - put: cf-release-release-candidate
         params:
