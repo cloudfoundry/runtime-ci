@@ -128,12 +128,6 @@ resources:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-release.git
 
-- name: cf-release-all-branches
-  type: git
-  source:
-    branch: develop
-    uri: https://github.com/cloudfoundry/cf-release.git
-
 - name: cf-release-release-candidate
   type: git
   source:
@@ -363,7 +357,7 @@ jobs:
     do:
     - aggregate:
       - get: repo
-        resource: cf-release-all-branches
+        resource: cf-release-develop
         trigger: true
         params:
           submodules: none
