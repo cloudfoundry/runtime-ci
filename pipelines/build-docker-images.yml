@@ -1886,6 +1886,7 @@ jobs:
       file: runtime-ci/scripts/ci/create-version-json/task.yml
       input_mapping:
         version: cf-cli
+        input-version-json: cf-cli
     - put: cats-concourse-task-pipeline-image
       params:
         build: cats-concourse-task
