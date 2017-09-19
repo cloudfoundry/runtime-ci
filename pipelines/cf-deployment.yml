@@ -635,7 +635,7 @@ resources:
   type: tracker
   source:
     token: {{cf_mega_api_token}}
-    project_id: 1382120
+    project_id: "1382120"
     tracker_url: https://www.pivotaltracker.com
 
 jobs:
