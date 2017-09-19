@@ -151,6 +151,7 @@ groups:
   - ensure-transition-env-is-clean
 - name: up
   jobs:
+  - unit-test-ops-files
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
@@ -161,6 +162,7 @@ groups:
   - bless-manifest
 - name: fr
   jobs:
+  - unit-test-ops-files
   - fresh-acquire-pool
   - fresh-cats
   - fresh-delete-deployment
@@ -170,6 +172,7 @@ groups:
   - bless-manifest
 - name: li
   jobs:
+  - unit-test-ops-files
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
