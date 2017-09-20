@@ -2217,6 +2217,13 @@ jobs:
       input_mapping:
         bbl-state: snitch-env-director-state
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    - task: bosh-update-cloud-config
+      file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+      input_mapping:
+        bbl-state: snitch-env-director-state
+        cloud-config: cf-deployment-develop
+      params:
+        CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
