@@ -1916,10 +1916,10 @@ jobs:
     input_mapping:
       bbl-state: luna-env-director-state
       runtime-configs: cf-deployment-develop
-      vars-store: luna-env-vars-store
+      vars-files: luna-env-vars-store
     params:
       RUNTIME_CONFIG_FILE: runtime-configs/enable-component-syslog.yml
-      VARS_FILES: vars-store/syslog-vars.yml
+      VARS_FILES: syslog-vars.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
