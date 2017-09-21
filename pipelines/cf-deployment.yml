@@ -1791,7 +1791,6 @@ jobs:
         integration-config: dumbledore-env-stubs-and-vars
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
-        NODES: 1
         PACKAGES: "http_routes tcp_routing"
 
 - name: complex-transition-delete-deployment
@@ -2876,8 +2875,6 @@ jobs:
         routing-release: github-routing-release-master
         integration-config: hermione-env-integration-configs
       file: runtime-ci/scripts/ci/run-rats/task.yml
-      params:
-        NODES: 2
 
 - name: fresh-delete-deployment
   serial: true
