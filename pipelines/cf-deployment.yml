@@ -81,8 +81,10 @@ groups:
   - setup-infrastructure-stable
   - ship-it-minor
   - ship-it-patch
+  - update-infrastructure-complex
   - update-infrastructure-fresh
   - update-infrastructure-upgrade
+  - update-infrastructure-transition
   - complex-acquire-pool
   - complex-release-pool-manual
   - complex-transition-deploy
@@ -126,8 +128,10 @@ groups:
   - setup-infrastructure-stable
   - setup-infrastructure-transition
   - setup-infrastructure-upgrade
+  - update-infrastructure-complex
   - update-infrastructure-fresh
   - update-infrastructure-upgrade
+  - update-infrastructure-transition
   - destroy-infrastructure-complex
   - destroy-infrastructure-fresh
   - destroy-infrastructure-lite
@@ -802,6 +806,41 @@ jobs:
   - put: fresh-pool
     params: {release: fresh-pool}
 
+- name: update-infrastructure-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: complex-pool
+        params: {acquire: true}
+      - get: dumbledore-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+        BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+        BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+        LB_DOMAIN: dumbledore.cf-app.com
+        BBL_ENV_NAME: dumbledore-upgrade
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: dumbledore-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: complex-pool
+      params: {release: complex-pool}
+
 - name: update-infrastructure-fresh
   serial: true
   public: true
@@ -873,6 +912,41 @@ jobs:
           rebase: true
     - put: upgrade-pool
       params: {release: upgrade-pool}
+
+- name: update-infrastructure-transition
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: transition-pool
+        params: {acquire: true}
+      - get: minerva-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
+        BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
+        BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+        LB_DOMAIN: minerva.cf-app.com
+        BBL_ENV_NAME: minerva-upgrade
+      input_mapping:
+        bbl-state: minerva-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: minerva-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: transition-pool
+      params: {release: transition-pool}
 
 - name: setup-infrastructure-stable
   serial: true
