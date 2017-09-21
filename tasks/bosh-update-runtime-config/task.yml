@@ -10,6 +10,7 @@ inputs:
 - name: bbl-state
 - name: runtime-configs
 - name: runtime-ci
+- name: vars-files
 
 run:
   path: runtime-ci/tasks/bosh-update-runtime-config/task
@@ -17,3 +18,4 @@ run:
 params:
   BBL_STATE_DIR:
   RUNTIME_CONFIG_FILE:
+  VARS_FILES:

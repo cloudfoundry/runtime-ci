@@ -5,9 +5,18 @@
 source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function bosh_update_runtime_config {
+  local arguments=""
+
+  for vf in ${VARS_FILES}
+  do
+    arguments="${arguments} -l vars-files/${vf}"
+  done
+
   bosh \
     -n \
-    update-runtime-config runtime-configs/"${RUNTIME_CONFIG_FILE}"
+    update-runtime-config \
+    runtime-configs/"${RUNTIME_CONFIG_FILE}" \
+    ${arguments}
 }
 
 function main() {

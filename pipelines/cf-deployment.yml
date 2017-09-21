@@ -431,9 +431,10 @@ resources:
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
-    - deployment-vars.yml
     - deployment-name.yml
+    - deployment-vars.yml
     - network-name.yml
+    - syslog-vars.yml
 - name: minerva-env-director-state
   type: git
   source:
@@ -1910,6 +1911,15 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
+  - task: bosh-update-runtime-config
+    file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
+    input_mapping:
+      bbl-state: luna-env-director-state
+      runtime-configs: cf-deployment-develop
+      vars-store: luna-env-vars-store
+    params:
+      RUNTIME_CONFIG_FILE: runtime-configs/enable-component-syslog.yml
+      VARS_FILES: vars-store/syslog-vars.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2147,6 +2157,7 @@ jobs:
       input_mapping:
         bbl-state: hermione-env-director-state
         runtime-configs: hermione-env-vars-store
+        vars-files: hermione-env-vars-store
       params:
         RUNTIME_CONFIG_FILE: runtime-config.yml
     - task: deploy-turbulence-api-upgrade
