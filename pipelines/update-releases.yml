@@ -17,7 +17,7 @@ groups:
   - update-credhub
   - update-java-buildpack
   - update-loggregator
-  - update-mysql
+  - update-cf-mysql
   - update-nats
   - update-nodejs-buildpack
   - update-php-buildpack
@@ -1263,8 +1263,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-mysql
-  serial_groups: [update-mysql]
+- name: update-cf-mysql
+  serial_groups: [update-cf-mysql]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1281,7 +1281,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-  - task: update-release-mysql
+  - task: update-release-cf-mysql
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
       release: cf-mysql-release
@@ -2006,7 +2006,7 @@ jobs:
   - update-go-buildpack
   - update-java-buildpack
   - update-loggregator
-  - update-mysql
+  - update-cf-mysql
   - update-nats
   - update-nodejs-buildpack
   - update-php-buildpack
@@ -2225,13 +2225,13 @@ jobs:
         exported-release: exported-release-loggregator
       params:
         RELEASE_NAME: loggregator
-    - task: compile-release-mysql
+    - task: compile-release-cf-mysql
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
         bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
-        exported-release: exported-release-mysql
+        exported-release: exported-release-cf-mysql
       params:
         RELEASE_NAME: cf-mysql
     - task: compile-release-nats
@@ -2320,7 +2320,7 @@ jobs:
     input_mapping:
       ops-files: cf-deployment-develop
       capi-release-tarball: exported-release-capi
-      cf-mysql-release-tarball: exported-release-mysql
+      cf-mysql-release-tarball: exported-release-cf-mysql
       nats-release-tarball: exported-release-nats
       routing-release-tarball: exported-release-routing
       consul-release-tarball: exported-release-consul
@@ -2354,7 +2354,7 @@ jobs:
         predefined_acl: publicRead
     - put: cf-mysql-release-gcs
       params:
-        file: exported-release-mysql/*.tgz
+        file: exported-release-cf-mysql/*.tgz
         predefined_acl: publicRead
     - put: cf-networking-release-gcs
       params:
