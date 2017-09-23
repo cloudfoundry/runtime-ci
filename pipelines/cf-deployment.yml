@@ -1228,7 +1228,8 @@ jobs:
       inputs:
       - name: cf-deployment-develop
       run:
-        path: cf-deployment-develop/scripts/test
+        dir: cf-deployment-develop
+        path: scripts/test
 
 - name: unit-test-transition-tools
   serial: false
