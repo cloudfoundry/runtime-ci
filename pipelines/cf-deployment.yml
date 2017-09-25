@@ -1713,7 +1713,7 @@ jobs:
         bbl-state: snitch-env-director-state
         cloud-config: cf-deployment-develop
       params:
-        CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
+        CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
