@@ -6,8 +6,8 @@ source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function download_legacy_manifests() {
   pushd vars-store
-    bosh download-manifest -d cf > cf.yml
-    bosh download-manifest -d cf-diego > diego.yml
+    bosh manifest -d cf > cf.yml
+    bosh manifest -d cf-diego > diego.yml
   popd
 }
 
