@@ -1,0 +1,1091 @@
+---
+groups:
+- name: complex
+  jobs:
+  - add-claimed-lock-complex
+  - setup-infrastructure-complex
+  - update-infrastructure-complex
+  - destroy-infrastructure-complex
+  - remove-claimed-lock-complex
+
+- name: fresh
+  jobs:
+  - add-claimed-lock-fresh
+  - setup-infrastructure-fresh
+  - update-infrastructure-fresh
+  - destroy-infrastructure-fresh
+  - remove-claimed-lock-fresh
+
+- name: lite
+  jobs:
+  - add-claimed-lock-lite
+  - setup-infrastructure-lite
+  - destroy-infrastructure-lite
+  - remove-claimed-lock-lite
+  - run-bosh-cleanup-lite
+  - run-bosh-cleanup-ops
+
+- name: ops
+  jobs:
+  - add-claimed-lock-ops
+  - setup-infrastructure-ops
+  - destroy-infrastructure-ops
+  - remove-claimed-lock-ops
+  - run-bosh-cleanup-ops
+
+- name: stable
+  jobs:
+  - add-claimed-lock-stable
+  - setup-infrastructure-stable
+  - destroy-infrastructure-stable
+  - remove-claimed-lock-stable
+  - run-bosh-cleanup-stable
+
+- name: transition
+  jobs:
+  - add-claimed-lock-transition
+  - setup-infrastructure-transition
+  - update-infrastructure-transition
+  - destroy-infrastructure-transition
+  - remove-claimed-lock-transition
+
+- name: upgrade
+  jobs:
+  - add-claimed-lock-upgrade
+  - setup-infrastructure-upgrade
+  - update-infrastructure-upgrade
+  - destroy-infrastructure-upgrade
+  - run-bosh-cleanup-upgrade
+
+resources:
+# Pools
+- name: complex-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/complex
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: fresh-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/fresh
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: lite-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/lite
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: ops-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/ops
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: stable-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/stable
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: transition-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/transition
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: upgrade-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/upgrade
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+# Code repos
+- name: bosh-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-deployment.git
+
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+- name: cf-deployment-develop
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-deployment.git
+
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
+# Env repos
+- name: bellatrix-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/bellatrix-env.git
+    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+
+- name: dumbledore-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+
+- name: hermione-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hermione-env.git
+    private_key: {{hermione_env_private_key}}
+    paths:
+    - bbl-state.json
+
+- name: luna-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/luna-env.git
+    private_key: {{luna_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+
+- name: minerva-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+
+- name: snitch-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/snitch-env.git
+    private_key: {{snitch_env_private_key}}
+    paths:
+    - google_account_creds.json
+    - bbl-state.json
+
+- name: trelawney-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/trelawney-env.git
+    private_key: {{trelawney_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state.json
+    - google_account_creds.json
+
+# Time
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 168h
+
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
+
+
+jobs:
+# Add claimed locks
+- name: add-claimed-lock-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: complex-pool
+  - put: complex-pool
+    params: {add_claimed: complex-pool}
+
+- name: add-claimed-lock-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: luna
+    output_mapping:
+      pool-resource: fresh-pool
+  - put: fresh-pool
+    params: {add_claimed: fresh-pool}
+
+- name: add-claimed-lock-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {add_claimed: lite-pool}
+
+- name: add-claimed-lock-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: trelawney
+    output_mapping:
+      pool-resource: ops-pool
+  - put: ops-pool
+    params: {add_claimed: ops-pool}
+
+- name: add-claimed-lock-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {add_claimed: stable-pool}
+
+- name: add-claimed-lock-transition
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: minerva
+    output_mapping:
+      pool-resource: transition-pool
+  - put: transition-pool
+    params: {add_claimed: transition-pool}
+
+- name: add-claimed-lock-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: hermione
+    output_mapping:
+      pool-resource: upgrade-pool
+  - put: upgrade-pool
+    params: {add_claimed: upgrade-pool}
+
+# Setup infrastructure
+- name: setup-infrastructure-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: complex-pool
+    trigger: true
+    passed: [ add-claimed-lock-complex ]
+  - aggregate:
+    - get: runtime-ci
+    - get: dumbledore-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: runtime-ci/tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+      BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+      LB_DOMAIN: dumbledore.cf-app.com
+      BBL_ENV_NAME: dumbledore-upgrade
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+      ops-files: dumbledore-env-director-state
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: complex-pool
+    params: {release: complex-pool}
+
+- name: setup-infrastructure-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: fresh-pool
+    trigger: true
+    passed: [ add-claimed-lock-fresh ]
+  - aggregate:
+    - get: runtime-ci
+    - get: luna-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{luna_cf_ssl_cert}}
+      BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+      LB_DOMAIN: luna.cf-app.com
+      BBL_ENV_NAME: luna-fresh
+    input_mapping:
+      bbl-state: luna-env-director-state
+      ops-files: luna-env-director-state
+    ensure:
+      put: luna-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: fresh-pool
+    params: {release: fresh-pool}
+
+- name: setup-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: lite-pool
+    trigger: true
+    passed: [ add-claimed-lock-lite ]
+  - aggregate:
+    - get: runtime-ci
+    - get: bosh-deployment
+    - get: snitch-env-director-state
+    - get: cf-deployment-develop
+  - task: setup-infrastructure
+    file: runtime-ci/tasks/prototype/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      LB_DOMAIN: snitch.cf-app.com
+      BBL_ENV_NAME: snitch-lite
+      OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml jumpbox-user.yml gcp/bosh-lite-vm-type.yml"
+      IS_BOSH_LITE: true
+    input_mapping:
+      bbl-state: snitch-env-director-state
+      ops-files: bosh-deployment
+    ensure:
+      put: snitch-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: bosh-update-cloud-config
+    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+    input_mapping:
+      bbl-state: snitch-env-director-state
+      cloud-config: cf-deployment-develop
+    params:
+      CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
+  - put: lite-pool
+    params: {release: lite-pool}
+
+- name: setup-infrastructure-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: ops-pool
+    trigger: true
+    passed: [ add-claimed-lock-ops ]
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: runtime-ci
+    - get: trelawney-env-director-state
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{trelawney_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
+      BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
+      LB_DOMAIN: trelawney.cf-app.com
+      BBL_ENV_NAME: trelawney-fresh
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      ops-files: trelawney-env-director-state
+    ensure:
+      put: trelawney-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: ops-pool
+    params: {release: ops-pool}
+
+- name: setup-infrastructure-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: stable-pool
+    trigger: true
+    passed: [ add-claimed-lock-stable ]
+  - aggregate:
+    - get: runtime-ci
+    - get: bellatrix-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_PROJECT_ID: {{bellatrix_gcp_project}}
+      BBL_GCP_REGION: us-central1
+      BBL_GCP_ZONE: us-central1-a
+      BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
+      BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+      LB_DOMAIN: bellatrix.cf-app.com
+      BBL_ENV_NAME: bellatrix-stable
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+      ops-files: bellatrix-env-director-state
+    ensure:
+      put: bellatrix-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: stable-pool
+    params: {release: stable-pool}
+
+- name: setup-infrastructure-transition
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: transition-pool
+    trigger: true
+    passed: [ add-claimed-lock-transition ]
+  - aggregate:
+    - get: runtime-ci
+    - get: minerva-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
+      BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
+      BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+      BBL_ENV_NAME: minerva-upgrade
+    input_mapping:
+      bbl-state: minerva-env-director-state
+      ops-files: minerva-env-director-state
+    ensure:
+      put: minerva-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: transition-pool
+    params: {release: transition-pool}
+
+- name: setup-infrastructure-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: upgrade-pool
+    trigger: true
+    passed: [ add-claimed-lock-upgrade ]
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: hermione-env-director-state
+    - get: runtime-ci
+    - get: bosh-deployment
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      LB_DOMAIN: hermione.cf-app.com
+      BBL_ENV_NAME: hermione-upgrade
+      OPS_FILES: "local-dns.yml"
+    input_mapping:
+      bbl-state: hermione-env-director-state
+      ops-files: bosh-deployment
+    ensure:
+      put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: bind-elb-to-r53
+    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    input_mapping:
+      env-repo: updated-bbl-state
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      DOMAIN: hermione.cf-app.com
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
+
+# Update infrastructure
+- name: update-infrastructure-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: complex-pool
+        params: {acquire: true}
+      - get: dumbledore-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+        BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+        BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+        LB_DOMAIN: dumbledore.cf-app.com
+        BBL_ENV_NAME: dumbledore-upgrade
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: dumbledore-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: complex-pool
+      params: {release: complex-pool}
+
+- name: update-infrastructure-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: fresh-pool
+        params: {acquire: true}
+      - get: runtime-ci
+      - get: luna-env-director-state
+      - get: cf-deployment-concourse-tasks
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: gcp
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
+        BBL_GCP_REGION: us-central1
+        BBL_GCP_ZONE: us-central1-a
+        BBL_LB_CERT: {{luna_cf_ssl_cert}}
+        BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+        LB_DOMAIN: luna.cf-app.com
+        BBL_ENV_NAME: luna-fresh
+      input_mapping:
+        bbl-state: luna-env-director-state
+        ops-files: luna-env-director-state
+      ensure:
+        put: luna-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: fresh-pool
+      params: {release: fresh-pool}
+
+- name: update-infrastructure-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: upgrade-pool
+        params: {acquire: true}
+      - get: hermione-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+        BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
+        BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+        LB_DOMAIN: hermione.cf-app.com
+        BBL_ENV_NAME: hermione-upgrade
+        OPS_FILES: "local-dns.yml"
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: hermione-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: upgrade-pool
+      params: {release: upgrade-pool}
+
+- name: update-infrastructure-transition
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: transition-pool
+        params: {acquire: true}
+      - get: minerva-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-deployment
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
+        BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
+        BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+        LB_DOMAIN: minerva.cf-app.com
+        BBL_ENV_NAME: minerva-upgrade
+      input_mapping:
+        bbl-state: minerva-env-director-state
+        ops-files: bosh-deployment
+      ensure:
+        put: minerva-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: transition-pool
+      params: {release: transition-pool}
+
+# Destroy infrastructure
+- name: destroy-infrastructure-complex
+  serial_groups: [dumbledore]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: complex-pool
+      params: {claim: dumbledore}
+    - get: dumbledore-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - try:
+      do:
+      - task: guarantee-no-existing-cf-deployment
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: dumbledore-env-director-state
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: fresh-pool
+      params: {claim: luna}
+    - get: luna-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: luna-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: luna-env-director-state
+    ensure:
+      put: luna-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: lite-pool
+      params: {claim: snitch}
+    - get: snitch-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: snitch-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: snitch-env-director-state
+    ensure:
+      put: snitch-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: ops-pool
+      params: {claim: trelawney}
+    - get: trelawney-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+    ensure:
+      put: trelawney-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: stable-pool
+      params: {claim: bellatrix}
+    - get: bellatrix-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    ensure:
+      put: bellatrix-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-transition
+  serial_groups: [minerva]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: transition-pool
+      params: {claim: minerva}
+    - get: minerva-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: minerva-env-director-state
+    ensure:
+      put: minerva-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-upgrade
+  serial_groups: [hermione]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: hermione-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    input_mapping:
+      bbl-state: hermione-env-director-state
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+  - task: unbind-elb-from-r53
+    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
+    input_mapping:
+      env-repo: hermione-env-director-state
+    params:
+      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      DOMAIN: hermione.cf-app.com
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: hermione-env-director-state
+    ensure:
+      put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+# Remove claimed locks
+- name: remove-claimed-lock-complex
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: complex-pool
+    passed: [ destroy-infrastructure-complex ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: complex-pool
+  - put: complex-pool
+    params: {remove: complex-pool}
+
+- name: remove-claimed-lock-fresh
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: fresh-pool
+    passed: [ destroy-infrastructure-fresh ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: luna
+    output_mapping:
+      pool-resource: fresh-pool
+  - put: fresh-pool
+    params: {remove: fresh-pool}
+
+- name: remove-claimed-lock-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: lite-pool
+    passed: [ destroy-infrastructure-lite ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {remove: lite-pool}
+
+- name: remove-claimed-lock-ops
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: ops-pool
+    passed: [ destroy-infrastructure-ops ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: trelawney
+    output_mapping:
+      pool-resource: ops-pool
+  - put: ops-pool
+    params: {remove: ops-pool}
+
+- name: remove-claimed-lock-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: stable-pool
+    passed: [ destroy-infrastructure-stable ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {remove: stable-pool}
+
+- name: remove-claimed-lock-transition
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: transition-pool
+    passed: [ destroy-infrastructure-transition ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: minerva
+    output_mapping:
+      pool-resource: transition-pool
+  - put: transition-pool
+    params: {remove: transition-pool}
+
+# BOSH cleanup
+- name: run-bosh-cleanup-lite
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: snitch-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: snitch-env-director-state
+
+- name: run-bosh-cleanup-ops
+  build_logs_to_retain: 100
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: trelawney-env-director-state
+      passed: [ setup-infrastructure-ops ]
+    - get: weekly
+      trigger: true
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+
+- name: run-bosh-cleanup-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: bellatrix-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: bellatrix-env-director-state
+
+- name: run-bosh-cleanup-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: hermione-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
