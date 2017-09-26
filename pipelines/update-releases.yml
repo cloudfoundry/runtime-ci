@@ -1103,6 +1103,8 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
     - get: grootfs-release
       trigger: true
       params:
@@ -1122,6 +1124,24 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-grootfs.yml
       UPDATED_OPS_FILE_PATH: use-grootfs.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -groot-fs
+      OPS_FILES: "deploy-bosh-backup-restore.yml base-ops-files/use-grootfs.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
@@ -1539,6 +1559,8 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
     - get: postgres-release
       trigger: true
       params:
@@ -1558,6 +1580,24 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
       UPDATED_OPS_FILE_PATH: use-postgres.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -postgres
+      OPS_FILES: "deploy-bosh-backup-restore.yml base-ops-files/use-postgres.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
