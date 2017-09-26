@@ -140,7 +140,8 @@ jobs:
           inputs:
           - name: cf-deployment-all-branches
           run:
-            path: cf-deployment-all-branches/scripts/test
+            dir: cf-deployment-all-branches
+            path: scripts/test
         on_failure:
           put: cf-deployment-all-branches
           params:
