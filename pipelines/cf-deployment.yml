@@ -20,7 +20,6 @@ groups:
   - fresh-rats
   - lite-rats
   - upgrade-rats
-  - ops-acquire-pool
   - ops-test
   - unit-test-ops-files
   - unit-test-transition-tools
@@ -79,6 +78,11 @@ groups:
   - stable-periodic-cats
   - stable-release-pool-manual
   - stable-update-cats-cfd-branch
+- name: ops
+  jobs:
+  - unit-test-ops-files
+  - ops-acquire-pool
+  - ops-test
 - name: up
   jobs:
   - unit-test-ops-files
