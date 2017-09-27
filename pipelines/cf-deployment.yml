@@ -1385,7 +1385,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - on_failure:
+  - ensure:
       put: ops-pool
       params: {release: ops-pool}
     do:
