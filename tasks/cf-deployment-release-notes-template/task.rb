@@ -7,7 +7,7 @@ require_relative './renderer.rb'
 
 updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
 
-opsfile_list = Dir.glob(File.join("cf-deployment-release-candidate", "operations", "*"))
+opsfile_list = Dir.glob(File.join("cf-deployment-release-candidate", "operations", "*.yml"))
 opsfile_list.select! { |opsfile| File.file?(opsfile) }
 opsfile_list.map! { |opsfile| opsfile.gsub!('cf-deployment-release-candidate/', '') }
 
