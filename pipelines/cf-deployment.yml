@@ -20,6 +20,7 @@ groups:
   - fresh-rats
   - lite-rats
   - upgrade-rats
+  - ops-acquire-pool
   - ops-test
   - unit-test-ops-files
   - unit-test-transition-tools
