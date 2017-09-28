@@ -10,7 +10,6 @@ groups:
   - update-consul
   - update-diego
   - update-dotnet-core-buildpack
-  - update-etcd
   - update-garden-runc
   - update-go-buildpack
   - update-grootfs
@@ -123,10 +122,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/dotnet-core-buildpack-release
-- name: etcd-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/etcd-release
 - name: garden-runc-release
   type: bosh-io-release
   source:
@@ -254,12 +249,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
     regexp: dotnet-core-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-- name: etcd-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: etcd-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: garden-runc-release-gcs
   type: gcs-resource
   source:
@@ -874,77 +863,6 @@ jobs:
     params:
       RELEASE_NAME: dotnet-core-buildpack
   - put: dotnet-core-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-etcd
-  serial_groups: [update-etcd]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: etcd-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-etcd
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: etcd-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: etcd
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -etcd
-      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: etcd
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: etcd-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: etcd
-  - put: etcd-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -2045,7 +1963,6 @@ jobs:
   - update-consul
   - update-diego
   - update-dotnet-core-buildpack
-  - update-etcd
   - update-garden-runc
   - update-go-buildpack
   - update-java-buildpack
@@ -2092,9 +2009,6 @@ jobs:
       params:
         tarball: false
     - get: dotnet-core-buildpack-release
-      params:
-        tarball: false
-    - get: etcd-release
       params:
         tarball: false
     - get: garden-runc-release
@@ -2224,15 +2138,6 @@ jobs:
         exported-release: exported-release-dotnet-core-buildpack
       params:
         RELEASE_NAME: dotnet-core-buildpack
-    - task: compile-release-etcd
-      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        manifest: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-etcd
-      params:
-        RELEASE_NAME: etcd
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2368,7 +2273,6 @@ jobs:
       nats-release-tarball: exported-release-nats
       routing-release-tarball: exported-release-routing
       consul-release-tarball: exported-release-consul
-      etcd-release-tarball: exported-release-etcd
       diego-release-tarball: exported-release-diego
       loggregator-release-tarball: exported-release-loggregator
       uaa-release-tarball: exported-release-uaa
@@ -2423,10 +2327,6 @@ jobs:
     - put: dotnet-core-buildpack-release-gcs
       params:
         file: exported-release-dotnet-core-buildpack/*.tgz
-        predefined_acl: publicRead
-    - put: etcd-release-gcs
-      params:
-        file: exported-release-etcd/*.tgz
         predefined_acl: publicRead
     - put: garden-runc-release-gcs
       params:
