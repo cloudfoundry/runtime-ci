@@ -1215,6 +1215,7 @@ jobs:
         integration-config: dumbledore-env-stubs-and-vars
       file: runtime-ci/scripts/ci/run-rats/task.yml
       params:
+        NODES: 1
         PACKAGES: "http_routes tcp_routing"
 
 - name: complex-transition-delete-deployment
