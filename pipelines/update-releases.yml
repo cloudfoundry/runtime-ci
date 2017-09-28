@@ -2497,7 +2497,7 @@ jobs:
       base-ops-files: updated-ops-file
       new-ops-files: cf-deployment-develop
     params:
-      NEW_OPS_FILES: "operations/bypass-cc-bridge.yml operations/experimental/deploy-bosh-backup-restore.yml"
+      NEW_OPS_FILES: "operations/bypass-cc-bridge.yml operations/experimental/enable-instance-identity-credentials.yml operations/experimental/deploy-bosh-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2507,7 +2507,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -credhub
-      OPS_FILES: "deploy-bosh-backup-restore.yml bypass-cc-bridge.yml base-ops-files/secure-service-credentials.yml"
+      OPS_FILES: "deploy-bosh-backup-restore.yml bypass-cc-bridge.yml enable-instance-identity-credentials.yml base-ops-files/secure-service-credentials.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
