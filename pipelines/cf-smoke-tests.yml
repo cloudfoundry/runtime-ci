@@ -68,7 +68,6 @@ jobs:
       vars-store: bellatrix-env-vars-store
     params:
      SYSTEM_DOMAIN: bellatrix.cf-app.com
-     ETCD_IP_ADDRESS: {{bellatrix_etcd_ip_address}}
 
 - name: run-smokes-errand
   build_logs_to_retain: 100
