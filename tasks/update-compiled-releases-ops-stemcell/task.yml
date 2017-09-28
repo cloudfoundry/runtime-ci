@@ -29,8 +29,6 @@ inputs:
 - name: diego-release-tarball
 - name: dotnet-core-buildpack-release
 - name: dotnet-core-buildpack-release-tarball
-- name: etcd-release
-- name: etcd-release-tarball
 - name: garden-runc-release
 - name: garden-runc-release-tarball
 - name: go-buildpack-release

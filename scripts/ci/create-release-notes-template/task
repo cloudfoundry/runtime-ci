@@ -55,8 +55,6 @@ release_notes_body="**Contents**
   - [dotnet-core-buildpack vDD](https://github.com/cloudfoundry/dotnet-core-buildpack/releases/tag/vDD)
 - Consul:
   - [consul-release vCC](https://github.com/cloudfoundry-incubator/consul-release/releases/tag/vCC)
-- Etcd:
-  - [etcd-release vCC](https://github.com/cloudfoundry-incubator/etcd-release/releases/tag/vEE)
 - NATS:
   - [nats-release vNN](https://github.com/cloudfoundry/nats-release/releases/tag/vNN)
 - Postgres:
