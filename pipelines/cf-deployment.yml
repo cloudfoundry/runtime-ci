@@ -497,7 +497,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/ChunyiLyu/wats
+    uri: https://github.com/selzoc/wats
 - name: cf-acceptance-tests
   type: git
   source:
