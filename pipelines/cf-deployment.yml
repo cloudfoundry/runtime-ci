@@ -1130,7 +1130,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/keep-etcd-for-migration.yml operations/experimental/enable-locket.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/experimental/use-external-locket-db.yml operations/experimental/skip-consul-locks.yml operations/experimental/skip-consul-cell-registrations.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/experimental/use-grootfs.yml operations/tcp-routing-gcp.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/keep-etcd-for-migration.yml operations/experimental/enable-locket.yml operations/use-external-dbs.yml operations/experimental/use-external-locket-db.yml operations/experimental/skip-consul-locks.yml operations/experimental/skip-consul-cell-registrations.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/experimental/use-grootfs.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml static_ips.yml"
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
         FAIL_ON_DOWNTIME: true
@@ -1353,7 +1353,7 @@ jobs:
       vars-files: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "operations/use-compiled-releases.yml operations/rename-network.yml operations/rename-deployment.yml operations/tcp-routing-gcp.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml operations/bypass-cc-bridge.yml"
+      OPS_FILES: "operations/use-compiled-releases.yml operations/rename-network.yml operations/rename-deployment.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml"
       VARS_FILES: "deployment-name.yml network-name.yml"
       REGENERATE_VARS_STORE: true
     ensure:
@@ -1418,7 +1418,7 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/tcp-routing-gcp.yml operations/experimental/enable-loggregator-v2-diego.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml"
+        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/locket.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml"
         DEPLOYMENT_NAME_SUFFIX: internal-mysql
     - task: bosh-dry-run-with-ops-cf-internal-postgres
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1440,7 +1440,7 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/tcp-routing-gcp.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/experimental/use-external-cf-networking-dbs.yml operations/use-external-dbs.yml operations/experimental/enable-iptables-logger.yml"
+        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/experimental/enable-iptables-logger.yml"
         VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml"
         DEPLOYMENT_NAME_SUFFIX: external-persistence
 
