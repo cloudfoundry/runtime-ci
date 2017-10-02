@@ -6,6 +6,7 @@ groups:
   - update-capi
   - update-cf-networking
   - update-cf-smoke-tests
+  - update-cf-syslog-drain-release
   - update-cflinuxfs2
   - update-consul
   - update-diego
@@ -106,6 +107,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-smoke-tests-release
+- name: cf-syslog-drain-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-syslog-drain-release
 - name: cflinuxfs2-release
   type: bosh-io-release
   source:
@@ -225,6 +230,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: {{concourse_gcp_service_account_json}}
     regexp: cf-smoke-tests-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: cf-syslog-drain-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: cf-syslog-drain-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cflinuxfs2-release-gcs
   type: gcs-resource
   source:
@@ -590,6 +601,78 @@ jobs:
     params:
       RELEASE_NAME: cf-smoke-tests
   - put: cf-smoke-tests-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-syslog-drain-release
+  serial_groups: [cf-syslog-drain-release]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: stemcell
+      passed: [ update-stemcell-and-recompile-releases ]
+      params:
+        tarball: false
+    - get: cf-syslog-drain-release
+      trigger: true
+      params:
+        tarball: false
+  - task: update-release-cf-syslog-drain-release
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-syslog-drain-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-syslog-drain
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -cf-syslog-drain-release
+      OPS_FILES: "operations/experimental/deploy-bosh-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-syslog-drain
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-syslog-drain-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-syslog-drain
+  - put: cf-syslog-drain-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -1959,6 +2042,7 @@ jobs:
   - update-capi
   - update-cf-networking
   - update-cf-smoke-tests
+  - update-cf-syslog-drain-release
   - update-cflinuxfs2
   - update-consul
   - update-diego
@@ -1997,6 +2081,9 @@ jobs:
       params:
         tarball: false
     - get: cf-smoke-tests-release
+      params:
+        tarball: false
+    - get: cf-syslog-drain-release
       params:
         tarball: false
     - get: cflinuxfs2-release
@@ -2102,6 +2189,15 @@ jobs:
         exported-release: exported-release-cf-smoke-tests
       params:
         RELEASE_NAME: cf-smoke-tests
+    - task: compile-release-cf-syslog-drain
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-syslog-drain
+      params:
+        RELEASE_NAME: cf-syslog-drain
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2289,6 +2385,7 @@ jobs:
       staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
       statsd-injector-release-tarball: exported-release-statsd-injector
       cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
+      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
       uaa-release-tarball: exported-release-uaa
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
@@ -2311,6 +2408,10 @@ jobs:
     - put: cf-smoke-tests-release-gcs
       params:
         file: exported-release-cf-smoke-tests/*.tgz
+        predefined_acl: publicRead
+    - put: cf-syslog-drain-release-gcs
+      params:
+        file: exported-release-cf-syslog-drain/*.tgz
         predefined_acl: publicRead
     - put: cflinuxfs2-release-gcs
       params:
