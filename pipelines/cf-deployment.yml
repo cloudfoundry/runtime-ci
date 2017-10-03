@@ -23,6 +23,7 @@ groups:
   - ops-test
   - unit-test-ops-files
   - unit-test-transition-tools
+  - unit-test-update-releases-coverage
 
   - bless-manifest
   - ship-it-minor
@@ -64,6 +65,7 @@ groups:
   - transition-record-compatible-versions
   - unit-test-ops-files
   - unit-test-transition-tools
+  - unit-test-update-releases-coverage
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
@@ -81,11 +83,13 @@ groups:
 - name: ops
   jobs:
   - unit-test-ops-files
+  - unit-test-update-releases-coverage
   - ops-acquire-pool
   - ops-test
 - name: up
   jobs:
   - unit-test-ops-files
+  - unit-test-update-releases-coverage
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
@@ -97,6 +101,7 @@ groups:
 - name: fr
   jobs:
   - unit-test-ops-files
+  - unit-test-update-releases-coverage
   - fresh-acquire-pool
   - fresh-cats
   - fresh-delete-deployment
@@ -107,6 +112,7 @@ groups:
 - name: li
   jobs:
   - unit-test-ops-files
+  - unit-test-update-releases-coverage
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
@@ -585,7 +591,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files]
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: fresh-pool
       params: {acquire: true}
 
@@ -596,7 +602,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files]
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: ops-pool
       params: {acquire: true}
 
@@ -607,7 +613,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files]
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: lite-pool
       params: {acquire: true}
 
@@ -672,6 +678,31 @@ jobs:
       - name: cf-deployment-transition
       run:
         path: cf-deployment-transition/test/test-suite.sh
+
+- name: unit-test-update-releases-coverage
+  public: true
+  serial: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-develop
+    trigger: true
+  - get: runtime-ci
+  - task: unit-test-update-releases-coverage
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/bosh-cli
+      run:
+        path: scripts/update-releases-coverage-test
+        args: []
+        dir: cf-deployment-develop
+      inputs:
+      - name: cf-deployment-develop
+        path: ""
+      - name: runtime-ci
+        path: ""
 
 - name: transition-acquire-pool
   public: true
@@ -1450,7 +1481,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files]
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: upgrade-pool
       params: {acquire: true}
 
