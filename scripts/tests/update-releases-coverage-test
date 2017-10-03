@@ -17,8 +17,21 @@ pass() {
   echo -e "${GREEN}PASS${NOCOLOR} - $1"
 }
 
+check_files() {
+  if [ ! -f ../cf-deployment-develop/cf-deployment.yml ]; then
+    echo "../cf-deployment-develop/cf-deployment.yml not found.  Exiting..."
+    exit 1
+  fi
+
+  if [ ! -f pipelines/update-releases.yml ]; then
+    echo "pipeline/update-releases.yml not found.  Exiting..."
+    exit 1
+  fi
+}
+
 main() {
-  releases=$(bosh int ../cf-deployment/cf-deployment.yml --path=/releases | grep name | cut -d ' ' -f3 | sort)
+  releases=$(bosh int ../cf-deployment-develop/cf-deployment.yml --path=/releases | grep name | cut -d ' ' -f3 | sort)
+
   for release in $releases; do
     grep "update-$release" pipelines/update-releases.yml &> /dev/null
     if [ $? == 0 ]; then
@@ -30,4 +43,5 @@ main() {
   exit $exit_code
 }
 
+check_files
 main
