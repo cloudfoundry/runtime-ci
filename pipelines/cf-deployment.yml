@@ -680,8 +680,8 @@ jobs:
         path: cf-deployment-transition/test/test-suite.sh
 
 - name: unit-test-update-releases-coverage
-  public: true
   serial: true
+  public: true
   build_logs_to_retain: 100
   plan:
   - get: cf-deployment-develop
@@ -694,15 +694,12 @@ jobs:
         type: docker-image
         source:
           repository: relintdockerhubpushbot/bosh-cli
-      run:
-        path: scripts/update-releases-coverage-test
-        args: []
-        dir: cf-deployment-develop
       inputs:
       - name: cf-deployment-develop
-        path: ""
       - name: runtime-ci
-        path: ""
+      run:
+        dir: runtime-ci
+        path: scripts/tests/update-releases-coverage-test
 
 - name: transition-acquire-pool
   public: true
