@@ -14,7 +14,7 @@ cat << EOF
     type: replace
     path: /stemcells/-
     value:
-      alias: windows
+      alias: windows2012R2
       os: windows2012R2
       version: "${windows_cell_version}"
 EOF
