@@ -92,11 +92,16 @@ jobs:
           git:
             submodules: none
             depth: 1
+      - task: write-pr-check-failure-comment
+        file: runtime-ci/tasks/write-pr-check-failure-comment/task.yml
+        input_mapping:
+          pull-request: cf-deployment-master
       - put: cf-deployment-master
         params:
           path: cf-deployment-master
           status: failure
           context: {{pr_context}}
+          comment: pull-request-comment/comment
   - name: pass-prs-to-cf-deployment-develop
     public: true
     build_logs_to_retain: 100
@@ -172,11 +177,16 @@ jobs:
           git:
             submodules: none
             depth: 1
+      - task: write-pr-check-failure-comment
+        file: runtime-ci/tasks/write-pr-check-failure-comment/task.yml
+        input_mapping:
+          pull-request: cf-release-master
       - put: cf-release-master
         params:
           path: cf-release-master
           status: failure
           context: {{pr_context}}
+          comment: pull-request-comment/comment
   - name: pass-prs-to-cf-release-develop
     public: true
     build_logs_to_retain: 100
@@ -218,11 +228,17 @@ jobs:
         params:
           CF_RELEASE_DIR: 'cf-release-develop'
         on_failure:
-          put: cf-release-all-branches
-          params:
-            path: cf-release-all-branches
-            status: failure
-            context: {{unit_tests_context}}
+          do:
+          - task: write-pr-check-failure-comment
+            file: runtime-ci/tasks/write-pr-check-failure-comment/task.yml
+            input_mapping:
+              pull-request: cf-release-all-branches
+          - put: cf-release-all-branches
+            params:
+              path: cf-release-all-branches
+              status: failure
+              context: {{unit_tests_context}}
+              comment: pull-request-comment/comment
         on_success:
           put: cf-release-all-branches
           params:
@@ -241,11 +257,16 @@ jobs:
           git:
             submodules: none
             depth: 1
+      - task: write-pr-check-failure-comment
+        file: runtime-ci/tasks/write-pr-check-failure-comment/task.yml
+        input_mapping:
+          pull-request: nats-release-master
       - put: nats-release-master
         params:
           path: nats-release-master
           status: failure
           context: {{pr_context}}
+          comment: pull-request-comment/comment
   - name: pass-prs-to-nats-release-develop
     public: true
     build_logs_to_retain: 100
