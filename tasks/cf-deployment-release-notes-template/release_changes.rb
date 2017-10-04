@@ -1,5 +1,6 @@
 require 'yaml'
 require 'hashdiff'
+require_relative './input_file_loader.rb'
 
 class ReleaseUpdate
   attr_accessor :old_version, :new_version
@@ -8,10 +9,10 @@ end
 class ReleaseUpdates
   class << self
     def load_from_files(filename, opsfile: false)
-      release_candidate = load_yaml_file('cf-deployment-release-candidate', filename)
+      release_candidate = InputFileLoader.load_yaml_file('cf-deployment-release-candidate', filename)
       release_candidate_releases_list = collect_releases_and_stemcells(release_candidate, opsfile: opsfile)
 
-      master = load_yaml_file('cf-deployment-master', filename)
+      master = InputFileLoader.load_yaml_file('cf-deployment-master', filename)
       master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
@@ -24,14 +25,6 @@ class ReleaseUpdates
     end
 
     private
-
-    def load_yaml_file(input_name, filename)
-      filepath = File.join(input_name, filename)
-      if File.exists? filepath
-        file_text = File.read(filepath)
-        YAML.load(file_text)
-      end
-    end
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
       return [] unless manifest

@@ -3,6 +3,7 @@
 require 'hashdiff'
 require 'yaml'
 require_relative './release_changes.rb'
+require_relative './variable_updates.rb'
 require_relative './renderer.rb'
 
 updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
@@ -17,3 +18,10 @@ opsfile_list.each do |opsfile|
 end
 
 puts Renderer.new.render(release_updates: updates)
+puts '========='
+variable_updates = VariableUpdates.load_from_files('cf-deployment.yml')
+variable_updates.each do |variable_name, variable_update|
+  puts variable_name
+  puts variable_update.state
+end
+
