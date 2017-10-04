@@ -1407,7 +1407,7 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: ensure-gcloud-backend-service-healthy
-    file: runtime-ci/task/ensure-gcloud-backend-service-healthy/task.yml
+    file: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task.yml
     input_mapping:
       google-creds-dir: luna-env-director-state
     params:
