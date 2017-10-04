@@ -1147,7 +1147,7 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml hold-static-ips.yml keep-etcd-for-transition.yml"
+        NEW_OPS_FILES: "cfr-to-cfd.yml hold-static-ips.yml keep-etcd-for-transition.yml keep-syslog-drain-binder-for-transition.yml opt-out-of-cf-syslog-drain-release-for-transition.yml"
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1158,7 +1158,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/keep-etcd-for-transition.yml operations/experimental/enable-locket.yml operations/use-external-dbs.yml operations/experimental/use-external-locket-db.yml operations/experimental/skip-consul-locks.yml operations/experimental/skip-consul-cell-registrations.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/experimental/use-grootfs.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/hold-static-ips.yml operations/keep-etcd-for-transition.yml operations/experimental/enable-locket.yml operations/use-external-dbs.yml operations/experimental/use-external-locket-db.yml operations/experimental/skip-consul-locks.yml operations/experimental/skip-consul-cell-registrations.yml operations/use-s3-blobstore.yml operations/use-blobstore-cdn.yml operations/cfr-to-cfd.yml operations/experimental/use-grootfs.yml operations/keep-etcd-for-transition.yml operations/keep-syslog-drain-binder-for-transition.yml operations/opt-out-of-cf-syslog-drain-release-for-transition.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml static_ips.yml"
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
         FAIL_ON_DOWNTIME: true
