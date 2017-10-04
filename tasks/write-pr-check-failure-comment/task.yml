@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: pull-request
+
+outputs:
+- name: pull-request-comment
+
+run:
+  path: runtime-ci/tasks/write-pr-check-failure-comment/task

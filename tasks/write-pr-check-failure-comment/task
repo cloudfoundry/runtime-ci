@@ -1,0 +1,11 @@
+#!/bin/bash
+set -eux
+
+pushd pull-request > /dev/null
+  PR_AUTHOR=$(git config --get pullrequest.userlogin)
+popd > /dev/null
+
+pushd pull-request-comment > /dev/null
+  echo "Hi @${PR_AUTHOR}, it looks like one or more of our checks have failed.  Please address them." \
+  > comment
+popd > /dev/null
