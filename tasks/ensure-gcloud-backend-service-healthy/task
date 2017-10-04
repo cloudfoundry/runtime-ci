@@ -2,12 +2,11 @@
 
 pushd google-creds-dir > /dev/null
   for i in $(seq 1 $TIMEOUT); do
-    set +e
-    healthy_backends="$(CLOUDSDK_CORE_PROJECT=${GCP_PROJECT_ID} gcloud compute backend-services get-health ${GCP_BACKEND_SERVICE} --global | grep "healthState: HEALTHY" | wc -l |  tr -d '[:space:]')"
+    gcloud auth activate-service-account --key-file=google_account_creds.json
+    healthy_backends="$(gcloud compute backend-services get-health ${GCP_BACKEND_SERVICE} --global --project=${GCP_PROJECT_ID} | grep "healthState: HEALTHY" | wc -l |  tr -d '[:space:]')"
     if [ "${healthy_backends}" -eq "2" ]; then
       exit 0
     fi
-    set -e
     sleep 1
   done
 popd > /dev/null
