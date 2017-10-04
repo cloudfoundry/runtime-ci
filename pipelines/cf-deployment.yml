@@ -26,6 +26,7 @@ groups:
   - unit-test-update-releases-coverage
 
   - bless-manifest
+  - ship-it-major
   - ship-it-minor
   - ship-it-patch
   - release-notes-template
@@ -50,6 +51,7 @@ groups:
   - lite-release-pool
   - lite-release-pool-manual
   - ops-test
+  - ship-it-major
   - ship-it-minor
   - ship-it-patch
   - complex-acquire-pool
@@ -2408,6 +2410,29 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: { bump: minor }
+      - get: cf-deployment-release-candidate
+        passed: [bless-manifest]
+      - get: cf-deployment-transition-compatibility
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
+      - task: record-transition-version
+        file: runtime-ci/tasks/record-transition-version/task.yml
+      - put: cf-deployment-transition-compatibility
+        params:
+          repository: updated-cf-deployment-transition-compatibility
+          rebase: true
+
+- name: ship-it-major
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - get: runtime-ci
+      - put: cf-deployment-version
+        params: { bump: major }
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
