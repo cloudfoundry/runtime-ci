@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: google/cloud-sdk
+
+inputs:
+- name: runtime-ci
+- name: google-creds-dir
+
+run:
+  path: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task
+
+params:
+  TIMEOUT: 60
+  GCP_PROJECT_ID:
+  GCP_BACKEND_SERVICE:

@@ -1406,6 +1406,13 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: ensure-gcloud-backend-service-healthy
+    file: runtime-ci/task/ensure-gcloud-backend-service-healthy/task.yml
+    input_mapping:
+      google-creds-dir: luna-env-director-state
+    params:
+      GCP_PROJECT_ID: {{luna_gcp_project}}
+      GCP_BACKEND_SERVICE: {{luna_router_backend_service}}
   - task: ensure-api-healthy
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
     params:
