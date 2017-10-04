@@ -16,3 +16,4 @@ run:
 
 params:
   CLOUD_CONFIG_FILE:
+  BBL_STATE_DIR: ""
