@@ -85,6 +85,7 @@ jobs:
     public: true
     build_logs_to_retain: 100
     plan:
+      - get: runtime-ci
       - get: cf-deployment-master
         trigger: true
         version: every
@@ -170,6 +171,7 @@ jobs:
     public: true
     build_logs_to_retain: 100
     plan:
+      - get: runtime-ci
       - get: cf-release-master
         trigger: true
         version: every
@@ -250,6 +252,7 @@ jobs:
     public: true
     build_logs_to_retain: 100
     plan:
+      - get: runtime-ci
       - get: nats-release-master
         trigger: true
         version: every
