@@ -233,7 +233,7 @@ resources:
 - name: legacy-cf-networking-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/cf-networking-release
+    repository: cloudfoundry/cf-networking-release
 - name: legacy-grootfs-release
   type: bosh-io-release
   source:

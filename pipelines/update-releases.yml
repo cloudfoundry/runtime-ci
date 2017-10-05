@@ -102,7 +102,7 @@ resources:
 - name: cf-networking-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/cf-networking-release
+    repository: cloudfoundry/cf-networking-release
 - name: cf-smoke-tests-release
   type: bosh-io-release
   source:

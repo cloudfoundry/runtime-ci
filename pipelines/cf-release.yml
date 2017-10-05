@@ -210,7 +210,7 @@ resources:
 - name: cf-networking-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/cf-networking-release
+    repository: cloudfoundry/cf-networking-release
 
 - name: grootfs-release-tarball
   type: bosh-io-release
