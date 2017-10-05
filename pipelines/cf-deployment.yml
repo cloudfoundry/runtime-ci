@@ -773,6 +773,15 @@ jobs:
           DB_USER: {{minerva_bbsdb_user}}
           DB_PASSWORD: {{minerva_bbsdb_password}}
           DB_NAME: {{minerva_bbsdb_db_name}}
+      - task: recreate-locketdb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          bbl-state: minerva-env-director-state
+        params:
+          DB_HOST: {{minerva_locketdb_host}}
+          DB_USER: {{minerva_locketdb_user}}
+          DB_PASSWORD: {{minerva_locketdb_password}}
+          DB_NAME: {{minerva_locketdb_db_name}}
 
 - name: complex-acquire-pool
   public: true
