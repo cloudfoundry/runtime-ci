@@ -226,7 +226,7 @@ jobs:
         vars-files: baba-yaga-env-vars-store
       params:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/experimental/deploy-bosh-backup-restore.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/experimental/enable-backup-restore.yml"
       ensure:
         put: baba-yaga-env-vars-store
         params:
