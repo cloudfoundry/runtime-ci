@@ -1463,7 +1463,7 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-bosh-dns.yml"
+        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-bosh-dns.yml operations/experimental/use-bosh-dns-for-containers.yml"
         DEPLOYMENT_NAME_SUFFIX: internal-mysql
     - task: bosh-dry-run-with-ops-cf-internal-postgres
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
