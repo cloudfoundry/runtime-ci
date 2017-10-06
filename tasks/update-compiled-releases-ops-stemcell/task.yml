@@ -21,6 +21,8 @@ inputs:
 - name: cf-networking-release-tarball
 - name: cf-smoke-tests-release
 - name: cf-smoke-tests-release-tarball
+- name: cf-syslog-drain-release
+- name: cf-syslog-drain-release-tarball
 - name: cflinuxfs2-release
 - name: cflinuxfs2-release-tarball
 - name: consul-release

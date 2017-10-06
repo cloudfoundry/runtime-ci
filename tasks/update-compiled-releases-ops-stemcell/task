@@ -59,6 +59,7 @@ main() {
    binary-buildpack
    cf-networking
    cf-smoke-tests
+   cf-syslog-drain
    cflinuxfs2
    consul
    diego
