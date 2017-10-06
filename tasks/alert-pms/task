@@ -14,7 +14,7 @@ echo "Hey there <@shannon> <@ahurley>. Could you please take a look at the lates
 echo "Hey there <@stummidi> <@jhamon>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/uaa
 echo "Hey there <@hev> <@jasonkeene>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/loggregator
 echo "Hey there <@zach> <@gerg>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/capi
-echo "Hey there <@slevine> <@dgoddard>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/buildpacks
+echo "Hey there <@slevine> <@scoward>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/buildpacks
 echo "Hey there <@emalm> <@jvshahid>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/diego
 echo "Hey there <@uramachandran> <@achin>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/container-networking
 echo "Hey there <@glestaris> <@tscolari>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/grootfs

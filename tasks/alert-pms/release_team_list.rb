@@ -53,8 +53,8 @@ def release_teams
     ),
     ReleaseTeam.new(
       name: "buildpacks",
-      anchor_github: '@dgodd',
-      anchor_slack:  '@dogddard',
+      anchor_github: '@idoru',
+      anchor_slack:  '@scoward',
       pm_github:     '@sclevine',
       pm_slack:      '@slevine'
     ),

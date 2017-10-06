@@ -69,7 +69,7 @@ Does this cf-release SHA look good for the CAPI team?  Any bugs, regressions, or
 - **Comments**:
 
 ----
-@sclevine, @dgodd:
+@sclevine, @idoru:
 Does this cf-release SHA look good for the Buildpacks and Stacks team?  Any bugs, regressions, or incomplete features of concern?
 - **Approval**: :+1: / :-1:
 - **Decider**:
