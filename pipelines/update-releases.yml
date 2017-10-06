@@ -3,7 +3,9 @@ groups:
 - name: update-releases
   jobs:
   - update-binary-buildpack
+  - update-bosh-dns
   - update-capi
+  - update-cf-mysql
   - update-cf-networking
   - update-cf-smoke-tests
   - update-cf-syslog-drain-release
@@ -17,7 +19,6 @@ groups:
   - update-credhub
   - update-java-buildpack
   - update-loggregator
-  - update-cf-mysql
   - update-nats
   - update-nodejs-buildpack
   - update-php-buildpack
@@ -91,6 +92,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/binary-buildpack-release
+- name: bosh-dns-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bosh-dns-release
 - name: capi-release
   type: bosh-io-release
   source:
@@ -2619,6 +2624,67 @@ jobs:
     params:
       OPS_FILE_NAME: secure-service-credentials.yml
       OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-bosh-dns
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: cf-deployment-concourse-tasks
+    - get: bosh-dns-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-bosh-dns
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: bosh-dns-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: bosh-dns
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
+      UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -bosh-dns
+      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-bosh-dns.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-bosh-dns.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns.yml
   - put: cf-deployment-develop
     params:
       rebase: true
