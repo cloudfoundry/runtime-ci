@@ -569,6 +569,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
       BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
       BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+      BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
       OPS_FILES: "local-dns.yml"
@@ -685,6 +686,7 @@ jobs:
         BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
         BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
         BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
+        BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
         LB_DOMAIN: hermione.cf-app.com
         BBL_ENV_NAME: hermione-upgrade
         OPS_FILES: "local-dns.yml"
