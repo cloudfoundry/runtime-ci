@@ -1645,7 +1645,7 @@ jobs:
         vars-files: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
-        OPS_FILES: "operations/aws.yml operations/windows-cell.yml operations/test/disable_windows_consul_agent_nameserver_overwriting.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/experimental/use-bosh-dns.yml operations/experimental/use-bosh-dns-for-containers.yml"
+        OPS_FILES: "operations/aws.yml operations/windows-cell.yml operations/test/disable_windows_consul_agent_nameserver_overwriting.yml operations/test/add-datadog-firehose-nozzle.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/enable-privileged-container-support.yml operations/experimental/use-bosh-dns.yml operations/experimental/use-bosh-dns-for-containers.yml operations/stop-skipping-tls-validation.yml"
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
