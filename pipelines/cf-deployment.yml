@@ -2354,6 +2354,10 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       params:
         DEPLOYMENT_NAME: luna-cf
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: luna-env-director-state
     - put: fresh-pool
       params: {release: fresh-pool}
 
