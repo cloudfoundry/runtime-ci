@@ -2,17 +2,15 @@
 
 set -eu
 
-export CF_DEPLOYMENT_NAME="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_deployment_name)"
-export CF_API_URL="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_api_url)"
-export CF_ADMIN_USERNAME="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_admin_username)"
-export CF_ADMIN_PASSWORD="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_admin_password)"
-export BOSH_ENVIRONMENT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_environment)"
-export BOSH_GW_USER="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_user)"
-export BOSH_GW_HOST="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_host)"
-export BOSH_GW_PRIVATE_KEY="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_private_key)"
-export BOSH_CA_CERT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_ca_cert)"
-export BOSH_CLIENT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_client)"
-export BOSH_CLIENT_SECRET="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_client_secret)"
+export CF_DEPLOYMENT_NAME="$(jq .cf_deployment_name drats-config/drats_integration_config.json)"
+export CF_API_URL="$(jq .cf_api_url drats-config/drats_integration_config.json)"
+export CF_ADMIN_USERNAME="$(jq .cf_admin_username drats-config/drats_integration_config.json)"
+export CF_ADMIN_PASSWORD="$(jq .cf_admin_password drats-config/drats_integration_config.json)"
+export BOSH_ENVIRONMENT="$(jq .bosh_environment drats-config/drats_integration_config.json)"
+export BOSH_GW_USER="$(jq .bosh_gw_user drats-config/drats_integration_config.json)"
+export BOSH_GW_HOST="$(jq .bosh_gw_host drats-config/drats_integration_config.json)"
+export BOSH_CLIENT="$(jq .bosh_client drats-config/drats_integration_config.json)"
+export BOSH_CLIENT_SECRET="$(jq .bosh_client_secret drats-config/drats_integration_config.json)"
 
 export GOPATH=$PWD
 export PATH=$PATH:$GOPATH/bin
@@ -20,7 +18,7 @@ export PATH=$PATH:$GOPATH/bin
 eval "$(ssh-agent)"
 
 rm -f ~/.gitconfig
-echo "${BOSH_GW_PRIVATE_KEY}" > ssh.pem
+jq -r .bosh_gw_private_key drats-config/drats_integration_config.json > ssh.pem
 chmod 0400 ssh.pem
 ssh-add ssh.pem
 
@@ -28,7 +26,7 @@ sshuttle -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" "${SSH_DESTINATION_CIDR}" --daemon
 
 sleep 5
 
-echo "$BOSH_CA_CERT" > bosh.cert
+jq -r .bosh_ca_cert drats-config/drats_integration_config.json > bosh.cert
 export BOSH_CERT_PATH=`pwd`/bosh.cert
 
 pushd bbr-binary-release
