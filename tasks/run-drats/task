@@ -11,6 +11,7 @@ export BOSH_GW_USER="$(jq .bosh_gw_user drats-config/drats_integration_config.js
 export BOSH_GW_HOST="$(jq .bosh_gw_host drats-config/drats_integration_config.json)"
 export BOSH_CLIENT="$(jq .bosh_client drats-config/drats_integration_config.json)"
 export BOSH_CLIENT_SECRET="$(jq .bosh_client_secret drats-config/drats_integration_config.json)"
+export SSH_DESTINATION_CIDR="$(jq .ssh_destination_cidr drats-config/drats_integration_config.json)"
 
 export GOPATH=$PWD
 export PATH=$PATH:$GOPATH/bin
