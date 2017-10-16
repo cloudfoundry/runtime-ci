@@ -13,18 +13,27 @@ pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
 popd > /dev/null
 
 echo '{}' | jq \
+--arg cf_deployment_name ${DEPLOYMENT_NAME} \
+--arg cf_api_url "api.${SYSTEM_DOMAIN}" \
 --arg cf_admin_password $(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password) \
+--arg bosh_environment "${BOSH_ENVIRONMENT}" \
+--arg bosh_gw_host "${BOSH_GW_HOST}" \
+--arg bosh_gw_private_key "${BOSH_GW_PRIVATE_KEY}" \
+--arg bosh_ca_cert "${BOSH_CA_CERT}" \
+--arg bosh_client "${BOSH_CLIENT}" \
+--arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
+--arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
 '{
-    "cf_deployment_name": "${DEPLOYMENT_NAME}",
-    "cf_api_url": "api.${SYSTEM_DOMAIN}",
+    "cf_deployment_name": $cf_deployment_name,
+    "cf_api_url": $cf_api_url,
     "cf_admin_username": "admin",
-    "cf_admin_password": "$cf_admin_password",
-    "bosh_environment": "${BOSH_ENVIRONMENT}",
+    "cf_admin_password": $cf_admin_password,
+    "bosh_environment": $bosh_environment,
     "bosh_gw_user": "jumpbox",
-    "bosh_gw_host": "${BOSH_GW_HOST}",
-    "bosh_gw_private_key": "${BOSH_GW_PRIVATE_KEY}",
-    "bosh_ca_cert": "${BOSH_CA_CERT}",
-    "bosh_client": "${BOSH_CLIENT}",
-    "bosh_client_secret": "${BOSH_CLIENT_SECRET}",
-    "ssh_destination_cidr": "${SSH_DESTINATION_CIDR}"
+    "bosh_gw_host": $bosh_gw_host,
+    "bosh_gw_private_key": $bosh_gw_private_key,
+    "bosh_ca_cert": $bosh_ca_cert,
+    "bosh_client": $bosh_client,
+    "bosh_client_secret": $bosh_client_secret,
+    "ssh_destination_cidr": $ssh_destination_cidr
 }' > drats-config/drats_integration_config.json
