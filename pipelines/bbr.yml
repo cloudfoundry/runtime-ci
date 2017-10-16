@@ -278,6 +278,7 @@ jobs:
         passed: [ setup-infrastructure ]
       - get: baba-yaga-env-vars-store
       - get: drats-master
+      - get: runtime-ci
     - task: run-drats
       file: runtime-ci/tasks/run-drats/task.yml
       input_mapping:

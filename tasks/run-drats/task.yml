@@ -14,7 +14,8 @@ inputs:
   path: src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 - name: bbr-binary-release
 
-run: runtime-ci/tasks/run-drats/task
+run:
+  path: runtime-ci/tasks/run-drats/task
 
 params:
   DEPLOYMENT_NAME: cf
