@@ -279,10 +279,15 @@ jobs:
       - get: baba-yaga-env-vars-store
       - get: drats-master
       - get: runtime-ci
+    - task: generate-drats-config
+      file: runtime-ci/tasks/generate-drats-config/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+        vars-store: baba-yaga-env-vars-store
+      params:
+        SYSTEM_DOMAIN: baba-yaga.cf-app.com
     - task: run-drats
       file: runtime-ci/tasks/run-drats/task.yml
       input_mapping:
         disaster-recovery-acceptance-tests: drats-master
         bbr-binary-release: bbr-github-release
-      params:
-        SYSTEM_DOMAIN: baba-yaga.cf-app.com

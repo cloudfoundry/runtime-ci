@@ -2,22 +2,17 @@
 
 set -eu
 
-export CF_DEPLOYMENT_NAME="${DEPLOYMENT_NAME}"
-export CF_API_URL="api.${SYSTEM_DOMAIN}"
-export CF_ADMIN_USERNAME="admin"
-export CF_ADMIN_PASSWORD=$(bosh-cli interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password)
-
-pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
-  bbl ssh-key > ssh.pem
-
-  export BOSH_ENVIRONMENT=$(bbl director-address)
-  export BOSH_GW_USER=jumpbox
-  export BOSH_GW_HOST=${BOSH_ENVIRONMENT%:25555}
-  export BOSH_GW_HOST=${BOSH_GW_HOST#https://}
-  export BOSH_CA_CERT=$(bbl director-ca-cert)
-  export BOSH_CLIENT=$(bbl director-username)
-  export BOSH_CLIENT_SECRET=$(bbl director-password)
-popd > /dev/null
+export CF_DEPLOYMENT_NAME="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_deployment_name)"
+export CF_API_URL="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_api_url)"
+export CF_ADMIN_USERNAME="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_admin_username)"
+export CF_ADMIN_PASSWORD="$(bosh-cli int drats-config/drats_integration_config.json --path=/cf_admin_password)"
+export BOSH_ENVIRONMENT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_environment)"
+export BOSH_GW_USER="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_user)"
+export BOSH_GW_HOST="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_host)"
+export BOSH_GW_PRIVATE_KEY="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_gw_private_key)"
+export BOSH_CA_CERT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_ca_cert)"
+export BOSH_CLIENT="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_client)"
+export BOSH_CLIENT_SECRET="$(bosh-cli int drats-config/drats_integration_config.json --path=/bosh_client_secret)"
 
 export GOPATH=$PWD
 export PATH=$PATH:$GOPATH/bin
@@ -25,8 +20,9 @@ export PATH=$PATH:$GOPATH/bin
 eval "$(ssh-agent)"
 
 rm -f ~/.gitconfig
-chmod 0400 bbl-state/"${BBL_STATE_DIR}"/ssh.pem
-ssh-add bbl-state/"${BBL_STATE_DIR}"/ssh.pem
+echo "${BOSH_GW_PRIVATE_KEY}" > ssh.pem
+chmod 0400 ssh.pem
+ssh-add ssh.pem
 
 sshuttle -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" "${SSH_DESTINATION_CIDR}" --daemon -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 

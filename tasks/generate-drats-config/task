@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -eu
+
+pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+  BOSH_ENVIRONMENT=$(bbl director-address)
+  BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
+  BOSH_GW_HOST=${BOSH_ENVIRONMENT%:25555}
+  BOSH_GW_HOST=${BOSH_GW_HOST#https://}
+  BOSH_CA_CERT=$(bbl director-ca-cert)
+  BOSH_CLIENT=$(bbl director-username)
+  BOSH_CLIENT_SECRET=$(bbl director-password)
+popd > /dev/null
+
+cat << EOF > drats-config/drats_integration_config.json
+    {
+        "cf_deployment_name": "${DEPLOYMENT_NAME}",
+        "cf_api_url": "api.${SYSTEM_DOMAIN}",
+        "cf_admin_username": "admin",
+        "cf_admin_password": "$(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password)",
+        "bosh_environment": "${BOSH_ENVIRONMENT}",
+        "bosh_gw_user": "jumpbox",
+        "bosh_gw_host": "${BOSH_GW_HOST}",
+        "bosh_gw_private_key": "${BOSH_GW_PRIVATE_KEY}",
+        "bosh_ca_cert": "${BOSH_CA_CERT}",
+        "bosh_client": "${BOSH_CLIENT}",
+        "bosh_client_secret": "${BOSH_CLIENT_SECRET}",
+        "ssh_destination_cidr": "${SSH_DESTINATION_CIDR}"
+    }
+EOF

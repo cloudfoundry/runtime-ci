@@ -8,19 +8,13 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: bbl-state
-- name: vars-store
 - name: disaster-recovery-acceptance-tests
   path: src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 - name: bbr-binary-release
+- name: drats-config
 
 run:
   path: runtime-ci/tasks/run-drats/task
 
 params:
-  DEPLOYMENT_NAME: cf
-  SYSTEM_DOMAIN:
-  BBL_STATE_DIR:
-  VARS_STORE_FILE: deployment-vars.yml
-  SSH_DESTINATION_CIDR: "10.0.0.0/8"
   FOCUSED_SUITE_NAME:
