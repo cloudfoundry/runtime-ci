@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -eu
+
+export CF_DEPLOYMENT_NAME="${DEPLOYMENT_NAME}"
+export CF_API_URL="api.${SYSTEM_DOMAIN}"
+export CF_ADMIN_USERNAME="admin"
+export CF_ADMIN_PASSWORD=$(bosh-cli interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password)
+
+pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+  bbl ssh-key > ssh.pem
+
+  export BOSH_ENVIRONMENT=$(bbl director-address)
+  export BOSH_GW_USER=jumpbox
+  export BOSH_GW_HOST=${BOSH_ENVIRONMENT%:25555}
+  export BOSH_GW_HOST=${BOSH_GW_HOST#https://}
+  export BOSH_CA_CERT=$(bbl director-ca-cert)
+  export BOSH_CLIENT=$(bbl director-username)
+  export BOSH_CLIENT_SECRET=$(bbl director-password)
+popd > /dev/null
+
+export GOPATH=$PWD
+export PATH=$PATH:$GOPATH/bin
+
+eval "$(ssh-agent)"
+
+rm -f ~/.gitconfig
+chmod 0400 bbl-state/"${BBL_STATE_DIR}"/ssh.pem
+ssh-add bbl-state/"${BBL_STATE_DIR}"/ssh.pem
+
+sshuttle -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" "${SSH_DESTINATION_CIDR}" --daemon -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+
+sleep 5
+
+echo "$BOSH_CA_CERT" > bosh.cert
+export BOSH_CERT_PATH=`pwd`/bosh.cert
+
+pushd bbr-binary-release
+  tar xvf *.tar
+  export BBR_BUILD_PATH=`pwd`/releases/bbr
+popd
+
+pushd src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
+  scripts/run_acceptance_tests.sh
+popd

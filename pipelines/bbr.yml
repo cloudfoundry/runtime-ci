@@ -4,6 +4,7 @@ groups:
   jobs:
   - acquire-pool
   - deploy
+  - run-drats
 
 - name: infrastructure
   jobs:
@@ -61,6 +62,16 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment.git
+- name: drats-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests.git
+- name: bbr-github-release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: bosh-backup-and-restore
 
 - name: daily
   type: time
@@ -248,3 +259,29 @@ jobs:
         params:
           repository: updated-integration-configs
           rebase: true
+
+- name: run-drats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - on_success:
+      put: bbr-pool
+      params: {release: bbr-pool}
+    do:
+    - get: bbr-pool
+      trigger: true
+      passed: [ deploy ]
+    - aggregate:
+      - get: bbr-github-release
+        trigger: true
+      - get: baba-yaga-env-director-state
+        passed: [ setup-infrastructure ]
+      - get: baba-yaga-env-vars-store
+      - get: drats-master
+    - task: run-drats
+      file: runtime-ci/tasks/run-drats/task.yml
+      input_mapping:
+        disaster-recovery-acceptance-tests: drats-master
+        bbr-binary-release: bbr-github-release
+      params:
+        SYSTEM_DOMAIN: baba-yaga.cf-app.com
