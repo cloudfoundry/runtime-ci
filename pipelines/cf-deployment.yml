@@ -1913,21 +1913,21 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         trigger: true
         params:
           tarball: false
@@ -1944,10 +1944,10 @@ jobs:
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats, complex-transition-cats, complex-transition-rats ]
+        passed: [ complex-transition-cats, complex-transition-rats ]
         trigger: true
       - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
