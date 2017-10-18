@@ -2196,6 +2196,8 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: luna-env-integration-configs
+      params:
+        CAPTURE_LOGS: true
       file: cats-concourse-task/task.yml
 
 - name: lite-cats
