@@ -57,10 +57,10 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-- name: cf-deployment-master
+- name: cf-deployment-rc
   type: git
   source:
-    branch: master
+    branch: release-candidate
     uri: https://github.com/cloudfoundry/cf-deployment.git
 - name: drats-master
   type: git
@@ -196,7 +196,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: cf-deployment-master
+    - get: cf-deployment-rc
       trigger: true
     - put: bbr-pool
       params: {acquire: true}
@@ -215,7 +215,7 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
-      - get: cf-deployment-master
+      - get: cf-deployment-rc
       - get: baba-yaga-env-vars-store
       - get: baba-yaga-env-director-state
         passed: [ setup-infrastructure ]
@@ -223,7 +223,7 @@ jobs:
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
-        cf-deployment: cf-deployment-master
+        cf-deployment: cf-deployment-rc
         bbl-state: baba-yaga-env-director-state
       params:
         INFRASTRUCTURE: google
@@ -231,8 +231,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        cf-deployment: cf-deployment-master
-        ops-files: cf-deployment-master
+        cf-deployment: cf-deployment-rc
+        ops-files: cf-deployment-rc
         vars-store: baba-yaga-env-vars-store
         vars-files: baba-yaga-env-vars-store
       params:
