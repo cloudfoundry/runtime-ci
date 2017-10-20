@@ -293,3 +293,10 @@ jobs:
       input_mapping:
         disaster-recovery-acceptance-tests: drats-master
         bbr-binary-release: bbr-github-release
+      params:
+        DEFAULT_TIMEOUT_MINS: 30
+      on_failure:
+        privileged: true
+        file: runtime-ci/tasks/run-bbr-cleanup/task.yml
+        input_mapping:
+          bbr-binary-release: bbr-github-release

@@ -18,3 +18,4 @@ run:
 
 params:
   FOCUSED_SUITE_NAME:
+  DEFAULT_TIMEOUT_MINS:
