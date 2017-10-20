@@ -205,7 +205,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - ensure:
+  - on_failure:
       put: bbr-pool
       params: {release: bbr-pool}
     do:
