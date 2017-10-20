@@ -296,6 +296,7 @@ jobs:
       params:
         DEFAULT_TIMEOUT_MINS: 30
       on_failure:
+        task: run-bbr-cleanup
         privileged: true
         file: runtime-ci/tasks/run-bbr-cleanup/task.yml
         input_mapping:
