@@ -425,7 +425,7 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       LB_DOMAIN: snitch.cf-app.com
       BBL_ENV_NAME: snitch-lite
-      OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml jumpbox-user.yml gcp/bosh-lite-vm-type.yml"
+      OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
       IS_BOSH_LITE: true
     input_mapping:
       bbl-state: snitch-env-director-state
@@ -689,7 +689,7 @@ jobs:
         BBL_GCP_ZONE: us-central1-a
         LB_DOMAIN: snitch.cf-app.com
         BBL_ENV_NAME: snitch-lite
-        OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml jumpbox-user.yml gcp/bosh-lite-vm-type.yml"
+        OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
         IS_BOSH_LITE: true
       input_mapping:
         bbl-state: snitch-env-director-state
