@@ -163,7 +163,7 @@ resources:
 - name: loggregator-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry/loggregator
+    repository: cloudfoundry/loggregator-release
 - name: nats-release
   type: bosh-io-release
   source:
