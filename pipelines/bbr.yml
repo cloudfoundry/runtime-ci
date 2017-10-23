@@ -273,12 +273,10 @@ jobs:
       passed: [ deploy ]
     - aggregate:
       - get: bbr-github-release
-        trigger: true
       - get: baba-yaga-env-director-state
         passed: [ setup-infrastructure ]
       - get: baba-yaga-env-vars-store
       - get: drats-master
-        trigger: true
       - get: runtime-ci
     - task: generate-drats-config
       file: runtime-ci/tasks/generate-drats-config/task.yml
