@@ -441,7 +441,7 @@ jobs:
       bbl-state: snitch-env-director-state
       cloud-config: cf-deployment-develop
     params:
-      CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
+      CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
   - put: lite-pool
     params: {release: lite-pool}
 
@@ -705,7 +705,7 @@ jobs:
         bbl-state: snitch-env-director-state
         cloud-config: cf-deployment-develop
       params:
-        CLOUD_CONFIG_FILE: "bosh-lite/cloud-config.yml"
+        CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - put: lite-pool
       params: {release: lite-pool}
 
