@@ -1184,7 +1184,13 @@ jobs:
           operations/keep-etcd-for-transition.yml
           operations/keep-syslog-drain-binder-for-transition.yml
           operations/opt-out-of-cf-syslog-drain-release-for-transition.yml
-        VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml static_ips.yml"
+          operations/override-app-domains.yml
+        VARS_FILES: |
+          rds-vars.yml
+          s3-vars.yml
+          cdn-vars.yml
+          static_ips.yml
+          app_domains_vars.yml
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
         FAIL_ON_DOWNTIME: true
       ensure:
