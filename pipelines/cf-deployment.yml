@@ -441,6 +441,7 @@ resources:
     - datadog-deployment-vars.yml
     - rds-vars.yml
     - runtime-config.yml
+    - confab-timeout-vars.yml
 - name: hermione-env-turbulence-vars
   type: git
   source:
@@ -1672,7 +1673,8 @@ jobs:
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers.yml
           operations/stop-skipping-tls-validation.yml
-        VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
+          operations/configure-confab-timeout.yml
+        VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml confab-timeout-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: hermione-env-vars-store
