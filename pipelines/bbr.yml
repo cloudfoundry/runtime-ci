@@ -303,6 +303,7 @@ jobs:
         bbr-binary-release: bbr-github-release
       params:
         DEFAULT_TIMEOUT_MINS: 30
+        SKIP_SUITE_NAME: cf-nfsbroker
       on_failure:
         task: run-bbr-cleanup
         privileged: true
