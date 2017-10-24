@@ -1170,18 +1170,18 @@ jobs:
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         OPS_FILES: |
-          operations/use-compiled-releases.yml \
-          operations/aws.yml \
-          operations/legacy/keep-static-ips.yml \
-          operations/use-external-dbs.yml \
-          operations/experimental/skip-consul-locks.yml \
-          operations/experimental/skip-consul-cell-registrations.yml \
-          operations/use-s3-blobstore.yml \
-          operations/use-blobstore-cdn.yml \
-          operations/cfr-to-cfd.yml \
-          operations/experimental/use-grootfs.yml \
-          operations/keep-etcd-for-transition.yml \
-          operations/keep-syslog-drain-binder-for-transition.yml \
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/legacy/keep-static-ips.yml
+          operations/use-external-dbs.yml
+          operations/experimental/skip-consul-locks.yml
+          operations/experimental/skip-consul-cell-registrations.yml
+          operations/use-s3-blobstore.yml
+          operations/use-blobstore-cdn.yml
+          operations/cfr-to-cfd.yml
+          operations/experimental/use-grootfs.yml
+          operations/keep-etcd-for-transition.yml
+          operations/keep-syslog-drain-binder-for-transition.yml
           operations/opt-out-of-cf-syslog-drain-release-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml cdn-vars.yml static_ips.yml"
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
