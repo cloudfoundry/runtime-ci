@@ -3,6 +3,7 @@ groups:
 - name: bbr
   jobs:
   - acquire-pool
+  - release-pool-manual
   - deploy
   - run-drats
 
@@ -200,6 +201,15 @@ jobs:
       trigger: true
     - put: bbr-pool
       params: {acquire: true}
+
+- name: release-pool-manual
+  public: true
+  plan:
+  - get: bbr-pool
+  ensure:
+    try:
+      put: bbr-pool
+      params: {release: bbr-pool}
 
 - name: deploy
   public: true
