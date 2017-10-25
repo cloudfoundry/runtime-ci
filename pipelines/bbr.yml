@@ -196,7 +196,8 @@ jobs:
   public: true
   serial: true
   plan:
-  - aggregate:
+  - timeout: 4h
+    aggregate:
     - get: cf-deployment-rc
       trigger: true
     - put: bbr-pool
