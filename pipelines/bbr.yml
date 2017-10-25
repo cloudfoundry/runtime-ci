@@ -304,9 +304,3 @@ jobs:
       params:
         DEFAULT_TIMEOUT_MINS: 30
         SKIP_SUITE_NAME: cf-nfsbroker
-      on_failure:
-        task: run-bbr-cleanup
-        privileged: true
-        file: runtime-ci/tasks/run-bbr-cleanup/task.yml
-        input_mapping:
-          bbr-binary-release: bbr-github-release
