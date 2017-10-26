@@ -1353,7 +1353,16 @@ jobs:
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
         UPTIMER_APP_DOMAIN: minerva.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/legacy/keep-static-ips.yml operations/keep-etcd-for-transition.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/remove-routing-components-for-transition.yml operations/remove-cf-networking-for-transition.yml"
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/legacy/keep-static-ips.yml
+          operations/keep-etcd-for-transition.yml
+          operations/use-external-dbs.yml
+          operations/use-s3-blobstore.yml
+          operations/cfr-to-cfd.yml
+          operations/remove-routing-components-for-transition.yml
+          operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
         FAIL_ON_DOWNTIME: true
       ensure:
@@ -1361,6 +1370,26 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: bosh-deploy-cf-without-etcd
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: minerva-env-director-state
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: collected-ops-files
+        vars-store: extracted-vars-store
+        vars-files: minerva-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: minerva.cf-app.com
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/legacy/keep-static-ips.yml
+          operations/use-external-dbs.yml
+          operations/use-s3-blobstore.yml
+          operations/remove-routing-components-for-transition.yml
+          operations/remove-cf-networking-for-transition.yml
+        VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
+        REGENERATE_VARS_STORE: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
