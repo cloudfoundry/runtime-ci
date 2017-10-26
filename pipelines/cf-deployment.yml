@@ -1170,6 +1170,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
@@ -1351,6 +1352,7 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
+        UPTIMER_APP_DOMAIN: minerva.cf-app.com
         OPS_FILES: "operations/use-compiled-releases.yml operations/aws.yml operations/legacy/keep-static-ips.yml operations/keep-etcd-for-transition.yml operations/use-external-dbs.yml operations/use-s3-blobstore.yml operations/cfr-to-cfd.yml operations/remove-routing-components-for-transition.yml operations/remove-cf-networking-for-transition.yml"
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
         FAIL_ON_DOWNTIME: true

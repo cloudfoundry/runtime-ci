@@ -77,6 +77,11 @@ params:
   # - Optional
   # - This will measure uptime during the bosh deploy task using [uptimer](https://github.com/cloudfoundry/uptimer)
 
+  UPTIMER_APP_DOMAIN:
+  # - Required if using `DEPLOY_WITH_UPTIME_MEASUREMENTS`,
+  #   ignored otherwise.
+  # - The domain that uptimer will push instrumentation apps to.
+
   FAIL_ON_DOWNTIME: false
   # - Optional
   # - This will cause the task to fail if you are not using the DEPLOY_WITH_UPTIME_MEASUREMENTS flag
