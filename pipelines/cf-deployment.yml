@@ -1229,6 +1229,7 @@ jobs:
           cdn-vars.yml
           static_ips.yml
           app_domains_vars.yml
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         REGENERATE_VARS_STORE: false
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
@@ -1395,6 +1396,7 @@ jobs:
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       ensure:
         put: minerva-env-stubs-and-vars
