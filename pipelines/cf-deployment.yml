@@ -1423,15 +1423,6 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
-  - task: bosh-update-runtime-config
-    file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
-    input_mapping:
-      bbl-state: luna-env-director-state
-      runtime-configs: cf-deployment-develop
-      vars-files: luna-env-vars-store
-    params:
-      RUNTIME_CONFIG_FILE: runtime-configs/enable-component-syslog.yml
-      VARS_FILES: syslog-vars.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -1442,8 +1433,17 @@ jobs:
       vars-files: luna-env-vars-store
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-      OPS_FILES: "operations/use-compiled-releases.yml operations/rename-network.yml operations/rename-deployment.yml operations/test/add-persistent-isolation-segment-diego-cell.yml operations/test/add-persistent-isolation-segment-router.yml"
-      VARS_FILES: "deployment-name.yml network-name.yml"
+      OPS_FILES: |
+        operations/use-compiled-releases.yml
+        operations/rename-network.yml
+        operations/rename-deployment.yml
+        operations/test/add-persistent-isolation-segment-diego-cell.yml
+        operations/test/add-persistent-isolation-segment-router.yml
+        operations/addons/enable-component-syslog.yml
+      VARS_FILES: |
+        deployment-name.yml
+        network-name.yml
+        syslog-vars.yml
       REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
