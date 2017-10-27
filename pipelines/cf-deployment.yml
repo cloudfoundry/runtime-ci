@@ -1389,7 +1389,7 @@ jobs:
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
-        REGENERATE_VARS_STORE: true
+        REGENERATE_VARS_STORE: false
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
