@@ -1200,7 +1200,7 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-without-etcd
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         bbl-state: dumbledore-env-director-state
         cf-deployment: cf-deployment-release-candidate
@@ -1209,6 +1209,7 @@ jobs:
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
@@ -1229,8 +1230,13 @@ jobs:
           cdn-vars.yml
           static_ips.yml
           app_domains_vars.yml
-        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        REGENERATE_VARS_STORE: false
+        RUMP_DEPLOYMENTS: "cf-routing"
+        FAIL_ON_DOWNTIME: true
+      ensure:
+        put: dumbledore-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
@@ -1404,7 +1410,7 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-without-etcd
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
@@ -1422,7 +1428,14 @@ jobs:
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
-        REGENERATE_VARS_STORE: false
+        UPTIMER_APP_DOMAIN: minerva.cf-app.com
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        FAIL_ON_DOWNTIME: true
+      ensure:
+        put: minerva-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
