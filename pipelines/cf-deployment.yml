@@ -1160,7 +1160,11 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml keep-etcd-for-transition.yml keep-syslog-drain-binder-for-transition.yml opt-out-of-cf-syslog-drain-release-for-transition.yml"
+        NEW_OPS_FILES: |
+          cfr-to-cfd.yml
+          keep-etcd-for-transition.yml
+          keep-syslog-drain-binder-for-transition.yml
+          opt-out-of-cf-syslog-drain-release-for-transition.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1181,6 +1185,7 @@ jobs:
           operations/experimental/skip-consul-cell-registrations.yml
           operations/use-s3-blobstore.yml
           operations/use-blobstore-cdn.yml
+          operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
           operations/keep-etcd-for-transition.yml
@@ -1220,6 +1225,7 @@ jobs:
           operations/experimental/skip-consul-cell-registrations.yml
           operations/use-s3-blobstore.yml
           operations/use-blobstore-cdn.yml
+          operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
           operations/keep-syslog-drain-binder-for-transition.yml
@@ -1380,7 +1386,11 @@ jobs:
         new-ops-files: cf-deployment-transition
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "cfr-to-cfd.yml remove-routing-components-for-transition.yml remove-cf-networking-for-transition.yml keep-etcd-for-transition.yml"
+        NEW_OPS_FILES: |
+          cfr-to-cfd.yml
+          remove-routing-components-for-transition.yml
+          remove-cf-networking-for-transition.yml
+          keep-etcd-for-transition.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1399,6 +1409,7 @@ jobs:
           operations/keep-etcd-for-transition.yml
           operations/use-external-dbs.yml
           operations/use-s3-blobstore.yml
+          operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
@@ -1426,6 +1437,7 @@ jobs:
           operations/legacy/keep-static-ips.yml
           operations/use-external-dbs.yml
           operations/use-s3-blobstore.yml
+          operations/set-bbs-active-key.yml
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
