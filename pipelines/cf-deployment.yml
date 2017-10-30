@@ -1228,8 +1228,6 @@ jobs:
           operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
-          operations/keep-syslog-drain-binder-for-transition.yml
-          operations/opt-out-of-cf-syslog-drain-release-for-transition.yml
           operations/override-app-domains.yml
         VARS_FILES: |
           rds-vars.yml
