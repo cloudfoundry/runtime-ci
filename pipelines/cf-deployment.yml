@@ -1200,7 +1200,7 @@ jobs:
           app_domains_vars.yml
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
         FAIL_ON_DOWNTIME: true
-      ensure:
+      on_failure:
         put: dumbledore-env-stubs-and-vars
         params:
           repository: updated-vars-store
@@ -1211,7 +1211,7 @@ jobs:
         bbl-state: dumbledore-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
-        vars-store: extracted-vars-store
+        vars-store: updated-vars-store
         vars-files: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
@@ -1414,7 +1414,7 @@ jobs:
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
-      ensure:
+      on_failure:
         put: minerva-env-stubs-and-vars
         params:
           repository: updated-vars-store
@@ -1425,7 +1425,7 @@ jobs:
         bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
-        vars-store: extracted-vars-store
+        vars-store: updated-vars-store
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
