@@ -303,5 +303,5 @@ jobs:
         disaster-recovery-acceptance-tests: drats-master
         bbr-binary-release: bbr-github-release
       params:
-        DEFAULT_TIMEOUT_MINS: 30
+        DEFAULT_TIMEOUT_MINS: 60
         SKIP_SUITE_NAME: cf-nfsbroker
