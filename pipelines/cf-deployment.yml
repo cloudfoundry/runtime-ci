@@ -1226,7 +1226,6 @@ jobs:
           operations/use-s3-blobstore.yml
           operations/use-blobstore-cdn.yml
           operations/set-bbs-active-key.yml
-          operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
           operations/override-app-domains.yml
         VARS_FILES: |
