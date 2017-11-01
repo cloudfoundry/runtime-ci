@@ -11,7 +11,7 @@ inputs:
 - name: bbl-state
 - name: vars-store
 
-outputs: 
+outputs:
 - name: drats-config
 
 run:

@@ -68,6 +68,11 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests.git
+- name: persi-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/persi-ci.git
 - name: bbr-github-release
   type: github-release
   source:
@@ -231,6 +236,7 @@ jobs:
       - get: baba-yaga-env-director-state
         passed: [ setup-infrastructure ]
       - get: baba-yaga-env-integration-configs
+      - get: persi-ci
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -238,6 +244,14 @@ jobs:
         bbl-state: baba-yaga-env-director-state
       params:
         INFRASTRUCTURE: google
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-rc
+        new-ops-files: persi-ci
+      params:
+        BASE_OPS_FILE_DIR: "operations"
+        NEW_OPS_FILES: "operations/enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -248,7 +262,11 @@ jobs:
         vars-files: baba-yaga-env-vars-store
       params:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/experimental/enable-backup-restore.yml"
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/experimental/enable-backup-restore.yml
+          operations/enable-nfs-volume-service.yml
+          operations/experimental/enable-nfs-broker-backup.yml
       ensure:
         put: baba-yaga-env-vars-store
         params:
@@ -304,4 +322,3 @@ jobs:
         bbr-binary-release: bbr-github-release
       params:
         DEFAULT_TIMEOUT_MINS: 60
-        SKIP_SUITE_NAME: cf-nfsbroker
