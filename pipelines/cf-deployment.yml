@@ -1497,11 +1497,13 @@ jobs:
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
         operations/addons/enable-component-syslog.yml
+        operations/use-gcs-blobstore.yml
       VARS_FILES: |
         deployment-name.yml
         network-name.yml
         bbs-key-label.yml
         syslog-vars.yml
+        gcs-vars.yml
       REGENERATE_VARS_STORE: true
     ensure:
       put: luna-env-vars-store
