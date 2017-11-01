@@ -257,7 +257,7 @@ jobs:
       input_mapping:
         bbl-state: baba-yaga-env-director-state
         cf-deployment: cf-deployment-rc
-        ops-files: cf-deployment-rc
+        ops-files: collected-ops-files
         vars-store: baba-yaga-env-vars-store
         vars-files: baba-yaga-env-vars-store
       params:
