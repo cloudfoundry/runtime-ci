@@ -14,6 +14,12 @@ export BOSH_CLIENT_SECRET=$(jq -r .bosh_client_secret drats-config/drats_integra
 
 export SSH_DESTINATION_CIDR=$(jq -r .ssh_destination_cidr drats-config/drats_integration_config.json)
 
+export NFS_SERVICE_NAME=$(jq -r .nfs_service_name drats-config/drats_integration_config.json)
+export NFS_PLAN_NAME=$(jq -r .nfs_plan_name drats-config/drats_integration_config.json)
+export NFS_BROKER_USER=$(jq -r .nfs_broker_user drats-config/drats_integration_config.json)
+export NFS_BROKER_PASSWORD=$(jq -r .nfs_broker_password drats-config/drats_integration_config.json)
+export NFS_BROKER_URL=$(jq -r .nfs_broker_url drats-config/drats_integration_config.json)
+
 export GOPATH=$PWD
 export PATH=$PATH:$GOPATH/bin
 

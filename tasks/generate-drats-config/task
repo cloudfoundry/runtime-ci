@@ -23,6 +23,8 @@ echo '{}' | jq \
 --arg bosh_client "${BOSH_CLIENT}" \
 --arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
+--arg nfs_broker_password $(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/nfs-broker-password) \
+--arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
 '{
     "cf_deployment_name": $cf_deployment_name,
     "cf_api_url": $cf_api_url,
@@ -35,5 +37,10 @@ echo '{}' | jq \
     "bosh_ca_cert": $bosh_ca_cert,
     "bosh_client": $bosh_client,
     "bosh_client_secret": $bosh_client_secret,
-    "ssh_destination_cidr": $ssh_destination_cidr
+    "ssh_destination_cidr": $ssh_destination_cidr,
+    "nfs_service_name": "nfs",
+    "nfs_plan_name": "Existing",
+    "nfs_broker_user": "nfs-broker",
+    "nfs_broker_password": $nfs_broker_password,
+    "nfs_broker_url": $nfs_broker_url
 }' > drats-config/drats_integration_config.json
