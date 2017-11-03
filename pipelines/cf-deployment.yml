@@ -1163,6 +1163,7 @@ jobs:
         NEW_OPS_FILES: |
           cfr-to-cfd.yml
           keep-etcd-for-transition.yml
+          enable-doppler-announce.yml
           keep-syslog-drain-binder-for-transition.yml
           opt-out-of-cf-syslog-drain-release-for-transition.yml
     - task: bosh-deploy-cf
@@ -1189,6 +1190,7 @@ jobs:
           operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
           operations/keep-etcd-for-transition.yml
+          operations/enable-doppler-announce.yml
           operations/keep-syslog-drain-binder-for-transition.yml
           operations/opt-out-of-cf-syslog-drain-release-for-transition.yml
           operations/override-app-domains.yml
@@ -1388,6 +1390,7 @@ jobs:
           remove-routing-components-for-transition.yml
           remove-cf-networking-for-transition.yml
           keep-etcd-for-transition.yml
+          enable-doppler-announce.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1404,6 +1407,7 @@ jobs:
           operations/aws.yml
           operations/legacy/keep-static-ips.yml
           operations/keep-etcd-for-transition.yml
+          operations/enable-doppler-announce.yml
           operations/use-external-dbs.yml
           operations/use-s3-blobstore.yml
           operations/set-bbs-active-key.yml
