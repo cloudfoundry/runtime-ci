@@ -22,7 +22,6 @@ ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
 
 RUN \
   gem update --system && \
-  gem install bundler --no-rdoc --no-ri && \
   gem install bosh_cli --version 1.3215.0 --no-rdoc --no-ri
 
 RUN \

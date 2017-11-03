@@ -15,6 +15,4 @@ RUN \
   rm -rf /tmp/*
 
 ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
-RUN \
-  gem update --system && \
-  gem install bundler --no-rdoc --no-ri
+RUN gem update --system

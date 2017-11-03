@@ -22,4 +22,4 @@ COPY Gemfile Gemfile.lock /
 
 RUN \
   gem update --system && \
-  gem install bundler --no-rdoc --no-ri && bundle install
+  bundle install
