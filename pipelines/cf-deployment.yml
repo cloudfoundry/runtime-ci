@@ -1207,6 +1207,13 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: remove-static-ips-from-cloud-config
+      file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+        ops-file: dumbledore-env-stubs-and-vars
+      params:
+        OPS_FILE_PATH: dumbledore-env-stubs-and-vars/add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf-without-etcd
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1221,7 +1228,6 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
-          operations/legacy/keep-static-ips.yml
           operations/use-external-dbs.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
