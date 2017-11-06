@@ -6,6 +6,4 @@ printenv
 
 cd "$CF_RELEASE_DIR"
 
-gem install bundler
-
 scripts/test
