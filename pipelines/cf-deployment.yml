@@ -1240,7 +1240,6 @@ jobs:
           rds-vars.yml
           s3-vars.yml
           cdn-vars.yml
-          static_ips.yml
           app_domains_vars.yml
         RUMP_DEPLOYMENTS: "cf-routing"
         FAIL_ON_DOWNTIME: true
