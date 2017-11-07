@@ -443,6 +443,7 @@ resources:
     - rds-vars.yml
     - runtime-config.yml
     - confab-timeout-vars.yml
+    - scale-windows-cells.yml
 - name: hermione-env-turbulence-vars
   type: git
   source:
@@ -1755,12 +1756,20 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-develop
+        new-ops-files: hermione-env-vars-store
+      params:
+        BASE_OPS_FILE_DIR: "operations"
+        NEW_OPS_FILES: "scale-windows-cells.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
+        ops-files: collected-ops-files
         vars-store: hermione-env-vars-store
         vars-files: hermione-env-vars-store
       params:
@@ -1768,6 +1777,7 @@ jobs:
         OPS_FILES: |
           operations/aws.yml
           operations/windows-cell.yml
+          operations/scale-windows-cells.yml
           operations/test/disable_windows_consul_agent_nameserver_overwriting.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-s3-blobstore.yml
