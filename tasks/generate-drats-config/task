@@ -14,7 +14,7 @@ popd > /dev/null
 
 echo '{}' | jq \
 --arg cf_deployment_name ${DEPLOYMENT_NAME} \
---arg cf_api_url "api.${SYSTEM_DOMAIN}" \
+--arg cf_api_url "https://api.${SYSTEM_DOMAIN}" \
 --arg cf_admin_password $(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password) \
 --arg bosh_environment "${BOSH_ENVIRONMENT}" \
 --arg bosh_gw_host "${BOSH_GW_HOST}" \
