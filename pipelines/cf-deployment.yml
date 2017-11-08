@@ -29,6 +29,9 @@ groups:
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
+  - ship-it-major-expedited
+  - ship-it-minor-expedited
+  - ship-it-patch-expedited
   - release-notes-template
 - name: dev
   jobs:
@@ -54,6 +57,9 @@ groups:
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
+  - ship-it-major-expedited
+  - ship-it-minor-expedited
+  - ship-it-patch-expedited
   - complex-acquire-pool
   - complex-release-pool-manual
   - complex-transition-deploy
@@ -2555,7 +2561,7 @@ jobs:
       - put: cf-deployment-version
         params: { bump: patch }
       - get: cf-deployment-release-candidate
-        passed: [bless-manifest]
+        passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
       - put: cf-deployment-master
         params:
@@ -2569,7 +2575,47 @@ jobs:
           repository: updated-cf-deployment-transition-compatibility
           rebase: true
 
+- name: ship-it-patch-expedited
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - get: runtime-ci
+      - put: cf-deployment-version
+        params: { bump: patch }
+      - get: cf-deployment-release-candidate
+        passed: [bless-manifest]
+      - get: cf-deployment-transition-compatibility
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
+
 - name: ship-it-minor
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - get: runtime-ci
+      - put: cf-deployment-version
+        params: { bump: minor }
+      - get: cf-deployment-release-candidate
+        passed: [transition-record-compatible-versions]
+      - get: cf-deployment-transition-compatibility
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
+      - task: record-transition-version
+        file: runtime-ci/tasks/record-transition-version/task.yml
+      - put: cf-deployment-transition-compatibility
+        params:
+          repository: updated-cf-deployment-transition-compatibility
+          rebase: true
+
+- name: ship-it-minor-expedited
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2585,6 +2631,23 @@ jobs:
           repository: cf-deployment-release-candidate
           tag: cf-deployment-version/version
           tag_prefix: v
+
+- name: ship-it-major
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - get: runtime-ci
+      - put: cf-deployment-version
+        params: { bump: major }
+      - get: cf-deployment-release-candidate
+        passed: [transition-record-compatible-versions]
+      - get: cf-deployment-transition-compatibility
+      - put: cf-deployment-master
+        params:
+          repository: cf-deployment-release-candidate
+          tag: cf-deployment-version/version
+          tag_prefix: v
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2592,7 +2655,7 @@ jobs:
           repository: updated-cf-deployment-transition-compatibility
           rebase: true
 
-- name: ship-it-major
+- name: ship-it-major-expedited
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2608,9 +2671,3 @@ jobs:
           repository: cf-deployment-release-candidate
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: record-transition-version
-        file: runtime-ci/tasks/record-transition-version/task.yml
-      - put: cf-deployment-transition-compatibility
-        params:
-          repository: updated-cf-deployment-transition-compatibility
-          rebase: true
