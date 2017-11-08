@@ -12,7 +12,7 @@ RUN \
   wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v4.10.4/bbl-v4.10.4_linux_x86-64 -P /tmp && \
   mv /tmp/bbl-* /usr/local/bin/bbl && \
   cd /usr/local/bin && \
-  echo "0393afe06f5ca1664553895f41c0f3d6186f191b bbl" | sha1sum -c - && \
+  echo "c1d2c001250506bd312203839058baf11ad7f53e150c8a6a1ff617a86d39f21a bbl" | sha256sum -c - && \
   chmod +x bbl
 
 RUN \
