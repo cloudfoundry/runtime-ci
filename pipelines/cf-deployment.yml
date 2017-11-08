@@ -1862,6 +1862,7 @@ jobs:
         vars-files: bellatrix-env-vars-store
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
+        #OPS_FILES: "operations/scale-database-cluster.yml"
       ensure:
         put: bellatrix-env-vars-store
         params:
