@@ -898,6 +898,10 @@ jobs:
           DB_USER: {{dumbledore_locketdb_username}}
           DB_PASSWORD: {{dumbledore_locketdb_password}}
           DB_NAME: {{dumbledore_locketdb_name}}
+    - task: restore-cloud-config
+      file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
 
 - name: complex-legacy-deploy
   public: true

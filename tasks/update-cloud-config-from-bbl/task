@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eu
+
+pushd bbl-state
+  eval "$(bbl print-env)"
+  bosh update-cloud-config <(bbl cloud-config)
+popd
