@@ -4,5 +4,5 @@ set -eu
 
 pushd bbl-state
   eval "$(bbl print-env)"
-  bosh update-cloud-config <(bbl cloud-config)
+  bosh -n update-cloud-config <(bbl cloud-config)
 popd
