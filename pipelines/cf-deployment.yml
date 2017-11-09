@@ -33,6 +33,7 @@ groups:
   - ship-it-minor-expedited
   - ship-it-patch-expedited
   - release-notes-template
+  - transition-record-compatible-versions
 - name: dev
   jobs:
   - bless-manifest
