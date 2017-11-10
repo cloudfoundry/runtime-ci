@@ -1519,6 +1519,7 @@ jobs:
         operations/test/add-persistent-isolation-segment-router.yml
         operations/addons/enable-component-syslog.yml
         operations/use-gcs-blobstore.yml
+        operations/workaround/use-4-azs-for-router.yml
       VARS_FILES: |
         deployment-name.yml
         network-name.yml
