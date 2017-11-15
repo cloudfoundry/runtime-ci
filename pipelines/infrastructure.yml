@@ -415,15 +415,15 @@ jobs:
     - get: bosh-deployment
     - get: snitch-env-director-state
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
-    file: runtime-ci/tasks/prototype/bbl-up/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
       BBL_GCP_REGION: us-central1
       BBL_GCP_ZONE: us-central1-a
-      LB_DOMAIN: snitch.cf-app.com
       BBL_ENV_NAME: snitch-lite
       OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
       IS_BOSH_LITE: true
@@ -679,15 +679,15 @@ jobs:
       - get: snitch-env-director-state
       - get: cf-deployment-develop
       - get: bosh-deployment
+      - get: cf-deployment-concourse-tasks
     - task: update-infrastructure
-      file: runtime-ci/tasks/prototype/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
         BBL_GCP_REGION: us-central1
         BBL_GCP_ZONE: us-central1-a
-        LB_DOMAIN: snitch.cf-app.com
         BBL_ENV_NAME: snitch-lite
         OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
         IS_BOSH_LITE: true
