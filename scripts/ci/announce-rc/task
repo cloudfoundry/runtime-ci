@@ -96,12 +96,6 @@ Can you provide a compatible cf-networking-release SHA or final release version?
 - **Decider**:
 - **Comments**:
 
-----
-@glestaris, @tscolari:
-Can you provide a compatible grootfs-release SHA or final release version?
-- **Approval**: :+1: / :-1:
-- **Decider**:
-- **Comments**:
 "
 
 echo "Finding cf-final-release-election issue number"

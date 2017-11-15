@@ -17,7 +17,6 @@ echo "Hey there <@zach> <@gerg>. Could you please take a look at the latest rele
 echo "Hey there <@slevine> <@scoward>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/buildpacks
 echo "Hey there <@emalm> <@jvshahid>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/diego
 echo "Hey there <@uramachandran> <@achin>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/container-networking
-echo "Hey there <@glestaris> <@tscolari>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/grootfs
 echo "Hey there <@nebhale>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/java-buildpack
 
 echo "Successfully saved a Slack messages"
