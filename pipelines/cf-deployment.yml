@@ -1239,6 +1239,8 @@ jobs:
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
+        UPTIMER_RUN_SYSLOG_MEASUREMENT: true
+        UPTIMER_TCP_DOMAIN: tcp.dumbledore.cf-app.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
@@ -1452,6 +1454,8 @@ jobs:
         vars-files: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
+        UPTIMER_APP_DOMAIN: minerva.cf-app.com
+        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
@@ -1462,7 +1466,6 @@ jobs:
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
         VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
-        UPTIMER_APP_DOMAIN: minerva.cf-app.com
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       ensure:
