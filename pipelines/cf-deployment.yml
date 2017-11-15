@@ -1421,6 +1421,7 @@ jobs:
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
         UPTIMER_APP_DOMAIN: minerva.cf-app.com
+        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
