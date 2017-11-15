@@ -12,7 +12,7 @@ echo "Hey there <@efarrar> <@genevieve>. Could you please take a look at the lat
 echo "Hey there <@valepert> <@smoser>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/postgres-release
 echo "Hey there <@shannon> <@ahurley>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/routing
 echo "Hey there <@stummidi> <@jhamon>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/uaa
-echo "Hey there <@hev> <@jasonkeene>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/loggregator
+echo "Hey there <@hev> <@josmith>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/loggregator
 echo "Hey there <@zach> <@gerg>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/capi
 echo "Hey there <@slevine> <@scoward>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/buildpacks
 echo "Hey there <@emalm> <@jvshahid>. Could you please take a look at the latest release candidate: ${issue_url} cc <@dsabeti>" > slack-messages/diego

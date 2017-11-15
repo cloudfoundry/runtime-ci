@@ -39,8 +39,8 @@ def release_teams
     ),
     ReleaseTeam.new(
       name: "loggregator",
-      anchor_github: '@jasonkeene',
-      anchor_slack:  '@jasonkeene',
+      anchor_github: '@JohannaSmith',
+      anchor_slack:  '@josmith',
       pm_github:     '@ahevenor',
       pm_slack:      '@hev'
     ),
