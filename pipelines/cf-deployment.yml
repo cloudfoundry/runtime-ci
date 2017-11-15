@@ -1945,7 +1945,7 @@ jobs:
         vars-files: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
-        OPS_FILES: "operations/use-compiled-releases.yml operations/bosh-lite.yml"
+        OPS_FILES: "operations/use-compiled-releases.yml operations/bosh-lite.yml operations/use-postgres.yml"
       ensure:
         put: snitch-env-vars-store
         params:
