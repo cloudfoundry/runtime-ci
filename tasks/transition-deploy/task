@@ -16,6 +16,9 @@ write_uptimer_deploy_config() {
     --arg app_domain ${UPTIMER_APP_DOMAIN} \
     --arg manifest $manifest \
     --arg deployment_name $deployment_name \
+    --arg run_app_syslog_availability ${UPTIMER_RUN_SYSLOG_MEASUREMENT} \
+    --arg tcp_domain ${UPTIMER_TCP_DOMAIN} \
+    --arg tcp_port ${UPTIMER_TCP_PORT} \
     '{
       "while": [
         {
@@ -38,13 +41,19 @@ write_uptimer_deploy_config() {
         "api": $cf_api,
         "app_domain": $app_domain,
         "admin_user": "admin",
-        "admin_password": $admin_password
+        "admin_password": $admin_password,
+        "tcp_domain": $tcp_domain,
+        "tcp_port": $tcp_port
       },
       "allowed_failures": {
         "app_pushability": 1,
         "http_availability": 0,
         "recent_logs": 2,
-        "streaming_logs": 2
+        "streaming_logs": 2,
+        "app_syslog_availability": 2
+      },
+      "optional_tests": {
+        "run_app_syslog_availability": $run_app_syslog_availability
       }
     }'
   set -x

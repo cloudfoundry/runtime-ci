@@ -1189,6 +1189,9 @@ jobs:
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
+        UPTIMER_RUN_SYSLOG_MEASUREMENT: true
+        UPTIMER_TCP_DOMAIN: tcp.dumbledore.cf-app.com
+        FAIL_ON_DOWNTIME: true
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
@@ -1213,7 +1216,6 @@ jobs:
           static_ips.yml
           app_domains_vars.yml
         RUMP_DEPLOYMENTS: "cf-diego cf-routing"
-        FAIL_ON_DOWNTIME: true
       on_failure:
         put: dumbledore-env-stubs-and-vars
         params:

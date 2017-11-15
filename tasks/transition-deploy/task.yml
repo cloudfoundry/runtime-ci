@@ -82,6 +82,18 @@ params:
   #   ignored otherwise.
   # - The domain that uptimer will push instrumentation apps to.
 
+  UPTIMER_RUN_SYSLOG_MEASUREMENT: false
+  # - Optional
+  # - This will measure app syslog availability during the deploy.
+
+  UPTIMER_TCP_DOMAIN:
+  # - Required if using `UPTIMER_RUN_SYSLOG_MEASUREMENT`
+  # - The domain used for tcp route mapped to a syslog sink
+
+  UPTIMER_TCP_PORT: 1025
+  # - Required if using `UPTIMER_RUN_SYSLOG_MEASUREMENT`
+  # - The port used with `UPTIMER_TCP_DOMAIN`
+
   FAIL_ON_DOWNTIME: false
   # - Optional
   # - This will cause the task to fail if you are not using the DEPLOY_WITH_UPTIME_MEASUREMENTS flag
