@@ -43,7 +43,7 @@ write_uptimer_deploy_config() {
         "admin_user": "admin",
         "admin_password": $admin_password,
         "tcp_domain": $tcp_domain,
-        "tcp_port": $tcp_port
+        "tcp_port": $tcp_port | tonumber
       },
       "allowed_failures": {
         "app_pushability": 1,
@@ -53,7 +53,7 @@ write_uptimer_deploy_config() {
         "app_syslog_availability": 2
       },
       "optional_tests": {
-        "run_app_syslog_availability": $run_app_syslog_availability
+        "run_app_syslog_availability": $run_app_syslog_availability | contains("true")
       }
     }'
   set -x
