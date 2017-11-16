@@ -346,7 +346,7 @@ jobs:
     - get: dumbledore-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
-    file: runtime-ci/tasks/bbl-up/task.yml
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
@@ -536,6 +536,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
       BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
       BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+      LB_DOMAIN: minerva.cf-app.com
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
       bbl-state: minerva-env-director-state
