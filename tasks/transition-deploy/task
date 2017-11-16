@@ -18,7 +18,7 @@ write_uptimer_deploy_config() {
     --arg deployment_name $deployment_name \
     --arg run_app_syslog_availability ${UPTIMER_RUN_SYSLOG_MEASUREMENT} \
     --arg tcp_domain ${UPTIMER_TCP_DOMAIN} \
-    --arg tcp_port ${UPTIMER_TCP_PORT} \
+    --arg available_port ${UPTIMER_TCP_PORT} \
     '{
       "while": [
         {
@@ -43,7 +43,7 @@ write_uptimer_deploy_config() {
         "admin_user": "admin",
         "admin_password": $admin_password,
         "tcp_domain": $tcp_domain,
-        "tcp_port": $tcp_port | tonumber
+        "available_port": $available_port | tonumber
       },
       "allowed_failures": {
         "app_pushability": 1,
