@@ -1165,6 +1165,12 @@ jobs:
         bbl-state: dumbledore-env-director-state
       params:
         INFRASTRUCTURE: aws
+    - task: create-tcp-domain
+      file: runtime-ci/tasks/create-tcp-domain/task.yml
+      input_mapping:
+        vars-store: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
