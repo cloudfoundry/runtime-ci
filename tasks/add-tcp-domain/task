@@ -1,0 +1,13 @@
+#!/bin/bash
+set -eu
+
+CF_PASSWORD=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
+
+echo "Setting target to api.${SYSTEM_DOMAIN}"
+cf api --skip-ssl-validation api.${SYSTEM_DOMAIN}
+
+echo "Authenticating as admin"
+cf auth admin "${CF_PASSWORD}"
+
+echo "Creating tcp domain"
+cf create-shared-domain tcp.${SYSTEM_DOMAIN} --router-group default-tcp || true
