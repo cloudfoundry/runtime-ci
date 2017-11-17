@@ -1499,8 +1499,14 @@ jobs:
           cfr-to-cfd.yml
           remove-routing-components-for-transition.yml
           remove-cf-networking-for-transition.yml
-          keep-etcd-for-transition.yml
           enable-doppler-announce.yml
+    - task: remove-static-ips-from-cloud-config
+      file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
+      input_mapping:
+        bbl-state: minerva-env-director-state
+        ops-file: minerva-env-stubs-and-vars
+      params:
+        OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1516,7 +1522,6 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
-          operations/legacy/keep-static-ips.yml
           operations/keep-etcd-for-transition.yml
           operations/enable-doppler-announce.yml
           operations/use-external-dbs.yml
@@ -1525,7 +1530,9 @@ jobs:
           operations/cfr-to-cfd.yml
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
-        VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
+        VARS_FILES: |
+          rds-vars.yml
+          s3-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       on_failure:
@@ -1548,13 +1555,14 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
-          operations/legacy/keep-static-ips.yml
           operations/use-external-dbs.yml
           operations/use-s3-blobstore.yml
           operations/set-bbs-active-key.yml
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
-        VARS_FILES: "rds-vars.yml s3-vars.yml static_ips.yml"
+        VARS_FILES: |
+          rds-vars.yml
+          s3-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       ensure:
