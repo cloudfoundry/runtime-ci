@@ -1296,7 +1296,6 @@ jobs:
           operations/cfr-to-cfd.yml
           operations/experimental/use-grootfs.yml
           operations/keep-etcd-for-transition.yml
-          operations/keep-syslog-drain-binder-for-transition.yml
           operations/override-app-domains.yml
         VARS_FILES: |
           rds-vars.yml
