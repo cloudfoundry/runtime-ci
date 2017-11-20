@@ -575,6 +575,7 @@ jobs:
       BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
+      BBL_STATE_DIR: bbl-state
       OPS_FILES: "local-dns.yml"
     input_mapping:
       bbl-state: hermione-env-director-state
@@ -737,6 +738,7 @@ jobs:
         BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
         LB_DOMAIN: hermione.cf-app.com
         BBL_ENV_NAME: hermione-upgrade
+        BBL_STATE_DIR: bbl-state
         OPS_FILES: "local-dns.yml"
       input_mapping:
         bbl-state: hermione-env-director-state
@@ -949,9 +951,11 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
@@ -959,11 +963,14 @@ jobs:
     params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
+      BBL_STATE_DIR: bbl-state
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: hermione-env-director-state
       params:
@@ -1145,3 +1152,5 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state

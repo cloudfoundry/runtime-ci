@@ -14,5 +14,6 @@ run:
   path: runtime-ci/tasks/run-errand/task
 
 params:
+  BBL_STATE_DIR:
   DEPLOYMENT_NAME: cf
   ERRAND_NAME:
