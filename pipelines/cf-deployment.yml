@@ -309,13 +309,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
-    paths:
-    - transition/stubs/*
-    - deployment-vars.yml
-    - integration_config.json
-    - s3-vars.yml
-    - rds-vars.yml
-    - static_ips.yml
 - name: dumbledore-env-stubs-and-vars
   type: git
   source:
@@ -792,6 +785,10 @@ jobs:
           DB_USER: {{minerva_locketdb_user}}
           DB_PASSWORD: {{minerva_locketdb_password}}
           DB_NAME: {{minerva_locketdb_db_name}}
+      - task: restore-cloud-config
+        file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
+        input_mapping:
+          bbl-state: minerva-env-director-state
 
 - name: complex-acquire-pool
   public: true
@@ -1180,8 +1177,8 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: |
           cfr-to-cfd.yml
-          keep-etcd-for-transition.yml
           enable-doppler-announce.yml
+          keep-etcd-for-transition.yml
           keep-syslog-drain-binder-for-transition.yml
           opt-out-of-cf-syslog-drain-release-for-transition.yml
     - task: bosh-deploy-cf
@@ -1496,9 +1493,10 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: |
           cfr-to-cfd.yml
+          enable-doppler-announce.yml
+          keep-etcd-for-transition.yml
           remove-routing-components-for-transition.yml
           remove-cf-networking-for-transition.yml
-          enable-doppler-announce.yml
     - task: remove-static-ips-from-cloud-config
       file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
       input_mapping:
@@ -1532,6 +1530,7 @@ jobs:
         VARS_FILES: |
           rds-vars.yml
           s3-vars.yml
+          static_ips.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       on_failure:
