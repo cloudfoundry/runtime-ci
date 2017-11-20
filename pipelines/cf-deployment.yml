@@ -1595,6 +1595,7 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       DEPLOYMENT_NAME: luna-cf
+      BBL_STATE_DIR: bbl-state
   - task: bosh-upload-stemcell-fresh
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -1602,6 +1603,7 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
+      BBL_STATE_DIR: bbl-state
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -1611,6 +1613,7 @@ jobs:
       vars-store: luna-env-vars-store
       vars-files: luna-env-vars-store
     params:
+      BBL_STATE_DIR: bbl-state
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: |
         operations/use-compiled-releases.yml
@@ -1638,6 +1641,8 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -2614,6 +2619,7 @@ jobs:
         bbl-state: luna-env-director-state
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       params:
+        BBL_STATE_DIR: bbl-state
         DEPLOYMENT_NAME: luna-cf
     - put: fresh-pool
       params: {release: fresh-pool}
