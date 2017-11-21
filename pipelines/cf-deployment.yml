@@ -2511,6 +2511,7 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-vars-store
+      - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
