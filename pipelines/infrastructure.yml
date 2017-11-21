@@ -505,6 +505,7 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
       BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
     input_mapping:
@@ -909,13 +910,17 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: bellatrix-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: bellatrix-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: bellatrix-env-director-state
       params:
@@ -1145,6 +1150,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
 
 - name: run-bosh-cleanup-upgrade
   serial: true
