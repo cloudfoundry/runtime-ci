@@ -829,20 +829,24 @@ jobs:
       - get: runtime-ci
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-      - task: guarantee-no-existing-diego-deployment
-        input_mapping:
-          bbl-state: dumbledore-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
+          BBL_STATE_DIR: bbl-state
+      - task: guarantee-no-existing-diego-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        input_mapping:
+          bbl-state: dumbledore-env-director-state
+        params:
+          BBL_STATE_DIR: bbl-state
           DEPLOYMENT_NAME: cf-diego
       - task: guarantee-no-existing-routing-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
+          BBL_STATE_DIR: bbl-state
           DEPLOYMENT_NAME: cf-routing
     - aggregate:
       - task: recreate-uaadb
@@ -850,6 +854,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_uaadb_host}}
           DB_USER: {{dumbledore_uaadb_user}}
           DB_PASSWORD: {{dumbledore_uaadb_password}}
@@ -859,6 +864,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_ccdb_host}}
           DB_USER: {{dumbledore_ccdb_user}}
           DB_PASSWORD: {{dumbledore_ccdb_password}}
@@ -868,6 +874,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_npdb_host}}
           DB_USER: {{dumbledore_npdb_user}}
           DB_PASSWORD: {{dumbledore_npdb_password}}
@@ -877,6 +884,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_ncdb_host}}
           DB_USER: {{dumbledore_ncdb_user}}
           DB_PASSWORD: {{dumbledore_ncdb_password}}
@@ -886,6 +894,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_bbsdb_host}}
           DB_USER: {{dumbledore_bbsdb_user}}
           DB_PASSWORD: {{dumbledore_bbsdb_password}}
@@ -895,6 +904,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_routingapidb_host}}
           DB_USER: {{dumbledore_routingapidb_username}}
           DB_PASSWORD: {{dumbledore_routingapidb_password}}
@@ -904,6 +914,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{dumbledore_locketdb_host}}
           DB_USER: {{dumbledore_locketdb_username}}
           DB_PASSWORD: {{dumbledore_locketdb_password}}
@@ -912,6 +923,8 @@ jobs:
       file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
       input_mapping:
         bbl-state: dumbledore-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
 
 - name: complex-legacy-deploy
   public: true
@@ -1026,6 +1039,7 @@ jobs:
       input_mapping:
         bbl-state: dumbledore-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         ERRAND_NAME: smoke_tests
     - task: run-routing-smoke-tests
       input_mapping:
@@ -1160,6 +1174,7 @@ jobs:
         bbl-state: dumbledore-env-director-state
         vars-store: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         EXTRACT_CF_NETWORKING: true
         EXTRACT_ROUTING: true
     - task: bosh-upload-stemcell
@@ -1168,6 +1183,7 @@ jobs:
         cf-deployment: cf-deployment-release-candidate
         bbl-state: dumbledore-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         INFRASTRUCTURE: aws
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
@@ -1197,6 +1213,7 @@ jobs:
         vars-store: extracted-vars-store
         vars-files: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         UPTIMER_RUN_SYSLOG_MEASUREMENT: true
@@ -1240,6 +1257,7 @@ jobs:
         vars-store: updated-vars-store
         vars-files: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         UPTIMER_RUN_SYSLOG_MEASUREMENT: true
@@ -1282,6 +1300,7 @@ jobs:
         vars-store: updated-vars-store
         vars-files: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         UPTIMER_RUN_SYSLOG_MEASUREMENT: true
@@ -1330,6 +1349,7 @@ jobs:
         vars-store: updated-vars-store
         vars-files: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         UPTIMER_APP_DOMAIN: apps.dumbledore.cf-app.com
         UPTIMER_RUN_SYSLOG_MEASUREMENT: true
@@ -1449,9 +1469,11 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
   - task: delete-deployment-cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: dumbledore-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - put: complex-pool
     params: {release: complex-pool}
 
