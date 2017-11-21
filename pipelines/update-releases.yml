@@ -382,6 +382,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: binary-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -445,6 +446,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -capi
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -454,6 +456,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: capi
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -516,6 +519,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -cf-networking
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -525,6 +529,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: cf-networking
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -587,6 +592,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -cf-smoke-tests
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -596,6 +602,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: cf-smoke-tests
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -659,6 +666,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -cf-syslog-drain-release
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -668,6 +676,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: cf-syslog-drain
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -730,6 +739,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -cflinuxfs2
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -739,6 +749,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: cflinuxfs2
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -801,6 +812,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -consul
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -810,6 +822,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: consul
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -872,6 +885,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -diego
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -881,6 +895,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: diego
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -941,6 +956,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: dotnet-core-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1003,6 +1019,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -garden-runc
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1012,6 +1029,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: garden-runc
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1072,6 +1090,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: go-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1145,6 +1164,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -groot-fs
       OPS_FILES: "enable-backup-restore.yml base-ops-files/use-grootfs.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1193,6 +1213,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: java-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1255,6 +1276,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -loggregator
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1264,6 +1286,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: loggregator
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1327,6 +1350,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -cf-mysql
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1336,6 +1360,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: cf-mysql
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1399,6 +1424,7 @@ jobs:
       vars-files: greengrass-env-director-state
       MANIFEST_DESTINATION: cf-deployment.yml
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -nats
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1408,6 +1434,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: nats
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1468,6 +1495,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: nodejs-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1528,6 +1556,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: php-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1601,6 +1630,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -postgres
       OPS_FILES: "enable-backup-restore.yml base-ops-files/use-postgres.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1649,6 +1679,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: python-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1711,6 +1742,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -routing
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1720,6 +1752,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: routing
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1780,6 +1813,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: ruby-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1840,6 +1874,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: staticfile-buildpack
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1902,6 +1937,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -statsd-injector
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1911,6 +1947,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: statsd-injector
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -1973,6 +2010,7 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -uaa
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -1982,6 +2020,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       RELEASE_NAME: uaa
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
@@ -2156,6 +2195,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
+      BBL_STATE_DIR: bbl-state
       INFRASTRUCTURE: google
   - aggregate:
     - task: compile-release-binary-buildpack
@@ -2166,6 +2206,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-binary-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: binary-buildpack
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2175,6 +2216,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-capi
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: capi
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2184,6 +2226,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-cf-networking
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: cf-networking
     - task: compile-release-cf-smoke-tests
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2193,6 +2236,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-cf-smoke-tests
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: cf-smoke-tests
     - task: compile-release-cf-syslog-drain
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2202,6 +2246,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-cf-syslog-drain
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: cf-syslog-drain
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2211,6 +2256,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-cflinuxfs2
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: cflinuxfs2
     - task: compile-release-consul
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2220,6 +2266,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-consul
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: consul
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2229,6 +2276,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-diego
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: diego
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2238,6 +2286,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-dotnet-core-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: dotnet-core-buildpack
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2247,6 +2296,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-garden-runc
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: garden-runc
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2256,6 +2306,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-go-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: go-buildpack
     - task: compile-release-java-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2265,6 +2316,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-java-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: java-buildpack
     - task: compile-release-loggregator
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2274,6 +2326,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-loggregator
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: loggregator
     - task: compile-release-cf-mysql
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2283,6 +2336,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-cf-mysql
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: cf-mysql
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2292,6 +2346,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-nats
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: nats
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2301,6 +2356,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-nodejs-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: nodejs-buildpack
     - task: compile-release-php-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2310,6 +2366,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-php-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: php-buildpack
     - task: compile-release-python-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2319,6 +2376,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-python-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: python-buildpack
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2328,6 +2386,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-routing
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: routing
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2337,6 +2396,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-ruby-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: ruby-buildpack
     - task: compile-release-staticfile-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2346,6 +2406,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-staticfile-buildpack
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: staticfile-buildpack
     - task: compile-release-statsd-injector
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2355,6 +2416,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-statsd-injector
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: statsd-injector
     - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2364,6 +2426,7 @@ jobs:
       output_mapping:
         exported-release: exported-release-uaa
       params:
+        BBL_STATE_DIR: bbl-state
         RELEASE_NAME: uaa
   - task: update-compiled-releases-ops-stemcell
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
@@ -2542,6 +2605,7 @@ jobs:
       stemcell: windows-google-stemcell
       bbl-state: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       STEMCELL_NAME: '*.tgz'
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2551,6 +2615,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -windows-releases
       OPS_FILES: "enable-backup-restore.yml base-ops-files/windows-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -2612,6 +2677,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -credhub
       OPS_FILES: "enable-backup-restore.yml enable-instance-identity-credentials.yml base-ops-files/secure-service-credentials.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -2673,6 +2739,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME_SUFFIX: -bosh-dns
       OPS_FILES: "enable-backup-restore.yml base-ops-files/use-bosh-dns.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
@@ -2710,6 +2777,7 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{greengrass_cf_ssl_cert}}
       BBL_LB_KEY: {{greengrass_cf_ssl_cert_private_key}}
+      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: greengrass.cf-app.com
       BBL_ENV_NAME: greengrass-compile
       OPS_FILES: "scale-up-for-compilation.yml"
@@ -2727,6 +2795,7 @@ jobs:
       ops-file: greengrass-env-ops-files
       bbl-state: greengrass-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       OPS_FILE_PATH: add-credhub-lb.yml
 
 
@@ -2740,13 +2809,17 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: greengrass-env-director-state
       params:
@@ -2769,4 +2842,6 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: greengrass-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
 

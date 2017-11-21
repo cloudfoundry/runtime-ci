@@ -18,6 +18,7 @@ run:
   path: runtime-ci/tasks/compile-release-from-manifest/task
 
 params:
+  BBL_STATE_DIR:
   RELEASE_NAME:
   MANIFEST_FILENAME: cf-deployment.yml
   STEMCELL_OS: ubuntu-trusty
