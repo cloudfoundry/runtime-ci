@@ -541,6 +541,7 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
       BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
       BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: minerva.cf-app.com
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
@@ -779,6 +780,7 @@ jobs:
         BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
         BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
         BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+        BBL_STATE_DIR: bbl-state
         LB_DOMAIN: minerva.cf-app.com
         BBL_ENV_NAME: minerva-upgrade
       input_mapping:
@@ -944,13 +946,17 @@ jobs:
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        params:
+          BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: minerva-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: minerva-env-director-state
       params:

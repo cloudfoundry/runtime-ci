@@ -739,14 +739,17 @@ jobs:
       - get: runtime-ci
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        params:
+          BBL_STATE_DIR: bbl-state
       - task: guarantee-no-existing-diego-deployment
         input_mapping:
           bbl-state: minerva-env-director-state
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
+          BBL_STATE_DIR: bbl-state
           DEPLOYMENT_NAME: cf-diego
     - aggregate:
       - task: recreate-uaadb
@@ -754,6 +757,7 @@ jobs:
         input_mapping:
           bbl-state: minerva-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{minerva_uaadb_host}}
           DB_USER: {{minerva_uaadb_user}}
           DB_PASSWORD: {{minerva_uaadb_password}}
@@ -763,6 +767,7 @@ jobs:
         input_mapping:
           bbl-state: minerva-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{minerva_ccdb_host}}
           DB_USER: {{minerva_ccdb_user}}
           DB_PASSWORD: {{minerva_ccdb_password}}
@@ -772,6 +777,7 @@ jobs:
         input_mapping:
           bbl-state: minerva-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{minerva_bbsdb_host}}
           DB_USER: {{minerva_bbsdb_user}}
           DB_PASSWORD: {{minerva_bbsdb_password}}
@@ -781,6 +787,7 @@ jobs:
         input_mapping:
           bbl-state: minerva-env-director-state
         params:
+          BBL_STATE_DIR: bbl-state
           DB_HOST: {{minerva_locketdb_host}}
           DB_USER: {{minerva_locketdb_user}}
           DB_PASSWORD: {{minerva_locketdb_password}}
@@ -789,6 +796,8 @@ jobs:
         file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
+        params:
+          BBL_STATE_DIR: bbl-state
 
 - name: complex-acquire-pool
   public: true
@@ -1100,6 +1109,7 @@ jobs:
       input_mapping:
         bbl-state: minerva-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         ERRAND_NAME: smoke_tests
 
 - name: complex-transition-deploy
@@ -1477,12 +1487,15 @@ jobs:
       input_mapping:
         bbl-state: minerva-env-director-state
         vars-store: minerva-env-stubs-and-vars
+      params:
+        BBL_STATE_DIR: bbl-state
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
         bbl-state: minerva-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         INFRASTRUCTURE: aws
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
@@ -1503,6 +1516,7 @@ jobs:
         bbl-state: minerva-env-director-state
         ops-file: minerva-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
@@ -1513,6 +1527,7 @@ jobs:
         vars-store: extracted-vars-store
         vars-files: minerva-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: minerva.cf-app.com
         UPTIMER_APP_DOMAIN: minerva.cf-app.com
         UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
@@ -1547,6 +1562,7 @@ jobs:
         vars-store: updated-vars-store
         vars-files: minerva-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: minerva.cf-app.com
         UPTIMER_APP_DOMAIN: minerva.cf-app.com
         UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
@@ -2265,9 +2281,11 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
   - task: delete-deployment-cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: minerva-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - put: transition-pool
     params: {release: transition-pool}
 
