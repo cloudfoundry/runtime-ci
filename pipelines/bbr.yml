@@ -240,7 +240,6 @@ jobs:
       - get: cf-deployment-rc
       - get: baba-yaga-env-vars-store
       - get: baba-yaga-env-director-state
-        passed: [ setup-infrastructure ]
       - get: baba-yaga-env-integration-configs
       - get: persi-ci
     - task: bosh-upload-stemcell
@@ -314,7 +313,6 @@ jobs:
     - aggregate:
       - get: bbr-github-release
       - get: baba-yaga-env-director-state
-        passed: [ setup-infrastructure ]
       - get: baba-yaga-env-vars-store
       - get: drats-master
       - get: runtime-ci
@@ -334,3 +332,4 @@ jobs:
         bbr-binary-release: bbr-github-release
       params:
         DEFAULT_TIMEOUT_MINS: 60
+        SKIP_SUITE_NAME: cf-credhub
