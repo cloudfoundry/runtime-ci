@@ -52,6 +52,7 @@ groups:
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
+  - lite-enable-docker-and-tasks
   - lite-rats
   - lite-release-pool
   - lite-release-pool-manual
@@ -127,6 +128,7 @@ groups:
   - lite-acquire-pool
   - lite-cats
   - lite-deploy
+  - lite-enable-docker-and-tasks
   - lite-rats
   - lite-release-pool
   - lite-release-pool-manual
@@ -2520,6 +2522,28 @@ jobs:
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
 
+- name: lite-enable-docker-and-tasks
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: lite-pool
+      trigger: true
+      passed: [ lite-deploy ]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: snitch-env-vars-store
+      - get: cf-deployment-develop
+        passed: [ lite-deploy ]
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: snitch-env-vars-store
+      params:
+        SYSTEM_DOMAIN: snitch.cf-app.com
+
 - name: fresh-cats
   serial: true
   public: true
@@ -2554,31 +2578,22 @@ jobs:
     do:
     - get: lite-pool
       trigger: true
-      passed: [ lite-deploy ]
+      passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
-        passed: [ lite-deploy ]
-      - get: snitch-env-director-state
-        passed: [ lite-deploy ]
+        passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-vars-store
-        passed: [ lite-deploy ]
+        passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-integration-configs
       - get: cats-concourse-task
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      attempts: 10
-      input_mapping:
-        vars-store: snitch-env-vars-store
-      params:
-        SYSTEM_DOMAIN: snitch.cf-app.com
     - task: run-cats
+      file: cats-concourse-task/task.yml
       input_mapping:
         integration-config: snitch-env-integration-configs
       params:
         NODES: 4
-      file: cats-concourse-task/task.yml
 
 - name: fresh-rats
   serial: true
@@ -2613,30 +2628,21 @@ jobs:
     do:
     - get: lite-pool
       trigger: true
-      passed: [ lite-deploy ]
+      passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: snitch-env-integration-configs
-      - get: snitch-env-director-state
-        passed: [ lite-deploy ]
       - get: snitch-env-vars-store
-        passed: [ lite-deploy ]
+        passed: [ lite-enable-docker-and-tasks ]
       - get: cf-deployment-develop
-        passed: [ lite-deploy ]
-    - task: enable-docker-and-tasks
-      attempts: 10
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: snitch-env-vars-store
-      params:
-        SYSTEM_DOMAIN: snitch.cf-app.com
+        passed: [ lite-enable-docker-and-tasks ]
     - task: run-rats
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
-      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: upgrade-rats
   serial_groups: [ hermione-rats ]
