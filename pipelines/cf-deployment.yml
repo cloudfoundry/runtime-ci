@@ -1697,6 +1697,7 @@ jobs:
     params:
       GCP_PROJECT_ID: {{luna_gcp_project}}
       GCP_BACKEND_SERVICE: {{luna_router_backend_service}}
+      GOOGLE_ACCOUNT_CREDS_PATH: bbl-state/google_account_creds.json
   - task: ensure-api-healthy
     file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
     params:
