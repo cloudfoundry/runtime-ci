@@ -425,6 +425,7 @@ jobs:
       BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
       BBL_GCP_REGION: us-central1
       BBL_GCP_ZONE: us-central1-a
+      BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: snitch-lite
       OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
       IS_BOSH_LITE: true
@@ -442,6 +443,7 @@ jobs:
       bbl-state: snitch-env-director-state
       cloud-config: cf-deployment-develop
     params:
+      BBL_STATE_DIR: bbl-state
       CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
   - put: lite-pool
     params: {release: lite-pool}
@@ -692,6 +694,7 @@ jobs:
         BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
         BBL_GCP_REGION: us-central1
         BBL_GCP_ZONE: us-central1-a
+        BBL_STATE_DIR: bbl-state
         BBL_ENV_NAME: snitch-lite
         OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
         IS_BOSH_LITE: true
@@ -709,6 +712,7 @@ jobs:
         bbl-state: snitch-env-director-state
         cloud-config: cf-deployment-develop
       params:
+        BBL_STATE_DIR: bbl-state
         CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - put: lite-pool
       params: {release: lite-pool}
@@ -855,13 +859,17 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: snitch-env-director-state
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: snitch-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: snitch-env-director-state
       params:
@@ -1103,6 +1111,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
 
 - name: run-bosh-cleanup-ops
   build_logs_to_retain: 100

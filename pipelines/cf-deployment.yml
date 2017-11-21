@@ -2025,15 +2025,18 @@ jobs:
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      params:
+        BBL_STATE_DIR: bbl-state
     - task: bosh-update-cloud-config
       file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
         cloud-config: cf-deployment-develop
       params:
+        BBL_STATE_DIR: bbl-state
         CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -2041,6 +2044,7 @@ jobs:
         cf-deployment: cf-deployment-develop
         bbl-state: snitch-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -2051,6 +2055,7 @@ jobs:
         ops-files: cf-deployment-develop
         vars-files: snitch-env-vars-store
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: "operations/use-compiled-releases.yml operations/bosh-lite.yml operations/use-postgres.yml"
       ensure:
@@ -2062,6 +2067,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
