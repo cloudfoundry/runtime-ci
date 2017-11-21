@@ -35,8 +35,7 @@ resources:
     uri: git@github.com:cloudfoundry/baba-yaga-env.git
     private_key: {{baba_yaga_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 - name: baba-yaga-env-integration-configs
   type: git
   source:

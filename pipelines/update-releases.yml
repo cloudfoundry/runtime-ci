@@ -61,8 +61,7 @@ resources:
     uri: git@github.com:cloudfoundry/greengrass-env.git
     private_key: {{greengrass_env_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 - name: greengrass-env-ops-files
   type: git
   source:

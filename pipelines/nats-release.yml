@@ -58,8 +58,7 @@ resources:
     uri: git@github.com:cloudfoundry/myrtle-env.git
     private_key: {{myrtle_env_git_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 - name: myrtle-env-vars-store
   type: git
   source:

@@ -149,8 +149,7 @@ resources:
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: {{bellatrix_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 
 - name: dumbledore-env-director-state
   type: git
@@ -159,7 +158,7 @@ resources:
     uri: git@github.com:cloudfoundry/dumbledore-env.git
     private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
+    - bbl-state
 
 - name: hermione-env-director-state
   type: git
@@ -168,7 +167,7 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths:
-    - bbl-state.json
+    - bbl-state
 
 - name: luna-env-director-state
   type: git
@@ -177,8 +176,7 @@ resources:
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 
 - name: minerva-env-director-state
   type: git
@@ -187,7 +185,7 @@ resources:
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
+    - bbl-state
 
 - name: snitch-env-director-state
   type: git
@@ -196,8 +194,7 @@ resources:
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
     paths:
-    - google_account_creds.json
-    - bbl-state.json
+    - bbl-state
 
 - name: trelawney-env-director-state
   type: git
@@ -206,8 +203,7 @@ resources:
     uri: git@github.com:cloudfoundry/trelawney-env.git
     private_key: {{trelawney_env_readwrite_deploy_key}}
     paths:
-    - bbl-state.json
-    - google_account_creds.json
+    - bbl-state
 
 # Time
 - name: weekly
