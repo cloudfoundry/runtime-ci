@@ -1322,6 +1322,7 @@ jobs:
         bbl-state: dumbledore-env-director-state
         ops-file: dumbledore-env-stubs-and-vars
       params:
+        BBL_STATE_DIR: bbl-state
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf-without-etcd
       file: runtime-ci/tasks/transition-deploy/task.yml

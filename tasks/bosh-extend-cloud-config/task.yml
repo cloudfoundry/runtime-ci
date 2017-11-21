@@ -15,4 +15,5 @@ run:
   path: runtime-ci/tasks/bosh-extend-cloud-config/task
 
 params:
+  BBL_STATE_DIR:
   OPS_FILE_PATH:
