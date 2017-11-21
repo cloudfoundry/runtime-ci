@@ -475,6 +475,8 @@ jobs:
     input_mapping:
       bbl-state: trelawney-env-director-state
       ops-files: trelawney-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: trelawney-env-director-state
       params:
@@ -892,6 +894,8 @@ jobs:
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
     ensure:
       put: trelawney-env-director-state
       params:
@@ -1133,6 +1137,8 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
 
 - name: run-bosh-cleanup-stable
   serial: true

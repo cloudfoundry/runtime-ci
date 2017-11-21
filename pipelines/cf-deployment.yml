@@ -1692,6 +1692,7 @@ jobs:
         cf-deployment: cf-deployment-develop
         bbl-state: trelawney-env-director-state
       params:
+        BBL_STATE_DIR: bbl-state
         INFRASTRUCTURE: google
     - task: bosh-dry-run-with-ops-cf-internal-mysql
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1701,6 +1702,7 @@ jobs:
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: trelawney.cf-app.com
         OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-bosh-dns.yml operations/experimental/use-bosh-dns-for-containers.yml"
         DEPLOYMENT_NAME_SUFFIX: internal-mysql
@@ -1712,6 +1714,7 @@ jobs:
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: trelawney.cf-app.com
         OPS_FILES: "operations/use-postgres.yml operations/experimental/enable-prefer-declarative-healthchecks.yml"
         DEPLOYMENT_NAME_SUFFIX: internal-postgres
@@ -1723,6 +1726,7 @@ jobs:
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
       params:
+        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: trelawney.cf-app.com
         OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/experimental/enable-iptables-logger.yml"
         VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml"
