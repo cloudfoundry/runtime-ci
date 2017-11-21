@@ -2006,7 +2006,7 @@ jobs:
       params:
         BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: bellatrix.cf-app.com
-        #OPS_FILES: "operations/scale-database-cluster.yml"
+        OPS_FILES: "operations/scale-database-cluster.yml"
       ensure:
         put: bellatrix-env-vars-store
         params:
