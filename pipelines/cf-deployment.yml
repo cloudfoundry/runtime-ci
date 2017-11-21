@@ -44,6 +44,7 @@ groups:
   - fresh-cats
   - fresh-delete-deployment
   - fresh-deploy
+  - fresh-enable-docker-and-tasks
   - fresh-rats
   - fresh-release-pool-manual
   - legacy-deploy
@@ -115,6 +116,7 @@ groups:
   - fresh-cats
   - fresh-delete-deployment
   - fresh-deploy
+  - fresh-enable-docker-and-tasks
   - fresh-rats
   - fresh-release-pool-manual
   - bless-manifest
@@ -2496,7 +2498,7 @@ jobs:
       params:
         DEPLOY_KEY: {{cf_acceptance_tests_private_key}}
 
-- name: fresh-cats
+- name: fresh-enable-docker-and-tasks
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -2507,11 +2509,8 @@ jobs:
       trigger: true
       passed: [ fresh-deploy ]
     - aggregate:
-      - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
       - get: luna-env-vars-store
-      - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
@@ -2520,12 +2519,31 @@ jobs:
         vars-store: luna-env-vars-store
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
+
+- name: fresh-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: fresh-pool
+      trigger: true
+      passed: [ fresh-enable-docker-and-tasks ]
+    - aggregate:
+      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+      - get: luna-env-vars-store
+      - get: luna-env-integration-configs
+      - get: cf-deployment-develop
+        passed: [ fresh-enable-docker-and-tasks ]
     - task: run-cats
+      file: cats-concourse-task/task.yml
       input_mapping:
         integration-config: luna-env-integration-configs
       params:
         CAPTURE_LOGS: true
-      file: cats-concourse-task/task.yml
 
 - name: lite-cats
   serial_groups: [ snitch-cats ]
@@ -2571,7 +2589,7 @@ jobs:
     do:
     - get: fresh-pool
       trigger: true
-      passed: [ fresh-deploy ]
+      passed: [ fresh-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -2579,18 +2597,12 @@ jobs:
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
-        passed: [ fresh-deploy ]
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: luna-env-vars-store
-      params:
-        SYSTEM_DOMAIN: luna.cf-app.com
+        passed: [ fresh-enable-docker-and-tasks ]
     - task: run-rats
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
-      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: lite-rats
   serial_groups: [ snitch-rats ]
