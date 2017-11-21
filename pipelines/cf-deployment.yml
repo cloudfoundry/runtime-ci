@@ -80,6 +80,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
+  - upgrade-enable-docker-and-tasks
   - upgrade-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -104,6 +105,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
+  - upgrade-enable-docker-and-tasks
   - upgrade-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -2326,24 +2328,16 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-deploy ]
+      passed: [ upgrade-enable-docker-and-tasks ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-      - get: hermione-env-director-state
-        passed: [ upgrade-deploy ]
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-deploy ]
+        passed: [ upgrade-enable-docker-and-tasks ]
       - get: cf-deployment-develop
-        passed: [ upgrade-deploy ]
+        passed: [ upgrade-enable-docker-and-tasks ]
       - get: cats-concourse-task
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: hermione-env-vars-store
-      params:
-        SYSTEM_DOMAIN: hermione.cf-app.com
     - task: run-cats
       input_mapping:
         integration-config: hermione-env-integration-configs
@@ -2361,17 +2355,15 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-deploy ]
+      passed: [ upgrade-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
       - get: windows-acceptance-tests
       - get: hermione-env-integration-configs
-      - get: hermione-env-director-state
-        passed: [ upgrade-deploy ]
       - get: hermione-env-vars-store
-        passed: [ upgrade-deploy ]
+        passed: [ upgrade-enable-docker-and-tasks ]
       - get: cf-deployment-develop
-        passed: [ upgrade-deploy ]
+        passed: [ upgrade-enable-docker-and-tasks ]
     - task: run-wats
       input_mapping:
         integration-config: hermione-env-integration-configs
@@ -2389,13 +2381,11 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [upgrade-deploy]
+      passed: [ upgrade-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
-      - get: hermione-env-director-state
-        passed: [upgrade-deploy]
       - get: cf-deployment-develop
-        passed: [upgrade-deploy]
+        passed: [ upgrade-enable-docker-and-tasks ]
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
@@ -2544,6 +2534,28 @@ jobs:
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
 
+- name: upgrade-enable-docker-and-tasks
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-deploy ]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: hermione-env-vars-store
+      - get: cf-deployment-develop
+        passed: [ upgrade-deploy ]
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: hermione-env-vars-store
+      params:
+        SYSTEM_DOMAIN: hermione.cf-app.com
+
 - name: fresh-cats
   serial: true
   public: true
@@ -2656,24 +2668,16 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [upgrade-deploy]
+      passed: [ upgrade-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: hermione-env-integration-configs
-      - get: hermione-env-director-state
-        passed: [ upgrade-deploy ]
       - get: hermione-env-vars-store
-        passed: [ upgrade-deploy ]
+        passed: [ upgrade-enable-docker-and-tasks ]
       - get: cf-deployment-develop
-        passed: [ upgrade-deploy ]
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: hermione-env-vars-store
-      params:
-        SYSTEM_DOMAIN: hermione.cf-app.com
+        passed: [ upgrade-enable-docker-and-tasks ]
     - task: run-rats
       input_mapping:
         routing-release: github-routing-release-master
