@@ -2388,6 +2388,7 @@ jobs:
       passed: [ upgrade-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
+      - get: hermione-env-director-state
       - get: cf-deployment-develop
         passed: [ upgrade-enable-docker-and-tasks ]
   - task: bosh-run-errand-smoke-tests
