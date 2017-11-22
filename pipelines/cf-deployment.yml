@@ -1386,7 +1386,9 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: dumbledore-env-stubs-and-vars
+        bbl-state: dumbledore-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -1613,7 +1615,9 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: minerva-env-stubs-and-vars
+        bbl-state: minerva-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
 
 - name: fresh-deploy
   serial: true
