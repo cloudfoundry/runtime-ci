@@ -1962,7 +1962,6 @@ jobs:
           operations/aws.yml
           operations/windows-cell.yml
           operations/scale-windows-cells.yml
-          operations/test/disable_windows_consul_agent_nameserver_overwriting.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-s3-blobstore.yml
           operations/experimental/enable-instance-identity-credentials.yml
@@ -1973,8 +1972,11 @@ jobs:
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers.yml
           operations/stop-skipping-tls-validation.yml
-          operations/configure-confab-timeout.yml
-        VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml confab-timeout-vars.yml"
+          operations/experimental/skip-consul-locks.yml
+          operations/experimental/skip-consul-cell-registrations.yml
+          operations/experimental/disable-consul.yml
+          operations/experimental/disable-consul-windows.yml
+        VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
         put: hermione-env-vars-store
