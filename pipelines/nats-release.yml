@@ -160,7 +160,6 @@ jobs:
       trigger: true
     - get: myrtle-env-bbl-state
       trigger: true
-      passed: [setup-infrastructure]
     - get: nats-release
       trigger: true
     - get: runtime-ci
