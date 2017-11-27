@@ -220,6 +220,11 @@ resources:
     stop: 3:30 -0700
     interval: 24h
 
+# Image resources
+- name: cf-deployment-concourse-tasks-docker-latest
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 
 jobs:
 # Add claimed locks
@@ -376,8 +381,10 @@ jobs:
     - get: runtime-ci
     - get: luna-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-latest
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     params:
       BBL_ENV_NAME: luna-fresh
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -648,8 +655,10 @@ jobs:
       - get: runtime-ci
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-docker-latest
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -835,14 +844,17 @@ jobs:
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-latest
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: luna-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: luna-env-director-state
     params:

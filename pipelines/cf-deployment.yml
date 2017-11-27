@@ -579,6 +579,11 @@ resources:
     project_id: "1382120"
     tracker_url: https://www.pivotaltracker.com
 
+- name: cf-deployment-concourse-tasks-docker-latest
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
 jobs:
 - name: branch-freshness
   public: true
@@ -1635,8 +1640,10 @@ jobs:
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
+    - get: cf-deployment-concourse-tasks-docker-latest
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: luna-env-director-state
     params:
@@ -1644,6 +1651,7 @@ jobs:
       BBL_STATE_DIR: bbl-state
   - task: bosh-upload-stemcell-fresh
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       cf-deployment: cf-deployment-develop
       bbl-state: luna-env-director-state
@@ -1652,6 +1660,7 @@ jobs:
       BBL_STATE_DIR: bbl-state
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
@@ -1685,12 +1694,14 @@ jobs:
         rebase: true
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: luna-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
@@ -2705,10 +2716,12 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
+      - get: cf-deployment-concourse-tasks-docker-latest
     - task: delete-deployment-cf
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       input_mapping:
         bbl-state: luna-env-director-state
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       params:
         BBL_STATE_DIR: bbl-state
         DEPLOYMENT_NAME: luna-cf
