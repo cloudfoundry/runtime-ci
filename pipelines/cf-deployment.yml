@@ -108,6 +108,7 @@ groups:
   - upgrade-enable-docker-and-tasks
   - upgrade-rats
   - upgrade-release-pool
+  - upgrade-release-pool-manual
   - upgrade-smoke-tests
   - upgrade-wats
   - bless-manifest
@@ -1863,6 +1864,15 @@ jobs:
       put: stable-pool
       params: {release: stable-pool}
 
+- name: upgrade-release-pool-manual
+  public: true
+  plan:
+  - get: upgrade-pool
+  ensure:
+    try:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
+
 - name: upgrade-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
@@ -2326,9 +2336,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
-    on_failure:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
     do:
     - get: upgrade-pool
       trigger: true
@@ -2353,9 +2360,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
-    on_failure:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
     do:
     - get: upgrade-pool
       trigger: true
@@ -2379,9 +2383,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 1h
-    on_failure:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
     do:
     - get: upgrade-pool
       trigger: true
@@ -2667,9 +2668,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
-    on_failure:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
     do:
     - get: upgrade-pool
       trigger: true
