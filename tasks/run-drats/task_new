@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -eu
+
+export GOPATH=$PWD
+export PATH=$PATH:$GOPATH/bin
+export CONFIG=environment/${CONFIG_FILE_PATH}
+export SSH_DESTINATION_CIDR="10.0.0.0/8"
+export BOSH_GW_USER="jumpbox"
+
+eval "$(ssh-agent)"
+ssh_key=$(mktemp /tmp/bosh-ca-XXXXXX)
+
+pushd environment/$BBL_STATE_DIR
+  export BOSH_GW_HOST=$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)
+  bbl director-ssh-key > "${ssh_key}"
+  chmod 0400 "${ssh_key}"
+popd
+
+pushd bbr-binary-release
+  tar xvf *.tar
+  export BBR_BUILD_PATH=`pwd`/releases/bbr
+popd
+
+echo "Starting SSH tunnel, you may be prompted for your OS password..."
+sshuttle -e "ssh -i ${ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" ${SSH_DESTINATION_CIDR} &
+tunnel_pid="$!"
+
+cleanup() {
+  kill "${tunnel_pid}"
+  rm -rf ${ssh_key}
+}
+trap 'cleanup' EXIT
+
+go get github.com/onsi/ginkgo/ginkgo
+dep ensure
+ginkgo -v --trace acceptance
