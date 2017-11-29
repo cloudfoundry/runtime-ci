@@ -1,0 +1,7 @@
+- type: replace
+  path: /releases/name=non-append-release?
+  value:
+    name: non-append
+    version: updated-non-append-version
+    url: updated-non-append-url
+    sha1: updated-non-append-sha1

@@ -23,7 +23,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 
 	var changes []string
 	for _, op := range deserializedOpsFile {
-		if op.Path == "/releases/-" {
+		if strings.HasPrefix(op.Path, "/releases/") {
 			valueMap := op.Value.(map[interface{}]interface{})
 			for _, releaseName := range releaseNames {
 				if valueMap["name"] == releaseName {
