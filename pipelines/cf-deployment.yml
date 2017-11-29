@@ -2587,7 +2587,7 @@ jobs:
       - get: hermione-env-vars-store
       - get: cf-deployment-develop
         passed: [ upgrade-deploy ]
-    - task: enable-docker-and-tasks
+    - task: set-feature-flags
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: hermione-env-vars-store
