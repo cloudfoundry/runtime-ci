@@ -1461,6 +1461,9 @@ jobs:
         vars-store: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
     - task: run-rats
       input_mapping:
         routing-release: github-routing-release-master
@@ -2214,6 +2217,9 @@ jobs:
         vars-store: dumbledore-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
     - task: run-cats
       input_mapping:
         integration-config: dumbledore-env-stubs-and-vars
@@ -2254,6 +2260,9 @@ jobs:
         vars-store: minerva-env-stubs-and-vars
       params:
         SYSTEM_DOMAIN: minerva.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
     - task: run-cats
       input_mapping:
         integration-config: minerva-env-stubs-and-vars
@@ -2480,6 +2489,9 @@ jobs:
         vars-store: bellatrix-env-vars-store
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
     - task: run-cats
       input_mapping:
         integration-config: bellatrix-env-integration-configs
@@ -2531,6 +2543,9 @@ jobs:
         vars-store: luna-env-vars-store
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
 
 - name: lite-enable-docker-and-tasks
   serial: true
@@ -2553,6 +2568,9 @@ jobs:
         vars-store: snitch-env-vars-store
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
 
 - name: upgrade-enable-docker-and-tasks
   serial: true
@@ -2575,6 +2593,9 @@ jobs:
         vars-store: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
 
 - name: fresh-cats
   serial: true

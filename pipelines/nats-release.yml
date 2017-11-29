@@ -311,6 +311,9 @@ jobs:
       vars-store: myrtle-env-vars-store
     params:
       SYSTEM_DOMAIN: myrtle.cf-app.com
+      ENABLED_FEATURE_FLAGS: |
+        diego_docker
+        task_creation
   - task: run-cats
     input_mapping:
       integration-config: myrtle-env-integration-configs
