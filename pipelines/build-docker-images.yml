@@ -10,6 +10,7 @@ groups:
   - build-relint-base-docker-image
   - build-bosh-cli-docker-image
   - build-bosh-and-spiff-docker-image
+  - build-bosh-and-sshuttle-docker-image
 - name: build-docker-images
   jobs:
   - trigger-all-image-builds
@@ -445,13 +446,19 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
 
-
 - name: runtime-ci-bosh-and-spiff
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-and-spiff/Dockerfile]
+
+- name: runtime-ci-bosh-and-sshuttle
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [dockerfiles/bosh-and-sshuttle/Dockerfile]
 
 - name: cf-cli
   type: github-release
@@ -863,6 +870,7 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
 - name: relint-base-image
   type: docker-image
   source:
@@ -870,6 +878,7 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
 - name: bosh-cli-image
   type: docker-image
   source:
@@ -877,10 +886,19 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
 - name: bosh-and-spiff-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-and-spiff
+    username: {{dockerhub_username}}
+    password: {{dockerhub_password}}
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: bosh-and-sshuttle-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-and-sshuttle
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1941,4 +1959,20 @@ jobs:
     - put: bosh-and-spiff-image
       params:
         build: runtime-ci-bosh-and-spiff/dockerfiles/bosh-and-spiff/
+        push: true
+
+- name: build-bosh-and-sshuttle-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: runtime-ci-bosh-and-sshuttle
+        trigger: true
+    - put: bosh-and-sshuttle-image
+      params:
+        build: runtime-ci-bosh-and-sshuttle/dockerfiles/bosh-and-sshuttle/
         push: true
