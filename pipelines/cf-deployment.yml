@@ -80,7 +80,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-enable-docker-and-tasks
+  - upgrade-set-feature-flags
   - upgrade-rats
   - upgrade-release-pool
   - upgrade-smoke-tests
@@ -105,7 +105,7 @@ groups:
   - upgrade-acquire-pool
   - upgrade-cats
   - upgrade-deploy
-  - upgrade-enable-docker-and-tasks
+  - upgrade-set-feature-flags
   - upgrade-rats
   - upgrade-release-pool
   - upgrade-release-pool-manual
@@ -2362,15 +2362,15 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-enable-docker-and-tasks ]
+      passed: [ upgrade-set-feature-flags ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
       - get: cats-concourse-task
     - task: run-cats
       input_mapping:
@@ -2386,15 +2386,15 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-enable-docker-and-tasks ]
+      passed: [ upgrade-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
       - get: windows-acceptance-tests
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
     - task: run-wats
       input_mapping:
         integration-config: hermione-env-integration-configs
@@ -2409,12 +2409,12 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-enable-docker-and-tasks ]
+      passed: [ upgrade-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
       - get: hermione-env-director-state
       - get: cf-deployment-develop
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
@@ -2572,7 +2572,7 @@ jobs:
           diego_docker
           task_creation
 
-- name: upgrade-enable-docker-and-tasks
+- name: upgrade-set-feature-flags
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -2596,6 +2596,7 @@ jobs:
         ENABLED_FEATURE_FLAGS: |
           diego_docker
           task_creation
+          service_instance_sharing
 
 - name: fresh-cats
   serial: true
@@ -2706,16 +2707,16 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [ upgrade-enable-docker-and-tasks ]
+      passed: [ upgrade-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-enable-docker-and-tasks ]
+        passed: [ upgrade-set-feature-flags ]
     - task: run-rats
       input_mapping:
         routing-release: github-routing-release-master
