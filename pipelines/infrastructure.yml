@@ -129,12 +129,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
-- name: cf-deployment-develop
-  type: git
-  source:
-    branch: develop
-    uri: https://github.com/cloudfoundry/cf-deployment.git
-
 - name: runtime-ci
   type: git
   source:
@@ -417,12 +411,12 @@ jobs:
     passed: [ add-claimed-lock-lite ]
   - aggregate:
     - get: runtime-ci
-    - get: bosh-deployment
     - get: snitch-env-director-state
-    - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-latest
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -431,24 +425,15 @@ jobs:
       BBL_GCP_ZONE: us-central1-a
       BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: snitch-lite
-      OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
       IS_BOSH_LITE: true
     input_mapping:
       bbl-state: snitch-env-director-state
-      ops-files: bosh-deployment
+      ops-files: snitch-env-director-state
     ensure:
       put: snitch-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: bosh-update-cloud-config
-    file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
-    input_mapping:
-      bbl-state: snitch-env-director-state
-      cloud-config: cf-deployment-develop
-    params:
-      BBL_STATE_DIR: bbl-state
-      CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
   - put: lite-pool
     params: {release: lite-pool}
 
@@ -693,11 +678,11 @@ jobs:
         params: {acquire: true}
       - get: runtime-ci
       - get: snitch-env-director-state
-      - get: cf-deployment-develop
-      - get: bosh-deployment
       - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-docker-latest
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -706,24 +691,15 @@ jobs:
         BBL_GCP_ZONE: us-central1-a
         BBL_STATE_DIR: bbl-state
         BBL_ENV_NAME: snitch-lite
-        OPS_FILES: "bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml"
         IS_BOSH_LITE: true
       input_mapping:
         bbl-state: snitch-env-director-state
-        ops-files: bosh-deployment
+        ops-files: snitch-env-director-state
       ensure:
         put: snitch-env-director-state
         params:
           repository: updated-bbl-state
           rebase: true
-    - task: bosh-update-cloud-config
-      file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
-      input_mapping:
-        bbl-state: snitch-env-director-state
-        cloud-config: cf-deployment-develop
-      params:
-        BBL_STATE_DIR: bbl-state
-        CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - put: lite-pool
       params: {release: lite-pool}
 
@@ -876,14 +852,17 @@ jobs:
     - get: snitch-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-latest
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: snitch-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    image: cf-deployment-concourse-tasks-docker-latest
     input_mapping:
       bbl-state: snitch-env-director-state
     params:
