@@ -853,13 +853,15 @@ jobs:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-concourse-tasks-docker-latest
-  - task: guarantee-no-existing-cf-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    image: cf-deployment-concourse-tasks-docker-latest
-    input_mapping:
-      bbl-state: snitch-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+  - try:
+      do:
+      - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        image: cf-deployment-concourse-tasks-docker-latest
+        input_mapping:
+          bbl-state: snitch-env-director-state
+        params:
+          BBL_STATE_DIR: bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     image: cf-deployment-concourse-tasks-docker-latest
