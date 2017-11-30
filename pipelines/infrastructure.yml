@@ -867,6 +867,7 @@ jobs:
       bbl-state: snitch-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: snitch-env-director-state
       params:
