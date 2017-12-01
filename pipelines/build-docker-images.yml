@@ -467,6 +467,13 @@ resources:
     repository: cli
     access_token: {{release_integration_download_bot_access_token}}
 
+- name: bosh-cli-github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: bosh-cli
+    access_token: {{release_integration_download_bot_access_token}}
+
 - name: terraform-github-release
   type: github-release
   source:
@@ -1008,6 +1015,8 @@ jobs:
         trigger: true
       - get: bbl-github-release
         trigger: true
+      - get: bosh-cli-github-release
+        trigger: true
     - put: create-version-json-pipeline-image
       params:
         build: runtime-ci-create-version-json/scripts/ci/create-version-json
@@ -1030,6 +1039,14 @@ jobs:
         input-version-json: version-json
       params:
         key: bbl_version
+    - task: create-bosh-cli-json
+      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      input_mapping:
+        version: bosh-cli-github-release
+        # This is an example of that chaining we spoke of earlier
+        input-version-json: version-json
+      params:
+        key: bosh_cli_version
     - put: cf-deployment-concourse-tasks-pipeline-image
       params:
         build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
