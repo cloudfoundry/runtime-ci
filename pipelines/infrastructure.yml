@@ -1115,10 +1115,12 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: snitch-env-director-state
+      - get: cf-deployment-concourse-tasks-docker-latest
       - get: daily
         trigger: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       input_mapping:
         bbl-state: snitch-env-director-state
       params:
