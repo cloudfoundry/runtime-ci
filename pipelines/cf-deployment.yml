@@ -11,13 +11,16 @@ groups:
   - lint-cf-deployment-manifest
   - complex-transition-cats
   - fresh-cats
+  - fresh-enable-docker-and-tasks
   - lite-cats
   - transition-cats
   - upgrade-cats
+  - upgrade-set-feature-flags
   - upgrade-smoke-tests
   - upgrade-wats
   - complex-transition-rats
   - fresh-rats
+  - lite-enable-docker-and-tasks
   - lite-rats
   - upgrade-rats
   - ops-test
