@@ -2113,14 +2113,6 @@ jobs:
         bbl-state: snitch-env-director-state
       params:
         BBL_STATE_DIR: bbl-state
-    - task: bosh-update-cloud-config
-      file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
-      input_mapping:
-        bbl-state: snitch-env-director-state
-        cloud-config: cf-deployment-develop
-      params:
-        BBL_STATE_DIR: bbl-state
-        CLOUD_CONFIG_FILE: "iaas-support/bosh-lite/cloud-config.yml"
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
