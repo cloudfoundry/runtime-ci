@@ -1991,6 +1991,8 @@ jobs:
           operations/experimental/disable-consul.yml
           operations/experimental/disable-consul-windows.yml
           operations/experimental/use-grootfs.yml
+          operations/experimental/bits-service.yml
+          operations/experimental/bits-service-s3.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
       ensure:
