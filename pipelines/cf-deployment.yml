@@ -2122,6 +2122,7 @@ jobs:
         BBL_STATE_DIR: bbl-state
     - task: bosh-update-cloud-config
       file: runtime-ci/scripts/ci/bosh-update-cloud-config/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       input_mapping:
         bbl-state: snitch-env-director-state
         cloud-config: cf-deployment-develop
