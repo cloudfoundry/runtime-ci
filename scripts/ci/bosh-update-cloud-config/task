@@ -9,6 +9,10 @@ function setup_bosh_env_vars() {
   set -x
 }
 
+function close_bbl_ssh_connection() {
+  pkill ssh || true
+}
+
 function update_cloud_config() {
   bosh \
     -n \
@@ -19,6 +23,7 @@ function update_cloud_config() {
 function main() {
   setup_bosh_env_vars
   update_cloud_config
+  close_bbl_ssh_connection
 }
 
 main
