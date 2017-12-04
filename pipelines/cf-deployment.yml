@@ -765,6 +765,8 @@ jobs:
           DEPLOYMENT_NAME: cf-diego
       - task: ensure-no-loggregator-releases
         file: cf-deployment-concourse-tasks/bosh-delete-loggregator-release/task.yml
+        input_mapping:
+          bbl-state: minerva-env-director-state
     - aggregate:
       - task: recreate-uaadb
         file: runtime-ci/tasks/recreate-database/task.yml
@@ -2366,6 +2368,8 @@ jobs:
       BBL_STATE_DIR: bbl-state
   - task: ensure-no-loggregator-releases
     file: cf-deployment-concourse-tasks/bosh-delete-loggregator-release/task.yml
+    input_mapping:
+      bbl-state: minerva-env-director-state
   - put: transition-pool
     params: {release: transition-pool}
 
