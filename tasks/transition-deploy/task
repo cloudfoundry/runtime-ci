@@ -50,7 +50,7 @@ write_uptimer_deploy_config() {
         "http_availability": 0,
         "recent_logs": 2,
         "streaming_logs": 2,
-        "app_syslog_availability": 2
+        "app_syslog_availability": 4
       },
       "optional_tests": {
         "run_app_syslog_availability": $run_app_syslog_availability | contains("true")
