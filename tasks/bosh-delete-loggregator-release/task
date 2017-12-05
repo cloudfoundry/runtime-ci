@@ -1,7 +1,7 @@
 #!/bin/bash
 set -exu
 
-source cf-deployment-concourse-tasks/shared-functions
+source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
 
 function bosh_delete_loggregator() {
   bosh -n delete-release loggregator
