@@ -2365,6 +2365,7 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
+      - get: runtime-ci
   - task: delete-deployment-cf
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
