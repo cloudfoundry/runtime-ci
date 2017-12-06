@@ -869,12 +869,6 @@ jobs:
         params:
           BBL_STATE_DIR: bbl-state
           DEPLOYMENT_NAME: cf-routing
-      - task: ensure-no-loggregator-releases
-        file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
-        input_mapping:
-          bbl-state: dumbledore-env-director-state
-        params:
-          BBL_STATE_DIR: bbl-state
     - aggregate:
       - task: recreate-uaadb
         file: runtime-ci/tasks/recreate-database/task.yml
@@ -948,6 +942,12 @@ jobs:
           DB_NAME: {{dumbledore_locketdb_name}}
     - task: restore-cloud-config
       file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
+      input_mapping:
+        bbl-state: dumbledore-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
+    - task: ensure-no-loggregator-releases
+      file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
       input_mapping:
         bbl-state: dumbledore-env-director-state
       params:
