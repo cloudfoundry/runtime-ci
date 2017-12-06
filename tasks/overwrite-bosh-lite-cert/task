@@ -12,7 +12,7 @@ function main() {
 
   cp ${temp_manifest} bosh-lite/packer/templates/bosh_lite_manifest_template.yml
 
-  cp -r bosh-lite modified-bosh-lite
+  cp -r bosh-lite/ modified-bosh-lite
 }
 
 main
