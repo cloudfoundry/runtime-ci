@@ -1,0 +1,18 @@
+#!/bin/bash -exu
+
+function main() {
+  temp_manifest=$(mktemp)
+
+  bosh \
+    -n \
+    interpolate bosh-lite/packer/templates/bosh_lite_manifest_template.yml \
+    -o bosh-lite-env/overwrite-director-cert-and-key.yml \
+    --var-file director_cert=bosh-lite-env/director.crt \
+    --var-file director_key=bosh-lite-env/director.key > ${temp_manifest}
+
+  cp ${temp_manifest} bosh-lite/packer/templates/bosh_lite_manifest_template.yml
+
+  cp -r bosh-lite modified-bosh-lite
+}
+
+main
