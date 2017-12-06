@@ -15,4 +15,4 @@ outputs:
 - name: modified-bosh-lite
 
 run:
-  path: runtime-ci/scripts/ci/overwrite-bosh-lite-cert/task
+  path: runtime-ci/tasks/overwrite-bosh-lite-cert/task
