@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -exu
+
+git clone cf-deployment-develop updated-cf-deployment-manifest
+pushd updated-cf-deployment-manifest
+  go run bump_manifest_version.go ${SEMVER_FIELD}
+
+  git add cf-deployment.yml
+  git config user.email "cf-release-integration@pivotal.io"
+  git config user.name  "CI (automated)"
+  git commit -m "Bump cf-deployment manifest's ${SEMVER_FIELD} version"
+popd
