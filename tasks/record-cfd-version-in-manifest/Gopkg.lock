@@ -1,0 +1,7 @@
+memo = "19a456282d83bfb81a9a3811f31b31994838c02c78f436ab5c12aa611fe04f1e"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/go-version"
+  packages = ["."]
+  revision = "4fe82ae3040f80a03d04d2cccb5606a626b8e1ee"
