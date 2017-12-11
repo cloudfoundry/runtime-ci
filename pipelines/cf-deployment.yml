@@ -2823,13 +2823,16 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: patch }
+        params: {bump: patch}
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
       - task: record-transition-version
@@ -2846,13 +2849,16 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: patch }
+        params: {bump: patch}
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
 
@@ -2863,13 +2869,16 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: minor }
+        params: {bump: minor}
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
       - task: record-transition-version
@@ -2886,13 +2895,16 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: minor }
+        params: {bump: minor}
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
 
@@ -2903,13 +2915,16 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: major }
+        params: {bump: major}
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
       - task: record-transition-version
@@ -2926,12 +2941,15 @@ jobs:
     - do:
       - get: runtime-ci
       - put: cf-deployment-version
-        params: { bump: major }
+        params: {bump: major}
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
+      - get: cf-deployment-version
+      - task: update-cf-deployment-manifest-version
+        file: runtime-ci/tasks/record-cfd-version-in-manifest
       - put: cf-deployment-master
         params:
-          repository: cf-deployment-release-candidate
+          repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v

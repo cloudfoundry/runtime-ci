@@ -4,14 +4,15 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/relint-base
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
 - name: runtime-ci
-- name: cf-deployment-develop
+- name: cf-deployment-release-candidate
+- name: cf-deployment-version
 
 outputs:
-- name: updated-cf-deployment-manifest
+- name: cf-deployment-rc-with-updated-version
 
 run:
   path: runtime-ci/tasks/record-cfd-version-in-manifest/task
