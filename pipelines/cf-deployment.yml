@@ -2836,16 +2836,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2873,16 +2868,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
 
 - name: ship-it-minor
   public: true
@@ -2904,16 +2894,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2941,16 +2926,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
 
 - name: ship-it-major
   public: true
@@ -2972,16 +2952,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -3009,13 +2984,8 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - task: merge-master-into-develop
-        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
-        input_mapping:
-          release-repo-master: cf-deployment-rc-with-updated-version
-          release-repo: cf-deployment-develop
-        params:
-          MERGE_MESSAGE: "Merge master into develop"
+      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: final-release-repo
+          repository: cf-deployment-master
+          merge: true
