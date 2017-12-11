@@ -2824,6 +2824,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: patch}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
@@ -2835,6 +2836,16 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2850,6 +2861,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: patch}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
@@ -2861,6 +2873,16 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
 
 - name: ship-it-minor
   public: true
@@ -2870,6 +2892,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: minor}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
@@ -2881,6 +2904,16 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2896,6 +2929,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: minor}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
@@ -2907,6 +2941,16 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
 
 - name: ship-it-major
   public: true
@@ -2916,6 +2960,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: major}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
@@ -2927,6 +2972,16 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2942,6 +2997,7 @@ jobs:
       - get: runtime-ci
       - put: cf-deployment-version
         params: {bump: major}
+      - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
@@ -2953,3 +3009,13 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
+      - task: merge-master-into-develop
+        file: runtime-ci/scripts/ci/merge-master-into-develop/task.yml
+        input_mapping:
+          release-repo-master: cf-deployment-rc-with-updated-version
+          release-repo: cf-deployment-develop
+        params:
+          MERGE_MESSAGE: "Merge master into develop"
+      - put: cf-deployment-develop
+        params:
+          repository: final-release-repo
