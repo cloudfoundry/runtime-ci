@@ -2017,6 +2017,11 @@ jobs:
           operations/experimental/disable-consul-windows.yml
           operations/experimental/use-grootfs.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
+        APP_PUSHABILITY_THRESHOLD: 0
+        HTTP_AVAILABILITY_THRESHOLD: 0
+        RECENT_LOGS_THRESHOLD: 0
+        STREAMING_LOGS_THRESHOLD: 0
+        APP_SYSLOG_AVAILABILITY_THRESHOLD: 0
       ensure:
         put: hermione-env-vars-store
         params:
