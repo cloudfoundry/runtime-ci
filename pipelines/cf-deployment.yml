@@ -1971,7 +1971,7 @@ jobs:
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
-        vars-store: hermione-env-stubs-and-vars
+        vars-store: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: collect-ops-files
