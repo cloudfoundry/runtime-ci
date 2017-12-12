@@ -4,7 +4,7 @@ set -exu
 
 git clone cf-deployment-release-candidate cf-deployment-rc-with-updated-version
 
-new_version="v$(cat cf-deployment-version/cf-deployment-version)"
+new_version="v$(cat cf-deployment-version/version)"
 
 pushd cf-deployment-rc-with-updated-version
   old_version="$(bosh int cf-deployment.yml --path /manifest_version)"
