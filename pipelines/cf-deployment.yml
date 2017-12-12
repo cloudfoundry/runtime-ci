@@ -2831,13 +2831,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: patch}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2845,11 +2844,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2863,13 +2862,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: patch}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2877,11 +2875,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
 
 - name: ship-it-minor
   public: true
@@ -2889,13 +2887,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: minor}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2903,11 +2900,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2921,13 +2918,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: minor}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2935,11 +2931,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
 
 - name: ship-it-major
   public: true
@@ -2947,13 +2943,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: major}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [transition-record-compatible-versions]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2961,11 +2956,11 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2979,13 +2974,12 @@ jobs:
   plan:
     - do:
       - get: runtime-ci
-      - put: cf-deployment-version
+      - get: cf-deployment-version
         params: {bump: major}
       - get: cf-deployment-develop
       - get: cf-deployment-release-candidate
         passed: [bless-manifest]
       - get: cf-deployment-transition-compatibility
-      - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
         file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
@@ -2993,8 +2987,8 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           tag: cf-deployment-version/version
           tag_prefix: v
-      - get: cf-deployment-master
       - put: cf-deployment-develop
         params:
-          repository: cf-deployment-master
+          repository: cf-deployment-rc-with-updated-version
           merge: true
+      - put: cf-deployment-version
