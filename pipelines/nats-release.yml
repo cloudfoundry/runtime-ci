@@ -260,6 +260,7 @@ jobs:
     params:
       BBL_STATE_DIR: bbl-state
       SYSTEM_DOMAIN: myrtle.cf-app.com
+      OPS_FILES: operations/workaround/use-4-azs-for-router.yml
     ensure:
       put: myrtle-env-vars-store
       params:
