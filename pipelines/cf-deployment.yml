@@ -2830,7 +2830,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
@@ -2862,7 +2862,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
@@ -2888,7 +2888,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
@@ -2920,7 +2920,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
@@ -2946,7 +2946,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
@@ -2978,7 +2978,7 @@ jobs:
       - get: cf-deployment-transition-compatibility
       - get: cf-deployment-version
       - task: update-cf-deployment-manifest-version
-        file: runtime-ci/tasks/record-cfd-version-in-manifest
+        file: runtime-ci/tasks/record-cfd-version-in-manifest/task.yml
       - put: cf-deployment-master
         params:
           repository: cf-deployment-rc-with-updated-version
