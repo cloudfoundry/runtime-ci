@@ -189,12 +189,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/write-creds/Dockerfile]
-- name: cf-deployment-concourse-tasks-bosh-deploy
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-    paths: [bosh-deploy/Dockerfile]
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -592,13 +586,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: bosh-deploy-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-deploy
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1062,24 +1049,6 @@ jobs:
         TRACKER_API_TOKEN: {{cf_mega_api_token}}
         DESCRIPTION_FILE: version.json
 
-- name: build-bosh-deploy-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: cf-deployment-concourse-tasks-bosh-deploy
-        trigger: true
-    - put: bosh-deploy-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-bosh-deploy/bosh-deploy
-        push: true
 - name: build-bosh-upload-stemcell-docker-image
   public: true
   build_logs_to_retain: 100
