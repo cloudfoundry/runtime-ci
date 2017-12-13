@@ -2021,7 +2021,7 @@ jobs:
         HTTP_AVAILABILITY_THRESHOLD: 0
         RECENT_LOGS_THRESHOLD: 0
         STREAMING_LOGS_THRESHOLD: 0
-        APP_SYSLOG_AVAILABILITY_THRESHOLD: 0
+        APP_SYSLOG_AVAILABILITY_THRESHOLD: 3
         FAIL_ON_DOWNTIME: true
       ensure:
         put: hermione-env-vars-store
