@@ -22,4 +22,6 @@ function main() {
   bosh -d "${DEPLOYMENT_NAME}" run-errand "${ERRAND_NAME}"
 }
 
+trap close_bbl_ssh_connection EXIT
+
 main
