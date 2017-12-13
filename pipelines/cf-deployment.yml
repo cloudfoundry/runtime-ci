@@ -2407,7 +2407,6 @@ jobs:
       trigger: true
       passed: [ upgrade-set-feature-flags ]
     - aggregate:
-      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
@@ -2653,7 +2652,6 @@ jobs:
       passed: [ fresh-enable-docker-and-tasks ]
     - aggregate:
       - get: cats-concourse-task
-      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
@@ -2677,7 +2675,6 @@ jobs:
       trigger: true
       passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
-      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
@@ -2704,7 +2701,6 @@ jobs:
       passed: [ fresh-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
@@ -2728,7 +2724,6 @@ jobs:
       passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: snitch-env-integration-configs
       - get: snitch-env-vars-store
@@ -2753,7 +2748,6 @@ jobs:
       passed: [ upgrade-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
