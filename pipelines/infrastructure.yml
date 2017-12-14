@@ -30,15 +30,16 @@ groups:
   jobs:
   - add-claimed-lock-ops
   - setup-infrastructure-ops
+  - update-infrastructure-ops
   - destroy-infrastructure-ops
   - remove-claimed-lock-ops
   - run-bosh-cleanup-ops
-  - update-infrastructure-ops
 
 - name: stable
   jobs:
   - add-claimed-lock-stable
   - setup-infrastructure-stable
+  - update-infrastructure-stable
   - destroy-infrastructure-stable
   - remove-claimed-lock-stable
   - run-bosh-cleanup-stable
@@ -741,6 +742,42 @@ jobs:
     - put: ops-pool
       params: {release: ops-pool}
 
+- name: update-infrastructure-stable
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: stable-pool
+        params: {acquire: true}
+      - get: runtime-ci
+      - get: bellatrix-env-director-state
+      - get: cf-deployment-concourse-tasks
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: gcp
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_PROJECT_ID: {{bellatrix_gcp_project}}
+        BBL_GCP_REGION: us-central1
+        BBL_GCP_ZONE: us-central1-a
+        BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
+        BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+        LB_DOMAIN: bellatrix.cf-app.com
+        BBL_ENV_NAME: bellatrix-stable
+        BBL_STATE_DIR: bbl-state
+      input_mapping:
+        bbl-state: bellatrix-env-director-state
+        stable-files: bellatrix-env-director-state
+      ensure:
+        put: bellatrix-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: stable-pool
+      params: {release: stable-pool}
 
 - name: update-infrastructure-upgrade
   serial: true
