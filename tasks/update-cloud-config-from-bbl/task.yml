@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: bbl-state
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/tasks/update-cloud-config-from-bbl/task

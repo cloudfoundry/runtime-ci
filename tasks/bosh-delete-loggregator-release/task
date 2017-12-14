@@ -1,7 +1,8 @@
 #!/bin/bash
 set -exu
 
-source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
 
 function bosh_delete_loggregator() {
   bosh -n delete-release loggregator
@@ -11,5 +12,7 @@ function main() {
   setup_bosh_env_vars
   bosh_delete_loggregator
 }
+
+trap close_bbl_ssh_connection EXIT
 
 main
