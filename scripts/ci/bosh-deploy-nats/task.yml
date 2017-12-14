@@ -11,6 +11,7 @@ inputs:
 - name: nats-release
 - name: runtime-ci
 - name: stemcell
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/scripts/ci/bosh-deploy-nats/task
