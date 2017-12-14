@@ -4,8 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    tag: v4.0.0
+    repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
 - name: bbl-state  # - The Director's bbl state dir
