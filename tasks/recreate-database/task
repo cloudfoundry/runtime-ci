@@ -40,6 +40,7 @@ function main() {
   export bosh_ssh_key=$(mktemp)
   setup_bosh_ssh_key ${bosh_ssh_key}
   setup_bosh_env_vars
+  set +x
 
   execute_sql "DROP DATABASE ${DB_NAME}"
   execute_sql "CREATE DATABASE ${DB_NAME}"
