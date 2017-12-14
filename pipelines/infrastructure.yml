@@ -770,7 +770,7 @@ jobs:
         BBL_STATE_DIR: bbl-state
       input_mapping:
         bbl-state: bellatrix-env-director-state
-        stable-files: bellatrix-env-director-state
+        ops-files: bellatrix-env-director-state
       ensure:
         put: bellatrix-env-director-state
         params:
