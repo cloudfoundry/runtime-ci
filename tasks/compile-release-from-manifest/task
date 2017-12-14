@@ -55,4 +55,6 @@ main() {
   export_release
 }
 
+trap close_bbl_ssh_connection EXIT
+
 main

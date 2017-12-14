@@ -54,4 +54,6 @@ function main() {
   bosh_deploy_dry_run
 }
 
+trap close_bbl_ssh_connection EXIT
+
 main
