@@ -1428,53 +1428,43 @@ jobs:
     do:
     - get: complex-pool
       trigger: true
-      passed: [ complex-transition-deploy ]
+      passed: [ complex-enable-docker-and-tasks ]
     - aggregate:
       - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
       - get: github-routing-release-master
       - get: legacy-routing-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: legacy-cf-networking-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: legacy-grootfs-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: dumbledore-env-stubs-and-vars
       - get: cf-deployment-release-candidate
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
       - get: legacy-cf-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ complex-transition-deploy ]
+        passed: [ complex-enable-docker-and-tasks ]
         params:
           tarball: false
       - get: cf-deployment-transition
-        passed: [ complex-transition-deploy ]
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: dumbledore-env-stubs-and-vars
-      params:
-        SYSTEM_DOMAIN: dumbledore.cf-app.com
-        ENABLED_FEATURE_FLAGS: |
-          diego_docker
-          task_creation
+        passed: [ complex-enable-docker-and-tasks ]
     - task: run-rats
       input_mapping:
         routing-release: github-routing-release-master
@@ -2204,7 +2194,8 @@ jobs:
         METRIC_NAME: time-to-healthy-router
         ENV_NAME: snitch
 
-- name: complex-transition-cats
+- name: complex-enable-docker-and-tasks
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2215,11 +2206,9 @@ jobs:
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
       - get: dumbledore-env-stubs-and-vars
       - get: cf-deployment-release-candidate
         passed: [ complex-transition-deploy ]
-      - get: cats-concourse-task
       - get: legacy-cf-release
         passed: [ complex-transition-deploy ]
       - get: legacy-diego-release
@@ -2252,6 +2241,45 @@ jobs:
         ENABLED_FEATURE_FLAGS: |
           diego_docker
           task_creation
+
+- name: complex-transition-cats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: complex-pool
+      passed: [ complex-enable-docker-and-tasks ]
+      trigger: true
+    - aggregate:
+      - get: cf-acceptance-tests
+      - get: dumbledore-env-stubs-and-vars
+      - get: cf-deployment-release-candidate
+        passed: [ complex-enable-docker-and-tasks ]
+      - get: cats-concourse-task
+      - get: legacy-cf-release
+        passed: [ complex-enable-docker-and-tasks ]
+      - get: legacy-diego-release
+        passed: [ complex-enable-docker-and-tasks ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ complex-enable-docker-and-tasks ]
+      - get: legacy-garden-runc-release
+        passed: [ complex-enable-docker-and-tasks ]
+      - get: legacy-routing-release
+        passed: [ complex-enable-docker-and-tasks ]
+        params:
+          tarball: false
+      - get: legacy-cf-networking-release
+        passed: [ complex-enable-docker-and-tasks ]
+        params:
+          tarball: false
+      - get: legacy-grootfs-release
+        passed: [ complex-enable-docker-and-tasks ]
+        params:
+          tarball: false
+      - get: cf-deployment-transition
+        passed: [ complex-enable-docker-and-tasks ]
+        trigger: true
     - task: run-cats
       input_mapping:
         integration-config: dumbledore-env-stubs-and-vars
