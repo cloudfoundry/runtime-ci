@@ -1,11 +1,14 @@
 #!/bin/bash
 set -eu
 
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
 function setup_bosh_ssh_key() {
   set +x
   chmod 0600 ${bosh_ssh_key}
   pushd "bbl-state/${BBL_STATE_DIR}" > /dev/null
-    bbl ssh-key > ${bosh_ssh_key}
+    bbl director-ssh-key > ${bosh_ssh_key}
   popd > /dev/null
 }
 
@@ -27,6 +30,7 @@ function execute_sql() {
   &> ssh_output.txt \
     ssh \
     -i ${bosh_ssh_key} \
+    -o "ProxyCommand='nc -x localhost:`echo $BOSH_ALL_PROXY| cut -f3 -d':'` %h %p'" \
     -o "StrictHostKeyChecking=no" \
     ${BOSH_GW_USER}@$(get_bosh_gateway_host) \
     "/var/vcap/packages/mysql/bin/mysql -h ${DB_HOST} -u ${DB_USER} --password=${DB_PASSWORD} -e '${cmd}'"
@@ -35,9 +39,12 @@ function execute_sql() {
 function main() {
   export bosh_ssh_key=$(mktemp)
   setup_bosh_ssh_key ${bosh_ssh_key}
+  setup_bosh_env_vars
 
   execute_sql "DROP DATABASE ${DB_NAME}"
   execute_sql "CREATE DATABASE ${DB_NAME}"
 }
+
+trap close_bbl_ssh_connection EXIT
 
 main
