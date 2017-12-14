@@ -143,6 +143,7 @@ jobs:
     input_mapping:
       bbl-state: myrtle-env-bbl-state
     params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_STATE_DIR: bbl-state
     ensure:
       put: myrtle-env-bbl-state

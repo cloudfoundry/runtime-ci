@@ -159,6 +159,7 @@ jobs:
     input_mapping:
       bbl-state: baba-yaga-env-director-state
     params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_STATE_DIR: bbl-state
     ensure:
       put: baba-yaga-env-director-state
