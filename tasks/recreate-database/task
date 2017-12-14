@@ -30,7 +30,7 @@ function execute_sql() {
   &> ssh_output.txt \
     ssh \
     -i ${bosh_ssh_key} \
-    -o "ProxyCommand='nc -x localhost:`echo $BOSH_ALL_PROXY| cut -f3 -d':'` %h %p'" \
+    -o ProxyCommand='nc -x localhost:`echo $BOSH_ALL_PROXY| cut -f3 -d':'` %h %p' \
     -o "StrictHostKeyChecking=no" \
     ${BOSH_GW_USER}@$(get_bosh_gateway_host) \
     "/var/vcap/packages/mysql/bin/mysql -h ${DB_HOST} -u ${DB_USER} --password=${DB_PASSWORD} -e '${cmd}'"
