@@ -2771,9 +2771,7 @@ jobs:
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_PROJECT_ID: {{greengrass_gcp_project}}
       BBL_GCP_REGION: us-central1
-      BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{greengrass_cf_ssl_cert}}
       BBL_LB_KEY: {{greengrass_cf_ssl_cert_private_key}}
       BBL_STATE_DIR: bbl-state
