@@ -2,9 +2,9 @@ FROM relintdockerhubpushbot/relint-base
 
 # bosh-cli
 RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.36-linux-amd64 --output-document="/usr/bin/bosh" && \
+  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.45-linux-amd64 --output-document="/usr/bin/bosh" && \
   cd /usr/bin && \
-  echo "61033a0869547d687c09ea866fe4f6ce16e020fd bosh" | sha1sum -c - && \
+  echo "bf04be72daa7da0c9bbeda16fda7fc7b2b8af51e bosh" | sha1sum -c - && \
   chmod +x bosh
 
 # bbl and dependencies
