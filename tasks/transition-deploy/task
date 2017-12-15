@@ -105,6 +105,6 @@ main() {
   exit_properly $exitStatus
 }
 
-trap commit_vars_store EXIT
+trap close_bbl_ssh_connection_and_commit_vars_store EXIT
 
 main
