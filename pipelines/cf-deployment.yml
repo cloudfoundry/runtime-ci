@@ -158,6 +158,7 @@ groups:
   - transition-cats
   - transition-delete-deployment
   - transition-deploy
+  - transition-enable-docker-and-tasks
   - transition-record-compatible-versions
   - bless-manifest
 - name: st
@@ -2288,7 +2289,8 @@ jobs:
         NODES: 9
       file: cats-concourse-task/task.yml
 
-- name: transition-cats
+- name: transition-enable-docker-and-tasks
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2299,11 +2301,9 @@ jobs:
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
       - get: minerva-env-stubs-and-vars
       - get: cf-deployment-release-candidate
         passed: [ transition-deploy ]
-      - get: cats-concourse-task
       - get: legacy-cf-release
         passed: [ transition-deploy ]
       - get: legacy-diego-release
@@ -2324,6 +2324,33 @@ jobs:
         ENABLED_FEATURE_FLAGS: |
           diego_docker
           task_creation
+
+- name: transition-cats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: transition-pool
+      passed: [ transition-enable-docker-and-tasks ]
+      trigger: true
+    - aggregate:
+      - get: cf-acceptance-tests
+      - get: minerva-env-stubs-and-vars
+      - get: cf-deployment-release-candidate
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: cats-concourse-task
+      - get: legacy-cf-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-diego-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-garden-runc-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: cf-deployment-transition
+        passed: [ transition-enable-docker-and-tasks ]
+        trigger: true
     - task: run-cats
       input_mapping:
         integration-config: minerva-env-stubs-and-vars
