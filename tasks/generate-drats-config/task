@@ -5,8 +5,7 @@ set -eu
 pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
   BOSH_ENVIRONMENT=$(bbl director-address)
   BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
-  BOSH_GW_HOST=${BOSH_ENVIRONMENT%:25555}
-  BOSH_GW_HOST=${BOSH_GW_HOST#https://}
+  BOSH_GW_HOST=$(bbl jumpbox-address)
   BOSH_CA_CERT=$(bbl director-ca-cert)
   BOSH_CLIENT=$(bbl director-username)
   BOSH_CLIENT_SECRET=$(bbl director-password)
