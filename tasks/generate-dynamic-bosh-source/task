@@ -1,0 +1,26 @@
+#!/bin/bash -eu
+
+pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+  BOSH_ENVIRONMENT=$(bbl director-address)
+  BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
+  BOSH_CA_CERT=$(bbl director-ca-cert)
+  BOSH_CLIENT=$(bbl director-username)
+  BOSH_CLIENT_SECRET=$(bbl director-password)
+  BOSH_JUMPBOX_ADDRESS=$(bbl jumpbox-address)
+popd > /dev/null
+
+echo '{}' | jq \
+--arg bosh_environment "${BOSH_ENVIRONMENT}" \
+--arg bosh_gw_private_key "${BOSH_GW_PRIVATE_KEY}" \
+--arg bosh_ca_cert "${BOSH_CA_CERT}" \
+--arg bosh_client "${BOSH_CLIENT}" \
+--arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
+--arg bosh_jumpbox_address "${BOSH_JUMPBOX_ADDRESS}" \
+'{
+    "target": $bosh_environment,
+    "client": $bosh_client,
+    "client_secret": $bosh_client_secret,
+    "ca_cert": $bosh_ca_cert,
+    "jumpbox_url": $bosh_jumpbox_address,
+    "jumpbox_ssh_key": $bosh_gw_private_key
+}' > dynamic-bosh-source/source_file.json
