@@ -146,6 +146,7 @@ groups:
   - complex-legacy-deploy
   - complex-acquire-pool
   - complex-transition-deploy
+  - complex-enable-docker-and-tasks
   - complex-transition-cats
   - complex-transition-rats
   - complex-transition-delete-deployment
