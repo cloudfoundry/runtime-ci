@@ -180,11 +180,6 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
-- name: complex-legacy-cf-bosh-deployment
-  type: bosh-deployment-v2
-  source:
-    deployment: cf
-
 - name: windows-stemcell-bosh-release
   type: bosh-io-stemcell
   source:
@@ -195,41 +190,30 @@ resources:
   source:
     name: bosh-google-kvm-windows2012R2-go_agent
 
-- name: complex-legacy-diego-bosh-deployment
-  type: bosh-deployment
+- name: complex-legacy-cf-bosh-deployment
+  type: bosh-deployment-v2
   source:
-    target: https://bosh.dumbledore.cf-app.com:25555
-    username: admin
-    password: {{dumbledore_bosh_password}}
+    deployment: cf
+
+- name: complex-legacy-diego-bosh-deployment
+  type: bosh-deployment-v2
+  source:
     deployment: cf-diego
-    ignore_ssl: true
 
 - name: complex-legacy-routing-bosh-deployment
-  type: bosh-deployment
+  type: bosh-deployment-v2
   source:
-    target: https://bosh.dumbledore.cf-app.com:25555
-    username: admin
-    password: {{dumbledore_bosh_password}}
     deployment: cf-routing
-    ignore_ssl: true
 
 - name: legacy-cf-bosh-deployment
-  type: bosh-deployment
+  type: bosh-deployment-v2
   source:
-    target: https://bosh.minerva.cf-app.com:25555
-    username: admin
-    password: {{minerva_bosh_password}}
     deployment: cf
-    ignore_ssl: true
 
 - name: legacy-diego-bosh-deployment
-  type: bosh-deployment
+  type: bosh-deployment-v2
   source:
-    target: https://bosh.minerva.cf-app.com:25555
-    username: admin
-    password: {{minerva_bosh_password}}
     deployment: cf-diego
-    ignore_ssl: true
 
 - name: legacy-cf-release
   type: bosh-io-release
@@ -1042,32 +1026,31 @@ jobs:
     - put: complex-legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest-no-routing/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
     - put: complex-legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
         - legacy-cflinuxfs2-release/release.tgz
         - legacy-grootfs-release/release.tgz
         - legacy-cf-networking-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
     - put: complex-legacy-routing-bosh-deployment
       params:
         manifest: routing-manifest/routing-deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-routing-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
     - put: complex-legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-cf-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
     - task: bosh-run-errand-smoke-tests
       file: runtime-ci/tasks/run-errand/task.yml
       input_mapping:
@@ -1135,20 +1118,26 @@ jobs:
         DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/rds-overrides.yml
         PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
         RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+    - task: generate-dynamic-bosh-source
+      file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
+      input_mapping:
+        bbl-state: minerva-env-director-state
+      params:
+        BBL_STATE_DIR: bbl-state
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-cf-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
     - put: legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
         - legacy-cflinuxfs2-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
     - task: bosh-run-errand-smoke-tests
       file: runtime-ci/tasks/run-errand/task.yml
       input_mapping:
