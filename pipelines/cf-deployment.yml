@@ -10,10 +10,12 @@ groups:
 
   - lint-cf-deployment-manifest
   - branch-freshness
+  - complex-enable-docker-and-tasks
   - complex-transition-cats
   - fresh-cats
   - fresh-enable-docker-and-tasks
   - lite-cats
+  - transition-enable-docker-and-tasks
   - transition-cats
   - upgrade-cats
   - upgrade-set-feature-flags
