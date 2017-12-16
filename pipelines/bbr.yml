@@ -309,6 +309,7 @@ jobs:
         BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         OPS_FILES: |
+          operations/workaround/use-4-azs-for-router.yml
           operations/use-compiled-releases.yml
           operations/experimental/enable-backup-restore.yml
           operations/enable-nfs-volume-service.yml
