@@ -384,9 +384,7 @@ jobs:
     params:
       BBL_ENV_NAME: luna-fresh
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
       BBL_GCP_REGION: us-central1
-      BBL_GCP_ZONE: us-central1-a
       BBL_IAAS: gcp
       BBL_LB_CERT: {{luna_cf_ssl_cert}}
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
@@ -422,9 +420,7 @@ jobs:
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
       BBL_GCP_REGION: us-central1
-      BBL_GCP_ZONE: us-central1-a
       BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: snitch-lite
       IS_BOSH_LITE: true
@@ -456,9 +452,7 @@ jobs:
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_PROJECT_ID: {{trelawney_gcp_project}}
       BBL_GCP_REGION: us-central1
-      BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
       BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
       BBL_STATE_DIR: bbl-state
@@ -492,9 +486,7 @@ jobs:
     params:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_PROJECT_ID: {{bellatrix_gcp_project}}
       BBL_GCP_REGION: us-central1
-      BBL_GCP_ZONE: us-central1-a
       BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
       BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
       BBL_STATE_DIR: bbl-state
@@ -648,9 +640,7 @@ jobs:
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-        BBL_GCP_PROJECT_ID: {{luna_gcp_project}}
         BBL_GCP_REGION: us-central1
-        BBL_GCP_ZONE: us-central1-a
         BBL_LB_CERT: {{luna_cf_ssl_cert}}
         BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
         LB_DOMAIN: luna.cf-app.com
@@ -687,9 +677,7 @@ jobs:
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-        BBL_GCP_PROJECT_ID: {{snitch_gcp_project}}
         BBL_GCP_REGION: us-central1
-        BBL_GCP_ZONE: us-central1-a
         BBL_STATE_DIR: bbl-state
         BBL_ENV_NAME: snitch-lite
         IS_BOSH_LITE: true
@@ -722,9 +710,7 @@ jobs:
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-        BBL_GCP_PROJECT_ID: {{trelawney_gcp_project}}
         BBL_GCP_REGION: us-central1
-        BBL_GCP_ZONE: us-central1-a
         BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
         BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
         LB_DOMAIN: trelawney.cf-app.com
@@ -759,9 +745,7 @@ jobs:
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-        BBL_GCP_PROJECT_ID: {{bellatrix_gcp_project}}
         BBL_GCP_REGION: us-central1
-        BBL_GCP_ZONE: us-central1-a
         BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
         BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
         LB_DOMAIN: bellatrix.cf-app.com
