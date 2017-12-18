@@ -2846,6 +2846,7 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: patch}
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2877,6 +2878,7 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: patch}
 
 - name: ship-it-minor
   public: true
@@ -2902,6 +2904,7 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: minor}
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2933,6 +2936,7 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: minor}
 
 - name: ship-it-major
   public: true
@@ -2958,6 +2962,7 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: major}
       - task: record-transition-version
         file: runtime-ci/tasks/record-transition-version/task.yml
       - put: cf-deployment-transition-compatibility
@@ -2989,3 +2994,4 @@ jobs:
           repository: cf-deployment-rc-with-updated-version
           merge: true
       - put: cf-deployment-version
+        params: {bump: major}
