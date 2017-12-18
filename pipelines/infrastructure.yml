@@ -605,7 +605,6 @@ jobs:
         params: {acquire: true}
       - get: dumbledore-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bosh-deployment
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -620,7 +619,7 @@ jobs:
         BBL_ENV_NAME: dumbledore-upgrade
       input_mapping:
         bbl-state: dumbledore-env-director-state
-        ops-files: bosh-deployment
+        ops-files: dumbledore-env-director-state
       ensure:
         put: dumbledore-env-director-state
         params:
@@ -829,7 +828,6 @@ jobs:
         params: {acquire: true}
       - get: minerva-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bosh-deployment
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -844,7 +842,7 @@ jobs:
         BBL_ENV_NAME: minerva-upgrade
       input_mapping:
         bbl-state: minerva-env-director-state
-        ops-files: bosh-deployment
+        ops-files: minerva-env-director-state
       ensure:
         put: minerva-env-director-state
         params:
