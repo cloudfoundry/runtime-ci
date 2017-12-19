@@ -2,28 +2,26 @@
 
 set -u
 
-EXCEPTION_TASKS=""
-
 pushd runtime-ci >> /dev/null
   FAIL=false
   for task_file in scripts/ci/*/task.yml; do
-    is_exception=false
-    for exception_candidate in ${EXCEPTION_TASKS[*]}; do
-      if [[ "$exception_candidate" == "$task_file" ]]; then
-        is_exception=true
-      fi
-    done
-    if [[ ! $is_exception ]]; then
-      ack "$task_file" pipelines >> /dev/null
-    fi
-    # task_is_used "$task_file"
+    ack "$task_file" pipelines >> /dev/null
     EXIT_STATUS=$?
     if [[ $EXIT_STATUS -ne 0 ]]; then
       FAIL=true
       echo "$task_file is not used in any pipeline"
     fi
   done
+  for task_file in tasks/*/task.yml; do
+    ack "$task_file" pipelines >> /dev/null
+    EXIT_STATUS=$?
+    if [[ $EXIT_STATUS -ne 0 ]]; then
+      FAIL=true
+      echo "$task_file is not used in any pipeline"
+    fi
+  done
+popd >> /dev/null
 
-  if $FAIL; then
-    exit 1
-  fi
+if $FAIL; then
+  exit 1
+fi
