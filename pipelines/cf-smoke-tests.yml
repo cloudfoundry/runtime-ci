@@ -67,7 +67,8 @@ jobs:
       bbl-state: bellatrix-env-director-state
       vars-store: bellatrix-env-vars-store
     params:
-     SYSTEM_DOMAIN: bellatrix.cf-app.com
+      BBL_STATE_DIR: bbl-state
+      SYSTEM_DOMAIN: bellatrix.cf-app.com
 
 - name: run-smokes-errand
   build_logs_to_retain: 100

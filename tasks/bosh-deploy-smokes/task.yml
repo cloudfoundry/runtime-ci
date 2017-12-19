@@ -16,6 +16,7 @@ run:
   path: runtime-ci/tasks/bosh-deploy-smokes/task
 
 params:
+  BBL_STATE_DIR:
   VARS_STORE_FILE: deployment-vars.yml
   RELEASE_NAME: cf-smoke-tests
   SYSTEM_DOMAIN:
