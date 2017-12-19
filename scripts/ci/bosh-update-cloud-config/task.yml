@@ -10,6 +10,7 @@ inputs:
 - name: bbl-state
 - name: cloud-config
 - name: runtime-ci
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/scripts/ci/bosh-update-cloud-config/task

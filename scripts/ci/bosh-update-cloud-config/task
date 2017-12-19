@@ -1,17 +1,10 @@
 #!/bin/bash
 set -eux
 
-function setup_bosh_env_vars() {
-  set +x
-  pushd bbl-state/"${BBL_STATE_DIR}"
-    eval "$(bbl print-env)"
-  popd
-  set -x
-}
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
 
-function close_bbl_ssh_connection() {
-  pkill ssh || true
-}
+trap close_bbl_ssh_connection EXIT
 
 function update_cloud_config() {
   bosh \
@@ -23,7 +16,6 @@ function update_cloud_config() {
 function main() {
   setup_bosh_env_vars
   update_cloud_config
-  close_bbl_ssh_connection
 }
 
 main
