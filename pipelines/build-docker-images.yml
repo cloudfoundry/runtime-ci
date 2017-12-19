@@ -20,12 +20,10 @@ groups:
   - build-cannot-bump-docker-image
   - build-generate-release-manifest-docker-image
   - build-create-final-release-docker-image
-  - build-create-minimal-cf-release-manifest-docker-image
   - build-create-release-docker-image
   - build-create-release-notes-template-docker-image
   - build-delete-deployment-docker-image
   - build-deprovision-bosh-lite-docker-image
-  - build-enable-docker-diego-docker-image
   - build-enable-docker-diego-1-0-docker-image
   - build-merge-master-into-develop-docker-image
   - build-provision-bosh-lite-docker-image
@@ -41,9 +39,7 @@ groups:
   - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
   - build-create-diego-manifest-with-config-docker-image
-  - build-create-bosh-lite-diego-cats-manifest-docker-image
   - build-run-errand-bbl-docker-image
-  - build-run-errand-bbl-bosh-2-0-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
   - build-bosh-upload-stemcell-docker-image
@@ -57,12 +53,10 @@ groups:
   - build-recreate-datadog-dashboards-docker-image
   - build-extend-bosh-lite-diego-stub-docker-image
   - build-commit-generated-manifest-docker-image
-  - build-create-final-release-bucket-docker-image
   - build-write-build-url-docker-image
   - build-write-director-version-docker-image
   - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
-  - build-bbl-state-from-vars-store-docker-image
 
 resources:
 - name: runtime-ci
@@ -159,24 +153,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-diego-manifest-with-config/Dockerfile]
-- name: runtime-ci-create-bosh-lite-diego-cats-manifest
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-bosh-lite-diego-cats-manifest/Dockerfile]
 - name: runtime-ci-run-errand-bbl
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-errand-bbl/Dockerfile]
-- name: runtime-ci-run-errand-bbl-bosh-2-0
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-errand-bbl-bosh-2-0/Dockerfile]
 - name: runtime-ci-write-target-file
   type: git
   source:
@@ -248,12 +230,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release/Dockerfile]
-- name: runtime-ci-create-minimal-cf-release-manifest
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-minimal-cf-release-manifest/Dockerfile]
 - name: runtime-ci-create-release
   type: git
   source:
@@ -284,12 +260,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/enable-docker-diego-1-0/Dockerfile]
-- name: runtime-ci-enable-docker-diego
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/enable-docker-diego/Dockerfile]
 - name: runtime-ci-merge-master-into-develop
   type: git
   source:
@@ -384,13 +354,6 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/commit-generated-manifest/Dockerfile]
 
-- name: runtime-ci-create-final-release-bucket
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-final-release-bucket/Dockerfile]
-
 - name: runtime-ci-write-build-url
   type: git
   source:
@@ -411,13 +374,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/untar-release/Dockerfile]
-
-- name: runtime-ci-bbl-state-from-vars-store
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bbl-state-from-vars-store/Dockerfile]
 
 - name: cats-concourse-task
   type: git
@@ -539,24 +495,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-bosh-lite-diego-cats-manifest-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-bosh-lite-diego-cats-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: run-errand-bbl-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-errand-bbl
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-errand-bbl-bosh-2-0-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-errand-bbl-bosh-2-0
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -645,13 +587,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-minimal-cf-release-manifest-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-minimal-cf-release-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: create-release-pipeline-image
   type: docker-image
   source:
@@ -684,13 +619,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/enable-docker-diego-1-0
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: enable-docker-diego-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/enable-docker-diego
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -801,14 +729,6 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: create-final-release-bucket-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-final-release-bucket
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
 - name: write-build-url-pipeline-image
   type: docker-image
   source:
@@ -837,14 +757,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/build-metadata-resource
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: bbl-state-from-vars-store-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bbl-state-from-vars-store
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1139,24 +1051,6 @@ jobs:
       params:
         build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
         push: true
-- name: build-run-errand-bbl-bosh-2-0-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-errand-bbl-bosh-2-0
-        trigger: true
-    - put: run-errand-bbl-bosh-2-0-pipeline-image
-      params:
-        build: runtime-ci-run-errand-bbl-bosh-2-0/scripts/ci/run-errand-bbl-bosh-2-0
-        push: true
 - name: build-create-diego-manifest-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1192,24 +1086,6 @@ jobs:
     - put: create-diego-manifest-with-config-pipeline-image
       params:
         build: runtime-ci-create-diego-manifest-with-config/scripts/ci/create-diego-manifest-with-config
-        push: true
-- name: build-create-bosh-lite-diego-cats-manifest-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-bosh-lite-diego-cats-manifest
-        trigger: true
-    - put: create-bosh-lite-diego-cats-manifest-pipeline-image
-      params:
-        build: runtime-ci-create-bosh-lite-diego-cats-manifest/scripts/ci/create-bosh-lite-diego-cats-manifest
         push: true
 - name: build-create-bosh-lite-stub-docker-image
   public: true
@@ -1355,24 +1231,6 @@ jobs:
       params:
         build: runtime-ci-create-final-release/scripts/ci/create-final-release
         push: true
-- name: build-create-minimal-cf-release-manifest-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-minimal-cf-release-manifest
-        trigger: true
-    - put: create-minimal-cf-release-manifest-pipeline-image
-      params:
-        build: runtime-ci-create-minimal-cf-release-manifest/scripts/ci/create-minimal-cf-release-manifest
-        push: true
 - name: build-create-release-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1462,24 +1320,6 @@ jobs:
     - put: enable-docker-diego-1-0-pipeline-image
       params:
         build: runtime-ci-enable-docker-diego-1-0/scripts/ci/enable-docker-diego-1-0
-        push: true
-- name: build-enable-docker-diego-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-enable-docker-diego
-        trigger: true
-    - put: enable-docker-diego-pipeline-image
-      params:
-        build: runtime-ci-enable-docker-diego/scripts/ci/enable-docker-diego
         push: true
 - name: build-merge-master-into-develop-docker-image
   public: true
@@ -1759,24 +1599,6 @@ jobs:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
         push: true
 
-- name: build-create-final-release-bucket-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-final-release-bucket
-        trigger: true
-    - put: create-final-release-bucket-pipeline-image
-      params:
-        build: runtime-ci-create-final-release-bucket/scripts/ci/create-final-release-bucket
-        push: true
-
 - name: build-write-build-url-docker-image
   public: true
   plan:
@@ -1847,25 +1669,6 @@ jobs:
     - put: build-metadata-resource-pipeline-image
       params:
         build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
-        push: true
-
-- name: build-bbl-state-from-vars-store-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-bbl-state-from-vars-store
-        trigger: true
-    - put: bbl-state-from-vars-store-pipeline-image
-      params:
-        build: runtime-ci-bbl-state-from-vars-store/scripts/ci/bbl-state-from-vars-store
         push: true
 
 - name: build-cats-concourse-task-docker-image
