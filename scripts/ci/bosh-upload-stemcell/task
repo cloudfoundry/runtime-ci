@@ -1,20 +1,10 @@
 #!/bin/bash
 set -eux
 
-function setup_bosh_env_vars() {
-  set +x
-  pushd "bbl-state/${BBL_STATE_DIR}"
-    BOSH_CA_CERT="$(bbl director-ca-cert)"
-    export BOSH_CA_CERT
-    BOSH_ENVIRONMENT=$(bbl director-address)
-    export BOSH_ENVIRONMENT
-    BOSH_CLIENT=$(bbl director-username)
-    export BOSH_CLIENT
-    BOSH_CLIENT_SECRET=$(bbl director-password)
-    export BOSH_CLIENT_SECRET
-  popd
-  set -x
-}
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+trap close_bbl_ssh_connection EXIT
 
 function upload_stemcell() {
   bosh \
