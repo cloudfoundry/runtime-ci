@@ -86,6 +86,7 @@ jobs:
     input_mapping:
       bbl-state: bellatrix-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: cf-smoke-tests
       ERRAND_NAME: smoke-tests
 
@@ -105,8 +106,8 @@ jobs:
     input_mapping:
       bbl-state: bellatrix-env-director-state
     params:
+      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: cf-smoke-tests
-
 
 - name: create-final-release
   build_logs_to_retain: 100
