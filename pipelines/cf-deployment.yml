@@ -513,6 +513,11 @@ resources:
     project_id: "1382120"
     tracker_url: https://www.pivotaltracker.com
 
+- name: cf-deployment-concourse-tasks-docker-latest
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
 jobs:
 - name: branch-freshness
   public: true
@@ -675,6 +680,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks-docker-latest
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -738,6 +744,7 @@ jobs:
           DB_NAME: {{minerva_locketdb_db_name}}
       - task: restore-cloud-config
         file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
+        image: cf-deployment-concourse-tasks-docker-latest
         input_mapping:
           bbl-state: minerva-env-director-state
         params:
@@ -774,6 +781,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks-docker-latest
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -868,6 +876,7 @@ jobs:
           DB_NAME: {{dumbledore_locketdb_name}}
     - task: restore-cloud-config
       file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
+      image: cf-deployment-concourse-tasks-docker-latest
       input_mapping:
         bbl-state: dumbledore-env-director-state
       params:
