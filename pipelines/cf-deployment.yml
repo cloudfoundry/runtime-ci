@@ -1829,10 +1829,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - on_failure:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
-    do:
+  - do:
     - get: upgrade-pool
       trigger: true
       passed: [ upgrade-acquire-pool ]
@@ -1939,11 +1936,11 @@ jobs:
           operations/experimental/disable-consul-windows.yml
           operations/experimental/use-grootfs.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
-        APP_PUSHABILITY_THRESHOLD: 0
+        APP_PUSHABILITY_THRESHOLD: 3
         HTTP_AVAILABILITY_THRESHOLD: 0
-        RECENT_LOGS_THRESHOLD: 0
-        STREAMING_LOGS_THRESHOLD: 0
-        APP_SYSLOG_AVAILABILITY_THRESHOLD: 3
+        RECENT_LOGS_THRESHOLD: 7
+        STREAMING_LOGS_THRESHOLD: 2
+        APP_SYSLOG_AVAILABILITY_THRESHOLD: 19
         FAIL_ON_DOWNTIME: true
       ensure:
         put: hermione-env-vars-store
