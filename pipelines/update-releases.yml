@@ -2716,7 +2716,7 @@ jobs:
     ensure:
       put: greengrass-env-director-state
       params:
-        repository: updated-bbl-state
+        repository: updated-env-repo
         rebase: true
   - task: extend-cloud-config-for-credhub-dry-run
     file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
@@ -2749,7 +2749,7 @@ jobs:
     ensure:
       put: greengrass-env-director-state
       params:
-        repository: updated-bbl-state
+        repository: updated-env-repo
         rebase: true
 
 - name: run-bosh-cleanup-compilation
