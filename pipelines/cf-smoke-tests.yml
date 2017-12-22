@@ -63,10 +63,9 @@ jobs:
   - task: deploy-smoke-tests-errand
     file: runtime-ci/tasks/bosh-deploy-smokes/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      env-repo: bellatrix-env-director-state
       vars-store: bellatrix-env-vars-store
     params:
-      BBL_STATE_DIR: bbl-state
       SYSTEM_DOMAIN: bellatrix.cf-app.com
 
 - name: run-smokes-errand
@@ -83,9 +82,8 @@ jobs:
   - task: run-smokes
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      env-repo: bellatrix-env-director-state
     params:
-      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: cf-smoke-tests
       ERRAND_NAME: smoke-tests
 
@@ -103,9 +101,8 @@ jobs:
   - task: delete-smoke-tests-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      env-repo: bellatrix-env-director-state
     params:
-      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: cf-smoke-tests
 
 - name: create-final-release

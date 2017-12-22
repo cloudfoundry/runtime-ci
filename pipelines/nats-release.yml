@@ -51,7 +51,7 @@ resources:
     name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 # ENV
-- name: myrtle-env-bbl-state
+- name: myrtle-env-director-state
   type: git
   source:
     branch: master
@@ -106,7 +106,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -115,14 +115,13 @@ jobs:
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: {{myrtle_cf_ssl_cert}}
       BBL_LB_KEY: {{myrtle_cf_ssl_cert_private_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: myrtle.cf-app.com
       BBL_ENV_NAME: myrtle-nats
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
-      ops-files: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
+      ops-files: myrtle-env-director-state
     ensure:
-      put: myrtle-env-bbl-state
+      put: myrtle-env-director-state
       params:
         repository: updated-env-repo
         rebase: true
@@ -133,17 +132,16 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_STATE_DIR: bbl-state
     ensure:
-      put: myrtle-env-bbl-state
+      put: myrtle-env-director-state
       params:
         repository: updated-env-repo
         rebase: true
@@ -156,7 +154,7 @@ jobs:
   - aggregate:
     - get: stemcell
       trigger: true
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
     - get: nats-release
       trigger: true
@@ -167,9 +165,7 @@ jobs:
   - task: deploy-nats
     file: runtime-ci/scripts/ci/bosh-deploy-nats/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: myrtle-env-director-state
 
 - name: smoke-tests
   public: true
@@ -181,7 +177,7 @@ jobs:
       trigger: true
       passed: [deploy-nats-standalone]
     - get: runtime-ci
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
       passed: [deploy-nats-standalone]
     - get: weekly
@@ -190,9 +186,8 @@ jobs:
   - task: run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
     params:
-      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: nats
       ERRAND_NAME: smoke-tests
 
@@ -204,7 +199,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
       passed: [smoke-tests]
     - get: nats-release
@@ -216,9 +211,8 @@ jobs:
   - task: delete-nats-standalone
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
     params:
-      BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: nats
 
 - name: deploy-cf-with-created-nats
@@ -229,7 +223,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-master
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
       passed: [smoke-tests]
     - get: myrtle-env-vars-store
@@ -243,21 +237,18 @@ jobs:
   - task: upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
       cf-deployment: cf-deployment-master
-    params:
-      BBL_STATE_DIR: bbl-state
   - task: deploy-cf-with-created-nats
     file: cf-deployment-concourse-tasks/bosh-deploy-with-created-release/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
+      env-repo: myrtle-env-director-state
       cf-deployment: cf-deployment-master
       release: nats-release
       ops-files: cf-deployment-master
       vars-store: myrtle-env-vars-store
       vars-files: myrtle-env-vars-store
     params:
-      BBL_STATE_DIR: bbl-state
       SYSTEM_DOMAIN: myrtle.cf-app.com
       OPS_FILES: operations/workaround/use-4-azs-for-router.yml
     ensure:
@@ -278,9 +269,7 @@ jobs:
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: myrtle-env-director-state
 
 - name: cf-acceptance-tests
   serial_groups: [myrtle]
@@ -292,7 +281,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: cf-deployment-master
       passed: [deploy-cf-with-created-nats]
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
       passed: [deploy-cf-with-created-nats]
     - get: myrtle-env-vars-store
@@ -329,7 +318,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: myrtle-env-bbl-state
+    - get: myrtle-env-director-state
       trigger: true
       passed: [cf-acceptance-tests]
     - get: nats-release
@@ -341,9 +330,7 @@ jobs:
   - task: delete-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: myrtle-env-bbl-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: myrtle-env-director-state
 
 - name: create-final-release
   public: true

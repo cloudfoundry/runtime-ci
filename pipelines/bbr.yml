@@ -122,7 +122,6 @@ jobs:
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: {{baba_yaga_cf_ssl_cert}}
       BBL_LB_KEY: {{baba_yaga_cf_ssl_cert_private_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: baba-yaga.cf-app.com
       BBL_ENV_NAME: baba-yaga-bbr
     input_mapping:
@@ -159,9 +158,8 @@ jobs:
         BBL_LB_KEY: {{baba_yaga_cf_ssl_cert_private_key}}
         LB_DOMAIN: baba-yaga.cf-app.com
         BBL_ENV_NAME: baba-yaga-bbr
-        BBL_STATE_DIR: bbl-state
       input_mapping:
-        bbl-state: baba-yaga-env-director-state
+        env-repo: baba-yaga-env-director-state
         ops-files: baba-yaga-env-director-state
       ensure:
         put: baba-yaga-env-director-state
@@ -185,16 +183,13 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: baba-yaga-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: baba-yaga-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state: baba-yaga-env-director-state
+      env-repo: baba-yaga-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: baba-yaga-env-director-state
       params:
@@ -234,9 +229,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: baba-yaga-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
+        env-repo: baba-yaga-env-director-state
 
 - name: acquire-pool
   public: true
@@ -281,9 +274,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-rc
-        bbl-state: baba-yaga-env-director-state
+        env-repo: baba-yaga-env-director-state
       params:
-        BBL_STATE_DIR: bbl-state
         INFRASTRUCTURE: google
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
@@ -296,13 +288,12 @@ jobs:
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        bbl-state: baba-yaga-env-director-state
+        env-repo: baba-yaga-env-director-state
         cf-deployment: cf-deployment-rc
         ops-files: collected-ops-files
         vars-store: baba-yaga-env-vars-store
         vars-files: baba-yaga-env-vars-store
       params:
-        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         OPS_FILES: |
           operations/workaround/use-4-azs-for-router.yml
@@ -319,9 +310,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: baba-yaga-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
+        env-repo: baba-yaga-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -355,10 +344,9 @@ jobs:
     - task: generate-drats-config
       file: runtime-ci/tasks/generate-drats-config/task.yml
       input_mapping:
-        bbl-state: baba-yaga-env-director-state
+        env-repo: baba-yaga-env-director-state
         vars-store: baba-yaga-env-vars-store
       params:
-        BBL_STATE_DIR: bbl-state
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
     - task: run-drats
       privileged: true
