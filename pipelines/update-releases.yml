@@ -2839,7 +2839,4 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: greengrass-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
-
+        env-repo: greengrass-env-director-state
