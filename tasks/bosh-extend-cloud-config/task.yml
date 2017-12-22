@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-  - name: env-repo
+- name: env-repo
 - name: ops-file
 
 run:
