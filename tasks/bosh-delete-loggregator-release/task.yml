@@ -12,4 +12,5 @@ inputs:
 - name: cf-deployment-concourse-tasks
 
 run:
+  BBL_STATE_DIR: bbl-state
   path: runtime-ci/tasks/bosh-delete-loggregator-release/task
