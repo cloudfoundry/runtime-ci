@@ -6,7 +6,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-upload-stemcell
 
 inputs:
-- name: bbl-state
+- name: env-repo
 - name: runtime-ci
 - name: stemcell
 - name: cf-deployment-concourse-tasks
@@ -15,5 +15,5 @@ run:
   path: runtime-ci/scripts/ci/bosh-upload-stemcell/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   STEMCELL_NAME:
