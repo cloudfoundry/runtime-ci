@@ -145,7 +145,7 @@ resources:
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: {{bellatrix_env_readwrite_deploy_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: dumbledore-env-director-state
   type: git
@@ -154,7 +154,7 @@ resources:
     uri: git@github.com:cloudfoundry/dumbledore-env.git
     private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: hermione-env-director-state
   type: git
@@ -163,7 +163,7 @@ resources:
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: {{hermione_env_private_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: luna-env-director-state
   type: git
@@ -172,7 +172,7 @@ resources:
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: {{luna_env_readwrite_deploy_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: minerva-env-director-state
   type: git
@@ -181,7 +181,7 @@ resources:
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: snitch-env-director-state
   type: git
@@ -190,7 +190,7 @@ resources:
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: {{snitch_env_private_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 - name: trelawney-env-director-state
   type: git
@@ -199,7 +199,7 @@ resources:
     uri: git@github.com:cloudfoundry/trelawney-env.git
     private_key: {{trelawney_env_readwrite_deploy_key}}
     paths:
-    - bbl-state
+    - env-repo
 
 # Time
 - name: weekly
@@ -345,7 +345,6 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
       BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
       BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: dumbledore.cf-app.com
       BBL_ENV_NAME: dumbledore-upgrade
     input_mapping:
@@ -380,7 +379,6 @@ jobs:
       BBL_IAAS: gcp
       BBL_LB_CERT: {{luna_cf_ssl_cert}}
       BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: luna.cf-app.com
     input_mapping:
       env-repo: luna-env-director-state
@@ -411,7 +409,6 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: snitch-lite
       IS_BOSH_LITE: true
     input_mapping:
@@ -445,7 +442,6 @@ jobs:
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
       BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: trelawney.cf-app.com
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
@@ -479,7 +475,6 @@ jobs:
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
       BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
     input_mapping:
@@ -514,7 +509,6 @@ jobs:
       BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
       BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
       BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
-      BBL_STATE_DIR: bbl-state
       LB_DOMAIN: minerva.cf-app.com
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
@@ -553,7 +547,6 @@ jobs:
       BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
-      BBL_STATE_DIR: bbl-state
       OPS_FILES: "local-dns.yml"
     input_mapping:
       env-repo: hermione-env-director-state
@@ -596,7 +589,6 @@ jobs:
         BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
         BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
         BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-        BBL_STATE_DIR: bbl-state
         LB_DOMAIN: dumbledore.cf-app.com
         BBL_ENV_NAME: dumbledore-upgrade
       input_mapping:
@@ -633,7 +625,6 @@ jobs:
         BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
         LB_DOMAIN: luna.cf-app.com
         BBL_ENV_NAME: luna-fresh
-        BBL_STATE_DIR: bbl-state
       input_mapping:
         env-repo: luna-env-director-state
         ops-files: luna-env-director-state
@@ -664,7 +655,6 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_STATE_DIR: bbl-state
         BBL_ENV_NAME: snitch-lite
         IS_BOSH_LITE: true
       input_mapping:
@@ -701,7 +691,6 @@ jobs:
         BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
         LB_DOMAIN: trelawney.cf-app.com
         BBL_ENV_NAME: trelawney-ops
-        BBL_STATE_DIR: bbl-state
       input_mapping:
         env-repo: trelawney-env-director-state
         ops-files: trelawney-env-director-state
@@ -736,7 +725,6 @@ jobs:
         BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
         LB_DOMAIN: bellatrix.cf-app.com
         BBL_ENV_NAME: bellatrix-stable
-        BBL_STATE_DIR: bbl-state
       input_mapping:
         env-repo: bellatrix-env-director-state
         ops-files: bellatrix-env-director-state
@@ -773,7 +761,6 @@ jobs:
         BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
         LB_DOMAIN: hermione.cf-app.com
         BBL_ENV_NAME: hermione-upgrade
-        BBL_STATE_DIR: bbl-state
         OPS_FILES: "local-dns.yml"
       input_mapping:
         env-repo: hermione-env-director-state
@@ -807,7 +794,6 @@ jobs:
         BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
         BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
         BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
-        BBL_STATE_DIR: bbl-state
         LB_DOMAIN: minerva.cf-app.com
         BBL_ENV_NAME: minerva-upgrade
       input_mapping:
@@ -838,15 +824,11 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          bbl-state: dumbledore-env-director-state
-        params:
-          BBL_STATE_DIR: bbl-state
+          env-repo: dumbledore-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: dumbledore-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: dumbledore-env-director-state
       params:
@@ -867,16 +849,13 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: luna-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: luna-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: luna-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: luna-env-director-state
       params:
@@ -899,15 +878,12 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          bbl-state: snitch-env-director-state
-        params:
-          BBL_STATE_DIR: bbl-state
+          env-repo: snitch:
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: snitch-env-director-state
     params:
-      BBL_STATE_DIR: bbl-state
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: snitch-env-director-state
@@ -932,7 +908,6 @@ jobs:
       env-repo: trelawney-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: trelawney-env-director-state
       params:
@@ -953,15 +928,11 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: bellatrix-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: bellatrix-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: bellatrix-env-director-state
       params:
@@ -984,15 +955,11 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          BBL_STATE_DIR: bbl-state
+          env-repo: minerva-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: minerva-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: minerva-env-director-state
       params:
@@ -1011,24 +978,18 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: hermione-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: hermione-env-director-state
   - task: unbind-elb-from-r53
     file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
     input_mapping:
       env-repo: hermione-env-director-state
-    params:
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
       AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_STATE_DIR: bbl-state
       DOMAIN: hermione.cf-app.com
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       env-repo: hermione-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
     ensure:
       put: hermione-env-director-state
       params:
@@ -1160,9 +1121,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: snitch-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
+        env-repo: snitch-env-director-state
 
 - name: run-bosh-cleanup-ops
   build_logs_to_retain: 100
@@ -1177,9 +1136,7 @@ jobs:
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      bbl-state: trelawney-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
+      env-repo: trelawney-env-director-state
 
 - name: run-bosh-cleanup-stable
   serial: true
@@ -1196,9 +1153,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: bellatrix-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
+        env-repo: bellatrix-env-director-state
 
 - name: run-bosh-cleanup-upgrade
   serial: true
@@ -1215,6 +1170,4 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        bbl-state: hermione-env-director-state
-      params:
-        BBL_STATE_DIR: bbl-state
+        env-repo: hermione-env-director-state
