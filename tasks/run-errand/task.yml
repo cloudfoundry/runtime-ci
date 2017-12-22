@@ -7,13 +7,13 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: bbl-state
+- name: env-repo
 - name: runtime-ci
 
 run:
   path: runtime-ci/tasks/run-errand/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   DEPLOYMENT_NAME: cf
   ERRAND_NAME:

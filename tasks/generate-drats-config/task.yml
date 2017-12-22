@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: bbl-state
+- name: env-repo
 - name: vars-store
 
 outputs:
@@ -20,6 +20,6 @@ run:
 params:
   DEPLOYMENT_NAME: cf
   SYSTEM_DOMAIN:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   VARS_STORE_FILE: deployment-vars.yml
   SSH_DESTINATION_CIDR: "10.0.0.0/8"

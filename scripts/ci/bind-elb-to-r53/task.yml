@@ -14,7 +14,7 @@ run:
   path: runtime-ci/scripts/ci/bind-elb-to-r53/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
   DOMAIN:

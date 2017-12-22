@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: bbl-state
+- name: env-repo
 - name: manifest
 - name: runtime-ci
 
@@ -18,7 +18,7 @@ run:
   path: runtime-ci/tasks/compile-release-from-manifest/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   RELEASE_NAME:
   MANIFEST_FILENAME: cf-deployment.yml
   STEMCELL_OS: ubuntu-trusty

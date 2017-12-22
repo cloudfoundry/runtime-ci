@@ -2,7 +2,7 @@
 
 set -eu
 
-pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+pushd env-repo/"${BBL_STATE_DIR}" > /dev/null
   BOSH_ENVIRONMENT=$(bbl director-address)
   BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
   BOSH_GW_HOST=$(bbl jumpbox-address)

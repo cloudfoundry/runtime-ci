@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: bbl-state
+  - name: env-repo
 
 outputs:
 - name: dynamic-bosh-source
@@ -17,4 +17,4 @@ run:
   path: runtime-ci/tasks/generate-dynamic-bosh-source/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state

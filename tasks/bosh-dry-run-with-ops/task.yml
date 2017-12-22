@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: bbl-state
+- name: env-repo
 - name: cf-deployment
 - name: ops-files
 - name: vars-files
@@ -17,7 +17,7 @@ run:
   path: runtime-ci/tasks/bosh-dry-run-with-ops/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   VARS_FILES:
   DEPLOYMENT_NAME_SUFFIX:
   SYSTEM_DOMAIN:

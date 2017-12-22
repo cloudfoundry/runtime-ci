@@ -8,12 +8,12 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: bbl-state
+  - name: env-repo
 - name: ops-file
 
 run:
   path: runtime-ci/tasks/bosh-extend-cloud-config/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   OPS_FILE_PATH:

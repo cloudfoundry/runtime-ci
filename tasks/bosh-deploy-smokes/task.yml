@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: bbl-state
+- name: env-repo
 - name: vars-store
 - name: cf-smoke-tests-release
 - name: runtime-ci
@@ -16,7 +16,7 @@ run:
   path: runtime-ci/tasks/bosh-deploy-smokes/task
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   VARS_STORE_FILE: deployment-vars.yml
   RELEASE_NAME: cf-smoke-tests
   SYSTEM_DOMAIN:

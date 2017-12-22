@@ -17,7 +17,7 @@ run:
   path: runtime-ci/tasks/run-drats/task_new
 
 params:
-  BBL_STATE_DIR:
+  BBL_STATE_DIR: bbl-state
   CONFIG_FILE_PATH:
   DEFAULT_TIMEOUT_MINS:
   FOCUSED_SUITE_NAME:
