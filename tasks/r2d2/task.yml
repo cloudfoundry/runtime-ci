@@ -19,5 +19,6 @@ run:
   path: runtime-ci/tasks/r2d2/task
 
 params:
+  BBL_STATE_DIR: bbl-state
   EXTRACT_CF_NETWORKING: false
   EXTRACT_ROUTING: false
