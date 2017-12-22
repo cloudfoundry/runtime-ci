@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: bbl-state  # - The Director's bbl state dir
+- name: env-repo  # - The Director's environment repo
 - name: runtime-ci  # This repo
 - name: cf-deployment-concourse-tasks
 
