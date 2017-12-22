@@ -11,6 +11,8 @@ inputs:
 - name: runtime-ci  # This repo
 - name: cf-deployment-concourse-tasks
 
-run:
+params:
   BBL_STATE_DIR: bbl-state
+
+run:
   path: runtime-ci/tasks/bosh-delete-loggregator-release/task
