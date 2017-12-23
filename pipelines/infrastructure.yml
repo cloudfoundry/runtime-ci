@@ -973,6 +973,8 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - put: upgrade-pool
+      params: {claim: hermione}
     - get: hermione-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
