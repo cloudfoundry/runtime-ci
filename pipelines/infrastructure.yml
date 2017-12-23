@@ -59,6 +59,7 @@ groups:
   - update-infrastructure-upgrade
   - destroy-infrastructure-upgrade
   - run-bosh-cleanup-upgrade
+  - remove-claimed-lock-upgrade
 
 resources:
 # Pools
@@ -1104,6 +1105,24 @@ jobs:
       pool-resource: transition-pool
   - put: transition-pool
     params: {remove: transition-pool}
+
+- name: remove-claimed-lock-upgrade
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: upgrade-pool
+    passed: [ destroy-infrastructure-upgrade ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: hermione
+    output_mapping:
+      pool-resource: upgrade-pool
+  - put: transition-pool
+    params: {remove: upgrade-pool}
 
 # BOSH cleanup
 - name: run-bosh-cleanup-lite
