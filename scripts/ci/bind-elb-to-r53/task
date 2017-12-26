@@ -5,13 +5,13 @@ set -eux
 cf_router_load_balancer_url() {
   bbl \
     lbs \
-    | grep Router | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
+    | grep 'CF Router LB' | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
 
 cf_ssh_proxy_load_balancer_url() {
   bbl \
     lbs \
-    | grep "SSH Proxy" | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
+    | grep "CF SSH Proxy LB" | sed 's/.*\[\(.*elb.amazonaws.com.*\)\].*/\1/'
 }
 
 get_hosted_zone_id_from_create_hosted_zone_response() {
