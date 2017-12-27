@@ -311,18 +311,6 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         env-repo: baba-yaga-env-director-state
-    - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-      params:
-        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
-      input_mapping:
-        vars-store: baba-yaga-env-vars-store
-        integration-configs: baba-yaga-env-integration-configs
-      ensure:
-        put: baba-yaga-env-integration-configs
-        params:
-          repository: updated-integration-configs
-          rebase: true
 
 - name: run-drats
   public: true
