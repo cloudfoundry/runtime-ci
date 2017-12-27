@@ -6,6 +6,7 @@ setup_env() {
   echo "${SSH_KEY}" > /tmp/bosh_lite_key
 	export AWS_ACCESS_KEY_ID=${BOSH_AWS_ACCESS_KEY_ID}
 	export AWS_SECRET_ACCESS_KEY=${BOSH_AWS_SECRET_ACCESS_KEY}
+	export AWS_DEFAULT_REGION=${BOSH_LITE_REGION}
   set -x
 
   export BOSH_LITE_SUBNET_ID
