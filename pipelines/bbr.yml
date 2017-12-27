@@ -338,10 +338,8 @@ jobs:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
     - task: run-drats
       privileged: true
-      file: runtime-ci/tasks/run-drats/task.yml
+      file: drats-master/ci/drats-with-integration-config/task.yml
       input_mapping:
         disaster-recovery-acceptance-tests: drats-master
         bbr-binary-release: bbr-github-release
-      params:
-        DEFAULT_TIMEOUT_MINS: 60
-        SKIP_SUITE_NAME: cf-credhub
+        drats-integration-config: drats-config
