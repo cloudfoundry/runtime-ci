@@ -23,10 +23,8 @@ groups:
   - build-create-release-docker-image
   - build-create-release-notes-template-docker-image
   - build-delete-deployment-docker-image
-  - build-deprovision-bosh-lite-docker-image
   - build-enable-docker-diego-1-0-docker-image
   - build-merge-master-into-develop-docker-image
-  - build-provision-bosh-lite-docker-image
   - build-record-compatible-versions-docker-image
   - build-run-bosh-cleanup-1.0-docker-image
   - build-run-rats-docker-image
@@ -35,11 +33,8 @@ groups:
   - build-run-smoketests-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
-  - build-create-bosh-lite-creds-docker-image
-  - build-create-bosh-lite-stub-docker-image
   - build-create-diego-manifest-docker-image
   - build-create-diego-manifest-with-config-docker-image
-  - build-run-errand-bbl-docker-image
   - build-write-target-file-docker-image
   - build-write-creds-docker-image
   - build-bosh-upload-stemcell-docker-image
@@ -51,7 +46,6 @@ groups:
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-recreate-datadog-dashboards-docker-image
-  - build-extend-bosh-lite-diego-stub-docker-image
   - build-commit-generated-manifest-docker-image
   - build-write-build-url-docker-image
   - build-write-director-version-docker-image
@@ -129,18 +123,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/verify-every-task-has-correct-docker-image/Dockerfile]
-- name: runtime-ci-create-bosh-lite-creds
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-bosh-lite-creds/Dockerfile]
-- name: runtime-ci-create-bosh-lite-stub
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-bosh-lite-stub/Dockerfile]
 - name: runtime-ci-create-diego-manifest
   type: git
   source:
@@ -153,12 +135,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-diego-manifest-with-config/Dockerfile]
-- name: runtime-ci-run-errand-bbl
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-errand-bbl/Dockerfile]
 - name: runtime-ci-write-target-file
   type: git
   source:
@@ -248,12 +224,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/delete-deployment/Dockerfile]
-- name: runtime-ci-deprovision-bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/deprovision-bosh-lite/Dockerfile]
 - name: runtime-ci-enable-docker-diego-1-0
   type: git
   source:
@@ -266,12 +236,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/merge-master-into-develop/Dockerfile]
-- name: runtime-ci-provision-bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/provision-bosh-lite/Dockerfile]
 - name: runtime-ci-record-compatible-versions
   type: git
   source:
@@ -340,13 +304,6 @@ resources:
     paths:
     - scripts/ci/recreate-datadog-dashboards/Dockerfile
     - scripts/ci/recreate-datadog-dashboards/Gemfile.lock
-- name: runtime-ci-extend-bosh-lite-diego-stub
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/extend-bosh-lite-diego-stub/Dockerfile]
-
 - name: runtime-ci-commit-generated-manifest
   type: git
   source:
@@ -467,20 +424,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-bosh-lite-creds-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-bosh-lite-creds
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-bosh-lite-stub-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-bosh-lite-stub
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: create-diego-manifest-pipeline-image
   type: docker-image
   source:
@@ -492,13 +435,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/create-diego-manifest-with-config
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-errand-bbl-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-errand-bbl
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -608,13 +544,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: deprovision-bosh-lite-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/deprovision-bosh-lite
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: enable-docker-diego-1-0-pipeline-image
   type: docker-image
   source:
@@ -626,13 +555,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/merge-master-into-develop
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: provision-bosh-lite-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/provision-bosh-lite
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -710,13 +632,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/recreate-datadog-dashboards
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: extend-bosh-lite-diego-stub-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/extend-bosh-lite-diego-stub
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -1033,24 +948,6 @@ jobs:
       params:
         build: runtime-ci-write-creds/scripts/ci/write-creds
         push: true
-- name: build-run-errand-bbl-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-errand-bbl
-        trigger: true
-    - put: run-errand-bbl-pipeline-image
-      params:
-        build: runtime-ci-run-errand-bbl/scripts/ci/run-errand-bbl
-        push: true
 - name: build-create-diego-manifest-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1086,42 +983,6 @@ jobs:
     - put: create-diego-manifest-with-config-pipeline-image
       params:
         build: runtime-ci-create-diego-manifest-with-config/scripts/ci/create-diego-manifest-with-config
-        push: true
-- name: build-create-bosh-lite-stub-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-bosh-lite-stub
-        trigger: true
-    - put: create-bosh-lite-stub-pipeline-image
-      params:
-        build: runtime-ci-create-bosh-lite-stub/scripts/ci/create-bosh-lite-stub
-        push: true
-- name: build-create-bosh-lite-creds-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-bosh-lite-creds
-        trigger: true
-    - put: create-bosh-lite-creds-pipeline-image
-      params:
-        build: runtime-ci-create-bosh-lite-creds/scripts/ci/create-bosh-lite-creds
         push: true
 - name: build-announce-rc-docker-image
   public: true
@@ -1285,24 +1146,6 @@ jobs:
       params:
         build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
         push: true
-- name: build-deprovision-bosh-lite-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-deprovision-bosh-lite
-        trigger: true
-    - put: deprovision-bosh-lite-pipeline-image
-      params:
-        build: runtime-ci-deprovision-bosh-lite/scripts/ci/deprovision-bosh-lite
-        push: true
 - name: build-enable-docker-diego-1-0-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1338,24 +1181,6 @@ jobs:
     - put: merge-master-into-develop-pipeline-image
       params:
         build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
-        push: true
-- name: build-provision-bosh-lite-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-provision-bosh-lite
-        trigger: true
-    - put: provision-bosh-lite-pipeline-image
-      params:
-        build: runtime-ci-provision-bosh-lite/scripts/ci/provision-bosh-lite
         push: true
 - name: build-record-compatible-versions-docker-image
   public: true
@@ -1559,25 +1384,6 @@ jobs:
     - put: recreate-datadog-dashboards-pipeline-image
       params:
         build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
-        push: true
-
-- name: build-extend-bosh-lite-diego-stub-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-extend-bosh-lite-diego-stub
-        trigger: true
-    - put: extend-bosh-lite-diego-stub-pipeline-image
-      params:
-        build: runtime-ci-extend-bosh-lite-diego-stub/scripts/ci/extend-bosh-lite-diego-stub
         push: true
 
 - name: build-commit-generated-manifest-docker-image
