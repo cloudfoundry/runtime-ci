@@ -4,8 +4,6 @@ set -exu
 setup_env() {
   set +x
   echo "${SSH_KEY}" > /tmp/bosh_lite_key
-  export BOSH_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-  export BOSH_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
   set -x
 
   export BOSH_LITE_SUBNET_ID
