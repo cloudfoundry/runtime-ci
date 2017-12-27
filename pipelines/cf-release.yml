@@ -541,9 +541,9 @@ jobs:
       privileged: true
       file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
       params:
-        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
+        BOSH_AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
+        BOSH_AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
+        BOSH_LITE_REGION: {{bosh_lite_aws_default_region}}
         BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
         BOSH_LITE_ELASTIC_IP: {{bosh_lite_elastic_ip}}
         BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
