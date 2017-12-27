@@ -6,7 +6,6 @@ set -exu
 current_date=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
 
 cf_release_sha=$(cd cf-release; git rev-parse HEAD)
-bosh_lite_sha=$(cd bosh-lite; git rev-parse HEAD)
 
 tar xzf aws-stemcell/stemcell.tgz
 aws_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
@@ -14,13 +13,6 @@ aws_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'
 aws_stemcell="${aws_stemcell_name}/${aws_stemcell_version}"
 aws_director_version=$(cat aws-director-version/director_version)
 aws_build_url=$(cat aws-build-url/build_url)
-
-tar xzf bosh-lite-stemcell/stemcell.tgz
-bosh_lite_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
-bosh_lite_stemcell_version=$(grep -e "^version" stemcell.MF | cut -f2 -d' ' | tr -d "'" | tr -d '"')
-bosh_lite_stemcell="${bosh_lite_stemcell_name}/${bosh_lite_stemcell_version}"
-bosh_lite_director_version=$(cat bosh-lite-director-version/director_version)
-bosh_lite_build_url=$(cat bosh-lite-build-url/build_url)
 
 tar xzf vsphere-stemcell/stemcell.tgz
 vsphere_stemcell_name=$(grep -e "^name" stemcell.MF | cut -f2 -d' ')
@@ -35,7 +27,7 @@ cflinuxfs2_release_version=$(cd cflinuxfs2-release-tarball; cat version)
 cf_networking_release_version=$(cd cf-networking-release-tarball; cat version)
 grootfs_release_version=$(cd grootfs-release-tarball; cat version)
 
-new_row="${cf_release_sha},${diego_release_version},${garden_runc_release_version},${cflinuxfs2_release_version},${cf_networking_release_version},${grootfs_release_version},${bosh_lite_sha},${aws_stemcell},${bosh_lite_stemcell},${vsphere_stemcell},${aws_director_version},${bosh_lite_director_version},${vsphere_director_version},${aws_build_url},${bosh_lite_build_url},${vsphere_build_url}"
+new_row="${cf_release_sha},${diego_release_version},${garden_runc_release_version},${cflinuxfs2_release_version},${cf_networking_release_version},${grootfs_release_version},,${aws_stemcell},,${vsphere_stemcell},${aws_director_version},,${vsphere_director_version},${aws_build_url},,${vsphere_build_url}"
 if grep "$new_row" "diego-cf-compatibility/$COMPATIBILITY_FILE"; then
   echo "No changes to be made".
 else
