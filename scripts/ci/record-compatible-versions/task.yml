@@ -21,7 +21,6 @@ inputs:
   - name: vsphere-director-version
   - name: aws-build-url
   - name: vsphere-build-url
-  - name: bosh-lite
 
 outputs:
   - name: updated-diego-cf-compatibility
