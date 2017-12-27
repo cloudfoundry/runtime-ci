@@ -9,7 +9,7 @@ setup_env() {
   set -x
 
   export BOSH_LITE_SUBNET_ID
-  BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=BoshLite" | jq -r .Subnets[0].SubnetId)
+  BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=bosh-lite-vagrant-bosh-subnet" | jq -r .Subnets[0].SubnetId)
 
   export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 }
