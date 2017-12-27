@@ -4,11 +4,7 @@ groups:
   - unit-tests
   - branch-freshness
   - create-release
-  - deploy-bosh-lite
-  - bosh-lite-smoke-tests
-  - bosh-lite-acceptance-tests
   - generate-aws-manifests
-  - generate-bosh-lite-manifests
   - generate-vsphere-manifests
   - deploy-aws
   - aws-smoke-tests
@@ -78,26 +74,10 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
-- name: cf-bosh-lite-manifest
-  type: s3
-  source:
-    bucket: cf-bosh-lite-manifest
-    versioned_file: deployment.yml
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
 - name: cf-a1-diego-manifest
   type: s3
   source:
     bucket: cf-a1-diego-manifest
-    versioned_file: diego-deployment.yml
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: cf-bosh-lite-diego-manifest
-  type: s3
-  source:
-    bucket: cf-bosh-lite-diego-manifest
     versioned_file: diego-deployment.yml
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
@@ -162,14 +142,6 @@ resources:
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
 
-- name: bosh-lite-build-url
-  type: s3
-  source:
-    bucket: bosh-lite-build-url
-    versioned_file: build_url
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
 - name: vsphere-build-url
   type: s3
   source:
@@ -182,14 +154,6 @@ resources:
   type: s3
   source:
     bucket: aws-director-version
-    versioned_file: director_version
-    access_key_id: {{s3_bucket_access_key_id}}
-    secret_access_key: {{s3_bucket_secret_key}}
-
-- name: bosh-lite-director-version
-  type: s3
-  source:
-    bucket: bosh-lite-director-version
     versioned_file: director_version
     access_key_id: {{s3_bucket_access_key_id}}
     secret_access_key: {{s3_bucket_secret_key}}
@@ -221,17 +185,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-release
-
-- name: bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bosh-lite.git
-
-- name: bosh-lite-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
 
 - name: aws-stemcell
   type: bosh-io-stemcell
@@ -268,22 +221,6 @@ resources:
     username: {{a1_bosh_username}}
     password: {{a1_bosh_password}}
     deployment: cf-a1
-    ignore_ssl: true
-
-- name: bosh-lite-deployment
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: cf-warden
-    ignore_ssl: true
-
-- name: bosh-lite-deployment-diego
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: cf-warden-diego
     ignore_ssl: true
 
 - name: a1-diego-deployment
@@ -481,307 +418,6 @@ jobs:
             target: a1-target-file
             username: a1-username
             password: a1-password
-
-- name: deploy-bosh-lite
-  public: true
-  serial_groups:
-  - bosh-lite
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: bosh-lite
-        tags: [ bosh-lite-aws ]
-      - get: runtime-ci
-        tags: [ bosh-lite-aws ]
-      - get: cf-release-tarball
-        passed: [generate-bosh-lite-manifests]
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: diego-release-tarball
-        trigger: true
-        passed: [ generate-bosh-lite-manifests ]
-        tags: [ bosh-lite-aws ]
-      - get: garden-runc-release-tarball
-        trigger: true
-        passed: [ generate-bosh-lite-manifests ]
-        tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-release-tarball
-        trigger: true
-        passed: [ generate-bosh-lite-manifests ]
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-manifest
-        trigger: true
-        passed: [ generate-bosh-lite-manifests ]
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-diego-manifest
-        trigger: true
-        passed: [ generate-bosh-lite-manifests ]
-        tags: [ bosh-lite-aws ]
-      - get: bosh-lite-stemcell
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [generate-bosh-lite-manifests]
-        params:
-          submodules: none
-        tags: [ bosh-lite-aws ]
-    - task: deprovision-bosh-lite
-      tags: [ bosh-lite-aws ]
-      privileged: true
-      file: runtime-ci/scripts/ci/deprovision-bosh-lite/task.yml
-      params:
-        AWS_DEFAULT_REGION: {{bosh_lite_aws_default_region}}
-        AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-    - task: provision-bosh-lite
-      tags: [ bosh-lite-aws ]
-      privileged: true
-      file: runtime-ci/scripts/ci/provision-bosh-lite/task.yml
-      params:
-        BOSH_AWS_ACCESS_KEY_ID: {{bosh_lite_vagrant_user_access_key_id}}
-        BOSH_AWS_SECRET_ACCESS_KEY: {{bosh_lite_vagrant_user_secret_access_key}}
-        BOSH_LITE_REGION: {{bosh_lite_aws_default_region}}
-        BOSH_LITE_SECURITY_GROUP: {{bosh_lite_security_group}}
-        BOSH_LITE_ELASTIC_IP: {{bosh_lite_elastic_ip}}
-        BOSH_LITE_KEYPAIR: {{bosh_lite_keypair_name}}
-        SSH_KEY: {{bosh_lite_private_key}}
-    - task: write-target-file
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-    - put: bosh-lite-deployment
-      tags: [ bosh-lite-aws ]
-      params:
-        target_file: target-file-dir/target
-        manifest: cf-bosh-lite-manifest/deployment.yml
-        stemcells: [bosh-lite-stemcell/*.tgz]
-        releases: [ cf-release-tarball/*.tgz]
-    - task: write-target-file
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-      output_mapping:
-        target-file-dir: target-file-dir-diego
-    - put: bosh-lite-deployment-diego
-      tags: [ bosh-lite-aws ]
-      params:
-        target_file: target-file-dir-diego/target
-        manifest: cf-bosh-lite-diego-manifest/diego-deployment.yml
-        stemcells: [bosh-lite-stemcell/*.tgz]
-        releases:
-        - diego-release-tarball/*.tgz
-        - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-release-tarball/*.tgz
-    - task: create-bosh-lite-creds
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
-      output_mapping:
-        bosh-user-file-dir: bosh-username
-        bosh-password-file-dir: bosh-password
-    - task: write-target-file
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-      output_mapping:
-        target-file-dir: bosh-target
-    - task: write-director-version
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-director-version/task.yml
-      output_mapping:
-        director-version: bosh-lite
-      params:
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: username
-        BOSH_PASSWORD_FILE: password
-    - put: bosh-lite-director-version
-      tags: [ bosh-lite-aws ]
-      params:
-        file: bosh-lite/director_version
-- name: bosh-lite-smoke-tests
-  public: true
-  serial_groups:
-  - bosh-lite
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: bosh-lite-director-version
-        passed: [ deploy-bosh-lite ]
-        tags: [ bosh-lite-aws ]
-      - get: bosh-lite-stemcell
-        passed: [deploy-bosh-lite]
-        params:
-          tarball: false
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [deploy-bosh-lite]
-        params:
-          submodules: none
-        tags: [ bosh-lite-aws ]
-      - get: bosh-lite
-        passed:
-        - deploy-bosh-lite
-        tags: [ bosh-lite-aws ]
-      - get: runtime-ci
-        tags: [ bosh-lite-aws ]
-      - get: cf-release-tarball
-        passed: [deploy-bosh-lite]
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: diego-release-tarball
-        passed: [ deploy-bosh-lite ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: garden-runc-release-tarball
-        passed: [ deploy-bosh-lite ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-release-tarball
-        passed: [ deploy-bosh-lite ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-manifest
-        passed: [ deploy-bosh-lite ]
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-diego-manifest
-        trigger: true
-        passed: [ deploy-bosh-lite ]
-        tags: [ bosh-lite-aws ]
-    - task: create-bosh-lite-creds
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
-    - task: write-target-file
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-    - task: run-errand-bbl-smoke-test
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
-      params:
-        BOSH_USER_FILE: bosh-user-file-dir/username
-        BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-        DEPLOYMENT_NAME: cf-warden
-        ERRAND_NAME: smoke_tests
-- name: bosh-lite-acceptance-tests
-  public: true
-  serial_groups:
-  - bosh-lite
-  build_logs_to_retain: 100
-  plan:
-  - timeout: *timeout
-    do:
-    - aggregate:
-      - get: bosh-lite-director-version
-        passed: [ bosh-lite-smoke-tests ]
-        tags: [ bosh-lite-aws ]
-      - get: bosh-lite-stemcell
-        passed: [bosh-lite-smoke-tests]
-        params:
-          tarball: false
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: cf-release
-        resource: cf-release-develop
-        passed: [bosh-lite-smoke-tests]
-        params:
-          submodules: none
-        tags: [ bosh-lite-aws ]
-      - get: runtime-ci
-        tags: [ bosh-lite-aws ]
-      - get: bosh-lite
-        passed:
-        - bosh-lite-smoke-tests
-        tags: [ bosh-lite-aws ]
-      - get: cf-release-tarball
-        passed: [bosh-lite-smoke-tests]
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: diego-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: garden-runc-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: cflinuxfs2-release-tarball
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-        params:
-          tarball: false
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-manifest
-        passed: [ bosh-lite-smoke-tests ]
-        trigger: true
-        tags: [ bosh-lite-aws ]
-      - get: cf-bosh-lite-diego-manifest
-        trigger: true
-        passed: [ bosh-lite-smoke-tests ]
-        tags: [ bosh-lite-aws ]
-    - task: write-target-file-api
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: api.bosh-lite.runtime-ci.cf-app.com
-      output_mapping:
-        target-file-dir: bosh-lite-api-target-file
-    - task: enable-docker-diego-and-task-creation
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/enable-docker-diego-1-0/task.yml
-      input_mapping:
-        cf-target: bosh-lite-api-target-file
-      params:
-        CF_USER: {{bosh_lite_cf_user}}
-        CF_PASSWORD: {{bosh_lite_cf_password}}
-    - task: create-bosh-lite-creds
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/create-bosh-lite-creds/task.yml
-    - task: write-target-file
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-target-file/task.yml
-      params:
-        TARGET: {{bosh_lite_elastic_ip}}
-    - task: run-errand-acceptance-tests
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/run-errand-bbl/task.yml
-      params:
-        BOSH_TARGET_FILE: target
-        BOSH_USER_FILE: bosh-user-file-dir/username
-        BOSH_PASSWORD_FILE: bosh-password-file-dir/password
-        DEPLOYMENT_NAME: cf-warden
-        ERRAND_NAME: acceptance_tests
-    - put: acceptance-test-metadata
-      tags: [ bosh-lite-aws ]
-    - task: write-build-url
-      tags: [ bosh-lite-aws ]
-      file: runtime-ci/scripts/ci/write-build-url/task.yml
-      output_mapping:
-        build_url: bosh-lite
-    - put: bosh-lite-build-url
-      tags: [ bosh-lite-aws ]
-      params:
-        file: bosh-lite/build_url
 
 - name: deploy-vsphere
   public: true
@@ -1299,89 +935,6 @@ jobs:
       params:
         file: generated-diego-manifest/diego-deployment.yml
 
-- name: generate-bosh-lite-manifests
-  public: true
-  serial_groups:
-  - bosh-lite
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: diego-release-github-release
-      params:
-        globs: [ none ]
-        include_source_tarball: true
-    - get: runtime-ci
-    - get: cf-release-develop
-      trigger: true
-      passed: [ create-release ]
-      params:
-        submodules: none
-    - get: cf-release-tarball
-      trigger: true
-      passed: [ create-release ]
-    - get: diego-release-tarball
-      trigger: true
-      params:
-        tarball: false
-    - get: garden-runc-release-tarball
-      trigger: true
-      params:
-        tarball: false
-    - get: cflinuxfs2-release-tarball
-      trigger: true
-      params:
-        tarball: false
-  - task: create-bosh-lite-stub
-    file: runtime-ci/scripts/ci/create-bosh-lite-stub/task.yml
-    params:
-      BOSH_LITE_IP: {{bosh_lite_elastic_ip}}
-      SAML_SERVICE_PROVIDER_KEY: {{saml_service_provider_key}}
-      SAML_SERVICE_PROVIDER_CERTIFICATE: {{saml_service_provider_certificate}}
-  - task: generate-release-manifest-cf
-    file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
-    input_mapping:
-      release-repo: cf-release-develop
-      stubs-repo: bosh-lite-stub
-    params:
-      INFRASTRUCTURE: bosh-lite
-      STUBS_PATH: stub.yml
-  - task: untar-diego-release
-    file: runtime-ci/scripts/ci/untar-release/task.yml
-    input_mapping:
-      release-tarball: diego-release-github-release
-    output_mapping:
-      untarred-release: diego-release
-    params:
-      RELEASE_TARBALL_PATH: source.tar.gz
-  - task: extend-bosh-lite-diego-stub
-    file: runtime-ci/scripts/ci/extend-bosh-lite-diego-stub/task.yml
-    input_mapping:
-      bosh-lite-stub: diego-release
-    params:
-      BOSH_LITE_STUB_PATH: manifest-generation/bosh-lite-stubs/property-overrides.yml
-      EXTENDED_BOSH_LITE_STUB_PATH: property-overrides.yml
-  - task: create-diego-manifest
-    file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-    input_mapping:
-      diego-release: diego-release
-      cf-manifest: manifest
-      property-overrides: extended-bosh-lite-stub
-      instance-count-overrides: diego-release
-      release-versions: diego-release
-      iaas-settings: diego-release
-    params:
-      PROPERTY_OVERRIDES_PATH: property-overrides.yml
-      INSTANCE_COUNT_OVERRIDES_PATH: manifest-generation/bosh-lite-stubs/instance-count-overrides.yml
-      RELEASE_VERSIONS_PATH: manifest-generation/bosh-lite-stubs/release-versions.yml
-      IAAS_SETTINGS_PATH: manifest-generation/bosh-lite-stubs/iaas-settings.yml
-  - aggregate:
-    - put: cf-bosh-lite-manifest
-      params:
-        file: manifest/deployment.yml
-    - put: cf-bosh-lite-diego-manifest
-      params:
-        file: generated-diego-manifest/diego-deployment.yml
-
 - name: generate-vsphere-manifests
   public: true
   build_logs_to_retain: 100
@@ -1579,19 +1132,11 @@ jobs:
       - get: cf-release
         resource: cf-release-develop
         passed:
-        - bosh-lite-acceptance-tests
         - aws-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
           submodules: none
-      - get: bosh-lite
-        passed:
-        - bosh-lite-acceptance-tests
-      - get: bosh-lite-stemcell
-        passed:
-        - bosh-lite-acceptance-tests
-        trigger: true
       - get: vsphere-stemcell
         passed:
         - vsphere-acceptance-tests
@@ -1603,7 +1148,6 @@ jobs:
       - get: diego-release-tarball
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
@@ -1611,7 +1155,6 @@ jobs:
       - get: garden-runc-release-tarball
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         trigger: true
         params:
@@ -1620,7 +1163,6 @@ jobs:
         trigger: true
         passed:
         - aws-acceptance-tests
-        - bosh-lite-acceptance-tests
         - vsphere-acceptance-tests
         params:
           tarball: false
@@ -1640,14 +1182,10 @@ jobs:
         passed: [ vsphere-acceptance-tests ]
       - get: aws-director-version
         passed: [ aws-acceptance-tests ]
-      - get: bosh-lite-director-version
-        passed: [ bosh-lite-acceptance-tests ]
       - get: vsphere-build-url
         passed: [ vsphere-acceptance-tests ]
       - get: aws-build-url
         passed: [ aws-acceptance-tests ]
-      - get: bosh-lite-build-url
-        passed: [ bosh-lite-acceptance-tests ]
     - aggregate:
       - put: cf-release-release-candidate
         params:
