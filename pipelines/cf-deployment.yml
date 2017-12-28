@@ -1483,6 +1483,7 @@ jobs:
           operations/cfr-to-cfd.yml
           operations/remove-routing-components-for-transition.yml
           operations/remove-cf-networking-for-transition.yml
+          operations/set-router-static-ips.yml
         VARS_FILES: |
           rds-vars.yml
           s3-vars.yml
