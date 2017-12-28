@@ -8,18 +8,18 @@ RUN \
   chmod +x bosh
 
 # bbl and dependencies
+ARG bbl_version
 RUN \
-  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v5.10.1/bbl-v5.10.1_linux_x86-64 -P /tmp && \
+  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${bbl_version}/bbl-v${bbl_version}_linux_x86-64 -P /tmp && \
   mv /tmp/bbl-* /usr/local/bin/bbl && \
   cd /usr/local/bin && \
-  echo "cab73790adc8f2a508cd580fd2064837220562b1523e386600cef419f2220ffe bbl" | sha256sum -c - && \
   chmod +x bbl
 
+ARG terraform_version
 RUN \
-  wget https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip -P /tmp && \
+  wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip -P /tmp && \
   cd /tmp && \
-  echo "4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35 terraform_0.11.1_linux_amd64.zip" | sha256sum -c - && \
-  unzip /tmp/terraform_0.11.1_linux_amd64.zip -d /tmp && \
+  unzip /tmp/terraform_${terraform_version}_linux_amd64.zip -d /tmp && \
   mv /tmp/terraform /usr/local/bin/terraform && \
   cd /usr/local/bin && \
   chmod +x terraform && \
