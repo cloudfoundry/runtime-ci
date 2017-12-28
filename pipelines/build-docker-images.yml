@@ -1516,15 +1516,47 @@ jobs:
     - aggregate:
       - get: weekly
         trigger: true
+      - get: runtime-ci
       - get: runtime-ci-bosh-cli
         trigger: true
       - get: relint-base-image
         trigger: true
         passed: [build-relint-base-docker-image]
+      - get: bosh-cli-github-release
+        trigger: true
+      - get: bbl-github-release
+        trigger: true
+      - get: terraform-github-release
+        trigger: true
+    - task: create-bosh-cli-json
+      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      input_mapping:
+        version: bosh-cli-github-release
+        # This is an example of that chaining we spoke of earlier
+        input-version-json: bosh-cli-github-release
+      params:
+        key: bosh_cli_version
+    - task: create-bbl-json
+      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      input_mapping:
+        version: bbl-github-release
+        # This is an example of that chaining we spoke of earlier
+        input-version-json: version-json
+      params:
+        key: bbl_version
+    - task: create-terraform-json
+      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      input_mapping:
+        version: terraform-github-release
+        # This is an example of that chaining we spoke of earlier
+        input-version-json: version-json
+      params:
+        key: terraform_version
     - put: bosh-cli-image
       params:
         build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
+        build_args_file: version-json/version.json
 
 - name: build-bosh-and-spiff-docker-image
   public: true
