@@ -1518,7 +1518,7 @@ jobs:
         trigger: true
       - get: runtime-ci-bosh-cli
         trigger: true
-      - get: runtime-ci-relint-base
+      - get: relint-base-image
         trigger: true
         passed: [build-relint-base-docker-image]
     - put: bosh-cli-image
@@ -1537,7 +1537,7 @@ jobs:
         trigger: true
       - get: runtime-ci-bosh-and-spiff
         trigger: true
-      - get: runtime-ci-bosh-cli
+      - get: bosh-cli-image
         passed: [build-bosh-cli-docker-image]
         trigger: true
     - put: bosh-and-spiff-image
