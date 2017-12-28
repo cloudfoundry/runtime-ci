@@ -447,7 +447,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/selzoc/wats
+    uri: https://github.com/cloudfoundry/wats
 - name: cf-acceptance-tests
   type: git
   source:
