@@ -42,5 +42,5 @@ func createHttpsClient() *http.Client {
 			InsecureSkipVerify: true,
 		},
 	}
-	return &http.Client{Transport: tr}
+	return &http.Client{Transport: tr, Timeout: time.Duration(30 * time.Second)}
 }
