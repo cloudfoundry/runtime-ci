@@ -10,29 +10,51 @@ import (
 
 // Constants
 const MAX_TIMEOUT_IN_SEC = 900
-const MIN_NUM_SUCCESSFUL_SEQUENTIAL_TRIES = 10
+const MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES = 10
+const MIN_PROPAGATION_DELAY = 120
 
 func main() {
 	client := createHttpsClient()
 	v2InfoURL := fmt.Sprintf("https://api.%s/v2/info", os.Getenv("SYSTEM_DOMAIN"))
 
+	var (
+		firstSuccessTime    time.Time
+		numSuccessResponses int
+	)
+
 	startTime := time.Now()
-	numSuccessResponses := 0
 
 	for time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC {
 		resp, err := client.Get(v2InfoURL)
 		if err != nil || resp.StatusCode != 200 {
 			numSuccessResponses = 0
+			fmt.Printf("Received error from the API, resetting...\n")
 			continue
 		}
+
+		// Record time of the first success
+		if numSuccessResponses == 0 {
+			firstSuccessTime = time.Now()
+		}
+
 		numSuccessResponses += 1
-		if numSuccessResponses == MIN_NUM_SUCCESSFUL_SEQUENTIAL_TRIES {
+		fmt.Printf(
+			"Received %d successful responses from the API. %fs remain until propagation delay threshold is reached.\n",
+			numSuccessResponses,
+			MIN_PROPAGATION_DELAY-time.Since(firstSuccessTime).Seconds(),
+		)
+
+		// Api is healthy if both conditions are met:
+		// 1. There was at least MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES from the API server
+		// 2. We've waited at least MIN_PROPAGATION_DELAY seconds
+		if numSuccessResponses >= MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES && time.Since(firstSuccessTime).Seconds() >= MIN_PROPAGATION_DELAY {
 			fmt.Println("API is healthy!")
 			os.Exit(0)
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
-	fmt.Printf("API is unhealthy: could not get %d successful API responses in the row with %ds timeout\n", MIN_NUM_SUCCESSFUL_SEQUENTIAL_TRIES, MAX_TIMEOUT_IN_SEC)
+
+	fmt.Printf("API is unhealthy: could not get %d successful API responses in the row with %ds timeout\n", MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES, MAX_TIMEOUT_IN_SEC)
 	os.Exit(1)
 }
 
