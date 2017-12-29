@@ -1615,7 +1615,7 @@ jobs:
       GCP_BACKEND_SERVICE: {{luna_router_backend_service}}
       GOOGLE_ACCOUNT_CREDS_PATH: google_account_creds.json
   - task: ensure-api-healthy
-    file: runtime-ci/ensure-api-healthy/task.yml
+    file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
 
