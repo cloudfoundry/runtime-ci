@@ -1615,12 +1615,9 @@ jobs:
       GCP_BACKEND_SERVICE: {{luna_router_backend_service}}
       GOOGLE_ACCOUNT_CREDS_PATH: google_account_creds.json
   - task: ensure-api-healthy
-    file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
+    file: runtime-ci/ensure-api-healthy/task.yml
     params:
-      ENDPOINT: api.luna.cf-app.com
-      DD_API_KEY: {{datadog_api_key}}
-      METRIC_NAME: time-to-healthy-router
-      ENV_NAME: luna
+      SYSTEM_DOMAIN: luna.cf-app.com
 
 - name: ops-test
   serial_groups: [trelawney]
