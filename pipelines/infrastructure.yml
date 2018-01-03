@@ -8,6 +8,14 @@ groups:
   - destroy-infrastructure-fresh
   - remove-claimed-lock-fresh
 
+- name: internal-services
+  jobs:
+  - add-claimed-lock-internal-services
+  - setup-infrastructure-internal-services
+  - update-infrastructure-internal-services
+  - destroy-infrastructure-internal-services
+  - remove-claimed-lock-internal-services
+
 - name: lite
   jobs:
   - add-claimed-lock-lite
@@ -61,6 +69,14 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: internal-services-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/internal-services
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
 
 - name: lite-pool
@@ -129,6 +145,15 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: {{bellatrix_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state
+
+- name: dumbledore-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
     - bbl-state
 
@@ -208,6 +233,21 @@ jobs:
       pool-resource: fresh-pool
   - put: fresh-pool
     params: {add_claimed: fresh-pool}
+
+- name: add-claimed-lock-internal-services
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: internal-services-pool
+  - put: internal-services-pool
+    params: {add_claimed: internal-services-pool}
 
 - name: add-claimed-lock-lite
   serial: true
@@ -317,6 +357,41 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: setup-infrastructure-internal-services
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: internal-services-pool
+    trigger: true
+    passed: [ add-claimed-lock-internal-services ]
+  - aggregate:
+    - get: runtime-ci
+    - get: dumbledore-env-director-state
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+      BBL_IAAS: aws
+      BBL_AWS_REGION: us-west-2
+      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+      BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+      LB_DOMAIN: dumbledore.cf-app.com
+      BBL_ENV_NAME: dumbledore-upgrade
+    input_mapping:
+      env-repo: dumbledore-env-director-state
+      ops-files: dumbledore-env-director-state
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-env-repo
+        rebase: true
+  - put: internal-services-pool
+    params: {release: internal-services-pool}
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -529,6 +604,41 @@ jobs:
     - put: fresh-pool
       params: {release: fresh-pool}
 
+- name: update-infrastructure-internal-services
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: internal-services-pool
+        params: {acquire: true}
+      - get: dumbledore-env-director-state
+      - get: cf-deployment-concourse-tasks
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_STATE_DIR: bbl-state
+        BBL_IAAS: aws
+        BBL_AWS_REGION: us-west-2
+        BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+        BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+        BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
+        BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
+        LB_DOMAIN: dumbledore.cf-app.com
+        BBL_ENV_NAME: dumbledore-upgrade
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+        ops-files: dumbledore-env-director-state
+      ensure:
+        put: dumbledore-env-director-state
+        params:
+          repository: updated-env-repo
+          rebase: true
+    - put: internal-services-pool
+      params: {release: internal-services-pool}
+
 - name: update-infrastructure-lite
   serial: true
   public: true
@@ -728,6 +838,37 @@ jobs:
         repository: updated-env-repo
         rebase: true
 
+- name: destroy-infrastructure-internal-services
+  serial_groups: [dumbledore]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: internal-services-pool
+      params: {claim: dumbledore}
+    - get: dumbledore-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - try:
+      do:
+      - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        input_mapping:
+          env-repo: dumbledore-env-director-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      env-repo: dumbledore-env-director-state
+    params:
+      BBL_STATE_DIR: bbl-state
+      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
+      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+    ensure:
+      put: dumbledore-env-director-state
+      params:
+        repository: updated-env-repo
+        rebase: true
+
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
   public: true
@@ -882,6 +1023,24 @@ jobs:
       pool-resource: fresh-pool
   - put: fresh-pool
     params: {remove: fresh-pool}
+
+- name: remove-claimed-lock-internal-services
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: internal-services-pool
+    passed: [ destroy-infrastructure-internal-services ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: dumbledore
+    output_mapping:
+      pool-resource: internal-services-pool
+  - put: internal-services-pool
+    params: {remove: internal-services-pool}
 
 - name: remove-claimed-lock-lite
   serial: true
