@@ -1,13 +1,5 @@
 ---
 groups:
-- name: complex
-  jobs:
-  - add-claimed-lock-complex
-  - setup-infrastructure-complex
-  - update-infrastructure-complex
-  - destroy-infrastructure-complex
-  - remove-claimed-lock-complex
-
 - name: fresh
   jobs:
   - add-claimed-lock-fresh
@@ -63,14 +55,6 @@ groups:
 
 resources:
 # Pools
-- name: complex-pool
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/relint-ci-pools
-    branch: master
-    pool: cf-deployment/complex
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
-
 - name: fresh-pool
   type: pool
   source:
@@ -148,15 +132,6 @@ resources:
     paths:
     - bbl-state
 
-- name: dumbledore-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
-    paths:
-    - bbl-state
-
 - name: hermione-env-director-state
   type: git
   source:
@@ -219,21 +194,6 @@ resources:
 
 jobs:
 # Add claimed locks
-- name: add-claimed-lock-complex
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: dumbledore
-    output_mapping:
-      pool-resource: complex-pool
-  - put: complex-pool
-    params: {add_claimed: complex-pool}
-
 - name: add-claimed-lock-fresh
   serial: true
   public: true
@@ -325,40 +285,6 @@ jobs:
     params: {add_claimed: upgrade-pool}
 
 # Setup infrastructure
-- name: setup-infrastructure-complex
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: complex-pool
-    trigger: true
-    passed: [ add-claimed-lock-complex ]
-  - aggregate:
-    - get: runtime-ci
-    - get: dumbledore-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_IAAS: aws
-      BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
-      BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
-      BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-      LB_DOMAIN: dumbledore.cf-app.com
-      BBL_ENV_NAME: dumbledore-upgrade
-    input_mapping:
-      env-repo: dumbledore-env-director-state
-      ops-files: dumbledore-env-director-state
-    ensure:
-      put: dumbledore-env-director-state
-      params:
-        repository: updated-env-repo
-        rebase: true
-  - put: complex-pool
-    params: {release: complex-pool}
-
 - name: setup-infrastructure-fresh
   serial: true
   public: true
@@ -569,40 +495,6 @@ jobs:
     params: {release: upgrade-pool}
 
 # Update infrastructure
-- name: update-infrastructure-complex
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - put: complex-pool
-        params: {acquire: true}
-      - get: dumbledore-env-director-state
-      - get: cf-deployment-concourse-tasks
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_IAAS: aws
-        BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
-        BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
-        BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
-        BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-        LB_DOMAIN: dumbledore.cf-app.com
-        BBL_ENV_NAME: dumbledore-upgrade
-      input_mapping:
-        env-repo: dumbledore-env-director-state
-        ops-files: dumbledore-env-director-state
-      ensure:
-        put: dumbledore-env-director-state
-        params:
-          repository: updated-env-repo
-          rebase: true
-    - put: complex-pool
-      params: {release: complex-pool}
-
 - name: update-infrastructure-fresh
   serial: true
   public: true
@@ -809,33 +701,6 @@ jobs:
       params: {release: transition-pool}
 
 # Destroy infrastructure
-- name: destroy-infrastructure-complex
-  serial_groups: [dumbledore]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - put: complex-pool
-      params: {claim: dumbledore}
-    - get: dumbledore-env-director-state
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-  - try:
-      do:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          env-repo: dumbledore-env-director-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      env-repo: dumbledore-env-director-state
-    ensure:
-      put: dumbledore-env-director-state
-      params:
-        repository: updated-env-repo
-        rebase: true
-
 - name: destroy-infrastructure-fresh
   serial: true
   public: true
@@ -1000,24 +865,6 @@ jobs:
         rebase: true
 
 # Remove claimed locks
-- name: remove-claimed-lock-complex
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: complex-pool
-    passed: [ destroy-infrastructure-complex ]
-    trigger: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: dumbledore
-    output_mapping:
-      pool-resource: complex-pool
-  - put: complex-pool
-    params: {remove: complex-pool}
-
 - name: remove-claimed-lock-fresh
   serial: true
   public: true
