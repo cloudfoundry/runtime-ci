@@ -90,6 +90,10 @@ groups:
   - transition-delete-deployment
   - transition-deploy
   - transition-enable-docker-and-tasks
+  - internal-services-release-pool-manual
+  - ensure-internal-services-env-is-clean
+  - internal-services-legacy-deploy
+  - internal-services-acquire-pool
   - transition-record-compatible-versions
   - bless-manifest
 - name: st
@@ -189,6 +193,16 @@ resources:
     branch: master
     pool: cf-deployment/transition
     private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+- name: internal-services-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/internal-services
+    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+
+
 - name: ops-pool
   type: pool
   source:
@@ -202,6 +216,12 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
+- name: dumbledore-env-stubs-and-vars
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -265,6 +285,14 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state
+- name: dumbledore-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
     - bbl-state
 - name: trelawney-env-director-state
@@ -587,6 +615,23 @@ jobs:
         dir: runtime-ci
         path: scripts/tests/update-releases-coverage-test
 
+- name: internal-services-acquire-pool
+  public: true
+  serial: true
+  build_logs_to_retain: 10
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-release-candidate
+        trigger: true
+      - get: legacy-cf-release
+        trigger: true
+      - get: legacy-diego-release
+        trigger: true
+      - put: internal-services-pool
+        params: {claim: dumbledore}
+
 - name: transition-acquire-pool
   public: true
   serial: true
@@ -603,6 +648,36 @@ jobs:
         trigger: true
       - put: transition-pool
         params: {claim: minerva}
+
+- name: ensure-internal-services-env-is-clean
+  public: true
+  serial: true
+  build_logs_to_retain: 10
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-acquire-pool ]
+      trigger: true
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-director-state
+      - get: runtime-ci
+    - aggregate:
+      - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        input_mapping:
+          env-repo: dumbledore-env-director-state
+      - task: guarantee-no-existing-diego-deployment
+        input_mapping:
+          env-repo: dumbledore-env-director-state
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        params:
+          DEPLOYMENT_NAME: cf-diego
+    - task: ensure-no-loggregator-releases
+      file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
 
 - name: ensure-transition-env-is-clean
   public: true
@@ -752,6 +827,82 @@ jobs:
         env-repo: minerva-env-director-state
       params:
         ERRAND_NAME: smoke_tests
+
+- name: internal-services-legacy-deploy
+  public: true
+  serial: true
+  build_logs_to_retain: 10
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ ensure-internal-services-env-is-clean ]
+      trigger: true
+    - aggregate:
+      - get: runtime-ci
+      - get: dumbledore-env-stubs-and-vars
+      - get: dumbledore-env-director-state
+      - get: cf-release-master
+        params:
+          depth: 1
+          submodules: none
+      - get: github-diego-release
+      - get: legacy-garden-runc-release
+      - get: legacy-diego-release
+      - get: legacy-cflinuxfs2-release
+      - get: legacy-cf-release
+      - get: aws-stemcell
+      - get: cf-deployment-transition
+    - task: generate-release-manifest-cf
+      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
+      input_mapping:
+        release-repo: cf-release-master
+        stubs-repo: dumbledore-env-stubs-and-vars
+      params:
+        INFRASTRUCTURE: aws
+        STUBS_PATH: transition/stubs/cf/cf-stub.yml
+      output_mapping:
+        manifest: cf-manifest
+    # - task: create-diego-manifest
+    #   file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+    #   input_mapping:
+    #     diego-release: github-diego-release
+    #     iaas-settings: dumbledore-env-stubs-and-vars
+    #     property-overrides: dumbledore-env-stubs-and-vars
+    #     instance-count-overrides: dumbledore-env-stubs-and-vars
+    #     release-versions: dumbledore-env-stubs-and-vars
+    #   output_mapping:
+    #     generated-diego-manifest: diego-manifest
+    #   params:
+    #     IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
+    #     INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
+    #     DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/rds-overrides.yml
+    #     PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
+    #     RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+    - task: generate-dynamic-bosh-source
+      file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+    - put: legacy-cf-bosh-deployment
+      params:
+        manifest: cf-manifest/deployment.yml
+        releases:
+        - legacy-cf-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
+    # - put: legacy-diego-bosh-deployment
+    #   params:
+    #     manifest: diego-manifest/diego-deployment.yml
+    #     releases:
+    #     - legacy-diego-release/release.tgz
+    #     - legacy-garden-runc-release/release.tgz
+    #     - legacy-cflinuxfs2-release/release.tgz
+    #     source_file: dynamic-bosh-source/source_file.json
+    # - task: bosh-run-errand-smoke-tests
+    #   file: runtime-ci/tasks/run-errand/task.yml
+    #   input_mapping:
+    #     env-repo: dumbledore-env-director-state
+    #   params:
+    #     ERRAND_NAME: smoke_tests
 
 - name: transition-deploy
   public: true
@@ -1084,6 +1235,15 @@ jobs:
     try:
       put: lite-pool
       params: {release: lite-pool}
+
+- name: internal-services-release-pool-manual
+  public: true
+  plan:
+  - get: internal-services-pool
+  ensure:
+    try:
+      put: internal-services-pool
+      params: {release: internal-services-pool}
 
 - name: transition-release-pool-manual
   public: true
