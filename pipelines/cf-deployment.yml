@@ -757,6 +757,24 @@ jobs:
           DB_USER: {{minerva_locketdb_user}}
           DB_PASSWORD: {{minerva_locketdb_password}}
           DB_NAME: {{minerva_locketdb_db_name}}
+      - task: recreate-npsdb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          env-repo: minerva-env-director-state
+        params:
+          DB_HOST: {{minerva_npsdb_host}}
+          DB_USER: {{minerva_npsdb_user}}
+          DB_PASSWORD: {{minerva_npsdb_password}}
+          DB_NAME: {{minerva_npsdb_db_name}}
+      - task: recreate-routingdb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          env-repo: minerva-env-director-state
+        params:
+          DB_HOST: {{minerva_routingdb_host}}
+          DB_USER: {{minerva_routingdb_user}}
+          DB_PASSWORD: {{minerva_routingdb_password}}
+          DB_NAME: {{minerva_routingdb_db_name}}
       - task: restore-cloud-config
         file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
         image: cf-deployment-concourse-tasks-docker-latest
