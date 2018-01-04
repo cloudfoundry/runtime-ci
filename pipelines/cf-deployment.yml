@@ -218,14 +218,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
-- name: minerva-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: {{minerva_env_readwrite_deploy_key}}
-    paths:
-    - deployment-vars.yml
 - name: minerva-env-integration-configs
   type: git
   source:
@@ -1053,7 +1045,7 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
-    - task: bosh-deploy-cf-with-networking
+    - task: bosh-deploy-cf-with-networking-and-routing
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         env-repo: minerva-env-director-state
@@ -1657,7 +1649,7 @@ jobs:
       trigger: true
     - aggregate:
       - get: cf-acceptance-tests
-      - get: minerva-env-stubs-and-vars
+      - get: minerva-env-integration-configs
       - get: cf-deployment-release-candidate
         passed: [ transition-enable-docker-and-tasks ]
       - get: cats-concourse-task
@@ -1674,7 +1666,7 @@ jobs:
         trigger: true
     - task: run-cats
       input_mapping:
-        integration-config: minerva-env-stubs-and-vars
+        integration-config: minerva-env-integration-configs
       params:
         NODES: 9
       file: cats-concourse-task/task.yml
@@ -2078,7 +2070,6 @@ jobs:
       - get: runtime-ci
       - get: github-routing-release-master
       - get: minerva-env-integration-configs
-      - get: minerva-env-vars-store
       - get: cf-deployment-transition
         passed: [ transition-enable-docker-and-tasks ]
     - task: run-rats
