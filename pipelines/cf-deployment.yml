@@ -864,22 +864,22 @@ jobs:
         STUBS_PATH: transition/stubs/cf/cf-stub.yml
       output_mapping:
         manifest: cf-manifest
-    # - task: create-diego-manifest
-    #   file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
-    #   input_mapping:
-    #     diego-release: github-diego-release
-    #     iaas-settings: dumbledore-env-stubs-and-vars
-    #     property-overrides: dumbledore-env-stubs-and-vars
-    #     instance-count-overrides: dumbledore-env-stubs-and-vars
-    #     release-versions: dumbledore-env-stubs-and-vars
-    #   output_mapping:
-    #     generated-diego-manifest: diego-manifest
-    #   params:
-    #     IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
-    #     INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
-    #     DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/rds-overrides.yml
-    #     PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
-    #     RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+    - task: create-diego-manifest
+      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+      input_mapping:
+        diego-release: github-diego-release
+        iaas-settings: dumbledore-env-stubs-and-vars
+        property-overrides: dumbledore-env-stubs-and-vars
+        instance-count-overrides: dumbledore-env-stubs-and-vars
+        release-versions: dumbledore-env-stubs-and-vars
+      output_mapping:
+        generated-diego-manifest: diego-manifest
+      params:
+        IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
+        INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
+        DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
+        PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
+        RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
     - task: generate-dynamic-bosh-source
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
@@ -897,20 +897,20 @@ jobs:
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
-    # - put: legacy-diego-bosh-deployment
-    #   params:
-    #     manifest: diego-manifest/diego-deployment.yml
-    #     releases:
-    #     - legacy-diego-release/release.tgz
-    #     - legacy-garden-runc-release/release.tgz
-    #     - legacy-cflinuxfs2-release/release.tgz
-    #     source_file: dynamic-bosh-source/source_file.json
-    # - task: bosh-run-errand-smoke-tests
-    #   file: runtime-ci/tasks/run-errand/task.yml
-    #   input_mapping:
-    #     env-repo: dumbledore-env-director-state
-    #   params:
-    #     ERRAND_NAME: smoke_tests
+    - put: legacy-diego-bosh-deployment
+      params:
+        manifest: diego-manifest/diego-deployment.yml
+        releases:
+        - legacy-diego-release/release.tgz
+        - legacy-garden-runc-release/release.tgz
+        - legacy-cflinuxfs2-release/release.tgz
+        source_file: dynamic-bosh-source/source_file.json
+    - task: bosh-run-errand-smoke-tests
+      file: runtime-ci/tasks/run-errand/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+      params:
+        ERRAND_NAME: smoke_tests
 
 - name: transition-deploy
   public: true
