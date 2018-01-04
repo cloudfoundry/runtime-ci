@@ -766,6 +766,15 @@ jobs:
           DB_USER: {{minerva_npsdb_user}}
           DB_PASSWORD: {{minerva_npsdb_password}}
           DB_NAME: {{minerva_npsdb_db_name}}
+      - task: recreate-silkdb
+        file: runtime-ci/tasks/recreate-database/task.yml
+        input_mapping:
+          env-repo: minerva-env-director-state
+        params:
+          DB_HOST: {{minerva_silkdb_host}}
+          DB_USER: {{minerva_silkdb_user}}
+          DB_PASSWORD: {{minerva_silkdb_password}}
+          DB_NAME: {{minerva_silkdb_db_name}}
       - task: recreate-routingdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
