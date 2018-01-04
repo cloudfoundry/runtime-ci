@@ -21,6 +21,7 @@ groups:
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
+  - transition-rats
   - upgrade-rats
   - ops-test
   - unit-test-ops-files
@@ -87,6 +88,7 @@ groups:
   - legacy-deploy
   - transition-acquire-pool
   - transition-cats
+  - transition-rats
   - transition-delete-deployment
   - transition-deploy
   - transition-enable-docker-and-tasks
@@ -216,6 +218,23 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
+- name: minerva-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - deployment-vars.yml
+- name: minerva-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/minerva-env.git
+    private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
 - name: dumbledore-env-stubs-and-vars
   type: git
   source:
@@ -1034,10 +1053,50 @@ jobs:
         params:
           repository: updated-vars-store
           rebase: true
+    - task: bosh-deploy-cf-with-networking
+      file: runtime-ci/tasks/transition-deploy/task.yml
+      input_mapping:
+        env-repo: minerva-env-director-state
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: collected-ops-files
+        vars-store: updated-vars-store
+        vars-files: minerva-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: minerva.cf-app.com
+        UPTIMER_APP_DOMAIN: minerva.cf-app.com
+        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/use-external-dbs.yml
+          operations/use-s3-blobstore.yml
+          operations/set-bbs-active-key.yml
+        VARS_FILES: |
+          rds-vars.yml
+          s3-vars.yml
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        FAIL_ON_DOWNTIME: true
+      ensure:
+        put: minerva-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         env-repo: minerva-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: minerva-env-vars-store
+        integration-configs: minerva-env-integration-configs
+      ensure:
+        put: minerva-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
 
 - name: fresh-deploy
   serial: true
@@ -1674,7 +1733,7 @@ jobs:
   - timeout: 4h
     do:
     - get: transition-pool
-      passed: [ transition-cats ]
+      passed: [ transition-cats, transition-rats ]
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
@@ -2004,6 +2063,29 @@ jobs:
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
+
+- name: transition-rats
+  serial_groups: [ minerva-rats ]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: transition-pool
+      trigger: true
+      passed: [ transition-enable-docker-and-tasks ]
+    - aggregate:
+      - get: runtime-ci
+      - get: github-routing-release-master
+      - get: minerva-env-integration-configs
+      - get: minerva-env-vars-store
+      - get: cf-deployment-transition
+        passed: [ transition-enable-docker-and-tasks ]
+    - task: run-rats
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      input_mapping:
+        routing-release: github-routing-release-master
+        integration-config: minerva-env-integration-configs
 
 - name: lite-rats
   serial_groups: [ snitch-rats ]
