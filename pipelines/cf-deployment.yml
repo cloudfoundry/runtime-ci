@@ -853,6 +853,7 @@ jobs:
       - get: legacy-cf-release
       - get: aws-stemcell
       - get: cf-deployment-transition
+      - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
       file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
       input_mapping:
@@ -883,6 +884,13 @@ jobs:
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
+    - task: bosh-upload-stemcell
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: aws-stemcell
+        env-repo: dumbledore-env-director-state
+      params:
+        STEMCELL_NAME: '*.tgz'
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
