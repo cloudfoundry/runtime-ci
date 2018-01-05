@@ -963,6 +963,7 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-stubs-and-vars
+      - get: minerva-env-integration-configs
       - get: minerva-env-director-state
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
@@ -1109,7 +1110,7 @@ jobs:
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: minerva-env-vars-store
+        vars-store: minerva-env-stubs-and-vars
         integration-configs: minerva-env-integration-configs
       ensure:
         put: minerva-env-integration-configs
