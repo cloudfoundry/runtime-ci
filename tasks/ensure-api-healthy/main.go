@@ -10,8 +10,8 @@ import (
 
 // Constants
 const MAX_TIMEOUT_IN_SEC = 900
-const MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES = 10
-const MIN_PROPAGATION_DELAY = 120
+const MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES = 20
+const MIN_PROPAGATION_DELAY = 240
 
 func main() {
 	client := createHttpsClient()
