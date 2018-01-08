@@ -1034,7 +1034,10 @@ jobs:
           operations/aws.yml
           operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
+          keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
+        VARS_FILES: |
+          static_ips.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
       on_failure:
