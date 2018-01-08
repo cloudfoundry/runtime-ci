@@ -1039,7 +1039,7 @@ jobs:
         VARS_FILES: |
           static_ips.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        FAIL_ON_DOWNTIME: true
+        FAIL_ON_DOWNTIME: false
       on_failure:
         put: dumbledore-env-stubs-and-vars
         params:
@@ -1062,7 +1062,7 @@ jobs:
           operations/aws.yml
           operations/set-bbs-active-key.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        FAIL_ON_DOWNTIME: true
+        FAIL_ON_DOWNTIME: false
       ensure:
         put: dumbledore-env-stubs-and-vars
         params:
