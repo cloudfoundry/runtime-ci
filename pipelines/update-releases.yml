@@ -2736,11 +2736,13 @@ jobs:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
-      vars-files: greengrass-env-director-state
+      vars-files: cf-deployment-develop
     params:
       DEPLOYMENT_NAME_SUFFIX: -syslog
       OPS_FILES: "enable-backup-restore.yml base-ops-files/enable-component-syslog.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+      VARS_FILES: |
+        operations/addons/example-vars-files/vars-enable-component-syslog.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
