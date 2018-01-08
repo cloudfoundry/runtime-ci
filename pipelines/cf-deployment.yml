@@ -1032,12 +1032,14 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
+          operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
           operations/keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
         VARS_FILES: |
           static_ips.yml
+          blobstore-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: false
       on_failure:
@@ -1060,7 +1062,10 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/aws.yml
+          operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
+        VARS_FILES: |
+          blobstore-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: false
       ensure:
