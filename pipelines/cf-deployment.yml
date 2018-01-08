@@ -1034,7 +1034,7 @@ jobs:
           operations/aws.yml
           operations/set-bbs-active-key.yml
           operations/cfr-to-cfd.yml
-          keep-etcd-for-transition.yml
+          operations/keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
         VARS_FILES: |
           static_ips.yml
