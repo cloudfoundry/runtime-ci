@@ -5,6 +5,7 @@ groups:
   - fresh-deploy
   - lite-deploy
   - transition-deploy
+  - internal-services-transition-deploy
   - upgrade-deploy
 
   - lint-cf-deployment-manifest
@@ -95,6 +96,7 @@ groups:
   - internal-services-release-pool-manual
   - ensure-internal-services-env-is-clean
   - internal-services-legacy-deploy
+  - internal-services-transition-deploy
   - internal-services-acquire-pool
   - transition-record-compatible-versions
   - bless-manifest
@@ -224,6 +226,15 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
     private_key: {{minerva_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+- name: dumbledore-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/dumbledore-env.git
+    private_key: {{dumbledore_env_readwrite_deploy_key}}
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -949,6 +960,127 @@ jobs:
         env-repo: dumbledore-env-director-state
       params:
         ERRAND_NAME: smoke_tests
+
+- name: internal-services-transition-deploy
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-legacy-deploy ]
+      trigger: true
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-stubs-and-vars
+      - get: dumbledore-env-integration-configs
+      - get: dumbledore-env-director-state
+      - get: cf-deployment-release-candidate
+        passed: [ bless-manifest ]
+      - get: legacy-cf-release
+        passed: [ internal-services-legacy-deploy ]
+      - get: legacy-diego-release
+        passed: [ internal-services-legacy-deploy ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ internal-services-legacy-deploy ]
+      - get: legacy-garden-runc-release
+        passed: [ internal-services-legacy-deploy ]
+      - get: cf-deployment-transition
+    - task: extract-vars-store
+      file: runtime-ci/tasks/r2d2/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+        vars-store: dumbledore-env-stubs-and-vars
+    - task: bosh-upload-stemcell
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-release-candidate
+        env-repo: dumbledore-env-director-state
+      params:
+        INFRASTRUCTURE: aws
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-release-candidate
+        new-ops-files: cf-deployment-transition
+      params:
+        BASE_OPS_FILE_DIR: "operations"
+        NEW_OPS_FILES: |
+          cfr-to-cfd.yml
+          keep-etcd-for-transition.yml
+          migrate-webdav.yml
+    - task: remove-static-ips-from-cloud-config
+      file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+        ops-file: dumbledore-env-stubs-and-vars
+      params:
+        OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
+    - task: bosh-deploy-cf
+      file: runtime-ci/tasks/transition-deploy/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: collected-ops-files
+        vars-store: extracted-vars-store
+        vars-files: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_APP_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/set-bbs-active-key.yml
+          operations/cfr-to-cfd.yml
+          operations/migrate-webdav.yml
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        FAIL_ON_DOWNTIME: true
+      on_failure:
+        put: dumbledore-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: bosh-deploy-cf-without-etcd
+      file: runtime-ci/tasks/transition-deploy/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+        cf-deployment: cf-deployment-release-candidate
+        ops-files: collected-ops-files
+        vars-store: updated-vars-store
+        vars-files: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_APP_DOMAIN: dumbledore.cf-app.com
+        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+          operations/aws.yml
+          operations/set-bbs-active-key.yml
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        FAIL_ON_DOWNTIME: true
+      ensure:
+        put: dumbledore-env-stubs-and-vars
+        params:
+          repository: updated-vars-store
+          rebase: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        env-repo: dumbledore-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        vars-store: dumbledore-env-stubs-and-vars
+        integration-configs: dumbledore-env-integration-configs
+      ensure:
+        put: dumbledore-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
 
 - name: transition-deploy
   public: true
