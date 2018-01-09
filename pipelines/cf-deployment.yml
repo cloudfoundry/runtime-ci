@@ -1412,14 +1412,14 @@ jobs:
     input_mapping:
       env-repo: hagrid-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
+      ops-files: collected-ops-files
       vars-store: hagrid-env-vars-store
       vars-files: hagrid-env-vars-store
     params:
       SYSTEM_DOMAIN: hagrid.cf-app.com
       OPS_FILES: |
-        use-compiled-releases.yml
-        use-haproxy-singleton.yml
+        operations/use-compiled-releases.yml
+        operations/use-haproxy-singleton.yml
     ensure:
       put: hagrid-env-vars-store
       params:
