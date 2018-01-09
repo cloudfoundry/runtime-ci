@@ -1036,6 +1036,7 @@ jobs:
           cfr-to-cfd.yml
           keep-etcd-for-transition.yml
           migrate-webdav.yml
+          migrate-postgres.yml
     - task: remove-static-ips-from-cloud-config
       file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
       input_mapping:
@@ -1060,9 +1061,11 @@ jobs:
           operations/aws.yml
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
+          operations/use-postgres.yml
           operations/cfr-to-cfd.yml
           operations/keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
+          operations/migrate-postgres.yml
         VARS_FILES: |
           static_ips.yml
           blobstore-vars.yml
@@ -1090,6 +1093,7 @@ jobs:
           operations/aws.yml
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
+          operations/use-postgres.yml
         VARS_FILES: |
           blobstore-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
