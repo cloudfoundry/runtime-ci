@@ -1066,7 +1066,7 @@ jobs:
         VARS_FILES: |
           static_ips.yml
           blobstore-vars.yml
-        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        DEPLOY_WITH_UPTIME_MEASUREMENTS: false
         FAIL_ON_DOWNTIME: false
       on_failure:
         put: dumbledore-env-stubs-and-vars
