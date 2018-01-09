@@ -167,8 +167,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
     private_key: {{hagrid_env_readwrite_deploy_key}}
-    paths:
-    - bbl-state
 
 - name: hermione-env-director-state
   type: git
