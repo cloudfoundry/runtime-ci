@@ -109,6 +109,9 @@ groups:
   - stable-periodic-cats
   - stable-release-pool-manual
   - stable-update-cats-cfd-branch
+- name: xp
+  jobs:
+  - experimental-deploy
 
 resource_types:
 - name: terraform
@@ -326,6 +329,29 @@ resources:
     paths:
     - bbl-state
     - google_account_creds.json
+- name: hagrid-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_readwrite_deploy_key}}
+    paths:
+    - bbl-state
+- name: hagrid-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_readwrite_deploy_key}}
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+- name: hagrid-env-vars-store
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: {{hagrid_env_readwrite_deploy_key}}
 - name: half-hourly
   type: time
   source:
@@ -1373,6 +1399,14 @@ jobs:
       env-repo: hagrid-env-director-state
     params:
       INFRASTRUCTURE: google
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment-develop
+      new-ops-files: hagrid-env-vars-store
+    params:
+      BASE_OPS_FILE_DIR: "operations"
+      NEW_OPS_FILES: "use-haproxy-singleton.yml"
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -1384,14 +1418,8 @@ jobs:
     params:
       SYSTEM_DOMAIN: hagrid.cf-app.com
       OPS_FILES: |
-        operations/use-compiled-releases.yml
-        operations/rename-network.yml
-        operations/rename-deployment.yml
-        operations/use-haproxy-singleton.yml
-      VARS_FILES: |
-        deployment-name.yml
-        network-name.yml
-      REGENERATE_VARS_STORE: true
+        use-compiled-releases.yml
+        use-haproxy-singleton.yml
     ensure:
       put: hagrid-env-vars-store
       params:
@@ -1426,7 +1454,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: hagrid.cf-app.com
 
-  - name: ops-test
+- name: ops-test
   serial_groups: [trelawney]
   public: true
   build_logs_to_retain: 100
@@ -2252,27 +2280,6 @@ jobs:
       file: cats-concourse-task/task.yml
       input_mapping:
         integration-config: luna-env-integration-configs
-      params:
-        CAPTURE_LOGS: true
-
-- name: experimental-cats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cats-concourse-task
-      - get: cf-acceptance-tests
-      - get: hagrid-env-vars-store
-      - get: hagrid-env-integration-configs
-      - get: cf-deployment-develop
-        passed: [ experimental-enable-docker-and-tasks ]
-    - task: run-cats
-      file: cats-concourse-task/task.yml
-      input_mapping:
-        integration-config: hagrid-env-integration-configs
       params:
         CAPTURE_LOGS: true
 
