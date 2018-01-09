@@ -1441,14 +1441,6 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: ensure-gcloud-backend-service-healthy
-    file: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task.yml
-    input_mapping:
-      google-creds-dir: hagrid-env-director-state
-    params:
-      GCP_PROJECT_ID: {{hagrid_gcp_project}}
-      GCP_BACKEND_SERVICE: {{hagrid_router_backend_service}}
-      GOOGLE_ACCOUNT_CREDS_PATH: google_account_creds.json
   - task: ensure-api-healthy
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
