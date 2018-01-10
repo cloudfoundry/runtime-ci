@@ -112,6 +112,8 @@ groups:
 - name: xp
   jobs:
   - experimental-deploy
+  - experimental-cats
+  - experimental-rats
 
 resource_types:
 - name: terraform
@@ -1445,6 +1447,41 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+
+- name: experimental-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cats-concourse-task
+      - get: cf-acceptance-tests
+      - get: hagrid-env-vars-store
+      - get: hagrid-env-integration-configs
+    - task: run-cats
+      file: cats-concourse-task/task.yml
+      input_mapping:
+        integration-config: hagrid-env-integration-configs
+
+- name: experimental-rats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: runtime-ci
+      - get: github-routing-release-master
+      - get: hagrid-env-vars-store
+      - get: hagrid-env-integration-configs
+    - task: run-rats
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      input_mapping:
+        routing-release: github-routing-release-master
+        integration-config: hagrid-env-integration-configs
 
 - name: ops-test
   serial_groups: [trelawney]
