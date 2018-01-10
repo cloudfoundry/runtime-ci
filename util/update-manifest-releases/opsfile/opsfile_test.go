@@ -36,6 +36,20 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 
+	It("does not update release when opsfile is removing that release", func() {
+		originalOpsFile, err := ioutil.ReadFile("../fixtures/original_release_removal_opsfile.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_release_removal_opsfile.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(nil, "../fixtures/build", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
+		Expect(changes).To(Equal("No opsfile release updates"))
+	})
+
 	It("updates releases when opsfile does not use append syntax", func() {
 		releaseNames := []string{"non-append"}
 
