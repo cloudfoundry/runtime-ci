@@ -1732,6 +1732,8 @@ jobs:
           operations/use-s3-blobstore.yml
           operations/experimental/enable-instance-identity-credentials.yml
           operations/experimental/secure-service-credentials.yml
+          operations/experimental/enable-instance-identity-credentials-windows.yml
+          operations/experimental/secure-service-credentials-windows-cell.yml
           operations/use-external-dbs.yml
           operations/experimental/secure-service-credentials-external-db.yml
           operations/enable-privileged-container-support.yml
