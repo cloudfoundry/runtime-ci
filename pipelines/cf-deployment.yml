@@ -1426,6 +1426,8 @@ jobs:
       OPS_FILES: |
         operations/use-compiled-releases.yml
         operations/use-haproxy-singleton.yml
+      VARS_FILES: |
+        tcp-router-ips.yml
     ensure:
       put: hagrid-env-vars-store
       params:
