@@ -1067,6 +1067,7 @@ jobs:
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
+          operations/legacy/keep-original-postgres-configuration.yml
           operations/cfr-to-cfd.yml
           operations/keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
@@ -1074,6 +1075,7 @@ jobs:
         VARS_FILES: |
           static_ips.yml
           blobstore-vars.yml
+          postgres-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: false
         FAIL_ON_DOWNTIME: false
       on_failure:
@@ -1099,8 +1101,10 @@ jobs:
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
+          operations/legacy/keep-original-postgres-configuration.yml
         VARS_FILES: |
           blobstore-vars.yml
+          postgres-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: false
       ensure:
