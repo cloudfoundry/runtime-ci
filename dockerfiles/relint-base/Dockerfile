@@ -25,3 +25,8 @@ RUN \
   cd /usr/bin && \
   echo "d8e36831c3c94bb58be34dd544f44a6c6cb88568 jq" | sha1sum -c - && \
   chmod +x jq
+
+# yq
+RUN \
+  wget https://github.com/mikefarah/yq/releases/download/1.14.0/yq_linux_amd64 --output-document="/usr/bin/yq" && \
+  chmod +x /usr/bin/yq
