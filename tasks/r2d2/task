@@ -20,6 +20,7 @@ function extract_vars() {
     -d diego.yml \
     $([ "${EXTRACT_CF_NETWORKING}" == "true" ] && echo "-N") \
     $([ "${EXTRACT_ROUTING}" == "true" ] && echo "-r") \
+    $([ "${EXTRACT_LOCKET}" == "true" ] && echo "-Q") \
     -ca transition/ca-keys-stub.yml
   popd
 }
