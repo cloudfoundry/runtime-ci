@@ -957,6 +957,7 @@ jobs:
         DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/postgres-overrides.yml
         PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
         RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
+        USE_LOCKET: true
     - task: generate-dynamic-bosh-source
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:

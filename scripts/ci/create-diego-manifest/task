@@ -24,6 +24,7 @@ pushd "${DIEGO_RELEASE_DIR}"
     -n "${INSTANCE_COUNT_OVERRIDES_PATH}" \
     -v "${RELEASE_VERSIONS_PATH}" \
     -s "${DIEGO_SQL_RESOURCE_PATH}" \
+    $([ "${USE_LOCKET}" == "true" ] && echo "-Q") \
     -x \
     -r \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"

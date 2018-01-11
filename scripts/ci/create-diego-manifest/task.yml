@@ -27,6 +27,7 @@ params:
   RELEASE_VERSIONS_PATH: ~
   IAAS_SETTINGS_PATH: iaas-settings.yml
   DIEGO_SQL_RESOURCE_PATH: diego-release/manifest-generation/bosh-lite-stubs/postgres/diego-sql.yml
+  USE_LOCKET: false
 
 run:
   path: runtime-ci/scripts/ci/create-diego-manifest/task
