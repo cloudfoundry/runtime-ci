@@ -993,6 +993,7 @@ jobs:
         ERRAND_NAME: smoke_tests
 
 - name: internal-services-transition-deploy
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
