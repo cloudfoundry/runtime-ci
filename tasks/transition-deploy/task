@@ -46,7 +46,7 @@ write_uptimer_deploy_config() {
         "available_port": $available_port | tonumber
       },
       "allowed_failures": {
-        "app_pushability": 1,
+        "app_pushability": 2,
         "http_availability": 0,
         "recent_logs": 2,
         "streaming_logs": 2,
