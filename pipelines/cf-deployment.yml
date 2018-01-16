@@ -28,6 +28,8 @@ groups:
   - unit-test-ops-files
   - unit-test-transition-tools
   - unit-test-update-releases-coverage
+  - internal-services-cats
+  - internal-services-enable-docker-and-tasks
 
   - bless-manifest
   - ship-it-major
@@ -98,6 +100,9 @@ groups:
   - internal-services-legacy-deploy
   - internal-services-transition-deploy
   - internal-services-acquire-pool
+  - internal-services-cats
+  - internal-services-enable-docker-and-tasks
+  - internal-services-delete-deployment
   - transition-record-compatible-versions
   - bless-manifest
 - name: st
@@ -1956,6 +1961,42 @@ jobs:
           diego_docker
           task_creation
 
+- name: internal-services-enable-docker-and-tasks
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-transition-deploy ]
+      trigger: true
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-stubs-and-vars
+      - get: cf-deployment-release-candidate
+        passed: [ internal-services-transition-deploy ]
+      - get: legacy-cf-release
+        passed: [ internal-services-transition-deploy ]
+      - get: legacy-diego-release
+        passed: [ internal-services-transition-deploy ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ internal-services-transition-deploy ]
+      - get: legacy-garden-runc-release
+        passed: [ internal-services-transition-deploy ]
+      - get: cf-deployment-transition
+        passed: [ internal-services-transition-deploy ]
+        trigger: true
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        vars-store: dumbledore-env-stubs-and-vars
+      params:
+        SYSTEM_DOMAIN: dumbledore.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
+
 - name: transition-cats
   public: true
   build_logs_to_retain: 100
@@ -1984,8 +2025,36 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: minerva-env-integration-configs
-      params:
-        NODES: 9
+      file: cats-concourse-task/task.yml
+
+- name: internal-services-cats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-enable-docker-and-tasks ]
+      trigger: true
+    - aggregate:
+      - get: cf-acceptance-tests
+      - get: dumbledore-env-integration-configs
+      - get: cf-deployment-release-candidate
+        passed: [ internal-services-enable-docker-and-tasks ]
+      - get: cats-concourse-task
+      - get: legacy-cf-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+      - get: legacy-diego-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+      - get: legacy-garden-runc-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+      - get: cf-deployment-transition
+        passed: [ internal-services-enable-docker-and-tasks ]
+    - task: run-cats
+      input_mapping:
+        integration-config: dumbledore-env-integration-configs
       file: cats-concourse-task/task.yml
 
 - name: transition-record-compatible-versions
@@ -1997,29 +2066,29 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         trigger: true
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats, transition-rats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats ]
         trigger: true
       - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
@@ -2058,6 +2127,30 @@ jobs:
       env-repo: minerva-env-director-state
   - put: transition-pool
     params: {release: transition-pool}
+
+- name: internal-services-delete-deployment
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-cats ]
+      trigger: true
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: dumbledore-env-director-state
+      - get: runtime-ci
+  - task: delete-deployment-cf
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      env-repo: dumbledore-env-director-state
+  - task: ensure-no-loggregator-releases
+    file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
+    input_mapping:
+      env-repo: dumbledore-env-director-state
+  - put: internal-services-pool
+    params: {release: internal-services-pool}
 
 - name: upgrade-cats
   serial_groups: [ hermione-cats ]
