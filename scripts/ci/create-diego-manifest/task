@@ -27,6 +27,5 @@ pushd "${DIEGO_RELEASE_DIR}"
     $([ "${USE_LOCKET}" == "true" ] && echo "-Q") \
     -x \
     -r \
-    -G \
     > "${GENERATED_DIEGO_MANIFEST_DIR}/diego-deployment.yml"
 popd
