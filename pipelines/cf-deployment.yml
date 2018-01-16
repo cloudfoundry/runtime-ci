@@ -1981,7 +1981,6 @@ jobs:
         passed: [ transition-enable-docker-and-tasks ]
       - get: cf-deployment-transition
         passed: [ transition-enable-docker-and-tasks ]
-        trigger: true
     - task: run-cats
       input_mapping:
         integration-config: minerva-env-integration-configs
@@ -1998,29 +1997,29 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         trigger: true
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats ]
+        passed: [ transition-cats, transition-rats ]
         trigger: true
       - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
@@ -2389,6 +2388,16 @@ jobs:
       - get: github-routing-release-master
       - get: minerva-env-integration-configs
       - get: cf-deployment-transition
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: cf-deployment-release-candidate
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-cf-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-diego-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-cflinuxfs2-release
+        passed: [ transition-enable-docker-and-tasks ]
+      - get: legacy-garden-runc-release
         passed: [ transition-enable-docker-and-tasks ]
     - task: run-rats
       file: runtime-ci/scripts/ci/run-rats/task.yml
