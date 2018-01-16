@@ -1950,7 +1950,6 @@ jobs:
         passed: [ transition-deploy ]
       - get: cf-deployment-transition
         passed: [ transition-deploy ]
-        trigger: true
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1986,7 +1985,6 @@ jobs:
         passed: [ internal-services-transition-deploy ]
       - get: cf-deployment-transition
         passed: [ internal-services-transition-deploy ]
-        trigger: true
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
