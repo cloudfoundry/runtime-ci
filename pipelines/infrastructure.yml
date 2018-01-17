@@ -381,11 +381,14 @@ jobs:
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: hagrid-fresh
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_IAAS: gcp
-      SKIP_LB_CREATION: true
+      BBL_LB_CERT: {{hagrid_cf_ssl_cert}}
+      BBL_LB_KEY: {{hagrid_cf_ssl_cert_private_key}}
+      LB_DOMAIN: hagrid.cf-app.com
     input_mapping:
       env-repo: hagrid-env-director-state
       ops-files: hagrid-env-director-state
