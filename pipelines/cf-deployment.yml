@@ -1533,7 +1533,11 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/experimental/use-bosh-dns.yml operations/experimental/use-bosh-dns-for-containers.yml"
+        OPS_FILES: |
+          operations/scale-to-one-az.yml
+          operations/experimental/skip-consul-locks.yml
+          operations/experimental/use-bosh-dns.yml
+          operations/experimental/use-bosh-dns-for-containers.yml
         DEPLOYMENT_NAME_SUFFIX: internal-mysql
     - task: bosh-dry-run-with-ops-cf-internal-postgres
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1544,7 +1548,9 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/use-postgres.yml operations/experimental/enable-prefer-declarative-healthchecks.yml"
+        OPS_FILES: |
+          operations/use-postgres.yml
+          operations/experimental/enable-prefer-declarative-healthchecks.yml
         DEPLOYMENT_NAME_SUFFIX: internal-postgres
     - task: bosh-dry-run-with-ops-cf-external-persistence
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1555,8 +1561,15 @@ jobs:
         vars-files: cf-deployment-develop
       params:
         SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: "operations/scale-to-one-az.yml operations/experimental/skip-consul-locks.yml operations/experimental/use-grootfs.yml operations/use-s3-blobstore.yml operations/use-external-dbs.yml operations/experimental/enable-iptables-logger.yml"
-        VARS_FILES: "operations/example-vars-files/vars-use-s3-blobstore.yml operations/example-vars-files/vars-use-external-dbs.yml"
+        OPS_FILES: |
+          operations/scale-to-one-az.yml
+          operations/experimental/skip-consul-locks.yml
+          operations/use-s3-blobstore.yml
+          operations/use-external-dbs.yml
+          operations/experimental/enable-iptables-logger.yml
+        VARS_FILES: |
+          operations/example-vars-files/vars-use-s3-blobstore.yml
+          operations/example-vars-files/vars-use-external-dbs.yml
         DEPLOYMENT_NAME_SUFFIX: external-persistence
 
 - name: upgrade-acquire-pool
@@ -1759,7 +1772,6 @@ jobs:
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
           operations/experimental/disable-consul-windows.yml
-          operations/experimental/use-grootfs.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         APP_PUSHABILITY_THRESHOLD: 3
         HTTP_AVAILABILITY_THRESHOLD: 0
