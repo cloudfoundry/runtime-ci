@@ -15,7 +15,6 @@ groups:
   - update-dotnet-core-buildpack
   - update-garden-runc
   - update-go-buildpack
-  - update-grootfs
   - update-credhub
   - update-java-buildpack
   - update-loggregator
@@ -148,10 +147,6 @@ resources:
   type: bosh-io-release
   source:
     repository: pivotal-cf/credhub-release
-- name: grootfs-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/grootfs-release
 - name: hwc-buildpack-release
   type: bosh-io-release
   source:
@@ -1100,67 +1095,6 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-grootfs
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: grootfs-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-grootfs
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: grootfs-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: grootfs
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-grootfs.yml
-      UPDATED_OPS_FILE_PATH: use-grootfs.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      env-repo: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -groot-fs
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-grootfs.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-grootfs.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-grootfs.yml
   - put: cf-deployment-develop
     params:
       rebase: true
