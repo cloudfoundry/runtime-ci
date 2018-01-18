@@ -15,7 +15,7 @@ type Op struct {
 	Value     interface{} `yaml:"value,omitempty"`
 }
 
-func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc, offline string) ([]byte, string, error) {
 	var deserializedOpsFile []Op
 	if err := unmarshalFunc(opsFile, &deserializedOpsFile); err != nil {
 		return nil, "", err
@@ -29,9 +29,11 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 				if valueMap["name"] == releaseName {
 					oldRelease := common.Release{
 						Name:    strings.TrimSpace(valueMap["name"].(string)),
-						SHA1:    strings.TrimSpace(valueMap["sha1"].(string)),
-						URL:     strings.TrimSpace(valueMap["url"].(string)),
 						Version: strings.TrimSpace(valueMap["version"].(string)),
+					}
+					if offline == "true" {
+						oldRelease.SHA1 = strings.TrimSpace(valueMap["sha1"].(string))
+						oldRelease.URL = strings.TrimSpace(valueMap["url"].(string))
 					}
 					newRelease, err := getReleaseFromFile(buildDir, releaseName)
 					if err != nil {
@@ -42,9 +44,11 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 						changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
 					}
 
-					valueMap["sha1"] = newRelease.SHA1
-					valueMap["url"] = newRelease.URL
 					valueMap["version"] = newRelease.Version
+					if offline == "true" {
+						valueMap["sha1"] = newRelease.SHA1
+						valueMap["url"] = newRelease.URL
+					}
 				}
 			}
 		}
