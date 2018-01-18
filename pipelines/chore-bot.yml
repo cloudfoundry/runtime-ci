@@ -39,7 +39,7 @@ jobs:
   - get: chore-bot-config-and-manifest
   - get: runtime-ci
   - task: copy-config-to-app-path
-    file: runtime-ci/tasks/copy-chorebot-config/task.yml
+    file: runtime-ci/tasks/copy-chore-bot-config/task.yml
     input_mapping:
       chore-bot-config: chore-bot-config-and-manifest
   - put: pws
