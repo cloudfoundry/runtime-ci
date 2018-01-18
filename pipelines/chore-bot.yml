@@ -14,7 +14,7 @@ resources:
     uri: git@github.com:cloudfoundry/runtime-ci-private.git
     private_key: {{runtime_ci_private_deploy_key}}
     paths:
-    - chore-bot
+    - chore_bot
 
 - name: runtime-ci
   type: git
