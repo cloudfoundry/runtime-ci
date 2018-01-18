@@ -45,4 +45,4 @@ jobs:
   - put: pws
     params:
       path: chore-bot-source-with-config
-      manifest: chore-bot-config-and-manifest/chore-bot/manifest.yml
+      manifest: chore-bot-config-and-manifest/chore_bot/manifest.yml
