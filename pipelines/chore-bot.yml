@@ -1,0 +1,48 @@
+---
+resources:
+- name: chore-bot-source
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:pivotal-cf-experimental/relint-trackerbot.git
+    private_key: {{relint_trackerbot_deploy_key}}
+
+- name: chore-bot-config-and-manifest
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/runtime-ci-private.git
+    private_key: {{runtime_ci_private_deploy_key}}
+    paths:
+    - chore-bot
+
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci
+
+- name: pws
+  type: cf
+  source:
+    api: https://api.run.pivotal.io
+    username: {{pws_username}}
+    password: {{pws_password}}
+    organization: release-integration
+    space: concourse-bot
+
+jobs:
+- name: deploy-chore-bot
+  serial: true
+  plan:
+  - get: chore-bot-source
+  - get: chore-bot-config-and-manifest
+  - get: runtime-ci
+  - task: copy-config-to-app-path
+    file: runtime-ci/tasks/copy-chorebot-config/task.yml
+    input_mapping:
+      chore-bot-config: chore-bot-config-and-manifest
+  - put: pws
+    params:
+      path: chore-bot-source-with-config
+      manifest: chore-bot-config-and-manifest/chore-bot/manifest.yml

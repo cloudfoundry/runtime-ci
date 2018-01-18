@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: chore-bot-config
+- name: chore-bot-source
+
+outputs:
+- name: chore-bot-source-with-config
+
+run:
+  path: runtime-ci/tasks/copy-chore-bot-config/task
