@@ -29,22 +29,29 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 				if valueMap["name"] == releaseName {
 					oldRelease := common.Release{
 						Name:    strings.TrimSpace(valueMap["name"].(string)),
-						SHA1:    strings.TrimSpace(valueMap["sha1"].(string)),
-						URL:     strings.TrimSpace(valueMap["url"].(string)),
 						Version: strings.TrimSpace(valueMap["version"].(string)),
 					}
+
 					newRelease, err := getReleaseFromFile(buildDir, releaseName)
 					if err != nil {
 						return nil, "", err
 					}
 
+					if sha, ok := valueMap["sha1"]; ok {
+						oldRelease.SHA1 = strings.TrimSpace(sha.(string))
+						valueMap["sha1"] = newRelease.SHA1
+					}
+
+					if url, ok := valueMap["url"]; ok {
+						oldRelease.URL = strings.TrimSpace(url.(string))
+						valueMap["url"] = newRelease.URL
+					}
+
+					valueMap["version"] = newRelease.Version
+
 					if newRelease != oldRelease {
 						changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
 					}
-
-					valueMap["sha1"] = newRelease.SHA1
-					valueMap["url"] = newRelease.URL
-					valueMap["version"] = newRelease.Version
 				}
 			}
 		}
@@ -69,22 +76,27 @@ func getReleaseFromFile(buildDir, releaseName string) (common.Release, error) {
 	}
 	releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", releaseName))
 
-	sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
-	newRelease.SHA1 = strings.TrimSpace(string(sha1))
-	if err != nil {
-		return common.Release{}, err
+	sha1, shaErr := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
+	url, urlErr := ioutil.ReadFile(filepath.Join(releasePath, "url"))
+	version, verErr := ioutil.ReadFile(filepath.Join(releasePath, "version"))
+
+	isShaErr := shaErr != nil
+    isUrlErr := urlErr != nil
+
+    // We accept neither or both of "sha1" and "url".  If we error out on only one or the other, something is wrong.
+    if isShaErr != isUrlErr {
+		if isShaErr {
+			return common.Release{}, shaErr
+		}
+		return common.Release{}, urlErr
 	}
 
-	url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
-	if err != nil {
-		return common.Release{}, err
+	if verErr != nil {
+		return common.Release{}, verErr
 	}
+
 	newRelease.URL = strings.TrimSpace(string(url))
-
-	version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
-	if err != nil {
-		return common.Release{}, err
-	}
+	newRelease.SHA1 = strings.TrimSpace(string(sha1))
 	newRelease.Version = strings.TrimSpace(string(version))
 
 	return newRelease, nil

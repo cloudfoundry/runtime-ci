@@ -30,7 +30,9 @@ groups:
   - update-stemcell-and-recompile-releases
   - update-syslog
   - update-uaa
-  - update-windows-releases
+  - update-windows-2012-releases
+  - update-windows-2016-releases
+  - update-windows-2016-offline-releases
   - update-windows-stemcell
 - name: infrastructure
   jobs:
@@ -203,6 +205,22 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
+- name: winc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/winc-release
+- name: windows-utilities-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/windows-utilities-release
+- name: windows2016fs-online-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/windows2016fs-online-release
+- name: windows2016fs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/windows2016fs-release
 
 - name: binary-buildpack-release-gcs
   type: gcs-resource
@@ -2440,7 +2458,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-windows-releases
+- name: update-windows-2012-releases
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -2460,13 +2478,18 @@ jobs:
       trigger: true
       params:
         tarball: false
+    - get: windows-utilities-release
+      trigger: true
+      params:
+        tarball: false
     - get: windows-google-stemcell
   - task: update-windows-releases
-    file: runtime-ci/tasks/update-windows-releases/task.yml
+    file: runtime-ci/tasks/update-windows-releases/task-2012.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
+      windows-utilities-release: windows-utilities-release
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -2489,7 +2512,7 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -windows-releases
+      DEPLOYMENT_NAME_SUFFIX: -windows-2012-releases
       OPS_FILES: "enable-backup-restore.yml base-ops-files/windows-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
@@ -2501,6 +2524,143 @@ jobs:
     params:
       OPS_FILE_NAME: windows-cell.yml
       OPS_FILE_DESTINATION: operations/windows-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-windows-2016-releases
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+      params:
+        tarball: false
+    - get: winc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: hwc-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: windows-utilities-release
+      trigger: true
+      params:
+        tarball: false
+    - get: windows2016fs-online-release
+      trigger: true
+      params:
+        tarball: false
+    - get: windows-google-stemcell
+  - task: update-windows-releases
+    file: runtime-ci/tasks/update-windows-releases/task-2016.yml
+    input_mapping:
+      original-ops-file: cf-deployment-develop
+      winc-release: winc-release
+      hwc-buildpack-release: hwc-buildpack-release
+      windows-utilities-release: windows-utilities-release
+      windows2016fs-online-release: windows2016fs-online-release
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+  - task: bosh-upload-windows-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: windows-google-stemcell
+      env-repo: greengrass-env-director-state
+    params:
+      STEMCELL_NAME: '*.tgz'
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      env-repo: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -windows-2016-releases
+      OPS_FILES: "enable-backup-restore.yml base-ops-files/windows2016-cell.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: windows2016-cell.yml
+      OPS_FILE_DESTINATION: operations/experimental/windows2016-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-windows-2016-offline-releases
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+      params:
+        tarball: false
+    - get: windows2016fs-release
+      trigger: true
+      params:
+        tarball: false
+    - get: windows-google-stemcell
+  - task: update-windows-releases
+    file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
+    input_mapping:
+      original-ops-file: cf-deployment-develop
+      windows2016fs-release: windows-2016fs-release
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+  - task: bosh-upload-windows-stemcell
+    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: windows-google-stemcell
+      env-repo: greengrass-env-director-state
+    params:
+      STEMCELL_NAME: '*.tgz'
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      env-repo: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -windows-2016-offline-releases
+      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-offline-windows2016fs.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-offline-windows2016fs.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-offline-windows2016fs.yml
   - put: cf-deployment-develop
     params:
       rebase: true

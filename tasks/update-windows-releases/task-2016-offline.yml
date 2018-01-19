@@ -9,9 +9,8 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: original-ops-file
-- name: garden-windows-release
-- name: hwc-buildpack-release
-- name: windows-utilities-release
+- name: windows2016fs-release
+
 
 outputs:
 - name: commit-message
@@ -22,6 +21,5 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  ORIGINAL_OPS_FILE_PATH: operations/windows-cell.yml
-  UPDATED_OPS_FILE_PATH: windows-cell.yml
-  OFFLINE: false
+  ORIGINAL_OPS_FILE_PATH: operations/experimental/use-offline-windows2016fs.yml
+  UPDATED_OPS_FILE_PATH: use-offline-windows2016fs.yml
