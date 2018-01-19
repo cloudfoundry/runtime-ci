@@ -36,8 +36,7 @@ func mergeReleases(manifestReleases []common.Release, updatingReleases []string)
 	return allReleases
 }
 
-func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc, offline string) ([]byte, string, error) {
-	//offline logic is not implemented here
+func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
 	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))

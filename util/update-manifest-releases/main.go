@@ -31,15 +31,15 @@ func getReleaseNames(buildDir string) ([]string, error) {
 	return releases, nil
 }
 
-type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc, string) ([]byte, string, error)
+type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc) ([]byte, string, error)
 
-func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc, offline string) error {
+func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
 	originalFile, err := ioutil.ReadFile(filepath.Join(buildDir, inputDir, inputPath))
 	if err != nil {
 		return err
 	}
 
-	updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal, offline)
+	updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,6 @@ func main() {
 			buildDir,
 			commitMessagePath,
 			opsfile.UpdateReleases,
-			os.Getenv("OFFLINE"),
 		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -103,7 +102,6 @@ func main() {
 			buildDir,
 			commitMessagePath,
 			manifest.UpdateReleasesAndStemcells,
-			"false",
 		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

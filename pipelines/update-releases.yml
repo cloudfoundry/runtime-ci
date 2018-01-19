@@ -2476,9 +2476,6 @@ jobs:
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
-    params:
-      ORIGINAL_OPS_FILE_PATH: operations/windows-cell.yml
-      UPDATED_OPS_FILE_PATH: windows-cell.yml
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
