@@ -88,6 +88,13 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-windows2012R2-go_agent
+- name: windows-google-stemcell-2016
+  type: s3
+  source:
+    bucket: all-bosh-windows
+    regexp: 1709/tested/gcp/light-bosh-stemcell-(.*)-google-kvm-windows2016-go_agent.tgz
+    access_key_id: ((BOSH_WINDOWS_BOSH_CI_S3_ACCESS_KEY_ID))
+    secret_access_key: ((BOSH_WINDOWS_BOSH_CI_S3_SECRET_ACCESS_KEY))
 
 - name: binary-buildpack-release
   type: bosh-io-release
@@ -218,10 +225,10 @@ resources:
   source:
     repository: cloudfoundry-incubator/windows2016fs-online-release
 - name: windows2016fs-release
-  type: bosh-io-release
+  type: github-release
   source:
-    repository: cloudfoundry-incubator/windows2016fs-release
-
+    owner: cloudfoundry-incubator
+    repository: windows2016fs-release
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -2557,7 +2564,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows-google-stemcell
+    - get: windows-google-stemcell-2016
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016.yml
     input_mapping:
@@ -2576,7 +2583,7 @@ jobs:
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
-      stemcell: windows-google-stemcell
+      stemcell: windows-google-stemcell-2016
       env-repo: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
@@ -2621,7 +2628,9 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows-google-stemcell
+    - get: windows-google-stemcell-2016
+  - task: build-windows2016fs-release
+    file: runtime-ci/task/build-windows2016fs-release/task.yml
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
     input_mapping:
@@ -2637,7 +2646,7 @@ jobs:
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
-      stemcell: windows-google-stemcell
+      stemcell: windows-google-stemcell-2016
       env-repo: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'

@@ -1,0 +1,30 @@
+et -e
+
+rootdir="$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )"
+outfile="$rootdir/bin/create"
+
+if [[ -n "$DEV_ENV" ]]; then
+  if ! [[ $(go version) == *go1.9* ]]; then
+    echo "Must have go 1.9"
+    exit 1
+  fi
+
+  export GOPATH=$rootdir
+  go build -o "$outfile" "$rootdir/src/create/main.go"
+else
+  version=$(cat "$rootdir/VERSION")
+  sha=$(cat "$rootdir/CREATE_BIN_SHA_LINUX")
+  url="https://s3.amazonaws.com/windows2016fs/create-binaries/create-$version-linux-amd64"
+
+  mkdir -p "$rootdir/bin"
+  curl --retry 15 --retry-delay 2 "$url" -o "$outfile" -L --fail -f
+  actualSha=$(sha256sum $outfile | awk '{ print $1 }')
+  if [[ "$actualSha" != "$sha" ]]; then
+    echo "$actualSha did not match expected sha256 $sha"
+    exit 1
+  fi
+
+  chmod +x "$outfile"
+fi
+
+"$outfile" --releaseDir "$rootdir" "${@:1}"
