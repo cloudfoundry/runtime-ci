@@ -2630,7 +2630,7 @@ jobs:
         tarball: false
     - get: windows-google-stemcell-2016
   - task: build-windows2016fs-release
-    file: runtime-ci/task/build-windows2016fs-release/task.yml
+    file: runtime-ci/tasks/build-windows2016fs-release/task.yml
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
     input_mapping:
