@@ -225,10 +225,11 @@ resources:
   source:
     repository: cloudfoundry-incubator/windows2016fs-online-release
 - name: windows2016fs-release
-  type: github-release
+  type: git
   source:
-    owner: cloudfoundry-incubator
-    repository: windows2016fs-release
+    uri: git@github.com:cloudfoundry-incubator/windows2016fs-release.git
+    branch: master
+    tag: v0.0.17
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
