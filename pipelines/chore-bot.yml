@@ -38,6 +38,8 @@ jobs:
   - get: chore-bot-source
   - get: chore-bot-config-and-manifest
   - get: runtime-ci
+  - task: unit-tests
+    file: runtime-ci/tasks/run-chore-bot-tests/task.yml
   - task: copy-config-to-app-path
     file: runtime-ci/tasks/copy-chore-bot-config/task.yml
     input_mapping:
