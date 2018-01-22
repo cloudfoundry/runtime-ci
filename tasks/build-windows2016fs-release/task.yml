@@ -10,7 +10,7 @@ inputs:
 - name: windows2016fs-release
 
 outputs:
-- name: windows2016fs-release
+- name: windows2016fs-release-built
 
 params:
 

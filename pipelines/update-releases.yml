@@ -2635,7 +2635,7 @@ jobs:
     file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
-      windows2016fs-release: windows-2016fs-release
+      windows2016fs-release: windows2016fs-release-built
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
