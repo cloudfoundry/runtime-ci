@@ -19,6 +19,11 @@ write_uptimer_deploy_config() {
     --arg run_app_syslog_availability ${UPTIMER_RUN_SYSLOG_MEASUREMENT} \
     --arg tcp_domain ${UPTIMER_TCP_DOMAIN} \
     --arg available_port ${UPTIMER_TCP_PORT} \
+    --arg app_pushability ${UPTIMER_APP_PUSHABILITY_THRESHOLD} \
+    --arg http_availability ${UPTIMER_HTTP_AVAILABILITY_THRESHOLD} \
+    --arg recent_logs ${UPTIMER_RECENT_LOGS_THRESHOLD} \
+    --arg streaming_logs ${UPTIMER_STREAMING_LOGS_THRESHOLD} \
+    --arg app_syslog_availability ${UPTIMER_APP_SYSLOG_AVAILABILITY_THRESHOLD} \
     '{
       "while": [
         {
@@ -46,11 +51,11 @@ write_uptimer_deploy_config() {
         "available_port": $available_port | tonumber
       },
       "allowed_failures": {
-        "app_pushability": 2,
-        "http_availability": 0,
-        "recent_logs": 2,
-        "streaming_logs": 2,
-        "app_syslog_availability": 4
+        "app_pushability": $app_pushability | tonumber,
+        "http_availability": $http_availability | tonumber,
+        "recent_logs": $recent_logs | tonumber,
+        "streaming_logs": $streaming_logs | tonumber,
+        "app_syslog_availability": $app_syslog_availability | tonumber
       },
       "optional_tests": {
         "run_app_syslog_availability": $run_app_syslog_availability | contains("true")
