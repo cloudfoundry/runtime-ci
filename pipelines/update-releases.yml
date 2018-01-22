@@ -225,11 +225,10 @@ resources:
   source:
     repository: cloudfoundry-incubator/windows2016fs-online-release
 - name: windows2016fs-release
-  type: git
+  type: github-release
   source:
-    uri: git@github.com:cloudfoundry-incubator/windows2016fs-release.git
-    branch: master
-    tag: v0.0.17
+    owner: cloudfoundry-incubator
+    repository: windows2016fs-release
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -2630,38 +2629,10 @@ jobs:
       params:
         tarball: false
     - get: windows-google-stemcell-2016
-  - task: build-windows2016fs-release
-    file: runtime-ci/tasks/build-windows2016fs-release/task.yml
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
-      windows2016fs-release: windows2016fs-release-built
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
-  - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: windows-google-stemcell-2016
-      env-repo: greengrass-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      env-repo: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: -windows-2016-offline-releases
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-offline-windows2016fs.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
