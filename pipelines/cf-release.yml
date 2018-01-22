@@ -176,11 +176,6 @@ resources:
   source:
     repository: cloudfoundry/cf-networking-release
 
-- name: grootfs-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/grootfs-release
-
 - name: cflinuxfs2-release-tarball
   type: bosh-io-release
   source:
@@ -710,9 +705,6 @@ jobs:
       - get: cflinuxfs2-release-tarball
         trigger: true
         passed: [ generate-aws-manifests ]
-      - get: grootfs-release-tarball
-        passed: [ generate-aws-manifests ]
-        trigger: true
     - put: a1-deployment
       params:
         manifest: cf-a1-manifest/deployment.yml
@@ -727,7 +719,6 @@ jobs:
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-release-tarball/*.tgz
         - cf-networking-release-tarball/*.tgz
-        - grootfs-release-tarball/*.tgz
         stemcells: [aws-stemcell/*.tgz]
     - aggregate:
       - task: write-target-file-bosh-director
@@ -810,11 +801,6 @@ jobs:
         passed: [ deploy-aws ]
         params:
           tarball: false
-      - get: grootfs-release-tarball
-        trigger: true
-        passed: [ deploy-aws ]
-        params:
-          tarball: false
     - task: run-errand-smoke-tests
       privileged: true
       file: runtime-ci/scripts/ci/run-errand/task.yml
@@ -859,10 +845,6 @@ jobs:
       params:
         tarball: false
     - get: cf-networking-release-tarball
-      trigger: true
-      params:
-        tarball: false
-    - get: grootfs-release-tarball
       trigger: true
       params:
         tarball: false
@@ -1046,11 +1028,6 @@ jobs:
         passed: [ aws-smoke-tests ]
         params:
           tarball: false
-      - get: grootfs-release-tarball
-        trigger: true
-        passed: [ aws-smoke-tests ]
-        params:
-          tarball: false
       - get: a1-env
       - get: cats-concourse-task
     - task: write-target-file-api
@@ -1144,12 +1121,6 @@ jobs:
         params:
           tarball: false
       - get: cf-networking-release-tarball
-        trigger: true
-        passed:
-        - aws-acceptance-tests
-        params:
-          tarball: false
-      - get: grootfs-release-tarball
         trigger: true
         passed:
         - aws-acceptance-tests
