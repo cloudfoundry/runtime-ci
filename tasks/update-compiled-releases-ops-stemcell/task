@@ -54,6 +54,7 @@ EOF
 main() {
  local releases
  releases=(
+   bbr
    capi
    cf-mysql
    binary-buildpack

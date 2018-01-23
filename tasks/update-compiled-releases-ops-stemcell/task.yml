@@ -10,7 +10,8 @@ inputs:
 - name: runtime-ci
 - name: ops-files
 - name: stemcell
-
+- name: bbr-release
+- name: bbr-release-tarball
 - name: binary-buildpack-release
 - name: binary-buildpack-release-tarball
 - name: capi-release
