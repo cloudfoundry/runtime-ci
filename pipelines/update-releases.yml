@@ -2,6 +2,7 @@
 groups:
 - name: update-releases
   jobs:
+  - update-bbr
   - update-binary-buildpack
   - update-bosh-dns
   - update-capi
@@ -96,6 +97,10 @@ resources:
     access_key_id: ((BOSH_WINDOWS_BOSH_CI_S3_ACCESS_KEY_ID))
     secret_access_key: ((BOSH_WINDOWS_BOSH_CI_S3_SECRET_ACCESS_KEY))
 
+- name: bbr-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/backup-and-restore-sdk-release
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
@@ -229,6 +234,12 @@ resources:
   source:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
+- name: bbr-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: {{concourse_gcp_service_account_json}}
+    regexp: bbr-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -375,6 +386,77 @@ resources:
     interval: 24h
 
 jobs:
+- name: update-bbr
+  serial_groups: [update-bbr]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: greengrass-env-director-state
+    - get: bbr-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-bbr
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: bbr-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: bbr
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      env-repo: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: -bbr
+      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      env-repo: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: bbr
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: bbr-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: bbr
+  - put: bbr-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
 - name: update-binary-buildpack
   serial_groups: [update-binary-buildpack]
   public: true
@@ -2006,6 +2088,7 @@ jobs:
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
+  - update-bbr
   - update-binary-buildpack
   - update-capi
   - update-cf-networking
@@ -2036,6 +2119,9 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
+    - get: bbr-release
+      params:
+        tarball: false
     - get: binary-buildpack-release
       params:
         tarball: false
@@ -2121,6 +2207,15 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - aggregate:
+    - task: compile-release-bbr
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        env-repo: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-bbr
+      params:
+        RELEASE_NAME: bbr
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2332,6 +2427,7 @@ jobs:
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
+      bbr-release-tarball: exported-release-bbr
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-cf-mysql
       nats-release-tarball: exported-release-nats
@@ -2357,6 +2453,10 @@ jobs:
       uaa-release-tarball: exported-release-uaa
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
+    - put: bbr-release-gcs
+      params:
+        file: exported-release-bbr/*.tgz
+        predefined_acl: publicRead
     - put: binary-buildpack-release-gcs
       params:
         file: exported-release-binary-buildpack/*.tgz
