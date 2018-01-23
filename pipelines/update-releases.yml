@@ -2088,7 +2088,6 @@ jobs:
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
-  - update-bbr
   - update-binary-buildpack
   - update-capi
   - update-cf-networking
@@ -2119,9 +2118,6 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-    - get: bbr-release
-      params:
-        tarball: false
     - get: binary-buildpack-release
       params:
         tarball: false
@@ -2207,15 +2203,6 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - aggregate:
-    - task: compile-release-bbr
-      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-      input_mapping:
-        env-repo: greengrass-env-director-state
-        manifest: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-bbr
-      params:
-        RELEASE_NAME: bbr
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2427,7 +2414,6 @@ jobs:
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
-      bbr-release-tarball: exported-release-bbr
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-cf-mysql
       nats-release-tarball: exported-release-nats
@@ -2453,10 +2439,6 @@ jobs:
       uaa-release-tarball: exported-release-uaa
       cf-networking-release-tarball: exported-release-cf-networking
   - aggregate:
-    - put: bbr-release-gcs
-      params:
-        file: exported-release-bbr/*.tgz
-        predefined_acl: publicRead
     - put: binary-buildpack-release-gcs
       params:
         file: exported-release-binary-buildpack/*.tgz
