@@ -1244,6 +1244,10 @@ jobs:
           s3-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
+        UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
+        UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
+        UPTIMER_RECENT_LOGS_THRESHOLD: 2
+        UPTIMER_STREAMING_LOGS_THRESHOLD: 2
       ensure:
         put: minerva-env-stubs-and-vars
         params:
@@ -1272,6 +1276,10 @@ jobs:
           s3-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: true
+        UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
+        UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
+        UPTIMER_RECENT_LOGS_THRESHOLD: 2
+        UPTIMER_STREAMING_LOGS_THRESHOLD: 2
       ensure:
         put: minerva-env-stubs-and-vars
         params:
