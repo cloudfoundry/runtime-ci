@@ -234,12 +234,6 @@ resources:
   source:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
-- name: bbr-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
-    regexp: bbr-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
