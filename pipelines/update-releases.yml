@@ -381,13 +381,14 @@ resources:
 
 jobs:
 - name: update-bbr
-  serial_groups: [update-bbr]
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: bbr-release
       trigger: true
@@ -404,48 +405,37 @@ jobs:
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: bbr
+      RELEASE_NAME: backup-and-restore-sdk
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-backup-restore.yml
+      UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       env-repo: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -bbr
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+      DEPLOYMENT_NAME_SUFFIX: bbr
+      OPS_FILES: "base-ops-files/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      env-repo: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: bbr
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: bbr-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: bbr
-  - put: bbr-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: enable-backup-restore.yml
+      OPS_FILE_DESTINATION: operations/experimental/enable-backup-restore.yml
   - put: cf-deployment-develop
     params:
       rebase: true
