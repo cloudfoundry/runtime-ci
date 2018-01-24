@@ -983,21 +983,30 @@ jobs:
       - get: runtime-ci
         tags: [dumbledore]
       - get: cf-deployment-concourse-tasks
+        tags: [dumbledore]
       - get: dumbledore-env-stubs-and-vars
         tags: [dumbledore]
       - get: dumbledore-env-integration-configs
+        tags: [dumbledore]
       - get: dumbledore-env-director-state
+        tags: [dumbledore]
       - get: cf-deployment-release-candidate
         passed: [ bless-manifest ]
+        tags: [dumbledore]
       - get: legacy-cf-release
         passed: [ internal-services-legacy-deploy ]
+        tags: [dumbledore]
       - get: legacy-diego-release
         passed: [ internal-services-legacy-deploy ]
+        tags: [dumbledore]
       - get: legacy-cflinuxfs2-release
         passed: [ internal-services-legacy-deploy ]
+        tags: [dumbledore]
       - get: legacy-garden-runc-release
         passed: [ internal-services-legacy-deploy ]
+        tags: [dumbledore]
       - get: cf-deployment-transition
+        tags: [dumbledore]
     - task: extract-vars-store
       tags: [dumbledore]
       file: runtime-ci/tasks/r2d2/task.yml
@@ -1007,6 +1016,7 @@ jobs:
       params:
         EXTRACT_LOCKET: true
     - task: bosh-upload-stemcell
+      tags: [dumbledore]
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
@@ -1014,6 +1024,7 @@ jobs:
       params:
         INFRASTRUCTURE: aws
     - task: collect-ops-files
+      tags: [dumbledore]
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
         base-ops-files: cf-deployment-release-candidate
@@ -1025,7 +1036,9 @@ jobs:
           keep-etcd-for-transition.yml
           migrate-webdav.yml
           migrate-postgres.yml
+          migrate-haproxy.yml
     - task: remove-static-ips-from-cloud-config
+      tags: [dumbledore]
       file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
@@ -1040,6 +1053,7 @@ jobs:
       params:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
     - task: bosh-deploy-cf
+      tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
@@ -1055,11 +1069,13 @@ jobs:
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
+          operations/use-haproxy.yml
           operations/legacy/keep-original-postgres-configuration.yml
           operations/cfr-to-cfd.yml
           operations/keep-etcd-for-transition.yml
           operations/migrate-webdav.yml
           operations/migrate-postgres.yml
+          operations/migrate-haproxy.yml
         VARS_FILES: |
           static_ips.yml
           blobstore-vars.yml
@@ -1077,10 +1093,12 @@ jobs:
         UPTIMER_APP_SYSLOG_AVAILABILITY_THRESHOLD: 19
       on_failure:
         put: dumbledore-env-stubs-and-vars
+        tags: [dumbledore]
         params:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-without-etcd
+      tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
@@ -1098,22 +1116,27 @@ jobs:
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
+          operations/use-haproxy.yml
           operations/legacy/keep-original-postgres-configuration.yml
         VARS_FILES: |
+          static_ips.yml
           blobstore-vars.yml
           postgres-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: false
       ensure:
         put: dumbledore-env-stubs-and-vars
+        tags: [dumbledore]
         params:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
+      tags: [dumbledore]
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
     - task: update-integration-configs
+      tags: [dumbledore]
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
@@ -1122,6 +1145,7 @@ jobs:
         integration-configs: dumbledore-env-integration-configs
       ensure:
         put: dumbledore-env-integration-configs
+        tags: [dumbledore]
         params:
           repository: updated-integration-configs
           rebase: true
