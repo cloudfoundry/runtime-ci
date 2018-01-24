@@ -11,7 +11,7 @@ inputs:
 - name: original-ops-file
 - name: hwc-buildpack-release
 - name: winc-release
-- name: windows2016fs-online-release
+- name: windows2016fs-release
 - name: windows-utilities-release
 
 
