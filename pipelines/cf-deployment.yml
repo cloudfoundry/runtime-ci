@@ -1876,21 +1876,30 @@ jobs:
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        tags: [dumbledore]
       - get: dumbledore-env-stubs-and-vars
+        tags: [dumbledore]
       - get: cf-deployment-release-candidate
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
       - get: legacy-cf-release
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
       - get: legacy-diego-release
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
       - get: legacy-cflinuxfs2-release
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
       - get: legacy-garden-runc-release
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
       - get: cf-deployment-transition
         passed: [ internal-services-transition-deploy ]
+        tags: [dumbledore]
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      tags: [dumbledore]
       input_mapping:
         vars-store: dumbledore-env-stubs-and-vars
       params:
@@ -1940,24 +1949,34 @@ jobs:
       trigger: true
     - aggregate:
       - get: cf-acceptance-tests
+        tags: [dumbledore]
       - get: dumbledore-env-integration-configs
+        tags: [dumbledore]
       - get: cf-deployment-release-candidate
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
       - get: cats-concourse-task
+        tags: [dumbledore]
       - get: legacy-cf-release
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
       - get: legacy-diego-release
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
       - get: legacy-cflinuxfs2-release
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
       - get: legacy-garden-runc-release
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
       - get: cf-deployment-transition
         passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
     - task: run-cats
       input_mapping:
         integration-config: dumbledore-env-integration-configs
       file: cats-concourse-task/task.yml
+      tags: [dumbledore]
 
 - name: transition-record-compatible-versions
   public: true
