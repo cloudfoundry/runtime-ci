@@ -981,8 +981,10 @@ jobs:
       trigger: true
     - aggregate:
       - get: runtime-ci
+        tags: [dumbledore]
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-stubs-and-vars
+        tags: [dumbledore]
       - get: dumbledore-env-integration-configs
       - get: dumbledore-env-director-state
       - get: cf-deployment-release-candidate
@@ -997,6 +999,7 @@ jobs:
         passed: [ internal-services-legacy-deploy ]
       - get: cf-deployment-transition
     - task: extract-vars-store
+      tags: [dumbledore]
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
@@ -1030,6 +1033,7 @@ jobs:
       params:
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: add-tcp-domain
+      tags: [dumbledore]
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
         vars-store: extracted-vars-store
