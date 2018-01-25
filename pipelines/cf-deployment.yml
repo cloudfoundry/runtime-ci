@@ -29,6 +29,7 @@ groups:
   - unit-test-transition-tools
   - unit-test-update-releases-coverage
   - internal-services-cats
+  - internal-services-rats
   - internal-services-enable-docker-and-tasks
 
   - bless-manifest
@@ -101,6 +102,7 @@ groups:
   - internal-services-transition-deploy
   - internal-services-acquire-pool
   - internal-services-cats
+  - internal-services-rats
   - internal-services-enable-docker-and-tasks
   - internal-services-delete-deployment
   - transition-record-compatible-versions
@@ -1996,6 +1998,47 @@ jobs:
       file: cats-concourse-task/task.yml
       tags: [dumbledore]
 
+- name: internal-services-rats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: internal-services-pool
+      passed: [ internal-services-enable-docker-and-tasks ]
+      trigger: true
+    - aggregate:
+      - get: dumbledore-env-integration-configs
+        tags: [dumbledore]
+      - get: github-routing-release-master
+        tags: [dumbledore]
+      - get: runtime-ci
+        tags: [dumbledore]
+      - get: cf-deployment-release-candidate
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+      - get: legacy-cf-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+      - get: legacy-diego-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+      - get: legacy-cflinuxfs2-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+      - get: legacy-garden-runc-release
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+      - get: cf-deployment-transition
+        passed: [ internal-services-enable-docker-and-tasks ]
+        tags: [dumbledore]
+    - task: run-rats
+      tags: [dumbledore]
+      file: runtime-ci/scripts/ci/run-rats/task.yml
+      input_mapping:
+        routing-release: github-routing-release-master
+        integration-config: dumbledore-env-integration-configs
+
 - name: transition-record-compatible-versions
   public: true
   build_logs_to_retain: 100
@@ -2005,29 +2048,29 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats, transition-rats, internal-services-cats ]
+        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
         trigger: true
       - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
