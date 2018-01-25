@@ -1058,7 +1058,6 @@ jobs:
         SYSTEM_DOMAIN: dumbledore.cf-app.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
-          operations/aws.yml
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
@@ -1104,7 +1103,6 @@ jobs:
         UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
         OPS_FILES: |
           operations/use-compiled-releases.yml
-          operations/aws.yml
           operations/legacy/keep-original-blobstore-directory-keys.yml
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
