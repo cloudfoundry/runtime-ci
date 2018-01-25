@@ -920,8 +920,10 @@ jobs:
       params:
         INFRASTRUCTURE: aws
         STUBS_PATH: transition/stubs/cf/cf-stub.yml
+    - task: update-loggregator-port
+      file: runtime-ci/tasks/switch-cfr-logging-port/task.yml
       output_mapping:
-        manifest: cf-manifest
+        updated-manifest: cf-manifest
     - task: create-diego-manifest
       file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
       input_mapping:
