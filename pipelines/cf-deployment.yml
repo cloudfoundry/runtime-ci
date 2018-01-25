@@ -1066,6 +1066,7 @@ jobs:
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
           operations/use-haproxy.yml
+          operations/legacy/keep-haproxy-ssl-pem.yml
           operations/legacy/keep-original-postgres-configuration.yml
           operations/cfr-to-cfd.yml
           operations/keep-etcd-for-transition.yml
@@ -1076,6 +1077,7 @@ jobs:
           static_ips.yml
           blobstore-vars.yml
           postgres-vars.yml
+          haproxy-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: false
         FAIL_ON_DOWNTIME: false
@@ -1111,11 +1113,13 @@ jobs:
           operations/set-bbs-active-key.yml
           operations/use-postgres.yml
           operations/use-haproxy.yml
+          operations/legacy/keep-haproxy-ssl-pem.yml
           operations/legacy/keep-original-postgres-configuration.yml
         VARS_FILES: |
           static_ips.yml
           blobstore-vars.yml
           postgres-vars.yml
+          haproxy-vars.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         FAIL_ON_DOWNTIME: false
       ensure:
