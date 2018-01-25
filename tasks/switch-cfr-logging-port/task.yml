@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: manifest
+- name: runtime-ci
+
+outputs:
+- name: updated-manifest
+
+run:
+  path: runtime-ci/tasks/switch-cfr-logging-port/task
