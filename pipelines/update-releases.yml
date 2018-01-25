@@ -234,6 +234,7 @@ resources:
   source:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
+    access_token: {{release_integration_download_bot_access_token}}
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
