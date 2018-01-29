@@ -2126,7 +2126,7 @@ jobs:
   - timeout: 4h
     do:
     - get: internal-services-pool
-      passed: [ internal-services-cats ]
+      passed: [ internal-services-cats, internal-services-rats ]
       trigger: true
     - aggregate:
       - get: cf-deployment-concourse-tasks
