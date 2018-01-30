@@ -679,7 +679,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-smoke-tests
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -751,7 +750,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-syslog-drain-release
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -822,7 +820,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cflinuxfs2
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -893,7 +890,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -consul
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -964,7 +960,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -diego
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1095,7 +1090,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -garden-runc
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1286,7 +1280,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -loggregator
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1358,7 +1351,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -cf-mysql
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1430,7 +1422,6 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
     params:
       DEPLOYMENT_NAME_SUFFIX: -nats
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1616,23 +1607,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
       UPDATED_OPS_FILE_PATH: use-postgres.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -postgres
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-postgres.yml"
+      OPS_FILES: "use-postgres.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
@@ -1933,7 +1917,6 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -statsd-injector
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2564,13 +2547,6 @@ jobs:
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -2583,11 +2559,11 @@ jobs:
     input_mapping:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -windows-2012-releases
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/windows-cell.yml"
+      OPS_FILES: "windows-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
@@ -2637,13 +2613,6 @@ jobs:
     input_mapping:
       original-ops-file: cf-deployment-develop
       windows2016fs-release: windows2016fs-online-release
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -2656,11 +2625,11 @@ jobs:
     input_mapping:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -windows-2016-releases
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/windows2016-cell.yml"
+      OPS_FILES: "windows2016-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
@@ -2801,23 +2770,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: -bosh-dns
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/use-bosh-dns.yml"
+      OPS_FILES: "use-bosh-dns.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
@@ -2862,23 +2824,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       env-repo: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: cf-deployment-develop
     params:
       DEPLOYMENT_NAME_SUFFIX: -syslog
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/enable-component-syslog.yml"
+      OPS_FILES: "enable-component-syslog.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: |
         operations/addons/example-vars-files/vars-enable-component-syslog.yml
