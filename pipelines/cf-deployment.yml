@@ -1220,7 +1220,7 @@ jobs:
         UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
         UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
         UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
-        UPTIMER_RECENT_LOGS_THRESHOLD: 2
+        UPTIMER_RECENT_LOGS_THRESHOLD: 5
         UPTIMER_STREAMING_LOGS_THRESHOLD: 2
         OPS_FILES: |
           operations/use-compiled-releases.yml
