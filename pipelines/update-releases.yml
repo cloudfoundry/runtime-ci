@@ -7,6 +7,7 @@ groups:
   - update-bosh-dns
   - update-capi
   - update-cf-mysql
+  - update-cf-app-sd
   - update-cf-networking
   - update-cf-smoke-tests
   - update-cf-syslog-drain-release
@@ -113,6 +114,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/capi-release
+- name: cf-app-sd-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-app-sd-release
 - name: cf-mysql-release
   type: bosh-io-release
   source:
@@ -569,6 +574,60 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-app-sd
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-app-sd-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-app-sd
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-app-sd-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-app-sd
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-service-discovery.yml
+      UPDATED_OPS_FILE_PATH: enable-service-discovery.yml
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      env-repo: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-app-sd
+      OPS_FILES: enable-service-discovery.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: enable-service-discovery.yml
+      OPS_FILE_DESTINATION: operations/experimental/enable-service-discovery.yml
   - put: cf-deployment-develop
     params:
       rebase: true
