@@ -418,9 +418,7 @@ jobs:
       BBL_AWS_REGION: us-west-2
       BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
       BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
-      BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
-      BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-      LB_DOMAIN: dumbledore.cf-app.com
+      SKIP_LB_CREATION: true
       BBL_ENV_NAME: dumbledore-upgrade
     input_mapping:
       env-repo: dumbledore-env-director-state
@@ -664,9 +662,7 @@ jobs:
         BBL_AWS_REGION: us-west-2
         BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
         BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
-        BBL_LB_CERT: {{dumbledore_lbs_ssl_cert}}
-        BBL_LB_KEY: {{dumbledore_lbs_ssl_signing_key}}
-        LB_DOMAIN: dumbledore.cf-app.com
+        SKIP_LB_CREATION: true
         BBL_ENV_NAME: dumbledore-upgrade
       input_mapping:
         env-repo: dumbledore-env-director-state
