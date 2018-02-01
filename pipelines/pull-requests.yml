@@ -145,6 +145,8 @@ jobs:
               repository: relintdockerhubpushbot/bosh-cli
           inputs:
           - name: cf-deployment-all-branches
+          params:
+            RUN_SEMANTIC: true
           run:
             dir: cf-deployment-all-branches
             path: scripts/test
