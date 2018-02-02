@@ -360,6 +360,13 @@ resources:
     repository: cli
     access_token: {{release_integration_download_bot_access_token}}
 
+- name: credhub-cli
+  type: github-release
+  source:
+    user: cloudfoundry-incubator
+    repository: credhub-cli
+    access_token: {{release_integration_download_bot_access_token}}
+
 - name: bosh-cli-github-release
   type: github-release
   source:
@@ -801,6 +808,8 @@ jobs:
       - get: bbl-github-release
         trigger: true
       - get: bosh-cli-github-release
+        trigger: true
+      - get: credhub-cli-github-release
         trigger: true
     - task: update-dockerfile-versions
       file: runtime-ci/tasks/update-cf-d-ct-dockerfile-versions/task.yml

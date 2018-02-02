@@ -5,6 +5,7 @@ dockerfile="cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-ta
 sed -i "s/ENV bosh_cli_version.*$/ENV bosh_cli_version $(cat bosh-cli-github-release/version)/" $dockerfile
 sed -i "s/ENV bbl_version.*$/ENV bbl_version $(cat bbl-github-release/version)/" $dockerfile
 sed -i "s/ENV terraform_version.*$/ENV terraform_version $(cat terraform-github-release/version)/" $dockerfile
+sed -i "s/ENV credhub_cli_version.*$/ENV credhub_cli_version $(cat credhub-cli-github-release/version)/" $dockerfile
 
 pushd cf-deployment-concourse-tasks
   if [[ -n $(git status --porcelain) ]]; then

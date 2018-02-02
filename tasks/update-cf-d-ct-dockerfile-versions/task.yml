@@ -11,6 +11,7 @@ inputs:
 - name: cf-deployment-concourse-tasks
 - name: bbl-github-release
 - name: bosh-cli-github-release
+- name: credhub-cli-github-release
 - name: terraform-github-release
 
 outputs:
