@@ -801,41 +801,16 @@ jobs:
         trigger: true
       - get: bosh-cli-github-release
         trigger: true
-    - put: create-version-json-pipeline-image
-      params:
-        build: runtime-ci-create-version-json/scripts/ci/create-version-json
-        push: true
-    - task: create-terraform-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
-      input_mapping:
-        version: terraform-github-release
-        # This task has to have an input mapping so that it can chain to itself
-        # Any valid Concourse resource that does not contain a file named
-        # `version.json` will work.
-        input-version-json: terraform-github-release
-      params:
-        key: terraform_version
-    - task: create-bbl-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
-      input_mapping:
-        version: bbl-github-release
-        # This is an example of that chaining we spoke of earlier
-        input-version-json: version-json
-      params:
-        key: bbl_version
-    - task: create-bosh-cli-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
-      input_mapping:
-        version: bosh-cli-github-release
-        # This is an example of that chaining we spoke of earlier
-        input-version-json: version-json
-      params:
-        key: bosh_cli_version
+    - task: update-dockerfile-versions
+      file: runtime-ci/tasks/update-cf-d-ct-dockerfile-versions/task.yml
     - put: cf-deployment-concourse-tasks-pipeline-image
       params:
-        build: cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks
+        build: cf-deployment-concourse-tasks-updated/dockerfiles/cf-deployment-concourse-tasks
         push: true
-        build_args_file: version-json/version.json
+    - put: cf-deployment-concourse-tasks
+      params:
+        repository: cf-deployment-concourse-tasks-updated
+        rebase: true
     - task: create-pm-story
       file: runtime-ci/tasks/create-pm-story/task.yml
       input_mapping:

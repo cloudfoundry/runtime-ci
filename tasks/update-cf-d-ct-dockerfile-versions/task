@@ -1,0 +1,19 @@
+#!/bin/bash -exu
+
+dockerfile="cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks/Dockerfile"
+
+sed -i "s/ENV bosh_cli_version.*$/ENV bosh_cli_version $(cat bosh-cli-github-release/version)/" $dockerfile
+sed -i "s/ENV bbl_version.*$/ENV bbl_version $(cat bbl-github-release/version)/" $dockerfile
+sed -i "s/ENV terraform_version.*$/ENV terraform_version $(cat terraform-github-release/version)/" $dockerfile
+
+pushd cf-deployment-concourse-tasks
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CI Bot"
+    git config user.email "cf-release-integration@pivotal.io"
+    git add .
+    git commit --allow-empty \
+    -m "Update Dockerfile"
+  fi
+popd
+
+git clone cf-deployment-concourse-tasks cf-deployment-concourse-tasks-updated
