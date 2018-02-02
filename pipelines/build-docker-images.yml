@@ -360,7 +360,7 @@ resources:
     repository: cli
     access_token: {{release_integration_download_bot_access_token}}
 
-- name: credhub-cli
+- name: credhub-cli-github-release
   type: github-release
   source:
     user: cloudfoundry-incubator
