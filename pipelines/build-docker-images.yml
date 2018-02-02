@@ -811,6 +811,8 @@ jobs:
         trigger: true
       - get: credhub-cli-github-release
         trigger: true
+      - get: cf-cli
+        trigger: true
     - task: update-dockerfile-versions
       file: runtime-ci/tasks/update-cf-d-ct-dockerfile-versions/task.yml
     - put: cf-deployment-concourse-tasks-pipeline-image

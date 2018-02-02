@@ -12,6 +12,7 @@ inputs:
 - name: bbl-github-release
 - name: bosh-cli-github-release
 - name: credhub-cli-github-release
+- name: cf-cli
 - name: terraform-github-release
 
 outputs:
