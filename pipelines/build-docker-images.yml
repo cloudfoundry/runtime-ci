@@ -445,14 +445,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: cf-deployment-concourse-tasks-docker-image-version
-  type: semver
-  source:
-    driver: git
-    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
-    branch: master
-    file: cf-deployment-concourse-tasks-docker-image-version
-    private_key: {{cf_deployment_concourse_tasks_docker_image_version_repo_private_key}}
 - name: cf-deployment-concourse-tasks-pipeline-image
   type: docker-image
   source:
@@ -797,11 +789,6 @@ jobs:
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
-      # We aren't using cf-deployment-concourse-tasks-docker-image-version
-      # but we want to keep it here for use in a future workflow
-      # where we semantically version the docker image, so we need to `get`
-      # the resource somewhere or concourse will complain.
-      - get: cf-deployment-concourse-tasks-docker-image-version
       - get: runtime-ci-create-version-json
       - get: terraform-github-release
         trigger: true
