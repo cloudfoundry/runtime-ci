@@ -308,6 +308,7 @@ resources:
     - network-name.yml
     - syslog-vars.yml
     - bbs-key-label.yml
+    - gcs-vars.yml
 - name: minerva-env-director-state
   type: git
   source:
