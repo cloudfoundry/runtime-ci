@@ -14,40 +14,24 @@ groups:
   jobs:
   - trigger-all-image-builds
   - build-announce-rc-docker-image
-  - build-can-bump-docker-image
   - build-wait-for-endpoint-docker-image
-  - build-cannot-bump-docker-image
   - build-generate-release-manifest-docker-image
   - build-create-final-release-docker-image
-  - build-create-release-docker-image
   - build-create-release-notes-template-docker-image
-  - build-delete-deployment-docker-image
-  - build-enable-docker-diego-1-0-docker-image
   - build-merge-master-into-develop-docker-image
-  - build-record-compatible-versions-docker-image
-  - build-run-bosh-cleanup-1.0-docker-image
   - build-run-rats-docker-image
   - build-run-cf-release-unit-tests-docker-image
-  - build-run-errand-docker-image
-  - build-run-smoketests-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-create-diego-manifest-docker-image
-  - build-create-diego-manifest-with-config-docker-image
-  - build-write-target-file-docker-image
-  - build-write-creds-docker-image
   - build-bosh-upload-stemcell-docker-image
   - build-verify-every-task-has-correct-docker-image-docker-image
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
-  - build-create-diego-iaas-settings-docker-image
   - build-bind-elb-to-r53-docker-image
   - build-unbind-elb-from-r53-docker-image
   - build-recreate-datadog-dashboards-docker-image
   - build-commit-generated-manifest-docker-image
-  - build-write-build-url-docker-image
-  - build-write-director-version-docker-image
-  - build-untar-release-docker-image
   - build-build-metadata-resource-docker-image
 
 resources:
@@ -97,12 +81,6 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [resources/build-metadata-resource/*]
 
-- name: runtime-ci-create-diego-iaas-settings
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-diego-iaas-settings/Dockerfile]
 - name: runtime-ci-verify-every-task-has-docker-build
   type: git
   source:
@@ -127,24 +105,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-diego-manifest/Dockerfile]
-- name: runtime-ci-create-diego-manifest-with-config
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-diego-manifest-with-config/Dockerfile]
-- name: runtime-ci-write-target-file
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-target-file/Dockerfile]
-- name: runtime-ci-write-creds
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-creds/Dockerfile]
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -169,24 +129,12 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/announce-rc/Dockerfile]
-- name: runtime-ci-can-bump
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/can-bump/Dockerfile]
 - name: runtime-ci-wait-for-endpoint
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/wait-for-endpoint/Dockerfile]
-- name: runtime-ci-cannot-bump
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/cannot-bump/Dockerfile]
 - name: runtime-ci-generate-release-manifest
   type: git
   source:
@@ -199,48 +147,18 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-final-release/Dockerfile]
-- name: runtime-ci-create-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-release/Dockerfile]
 - name: runtime-ci-create-release-notes-template
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/create-release-notes-template/Dockerfile]
-- name: runtime-ci-delete-deployment
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/delete-deployment/Dockerfile]
-- name: runtime-ci-enable-docker-diego-1-0
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/enable-docker-diego-1-0/Dockerfile]
 - name: runtime-ci-merge-master-into-develop
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/merge-master-into-develop/Dockerfile]
-- name: runtime-ci-record-compatible-versions
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/record-compatible-versions/Dockerfile]
-- name: runtime-ci-run-bosh-cleanup-1.0
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-bosh-cleanup-1.0/Dockerfile]
 - name: runtime-ci-run-rats
   type: git
   source:
@@ -253,18 +171,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-cf-release-unit-tests/Dockerfile]
-- name: runtime-ci-run-errand
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-errand/Dockerfile]
-- name: runtime-ci-run-smoketests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-smoketests/Dockerfile]
 - name: runtime-ci-validate-all-jobs-public
   type: git
   source:
@@ -303,27 +209,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/commit-generated-manifest/Dockerfile]
-
-- name: runtime-ci-write-build-url
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-build-url/Dockerfile]
-
-- name: runtime-ci-write-director-version
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/write-director-version/Dockerfile]
-
-- name: runtime-ci-untar-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/untar-release/Dockerfile]
 
 - name: cats-concourse-task
   type: git
@@ -389,13 +274,6 @@ resources:
     access_token: {{release_integration_download_bot_access_token}}
 
   # All the docker images
-- name: create-diego-iaas-settings-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-diego-iaas-settings
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: verify-every-task-has-docker-build-pipeline-image
   type: docker-image
   source:
@@ -424,27 +302,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-diego-manifest-with-config-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-diego-manifest-with-config
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: write-target-file-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/write-target-file
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: write-creds-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/write-creds
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: cf-deployment-concourse-tasks-pipeline-image
   type: docker-image
   source:
@@ -466,24 +323,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: can-bump-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/can-bump
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: wait-for-endpoint-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/wait-for-endpoint
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: cannot-bump-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cannot-bump
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -501,13 +344,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-release
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: create-release-notes-template-pipeline-image
   type: docker-image
   source:
@@ -515,38 +351,10 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: delete-deployment-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/delete-deployment
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: enable-docker-diego-1-0-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/enable-docker-diego-1-0
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: merge-master-into-develop-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/merge-master-into-develop
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: record-compatible-versions-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/record-compatible-versions
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-bosh-cleanup-1.0-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-bosh-cleanup-1.0
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -561,20 +369,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-cf-release-unit-tests
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-errand-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-errand
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-smoketests-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-smoketests
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -618,30 +412,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/commit-generated-manifest
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: write-build-url-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/write-build-url
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: write-director-version-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/write-director-version
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: untar-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/untar-release
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -702,24 +472,6 @@ jobs:
   plan:
   - get: trigger-resource
 
-- name: build-create-diego-iaas-settings-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-diego-iaas-settings
-        trigger: true
-    - put: create-diego-iaas-settings-pipeline-image
-      params:
-        build: runtime-ci-create-diego-iaas-settings/scripts/ci/create-diego-iaas-settings
-        push: true
 - name: build-verify-every-task-has-docker-build-docker-image
   public: true
   build_logs_to_retain: 100
@@ -838,42 +590,6 @@ jobs:
       params:
         build: runtime-ci-bosh-upload-stemcell/scripts/ci/bosh-upload-stemcell
         push: true
-- name: build-write-target-file-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-target-file
-        trigger: true
-    - put: write-target-file-pipeline-image
-      params:
-        build: runtime-ci-write-target-file/scripts/ci/write-target-file
-        push: true
-- name: build-write-creds-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-creds
-        trigger: true
-    - put: write-creds-pipeline-image
-      params:
-        build: runtime-ci-write-creds/scripts/ci/write-creds
-        push: true
 - name: build-create-diego-manifest-docker-image
   public: true
   build_logs_to_retain: 100
@@ -891,24 +607,6 @@ jobs:
     - put: create-diego-manifest-pipeline-image
       params:
         build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
-        push: true
-- name: build-create-diego-manifest-with-config-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-diego-manifest-with-config
-        trigger: true
-    - put: create-diego-manifest-with-config-pipeline-image
-      params:
-        build: runtime-ci-create-diego-manifest-with-config/scripts/ci/create-diego-manifest-with-config
         push: true
 - name: build-announce-rc-docker-image
   public: true
@@ -928,24 +626,6 @@ jobs:
       params:
         build: runtime-ci-announce-rc/scripts/ci/announce-rc
         push: true
-- name: build-can-bump-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-can-bump
-        trigger: true
-    - put: can-bump-pipeline-image
-      params:
-        build: runtime-ci-can-bump/scripts/ci/can-bump
-        push: true
 - name: build-wait-for-endpoint-docker-image
   public: true
   build_logs_to_retain: 100
@@ -963,24 +643,6 @@ jobs:
     - put: wait-for-endpoint-pipeline-image
       params:
         build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
-        push: true
-- name: build-cannot-bump-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-cannot-bump
-        trigger: true
-    - put: cannot-bump-pipeline-image
-      params:
-        build: runtime-ci-cannot-bump/scripts/ci/cannot-bump
         push: true
 - name: build-generate-release-manifest-docker-image
   public: true
@@ -1018,24 +680,6 @@ jobs:
       params:
         build: runtime-ci-create-final-release/scripts/ci/create-final-release
         push: true
-- name: build-create-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-release
-        trigger: true
-    - put: create-release-pipeline-image
-      params:
-        build: runtime-ci-create-release/scripts/ci/create-release
-        push: true
 - name: build-create-release-notes-template-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1053,42 +697,6 @@ jobs:
     - put: create-release-notes-template-pipeline-image
       params:
         build: runtime-ci-create-release-notes-template/scripts/ci/create-release-notes-template
-        push: true
-- name: build-delete-deployment-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-delete-deployment
-        trigger: true
-    - put: delete-deployment-pipeline-image
-      params:
-        build: runtime-ci-delete-deployment/scripts/ci/delete-deployment
-        push: true
-- name: build-enable-docker-diego-1-0-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-enable-docker-diego-1-0
-        trigger: true
-    - put: enable-docker-diego-1-0-pipeline-image
-      params:
-        build: runtime-ci-enable-docker-diego-1-0/scripts/ci/enable-docker-diego-1-0
         push: true
 - name: build-merge-master-into-develop-docker-image
   public: true
@@ -1108,43 +716,6 @@ jobs:
       params:
         build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
         push: true
-- name: build-record-compatible-versions-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-record-compatible-versions
-        trigger: true
-    - put: record-compatible-versions-pipeline-image
-      params:
-        build: runtime-ci-record-compatible-versions/scripts/ci/record-compatible-versions
-        push: true
-- name: build-run-bosh-cleanup-1.0-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-bosh-cleanup-1.0
-        trigger: true
-    - put: run-bosh-cleanup-1.0-pipeline-image
-      params:
-        build: runtime-ci-run-bosh-cleanup-1.0/scripts/ci/run-bosh-cleanup-1.0
-        push: true
-
 - name: build-run-rats-docker-image
   public: true
   build_logs_to_retain: 100
@@ -1183,42 +754,6 @@ jobs:
     - put: run-cf-release-unit-tests-pipeline-image
       params:
         build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
-        push: true
-- name: build-run-errand-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-errand
-        trigger: true
-    - put: run-errand-pipeline-image
-      params:
-        build: runtime-ci-run-errand/scripts/ci/run-errand
-        push: true
-- name: build-run-smoketests-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-smoketests
-        trigger: true
-    - put: run-smoketests-pipeline-image
-      params:
-        build: runtime-ci-run-smoketests/scripts/ci/run-smoketests
         push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true
@@ -1329,60 +864,6 @@ jobs:
     - put: commit-generated-manifest-pipeline-image
       params:
         build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
-        push: true
-
-- name: build-write-build-url-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-build-url
-        trigger: true
-    - put: write-build-url-pipeline-image
-      params:
-        build: runtime-ci-write-build-url/scripts/ci/write-build-url
-        push: true
-
-- name: build-write-director-version-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-write-director-version
-        trigger: true
-    - put: write-director-version-pipeline-image
-      params:
-        build: runtime-ci-write-director-version/scripts/ci/write-director-version
-        push: true
-
-- name: build-untar-release-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-untar-release
-        trigger: true
-    - put: untar-release-pipeline-image
-      params:
-        build: runtime-ci-untar-release/scripts/ci/untar-release
         push: true
 
 - name: build-build-metadata-resource-docker-image
