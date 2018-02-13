@@ -285,7 +285,7 @@ jobs:
         new-ops-files: baba-yaga-env-director-state
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "operations/enable-nfs-test-server.yml"
+        NEW_OPS_FILES: "enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
