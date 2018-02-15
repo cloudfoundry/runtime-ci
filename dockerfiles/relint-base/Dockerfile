@@ -8,7 +8,8 @@ RUN \
     ruby \
     unzip \
     wget \
-    curl
+    curl \
+    ack-grep
 
 ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
