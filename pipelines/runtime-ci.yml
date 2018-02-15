@@ -30,4 +30,4 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
-    file: runtime-ci/scripts/ci/verify-every-task-is-used-in-a-pipeline/task.yml
+    file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
