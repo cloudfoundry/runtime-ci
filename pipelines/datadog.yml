@@ -45,7 +45,7 @@ jobs:
         trigger: true
       - get: runtime-ci
     - task: recreate-datadog-dashboards
-      file: runtime-ci/tasks/recreate-datadog-dashboards/task.yml
+      file: runtime-ci/scripts/ci/recreate-datadog-dashboards/task.yml
       params:
         ENVIRONMENT_DISPLAY_NAME: "a1"
         CF_DEPLOYMENT_NAME: "cf-a1"

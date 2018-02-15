@@ -226,7 +226,7 @@ jobs:
           context: {{unit_tests_context}}
       - task: run-cf-release-unit-tests
         privileged: true
-        file: runtime-ci/tasks/run-cf-release-unit-tests/task.yml
+        file: runtime-ci/scripts/ci/run-cf-release-unit-tests/task.yml
         input_mapping:
             cf-release-develop: cf-release-all-branches
         params:

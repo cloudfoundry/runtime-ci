@@ -22,7 +22,7 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: validate-all-jobs-public
-    file: runtime-ci/tasks/validate-all-jobs-public/task.yml
+    file: runtime-ci/scripts/ci/validate-all-jobs-public/task.yml
 
 - name: verify-every-task-has-correct-docker-image
   public: true
@@ -32,7 +32,7 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: verify-every-task-has-correct-docker-image
-    file: runtime-ci/tasks/verify-every-task-has-correct-docker-image/task.yml
+    file: runtime-ci/scripts/ci/verify-every-task-has-correct-docker-image/task.yml
 
 - name: verify-every-task-has-docker-build
   public: true
@@ -42,7 +42,7 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: verify-every-task-has-docker-build
-    file: runtime-ci/tasks/verify-every-task-has-docker-build/task.yml
+    file: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task.yml
 
 - name: verify-every-task-is-used-in-a-pipeline
   public: true
@@ -52,4 +52,4 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
-    file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
+    file: runtime-ci/scripts/ci/verify-every-task-is-used-in-a-pipeline/task.yml

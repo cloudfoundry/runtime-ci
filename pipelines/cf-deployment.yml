@@ -524,7 +524,7 @@ jobs:
       trigger: true
     - get: runtime-ci
   - task: validate-branch-freshness
-    file: runtime-ci/tasks/validate-branch-freshness/task.yml
+    file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
     input_mapping:
       repo: cf-deployment-all-branches
 
@@ -837,7 +837,7 @@ jobs:
       - get: aws-stemcell
       - get: cf-deployment-transition
     - task: generate-release-manifest-cf
-      file: runtime-ci/tasks/generate-release-manifest/task.yml
+      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
       input_mapping:
         release-repo: cf-release-master
         stubs-repo: minerva-env-stubs-and-vars
@@ -847,7 +847,7 @@ jobs:
       output_mapping:
         manifest: cf-manifest
     - task: create-diego-manifest
-      file: runtime-ci/tasks/create-diego-manifest/task.yml
+      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
       input_mapping:
         diego-release: github-diego-release
         iaas-settings: minerva-env-stubs-and-vars
@@ -914,7 +914,7 @@ jobs:
       - get: cf-deployment-transition
       - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
-      file: runtime-ci/tasks/generate-release-manifest/task.yml
+      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
       input_mapping:
         release-repo: cf-release-master
         stubs-repo: dumbledore-env-stubs-and-vars
@@ -926,7 +926,7 @@ jobs:
       output_mapping:
         updated-manifest: cf-manifest
     - task: create-diego-manifest
-      file: runtime-ci/tasks/create-diego-manifest/task.yml
+      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
       input_mapping:
         diego-release: github-diego-release
         iaas-settings: dumbledore-env-stubs-and-vars
@@ -947,7 +947,7 @@ jobs:
       input_mapping:
         env-repo: dumbledore-env-director-state
     - task: bosh-upload-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: aws-stemcell
         env-repo: dumbledore-env-director-state
@@ -1612,7 +1612,7 @@ jobs:
       params:
         INFRASTRUCTURE: aws
     - task: bosh-upload-windows-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: windows-stemcell-bosh-release
         env-repo: hermione-env-director-state
@@ -1748,7 +1748,7 @@ jobs:
       params:
         INFRASTRUCTURE: google
     - task: bosh-upload-windows-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: windows-google-stemcell
         env-repo: bellatrix-env-director-state
@@ -1849,7 +1849,7 @@ jobs:
           repository: updated-integration-configs
           rebase: true
     - task: ensure-api-healthy
-      file: runtime-ci/tasks/wait-for-endpoint/task.yml
+      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
       params:
         ENDPOINT: api.snitch.cf-app.com
         DD_API_KEY: {{datadog_api_key}}
@@ -2041,7 +2041,7 @@ jobs:
         tags: [dumbledore]
     - task: run-rats
       tags: [dumbledore]
-      file: runtime-ci/tasks/run-rats/task.yml
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: dumbledore-env-integration-configs
@@ -2450,7 +2450,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
@@ -2482,7 +2482,7 @@ jobs:
       - get: legacy-garden-runc-release
         passed: [ transition-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: minerva-env-integration-configs
@@ -2506,7 +2506,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
+      file: runtime-ci/scripts/ci/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
@@ -2533,7 +2533,7 @@ jobs:
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: hermione-env-integration-configs
-      file: runtime-ci/tasks/run-rats/task.yml
+      file: runtime-ci/scripts/ci/run-rats/task.yml
 
 - name: fresh-delete-deployment
   serial: true
