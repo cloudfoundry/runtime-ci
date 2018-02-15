@@ -133,11 +133,6 @@ resources:
   source:
     name: bosh-aws-xen-hvm-windows2012R2-go_agent
 
-- name: windows-google-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-windows2012R2-go_agent
-
 - name: legacy-cf-bosh-deployment
   type: bosh-deployment-v2
   source:
@@ -1740,7 +1735,6 @@ jobs:
       - get: bellatrix-env-vars-store
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
-      - get: windows-google-stemcell
     - task: bosh-upload-stemcell-stable
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -1748,13 +1742,6 @@ jobs:
         env-repo: bellatrix-env-director-state
       params:
         INFRASTRUCTURE: google
-    - task: bosh-upload-windows-stemcell
-      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-      input_mapping:
-        stemcell: windows-google-stemcell
-        env-repo: bellatrix-env-director-state
-      params:
-        STEMCELL_NAME: '*.tgz'
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
