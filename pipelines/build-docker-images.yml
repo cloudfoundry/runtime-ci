@@ -70,7 +70,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-version-json/Dockerfile]
+    paths: [tasks/create-version-json/Dockerfile]
 
 - name: runtime-ci-build-metadata-resource
   type: git
@@ -84,25 +84,25 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/verify-every-task-has-docker-build/Dockerfile]
+    paths: [tasks/verify-every-task-has-docker-build/Dockerfile]
 - name: runtime-ci-verify-every-task-is-used-in-a-pipeline
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/verify-every-task-is-used-in-a-pipeline/Dockerfile]
+    paths: [tasks/verify-every-task-is-used-in-a-pipeline/Dockerfile]
 - name: runtime-ci-verify-every-task-has-correct-docker-image
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/verify-every-task-has-correct-docker-image/Dockerfile]
+    paths: [tasks/verify-every-task-has-correct-docker-image/Dockerfile]
 - name: runtime-ci-create-diego-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-diego-manifest/Dockerfile]
+    paths: [tasks/create-diego-manifest/Dockerfile]
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -120,81 +120,81 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bosh-upload-stemcell/Dockerfile]
+    paths: [tasks/bosh-upload-stemcell/Dockerfile]
 - name: runtime-ci-wait-for-endpoint
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/wait-for-endpoint/Dockerfile]
+    paths: [tasks/wait-for-endpoint/Dockerfile]
 - name: runtime-ci-generate-release-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/generate-release-manifest/Dockerfile]
+    paths: [tasks/generate-release-manifest/Dockerfile]
 - name: runtime-ci-create-final-release
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-final-nats-release/Dockerfile]
+    paths: [tasks/create-final-nats-release/Dockerfile]
 - name: runtime-ci-merge-master-into-develop
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/merge-master-into-develop/Dockerfile]
+    paths: [tasks/merge-master-into-develop/Dockerfile]
 - name: runtime-ci-run-rats
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-rats]
+    paths: [tasks/run-rats]
 - name: runtime-ci-run-cf-release-unit-tests
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-cf-release-unit-tests/Dockerfile]
+    paths: [tasks/run-cf-release-unit-tests/Dockerfile]
 - name: runtime-ci-validate-all-jobs-public
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/validate-all-jobs-public/Dockerfile]
+    paths: [tasks/validate-all-jobs-public/Dockerfile]
 - name: runtime-ci-validate-branch-freshness
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/validate-branch-freshness/Dockerfile]
+    paths: [tasks/validate-branch-freshness/Dockerfile]
 - name: runtime-ci-bind-elb-to-r53
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/bind-elb-to-r53/Dockerfile]
+    paths: [tasks/bind-elb-to-r53/Dockerfile]
 - name: runtime-ci-unbind-elb-from-r53
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/unbind-elb-from-r53/Dockerfile]
+    paths: [tasks/unbind-elb-from-r53/Dockerfile]
 - name: runtime-ci-recreate-datadog-dashboards
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths:
-    - scripts/ci/recreate-datadog-dashboards/Dockerfile
-    - scripts/ci/recreate-datadog-dashboards/Gemfile.lock
+    - tasks/recreate-datadog-dashboards/Dockerfile
+    - tasks/recreate-datadog-dashboards/Gemfile.lock
 - name: runtime-ci-commit-generated-manifest
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/commit-generated-manifest/Dockerfile]
+    paths: [tasks/commit-generated-manifest/Dockerfile]
 
 - name: cats-concourse-task
   type: git
@@ -460,7 +460,7 @@ jobs:
         trigger: true
     - put: verify-every-task-has-docker-build-pipeline-image
       params:
-        build: runtime-ci-verify-every-task-has-docker-build/scripts/ci/verify-every-task-has-docker-build
+        build: runtime-ci-verify-every-task-has-docker-build/tasks/verify-every-task-has-docker-build
         push: true
 - name: build-verify-every-task-is-used-in-a-pipeline-docker-image
   public: true
@@ -478,7 +478,7 @@ jobs:
         trigger: true
     - put: verify-every-task-is-used-in-a-pipeline-pipeline-image
       params:
-        build: runtime-ci-verify-every-task-is-used-in-a-pipeline/scripts/ci/verify-every-task-is-used-in-a-pipeline
+        build: runtime-ci-verify-every-task-is-used-in-a-pipeline/tasks/verify-every-task-is-used-in-a-pipeline
         push: true
 - name: build-verify-every-task-has-correct-docker-image-docker-image
   public: true
@@ -496,7 +496,7 @@ jobs:
         trigger: true
     - put: verify-every-task-has-pipeline-image
       params:
-        build: runtime-ci-verify-every-task-has-correct-docker-image/scripts/ci/verify-every-task-has-correct-docker-image
+        build: runtime-ci-verify-every-task-has-correct-docker-image/tasks/verify-every-task-has-correct-docker-image
         push: true
 
 - name: build-cf-deployment-concourse-tasks-docker-image
@@ -560,7 +560,7 @@ jobs:
         trigger: true
     - put: bosh-upload-stemcell-pipeline-image
       params:
-        build: runtime-ci-bosh-upload-stemcell/scripts/ci/bosh-upload-stemcell
+        build: runtime-ci-bosh-upload-stemcell/tasks/bosh-upload-stemcell
         push: true
 - name: build-create-diego-manifest-docker-image
   public: true
@@ -578,7 +578,7 @@ jobs:
         trigger: true
     - put: create-diego-manifest-pipeline-image
       params:
-        build: runtime-ci-create-diego-manifest/scripts/ci/create-diego-manifest
+        build: runtime-ci-create-diego-manifest/tasks/create-diego-manifest
         push: true
 - name: build-wait-for-endpoint-docker-image
   public: true
@@ -596,7 +596,7 @@ jobs:
         trigger: true
     - put: wait-for-endpoint-pipeline-image
       params:
-        build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
+        build: runtime-ci-wait-for-endpoint/tasks/wait-for-endpoint
         push: true
 - name: build-generate-release-manifest-docker-image
   public: true
@@ -614,7 +614,7 @@ jobs:
         trigger: true
     - put: generate-release-manifest-pipeline-image
       params:
-        build: runtime-ci-generate-release-manifest/scripts/ci/generate-release-manifest
+        build: runtime-ci-generate-release-manifest/tasks/generate-release-manifest
         push: true
 - name: build-create-final-release-docker-image
   public: true
@@ -632,7 +632,7 @@ jobs:
         trigger: true
     - put: create-final-release-pipeline-image
       params:
-        build: runtime-ci-create-final-release/scripts/ci/create-final-nats-release
+        build: runtime-ci-create-final-release/tasks/create-final-nats-release
         push: true
 - name: build-merge-master-into-develop-docker-image
   public: true
@@ -650,7 +650,7 @@ jobs:
         trigger: true
     - put: merge-master-into-develop-pipeline-image
       params:
-        build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
+        build: runtime-ci-merge-master-into-develop/tasks/merge-master-into-develop
         push: true
 - name: build-run-rats-docker-image
   public: true
@@ -670,7 +670,7 @@ jobs:
         trigger: true
     - put: run-rats-pipeline-image
       params:
-        build: runtime-ci-run-rats/scripts/ci/run-rats
+        build: runtime-ci-run-rats/tasks/run-rats
         push: true
 
 - name: build-run-cf-release-unit-tests-docker-image
@@ -689,7 +689,7 @@ jobs:
         trigger: true
     - put: run-cf-release-unit-tests-pipeline-image
       params:
-        build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
+        build: runtime-ci-run-cf-release-unit-tests/tasks/run-cf-release-unit-tests
         push: true
 - name: build-validate-all-jobs-public-docker-image
   public: true
@@ -707,7 +707,7 @@ jobs:
         trigger: true
     - put: validate-all-jobs-public-pipeline-image
       params:
-        build: runtime-ci-validate-all-jobs-public/scripts/ci/validate-all-jobs-public
+        build: runtime-ci-validate-all-jobs-public/tasks/validate-all-jobs-public
         push: true
 - name: build-validate-branch-freshness-docker-image
   public: true
@@ -725,7 +725,7 @@ jobs:
         trigger: true
     - put: validate-branch-freshness-pipeline-image
       params:
-        build: runtime-ci-validate-branch-freshness/scripts/ci/validate-branch-freshness
+        build: runtime-ci-validate-branch-freshness/tasks/validate-branch-freshness
         push: true
 - name: build-bind-elb-to-r53-docker-image
   public: true
@@ -743,7 +743,7 @@ jobs:
         trigger: true
     - put: bind-elb-to-r53-pipeline-image
       params:
-        build: runtime-ci-bind-elb-to-r53/scripts/ci/bind-elb-to-r53
+        build: runtime-ci-bind-elb-to-r53/tasks/bind-elb-to-r53
         push: true
 - name: build-unbind-elb-from-r53-docker-image
   public: true
@@ -761,7 +761,7 @@ jobs:
         trigger: true
     - put: unbind-elb-from-r53-pipeline-image
       params:
-        build: runtime-ci-unbind-elb-from-r53/scripts/ci/unbind-elb-from-r53
+        build: runtime-ci-unbind-elb-from-r53/tasks/unbind-elb-from-r53
         push: true
 
 - name: build-recreate-datadog-dashboards-docker-image
@@ -780,7 +780,7 @@ jobs:
         trigger: true
     - put: recreate-datadog-dashboards-pipeline-image
       params:
-        build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
+        build: runtime-ci-recreate-datadog-dashboards/tasks/recreate-datadog-dashboards
         push: true
 
 - name: build-commit-generated-manifest-docker-image
@@ -799,7 +799,7 @@ jobs:
         trigger: true
     - put: commit-generated-manifest-pipeline-image
       params:
-        build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
+        build: runtime-ci-commit-generated-manifest/tasks/commit-generated-manifest
         push: true
 
 - name: build-build-metadata-resource-docker-image
@@ -836,10 +836,10 @@ jobs:
         trigger: true
     - put: create-version-json-pipeline-image
       params:
-        build: runtime-ci-create-version-json/scripts/ci/create-version-json
+        build: runtime-ci-create-version-json/tasks/create-version-json
         push: true
     - task: create-version-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: cf-cli
         input-version-json: cf-cli
@@ -888,7 +888,7 @@ jobs:
       - get: terraform-github-release
         trigger: true
     - task: create-bosh-cli-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: bosh-cli-github-release
         # This is an example of that chaining we spoke of earlier
@@ -896,7 +896,7 @@ jobs:
       params:
         key: bosh_cli_version
     - task: create-bbl-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: bbl-github-release
         # This is an example of that chaining we spoke of earlier
@@ -904,7 +904,7 @@ jobs:
       params:
         key: bbl_version
     - task: create-terraform-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: terraform-github-release
         # This is an example of that chaining we spoke of earlier

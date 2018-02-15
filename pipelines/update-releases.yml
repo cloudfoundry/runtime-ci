@@ -434,7 +434,7 @@ jobs:
       OPS_FILES: "base-ops-files/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -492,7 +492,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -564,7 +564,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -620,7 +620,7 @@ jobs:
       OPS_FILES: enable-service-discovery.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -689,7 +689,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -759,7 +759,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -830,7 +830,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -900,7 +900,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -970,7 +970,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1040,7 +1040,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1100,7 +1100,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1170,7 +1170,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1230,7 +1230,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1290,7 +1290,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1360,7 +1360,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1431,7 +1431,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1502,7 +1502,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1562,7 +1562,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1622,7 +1622,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1678,7 +1678,7 @@ jobs:
       OPS_FILES: "use-postgres.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -1736,7 +1736,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1807,7 +1807,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1867,7 +1867,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1927,7 +1927,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -1997,7 +1997,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -2068,7 +2068,7 @@ jobs:
       file: exported-release/*.tgz
       predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -2099,7 +2099,7 @@ jobs:
     input_mapping:
       ops-files: cf-deployment-develop
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-stemcell-ops-file
@@ -2559,7 +2559,7 @@ jobs:
         file: exported-release-uaa/*.tgz
         predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
@@ -2607,7 +2607,7 @@ jobs:
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
   - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell
       env-repo: greengrass-env-director-state
@@ -2625,7 +2625,7 @@ jobs:
       OPS_FILES: "windows-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -2673,7 +2673,7 @@ jobs:
       original-ops-file: cf-deployment-develop
       windows2016fs-release: windows2016fs-online-release
   - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell-2016
       env-repo: greengrass-env-director-state
@@ -2691,7 +2691,7 @@ jobs:
       OPS_FILES: "windows2016-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -2726,7 +2726,7 @@ jobs:
     input_mapping:
       original-ops-file: cf-deployment-develop
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -2787,7 +2787,7 @@ jobs:
       OPS_FILES: "enable-backup-restore.yml base-ops-files/secure-service-credentials.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -2841,7 +2841,7 @@ jobs:
       OPS_FILES: "use-bosh-dns.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
@@ -2897,7 +2897,7 @@ jobs:
       VARS_FILES: |
         operations/addons/example-vars-files/vars-enable-component-syslog.yml
   - task: commit-generated-manifest-and-ops
-    file: runtime-ci/scripts/ci/commit-generated-manifest/task.yml
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file

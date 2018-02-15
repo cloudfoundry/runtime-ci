@@ -597,7 +597,7 @@ jobs:
         repository: updated-env-repo
         rebase: true
   - task: bind-elb-to-r53
-    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
+    file: runtime-ci/tasks/bind-elb-to-r53/task.yml
     input_mapping:
       env-repo: updated-env-repo
     params:
@@ -1025,7 +1025,7 @@ jobs:
     input_mapping:
       env-repo: hermione-env-director-state
   - task: unbind-elb-from-r53
-    file: runtime-ci/scripts/ci/unbind-elb-from-r53/task.yml
+    file: runtime-ci/tasks/unbind-elb-from-r53/task.yml
     input_mapping:
       env-repo: hermione-env-director-state
       AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
