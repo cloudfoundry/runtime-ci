@@ -10,6 +10,7 @@ groups:
   - build-relint-base-docker-image
   - build-bosh-cli-docker-image
   - build-bosh-and-spiff-docker-image
+  - build-run-rats-docker-image
 - name: build-docker-images
   jobs:
   - trigger-all-image-builds
@@ -17,7 +18,6 @@ groups:
   - build-generate-release-manifest-docker-image
   - build-create-final-release-docker-image
   - build-merge-master-into-develop-docker-image
-  - build-run-rats-docker-image
   - build-run-cf-release-unit-tests-docker-image
   - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
@@ -145,12 +145,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/merge-master-into-develop/Dockerfile]
-- name: runtime-ci-run-rats
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-rats]
 - name: runtime-ci-run-cf-release-unit-tests
   type: git
   source:
@@ -223,6 +217,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-and-spiff/Dockerfile]
+
+- name: runtime-ci-run-rats
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths: [dockerfiles/run-rats/Dockerfile]
 
 - name: cf-cli
   type: github-release
@@ -652,27 +653,6 @@ jobs:
       params:
         build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
         push: true
-- name: build-run-rats-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-rats
-        trigger: true
-      - get: cf-cli
-        trigger: true
-    - put: run-rats-pipeline-image
-      params:
-        build: runtime-ci-run-rats/scripts/ci/run-rats
-        push: true
-
 - name: build-run-cf-release-unit-tests-docker-image
   public: true
   build_logs_to_retain: 100
@@ -934,4 +914,20 @@ jobs:
     - put: bosh-and-spiff-image
       params:
         build: runtime-ci-bosh-and-spiff/dockerfiles/bosh-and-spiff/
+        push: true
+
+- name: build-run-rats-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: weekly
+        trigger: true
+      - get: runtime-ci-run-rats
+        trigger: true
+    - put: run-rats-pipeline-image
+      params:
+        build: runtime-ci-run-rats/dockerfiles/run-rats
         push: true
