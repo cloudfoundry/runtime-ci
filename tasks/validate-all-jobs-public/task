@@ -8,5 +8,5 @@ pushd "${RUNTIME_CI_DIR}" > /dev/null
   bundle install
   bundle exec rspec \
     --color \
-    "scripts/ci/validate-all-jobs-public/validate_jobs_public.rb"
+    "tasks/validate-all-jobs-public/validate_jobs_public.rb"
 popd > /dev/null

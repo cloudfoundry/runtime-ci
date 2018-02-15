@@ -19,7 +19,6 @@ groups:
   - build-create-final-release-docker-image
   - build-merge-master-into-develop-docker-image
   - build-run-cf-release-unit-tests-docker-image
-  - build-validate-all-jobs-public-docker-image
   - build-validate-branch-freshness-docker-image
   - build-create-diego-manifest-docker-image
   - build-recreate-datadog-dashboards-docker-image
@@ -120,12 +119,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/run-cf-release-unit-tests/Dockerfile]
-- name: runtime-ci-validate-all-jobs-public
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/validate-all-jobs-public/Dockerfile]
 - name: runtime-ci-validate-branch-freshness
   type: git
   source:
@@ -263,13 +256,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-cf-release-unit-tests
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: validate-all-jobs-public-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/validate-all-jobs-public
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -496,24 +482,6 @@ jobs:
     - put: run-cf-release-unit-tests-pipeline-image
       params:
         build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
-        push: true
-- name: build-validate-all-jobs-public-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-validate-all-jobs-public
-        trigger: true
-    - put: validate-all-jobs-public-pipeline-image
-      params:
-        build: runtime-ci-validate-all-jobs-public/scripts/ci/validate-all-jobs-public
         push: true
 - name: build-validate-branch-freshness-docker-image
   public: true
