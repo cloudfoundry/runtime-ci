@@ -2607,7 +2607,7 @@ jobs:
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
   - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell
       env-repo: greengrass-env-director-state
@@ -2673,7 +2673,7 @@ jobs:
       original-ops-file: cf-deployment-develop
       windows2016fs-release: windows2016fs-online-release
   - task: bosh-upload-windows-stemcell
-    file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell-2016
       env-repo: greengrass-env-director-state
