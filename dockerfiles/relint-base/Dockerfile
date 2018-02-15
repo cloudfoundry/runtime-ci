@@ -11,6 +11,8 @@ RUN \
     curl \
     ack-grep
 
+RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
+
 ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 RUN \
