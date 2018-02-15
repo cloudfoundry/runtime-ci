@@ -2041,7 +2041,7 @@ jobs:
         tags: [dumbledore]
     - task: run-rats
       tags: [dumbledore]
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+      file: runtime-ci/tasks/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: dumbledore-env-integration-configs
@@ -2450,7 +2450,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+      file: runtime-ci/tasks/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
@@ -2482,7 +2482,7 @@ jobs:
       - get: legacy-garden-runc-release
         passed: [ transition-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+      file: runtime-ci/tasks/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: minerva-env-integration-configs
@@ -2506,7 +2506,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
     - task: run-rats
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+      file: runtime-ci/tasks/run-rats/task.yml
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
@@ -2533,7 +2533,7 @@ jobs:
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: hermione-env-integration-configs
-      file: runtime-ci/scripts/ci/run-rats/task.yml
+      file: runtime-ci/tasks/run-rats/task.yml
 
 - name: fresh-delete-deployment
   serial: true
