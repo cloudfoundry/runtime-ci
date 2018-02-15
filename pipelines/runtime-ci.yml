@@ -2,8 +2,6 @@ groups:
 - name: runtime-ci
   jobs:
   - all-jobs-public
-  - verify-every-task-has-correct-docker-image
-  - verify-every-task-has-docker-build
   - verify-every-task-is-used-in-a-pipeline
 
 resources:
@@ -23,26 +21,6 @@ jobs:
       trigger: true
   - task: validate-all-jobs-public
     file: runtime-ci/scripts/ci/validate-all-jobs-public/task.yml
-
-- name: verify-every-task-has-correct-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-      trigger: true
-  - task: verify-every-task-has-correct-docker-image
-    file: runtime-ci/scripts/ci/verify-every-task-has-correct-docker-image/task.yml
-
-- name: verify-every-task-has-docker-build
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-      trigger: true
-  - task: verify-every-task-has-docker-build
-    file: runtime-ci/scripts/ci/verify-every-task-has-docker-build/task.yml
 
 - name: verify-every-task-is-used-in-a-pipeline
   public: true
