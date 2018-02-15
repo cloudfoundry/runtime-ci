@@ -26,7 +26,6 @@ groups:
   - build-verify-every-task-has-docker-build-docker-image
   - build-verify-every-task-is-used-in-a-pipeline-docker-image
   - build-recreate-datadog-dashboards-docker-image
-  - build-commit-generated-manifest-docker-image
   - build-build-metadata-resource-docker-image
 
 resources:
@@ -162,13 +161,6 @@ resources:
     paths:
     - scripts/ci/recreate-datadog-dashboards/Dockerfile
     - scripts/ci/recreate-datadog-dashboards/Gemfile.lock
-- name: runtime-ci-commit-generated-manifest
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/commit-generated-manifest/Dockerfile]
-
 - name: cats-concourse-task
   type: git
   source:
@@ -335,14 +327,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/recreate-datadog-dashboards
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: commit-generated-manifest-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/commit-generated-manifest
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -665,25 +649,6 @@ jobs:
     - put: recreate-datadog-dashboards-pipeline-image
       params:
         build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
-        push: true
-
-- name: build-commit-generated-manifest-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-commit-generated-manifest
-        trigger: true
-    - put: commit-generated-manifest-pipeline-image
-      params:
-        build: runtime-ci-commit-generated-manifest/scripts/ci/commit-generated-manifest
         push: true
 
 - name: build-build-metadata-resource-docker-image
