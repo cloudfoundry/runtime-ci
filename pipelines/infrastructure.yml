@@ -596,14 +596,6 @@ jobs:
       params:
         repository: updated-env-repo
         rebase: true
-  - task: bind-elb-to-r53
-    file: runtime-ci/scripts/ci/bind-elb-to-r53/task.yml
-    input_mapping:
-      env-repo: updated-env-repo
-    params:
-      AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      DOMAIN: hermione.cf-app.com
   - put: upgrade-pool
     params: {release: upgrade-pool}
 
