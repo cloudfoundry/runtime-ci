@@ -869,12 +869,16 @@ jobs:
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
+        stemcells:
+        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
     - put: legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
+        stemcells:
+        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
@@ -946,22 +950,19 @@ jobs:
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
-    - task: bosh-upload-stemcell
-      file: runtime-ci/scripts/ci/bosh-upload-stemcell/task.yml
-      input_mapping:
-        stemcell: aws-stemcell
-        env-repo: dumbledore-env-director-state
-      params:
-        STEMCELL_NAME: '*.tgz'
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
+        stemcells:
+        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
     - put: legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
+        stemcells:
+        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
