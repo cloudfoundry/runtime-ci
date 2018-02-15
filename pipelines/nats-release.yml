@@ -343,7 +343,7 @@ jobs:
       trigger: true
     - get: nats-release-master
   - task: create-final-release
-    file: runtime-ci/scripts/ci/create-final-release/task.yml
+    file: runtime-ci/scripts/ci/create-final-nats-release/task.yml
     input_mapping:
       release-repo-master: nats-release-master
       release-repo: nats-release
