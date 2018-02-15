@@ -20,7 +20,7 @@ jobs:
     - get: runtime-ci
       trigger: true
   - task: validate-all-jobs-public
-    file: runtime-ci/scripts/ci/validate-all-jobs-public/task.yml
+    file: runtime-ci/tasks/validate-all-jobs-public/task.yml
 
 - name: verify-every-task-is-used-in-a-pipeline
   public: true

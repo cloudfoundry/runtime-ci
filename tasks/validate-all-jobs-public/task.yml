@@ -4,13 +4,13 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/validate-all-jobs-public
+    repository: relintdockerhubpushbot/relint-base
 
 inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/scripts/ci/validate-all-jobs-public/task
+  path: runtime-ci/tasks/validate-all-jobs-public/task
 
 params:
   RUNTIME_CI_DIR: runtime-ci
