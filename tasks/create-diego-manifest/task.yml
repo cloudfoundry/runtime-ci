@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-diego-manifest
+    repository: relintdockerhubpushbot/bosh-and-spiff
 
 inputs:
 - name: diego-release
@@ -30,4 +30,4 @@ params:
   USE_LOCKET: false
 
 run:
-  path: runtime-ci/scripts/ci/create-diego-manifest/task
+  path: runtime-ci/tasks/create-diego-manifest/task

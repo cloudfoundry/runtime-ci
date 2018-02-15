@@ -842,7 +842,7 @@ jobs:
       output_mapping:
         manifest: cf-manifest
     - task: create-diego-manifest
-      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+      file: runtime-ci/tasks/create-diego-manifest/task.yml
       input_mapping:
         diego-release: github-diego-release
         iaas-settings: minerva-env-stubs-and-vars
@@ -925,7 +925,7 @@ jobs:
       output_mapping:
         updated-manifest: cf-manifest
     - task: create-diego-manifest
-      file: runtime-ci/scripts/ci/create-diego-manifest/task.yml
+      file: runtime-ci/tasks/create-diego-manifest/task.yml
       input_mapping:
         diego-release: github-diego-release
         iaas-settings: dumbledore-env-stubs-and-vars
