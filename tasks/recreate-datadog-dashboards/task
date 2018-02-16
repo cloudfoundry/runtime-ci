@@ -1,5 +1,7 @@
 #!/bin/bash
 set -exu
 
-BUNDLE_GEMFILE=runtime-ci/tasks/recreate-datadog-dashboards/Gemfile \
-  bundle exec ruby runtime-ci/tasks/recreate-datadog-dashboards/recreate_datadog_dashboards.rb
+export BUNDLE_GEMFILE=runtime-ci/tasks/recreate-datadog-dashboards/Gemfile
+
+bundle install
+bundle exec ruby runtime-ci/tasks/recreate-datadog-dashboards/recreate_datadog_dashboards.rb
