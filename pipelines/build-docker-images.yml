@@ -15,8 +15,6 @@ groups:
   jobs:
   - trigger-all-image-builds
   - build-wait-for-endpoint-docker-image
-  - build-create-final-release-docker-image
-  - build-merge-master-into-develop-docker-image
   - build-run-cf-release-unit-tests-docker-image
   - build-validate-branch-freshness-docker-image
   - build-recreate-datadog-dashboards-docker-image
@@ -80,18 +78,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/wait-for-endpoint/Dockerfile]
-- name: runtime-ci-create-final-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-final-nats-release/Dockerfile]
-- name: runtime-ci-merge-master-into-develop
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/merge-master-into-develop/Dockerfile]
 - name: runtime-ci-run-cf-release-unit-tests
   type: git
   source:
@@ -193,20 +179,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/wait-for-endpoint
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: create-final-release-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-final-release
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: merge-master-into-develop-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/merge-master-into-develop
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -348,42 +320,6 @@ jobs:
     - put: wait-for-endpoint-pipeline-image
       params:
         build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
-        push: true
-- name: build-create-final-release-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-create-final-release
-        trigger: true
-    - put: create-final-release-pipeline-image
-      params:
-        build: runtime-ci-create-final-release/scripts/ci/create-final-nats-release
-        push: true
-- name: build-merge-master-into-develop-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-merge-master-into-develop
-        trigger: true
-    - put: merge-master-into-develop-pipeline-image
-      params:
-        build: runtime-ci-merge-master-into-develop/scripts/ci/merge-master-into-develop
         push: true
 - name: build-run-cf-release-unit-tests-docker-image
   public: true
