@@ -15,7 +15,6 @@ groups:
   jobs:
   - trigger-all-image-builds
   - build-wait-for-endpoint-docker-image
-  - build-run-cf-release-unit-tests-docker-image
   - build-validate-branch-freshness-docker-image
   - build-recreate-datadog-dashboards-docker-image
 
@@ -70,12 +69,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [scripts/ci/wait-for-endpoint/Dockerfile]
-- name: runtime-ci-run-cf-release-unit-tests
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/run-cf-release-unit-tests/Dockerfile]
 - name: runtime-ci-validate-branch-freshness
   type: git
   source:
@@ -178,13 +171,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-rats
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-cf-release-unit-tests-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-cf-release-unit-tests
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -304,24 +290,6 @@ jobs:
     - put: wait-for-endpoint-pipeline-image
       params:
         build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
-        push: true
-- name: build-run-cf-release-unit-tests-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-run-cf-release-unit-tests
-        trigger: true
-    - put: run-cf-release-unit-tests-pipeline-image
-      params:
-        build: runtime-ci-run-cf-release-unit-tests/scripts/ci/run-cf-release-unit-tests
         push: true
 - name: build-validate-branch-freshness-docker-image
   public: true
