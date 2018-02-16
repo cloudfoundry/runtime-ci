@@ -14,7 +14,6 @@ groups:
 - name: build-docker-images
   jobs:
   - trigger-all-image-builds
-  - build-wait-for-endpoint-docker-image
   - build-recreate-datadog-dashboards-docker-image
 
 resources:
@@ -29,13 +28,6 @@ resources:
   source:
     start: 7:00 -0700
     stop: 7:30 -0700
-    interval: 168h
-
-- name: weekly-1
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
     interval: 168h
 
 - name: weekly-2
@@ -62,12 +54,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/uptimer.git
-- name: runtime-ci-wait-for-endpoint
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/wait-for-endpoint/Dockerfile]
 - name: runtime-ci-recreate-datadog-dashboards
   type: git
   source:
@@ -150,13 +136,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: wait-for-endpoint-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/wait-for-endpoint
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -258,25 +237,6 @@ jobs:
         TRACKER_STORY_STATE: delivered
         TRACKER_API_TOKEN: {{cf_mega_api_token}}
         DESCRIPTION_FILE: version.json
-
-- name: build-wait-for-endpoint-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-wait-for-endpoint
-        trigger: true
-    - put: wait-for-endpoint-pipeline-image
-      params:
-        build: runtime-ci-wait-for-endpoint/scripts/ci/wait-for-endpoint
-        push: true
 
 - name: build-recreate-datadog-dashboards-docker-image
   public: true

@@ -1843,13 +1843,6 @@ jobs:
         params:
           repository: updated-integration-configs
           rebase: true
-    - task: ensure-api-healthy
-      file: runtime-ci/scripts/ci/wait-for-endpoint/task.yml
-      params:
-        ENDPOINT: api.snitch.cf-app.com
-        DD_API_KEY: {{datadog_api_key}}
-        METRIC_NAME: time-to-healthy-router
-        ENV_NAME: snitch
 
 - name: transition-enable-docker-and-tasks
   serial: true
