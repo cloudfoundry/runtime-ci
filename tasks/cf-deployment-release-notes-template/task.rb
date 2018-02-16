@@ -4,15 +4,12 @@ require 'hashdiff'
 require 'yaml'
 require_relative './release_changes.rb'
 require_relative './renderer.rb'
+require_relative './ops_file_finder.rb'
 
 updates = ReleaseUpdates.load_from_files('cf-deployment.yml')
 
-opsfile_list = Dir.glob(File.join("cf-deployment-release-candidate", "operations", "*.yml"))
-opsfile_list.select! { |opsfile| File.file?(opsfile) }
-opsfile_list.map! { |opsfile| opsfile.gsub!('cf-deployment-release-candidate/', '') }
-
-opsfile_list.each do |opsfile|
-  opsfile_updates = ReleaseUpdates.load_from_files(opsfile, opsfile: true)
+OpsFileFinder.find_ops_files('cf-deployment-release-candidate').each do |opsfile|
+  opsfile_updates = ReleaseUpdates.load_from_files("operations/#{opsfile}", opsfile: true)
   updates.merge!(opsfile_updates)
 end
 
