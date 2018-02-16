@@ -519,7 +519,7 @@ jobs:
       trigger: true
     - get: runtime-ci
   - task: validate-branch-freshness
-    file: runtime-ci/scripts/ci/validate-branch-freshness/task.yml
+    file: runtime-ci/tasks/validate-branch-freshness/task.yml
     input_mapping:
       repo: cf-deployment-all-branches
 
