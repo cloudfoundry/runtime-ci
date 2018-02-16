@@ -1,5 +1,0 @@
-#!/bin/bash
-set -exu
-
-BUNDLE_GEMFILE=runtime-ci/scripts/ci/recreate-datadog-dashboards/Gemfile \
-  bundle exec ruby runtime-ci/scripts/ci/recreate-datadog-dashboards/recreate_datadog_dashboards.rb

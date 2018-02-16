@@ -4,7 +4,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/recreate-datadog-dashboards
+    repository: ruby
+    tag: 2.3-slim
 
 inputs:
 - name: runtime-ci
@@ -12,7 +13,7 @@ inputs:
 - name: datadog-loggregator-alert-template
 
 run:
-  path: runtime-ci/scripts/ci/recreate-datadog-dashboards/task
+  path: runtime-ci/tasks/recreate-datadog-dashboards/task
 
 params:
   ENVIRONMENT_DISPLAY_NAME:
