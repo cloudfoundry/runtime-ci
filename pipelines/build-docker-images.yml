@@ -18,7 +18,6 @@ groups:
   - build-run-cf-release-unit-tests-docker-image
   - build-validate-branch-freshness-docker-image
   - build-recreate-datadog-dashboards-docker-image
-  - build-build-metadata-resource-docker-image
 
 resources:
 - name: runtime-ci
@@ -52,13 +51,6 @@ resources:
   type: time
   source:
     interval: 2h
-
-- name: runtime-ci-build-metadata-resource
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [resources/build-metadata-resource/*]
 
 - name: cf-deployment-concourse-tasks
   type: git
@@ -207,14 +199,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/recreate-datadog-dashboards
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: build-metadata-resource-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/build-metadata-resource
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -375,24 +359,6 @@ jobs:
     - put: recreate-datadog-dashboards-pipeline-image
       params:
         build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
-        push: true
-
-- name: build-build-metadata-resource-docker-image
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-1
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-build-metadata-resource
-        trigger: true
-    - put: build-metadata-resource-pipeline-image
-      params:
-        build: runtime-ci-build-metadata-resource/resources/build-metadata-resource
         push: true
 
 - name: build-cats-concourse-task-docker-image
