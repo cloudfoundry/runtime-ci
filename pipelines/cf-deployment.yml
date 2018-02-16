@@ -831,6 +831,7 @@ jobs:
       - get: legacy-cf-release
       - get: aws-stemcell
       - get: cf-deployment-transition
+      - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
       file: runtime-ci/tasks/generate-release-manifest/task.yml
       input_mapping:
@@ -861,19 +862,22 @@ jobs:
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
         env-repo: minerva-env-director-state
+    - task: upload-stemcell
+      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: aws-stemcell
+        env-repo: minerva-env-director-state
+      params:
+        STEMCELL_NAME: stemcell.tgz
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
-        stemcells:
-        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
     - put: legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
-        stemcells:
-        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
@@ -945,19 +949,22 @@ jobs:
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
         env-repo: dumbledore-env-director-state
+    - task: upload-stemcell
+      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: aws-stemcell
+        env-repo: dumbledore-env-director-state
+      params:
+        STEMCELL_NAME: stemcell.tgz
     - put: legacy-cf-bosh-deployment
       params:
         manifest: cf-manifest/deployment.yml
-        stemcells:
-        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-cf-release/release.tgz
         source_file: dynamic-bosh-source/source_file.json
     - put: legacy-diego-bosh-deployment
       params:
         manifest: diego-manifest/diego-deployment.yml
-        stemcells:
-        - aws-stemcell/stemcell.tgz
         releases:
         - legacy-diego-release/release.tgz
         - legacy-garden-runc-release/release.tgz
