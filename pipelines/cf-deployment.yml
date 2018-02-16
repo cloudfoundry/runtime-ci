@@ -832,7 +832,7 @@ jobs:
       - get: aws-stemcell
       - get: cf-deployment-transition
     - task: generate-release-manifest-cf
-      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
+      file: runtime-ci/tasks/generate-release-manifest/task.yml
       input_mapping:
         release-repo: cf-release-master
         stubs-repo: minerva-env-stubs-and-vars
@@ -913,7 +913,7 @@ jobs:
       - get: cf-deployment-transition
       - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
-      file: runtime-ci/scripts/ci/generate-release-manifest/task.yml
+      file: runtime-ci/tasks/generate-release-manifest/task.yml
       input_mapping:
         release-repo: cf-release-master
         stubs-repo: dumbledore-env-stubs-and-vars

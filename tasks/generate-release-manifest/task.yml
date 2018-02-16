@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/generate-release-manifest
+    repository: relintdockerhubpushbot/bosh-and-spiff
 
 inputs:
 - name: release-repo
@@ -15,7 +15,7 @@ outputs:
 - name: manifest
 
 run:
-  path: runtime-ci/scripts/ci/generate-release-manifest/task
+  path: runtime-ci/tasks/generate-release-manifest/task
 
 params:
   INFRASTRUCTURE:
