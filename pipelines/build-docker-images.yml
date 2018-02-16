@@ -11,10 +11,6 @@ groups:
   - build-bosh-cli-docker-image
   - build-bosh-and-spiff-docker-image
   - build-run-rats-docker-image
-- name: build-docker-images
-  jobs:
-  - trigger-all-image-builds
-  - build-recreate-datadog-dashboards-docker-image
 
 resources:
 - name: runtime-ci
@@ -30,18 +26,6 @@ resources:
     stop: 7:30 -0700
     interval: 168h
 
-- name: weekly-2
-  type: time
-  source:
-    start: 5:00 -0700
-    stop: 5:30 -0700
-    interval: 168h
-
-- name: trigger-resource
-  type: time
-  source:
-    interval: 2h
-
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -54,14 +38,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/uptimer.git
-- name: runtime-ci-recreate-datadog-dashboards
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths:
-    - scripts/ci/recreate-datadog-dashboards/Dockerfile
-    - scripts/ci/recreate-datadog-dashboards/Gemfile.lock
 - name: cats-concourse-task
   type: git
   source:
@@ -146,13 +122,6 @@ resources:
     username: {{dockerhub_username}}
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: recreate-datadog-dashboards-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/recreate-datadog-dashboards
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: cats-concourse-task-pipeline-image
   type: docker-image
@@ -187,13 +156,6 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
-- name: trigger-all-image-builds
-  public: true
-  serial: true
-  build_logs_to_retain: 100
-  plan:
-  - get: trigger-resource
-
 - name: build-cf-deployment-concourse-tasks-docker-image
   public: true
   build_logs_to_retain: 100
@@ -237,25 +199,6 @@ jobs:
         TRACKER_STORY_STATE: delivered
         TRACKER_API_TOKEN: {{cf_mega_api_token}}
         DESCRIPTION_FILE: version.json
-
-- name: build-recreate-datadog-dashboards-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly-2
-        trigger: true
-      - get: trigger-resource
-        trigger: true
-        passed: [trigger-all-image-builds]
-      - get: runtime-ci-recreate-datadog-dashboards
-        trigger: true
-    - put: recreate-datadog-dashboards-pipeline-image
-      params:
-        build: runtime-ci-recreate-datadog-dashboards/scripts/ci/recreate-datadog-dashboards
-        push: true
 
 - name: build-cats-concourse-task-docker-image
   public: true
