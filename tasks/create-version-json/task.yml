@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/create-version-json
+    repository: relintdockerhubpushbot/relint-base
 
 inputs:
 - name: runtime-ci
@@ -15,7 +15,7 @@ outputs:
 - name: version-json
 
 run:
-  path: runtime-ci/scripts/ci/create-version-json/task
+  path: runtime-ci/tasks/create-version-json/task
 
 params:
   key: version

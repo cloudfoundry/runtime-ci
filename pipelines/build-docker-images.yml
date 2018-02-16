@@ -56,13 +56,6 @@ resources:
   source:
     interval: 2h
 
-- name: runtime-ci-create-version-json
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [scripts/ci/create-version-json/Dockerfile]
-
 - name: runtime-ci-build-metadata-resource
   type: git
   source:
@@ -276,14 +269,6 @@ resources:
     password: {{dockerhub_password}}
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: create-version-json-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/create-version-json
-    username: {{dockerhub_username}}
-    password: {{dockerhub_password}}
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
 - name: relint-base-image
   type: docker-image
   source:
@@ -330,7 +315,6 @@ jobs:
         trigger: true
       - get: cf-deployment-concourse-tasks
         trigger: true
-      - get: runtime-ci-create-version-json
       - get: terraform-github-release
         trigger: true
       - get: bbl-github-release
@@ -514,19 +498,14 @@ jobs:
   - do:
     - aggregate:
       - get: runtime-ci
-      - get: runtime-ci-create-version-json
       - get: weekly
         trigger: true
       - get: cats-concourse-task
         trigger: true
       - get: cf-cli
         trigger: true
-    - put: create-version-json-pipeline-image
-      params:
-        build: runtime-ci-create-version-json/scripts/ci/create-version-json
-        push: true
     - task: create-version-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: cf-cli
         input-version-json: cf-cli
@@ -575,7 +554,7 @@ jobs:
       - get: terraform-github-release
         trigger: true
     - task: create-bosh-cli-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: bosh-cli-github-release
         # This is an example of that chaining we spoke of earlier
@@ -583,7 +562,7 @@ jobs:
       params:
         key: bosh_cli_version
     - task: create-bbl-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: bbl-github-release
         # This is an example of that chaining we spoke of earlier
@@ -591,7 +570,7 @@ jobs:
       params:
         key: bbl_version
     - task: create-terraform-json
-      file: runtime-ci/scripts/ci/create-version-json/task.yml
+      file: runtime-ci/tasks/create-version-json/task.yml
       input_mapping:
         version: terraform-github-release
         # This is an example of that chaining we spoke of earlier
