@@ -4,14 +4,6 @@ set -u
 
 pushd runtime-ci >> /dev/null
   FAIL=false
-  for task_file in scripts/ci/*/task.yml; do
-    ack "$task_file" pipelines >> /dev/null
-    EXIT_STATUS=$?
-    if [[ $EXIT_STATUS -ne 0 ]]; then
-      FAIL=true
-      echo "$task_file is not used in any pipeline"
-    fi
-  done
   for task_file in tasks/*/task.yml; do
     ack "$task_file" pipelines >> /dev/null
     EXIT_STATUS=$?
