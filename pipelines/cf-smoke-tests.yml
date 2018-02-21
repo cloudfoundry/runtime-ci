@@ -8,12 +8,22 @@ groups:
   - create-final-release
 
 resources:
+# Weekly Trigger
+- name: weekly-trigger
+  type: time
+  source:
+    start: 3:00
+    stop: 3:30
+    location: America/Los_Angeles
+    interval: 168h
+
 # Concourse Tasks
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
 - name: runtime-ci
   type: git
   source:
@@ -54,6 +64,8 @@ jobs:
   serial_groups: [smoke_tests]
   public: true
   plan:
+  - get: weekly-trigger
+    trigger: true
   - aggregate:
     - get: runtime-ci
     - get: cf-smoke-tests-release
@@ -73,6 +85,9 @@ jobs:
   serial_groups: [smoke_tests]
   public: true
   plan:
+  - get: weekly-trigger
+    passed: [deploy-updated-smokes]
+    trigger: true
   - aggregate:
     - get: runtime-ci
     - get: cf-smoke-tests-release
@@ -92,6 +107,9 @@ jobs:
   serial_groups: [smoke_tests]
   public: true
   plan:
+  - get: weekly-trigger
+    passed: [run-smokes-errand]
+    trigger: true
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: cf-smoke-tests-release
