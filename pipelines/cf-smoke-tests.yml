@@ -36,7 +36,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-smoke-tests-release.git
-    private_key: {{cf_smoke_tests_readwrite_deploy_key}}
+    private_key: ((cf_smoke_tests_readwrite_deploy_key))
     ignore_paths:
     - releases/**
     - .final_builds/**
@@ -47,14 +47,14 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
 
 - name: bellatrix-env-vars-store
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - deployment-vars.yml
 
@@ -139,8 +139,8 @@ jobs:
       release-repo: cf-smoke-tests-release
     params:
       RELEASE_NAME: cf-smoke-tests
-      BLOBS_BUCKET_ACCESS_KEY_ID: {{cf_release_blobs_buckets_access_key_id}}
-      BLOBS_BUCKET_SECRET_KEY: {{cf_release_blobs_buckets_secrect_access_key}}
+      BLOBS_BUCKET_ACCESS_KEY_ID: ((cf_release_blobs_buckets_access_key_id))
+      BLOBS_BUCKET_SECRET_KEY: ((cf_release_blobs_buckets_secrect_access_key))
   - put: cf-smoke-tests-release
     params:
       repository: final-release-repo

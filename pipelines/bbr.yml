@@ -28,13 +28,13 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: bbr
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 - name: baba-yaga-env-director-state
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/baba-yaga-env.git
-    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    private_key: ((baba_yaga_env_readwrite_deploy_key))
     paths:
     - bbl-state
     - enable-nfs-test-server.yml
@@ -43,7 +43,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/baba-yaga-env.git
-    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    private_key: ((baba_yaga_env_readwrite_deploy_key))
     paths:
     - integration_config.json
 - name: baba-yaga-env-vars-store
@@ -51,7 +51,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/baba-yaga-env.git
-    private_key: {{baba_yaga_env_readwrite_deploy_key}}
+    private_key: ((baba_yaga_env_readwrite_deploy_key))
     paths:
     - deployment-vars.yml
 - name: cf-deployment-concourse-tasks
@@ -121,8 +121,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: {{baba_yaga_cf_ssl_cert}}
-      BBL_LB_KEY: {{baba_yaga_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((baba_yaga_cf_ssl_cert))
+      BBL_LB_KEY: ((baba_yaga_cf_ssl_cert_private_key))
       LB_DOMAIN: baba-yaga.cf-app.com
       BBL_ENV_NAME: baba-yaga-bbr
     input_mapping:
@@ -155,8 +155,8 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: {{baba_yaga_cf_ssl_cert}}
-        BBL_LB_KEY: {{baba_yaga_cf_ssl_cert_private_key}}
+        BBL_LB_CERT: ((baba_yaga_cf_ssl_cert))
+        BBL_LB_KEY: ((baba_yaga_cf_ssl_cert_private_key))
         LB_DOMAIN: baba-yaga.cf-app.com
         BBL_ENV_NAME: baba-yaga-bbr
       input_mapping:

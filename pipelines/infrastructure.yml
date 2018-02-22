@@ -73,7 +73,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: internal-services-pool
   type: pool
@@ -81,7 +81,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/internal-services
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: lite-pool
   type: pool
@@ -89,7 +89,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/lite
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: ops-pool
   type: pool
@@ -97,7 +97,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/ops
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: stable-pool
   type: pool
@@ -105,7 +105,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/stable
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: transition-pool
   type: pool
@@ -113,7 +113,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/transition
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: upgrade-pool
   type: pool
@@ -121,7 +121,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/upgrade
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 # Code repos
 - name: bosh-deployment
@@ -148,7 +148,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -157,7 +157,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    private_key: ((dumbledore_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -166,14 +166,14 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
-    private_key: {{hagrid_env_readwrite_deploy_key}}
+    private_key: ((hagrid_env_readwrite_deploy_key))
 
 - name: hermione-env-director-state
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - bbl-state
 
@@ -182,7 +182,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: {{luna_env_readwrite_deploy_key}}
+    private_key: ((luna_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -191,7 +191,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: {{minerva_env_readwrite_deploy_key}}
+    private_key: ((minerva_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -200,7 +200,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: {{snitch_env_private_key}}
+    private_key: ((snitch_env_private_key))
     paths:
     - bbl-state
 
@@ -209,7 +209,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
-    private_key: {{trelawney_env_readwrite_deploy_key}}
+    private_key: ((trelawney_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -355,8 +355,8 @@ jobs:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_IAAS: gcp
-      BBL_LB_CERT: {{luna_cf_ssl_cert}}
-      BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((luna_cf_ssl_cert))
+      BBL_LB_KEY: ((luna_cf_ssl_cert_private_key))
       LB_DOMAIN: luna.cf-app.com
     input_mapping:
       env-repo: luna-env-director-state
@@ -386,8 +386,8 @@ jobs:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_IAAS: gcp
-      BBL_LB_CERT: {{hagrid_cf_ssl_cert}}
-      BBL_LB_KEY: {{hagrid_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((hagrid_cf_ssl_cert))
+      BBL_LB_KEY: ((hagrid_cf_ssl_cert_private_key))
       LB_DOMAIN: hagrid.cf-app.com
     input_mapping:
       env-repo: hagrid-env-director-state
@@ -416,8 +416,8 @@ jobs:
       BBL_STATE_DIR: bbl-state
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
       SKIP_LB_CREATION: true
       BBL_ENV_NAME: dumbledore-upgrade
     input_mapping:
@@ -480,8 +480,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
-      BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((trelawney_cf_ssl_cert))
+      BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
       LB_DOMAIN: trelawney.cf-app.com
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
@@ -513,8 +513,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
-      BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
+      BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
     input_mapping:
@@ -545,10 +545,10 @@ jobs:
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
-      BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
-      BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+      BBL_AWS_ACCESS_KEY_ID: ((minerva_aws_access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((minerva_aws_secret_access_key))
+      BBL_LB_CERT: ((minerva_lbs_ssl_cert))
+      BBL_LB_KEY: ((minerva_lbs_ssl_signing_key))
       LB_DOMAIN: minerva.cf-app.com
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
@@ -580,11 +580,11 @@ jobs:
     params:
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-      BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
-      BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-      BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
+      BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+      BBL_LB_CERT: ((hermione_lbs_ssl_cert))
+      BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
+      BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
       OPS_FILES: "local-dns.yml"
@@ -619,8 +619,8 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: {{luna_cf_ssl_cert}}
-        BBL_LB_KEY: {{luna_cf_ssl_cert_private_key}}
+        BBL_LB_CERT: ((luna_cf_ssl_cert))
+        BBL_LB_KEY: ((luna_cf_ssl_cert_private_key))
         LB_DOMAIN: luna.cf-app.com
         BBL_ENV_NAME: luna-fresh
       input_mapping:
@@ -652,8 +652,8 @@ jobs:
         BBL_STATE_DIR: bbl-state
         BBL_IAAS: aws
         BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
-        BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+        BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
+        BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
         SKIP_LB_CREATION: true
         BBL_ENV_NAME: dumbledore-upgrade
       input_mapping:
@@ -718,8 +718,8 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: {{trelawney_cf_ssl_cert}}
-        BBL_LB_KEY: {{trelawney_cf_ssl_cert_private_key}}
+        BBL_LB_CERT: ((trelawney_cf_ssl_cert))
+        BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
         LB_DOMAIN: trelawney.cf-app.com
         BBL_ENV_NAME: trelawney-ops
       input_mapping:
@@ -752,8 +752,8 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: {{bellatrix_cf_ssl_cert}}
-        BBL_LB_KEY: {{bellatrix_cf_ssl_cert_private_key}}
+        BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
+        BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
         LB_DOMAIN: bellatrix.cf-app.com
         BBL_ENV_NAME: bellatrix-stable
       input_mapping:
@@ -785,11 +785,11 @@ jobs:
       params:
         BBL_IAAS: aws
         BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: {{hermione_aws_access_key_id}}
-        BBL_AWS_SECRET_ACCESS_KEY: {{hermione_aws_secret_access_key}}
-        BBL_LB_CERT: {{hermione_lbs_ssl_cert}}
-        BBL_LB_KEY: {{hermione_lbs_ssl_signing_key}}
-        BBL_LB_CERT_CHAIN: {{hermione_lbs_ssl_cert_chain}}
+        BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+        BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+        BBL_LB_CERT: ((hermione_lbs_ssl_cert))
+        BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
+        BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
         BBL_ENV_NAME: hermione-upgrade
         OPS_FILES: "local-dns.yml"
@@ -821,10 +821,10 @@ jobs:
       params:
         BBL_IAAS: aws
         BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: {{minerva_aws_access_key_id}}
-        BBL_AWS_SECRET_ACCESS_KEY: {{minerva_aws_secret_access_key}}
-        BBL_LB_CERT: {{minerva_lbs_ssl_cert}}
-        BBL_LB_KEY: {{minerva_lbs_ssl_signing_key}}
+        BBL_AWS_ACCESS_KEY_ID: ((minerva_aws_access_key_id))
+        BBL_AWS_SECRET_ACCESS_KEY: ((minerva_aws_secret_access_key))
+        BBL_LB_CERT: ((minerva_lbs_ssl_cert))
+        BBL_LB_KEY: ((minerva_lbs_ssl_signing_key))
         LB_DOMAIN: minerva.cf-app.com
         BBL_ENV_NAME: minerva-upgrade
       input_mapping:
@@ -889,8 +889,8 @@ jobs:
       env-repo: dumbledore-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
-      BBL_AWS_ACCESS_KEY_ID: {{dumbledore_aws_access_key_id}}
-      BBL_AWS_SECRET_ACCESS_KEY: {{dumbledore_aws_secret_access_key}}
+      BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
     ensure:
       put: dumbledore-env-director-state
       params:

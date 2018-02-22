@@ -23,18 +23,18 @@ resources:
   - name: cf-deployment-all-branches
     type: pull-request
     source:
-      access_token: {{github_status_bot_repo_access_token}}
+      access_token: ((github_status_bot_repo_access_token))
       repo: cloudfoundry/cf-deployment
   - name: cf-deployment-master
     type: pull-request
     source:
-      access_token: {{github_status_bot_repo_access_token}}
+      access_token: ((github_status_bot_repo_access_token))
       repo: cloudfoundry/cf-deployment
       base: master
   - name: cf-deployment-develop
     type: pull-request
     source:
-      access_token: {{github_status_bot_repo_access_token}}
+      access_token: ((github_status_bot_repo_access_token))
       repo: cloudfoundry/cf-deployment
       base: develop
 
@@ -59,7 +59,7 @@ jobs:
         params:
           path: cf-deployment-master
           status: failure
-          context: {{pr_context}}
+          context: ((pr_context))
           comment: pull-request-comment/comment
   - name: pass-prs-to-cf-deployment-develop
     public: true
@@ -76,7 +76,7 @@ jobs:
         params:
           path: cf-deployment-develop
           status: success
-          context: {{pr_context}}
+          context: ((pr_context))
 
   - name: run-unit-tests-on-all-cf-deployment-prs
     public: true
@@ -93,7 +93,7 @@ jobs:
         params:
           path: cf-deployment-all-branches
           status: pending
-          context: {{unit_tests_context}}
+          context: ((unit_tests_context))
       - task: unit-test-ops-files
         config:
           platform: linux
@@ -118,11 +118,11 @@ jobs:
             params:
               path: cf-deployment-all-branches
               status: failure
-              context: {{unit_tests_context}}
+              context: ((unit_tests_context))
               comment: pull-request-comment/comment
         on_success:
           put: cf-deployment-all-branches
           params:
             path: cf-deployment-all-branches
             status: success
-            context: {{unit_tests_context}}
+            context: ((unit_tests_context))

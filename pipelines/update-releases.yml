@@ -52,7 +52,7 @@ resources:
   source:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
+    private_key: ((cf_deployment_private_key))
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -63,7 +63,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/greengrass-env.git
-    private_key: {{greengrass_env_deploy_key}}
+    private_key: ((greengrass_env_deploy_key))
     paths:
     - bbl-state
 - name: greengrass-env-ops-files
@@ -71,7 +71,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/greengrass-env.git
-    private_key: {{greengrass_env_deploy_key}}
+    private_key: ((greengrass_env_deploy_key))
 - name: runtime-ci
   type: git
   source:
@@ -239,144 +239,144 @@ resources:
   source:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
-    access_token: {{release_integration_download_bot_access_token}}
+    access_token: ((release_integration_download_bot_access_token))
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: binary-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: capi-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: capi-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-mysql-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-networking-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: cf-networking-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-smoke-tests-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: cf-smoke-tests-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-syslog-drain-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: cf-syslog-drain-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cflinuxfs2-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: cflinuxfs2-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: consul-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: consul-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: diego-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: diego-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: dotnet-core-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: dotnet-core-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: garden-runc-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: garden-runc-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: go-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: go-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: java-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: java-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: loggregator-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: loggregator-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: nats-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: nats-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: nodejs-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: nodejs-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: php-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: php-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: python-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: python-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: routing-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: routing-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: ruby-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: ruby-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: staticfile-buildpack-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: staticfile-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: statsd-injector-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: statsd-injector-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: uaa-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
-    json_key: {{concourse_gcp_service_account_json}}
+    json_key: ((concourse_gcp_service_account_json))
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: daily
   type: time
@@ -2926,8 +2926,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: {{greengrass_cf_ssl_cert}}
-      BBL_LB_KEY: {{greengrass_cf_ssl_cert_private_key}}
+      BBL_LB_CERT: ((greengrass_cf_ssl_cert))
+      BBL_LB_KEY: ((greengrass_cf_ssl_cert_private_key))
       LB_DOMAIN: greengrass.cf-app.com
       BBL_ENV_NAME: greengrass-compile
       OPS_FILES: "scale-up-for-compilation.yml"
