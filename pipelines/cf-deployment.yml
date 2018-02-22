@@ -166,7 +166,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: lite-pool
   type: pool
@@ -174,7 +174,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/lite
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: upgrade-pool
   type: pool
@@ -182,7 +182,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/upgrade
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: stable-pool
   type: pool
@@ -190,7 +190,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/stable
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: transition-pool
   type: pool
@@ -198,7 +198,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/transition
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: internal-services-pool
   type: pool
@@ -206,7 +206,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/internal-services
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 
 - name: ops-pool
@@ -215,19 +215,19 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/ops
-    private_key: {{relint_ci_pools_readwrite_deploy_key}}
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
 - name: minerva-env-stubs-and-vars
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: {{minerva_env_readwrite_deploy_key}}
+    private_key: ((minerva_env_readwrite_deploy_key))
 - name: minerva-env-integration-configs
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: {{minerva_env_readwrite_deploy_key}}
+    private_key: ((minerva_env_readwrite_deploy_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -236,7 +236,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    private_key: ((dumbledore_env_readwrite_deploy_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -245,7 +245,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    private_key: ((dumbledore_env_readwrite_deploy_key))
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -255,7 +255,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - bbl-state
 - name: bellatrix-env-vars-store
@@ -263,7 +263,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - deployment-vars.yml
 - name: bellatrix-env-integration-configs
@@ -271,7 +271,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: {{bellatrix_env_readwrite_deploy_key}}
+    private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - integration_config.json
 - name: luna-env-director-state
@@ -279,7 +279,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: {{luna_env_readwrite_deploy_key}}
+    private_key: ((luna_env_readwrite_deploy_key))
     paths:
     - bbl-state
 - name: luna-env-integration-configs
@@ -287,7 +287,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: {{luna_env_readwrite_deploy_key}}
+    private_key: ((luna_env_readwrite_deploy_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -296,7 +296,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: {{luna_env_readwrite_deploy_key}}
+    private_key: ((luna_env_readwrite_deploy_key))
     paths:
     - deployment-name.yml
     - deployment-vars.yml
@@ -309,7 +309,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: {{minerva_env_readwrite_deploy_key}}
+    private_key: ((minerva_env_readwrite_deploy_key))
     paths:
     - bbl-state
 - name: dumbledore-env-director-state
@@ -317,7 +317,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: {{dumbledore_env_readwrite_deploy_key}}
+    private_key: ((dumbledore_env_readwrite_deploy_key))
     paths:
     - bbl-state
 - name: trelawney-env-director-state
@@ -325,7 +325,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
-    private_key: {{trelawney_env_readwrite_deploy_key}}
+    private_key: ((trelawney_env_readwrite_deploy_key))
     paths:
     - bbl-state
     - google_account_creds.json
@@ -348,7 +348,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - bbl-state
 - name: hermione-env-integration-configs
@@ -356,7 +356,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - integration_config.json
     - wats_integration_config.json
@@ -366,7 +366,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - deployment-vars.yml
     - datadog-deployment-vars.yml
@@ -379,7 +379,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - turbulence-deployment-vars.yml
 - name: hermione-env-turbulence-manifest
@@ -387,7 +387,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: {{hermione_env_private_key}}
+    private_key: ((hermione_env_private_key))
     paths:
     - turbulence.yml
 - name: cf-deployment-develop
@@ -395,7 +395,7 @@ resources:
   source:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
+    private_key: ((cf_deployment_private_key))
 - name: cf-deployment-transition
   type: git
   source:
@@ -406,13 +406,13 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment-transition-compatibility.git
-    private_key: {{cf_deployment_transition_compatibility_private_key}}
+    private_key: ((cf_deployment_transition_compatibility_private_key))
 - name: cf-deployment-release-candidate
   type: git
   source:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
+    private_key: ((cf_deployment_private_key))
 - name: cf-deployment-all-branches
   type: git
   source:
@@ -444,19 +444,19 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
-    private_key: {{cf_acceptance_tests_private_key}}
+    private_key: ((cf_acceptance_tests_private_key))
 - name: cf-deployment-master
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{cf_deployment_private_key}}
+    private_key: ((cf_deployment_private_key))
 - name: snitch-env-vars-store
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: {{snitch_env_private_key}}
+    private_key: ((snitch_env_private_key))
     paths:
     - deployment-vars.yml
 - name: snitch-env-integration-configs
@@ -464,7 +464,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: {{snitch_env_private_key}}
+    private_key: ((snitch_env_private_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -473,7 +473,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: {{snitch_env_private_key}}
+    private_key: ((snitch_env_private_key))
     paths:
     - bbl-state
 - name: bosh-deployment
@@ -493,14 +493,14 @@ resources:
     driver: git
     uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
     branch: master
-    private_key: {{cf_relint_ci_semver_private_key}}
+    private_key: ((cf_relint_ci_semver_private_key))
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-deployment-version
 
 - name: deliver-tracker-story
   type: tracker
   source:
-    token: {{cf_mega_api_token}}
+    token: ((cf_mega_api_token))
     project_id: "1382120"
     tracker_url: https://www.pivotaltracker.com
 
@@ -742,64 +742,64 @@ jobs:
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_uaadb_host}}
-          DB_USER: {{minerva_uaadb_user}}
-          DB_PASSWORD: {{minerva_uaadb_password}}
-          DB_NAME: {{minerva_uaadb_db_name}}
+          DB_HOST: ((minerva_uaadb_host))
+          DB_USER: ((minerva_uaadb_user))
+          DB_PASSWORD: ((minerva_uaadb_password))
+          DB_NAME: ((minerva_uaadb_db_name))
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_ccdb_host}}
-          DB_USER: {{minerva_ccdb_user}}
-          DB_PASSWORD: {{minerva_ccdb_password}}
-          DB_NAME: {{minerva_ccdb_db_name}}
+          DB_HOST: ((minerva_ccdb_host))
+          DB_USER: ((minerva_ccdb_user))
+          DB_PASSWORD: ((minerva_ccdb_password))
+          DB_NAME: ((minerva_ccdb_db_name))
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_bbsdb_host}}
-          DB_USER: {{minerva_bbsdb_user}}
-          DB_PASSWORD: {{minerva_bbsdb_password}}
-          DB_NAME: {{minerva_bbsdb_db_name}}
+          DB_HOST: ((minerva_bbsdb_host))
+          DB_USER: ((minerva_bbsdb_user))
+          DB_PASSWORD: ((minerva_bbsdb_password))
+          DB_NAME: ((minerva_bbsdb_db_name))
       - task: recreate-locketdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_locketdb_host}}
-          DB_USER: {{minerva_locketdb_user}}
-          DB_PASSWORD: {{minerva_locketdb_password}}
-          DB_NAME: {{minerva_locketdb_db_name}}
+          DB_HOST: ((minerva_locketdb_host))
+          DB_USER: ((minerva_locketdb_user))
+          DB_PASSWORD: ((minerva_locketdb_password))
+          DB_NAME: ((minerva_locketdb_db_name))
       - task: recreate-npsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_npsdb_host}}
-          DB_USER: {{minerva_npsdb_user}}
-          DB_PASSWORD: {{minerva_npsdb_password}}
-          DB_NAME: {{minerva_npsdb_db_name}}
+          DB_HOST: ((minerva_npsdb_host))
+          DB_USER: ((minerva_npsdb_user))
+          DB_PASSWORD: ((minerva_npsdb_password))
+          DB_NAME: ((minerva_npsdb_db_name))
       - task: recreate-silkdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_silkdb_host}}
-          DB_USER: {{minerva_silkdb_user}}
-          DB_PASSWORD: {{minerva_silkdb_password}}
-          DB_NAME: {{minerva_silkdb_db_name}}
+          DB_HOST: ((minerva_silkdb_host))
+          DB_USER: ((minerva_silkdb_user))
+          DB_PASSWORD: ((minerva_silkdb_password))
+          DB_NAME: ((minerva_silkdb_db_name))
       - task: recreate-routingdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
           env-repo: minerva-env-director-state
         params:
-          DB_HOST: {{minerva_routingdb_host}}
-          DB_USER: {{minerva_routingdb_user}}
-          DB_PASSWORD: {{minerva_routingdb_password}}
-          DB_NAME: {{minerva_routingdb_db_name}}
+          DB_HOST: ((minerva_routingdb_host))
+          DB_USER: ((minerva_routingdb_user))
+          DB_PASSWORD: ((minerva_routingdb_password))
+          DB_NAME: ((minerva_routingdb_db_name))
       - task: restore-cloud-config
         file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
         image: cf-deployment-concourse-tasks-docker-latest
@@ -1415,8 +1415,8 @@ jobs:
     input_mapping:
       google-creds-dir: luna-env-director-state
     params:
-      GCP_PROJECT_ID: {{luna_gcp_project}}
-      GCP_BACKEND_SERVICE: {{luna_router_backend_service}}
+      GCP_PROJECT_ID: ((luna_gcp_project))
+      GCP_BACKEND_SERVICE: ((luna_router_backend_service))
       GOOGLE_ACCOUNT_CREDS_PATH: google_account_creds.json
   - task: ensure-api-healthy
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
@@ -2293,7 +2293,7 @@ jobs:
       input_mapping:
         cf-deployment: cf-deployment-master
       params:
-        DEPLOY_KEY: {{cf_acceptance_tests_private_key}}
+        DEPLOY_KEY: ((cf_acceptance_tests_private_key))
 
 - name: fresh-enable-docker-and-tasks
   serial: true
