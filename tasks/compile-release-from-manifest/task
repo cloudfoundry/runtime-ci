@@ -21,10 +21,10 @@ update:
   canary_watch_time: 1
   update_watch_time: 1
 releases:
-- name: $(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/name)
-  sha1: $(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/sha1)
-  url: $(    bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/url)
-  version: $(bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/version)
+- name: "$(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/name)"
+  sha1: "$(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/sha1)"
+  url:  "$(   bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/url)"
+  version: "$(bosh interpolate ${MANIFEST_PATH} --path /releases/name=${RELEASE_NAME}/version)"
 stemcells:
 $(bosh interpolate ${MANIFEST_PATH} --path /stemcells)
 
