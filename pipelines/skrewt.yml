@@ -6,6 +6,13 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
+- name: bosh-bootloader
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-bootloader
+    tag_filter: v6.2.3
+
 - name: hagrid-env-director-state
   type: git
   source:
@@ -29,19 +36,22 @@ jobs:
     - get: runtime-ci
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: hagrid-env-director-state
+      bbl-config: bosh-bootloader
     params:
       BBL_ENV_NAME: hagrid
+      BBL_CONFIG_DIR: plan-patches/bosh-lite-gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_IAAS: gcp
       BBL_LB_CERT: {{hagrid_cf_ssl_cert}}
       BBL_LB_KEY: {{hagrid_cf_ssl_cert_private_key}}
       LB_DOMAIN: hagrid.cf-app.com
-    input_mapping:
-      bbl-state: hagrid-env-director-state
-      bbl-config: hagrid-env-director-state
+      SKIP_LB_CREATION: true
     ensure:
       put: hagrid-env-director-state
       params:
