@@ -27,6 +27,10 @@ function execute_sql() {
   local cmd
   cmd=${1}
   set +x
+  local ssh_proxy_port=9999
+  local jumpbox_address=$(bbl --state-dir env-repo/${BBL_STATE_DIR} jumpbox-address)
+  ssh -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=300 -D $ssh_proxy_port jumpbox@${jumpbox_address} -i $JUMPBOX_PRIVATE_KEY -f
+
   &> ssh_output.txt \
     ssh \
     -i ${bosh_ssh_key} \
