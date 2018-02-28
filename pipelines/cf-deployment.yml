@@ -128,6 +128,11 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
+- name: bbl-6-docker-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
 - name: windows-stemcell-bosh-release
   type: bosh-io-stemcell
   source:
@@ -1793,11 +1798,14 @@ jobs:
       - get: snitch-env-director-state
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
+      - get: bbl-6-docker-image
     - task: guarantee-no-existing-cf-deployment
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         env-repo: snitch-env-director-state
     - task: bosh-upload-stemcell-lite
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
@@ -1805,6 +1813,7 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         env-repo: snitch-env-director-state
@@ -1821,10 +1830,12 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         env-repo: snitch-env-director-state
     - task: update-integration-configs
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
@@ -2324,11 +2335,13 @@ jobs:
       trigger: true
       passed: [ lite-deploy ]
     - aggregate:
+      - get: bbl-6-docker-image
       - get: cf-deployment-concourse-tasks
       - get: snitch-env-vars-store
       - get: cf-deployment-develop
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: snitch-env-vars-store
