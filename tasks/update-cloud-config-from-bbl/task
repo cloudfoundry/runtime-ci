@@ -9,5 +9,5 @@ trap close_bbl_ssh_connection EXIT
 
 pushd "env-repo/${BBL_STATE_DIR}"
   eval "$(bbl print-env)"
-  bosh -n update-cloud-config <(bosh int cloud-config/cloud-config.yml -o cloud-config/ops.yml -o cloud-config/ops.yml --vars-file vars/cloud-config-vars.yml)
+  bosh -n update-cloud-config <(bosh int cloud-config/cloud-config.yml -o cloud-config/ops.yml --vars-file vars/cloud-config-vars.yml)
 popd
