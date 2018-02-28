@@ -19,6 +19,7 @@ groups:
   - upgrade-set-feature-flags
   - upgrade-smoke-tests
   - upgrade-wats
+  - upgrade-wats2016
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
@@ -60,6 +61,7 @@ groups:
   - upgrade-release-pool-manual
   - upgrade-smoke-tests
   - upgrade-wats
+  - upgrade-wats2016
   - bless-manifest
 - name: fr
   jobs:
@@ -1508,7 +1510,7 @@ jobs:
   public: true
   plan:
   - get: upgrade-pool
-    passed: [ upgrade-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
+    passed: [ upgrade-rats, upgrade-cats, upgrade-wats, upgrade-wats2016, upgrade-smoke-tests ]
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
@@ -1587,7 +1589,7 @@ jobs:
       params: {release: upgrade-pool}
 
 - name: upgrade-deploy
-  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
+  serial_groups: [ hermione-wats, hermione-wats2016, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2184,6 +2186,31 @@ jobs:
         integration-config: hermione-env-integration-configs
       file: runtime-ci/tasks/run-wats/task.yml
 
+- name: upgrade-wats2016
+  public: true
+  serial_groups: [ hermione-wats2016 ]
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-set-feature-flags ]
+    - aggregate:
+      - get: runtime-ci
+      - get: windows-acceptance-tests
+      - get: hermione-env-integration-configs
+      - get: hermione-env-vars-store
+        passed: [ upgrade-set-feature-flags ]
+      - get: cf-deployment-develop
+        passed: [ upgrade-set-feature-flags ]
+    - task: run-wats
+      input_mapping:
+        integration-config: hermione-env-integration-configs
+      file: runtime-ci/tasks/run-wats/task.yml
+      params:
+        CONFIG_FILE_PATH: wats2016_integration_config.json
+
 - name: upgrade-smoke-tests
   serial_groups: [hermione-smokes]
   public: true
@@ -2572,6 +2599,8 @@ jobs:
     - lite-rats
     - upgrade-rats
     - fresh-rats
+    - upgrade-wats
+    - upgrade-wats2016
     - upgrade-smoke-tests
     - ops-test
   - put: cf-deployment-release-candidate
