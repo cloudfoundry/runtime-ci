@@ -868,6 +868,7 @@ jobs:
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-bbl-6
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -875,13 +876,13 @@ jobs:
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: luna-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-internal-services
