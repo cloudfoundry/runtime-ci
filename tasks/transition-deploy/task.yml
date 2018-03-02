@@ -7,7 +7,7 @@ image_resource:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 
 inputs:
-- name: env-repo  # - The env repo containing the Director's bbl state dir
+- name: bbl-state  # - The env repo containing the Director's bbl state dir
 - name: cf-deployment # - The cf-deployment manifest
 - name: vars-store # - The BOSH deployment's vars-store yaml file
 - name: ops-files # - Operations files to be made available
@@ -25,8 +25,8 @@ run:
 params:
   BBL_STATE_DIR: bbl-state
   # - Path to the directory containing the `bbl-state.json` file
-  # - The path is relative to the `env-repo` input
-  # - If blank or '.', uses `env-repo` input as the location for bbl state
+  # - The path is relative to the `bbl-state` input
+  # - If blank or '.', uses `bbl-state` input as the location for bbl state
   # - If the specified path does not exist, it will be created
 
   MANIFEST_FILE: cf-deployment.yml

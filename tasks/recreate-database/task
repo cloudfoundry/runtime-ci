@@ -7,7 +7,7 @@ source cf-deployment-concourse-tasks/shared-functions
 function setup_bosh_ssh_key() {
   set +x
   chmod 0600 ${bosh_ssh_key}
-  pushd "env-repo/${BBL_STATE_DIR}" > /dev/null
+  pushd "bbl-state/${BBL_STATE_DIR}" > /dev/null
     bbl director-ssh-key > ${bosh_ssh_key}
   popd > /dev/null
 }
@@ -15,7 +15,7 @@ function setup_bosh_ssh_key() {
 function get_bosh_gateway_host() {
   set +x
   local director_ip_address
-  pushd "env-repo/${BBL_STATE_DIR}" > /dev/null
+  pushd "bbl-state/${BBL_STATE_DIR}" > /dev/null
     director_ip_address=$(bbl director-address)
     director_ip_address=${director_ip_address%:25555}
     director_ip_address=${director_ip_address#https://}
@@ -28,7 +28,7 @@ function execute_sql() {
   cmd=${1}
   set +x
   local ssh_proxy_port=9999
-  local jumpbox_address=$(bbl --state-dir env-repo/${BBL_STATE_DIR} jumpbox-address)
+  local jumpbox_address=$(bbl --state-dir bbl-state/${BBL_STATE_DIR} jumpbox-address)
   ssh -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=300 -D $ssh_proxy_port jumpbox@${jumpbox_address} -i $JUMPBOX_PRIVATE_KEY -f
 
   &> ssh_output.txt \

@@ -696,17 +696,17 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          env-repo: dumbledore-env-director-state
+          bbl-state: dumbledore-env-director-state
       - task: guarantee-no-existing-diego-deployment
         input_mapping:
-          env-repo: dumbledore-env-director-state
+          bbl-state: dumbledore-env-director-state
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
     - task: ensure-no-loggregator-releases
       file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
 
 - name: ensure-transition-env-is-clean
   public: true
@@ -726,22 +726,22 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
       - task: guarantee-no-existing-diego-deployment
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         params:
           DEPLOYMENT_NAME: cf-diego
     - task: ensure-no-loggregator-releases
       file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
     - aggregate:
       - task: recreate-uaadb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_uaadb_host))
           DB_USER: ((minerva_uaadb_user))
@@ -750,7 +750,7 @@ jobs:
       - task: recreate-ccdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_ccdb_host))
           DB_USER: ((minerva_ccdb_user))
@@ -759,7 +759,7 @@ jobs:
       - task: recreate-bbsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_bbsdb_host))
           DB_USER: ((minerva_bbsdb_user))
@@ -768,7 +768,7 @@ jobs:
       - task: recreate-locketdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_locketdb_host))
           DB_USER: ((minerva_locketdb_user))
@@ -777,7 +777,7 @@ jobs:
       - task: recreate-npsdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_npsdb_host))
           DB_USER: ((minerva_npsdb_user))
@@ -786,7 +786,7 @@ jobs:
       - task: recreate-silkdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_silkdb_host))
           DB_USER: ((minerva_silkdb_user))
@@ -795,7 +795,7 @@ jobs:
       - task: recreate-routingdb
         file: runtime-ci/tasks/recreate-database/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
         params:
           DB_HOST: ((minerva_routingdb_host))
           DB_USER: ((minerva_routingdb_user))
@@ -804,7 +804,7 @@ jobs:
       - task: restore-cloud-config
         file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
 
 - name: legacy-deploy
   public: true
@@ -861,12 +861,12 @@ jobs:
     - task: generate-dynamic-bosh-source
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
     - task: upload-stemcell
       file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: aws-stemcell
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
       params:
         STEMCELL_NAME: stemcell.tgz
     - put: legacy-cf-bosh-deployment
@@ -886,7 +886,7 @@ jobs:
     - task: bosh-run-errand-smoke-tests
       file: runtime-ci/tasks/run-errand/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
       params:
         ERRAND_NAME: smoke_tests
 
@@ -948,12 +948,12 @@ jobs:
     - task: generate-dynamic-bosh-source
       file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
     - task: upload-stemcell
       file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: aws-stemcell
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
       params:
         STEMCELL_NAME: stemcell.tgz
     - put: legacy-cf-bosh-deployment
@@ -973,7 +973,7 @@ jobs:
     - task: bosh-run-errand-smoke-tests
       file: runtime-ci/tasks/run-errand/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
       params:
         ERRAND_NAME: smoke_tests
 
@@ -1019,7 +1019,7 @@ jobs:
       tags: [dumbledore]
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
         vars-store: dumbledore-env-stubs-and-vars
       params:
         EXTRACT_LOCKET: true
@@ -1028,7 +1028,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
       params:
         INFRASTRUCTURE: aws
     - task: collect-ops-files
@@ -1049,7 +1049,7 @@ jobs:
       tags: [dumbledore]
       file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
         ops-file: dumbledore-env-stubs-and-vars
       params:
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
@@ -1057,7 +1057,7 @@ jobs:
       tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: extracted-vars-store
@@ -1102,7 +1102,7 @@ jobs:
       tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: updated-vars-store
@@ -1136,7 +1136,7 @@ jobs:
       tags: [dumbledore]
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
     - task: update-integration-configs
       tags: [dumbledore]
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1181,13 +1181,13 @@ jobs:
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         vars-store: minerva-env-stubs-and-vars
     - task: bosh-upload-stemcell
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
       params:
         INFRASTRUCTURE: aws
     - task: collect-ops-files
@@ -1206,14 +1206,14 @@ jobs:
     - task: remove-static-ips-from-cloud-config
       file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         ops-file: minerva-env-stubs-and-vars
       params:
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: extracted-vars-store
@@ -1252,7 +1252,7 @@ jobs:
     - task: bosh-deploy-cf-without-etcd
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: updated-vars-store
@@ -1286,7 +1286,7 @@ jobs:
     - task: bosh-deploy-cf-with-networking-and-routing
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         cf-deployment: cf-deployment-release-candidate
         ops-files: collected-ops-files
         vars-store: updated-vars-store
@@ -1318,7 +1318,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -1351,7 +1351,7 @@ jobs:
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
     params:
       DEPLOYMENT_NAME: luna-cf
   - task: bosh-upload-stemcell-fresh
@@ -1359,14 +1359,14 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
   - task: bosh-deploy-cf
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
       vars-store: luna-env-vars-store
@@ -1401,7 +1401,7 @@ jobs:
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
@@ -1448,13 +1448,13 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: trelawney-env-director-state
+        bbl-state: trelawney-env-director-state
       params:
         INFRASTRUCTURE: google
     - task: bosh-dry-run-with-ops-cf-internal-mysql
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
       input_mapping:
-        env-repo: trelawney-env-director-state
+        bbl-state: trelawney-env-director-state
         cf-deployment: cf-deployment-develop
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
@@ -1469,7 +1469,7 @@ jobs:
     - task: bosh-dry-run-with-ops-cf-internal-postgres
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
       input_mapping:
-        env-repo: trelawney-env-director-state
+        bbl-state: trelawney-env-director-state
         cf-deployment: cf-deployment-develop
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
@@ -1482,7 +1482,7 @@ jobs:
     - task: bosh-dry-run-with-ops-cf-external-persistence
       file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
       input_mapping:
-        env-repo: trelawney-env-director-state
+        bbl-state: trelawney-env-director-state
         cf-deployment: cf-deployment-develop
         ops-files: cf-deployment-develop
         vars-files: cf-deployment-develop
@@ -1756,13 +1756,13 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-master
-        env-repo: bellatrix-env-director-state
+        bbl-state: bellatrix-env-director-state
       params:
         INFRASTRUCTURE: google
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        env-repo: bellatrix-env-director-state
+        bbl-state: bellatrix-env-director-state
         cf-deployment: cf-deployment-master
         ops-files: cf-deployment-master
         vars-store: bellatrix-env-vars-store
@@ -1778,7 +1778,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: bellatrix-env-director-state
+        bbl-state: bellatrix-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
@@ -1815,20 +1815,20 @@ jobs:
       image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
-        env-repo: snitch-env-director-state
+        bbl-state: snitch-env-director-state
     - task: bosh-upload-stemcell-lite
       image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: snitch-env-director-state
+        bbl-state: snitch-env-director-state
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
       image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        env-repo: snitch-env-director-state
+        bbl-state: snitch-env-director-state
         cf-deployment: cf-deployment-develop
         vars-store: snitch-env-vars-store
         ops-files: cf-deployment-develop
@@ -1845,7 +1845,7 @@ jobs:
       image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: snitch-env-director-state
+        bbl-state: snitch-env-director-state
     - task: update-integration-configs
       image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -2113,11 +2113,11 @@ jobs:
   - task: delete-deployment-cf
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: minerva-env-director-state
+      bbl-state: minerva-env-director-state
   - task: ensure-no-loggregator-releases
     file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
     input_mapping:
-      env-repo: minerva-env-director-state
+      bbl-state: minerva-env-director-state
   - put: transition-pool
     params: {release: transition-pool}
 
@@ -2137,11 +2137,11 @@ jobs:
   - task: delete-deployment-cf
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: dumbledore-env-director-state
+      bbl-state: dumbledore-env-director-state
   - task: ensure-no-loggregator-releases
     file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
     input_mapping:
-      env-repo: dumbledore-env-director-state
+      bbl-state: dumbledore-env-director-state
   - put: internal-services-pool
     params: {release: internal-services-pool}
 
@@ -2234,7 +2234,7 @@ jobs:
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     params:
       ERRAND_NAME: smoke-tests
 
@@ -2260,7 +2260,7 @@ jobs:
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
-      env-repo: bellatrix-env-director-state
+      bbl-state: bellatrix-env-director-state
     params:
       ERRAND_NAME: smoke-tests
 
@@ -2584,7 +2584,7 @@ jobs:
     - task: delete-deployment-cf
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
-        env-repo: luna-env-director-state
+        bbl-state: luna-env-director-state
       params:
         DEPLOYMENT_NAME: luna-cf
     - put: fresh-pool
