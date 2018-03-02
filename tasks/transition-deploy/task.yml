@@ -119,6 +119,8 @@ params:
   # - This sets the maximum number of allowed uptimer failures for app syslog availability
   # - The default threshold value of 0 is our working value for cf-deployment, and is likely to be updated
 
+  USE_VARS_STORE: true
+
   FAIL_ON_DOWNTIME: false
   # - Optional
   # - This will cause the task to fail if you are not using the DEPLOY_WITH_UPTIME_MEASUREMENTS flag
