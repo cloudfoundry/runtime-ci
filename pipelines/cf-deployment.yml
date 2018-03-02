@@ -1611,6 +1611,7 @@ jobs:
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
       - get: windows-stemcell-bosh-release
+      - get: bbl-6-docker-image
     - task: bosh-upload-stemcell-upgrade
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:

@@ -1062,11 +1062,12 @@ jobs:
     - get: hagrid-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: hagrid-env-director-state
+      bbl-state: hagrid-env-director-state
   - task: destroy-infrastructure
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
