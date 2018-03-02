@@ -64,8 +64,14 @@ groups:
 - name: experimental
   jobs:
   - setup-infrastructure-experimental
+  - destroy-infrastructure-experimental
 
 resources:
+- name: bbl-6-docker-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
 # Pools
 - name: fresh-pool
   type: pool
@@ -142,12 +148,6 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
-
-- name: cf-deployment-concourse-tasks-bbl-6
-  type: git
-  source:
-    branch: WIP154739914
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: runtime-ci
@@ -362,7 +362,6 @@ jobs:
     - get: runtime-ci
     - get: luna-env-director-state
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-bbl-6
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -393,7 +392,9 @@ jobs:
     - get: runtime-ci
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_STATE_DIR: bbl-state
@@ -405,12 +406,12 @@ jobs:
       BBL_LB_KEY: ((hagrid_cf_ssl_cert_private_key))
       LB_DOMAIN: hagrid.cf-app.com
     input_mapping:
-      env-repo: hagrid-env-director-state
-      ops-files: hagrid-env-director-state
+      bbl-state: hagrid-env-director-state
+      bbl-config: hagrid-env-director-state
     ensure:
       put: hagrid-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: setup-infrastructure-internal-services
@@ -458,7 +459,6 @@ jobs:
     - get: runtime-ci
     - get: snitch-env-director-state
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-bbl-6
     - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
@@ -868,7 +868,6 @@ jobs:
     - get: luna-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-bbl-6
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -927,7 +926,6 @@ jobs:
     - get: snitch-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-bbl-6
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
@@ -1044,6 +1042,33 @@ jobs:
       put: hermione-env-director-state
       params:
         repository: updated-env-repo
+        rebase: true
+
+- name: destroy-infrastructure-experimental
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: hagrid-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    image: bbl-6-docker-image
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      env-repo: hagrid-env-director-state
+  - task: destroy-infrastructure
+    image: bbl-6-docker-image
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: hagrid-env-director-state
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+    ensure:
+      put: hagrid-env-director-state
+      params:
+        repository: updated-bbl-state
         rebase: true
 
 # Remove claimed locks
@@ -1183,7 +1208,6 @@ jobs:
     do:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-bbl-6
       - get: snitch-env-director-state
       - get: daily
         trigger: true
