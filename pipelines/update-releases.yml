@@ -47,6 +47,10 @@ resource_types:
   source:
     repository: frodenas/gcs-resource
 resources:
+- name: bbl-6-docker-image
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 - name: cf-deployment-develop
   type: git
   source:
@@ -425,7 +429,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
@@ -475,7 +479,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: binary-buildpack
@@ -536,7 +540,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -547,7 +551,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: capi
@@ -611,7 +615,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
@@ -661,7 +665,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -672,7 +676,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-networking
@@ -732,7 +736,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -742,7 +746,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-smoke-tests
@@ -803,7 +807,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -813,7 +817,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-syslog-drain
@@ -873,7 +877,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -883,7 +887,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: cflinuxfs2
@@ -943,7 +947,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -953,7 +957,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: consul
@@ -1013,7 +1017,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1023,7 +1027,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: diego
@@ -1083,7 +1087,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: dotnet-core-buildpack
@@ -1143,7 +1147,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1153,7 +1157,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: garden-runc
@@ -1213,7 +1217,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: go-buildpack
@@ -1273,7 +1277,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: java-buildpack
@@ -1333,7 +1337,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1343,7 +1347,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: loggregator
@@ -1404,7 +1408,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1414,7 +1418,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: cf-mysql
@@ -1474,7 +1478,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1485,7 +1489,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: nats
@@ -1545,7 +1549,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: nodejs-buildpack
@@ -1605,7 +1609,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: php-buildpack
@@ -1669,7 +1673,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
@@ -1719,7 +1723,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: python-buildpack
@@ -1779,7 +1783,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1790,7 +1794,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: routing
@@ -1850,7 +1854,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: ruby-buildpack
@@ -1910,7 +1914,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: staticfile-buildpack
@@ -1970,7 +1974,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -1980,7 +1984,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: statsd-injector
@@ -2040,7 +2044,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
@@ -2051,7 +2055,7 @@ jobs:
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       manifest: updated-deployment-manifest
     params:
       RELEASE_NAME: uaa
@@ -2225,7 +2229,7 @@ jobs:
   - task: upload-updated-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: updated-deployment-manifest
     params:
       INFRASTRUCTURE: google
@@ -2233,7 +2237,7 @@ jobs:
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-binary-buildpack
@@ -2242,7 +2246,7 @@ jobs:
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-capi
@@ -2251,7 +2255,7 @@ jobs:
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-networking
@@ -2260,7 +2264,7 @@ jobs:
     - task: compile-release-cf-smoke-tests
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-smoke-tests
@@ -2269,7 +2273,7 @@ jobs:
     - task: compile-release-cf-syslog-drain
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-syslog-drain
@@ -2278,7 +2282,7 @@ jobs:
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cflinuxfs2
@@ -2287,7 +2291,7 @@ jobs:
     - task: compile-release-consul
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-consul
@@ -2296,7 +2300,7 @@ jobs:
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-diego
@@ -2305,7 +2309,7 @@ jobs:
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-dotnet-core-buildpack
@@ -2314,7 +2318,7 @@ jobs:
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-garden-runc
@@ -2323,7 +2327,7 @@ jobs:
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-go-buildpack
@@ -2332,7 +2336,7 @@ jobs:
     - task: compile-release-java-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-java-buildpack
@@ -2341,7 +2345,7 @@ jobs:
     - task: compile-release-loggregator
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-loggregator
@@ -2350,7 +2354,7 @@ jobs:
     - task: compile-release-cf-mysql
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-cf-mysql
@@ -2359,7 +2363,7 @@ jobs:
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-nats
@@ -2368,7 +2372,7 @@ jobs:
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-nodejs-buildpack
@@ -2377,7 +2381,7 @@ jobs:
     - task: compile-release-php-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-php-buildpack
@@ -2386,7 +2390,7 @@ jobs:
     - task: compile-release-python-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-python-buildpack
@@ -2395,7 +2399,7 @@ jobs:
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-routing
@@ -2404,7 +2408,7 @@ jobs:
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-ruby-buildpack
@@ -2413,7 +2417,7 @@ jobs:
     - task: compile-release-staticfile-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-staticfile-buildpack
@@ -2422,7 +2426,7 @@ jobs:
     - task: compile-release-statsd-injector
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-statsd-injector
@@ -2431,7 +2435,7 @@ jobs:
     - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
         manifest: updated-deployment-manifest
       output_mapping:
         exported-release: exported-release-uaa
@@ -2610,13 +2614,13 @@ jobs:
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
@@ -2676,13 +2680,13 @@ jobs:
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows-google-stemcell-2016
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
@@ -2778,7 +2782,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
@@ -2832,7 +2836,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
@@ -2867,7 +2871,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: cf-deployment-develop
@@ -2922,7 +2926,7 @@ jobs:
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
       vars-files: cf-deployment-develop
@@ -2956,9 +2960,12 @@ jobs:
     - get: runtime-ci
     - get: greengrass-env-director-state
     - get: greengrass-env-ops-files
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_CONFIG_DIR: bbl-config
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
@@ -2966,23 +2973,21 @@ jobs:
       BBL_LB_KEY: ((greengrass_cf_ssl_cert_private_key))
       LB_DOMAIN: greengrass.cf-app.com
       BBL_ENV_NAME: greengrass-compile
-      OPS_FILES: "scale-up-for-compilation.yml"
     input_mapping:
-      env-repo: greengrass-env-director-state
-      ops-files: greengrass-env-ops-files
+      bbl-state: greengrass-env-director-state
+      bbl-config: greengrass-env-director-state
     ensure:
       put: greengrass-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - task: extend-cloud-config-for-credhub-dry-run
     file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
     input_mapping:
       ops-file: greengrass-env-ops-files
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
     params:
       OPS_FILE_PATH: add-credhub-lb.yml
-
 
 - name: destroy-infrastructure-compilation
   serial: true
@@ -2993,20 +2998,23 @@ jobs:
     - get: greengrass-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
   - task: destroy-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: greengrass-env-director-state
+      bbl-state: greengrass-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: greengrass-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: run-bosh-cleanup-compilation
@@ -3021,7 +3029,9 @@ jobs:
       - get: greengrass-env-director-state
       - get: daily
         trigger: true
+      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: greengrass-env-director-state
+        bbl-state: greengrass-env-director-state
