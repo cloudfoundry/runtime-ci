@@ -437,12 +437,12 @@ jobs:
       SKIP_LB_CREATION: true
       BBL_ENV_NAME: dumbledore-upgrade
     input_mapping:
-      env-repo: dumbledore-env-director-state
+      bbl-state: dumbledore-env-director-state
       ops-files: dumbledore-env-director-state
     ensure:
       put: dumbledore-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - put: internal-services-pool
     params: {release: internal-services-pool}
@@ -505,12 +505,12 @@ jobs:
       LB_DOMAIN: trelawney.cf-app.com
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
-      env-repo: trelawney-env-director-state
+      bbl-state: trelawney-env-director-state
       ops-files: trelawney-env-director-state
     ensure:
       put: trelawney-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - put: ops-pool
     params: {release: ops-pool}
@@ -538,12 +538,12 @@ jobs:
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
     input_mapping:
-      env-repo: bellatrix-env-director-state
+      bbl-state: bellatrix-env-director-state
       ops-files: bellatrix-env-director-state
     ensure:
       put: bellatrix-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - put: stable-pool
     params: {release: stable-pool}
@@ -572,12 +572,12 @@ jobs:
       LB_DOMAIN: minerva.cf-app.com
       BBL_ENV_NAME: minerva-upgrade
     input_mapping:
-      env-repo: minerva-env-director-state
+      bbl-state: minerva-env-director-state
       ops-files: minerva-env-director-state
     ensure:
       put: minerva-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - put: transition-pool
     params: {release: transition-pool}
@@ -609,12 +609,12 @@ jobs:
       BBL_ENV_NAME: hermione-upgrade
       OPS_FILES: "local-dns.yml"
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state: hermione-env-director-state
       ops-files: bosh-deployment
     ensure:
       put: hermione-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
@@ -644,12 +644,12 @@ jobs:
         LB_DOMAIN: luna.cf-app.com
         BBL_ENV_NAME: luna-fresh
       input_mapping:
-        env-repo: luna-env-director-state
+        bbl-state: luna-env-director-state
         ops-files: luna-env-director-state
       ensure:
         put: luna-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: fresh-pool
       params: {release: fresh-pool}
@@ -677,12 +677,12 @@ jobs:
         SKIP_LB_CREATION: true
         BBL_ENV_NAME: dumbledore-upgrade
       input_mapping:
-        env-repo: dumbledore-env-director-state
+        bbl-state: dumbledore-env-director-state
         ops-files: dumbledore-env-director-state
       ensure:
         put: dumbledore-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: internal-services-pool
       params: {release: internal-services-pool}
@@ -747,12 +747,12 @@ jobs:
         LB_DOMAIN: trelawney.cf-app.com
         BBL_ENV_NAME: trelawney-ops
       input_mapping:
-        env-repo: trelawney-env-director-state
+        bbl-state: trelawney-env-director-state
         ops-files: trelawney-env-director-state
       ensure:
         put: trelawney-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: ops-pool
       params: {release: ops-pool}
@@ -781,12 +781,12 @@ jobs:
         LB_DOMAIN: bellatrix.cf-app.com
         BBL_ENV_NAME: bellatrix-stable
       input_mapping:
-        env-repo: bellatrix-env-director-state
+        bbl-state: bellatrix-env-director-state
         ops-files: bellatrix-env-director-state
       ensure:
         put: bellatrix-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: stable-pool
       params: {release: stable-pool}
@@ -818,12 +818,12 @@ jobs:
         BBL_ENV_NAME: hermione-upgrade
         OPS_FILES: "local-dns.yml"
       input_mapping:
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
         ops-files: bosh-deployment
       ensure:
         put: hermione-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: upgrade-pool
       params: {release: upgrade-pool}
@@ -852,12 +852,12 @@ jobs:
         LB_DOMAIN: minerva.cf-app.com
         BBL_ENV_NAME: minerva-upgrade
       input_mapping:
-        env-repo: minerva-env-director-state
+        bbl-state: minerva-env-director-state
         ops-files: minerva-env-director-state
       ensure:
         put: minerva-env-director-state
         params:
-          repository: updated-env-repo
+          repository: updated-bbl-state
           rebase: true
     - put: transition-pool
       params: {release: transition-pool}
@@ -877,7 +877,7 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: luna-env-director-state
+      bbl-state: luna-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
@@ -906,11 +906,11 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          env-repo: dumbledore-env-director-state
+          bbl-state: dumbledore-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: dumbledore-env-director-state
+      bbl-state: dumbledore-env-director-state
     params:
       BBL_STATE_DIR: bbl-state
       BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
@@ -918,7 +918,7 @@ jobs:
     ensure:
       put: dumbledore-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-lite
@@ -939,7 +939,7 @@ jobs:
         image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          env-repo: snitch-env-director-state
+          bbl-state: snitch-env-director-state
   - task: destroy-infrastructure
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
@@ -967,13 +967,13 @@ jobs:
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: trelawney-env-director-state
+      bbl-state: trelawney-env-director-state
     params:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: trelawney-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-stable
@@ -990,15 +990,15 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: bellatrix-env-director-state
+      bbl-state: bellatrix-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: bellatrix-env-director-state
+      bbl-state: bellatrix-env-director-state
     ensure:
       put: bellatrix-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-transition
@@ -1017,15 +1017,15 @@ jobs:
       - task: guarantee-no-existing-cf-deployment
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
-          env-repo: minerva-env-director-state
+          bbl-state: minerva-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: minerva-env-director-state
+      bbl-state: minerva-env-director-state
     ensure:
       put: minerva-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-upgrade
@@ -1042,15 +1042,15 @@ jobs:
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state: hermione-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      env-repo: hermione-env-director-state
+      bbl-state: hermione-env-director-state
     ensure:
       put: hermione-env-director-state
       params:
-        repository: updated-env-repo
+        repository: updated-bbl-state
         rebase: true
 
 - name: destroy-infrastructure-experimental
@@ -1224,7 +1224,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: snitch-env-director-state
+        bbl-state: snitch-env-director-state
 
 - name: run-bosh-cleanup-ops
   build_logs_to_retain: 100
@@ -1239,7 +1239,7 @@ jobs:
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      env-repo: trelawney-env-director-state
+      bbl-state: trelawney-env-director-state
 
 - name: run-bosh-cleanup-stable
   serial: true
@@ -1256,7 +1256,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: bellatrix-env-director-state
+        bbl-state: bellatrix-env-director-state
 
 - name: run-bosh-cleanup-upgrade
   serial: true
@@ -1273,4 +1273,4 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
