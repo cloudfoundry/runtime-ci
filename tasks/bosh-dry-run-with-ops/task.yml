@@ -12,6 +12,7 @@ inputs:
 - name: ops-files
 - name: vars-files
 - name: runtime-ci
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/tasks/bosh-dry-run-with-ops/task
