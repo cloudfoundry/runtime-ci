@@ -10,6 +10,7 @@ inputs:
 - name: bbl-state
 - name: manifest
 - name: runtime-ci
+- name: cf-deployment-concourse-tasks
 
 outputs:
 - name: exported-release

@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: bbl-state
 - name: ops-file
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/tasks/bosh-extend-cloud-config/task

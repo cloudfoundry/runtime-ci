@@ -4,7 +4,7 @@ set -o pipefail
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+source cf-deployment-concourse-tasks/shared-functions
 
 function main() {
   setup_bosh_env_vars

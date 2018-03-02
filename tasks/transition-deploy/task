@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # shellcheck disable=SC1091
-source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+source cf-deployment-concourse-tasks/shared-functions
 
 write_uptimer_deploy_config() {
   local deployment_name

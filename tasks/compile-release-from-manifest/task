@@ -2,7 +2,7 @@
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+source cf-deployment-concourse-tasks/shared-functions
 
 validate_variables() {
   RELEASE_NAME="${RELEASE_NAME:?"RELEASE_NAME must be provided"}"

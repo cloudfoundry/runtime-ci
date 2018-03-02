@@ -1,7 +1,7 @@
 #!/bin/bash -exu
 
 # shellcheck disable=SC1091
-source runtime-ci/tasks/cf-deployment-concourse-tasks/shared-functions
+source cf-deployment-concourse-tasks/shared-functions
 
 trap close_bbl_ssh_connection EXIT
 
