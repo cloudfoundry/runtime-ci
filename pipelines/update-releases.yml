@@ -68,14 +68,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/greengrass-env.git
     private_key: ((greengrass_env_deploy_key))
-    paths:
-    - bbl-state
-- name: greengrass-env-ops-files
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/greengrass-env.git
-    private_key: ((greengrass_env_deploy_key))
 - name: runtime-ci
   type: git
   source:
@@ -2959,7 +2951,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: greengrass-env-director-state
-    - get: greengrass-env-ops-files
     - get: bbl-6-docker-image
   - task: setup-infrastructure
     image: bbl-6-docker-image
@@ -2984,7 +2975,7 @@ jobs:
   - task: extend-cloud-config-for-credhub-dry-run
     file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
     input_mapping:
-      ops-file: greengrass-env-ops-files
+      ops-file: greengrass-env-director-state
       bbl-state: greengrass-env-director-state
     params:
       OPS_FILE_PATH: add-credhub-lb.yml
