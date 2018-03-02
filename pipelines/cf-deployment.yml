@@ -1347,7 +1347,6 @@ jobs:
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -1616,20 +1615,21 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
       params:
         INFRASTRUCTURE: aws
     - task: bosh-upload-windows-stemcell
+      image: bbl-6-docker-image
       file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
       input_mapping:
         stemcell: windows-stemcell-bosh-release
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
       params:
         STEMCELL_NAME: '*.tgz'
     - task: bosh-update-runtime-config
       file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
       input_mapping:
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
         runtime-configs: hermione-env-vars-store
         vars-files: hermione-env-vars-store
       params:
@@ -1639,7 +1639,7 @@ jobs:
       input_mapping:
         cf-deployment: hermione-env-turbulence-manifest
         vars-store: hermione-env-turbulence-vars
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
         ops-files: runtime-ci
         vars-files: hermione-env-turbulence-vars
       params:
@@ -1669,7 +1669,7 @@ jobs:
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
         ops-files: collected-ops-files
         vars-store: hermione-env-vars-store
@@ -1719,7 +1719,7 @@ jobs:
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
-        env-repo: hermione-env-director-state
+        bbl-state: hermione-env-director-state
     - task: update-integration-configs
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
