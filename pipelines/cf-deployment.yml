@@ -2605,7 +2605,6 @@ jobs:
     - upgrade-rats
     - fresh-rats
     - upgrade-wats
-    - upgrade-wats2016
     - upgrade-smoke-tests
     - ops-test
   - put: cf-deployment-release-candidate
