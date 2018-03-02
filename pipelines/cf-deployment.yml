@@ -1347,6 +1347,7 @@ jobs:
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
+    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
     image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
