@@ -7,10 +7,11 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: env-repo
+- name: bbl-state
 - name: runtime-configs
 - name: runtime-ci
 - name: vars-files
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/tasks/bosh-update-runtime-config/task
