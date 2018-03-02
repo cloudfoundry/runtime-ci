@@ -494,7 +494,9 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: trelawney-env-director-state
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
@@ -736,7 +738,9 @@ jobs:
       - get: runtime-ci
       - get: trelawney-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: bbl-6-docker-image
     - task: update-infrastructure
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -964,7 +968,9 @@ jobs:
     - get: trelawney-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: destroy-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
@@ -1238,7 +1244,9 @@ jobs:
       passed: [ setup-infrastructure-ops ]
     - get: weekly
       trigger: true
+    - get: bbl-6-docker-image
   - task: run-bosh-cleanup
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
