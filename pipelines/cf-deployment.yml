@@ -1847,7 +1847,6 @@ jobs:
       input_mapping:
         bbl-state: snitch-env-director-state
     - task: update-integration-configs
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
@@ -2372,13 +2371,11 @@ jobs:
       trigger: true
       passed: [ lite-deploy ]
     - aggregate:
-      - get: bbl-6-docker-image
       - get: cf-deployment-concourse-tasks
       - get: snitch-env-vars-store
       - get: cf-deployment-develop
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         vars-store: snitch-env-vars-store
@@ -2581,7 +2578,9 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
+      - get: bbl-6-docker-image
     - task: delete-deployment-cf
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: luna-env-director-state
