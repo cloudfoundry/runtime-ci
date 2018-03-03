@@ -138,12 +138,6 @@ resources:
     tag_filter: v6.2.3
 
 # Code repos
-- name: bosh-deployment
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bosh-deployment.git
-
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -190,6 +184,7 @@ resources:
     private_key: ((hermione_env_private_key))
     paths:
     - bbl-state
+    - bbl-config
 
 - name: luna-env-director-state
   type: git
@@ -602,8 +597,9 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: bosh-deployment
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
@@ -615,10 +611,9 @@ jobs:
       BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-upgrade
-      OPS_FILES: "local-dns.yml"
     input_mapping:
       bbl-state: hermione-env-director-state
-      ops-files: bosh-deployment
+      bbl-config: hermione-env-director-state
     ensure:
       put: hermione-env-director-state
       params:
@@ -819,8 +814,9 @@ jobs:
         params: {acquire: true}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bosh-deployment
+      - get: bbl-6-docker-image
     - task: update-infrastructure
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: aws
@@ -832,10 +828,9 @@ jobs:
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
         BBL_ENV_NAME: hermione-upgrade
-        OPS_FILES: "local-dns.yml"
       input_mapping:
         bbl-state: hermione-env-director-state
-        ops-files: bosh-deployment
+        bbl-config: hermione-env-director-state
       ensure:
         put: hermione-env-director-state
         params:
@@ -1067,11 +1062,14 @@ jobs:
     - get: hermione-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
   - task: destroy-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
@@ -1304,7 +1302,9 @@ jobs:
       - get: hermione-env-director-state
       - get: daily
         trigger: true
+      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      image: bbl-6-docker-image
       input_mapping:
         bbl-state: hermione-env-director-state
