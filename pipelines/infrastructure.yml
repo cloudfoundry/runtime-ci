@@ -426,7 +426,9 @@ jobs:
     - get: runtime-ci
     - get: dumbledore-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_STATE_DIR: bbl-state
@@ -564,7 +566,9 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - task: setup-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
@@ -672,7 +676,9 @@ jobs:
         params: {acquire: true}
       - get: dumbledore-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: bbl-6-docker-image
     - task: update-infrastructure
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_STATE_DIR: bbl-state
@@ -850,7 +856,9 @@ jobs:
         params: {acquire: true}
       - get: minerva-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: bbl-6-docker-image
     - task: update-infrastructure
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: aws
@@ -911,6 +919,7 @@ jobs:
     - get: dumbledore-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
@@ -918,6 +927,7 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
   - task: destroy-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: dumbledore-env-director-state
@@ -1027,13 +1037,16 @@ jobs:
     - get: minerva-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+    - get: bbl-6-docker-image
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
+        image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
   - task: destroy-infrastructure
+    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: minerva-env-director-state
