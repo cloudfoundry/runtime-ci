@@ -1,3 +1,0 @@
-[submodule "tasks/cf-deployment-concourse-tasks"]
-	path = tasks/cf-deployment-concourse-tasks
-	url = https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
