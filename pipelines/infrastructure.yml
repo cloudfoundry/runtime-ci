@@ -637,7 +637,9 @@ jobs:
       - get: runtime-ci
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: bbl-6-docker-image
     - task: update-infrastructure
+      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
