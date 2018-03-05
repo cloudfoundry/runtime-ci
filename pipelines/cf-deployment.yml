@@ -2263,6 +2263,7 @@ jobs:
       - get: hermione-env-director-state
       - get: cf-deployment-develop
         passed: [ upgrade-set-feature-flags ]
+      - get: cf-deployment-concourse-tasks
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
