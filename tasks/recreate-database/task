@@ -4,6 +4,8 @@ set -eu
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
+trap "pkill ssh || true" EXIT
+
 function setup_bosh_ssh_key() {
   set +x
   chmod 0600 ${bosh_ssh_key}
