@@ -3,6 +3,8 @@
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
+trap commit_vars_store EXIT
+
 write_uptimer_deploy_config() {
   local deployment_name
   deployment_name=${1}
@@ -109,7 +111,5 @@ main() {
 
   exit_properly $exitStatus
 }
-
-trap close_bbl_ssh_connection_and_commit_vars_store EXIT
 
 main
