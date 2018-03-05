@@ -12,6 +12,4 @@ function main() {
   bosh update-cloud-config -n <(bosh int <(bosh cloud-config) -o ops-file/${OPS_FILE_PATH})
 }
 
-trap close_bbl_ssh_connection EXIT
-
 main

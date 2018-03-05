@@ -50,6 +50,4 @@ function main() {
   execute_sql "CREATE DATABASE ${DB_NAME}"
 }
 
-trap close_bbl_ssh_connection EXIT
-
 main
