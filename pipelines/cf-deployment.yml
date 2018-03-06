@@ -1535,7 +1535,7 @@ jobs:
   public: true
   plan:
   - get: upgrade-pool
-    passed: [ upgrade-rats, upgrade-cats, upgrade-wats, upgrade-wats2016, upgrade-smoke-tests ]
+    passed: [ upgrade-rats, upgrade-cats, upgrade-wats, upgrade-smoke-tests ]
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
