@@ -1723,6 +1723,7 @@ jobs:
           operations/experimental/disable-consul-windows.yml
           operations/experimental/disable-consul-windows2016.yml
           operations/experimental/enable-service-discovery.yml
+          operations/experimental/use-silk-release.yml
           operations/test/windows2016-debug.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
