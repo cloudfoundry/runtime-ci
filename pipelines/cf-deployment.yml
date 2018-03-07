@@ -1401,7 +1401,7 @@ jobs:
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
         operations/addons/enable-component-syslog.yml
-        operations/use-gcs-blobstore.yml
+        operations/test/use-gcs-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/workaround/use-4-azs-for-router.yml
         operations/scale-database-cluster.yml
