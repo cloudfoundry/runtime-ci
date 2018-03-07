@@ -1717,6 +1717,7 @@ jobs:
           operations/experimental/use-silk-release-external-db.yml
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers.yml
+          operations/experimental/use-bosh-dns-for-containers-with-silk-release.yml
           operations/experimental/use-bosh-dns-for-windows2016-containers.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/skip-consul-locks.yml
