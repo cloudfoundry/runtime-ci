@@ -19,7 +19,6 @@ groups:
   - upgrade-set-feature-flags
   - upgrade-smoke-tests
   - upgrade-wats
-  - upgrade-wats2016
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
@@ -61,7 +60,6 @@ groups:
   - upgrade-release-pool-manual
   - upgrade-smoke-tests
   - upgrade-wats
-  - upgrade-wats2016
   - bless-manifest
 - name: fr
   jobs:
@@ -2229,30 +2227,32 @@ jobs:
         integration-config: hermione-env-integration-configs
       file: runtime-ci/tasks/run-wats/task.yml
 
-- name: upgrade-wats2016
-  public: true
-  serial_groups: [ hermione-wats2016 ]
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: upgrade-pool
-      trigger: true
-      passed: [ upgrade-set-feature-flags ]
-    - aggregate:
-      - get: runtime-ci
-      - get: windows-acceptance-tests
-      - get: hermione-env-integration-configs
-      - get: hermione-env-vars-store
-        passed: [ upgrade-set-feature-flags ]
-      - get: cf-deployment-develop
-        passed: [ upgrade-set-feature-flags ]
-    - task: run-wats
-      input_mapping:
-        integration-config: hermione-env-integration-configs
-      file: runtime-ci/tasks/run-wats/task.yml
-      params:
-        CONFIG_FILE_PATH: wats2016_integration_config.json
+# Uncomment when this story is unblocked
+# https://www.pivotaltracker.com/story/show/155292704
+# - name: upgrade-wats2016
+#   public: true
+#   serial_groups: [ hermione-wats2016 ]
+#   build_logs_to_retain: 100
+#   plan:
+#   - timeout: 4h
+#     do:
+#     - get: upgrade-pool
+#       trigger: true
+#       passed: [ upgrade-set-feature-flags ]
+#     - aggregate:
+#       - get: runtime-ci
+#       - get: windows-acceptance-tests
+#       - get: hermione-env-integration-configs
+#       - get: hermione-env-vars-store
+#         passed: [ upgrade-set-feature-flags ]
+#       - get: cf-deployment-develop
+#         passed: [ upgrade-set-feature-flags ]
+#     - task: run-wats
+#       input_mapping:
+#         integration-config: hermione-env-integration-configs
+#       file: runtime-ci/tasks/run-wats/task.yml
+#       params:
+#         CONFIG_FILE_PATH: wats2016_integration_config.json
 
 - name: upgrade-smoke-tests
   serial_groups: [hermione-smokes]
