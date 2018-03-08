@@ -20,6 +20,7 @@ groups:
   - update-go-buildpack
   - update-credhub
   - update-java-buildpack
+  - update-haproxy
   - update-loggregator
   - update-nats
   - update-nfs-volume
@@ -170,6 +171,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/go-buildpack-release
+- name: haproxy-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/haproxy-boshrelease
 - name: credhub-release
   type: bosh-io-release
   source:
@@ -398,6 +403,69 @@ resources:
     interval: 24h
 
 jobs:
+- name: update-haproxy
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: haproxy-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: stemcell-3468
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-haproxy
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: haproxy-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: backup-and-restore-sdk
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
+      UPDATED_OPS_FILE_PATH: use-haproxy.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      NEW_OPS_FILES: "operations/use-haproxy.yml"
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: haproxy
+      OPS_FILES: "base-ops-files/use-haproxy.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+      VARS_FILES: "vars-files/haproxy-vars.yml"
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-haproxy.yml
+      OPS_FILE_DESTINATION: operations/use-haproxy.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
 - name: update-bbr
   serial: true
   public: true
