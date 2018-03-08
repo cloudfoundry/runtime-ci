@@ -78,11 +78,10 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
-- name: stemcell-3468
+- name: stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-trusty-go_agent
-    version_family: 3468.latest
 - name: windows-stemcell
   type: bosh-io-stemcell
   source:
@@ -418,7 +417,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -481,7 +479,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -543,7 +540,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -605,7 +601,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -666,7 +661,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -724,7 +718,6 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: stemcell
-      resource: stemcell-3468
       passed: [ update-stemcell-and-recompile-releases ]
       params:
         tarball: false
@@ -801,7 +794,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -856,7 +848,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -928,7 +919,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -984,7 +974,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1052,7 +1041,6 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: stemcell
-      resource: stemcell-3468
       passed: [ update-stemcell-and-recompile-releases ]
       params:
         tarball: false
@@ -1128,7 +1116,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1200,7 +1187,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1272,7 +1258,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1343,7 +1328,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1405,7 +1389,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1476,7 +1459,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1537,7 +1519,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1599,7 +1580,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1667,7 +1647,6 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: stemcell
-      resource: stemcell-3468
       passed: [ update-stemcell-and-recompile-releases ]
       params:
         tarball: false
@@ -1743,7 +1722,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1815,7 +1793,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1876,7 +1853,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1938,7 +1914,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -1992,7 +1967,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2054,7 +2028,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2126,7 +2099,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2187,7 +2159,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2249,7 +2220,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2321,7 +2291,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -2511,7 +2480,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       trigger: true
       params:
         tarball: false
@@ -3051,7 +3019,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -3113,7 +3080,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
@@ -3204,7 +3170,6 @@ jobs:
       params:
         tarball: false
     - get: stemcell
-      resource: stemcell-3468
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]

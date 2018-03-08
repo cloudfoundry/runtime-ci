@@ -249,7 +249,7 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/dumbledore-env.git
     private_key: ((dumbledore_env_readwrite_deploy_key))
-- name: aws-stemcell-3468
+- name: aws-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
@@ -828,7 +828,6 @@ jobs:
       - get: legacy-cflinuxfs2-release
       - get: legacy-cf-release
       - get: aws-stemcell
-        resource: aws-stemcell-3468
       - get: cf-deployment-transition
       - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
@@ -913,7 +912,6 @@ jobs:
       - get: legacy-cflinuxfs2-release
       - get: legacy-cf-release
       - get: aws-stemcell
-        resource: aws-stemcell-3468
       - get: cf-deployment-transition
       - get: cf-deployment-concourse-tasks
     - task: generate-release-manifest-cf
