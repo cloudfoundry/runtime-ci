@@ -68,6 +68,7 @@ jobs:
     trigger: true
   - aggregate:
     - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
     - get: cf-smoke-tests-release
       trigger: true
     - get: bellatrix-env-director-state
@@ -75,8 +76,8 @@ jobs:
   - task: deploy-smoke-tests-errand
     file: runtime-ci/tasks/bosh-deploy-smokes/task.yml
     input_mapping:
-      env-repo: bellatrix-env-director-state
       vars-store: bellatrix-env-vars-store
+      bbl-state: bellatrix-env-director-state
     params:
       SYSTEM_DOMAIN: bellatrix.cf-app.com
 
