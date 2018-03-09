@@ -16,6 +16,7 @@ groups:
   - transition-enable-docker-and-tasks
   - transition-cats
   - upgrade-cats
+  - upgrade-cats-windows2016
   - upgrade-set-feature-flags
   - upgrade-smoke-tests
   - fresh-rats
@@ -52,6 +53,7 @@ groups:
   - unit-test-update-releases-coverage
   - upgrade-acquire-pool
   - upgrade-cats
+  - upgrade-cats-windows2016
   - upgrade-deploy
   - upgrade-set-feature-flags
   - upgrade-rats
@@ -363,7 +365,7 @@ resources:
     private_key: ((hermione_env_private_key))
     paths:
     - integration_config.json
-    - wats_integration_config.json
+    - wats2016_integration_config.json
     - rats_integration_config.json
 - name: hermione-env-vars-store
   type: git
@@ -1527,7 +1529,7 @@ jobs:
   public: true
   plan:
   - get: upgrade-pool
-    passed: [ upgrade-rats, upgrade-cats, upgrade-smoke-tests ]
+    passed: [ upgrade-rats, upgrade-cats, upgrade-cats-windows2016, upgrade-smoke-tests ]
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
@@ -2195,6 +2197,32 @@ jobs:
         integration-config: hermione-env-integration-configs
       file: cats-concourse-task/task.yml
 
+- name: upgrade-cats-windows2016
+  serial_groups: [ hermione-cats-windows2016 ]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [ upgrade-set-feature-flags ]
+    - aggregate:
+      - get: cf-acceptance-tests
+      - get: hermione-env-integration-configs
+      - get: hermione-env-vars-store
+        passed: [ upgrade-set-feature-flags ]
+      - get: cf-deployment-develop
+        passed: [ upgrade-set-feature-flags ]
+      - get: cats-concourse-task
+    - task: run-cats
+      input_mapping:
+        integration-config: hermione-env-integration-configs
+      file: cats-concourse-task/task.yml
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: wats2016_integration_config.json
+
 - name: upgrade-smoke-tests
   serial_groups: [hermione-smokes]
   public: true
@@ -2581,6 +2609,7 @@ jobs:
     - fresh-cats
     - lite-cats
     - upgrade-cats
+    - upgrade-cats-windows2016
     - lite-rats
     - upgrade-rats
     - fresh-rats
