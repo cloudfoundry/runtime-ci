@@ -40,5 +40,13 @@ describe 'OpsFileFinder' do
       expect(ops).not_to include 'experimental'
     end
 
+    context 'and the directory is experimental directory' do
+      it 'returns the ops-files prepended with "experimentlal"' do
+        ops = OpsFileFinder.find_ops_files(REPO_DIR)
+
+        expect(ops).to include 'experimental/ops.yml'
+        expect(ops).to include 'experimental/ops2.yml'
+      end
+    end
   end
 end
