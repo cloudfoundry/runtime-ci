@@ -132,6 +132,68 @@ HEREDOC
         expect(stemcell_update.old_version).to eq 1
         expect(stemcell_update.new_version).to eq 2
       end
+
+      context 'when the ops-file replaces releases and stemcells rather than appending them' do
+        let(:file_contents_master) do
+<<-HEREDOC
+- type: replace
+  path: /releases/name=garden-windows?
+  value:
+    name: garden-windows
+    version: 0.6.0
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/stacks?
+- type: replace
+  path: /releases/name=hwc-buildpack?
+  value:
+    name: hwc-buildpack
+    version: 2.3.4
+- type: replace
+  path: /stemcells/name=windows2012R?
+  value:
+    name: windows2012R2
+    version: 1
+HEREDOC
+        end
+
+        let(:file_contents_rc) do
+<<-HEREDOC
+- type: replace
+  path: /releases/name=garden-windows?
+  value:
+    name: garden-windows
+    version: 0.7.0
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/stacks?
+- type: replace
+  path: /releases/name=hwc-buildpack?
+  value:
+    name: hwc-buildpack
+    version: 2.4.0
+- type: replace
+  path: /stemcells/name=windows2012R
+  value:
+    name: windows2012R2
+    version: 2
+
+HEREDOC
+        end
+
+        it 'returns the release and stemcell updates of the replacements binaries' do
+          release_1_update = updates.get_update_by_name('garden-windows')
+          release_2_update = updates.get_update_by_name('hwc-buildpack')
+          stemcell_update = updates.get_update_by_name('windows2012R2')
+
+          expect(release_1_update.old_version).to eq '0.6.0'
+          expect(release_1_update.new_version).to eq '0.7.0'
+
+          expect(release_2_update.old_version).to eq '2.3.4'
+          expect(release_2_update.new_version).to eq '2.4.0'
+
+          expect(stemcell_update.old_version).to eq 1
+          expect(stemcell_update.new_version).to eq 2
+        end
+      end
     end
 
     context 'when the old version of the file is empty' do

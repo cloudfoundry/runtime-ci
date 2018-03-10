@@ -38,7 +38,7 @@ class ReleaseUpdates
       return manifest['releases'] + manifest['stemcells'] unless opsfile
 
       manifest.select do |op|
-        op['type'] == 'replace' && (op['path'] == '/releases/-' || op['path'] == '/stemcells/-')
+        op['type'] == 'replace' && (op['path'].start_with?('/releases') || op['path'].start_with?('/stemcells'))
       end.collect do |op|
         {
           "name" => op["value"]["name"] || op['value']['os'],
