@@ -2,9 +2,6 @@ groups:
 - name: cf-deployment-concourse-tasks
   jobs:
   - build-cf-deployment-concourse-tasks-docker-image
-- name: cats-concourse-task
-  jobs:
-  - build-cats-concourse-task-docker-image
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -38,12 +35,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/uptimer.git
-- name: cats-concourse-task
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cats-concourse-task.git
-    paths: [Dockerfile]
 
 - name: runtime-ci-relint-base
   type: git
@@ -123,14 +114,6 @@ resources:
     password: ((dockerhub_password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-- name: cats-concourse-task-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cats-concourse-task
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
 - name: relint-base-image
   type: docker-image
   source:
@@ -199,31 +182,6 @@ jobs:
         TRACKER_STORY_STATE: delivered
         TRACKER_API_TOKEN: ((cf_mega_api_token))
         DESCRIPTION_FILE: version.json
-
-- name: build-cats-concourse-task-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - do:
-    - aggregate:
-      - get: runtime-ci
-      - get: weekly
-        trigger: true
-      - get: cats-concourse-task
-        trigger: true
-      - get: cf-cli
-        trigger: true
-    - task: create-version-json
-      file: runtime-ci/tasks/create-version-json/task.yml
-      input_mapping:
-        version: cf-cli
-        input-version-json: cf-cli
-    - put: cats-concourse-task-pipeline-image
-      params:
-        build: cats-concourse-task
-        push: true
-        build_args_file: version-json/version.json
-    timeout: 4h
 
 - name: build-relint-base-docker-image
   public: true

@@ -1,4 +1,4 @@
-FROM relintdockerhubpushbot/cats-concourse-task
+FROM relintdockerhubpushbot/cf-deployment-concourse-tasks
 
 # Install the container networking CLI plugin
 RUN wget -q -O /tmp/network-policy-plugin "https://github.com/cloudfoundry-incubator/netman-release/releases/download/v0.5.0/network-policy-plugin-linux64" && \

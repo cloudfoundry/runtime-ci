@@ -482,11 +482,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment.git
-- name: cats-concourse-task
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cats-concourse-task.git
 
 - name: cf-deployment-version
   type: semver
@@ -1977,7 +1972,7 @@ jobs:
       - get: minerva-env-integration-configs
       - get: cf-deployment-release-candidate
         passed: [ transition-enable-docker-and-tasks ]
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
       - get: legacy-cf-release
         passed: [ transition-enable-docker-and-tasks ]
       - get: legacy-diego-release
@@ -1991,7 +1986,7 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: minerva-env-integration-configs
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
 
 - name: internal-services-cats
   public: true
@@ -2010,7 +2005,7 @@ jobs:
       - get: cf-deployment-release-candidate
         passed: [ internal-services-enable-docker-and-tasks ]
         tags: [dumbledore]
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
         tags: [dumbledore]
       - get: legacy-cf-release
         passed: [ internal-services-enable-docker-and-tasks ]
@@ -2030,7 +2025,7 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: dumbledore-env-integration-configs
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       tags: [dumbledore]
 
 - name: internal-services-rats
@@ -2190,11 +2185,11 @@ jobs:
         passed: [ upgrade-set-feature-flags ]
       - get: cf-deployment-develop
         passed: [ upgrade-set-feature-flags ]
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
     - task: run-cats
       input_mapping:
         integration-config: hermione-env-integration-configs
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
 
 - name: upgrade-cats-windows2016
   serial_groups: [ hermione-cats-windows2016 ]
@@ -2213,11 +2208,11 @@ jobs:
         passed: [ upgrade-set-feature-flags ]
       - get: cf-deployment-develop
         passed: [ upgrade-set-feature-flags ]
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
     - task: run-cats
       input_mapping:
         integration-config: hermione-env-integration-configs
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       params:
         NODES: 6
         CONFIG_FILE_PATH: wats2016_integration_config.json
@@ -2298,7 +2293,6 @@ jobs:
       trigger: true
       passed: [ stable-semihourly-pool-acquisition ]
     - aggregate:
-      - get: cats-concourse-task
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: bellatrix-env-vars-store
@@ -2317,7 +2311,7 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: bellatrix-env-integration-configs
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
 
 - name: stable-update-cats-cfd-branch
   public: true
@@ -2431,14 +2425,14 @@ jobs:
       trigger: true
       passed: [ fresh-enable-docker-and-tasks ]
     - aggregate:
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
     - task: run-cats
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: luna-env-integration-configs
       params:
@@ -2461,9 +2455,9 @@ jobs:
       - get: snitch-env-vars-store
         passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-integration-configs
-      - get: cats-concourse-task
+      - get: cf-deployment-concourse-tasks
     - task: run-cats
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: snitch-env-integration-configs
       params:
