@@ -655,6 +655,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: binary-buildpack-release
       trigger: true
@@ -1322,6 +1323,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: dotnet-core-buildpack-release
       trigger: true
@@ -1453,6 +1455,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: go-buildpack-release
       trigger: true
@@ -1513,6 +1516,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: java-buildpack-release
       trigger: true
@@ -1787,6 +1791,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: nodejs-buildpack-release
       trigger: true
@@ -1847,6 +1852,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: php-buildpack-release
       trigger: true
@@ -1961,6 +1967,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: python-buildpack-release
       trigger: true
@@ -2093,6 +2100,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: ruby-buildpack-release
       trigger: true
@@ -2153,6 +2161,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
     - get: staticfile-buildpack-release
       trigger: true
