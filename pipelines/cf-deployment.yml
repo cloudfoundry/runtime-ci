@@ -2251,9 +2251,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - timeout: 1h
-    ensure:
-      put: stable-pool
-      params: {release: stable-pool}
     do:
     - get: stable-pool
       trigger: true
@@ -2271,6 +2268,9 @@ jobs:
       bbl-state: bellatrix-env-director-state
     params:
       ERRAND_NAME: smoke-tests
+    on_failure:
+      put: stable-pool
+      params: {release: stable-pool}
 
 - name: stable-semihourly-pool-acquisition
   serial: true
