@@ -6,6 +6,9 @@ class OpsFileFinder
     experimental_ops_files = Dir.glob(File.join(repo_dir, "operations", "experimental", "*.yml"))
     opsfile_list += experimental_ops_files
 
+    experimental_ops_files = Dir.glob(File.join(repo_dir, "operations", "addons", "*.yml"))
+    opsfile_list += experimental_ops_files
+
     opsfile_list.map { |opsfile| opsfile.gsub!("#{repo_dir}/operations/", '') }
   end
 end
