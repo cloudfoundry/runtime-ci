@@ -2264,6 +2264,7 @@ jobs:
         passed: [stable-deploy]
       - get: cf-deployment-master
         passed: [stable-deploy]
+      - get: cf-deployment-concourse-tasks
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
     input_mapping:
