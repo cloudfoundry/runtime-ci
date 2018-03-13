@@ -450,6 +450,12 @@ jobs:
       OPS_FILES: "base-ops-files/use-haproxy.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: "vars-files/haproxy-vars.yml"
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-haproxy
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -511,6 +517,12 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: bbr
       OPS_FILES: "base-ops-files/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bbr
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -572,6 +584,12 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: broker-registrar
       OPS_FILES: "base-ops-files/enable-nfs-volume-service.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-broker-registrar
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -633,6 +651,12 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: nfs-volume
       OPS_FILES: "base-ops-files/enable-nfs-volume-service.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-nfs-volume
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -715,9 +739,9 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
     - get: stemcell
       passed: [ update-stemcell-and-recompile-releases ]
       params:
@@ -742,9 +766,15 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -capi
+      DEPLOYMENT_NAME_SUFFIX: capi
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-capi
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -820,6 +850,12 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: cf-app-sd
       OPS_FILES: enable-service-discovery.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-app-sd
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -868,9 +904,15 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -cf-networking
+      DEPLOYMENT_NAME_SUFFIX: cf-networking
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-networking
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -943,9 +985,15 @@ jobs:
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -silk
+      DEPLOYMENT_NAME_SUFFIX: silk
       OPS_FILES: "use-silk-release.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-silk
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -994,8 +1042,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -cf-smoke-tests
+      DEPLOYMENT_NAME_SUFFIX: cf-smoke-tests
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-smoke-tests
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1065,8 +1119,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -cf-syslog-drain-release
+      DEPLOYMENT_NAME_SUFFIX: cf-syslog-drain-release
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-syslog-drain-release
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1136,8 +1196,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -cflinuxfs2
+      DEPLOYMENT_NAME_SUFFIX: cflinuxfs2
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cflinuxfs2
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1207,8 +1273,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -consul
+      DEPLOYMENT_NAME_SUFFIX: consul
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-consul
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1278,8 +1350,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -diego
+      DEPLOYMENT_NAME_SUFFIX: diego
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-diego
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1410,8 +1488,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -garden-runc
+      DEPLOYMENT_NAME_SUFFIX: garden-runc
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-garden-runc
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1603,8 +1687,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -loggregator
+      DEPLOYMENT_NAME_SUFFIX: loggregator
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-loggregator
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1674,8 +1764,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -cf-mysql
+      DEPLOYMENT_NAME_SUFFIX: cf-mysql
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-mysql
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1746,8 +1842,14 @@ jobs:
       vars-files: greengrass-env-director-state
       MANIFEST_DESTINATION: cf-deployment.yml
     params:
-      DEPLOYMENT_NAME_SUFFIX: -nats
+      DEPLOYMENT_NAME_SUFFIX: nats
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-nats
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1942,9 +2044,15 @@ jobs:
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -postgres
+      DEPLOYMENT_NAME_SUFFIX: postgres
       OPS_FILES: "use-postgres.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-postgres
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -2054,9 +2162,15 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -routing
+      DEPLOYMENT_NAME_SUFFIX: routing
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-routing
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2248,8 +2362,14 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -statsd-injector
+      DEPLOYMENT_NAME_SUFFIX: statsd-injector
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-statsd-injector
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2319,9 +2439,15 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -uaa
+      DEPLOYMENT_NAME_SUFFIX: uaa
       OPS_FILES: "operations/experimental/enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-uaa
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2895,9 +3021,15 @@ jobs:
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -windows-2012-releases
+      DEPLOYMENT_NAME_SUFFIX: windows-2012-releases
       OPS_FILES: "windows-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-windows-2012-releases
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -2961,9 +3093,15 @@ jobs:
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -windows-2016-releases
+      DEPLOYMENT_NAME_SUFFIX: windows-2016-releases
       OPS_FILES: "windows2016-cell.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-windows-2016-releases
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -3057,9 +3195,15 @@ jobs:
       ops-files: collected-ops-files
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -credhub
+      DEPLOYMENT_NAME_SUFFIX: credhub
       OPS_FILES: "enable-backup-restore.yml base-ops-files/secure-service-credentials.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-credhub
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -3111,9 +3255,15 @@ jobs:
       ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME_SUFFIX: -bosh-dns
+      DEPLOYMENT_NAME_SUFFIX: bosh-dns
       OPS_FILES: "use-bosh-dns.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -3146,10 +3296,16 @@ jobs:
       ops-files: updated-ops-file
       vars-files: cf-deployment-develop
     params:
-      DEPLOYMENT_NAME_SUFFIX: -bosh-dns
+      DEPLOYMENT_NAME_SUFFIX: bosh-dns
       OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: "operations/example-vars-files/vars-rename-network-and-deployment.yml"
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -3201,11 +3357,17 @@ jobs:
       ops-files: updated-ops-file
       vars-files: cf-deployment-develop
     params:
-      DEPLOYMENT_NAME_SUFFIX: -syslog
+      DEPLOYMENT_NAME_SUFFIX: syslog
       OPS_FILES: "enable-component-syslog.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: |
         operations/addons/example-vars-files/vars-enable-component-syslog.yml
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-syslog
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
