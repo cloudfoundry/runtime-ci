@@ -1,5 +1,18 @@
 #!/bin/bash
 set -eu
+## ======================================================================
+## The following environment variables can be overwritten in the
+## environment to contol the operation of this script.
+## ======================================================================
+
+CONCOURSE_BASE_URL=${CONCOURSE_BASE_URL:=https://release-integration.ci.cf-app.com}
+PIPELINE_INCLUDE=${PIPELINE_INCLUDE:=cf-deployment}
+JOB_KEYWORDS_EXCLUDE=${JOB_KEYWORDS_EXCLUDE:=ship-it transition stable-deploy}
+VERBOSE=${VERBOSE:=false}
+
+## ----------------------------------------------------------------------
+## general function(s)
+## ----------------------------------------------------------------------
 
 converts(){
   t=$1
@@ -16,24 +29,35 @@ converts(){
   printf '\n'
 }
 
+## ----------------------------------------------------------------------
+
 #number of seconds in a week
 ONE_WEEK=604800
 
 #current time in epoch time
 CURRENT_TIME="$(date +%s)"
-concourse_base_url=https://release-integration.ci.cf-app.com
+
+## ----------------------------------------------------------------------
+
 #get all job info
-jobs="$(curl ${concourse_base_url}/api/v1/teams/main/pipelines/cf-deployment/jobs --silent | jq .)"
+#jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/cf-deployment/jobs --silent | jq .)"
+jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/${PIPELINE_INCLUDE}/jobs --silent | jq .)"
+
+if [ "${VERBOSE}" = "true" ]; then
+    echo "jobs: ${jobs}"
+fi
 
 #focus on only needed info, removing nulls
-job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time , .url | values ] | select(length > 0)]')"
+job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time, .url | values ] | select(length > 0)]')"
+
+if [ "${VERBOSE}" = "true" ]; then
+    echo "job_details: ${job_details}"
+fi
 
 #get all jobs that haven't run in over a week
 stale_jobs="$(echo $job_details | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[3] > $ONE_WEEK))')"
 
-PIPELINE_INCLUDE='cf-deployment bbr cf-smoke-tests build-docker-images'
-
-JOB_KEYWORDS_EXCLUDE='ship-it transition stable-deploy'
+## ----------------------------------------------------------------------
 
 matching_jobs=""
 
@@ -63,14 +87,7 @@ for j in $matching_jobs; do
   fi
 done
 
-if [ -z "$report" ]; then
-cat <<EOF
-======================================================================
-No stale jobs found
-======================================================================
-EOF
-exit 0
-fi
+## ----------------------------------------------------------------------
 
 cat <<EOF
 ======================================================================
@@ -79,7 +96,19 @@ cat <<EOF
  \__ \ | |/ _ \| |__| _|  | || | (_) | _ \  / _ \| |__| _||   / | | 
  |___/ |_/_/ \_\____|___|  \__/ \___/|___/ /_/ \_\____|___|_|_\ |_| 
 ----------------------------------------------------------------------
+ CONCOURSE_BASE_URL=${CONCOURSE_BASE_URL}
+ PIPELINE_INCLUDE=${PIPELINE_INCLUDE}
+ JOB_KEYWORDS_EXCLUDE=${JOB_KEYWORDS_EXCLUDE}
+======================================================================
 EOF
+
+if [ -z "$report" ]; then
+cat <<EOF
+  No stale jobs found
+======================================================================
+EOF
+exit 0
+fi
 
 for k in $report; do
   job_name="$(echo $stale_jobs | jq .[$k] | jq .[1] | sed 's/"//g')"
@@ -87,7 +116,7 @@ for k in $report; do
   job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
   job_url="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
   job_age="$(echo $(($CURRENT_TIME- $job_start_time)) | sed 's/"//g')"
-  full_job_url=${concourse_base_url}${job_url}
+  full_job_url=${CONCOURSE_BASE_URL}${job_url}
 
 cat <<EOF
  Pipeline .. : $pipeline_name
