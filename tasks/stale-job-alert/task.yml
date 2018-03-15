@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+
+run:
+  path: runtime-ci/tasks/stale-job-alert/task
+
+params:
+  CONCOURSE_BASE_URL: "https://release-integration.ci.cf-app.com"
+  PIPELINE_INCLUDE: "cf-deployment"
+  JOB_KEYWORDS_EXCLUDE: "ship-it transition stable-deploy"
+  VERBOSE: "false"
+
