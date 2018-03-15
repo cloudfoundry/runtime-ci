@@ -128,11 +128,6 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
-- name: bbl-6-docker-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-
 - name: windows-stemcell-bosh-release
   type: bosh-io-stemcell
   source:
@@ -681,15 +676,12 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
       - get: runtime-ci
-      - get: bbl-6-docker-image
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
-        image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: dumbledore-env-director-state
       - task: guarantee-no-existing-diego-deployment
-        image: bbl-6-docker-image
         input_mapping:
           bbl-state: dumbledore-env-director-state
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -714,15 +706,12 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: runtime-ci
-      - get: bbl-6-docker-image
     - aggregate:
       - task: guarantee-no-existing-cf-deployment
-        image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
       - task: guarantee-no-existing-diego-deployment
-        image: bbl-6-docker-image
         input_mapping:
           bbl-state: minerva-env-director-state
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -1010,7 +999,6 @@ jobs:
         tags: [dumbledore]
       - get: cf-deployment-transition
         tags: [dumbledore]
-      - get: bbl-6-docker-image
         tags: [dumbledore]
     - task: extract-vars-store
       tags: [dumbledore]
@@ -1022,7 +1010,6 @@ jobs:
         EXTRACT_LOCKET: true
     - task: bosh-upload-stemcell
       tags: [dumbledore]
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
@@ -1052,7 +1039,6 @@ jobs:
       params:
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf
-      image: bbl-6-docker-image
       tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1098,7 +1084,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-without-etcd
-      image: bbl-6-docker-image
       tags: [dumbledore]
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
@@ -1133,7 +1118,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       tags: [dumbledore]
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
@@ -1179,14 +1163,12 @@ jobs:
       - get: legacy-garden-runc-release
         passed: [ legacy-deploy ]
       - get: cf-deployment-transition
-      - get: bbl-6-docker-image
     - task: extract-vars-store
       file: runtime-ci/tasks/r2d2/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
         vars-store: minerva-env-stubs-and-vars
     - task: bosh-upload-stemcell
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-release-candidate
@@ -1214,7 +1196,6 @@ jobs:
       params:
         OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
     - task: bosh-deploy-cf
-      image: bbl-6-docker-image
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
@@ -1254,7 +1235,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-without-etcd
-      image: bbl-6-docker-image
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
@@ -1289,7 +1269,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: bosh-deploy-cf-with-networking-and-routing
-      image: bbl-6-docker-image
       file: runtime-ci/tasks/transition-deploy/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
@@ -1322,7 +1301,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: minerva-env-director-state
@@ -1354,16 +1332,13 @@ jobs:
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
     params:
       DEPLOYMENT_NAME: luna-cf
   - task: bosh-upload-stemcell-fresh
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
@@ -1371,7 +1346,6 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-deploy-cf
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
@@ -1405,7 +1379,6 @@ jobs:
         repository: updated-vars-store
         rebase: true
   - task: run-bosh-cleanup
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
@@ -1451,9 +1424,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
       - get: trelawney-env-director-state
-      - get: bbl-6-docker-image
     - task: bosh-upload-stemcell-ops
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
@@ -1620,9 +1591,7 @@ jobs:
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
       - get: windows-stemcell-bosh-release
-      - get: bbl-6-docker-image
     - task: bosh-upload-stemcell-upgrade
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
@@ -1645,7 +1614,6 @@ jobs:
       params:
         RUNTIME_CONFIG_FILE: runtime-config.yml
     - task: deploy-turbulence-api-upgrade
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         cf-deployment: hermione-env-turbulence-manifest
@@ -1678,7 +1646,6 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: "scale-windows-cells.yml"
     - task: bosh-deploy-cf
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
@@ -1732,7 +1699,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
@@ -1768,9 +1734,7 @@ jobs:
       - get: bellatrix-env-vars-store
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
-      - get: bbl-6-docker-image
     - task: bosh-upload-stemcell-stable
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-master
@@ -1778,7 +1742,6 @@ jobs:
       params:
         INFRASTRUCTURE: google
     - task: bosh-deploy-cf
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
@@ -1795,7 +1758,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
@@ -1830,14 +1792,11 @@ jobs:
       - get: snitch-env-director-state
       - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
-      - get: bbl-6-docker-image
     - task: guarantee-no-existing-cf-deployment
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
     - task: bosh-upload-stemcell-lite
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
@@ -1845,7 +1804,6 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
@@ -1862,7 +1820,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
@@ -2129,9 +2086,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: minerva-env-director-state
       - get: runtime-ci
-      - get: bbl-6-docker-image
   - task: delete-deployment-cf
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: minerva-env-director-state
@@ -2155,9 +2110,7 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: dumbledore-env-director-state
       - get: runtime-ci
-      - get: bbl-6-docker-image
   - task: delete-deployment-cf
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: dumbledore-env-director-state
@@ -2581,9 +2534,7 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
-      - get: bbl-6-docker-image
     - task: delete-deployment-cf
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: luna-env-director-state
