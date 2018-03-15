@@ -37,57 +37,51 @@ ONE_WEEK=604800
 #current time in epoch time
 CURRENT_TIME="$(date +%s)"
 
-## ----------------------------------------------------------------------
-
-#get all job info
-#jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/cf-deployment/jobs --silent | jq .)"
-jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/${PIPELINE_INCLUDE}/jobs --silent | jq .)"
-
-if [ "${VERBOSE}" = "true" ]; then
-    echo "jobs: ${jobs}"
-fi
-
-#focus on only needed info, removing nulls
-job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time, .url | values ] | select(length > 0)]')"
-
-if [ "${VERBOSE}" = "true" ]; then
-    echo "job_details: ${job_details}"
-fi
-
-#get all jobs that haven't run in over a week
-stale_jobs="$(echo $job_details | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[3] > $ONE_WEEK))')"
+status=0
 
 ## ----------------------------------------------------------------------
 
-matching_jobs=""
+for PIPELINE in $PIPELINE_INCLUDE; do
 
-length=$(echo "$stale_jobs" | jq '. | length - 1 ')
+  #get all job info
+  #jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/cf-deployment/jobs --silent | jq .)"
+  jobs="$(curl ${CONCOURSE_BASE_URL}/api/v1/teams/main/pipelines/${PIPELINE}/jobs --silent | jq .)"
 
-for i in $(seq 0 "$length"); do
-  current_pipeline="$(echo $stale_jobs | jq .[$i] | jq .[2])"
-  for PIPELINE in $PIPELINE_INCLUDE; do
-    if [ "$PIPELINE" = "${current_pipeline//\"}" ]; then
-      matching_jobs="$matching_jobs $i"
-    fi
-  done
-done
-
-report=""
-
-for j in $matching_jobs; do
-  job_name="$(echo $stale_jobs | jq .[$j] | jq .[1])"
-  FOUND="false"
-  for KEYWORD in $JOB_KEYWORDS_EXCLUDE; do
-    if [[ $job_name = *"$KEYWORD"* ]]; then
-      FOUND="true"
-    fi
-  done
-  if [ $FOUND = false ]; then
-    report="$report $j"
+  if [ "${VERBOSE}" = "true" ]; then
+      echo "jobs: ${jobs}"
   fi
-done
 
-## ----------------------------------------------------------------------
+  #focus on only needed info, removing nulls
+  job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time, .url | values ] | select(length > 0)]')"
+
+  if [ "${VERBOSE}" = "true" ]; then
+      echo "job_details: ${job_details}"
+  fi
+
+  #get all jobs that haven't run in over a week
+  stale_jobs="$(echo $job_details | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[3] > $ONE_WEEK))')"
+
+  ## ----------------------------------------------------------------------
+
+  length=$(echo "$stale_jobs" | jq '. | length - 1 ')
+  report=""
+
+  if [ $length != -1 ]; then
+    for j in $(seq 0 "$length"); do
+      job_name="$(echo $stale_jobs | jq .[$j] | jq .[1])"
+      FOUND="false"
+      for KEYWORD in $JOB_KEYWORDS_EXCLUDE; do
+        if [[ $job_name = *"$KEYWORD"* ]]; then
+          FOUND="true"
+        fi
+      done
+      if [ $FOUND = false ]; then
+        report="$report $j"
+      fi
+    done
+  fi
+
+  ## ----------------------------------------------------------------------
 
 cat <<EOF
 ======================================================================
@@ -96,27 +90,25 @@ cat <<EOF
  \__ \ | |/ _ \| |__| _|  | || | (_) | _ \  / _ \| |__| _||   / | | 
  |___/ |_/_/ \_\____|___|  \__/ \___/|___/ /_/ \_\____|___|_|_\ |_| 
 ----------------------------------------------------------------------
- CONCOURSE_BASE_URL=${CONCOURSE_BASE_URL}
- PIPELINE_INCLUDE=${PIPELINE_INCLUDE}
- JOB_KEYWORDS_EXCLUDE=${JOB_KEYWORDS_EXCLUDE}
-======================================================================
+ CONCOURSE_BASE_URL .... : ${CONCOURSE_BASE_URL}
+ PIPELINE .............. : ${PIPELINE}
+ JOB_KEYWORDS_EXCLUDE .. : ${JOB_KEYWORDS_EXCLUDE}
+----------------------------------------------------------------------
 EOF
 
-if [ -z "$report" ]; then
+  if [ -z "$report" ]; then
 cat <<EOF
   No stale jobs found
-======================================================================
 EOF
-exit 0
-fi
-
-for k in $report; do
-  job_name="$(echo $stale_jobs | jq .[$k] | jq .[1] | sed 's/"//g')"
-  pipeline_name="$(echo $stale_jobs | jq .[$k] | jq .[2] | sed 's/"//g')"
-  job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
-  job_url="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
-  job_age="$(echo $(($CURRENT_TIME- $job_start_time)) | sed 's/"//g')"
-  full_job_url=${CONCOURSE_BASE_URL}${job_url}
+  else
+    status=1
+    for k in $report; do
+      job_name="$(echo $stale_jobs | jq .[$k] | jq .[1] | sed 's/"//g')"
+      pipeline_name="$(echo $stale_jobs | jq .[$k] | jq .[2] | sed 's/"//g')"
+      job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
+      job_url="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
+      job_age="$(echo $(($CURRENT_TIME- $job_start_time)) | sed 's/"//g')"
+      full_job_url=${CONCOURSE_BASE_URL}${job_url}
 
 cat <<EOF
  Pipeline .. : $pipeline_name
@@ -125,6 +117,9 @@ cat <<EOF
  Started ... : $( converts "$job_age" )ago
 ----------------------------------------------------------------------
 EOF
+    done
+  fi
+  echo ""
 done
 
-exit 1
+exit $status

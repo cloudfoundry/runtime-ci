@@ -14,7 +14,7 @@ run:
 
 params:
   CONCOURSE_BASE_URL: "https://release-integration.ci.cf-app.com"
-  PIPELINE_INCLUDE: "cf-deployment"
+  PIPELINE_INCLUDE: "cf-deployment bbr build-docker-images cf-smoke-tests"
   JOB_KEYWORDS_EXCLUDE: "ship-it transition stable-deploy"
   VERBOSE: "false"
 
