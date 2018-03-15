@@ -1,0 +1,86 @@
+#!/bin/bash
+set -eu
+
+#one week in epoch time
+ONE_WEEK=604800
+#one day in epoch time
+ONE_DAY=86400
+#current time in epoch time
+CURRENT_TIME="$(date +%s)"
+concourse_base_url=https://release-integration.ci.cf-app.com
+#get all job info
+jobs="$(curl ${concourse_base_url}/api/v1/teams/main/pipelines/cf-deployment/jobs --silent | jq .)"
+
+#focus on only needed info, removing nulls
+job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time , .url | values ] | select(length > 0)]')"
+
+#get all jobs that haven't run in over a week
+stale_jobs="$(echo $job_details | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[3] > $ONE_WEEK))')"
+
+PIPELINE_INCLUDE='cf-deployment bbr cf-smoke-tests build-docker-images'
+
+JOB_KEYWORDS_EXCLUDE='ship-it transition stable-deploy'
+
+#echo "$(echo $stale_jobs | jq --argjson PIPELINE_INCLUDE "$PIPELINE_INCLUDE" 'map(select($PIPELINE_INCLUDE | contains([.[1]])))')"
+one_indexed_length="$(echo $stale_jobs | jq '. | length ')"
+length=$(($one_indexed_length - 1))
+matching_jobs=""
+
+for i in $(seq 0 $length); do
+  current_pipeline="$(echo $stale_jobs | jq .[$i] | jq .[2])"
+  #current_id="$(echo $stale_jobs | jq .[$i] | jq .[0])"
+  for PIPELINE in $PIPELINE_INCLUDE; do
+    if [ "\"$PIPELINE\"" = "$current_pipeline" ]; then
+      matching_jobs="$matching_jobs $i"
+    fi
+  done
+done
+
+report=""
+
+for j in $matching_jobs; do
+  job_name="$(echo $stale_jobs | jq .[$j] | jq .[1])"
+  FOUND="false"
+  for KEYWORD in $JOB_KEYWORDS_EXCLUDE; do
+    if [[ $job_name = *"$KEYWORD"* ]]; then
+      FOUND="true"
+    fi
+  done
+  if [ $FOUND = false ]; then
+    report="$report $j"
+  fi
+done
+
+if [ -z "$report" ]; then
+  exit 0
+fi
+
+cat <<-EOF
+=====================================================================
+ ___ _____ _   _    ___      _  ___  ___     _   _    ___ ___ _____  
+/ __|_   _/_\ | |  | __|  _ | |/ _ \| _ )   /_\ | |  | __| _ \_   _| 
+\__ \ | |/ _ \| |__| _|  | || | (_) | _ \  / _ \| |__| _||   / | | 
+|___/ |_/_/ \_\____|___|  \__/ \___/|___/ /_/ \_\____|___|_|_\ |_| 
+=====================================================================
+
+EOF
+
+for k in $report; do
+  job_name="$(echo $stale_jobs | jq .[$k] | jq .[1] | sed 's/"//g')"
+  pipeline_name="$(echo $stale_jobs | jq .[$k] | jq .[2] | sed 's/"//g')"
+  job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
+  job_url="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
+  job_age="$(echo $(($CURRENT_TIME- $job_start_time)) | sed 's/"//g')"
+  full_job_url=${concourse_base_url}${job_url}
+  job_age_in_days=$(($job_age/$ONE_DAY))
+
+cat <<-EOF
+-----------------------------------------------------------------
+pipeline name : $pipeline_name
+job name .... : $job_name
+job url ..... : $full_job_url
+job age ..... : $job_age_in_days days
+EOF
+done
+
+exit 1
