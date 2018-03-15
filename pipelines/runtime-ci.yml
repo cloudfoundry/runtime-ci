@@ -3,6 +3,7 @@ groups:
   jobs:
   - all-jobs-public
   - verify-every-task-is-used-in-a-pipeline
+  - stale-job-alert
 
 resources:
 - name: runtime-ci
@@ -10,6 +11,13 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
 
 jobs:
 - name: all-jobs-public
@@ -31,3 +39,14 @@ jobs:
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
+
+- name: stale-job-alert
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: runtime-ci
+  - task: stale-job-alert
+    file: runtime-ci/tasks/stale-job-alert/task.yml
