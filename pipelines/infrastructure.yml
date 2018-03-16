@@ -67,11 +67,6 @@ groups:
   - destroy-infrastructure-experimental
 
 resources:
-- name: bbl-6-docker-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-
 # Pools
 - name: fresh-pool
   type: pool
@@ -390,9 +385,7 @@ jobs:
     - get: runtime-ci
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_STATE_DIR: bbl-state
@@ -424,9 +417,7 @@ jobs:
     - get: runtime-ci
     - get: dumbledore-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_STATE_DIR: bbl-state
@@ -460,9 +451,7 @@ jobs:
     - get: snitch-env-director-state
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     input_mapping:
       bbl-state: snitch-env-director-state
@@ -494,9 +483,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: trelawney-env-director-state
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
@@ -529,9 +516,7 @@ jobs:
     - get: runtime-ci
     - get: bellatrix-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
@@ -564,9 +549,7 @@ jobs:
     - get: runtime-ci
     - get: minerva-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
@@ -600,9 +583,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
     - get: runtime-ci
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: aws
@@ -639,10 +620,8 @@ jobs:
       - get: runtime-ci
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
       - get: bosh-bootloader
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -677,9 +656,7 @@ jobs:
         params: {acquire: true}
       - get: dumbledore-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_STATE_DIR: bbl-state
@@ -713,10 +690,8 @@ jobs:
       - get: runtime-ci
       - get: snitch-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
       - get: bosh-bootloader
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -749,9 +724,7 @@ jobs:
       - get: runtime-ci
       - get: trelawney-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -785,9 +758,7 @@ jobs:
       - get: runtime-ci
       - get: bellatrix-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -820,9 +791,7 @@ jobs:
         params: {acquire: true}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: aws
@@ -857,9 +826,7 @@ jobs:
         params: {acquire: true}
       - get: minerva-env-director-state
       - get: cf-deployment-concourse-tasks
-      - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: aws
@@ -920,7 +887,6 @@ jobs:
     - get: dumbledore-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
@@ -928,7 +894,6 @@ jobs:
         input_mapping:
           bbl-state: dumbledore-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: dumbledore-env-director-state
@@ -953,16 +918,13 @@ jobs:
     - get: snitch-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
-        image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: snitch-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: snitch-env-director-state
@@ -985,9 +947,7 @@ jobs:
     - get: trelawney-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
@@ -1010,14 +970,11 @@ jobs:
     - get: bellatrix-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: bellatrix-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: bellatrix-env-director-state
@@ -1038,16 +995,13 @@ jobs:
     - get: minerva-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - try:
       do:
       - task: guarantee-no-existing-cf-deployment
-        image: bbl-6-docker-image
         file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
         input_mapping:
           bbl-state: minerva-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: minerva-env-director-state
@@ -1068,14 +1022,11 @@ jobs:
     - get: hermione-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
@@ -1094,14 +1045,11 @@ jobs:
     - get: hagrid-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: hagrid-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: hagrid-env-director-state
@@ -1253,9 +1201,7 @@ jobs:
       - get: snitch-env-director-state
       - get: daily
         trigger: true
-      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
@@ -1270,9 +1216,7 @@ jobs:
       passed: [ setup-infrastructure-ops ]
     - get: weekly
       trigger: true
-    - get: bbl-6-docker-image
   - task: run-bosh-cleanup
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
@@ -1289,9 +1233,7 @@ jobs:
       - get: bellatrix-env-director-state
       - get: daily
         trigger: true
-      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
@@ -1308,9 +1250,7 @@ jobs:
       - get: hermione-env-director-state
       - get: daily
         trigger: true
-      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      image: bbl-6-docker-image
       input_mapping:
         bbl-state: hermione-env-director-state
