@@ -8,14 +8,6 @@ groups:
   - destroy-infrastructure-fresh
   - remove-claimed-lock-fresh
 
-- name: internal-services
-  jobs:
-  - add-claimed-lock-internal-services
-  - setup-infrastructure-internal-services
-  - update-infrastructure-internal-services
-  - destroy-infrastructure-internal-services
-  - remove-claimed-lock-internal-services
-
 - name: lite
   jobs:
   - add-claimed-lock-lite
@@ -44,14 +36,6 @@ groups:
   - remove-claimed-lock-stable
   - run-bosh-cleanup-stable
 
-- name: transition
-  jobs:
-  - add-claimed-lock-transition
-  - setup-infrastructure-transition
-  - update-infrastructure-transition
-  - destroy-infrastructure-transition
-  - remove-claimed-lock-transition
-
 - name: upgrade
   jobs:
   - add-claimed-lock-upgrade
@@ -76,14 +60,6 @@ resources:
     pool: cf-deployment/fresh
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
-- name: internal-services-pool
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/relint-ci-pools
-    branch: master
-    pool: cf-deployment/internal-services
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
-
 - name: lite-pool
   type: pool
   source:
@@ -106,14 +82,6 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/stable
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
-
-- name: transition-pool
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/relint-ci-pools
-    branch: master
-    pool: cf-deployment/transition
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: upgrade-pool
@@ -155,15 +123,6 @@ resources:
     paths:
     - bbl-state
 
-- name: dumbledore-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/dumbledore-env.git
-    private_key: ((dumbledore_env_readwrite_deploy_key))
-    paths:
-    - bbl-state
-
 - name: hagrid-env-director-state
   type: git
   source:
@@ -187,15 +146,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: ((luna_env_readwrite_deploy_key))
-    paths:
-    - bbl-state
-
-- name: minerva-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: ((minerva_env_readwrite_deploy_key))
     paths:
     - bbl-state
 
@@ -249,21 +199,6 @@ jobs:
   - put: fresh-pool
     params: {add_claimed: fresh-pool}
 
-- name: add-claimed-lock-internal-services
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: dumbledore
-    output_mapping:
-      pool-resource: internal-services-pool
-  - put: internal-services-pool
-    params: {add_claimed: internal-services-pool}
-
 - name: add-claimed-lock-lite
   serial: true
   public: true
@@ -308,21 +243,6 @@ jobs:
       pool-resource: stable-pool
   - put: stable-pool
     params: {add_claimed: stable-pool}
-
-- name: add-claimed-lock-transition
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: minerva
-    output_mapping:
-      pool-resource: transition-pool
-  - put: transition-pool
-    params: {add_claimed: transition-pool}
 
 - name: add-claimed-lock-upgrade
   serial: true
@@ -404,39 +324,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-
-- name: setup-infrastructure-internal-services
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: internal-services-pool
-    trigger: true
-    passed: [ add-claimed-lock-internal-services ]
-  - aggregate:
-    - get: runtime-ci
-    - get: dumbledore-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: bbl-state
-      BBL_IAAS: aws
-      BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
-      SKIP_LB_CREATION: true
-      BBL_ENV_NAME: dumbledore-upgrade
-    input_mapping:
-      bbl-state: dumbledore-env-director-state
-      bbl-config: dumbledore-env-director-state
-    ensure:
-      put: dumbledore-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - put: internal-services-pool
-    params: {release: internal-services-pool}
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -537,40 +424,6 @@ jobs:
   - put: stable-pool
     params: {release: stable-pool}
 
-- name: setup-infrastructure-transition
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: transition-pool
-    trigger: true
-    passed: [ add-claimed-lock-transition ]
-  - aggregate:
-    - get: runtime-ci
-    - get: minerva-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_IAAS: aws
-      BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: ((minerva_aws_access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((minerva_aws_secret_access_key))
-      BBL_LB_CERT: ((minerva_lbs_ssl_cert))
-      BBL_LB_KEY: ((minerva_lbs_ssl_signing_key))
-      LB_DOMAIN: minerva.cf-app.com
-      BBL_ENV_NAME: minerva-upgrade
-    input_mapping:
-      bbl-state: minerva-env-director-state
-      bbl-config: minerva-env-director-state
-    ensure:
-      put: minerva-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - put: transition-pool
-    params: {release: transition-pool}
-
 - name: setup-infrastructure-upgrade
   serial_groups: [hermione]
   public: true
@@ -643,39 +496,6 @@ jobs:
           rebase: true
     - put: fresh-pool
       params: {release: fresh-pool}
-
-- name: update-infrastructure-internal-services
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - put: internal-services-pool
-        params: {acquire: true}
-      - get: dumbledore-env-director-state
-      - get: cf-deployment-concourse-tasks
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: bbl-state
-        BBL_IAAS: aws
-        BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
-        BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
-        SKIP_LB_CREATION: true
-        BBL_ENV_NAME: dumbledore-upgrade
-      input_mapping:
-        bbl-state: dumbledore-env-director-state
-        bbl-config: dumbledore-env-director-state
-      ensure:
-        put: dumbledore-env-director-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - put: internal-services-pool
-      params: {release: internal-services-pool}
 
 - name: update-infrastructure-lite
   serial: true
@@ -814,40 +634,6 @@ jobs:
     - put: upgrade-pool
       params: {release: upgrade-pool}
 
-- name: update-infrastructure-transition
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - put: transition-pool
-        params: {acquire: true}
-      - get: minerva-env-director-state
-      - get: cf-deployment-concourse-tasks
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_IAAS: aws
-        BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: ((minerva_aws_access_key_id))
-        BBL_AWS_SECRET_ACCESS_KEY: ((minerva_aws_secret_access_key))
-        BBL_LB_CERT: ((minerva_lbs_ssl_cert))
-        BBL_LB_KEY: ((minerva_lbs_ssl_signing_key))
-        LB_DOMAIN: minerva.cf-app.com
-        BBL_ENV_NAME: minerva-upgrade
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        bbl-config: minerva-env-director-state
-      ensure:
-        put: minerva-env-director-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - put: transition-pool
-      params: {release: transition-pool}
-
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
   serial: true
@@ -872,37 +658,6 @@ jobs:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
     ensure:
       put: luna-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
-
-- name: destroy-infrastructure-internal-services
-  serial_groups: [dumbledore]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - put: internal-services-pool
-      params: {claim: dumbledore}
-    - get: dumbledore-env-director-state
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-  - try:
-      do:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          bbl-state: dumbledore-env-director-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: dumbledore-env-director-state
-    params:
-      BBL_STATE_DIR: bbl-state
-      BBL_AWS_ACCESS_KEY_ID: ((dumbledore_aws_access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((dumbledore_aws_secret_access_key))
-    ensure:
-      put: dumbledore-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
@@ -984,36 +739,6 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-transition
-  serial_groups: [minerva]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - put: transition-pool
-      params: {claim: minerva}
-    - get: minerva-env-director-state
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-  - try:
-      do:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: minerva-env-director-state
-    params:
-      BBL_AWS_ACCESS_KEY_ID: ((minerva_aws_access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((minerva_aws_secret_access_key))
-    ensure:
-      put: minerva-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
-
 - name: destroy-infrastructure-upgrade
   serial_groups: [hermione]
   public: true
@@ -1083,24 +808,6 @@ jobs:
   - put: fresh-pool
     params: {remove: fresh-pool}
 
-- name: remove-claimed-lock-internal-services
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: internal-services-pool
-    passed: [ destroy-infrastructure-internal-services ]
-    trigger: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: dumbledore
-    output_mapping:
-      pool-resource: internal-services-pool
-  - put: internal-services-pool
-    params: {remove: internal-services-pool}
-
 - name: remove-claimed-lock-lite
   serial: true
   public: true
@@ -1155,24 +862,6 @@ jobs:
   - put: stable-pool
     params: {remove: stable-pool}
 
-- name: remove-claimed-lock-transition
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: runtime-ci
-  - get: transition-pool
-    passed: [ destroy-infrastructure-transition ]
-    trigger: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: minerva
-    output_mapping:
-      pool-resource: transition-pool
-  - put: transition-pool
-    params: {remove: transition-pool}
-
 - name: remove-claimed-lock-upgrade
   serial: true
   public: true
@@ -1188,7 +877,7 @@ jobs:
       NAME: hermione
     output_mapping:
       pool-resource: upgrade-pool
-  - put: transition-pool
+  - put: upgrade-pool
     params: {remove: upgrade-pool}
 
 # BOSH cleanup
