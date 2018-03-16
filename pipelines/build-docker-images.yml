@@ -6,7 +6,6 @@ groups:
   jobs:
   - build-relint-base-docker-image
   - build-bosh-cli-docker-image
-  - build-bosh-and-spiff-docker-image
   - build-run-rats-docker-image
 
 resources:
@@ -49,13 +48,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
-
-- name: runtime-ci-bosh-and-spiff
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [dockerfiles/bosh-and-spiff/Dockerfile]
 
 - name: runtime-ci-run-rats
   type: git
@@ -126,14 +118,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-cli
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: bosh-and-spiff-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/bosh-and-spiff
     username: ((dockerhub_username))
     password: ((dockerhub_password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -249,25 +233,6 @@ jobs:
         build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
         build_args_file: version-json/version.json
-
-- name: build-bosh-and-spiff-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: runtime-ci-bosh-and-spiff
-        trigger: true
-      - get: bosh-cli-image
-        passed: [build-bosh-cli-docker-image]
-        trigger: true
-    - put: bosh-and-spiff-image
-      params:
-        build: runtime-ci-bosh-and-spiff/dockerfiles/bosh-and-spiff/
-        push: true
 
 - name: build-run-rats-docker-image
   public: true
