@@ -4,7 +4,6 @@ groups:
   jobs:
   - fresh-deploy
   - lite-deploy
-  - transition-deploy
   - internal-services-transition-deploy
   - upgrade-deploy
 
@@ -13,8 +12,6 @@ groups:
   - fresh-cats
   - fresh-enable-docker-and-tasks
   - lite-cats
-  - transition-enable-docker-and-tasks
-  - transition-cats
   - upgrade-cats
   - upgrade-cats-windows2016
   - upgrade-set-feature-flags
@@ -22,7 +19,6 @@ groups:
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
-  - transition-rats
   - upgrade-rats
   - ops-test
   - unit-test-ops-files
@@ -87,15 +83,7 @@ groups:
   - bless-manifest
 - name: tr
   jobs:
-  - transition-release-pool-manual
-  - ensure-transition-env-is-clean
   - legacy-deploy
-  - transition-acquire-pool
-  - transition-cats
-  - transition-rats
-  - transition-delete-deployment
-  - transition-deploy
-  - transition-enable-docker-and-tasks
   - internal-services-release-pool-manual
   - ensure-internal-services-env-is-clean
   - internal-services-legacy-deploy
@@ -190,14 +178,6 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/stable
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
-
-- name: transition-pool
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/relint-ci-pools
-    branch: master
-    pool: cf-deployment/transition
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: internal-services-pool
@@ -645,23 +625,6 @@ jobs:
       - put: internal-services-pool
         params: {claim: dumbledore}
 
-- name: transition-acquire-pool
-  public: true
-  serial: true
-  build_logs_to_retain: 10
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-release-candidate
-        trigger: true
-      - get: legacy-cf-release
-        trigger: true
-      - get: legacy-diego-release
-        trigger: true
-      - put: transition-pool
-        params: {claim: minerva}
-
 - name: ensure-internal-services-env-is-clean
   public: true
   serial: true
@@ -691,188 +654,6 @@ jobs:
       file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
       input_mapping:
         bbl-state: dumbledore-env-director-state
-
-- name: ensure-transition-env-is-clean
-  public: true
-  serial: true
-  build_logs_to_retain: 10
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ transition-acquire-pool ]
-      trigger: true
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: minerva-env-director-state
-      - get: runtime-ci
-    - aggregate:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-      - task: guarantee-no-existing-diego-deployment
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        params:
-          DEPLOYMENT_NAME: cf-diego
-    - task: ensure-no-loggregator-releases
-      file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-    - aggregate:
-      - task: recreate-uaadb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_uaadb_host))
-          DB_USER: ((minerva_uaadb_user))
-          DB_PASSWORD: ((minerva_uaadb_password))
-          DB_NAME: ((minerva_uaadb_db_name))
-      - task: recreate-ccdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_ccdb_host))
-          DB_USER: ((minerva_ccdb_user))
-          DB_PASSWORD: ((minerva_ccdb_password))
-          DB_NAME: ((minerva_ccdb_db_name))
-      - task: recreate-bbsdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_bbsdb_host))
-          DB_USER: ((minerva_bbsdb_user))
-          DB_PASSWORD: ((minerva_bbsdb_password))
-          DB_NAME: ((minerva_bbsdb_db_name))
-      - task: recreate-locketdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_locketdb_host))
-          DB_USER: ((minerva_locketdb_user))
-          DB_PASSWORD: ((minerva_locketdb_password))
-          DB_NAME: ((minerva_locketdb_db_name))
-      - task: recreate-npsdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_npsdb_host))
-          DB_USER: ((minerva_npsdb_user))
-          DB_PASSWORD: ((minerva_npsdb_password))
-          DB_NAME: ((minerva_npsdb_db_name))
-      - task: recreate-silkdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_silkdb_host))
-          DB_USER: ((minerva_silkdb_user))
-          DB_PASSWORD: ((minerva_silkdb_password))
-          DB_NAME: ((minerva_silkdb_db_name))
-      - task: recreate-routingdb
-        file: runtime-ci/tasks/recreate-database/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-        params:
-          DB_HOST: ((minerva_routingdb_host))
-          DB_USER: ((minerva_routingdb_user))
-          DB_PASSWORD: ((minerva_routingdb_password))
-          DB_NAME: ((minerva_routingdb_db_name))
-      - task: restore-cloud-config
-        file: runtime-ci/tasks/update-cloud-config-from-bbl/task.yml
-        input_mapping:
-          bbl-state: minerva-env-director-state
-
-- name: legacy-deploy
-  public: true
-  serial: true
-  build_logs_to_retain: 10
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ ensure-transition-env-is-clean ]
-      trigger: true
-    - aggregate:
-      - get: runtime-ci
-      - get: minerva-env-stubs-and-vars
-      - get: minerva-env-director-state
-      - get: cf-release-master
-        params:
-          depth: 1
-          submodules: none
-      - get: github-diego-release
-      - get: legacy-garden-runc-release
-      - get: legacy-diego-release
-      - get: legacy-cflinuxfs2-release
-      - get: legacy-cf-release
-      - get: aws-stemcell
-      - get: cf-deployment-transition
-      - get: cf-deployment-concourse-tasks
-    - task: generate-release-manifest-cf
-      file: runtime-ci/tasks/generate-release-manifest/task.yml
-      input_mapping:
-        release-repo: cf-release-master
-        stubs-repo: minerva-env-stubs-and-vars
-      params:
-        INFRASTRUCTURE: aws
-        STUBS_PATH: transition/stubs/cf/cf-stub.yml
-      output_mapping:
-        manifest: cf-manifest
-    - task: create-diego-manifest
-      file: runtime-ci/tasks/create-diego-manifest/task.yml
-      input_mapping:
-        diego-release: github-diego-release
-        iaas-settings: minerva-env-stubs-and-vars
-        property-overrides: minerva-env-stubs-and-vars
-        instance-count-overrides: minerva-env-stubs-and-vars
-        release-versions: minerva-env-stubs-and-vars
-      output_mapping:
-        generated-diego-manifest: diego-manifest
-      params:
-        IAAS_SETTINGS_PATH: transition/stubs/diego/iaas-settings.yml
-        INSTANCE_COUNT_OVERRIDES_PATH: transition/stubs/diego/instance-count-overrides.yml
-        DIEGO_SQL_RESOURCE_PATH: property-overrides/transition/stubs/diego/rds-overrides.yml
-        PROPERTY_OVERRIDES_PATH: transition/stubs/diego/property-overrides.yml
-        RELEASE_VERSIONS_PATH: transition/stubs/diego/release-versions.yml
-    - task: generate-dynamic-bosh-source
-      file: runtime-ci/tasks/generate-dynamic-bosh-source/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-    - task: upload-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-      input_mapping:
-        stemcell: aws-stemcell
-        bbl-state: minerva-env-director-state
-      params:
-        STEMCELL_NAME: stemcell.tgz
-    - put: legacy-cf-bosh-deployment
-      params:
-        manifest: cf-manifest/deployment.yml
-        releases:
-        - legacy-cf-release/release.tgz
-        source_file: dynamic-bosh-source/source_file.json
-    - put: legacy-diego-bosh-deployment
-      params:
-        manifest: diego-manifest/diego-deployment.yml
-        releases:
-        - legacy-diego-release/release.tgz
-        - legacy-garden-runc-release/release.tgz
-        - legacy-cflinuxfs2-release/release.tgz
-        source_file: dynamic-bosh-source/source_file.json
-    - task: bosh-run-errand-smoke-tests
-      file: runtime-ci/tasks/run-errand/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-      params:
-        ERRAND_NAME: smoke_tests
 
 - name: internal-services-legacy-deploy
   public: true
@@ -1137,186 +918,6 @@ jobs:
           repository: updated-integration-configs
           rebase: true
 
-- name: transition-deploy
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ legacy-deploy ]
-      trigger: true
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
-      - get: minerva-env-stubs-and-vars
-      - get: minerva-env-integration-configs
-      - get: minerva-env-director-state
-      - get: cf-deployment-release-candidate
-        passed: [ bless-manifest ]
-      - get: legacy-cf-release
-        passed: [ legacy-deploy ]
-      - get: legacy-diego-release
-        passed: [ legacy-deploy ]
-      - get: legacy-cflinuxfs2-release
-        passed: [ legacy-deploy ]
-      - get: legacy-garden-runc-release
-        passed: [ legacy-deploy ]
-      - get: cf-deployment-transition
-    - task: extract-vars-store
-      file: runtime-ci/tasks/r2d2/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        vars-store: minerva-env-stubs-and-vars
-    - task: bosh-upload-stemcell
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-release-candidate
-        bbl-state: minerva-env-director-state
-      params:
-        INFRASTRUCTURE: aws
-    - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-      input_mapping:
-        base-ops-files: cf-deployment-release-candidate
-        new-ops-files: cf-deployment-transition
-      params:
-        BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: |
-          cfr-to-cfd.yml
-          enable-doppler-announce.yml
-          keep-etcd-for-transition.yml
-          remove-routing-components-for-transition.yml
-          remove-cf-networking-for-transition.yml
-    - task: remove-static-ips-from-cloud-config
-      file: runtime-ci/tasks/bosh-extend-cloud-config/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        ops-file: minerva-env-stubs-and-vars
-      params:
-        OPS_FILE_PATH: add-static-ips-to-dynamic-range.yml
-    - task: bosh-deploy-cf
-      file: runtime-ci/tasks/transition-deploy/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        cf-deployment: cf-deployment-release-candidate
-        ops-files: collected-ops-files
-        vars-store: extracted-vars-store
-        vars-files: minerva-env-stubs-and-vars
-      params:
-        SYSTEM_DOMAIN: minerva.cf-app.com
-        UPTIMER_APP_DOMAIN: minerva.cf-app.com
-        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
-        UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
-        UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
-        UPTIMER_RECENT_LOGS_THRESHOLD: 5
-        UPTIMER_STREAMING_LOGS_THRESHOLD: 2
-        OPS_FILES: |
-          operations/use-compiled-releases.yml
-          operations/aws.yml
-          operations/keep-etcd-for-transition.yml
-          operations/enable-doppler-announce.yml
-          operations/use-external-dbs.yml
-          operations/use-s3-blobstore.yml
-          operations/set-bbs-active-key.yml
-          operations/cfr-to-cfd.yml
-          operations/remove-routing-components-for-transition.yml
-          operations/remove-cf-networking-for-transition.yml
-          operations/set-router-static-ips.yml
-        VARS_FILES: |
-          rds-vars.yml
-          s3-vars.yml
-          static_ips.yml
-        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        FAIL_ON_DOWNTIME: true
-      on_failure:
-        put: minerva-env-stubs-and-vars
-        params:
-          repository: updated-vars-store
-          rebase: true
-    - task: bosh-deploy-cf-without-etcd
-      file: runtime-ci/tasks/transition-deploy/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        cf-deployment: cf-deployment-release-candidate
-        ops-files: collected-ops-files
-        vars-store: updated-vars-store
-        vars-files: minerva-env-stubs-and-vars
-      params:
-        SYSTEM_DOMAIN: minerva.cf-app.com
-        UPTIMER_APP_DOMAIN: minerva.cf-app.com
-        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
-        OPS_FILES: |
-          operations/use-compiled-releases.yml
-          operations/aws.yml
-          operations/use-external-dbs.yml
-          operations/use-s3-blobstore.yml
-          operations/set-bbs-active-key.yml
-          operations/remove-routing-components-for-transition.yml
-          operations/remove-cf-networking-for-transition.yml
-        VARS_FILES: |
-          rds-vars.yml
-          s3-vars.yml
-        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        FAIL_ON_DOWNTIME: true
-        UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
-        UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
-        UPTIMER_RECENT_LOGS_THRESHOLD: 2
-        UPTIMER_STREAMING_LOGS_THRESHOLD: 2
-      ensure:
-        put: minerva-env-stubs-and-vars
-        params:
-          repository: updated-vars-store
-          rebase: true
-    - task: bosh-deploy-cf-with-networking-and-routing
-      file: runtime-ci/tasks/transition-deploy/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-        cf-deployment: cf-deployment-release-candidate
-        ops-files: collected-ops-files
-        vars-store: updated-vars-store
-        vars-files: minerva-env-stubs-and-vars
-      params:
-        SYSTEM_DOMAIN: minerva.cf-app.com
-        UPTIMER_APP_DOMAIN: minerva.cf-app.com
-        UPTIMER_TCP_DOMAIN: placeholder.this.is.dumb.com
-        OPS_FILES: |
-          operations/use-compiled-releases.yml
-          operations/aws.yml
-          operations/use-external-dbs.yml
-          operations/use-s3-blobstore.yml
-          operations/set-bbs-active-key.yml
-        VARS_FILES: |
-          rds-vars.yml
-          s3-vars.yml
-        DEPLOY_WITH_UPTIME_MEASUREMENTS: true
-        FAIL_ON_DOWNTIME: true
-        UPTIMER_HTTP_AVAILABILITY_THRESHOLD: 0
-        UPTIMER_APP_PUSHABILITY_THRESHOLD: 2
-        UPTIMER_RECENT_LOGS_THRESHOLD: 2
-        UPTIMER_STREAMING_LOGS_THRESHOLD: 2
-      ensure:
-        put: minerva-env-stubs-and-vars
-        params:
-          repository: updated-vars-store
-          rebase: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: minerva-env-director-state
-    - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-      params:
-        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
-      input_mapping:
-        vars-store: minerva-env-stubs-and-vars
-        integration-configs: minerva-env-integration-configs
-      ensure:
-        put: minerva-env-integration-configs
-        params:
-          repository: updated-integration-configs
-          rebase: true
-
 - name: fresh-deploy
   serial: true
   public: true
@@ -1544,15 +1145,6 @@ jobs:
     try:
       put: internal-services-pool
       params: {release: internal-services-pool}
-
-- name: transition-release-pool-manual
-  public: true
-  plan:
-  - get: transition-pool
-  ensure:
-    try:
-      put: transition-pool
-      params: {release: transition-pool}
 
 - name: stable-release-pool-manual
   public: true
@@ -1836,41 +1428,6 @@ jobs:
           repository: updated-integration-configs
           rebase: true
 
-- name: transition-enable-docker-and-tasks
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ transition-deploy ]
-      trigger: true
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: minerva-env-stubs-and-vars
-      - get: cf-deployment-release-candidate
-        passed: [ transition-deploy ]
-      - get: legacy-cf-release
-        passed: [ transition-deploy ]
-      - get: legacy-diego-release
-        passed: [ transition-deploy ]
-      - get: legacy-cflinuxfs2-release
-        passed: [ transition-deploy ]
-      - get: legacy-garden-runc-release
-        passed: [ transition-deploy ]
-      - get: cf-deployment-transition
-        passed: [ transition-deploy ]
-    - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        vars-store: minerva-env-stubs-and-vars
-      params:
-        SYSTEM_DOMAIN: minerva.cf-app.com
-        ENABLED_FEATURE_FLAGS: |
-          diego_docker
-          task_creation
-
 - name: internal-services-enable-docker-and-tasks
   serial: true
   public: true
@@ -1914,36 +1471,6 @@ jobs:
         ENABLED_FEATURE_FLAGS: |
           diego_docker
           task_creation
-
-- name: transition-cats
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ transition-enable-docker-and-tasks ]
-      trigger: true
-    - aggregate:
-      - get: cf-acceptance-tests
-      - get: minerva-env-integration-configs
-      - get: cf-deployment-release-candidate
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: cf-deployment-concourse-tasks
-      - get: legacy-cf-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-diego-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-cflinuxfs2-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-garden-runc-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: cf-deployment-transition
-        passed: [ transition-enable-docker-and-tasks ]
-    - task: run-cats
-      input_mapping:
-        integration-config: minerva-env-integration-configs
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
 
 - name: internal-services-cats
   public: true
@@ -2035,29 +1562,29 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: legacy-cf-release
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         params:
           tarball: false
       - get: legacy-diego-release
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-cflinuxfs2-release
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: legacy-garden-runc-release
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         trigger: true
         params:
           tarball: false
       - get: cf-deployment-release-candidate
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         trigger: true
       - get: cf-deployment-transition
-        passed: [ transition-cats, transition-rats, internal-services-cats, internal-services-rats ]
+        passed: [ internal-services-cats, internal-services-rats ]
         trigger: true
       - get: cf-deployment-transition-compatibility
     - task: record-compatible-versions
@@ -2072,30 +1599,6 @@ jobs:
       params:
         repository: updated-r2d2-compatibility
         rebase: true
-
-- name: transition-delete-deployment
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      passed: [ transition-cats, transition-rats ]
-      trigger: true
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: minerva-env-director-state
-      - get: runtime-ci
-  - task: delete-deployment-cf
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: minerva-env-director-state
-  - task: ensure-no-loggregator-releases
-    file: runtime-ci/tasks/bosh-delete-loggregator-release/task.yml
-    input_mapping:
-      bbl-state: minerva-env-director-state
-  - put: transition-pool
-    params: {release: transition-pool}
 
 - name: internal-services-delete-deployment
   public: true
@@ -2438,38 +1941,6 @@ jobs:
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
-
-- name: transition-rats
-  serial_groups: [ minerva-rats ]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: transition-pool
-      trigger: true
-      passed: [ transition-enable-docker-and-tasks ]
-    - aggregate:
-      - get: runtime-ci
-      - get: github-routing-release-master
-      - get: minerva-env-integration-configs
-      - get: cf-deployment-transition
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: cf-deployment-release-candidate
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-cf-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-diego-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-cflinuxfs2-release
-        passed: [ transition-enable-docker-and-tasks ]
-      - get: legacy-garden-runc-release
-        passed: [ transition-enable-docker-and-tasks ]
-    - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
-      input_mapping:
-        routing-release: github-routing-release-master
-        integration-config: minerva-env-integration-configs
 
 - name: lite-rats
   serial_groups: [ snitch-rats ]
