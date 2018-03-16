@@ -83,7 +83,6 @@ groups:
   - bless-manifest
 - name: tr
   jobs:
-  - legacy-deploy
   - internal-services-release-pool-manual
   - ensure-internal-services-env-is-clean
   - internal-services-legacy-deploy
@@ -196,21 +195,6 @@ resources:
     branch: master
     pool: cf-deployment/ops
     private_key: ((relint_ci_pools_readwrite_deploy_key))
-- name: minerva-env-stubs-and-vars
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: ((minerva_env_readwrite_deploy_key))
-- name: minerva-env-integration-configs
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: ((minerva_env_readwrite_deploy_key))
-    paths:
-    - integration_config.json
-    - rats_integration_config.json
 - name: dumbledore-env-integration-configs
   type: git
   source:
@@ -285,14 +269,6 @@ resources:
     - syslog-vars.yml
     - bbs-key-label.yml
     - gcs-vars.yml
-- name: minerva-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/minerva-env.git
-    private_key: ((minerva_env_readwrite_deploy_key))
-    paths:
-    - bbl-state
 - name: dumbledore-env-director-state
   type: git
   source:
