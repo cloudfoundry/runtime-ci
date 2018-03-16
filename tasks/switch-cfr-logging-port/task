@@ -1,5 +1,0 @@
-#!/bin/bash -exu
-
-bosh int manifest/deployment.yml \
-  -o runtime-ci/tasks/switch-cfr-logging-port/ops.yml \
-  > updated-manifest/deployment.yml

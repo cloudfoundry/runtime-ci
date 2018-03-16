@@ -1,7 +1,0 @@
-#!/bin/bash
-set -exu
-
-release-repo/scripts/generate_deployment_manifest \
-  "${INFRASTRUCTURE}" \
-  stubs-repo/${STUBS_PATH} > manifest/deployment.yml
-
