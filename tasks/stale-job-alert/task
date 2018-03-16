@@ -6,7 +6,7 @@ set -eu
 ## ======================================================================
 
 CONCOURSE_BASE_URL=${CONCOURSE_BASE_URL:=https://release-integration.ci.cf-app.com}
-PIPELINE_INCLUDE=${PIPELINE_INCLUDE:=cf-deployment}
+PIPELINE_INCLUDE=${PIPELINE_INCLUDE:=infrastructure}
 JOB_KEYWORDS_EXCLUDE=${JOB_KEYWORDS_EXCLUDE:=ship-it transition stable-deploy}
 VERBOSE=${VERBOSE:=false}
 
@@ -51,15 +51,19 @@ for PIPELINE in $PIPELINE_INCLUDE; do
       echo "jobs: ${jobs}"
   fi
 
-  #focus on only needed info, removing nulls
-  job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .start_time, .url | values ] | select(length > 0)]')"
+  job_details="$(echo $jobs | jq '[.[] | .finished_build | [ .id, .job_name, .pipeline_name, .url, .start_time, .end_time ]]')"
+
+  stale_jobs="$(echo $job_details | jq 'map(if .[4]==null then .[4]=.[5] else . end)')"
+  stale_jobs="$(echo $stale_jobs | jq 'map(if .[5]==null then .[5]=.[4] else . end)')"
+  stale_jobs="$(echo $stale_jobs | jq 'map(map(select(. | values)) | select(length > 0))')"
+  stale_jobs="$(echo $stale_jobs | jq 'map(select(length > 5))')"
 
   if [ "${VERBOSE}" = "true" ]; then
       echo "job_details: ${job_details}"
   fi
 
   #get all jobs that haven't run in over a week
-  stale_jobs="$(echo $job_details | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[3] > $ONE_WEEK))')"
+  stale_jobs="$(echo $stale_jobs | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[4] > $ONE_WEEK))')"
 
   ## ----------------------------------------------------------------------
 
@@ -105,8 +109,8 @@ EOF
     for k in $report; do
       job_name="$(echo $stale_jobs | jq .[$k] | jq .[1] | sed 's/"//g')"
       pipeline_name="$(echo $stale_jobs | jq .[$k] | jq .[2] | sed 's/"//g')"
-      job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
-      job_url="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
+      job_start_time="$(echo $stale_jobs | jq .[$k] | jq .[4] | sed 's/"//g')"
+      job_url="$(echo $stale_jobs | jq .[$k] | jq .[3] | sed 's/"//g')"
       job_age="$(echo $(($CURRENT_TIME- $job_start_time)) | sed 's/"//g')"
       full_job_url=${CONCOURSE_BASE_URL}${job_url}
 
