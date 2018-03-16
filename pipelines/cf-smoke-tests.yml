@@ -13,7 +13,7 @@ resources:
   type: time
   source:
     start: 3:00
-    stop: 3:30
+    stop: 4:30
     location: America/Los_Angeles
     interval: 168h
 
