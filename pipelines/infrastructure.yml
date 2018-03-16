@@ -622,7 +622,7 @@ jobs:
         BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
-        BBL_ENV_NAME: hermione-upgrade
+        BBL_ENV_NAME: bbl-env-vostok-2017-09-12t21-53z
       input_mapping:
         bbl-state: hermione-env-director-state
         bbl-config: hermione-env-director-state
