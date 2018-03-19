@@ -485,7 +485,6 @@ jobs:
         BBL_LB_CERT: ((luna_cf_ssl_cert))
         BBL_LB_KEY: ((luna_cf_ssl_cert_private_key))
         LB_DOMAIN: luna.cf-app.com
-        BBL_ENV_NAME: luna-fresh
       input_mapping:
         bbl-state: luna-env-director-state
         bbl-config: bosh-bootloader
@@ -553,7 +552,6 @@ jobs:
         BBL_LB_CERT: ((trelawney_cf_ssl_cert))
         BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
         LB_DOMAIN: trelawney.cf-app.com
-        BBL_ENV_NAME: trelawney-ops
       input_mapping:
         bbl-state: trelawney-env-director-state
         bbl-config: trelawney-env-director-state
@@ -587,7 +585,6 @@ jobs:
         BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
         BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
         LB_DOMAIN: bellatrix.cf-app.com
-        BBL_ENV_NAME: bellatrix-stable
       input_mapping:
         bbl-state: bellatrix-env-director-state
         bbl-config: bellatrix-env-director-state
@@ -622,7 +619,6 @@ jobs:
         BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
-        BBL_ENV_NAME: bbl-env-vostok-2017-09-12t21-53z
       input_mapping:
         bbl-state: hermione-env-director-state
         bbl-config: hermione-env-director-state
