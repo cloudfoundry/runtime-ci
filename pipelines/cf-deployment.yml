@@ -496,6 +496,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: |
+        operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/use-compiled-releases.yml
         operations/rename-network.yml
         operations/rename-deployment.yml
