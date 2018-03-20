@@ -25,6 +25,38 @@ describe 'Renderer' do
       updates
     end
 
+    it 'includes a section header for Notices' do
+      rendered_output = renderer.render(release_updates: release_updates)
+      expect(rendered_output).to include ("## Notices\n\n")
+    end
+
+    it 'includes a section header for Manifest Updates' do
+      rendered_output = renderer.render(release_updates: release_updates)
+      expect(rendered_output).to include ("## Manifest Updates\n\n")
+    end
+
+    it 'includes a section header for Ops-files, as well as sub-headers for New and Updated Ops-files' do
+      rendered_output = renderer.render(release_updates: release_updates)
+      expect(rendered_output).to include (
+<<-OPSFILES
+## Ops-files
+### New Ops-files
+### Updated Ops-files
+
+OPSFILES
+      )
+    end
+
+    it 'includes a section header for Other Updates' do
+      rendered_output = renderer.render(release_updates: release_updates)
+      expect(rendered_output).to include ("## Other Updates\n\n")
+    end
+
+    it 'inlcudes a section header for Release and Stemcell Updates' do
+      rendered_output = renderer.render(release_updates: release_updates)
+      expect(rendered_output).to include ("## Release and Stemcell Updates\n")
+    end
+
     describe 'Release and stemcell table' do
       it 'includes a header' do
         expect(renderer.render(release_updates: release_updates)).to include(
@@ -33,6 +65,11 @@ describe 'Renderer' do
 | ------- | ----------- | ----------- |
 HEADER
         )
+      end
+
+      it 'places the table header immediately after the section header' do
+        rendered_output = renderer.render(release_updates: release_updates)
+        expect(rendered_output).to include ("## Release and Stemcell Updates\n| Release | New Version | Old Version |")
       end
 
       it 'shows the release name, new version, and old version for each release' do
