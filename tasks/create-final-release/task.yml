@@ -9,6 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: release-repo
+- name: semantic-version
 
 outputs:
 - name: final-release-repo

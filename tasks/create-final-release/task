@@ -24,15 +24,16 @@ EOF
 }
 
 function create_release() {
+  local sem_ver=$(cat semantic-version/cf-smoke-tests-version)
   pushd release-repo > /dev/null
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
 
-    bosh -n create-release --final
+    echo "bosh -n create-release --final --version=$sem_ver"
 
-    git add .final_builds releases
+    # git add .final_builds releases
 
-    git commit -m "Final release."
+    # git commit -m "Final release."
   popd > /dev/null
 }
 
