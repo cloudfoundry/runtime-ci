@@ -3,6 +3,13 @@ set -exu
 
 root_dir="${PWD}"
 
+
+fail_fast() {
+if [ ! -f semantic-version/version ]; then
+  exit 1
+fi
+}
+
 setup_aws_access() {
   set +x
   BLOBS_BUCKET_ACCESS_KEY_ID="${BLOBS_BUCKET_ACCESS_KEY_ID:?"\$BLOBS_BUCKET_ACCESS_KEY_ID not set"}"
@@ -38,6 +45,8 @@ create_release() {
 }
 
 main() {
+  fail_fast
+
   setup_aws_access
 
   write_config_private
