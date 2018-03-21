@@ -104,7 +104,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: lite-pool
   type: pool
@@ -112,7 +112,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/lite
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: upgrade-pool
   type: pool
@@ -120,7 +120,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/upgrade
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: stable-pool
   type: pool
@@ -128,7 +128,7 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/stable
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: ops-pool
   type: pool
@@ -136,13 +136,13 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/ops
-    private_key: ((relint_ci_pools_readwrite_deploy_key))
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 - name: bellatrix-env-director-state
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 - name: bellatrix-env-vars-store
@@ -150,7 +150,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-vars.yml
 - name: bellatrix-env-integration-configs
@@ -158,7 +158,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
 - name: luna-env-director-state
@@ -166,7 +166,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key))
+    private_key: ((luna_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 - name: luna-env-integration-configs
@@ -174,7 +174,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key))
+    private_key: ((luna_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -183,7 +183,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key))
+    private_key: ((luna_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-name.yml
     - deployment-vars.yml
@@ -196,7 +196,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
-    private_key: ((trelawney_env_readwrite_deploy_key))
+    private_key: ((trelawney_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
     - google_account_creds.json
@@ -219,7 +219,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 - name: hermione-env-integration-configs
@@ -227,7 +227,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
     - wats2016_integration_config.json
@@ -237,7 +237,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-vars.yml
     - datadog-deployment-vars.yml
@@ -250,7 +250,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - turbulence-deployment-vars.yml
 - name: hermione-env-turbulence-manifest
@@ -258,7 +258,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - turbulence.yml
 - name: cf-deployment-develop
@@ -266,13 +266,13 @@ resources:
   source:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: ((cf_deployment_private_key))
+    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-release-candidate
   type: git
   source:
     branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: ((cf_deployment_private_key))
+    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-all-branches
   type: git
   source:
@@ -288,19 +288,19 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
-    private_key: ((cf_acceptance_tests_private_key))
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 - name: cf-deployment-master
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: ((cf_deployment_private_key))
+    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: snitch-env-vars-store
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: ((snitch_env_private_key))
+    private_key: ((snitch_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-vars.yml
 - name: snitch-env-integration-configs
@@ -308,7 +308,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: ((snitch_env_private_key))
+    private_key: ((snitch_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
     - rats_integration_config.json
@@ -317,7 +317,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: ((snitch_env_private_key))
+    private_key: ((snitch_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 - name: bosh-deployment
@@ -332,14 +332,14 @@ resources:
     driver: git
     uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
     branch: master
-    private_key: ((cf_relint_ci_semver_private_key))
+    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-deployment-version
 
 - name: deliver-tracker-story
   type: tracker
   source:
-    token: ((cf_mega_api_token))
+    token: ((cf_relint_tracker_api_token))
     project_id: "1382120"
     tracker_url: https://www.pivotaltracker.com
 
@@ -1131,7 +1131,7 @@ jobs:
       input_mapping:
         cf-deployment: cf-deployment-master
       params:
-        DEPLOY_KEY: ((cf_acceptance_tests_private_key))
+        DEPLOY_KEY: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: fresh-enable-docker-and-tasks
   serial: true
