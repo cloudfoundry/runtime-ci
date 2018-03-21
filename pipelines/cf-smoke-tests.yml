@@ -58,6 +58,17 @@ resources:
     paths:
     - deployment-vars.yml
 
+# Semantic Version
+- name: cf-smoke-tests-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
+    branch: master
+    private_key: ((cf_relint_ci_semver_private_key))
+    git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
+    file: cf-smoke-tests-version
+
 jobs:
 - name: deploy-updated-smokes
   build_logs_to_retain: 100
@@ -135,15 +146,20 @@ jobs:
     - get: cf-smoke-tests-release
       trigger: true
       passed: [run-smokes-errand]
+    - get: semantic-version
+      resource: cf-smoke-tests-version
+      params: {bump: patch}
   - task: create-final-release
     file: runtime-ci/tasks/create-final-release/task.yml
     input_mapping:
       release-repo: cf-smoke-tests-release
     params:
-      RELEASE_NAME: cf-smoke-tests
       BLOBS_BUCKET_ACCESS_KEY_ID: ((cf_release_blobs_buckets_access_key_id))
       BLOBS_BUCKET_SECRET_KEY: ((cf_release_blobs_buckets_secrect_access_key))
   - put: cf-smoke-tests-release
     params:
       repository: final-release-repo
       rebase: true
+      tag: semantic-version/version
+  - put: semantic-version
+    params: {bump: patch}

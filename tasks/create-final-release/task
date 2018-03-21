@@ -29,11 +29,11 @@ function create_release() {
     git config user.name "CF MEGA BOT"
     git config user.email "cf-mega@pivotal.io"
 
-    echo "bosh -n create-release --final --version=$sem_ver"
+    bosh -n create-release --final --version=$sem_ver
 
-    # git add .final_builds releases
+    git add .final_builds releases
 
-    # git commit -m "Final release."
+    git commit -m "Final release, version $sem_ver."
   popd > /dev/null
 }
 
