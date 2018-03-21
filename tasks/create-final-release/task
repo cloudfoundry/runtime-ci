@@ -3,14 +3,14 @@ set -exu
 
 root_dir="${PWD}"
 
-function setup_aws_access() {
+setup_aws_access() {
   set +x
   BLOBS_BUCKET_ACCESS_KEY_ID="${BLOBS_BUCKET_ACCESS_KEY_ID:?"\$BLOBS_BUCKET_ACCESS_KEY_ID not set"}"
   BLOBS_BUCKET_SECRET_KEY="${BLOBS_BUCKET_SECRET_KEY:?"\$BLOBS_BUCKET_SECRET_KEY not set"}"
   set -x
 }
 
-function write_config_private() {
+write_config_private() {
   set +x
 cat > "release-repo/config/private.yml" <<EOF
 ---
@@ -23,7 +23,7 @@ EOF
   set -x
 }
 
-function create_release() {
+create_release() {
   local sem_ver=$(cat semantic-version/version)
   pushd release-repo > /dev/null
     git config user.name "CF MEGA BOT"
@@ -37,7 +37,7 @@ function create_release() {
   popd > /dev/null
 }
 
-function main() {
+main() {
   setup_aws_access
 
   write_config_private
