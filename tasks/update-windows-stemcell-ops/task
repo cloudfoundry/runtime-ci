@@ -1,11 +1,10 @@
 #!/bin/bash -exu
 
 update_windows_cell() {
-  local windows_cell_version
   windows_cell_version=$(cat windows-stemcell/version)
 
   local windows_stack=windows2012R2
-  local windows_ops_file_path=windows-cell.yml
+  windows_ops_file_path=windows-cell.yml
 
   if [ ${USE_WINDOWS2016} == "true" ]; then
     windows_stack=windows2016
@@ -32,13 +31,13 @@ EOF
 }
 
 output_commit_message() {
-  current_stemcell_version=$(bosh interpolate ops-files/operations/${windows_ops_file_path} --path=/path=~1stemcells~1-/value/version)
-  if [ "${current_stemcell_version}" == "$(cat windows-stemcell/version)" ]; then
+  local current_stemcell_version=$(bosh interpolate ops-files/operations/${windows_ops_file_path} --path=/path=~1stemcells~1-/value/version)
+  if [ "${current_stemcell_version}" == "${windows_cell_version}" ]; then
     echo "No windows stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
   elif [ ${USE_WINDOWS2016} == "true" ]; then
-    echo "Windows2016 stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
+    echo "Windows2016 stemcell updated to ${windows_cell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
   else
-    echo "Windows stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
+    echo "Windows stemcell updated to ${windows_cell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
   fi
 }
 
