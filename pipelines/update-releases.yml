@@ -40,6 +40,7 @@ groups:
   - update-windows-2016-releases
   - update-windows-2016-offline-releases
   - update-windows-stemcell
+  - update-windows2016-stemcell
 - name: infrastructure
   jobs:
   - setup-infrastructure-compilation
@@ -81,18 +82,11 @@ resources:
 - name: windows-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-aws-xen-hvm-windows2012R2-go_agent
-- name: windows-google-stemcell
+    name: bosh-google-kvm-windows2012R2-go_agent
+- name: windows2016-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-google-kvm-windows2012R2-go_agent
-- name: windows-google-stemcell-2016
-  type: s3
-  source:
-    bucket: all-bosh-windows
-    regexp: 1709/tested/gcp/light-bosh-stemcell-(.*)-google-kvm-windows2016-go_agent.tgz
-    access_key_id: ((BOSH_WINDOWS_BOSH_CI_S3_ACCESS_KEY_ID))
-    secret_access_key: ((BOSH_WINDOWS_BOSH_CI_S3_SECRET_ACCESS_KEY))
+    name: bosh-google-kvm-windows2016-go_agent
 
 - name: bbr-release
   type: bosh-io-release
@@ -2508,6 +2502,38 @@ jobs:
       rebase: true
       repository: updated-repo
 
+- name: update-windows2016-stemcell
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: windows2016-stemcell
+      trigger: true
+      params:
+        tarball: false
+  - task: update-windows-stemcell-ops
+    file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      windows-stemcell: windows2016-stemcell
+    params:
+      USE_WINDOWS2016: true
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-stemcell-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: windows2016-cell.yml
+      OPS_FILE_DESTINATION: operations/windows2016-cell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
@@ -2994,7 +3020,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows-google-stemcell
+    - get: windows-stemcell
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2012.yml
     input_mapping:
@@ -3005,7 +3031,7 @@ jobs:
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
-      stemcell: windows-google-stemcell
+      stemcell: windows-stemcell
       bbl-state: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
@@ -3068,7 +3094,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows-google-stemcell-2016
+    - get: windows2016-stemcell
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016.yml
     input_mapping:
@@ -3077,7 +3103,7 @@ jobs:
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
-      stemcell: windows-google-stemcell-2016
+      stemcell: windows2016-stemcell
       bbl-state: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
@@ -3128,7 +3154,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows-google-stemcell-2016
+    - get: windows2016-stemcell
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
     input_mapping:
