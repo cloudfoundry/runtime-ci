@@ -20,3 +20,4 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
+  USE_WINDOWS2016: false

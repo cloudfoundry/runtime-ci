@@ -4,6 +4,14 @@ update_windows_cell() {
   local windows_cell_version
   windows_cell_version=$(cat windows-stemcell/version)
 
+  local windows_stack=windows2012R2
+  local windows_ops_file_path=windows-cell.yml
+
+  if [ ${USE_WINDOWS2016} == "true" ]; then
+    windows_stack=windows2016
+    windows_ops_file_path=windows2016-cell.yml
+  fi
+
   update_windows_cell_ops_file=$(mktemp)
 (
 cat << EOF
@@ -14,19 +22,21 @@ cat << EOF
     type: replace
     path: /stemcells/-
     value:
-      alias: windows2012R2
-      os: windows2012R2
+      alias: "${windows_stack}"
+      os: "${windows_stack}"
       version: "${windows_cell_version}"
 EOF
 ) > "${update_windows_cell_ops_file}"
 
-  bosh interpolate ops-files/operations/windows-cell.yml -o "${update_windows_cell_ops_file}" > updated-stemcell-ops-file/windows-cell.yml
+  bosh interpolate ops-files/operations/${windows_ops_file_path} -o "${update_windows_cell_ops_file}" > updated-stemcell-ops-file/${windows_ops_file_path}
 }
 
 output_commit_message() {
-  current_stemcell_version=$(bosh interpolate ops-files/operations/windows-cell.yml --path=/path=~1stemcells~1-/value/version)
+  current_stemcell_version=$(bosh interpolate ops-files/operations/${windows_ops_file_path} --path=/path=~1stemcells~1-/value/version)
   if [ "${current_stemcell_version}" == "$(cat windows-stemcell/version)" ]; then
     echo "No windows stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
+  elif [ ${USE_WINDOWS2016} == "true" ]; then
+    echo "Windows2016 stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
   else
     echo "Windows stemcell updated to $(cat windows-stemcell/version)" > commit-message/${COMMIT_MESSAGE_PATH}
   fi
