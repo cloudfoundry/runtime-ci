@@ -495,7 +495,7 @@ jobs:
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
       stemcell: windows2016-stemcell
-      bbl-state: hermione-env-director-state
+      bbl-state: luna-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
