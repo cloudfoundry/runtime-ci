@@ -782,7 +782,7 @@ jobs:
           operations/aws.yml
           operations/windows-cell.yml
           operations/scale-windows-cells.yml
-          operations/experimental/windows2016-cell.yml
+          operations/windows2016-cell.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-s3-blobstore.yml
           operations/experimental/enable-instance-identity-credentials-windows2016.yml

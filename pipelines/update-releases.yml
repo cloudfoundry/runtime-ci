@@ -3106,7 +3106,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: windows2016-cell.yml
-      OPS_FILE_DESTINATION: operations/experimental/windows2016-cell.yml
+      OPS_FILE_DESTINATION: operations/windows2016-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true
