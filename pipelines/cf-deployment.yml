@@ -98,11 +98,6 @@ resources:
   source:
     name: bosh-aws-xen-hvm-windows2012R2-go_agent
 
-- name: windows2016-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-windows2016-go_agent
-
 - name: fresh-pool
   type: pool
   source:
