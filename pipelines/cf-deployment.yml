@@ -477,7 +477,6 @@ jobs:
     - get: luna-env-vars-store
     - get: luna-env-integration-configs
     - get: luna-env-director-state
-    - get: windows2016-stemcell
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -491,13 +490,6 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
-  - task: bosh-upload-windows2016-stemcell
-    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: windows2016-stemcell
-      bbl-state: luna-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -509,7 +501,6 @@ jobs:
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: |
-        operations/windows2016-cell.yml
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/use-compiled-releases.yml
         operations/rename-network.yml
