@@ -4,21 +4,21 @@ groups:
   jobs:
   - fresh-deploy
   - lite-deploy
-  - upgrade-deploy
+  - experimental-deploy
 
   - lint-cf-deployment-manifest
   - branch-freshness
   - fresh-cats
   - fresh-enable-docker-and-tasks
   - lite-cats
-  - upgrade-cats
-  - upgrade-cats-windows2016
-  - upgrade-set-feature-flags
-  - upgrade-smoke-tests
+  - experimental-cats
+  - experimental-cats-windows2016
+  - experimental-set-feature-flags
+  - experimental-smoke-tests
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
-  - upgrade-rats
+  - experimental-rats
   - ops-test
   - unit-test-ops-files
   - unit-test-update-releases-coverage
@@ -34,19 +34,19 @@ groups:
   - unit-test-update-releases-coverage
   - ops-acquire-pool
   - ops-test
-- name: up
+- name: ex
   jobs:
   - unit-test-ops-files
   - unit-test-update-releases-coverage
-  - upgrade-acquire-pool
-  - upgrade-cats
-  - upgrade-cats-windows2016
-  - upgrade-deploy
-  - upgrade-set-feature-flags
-  - upgrade-rats
-  - upgrade-release-pool
-  - upgrade-release-pool-manual
-  - upgrade-smoke-tests
+  - experimental-acquire-pool
+  - experimental-cats
+  - experimental-cats-windows2016
+  - experimental-deploy
+  - experimental-set-feature-flags
+  - experimental-rats
+  - experimental-release-pool
+  - experimental-release-pool-manual
+  - experimental-smoke-tests
   - bless-manifest
 - name: fr
   jobs:
@@ -114,12 +114,12 @@ resources:
     pool: cf-deployment/lite
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
-- name: upgrade-pool
+- name: experimental-pool
   type: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
-    pool: cf-deployment/upgrade
+    pool: cf-deployment/experimental
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: stable-pool
@@ -620,7 +620,7 @@ jobs:
           operations/example-vars-files/vars-use-external-dbs.yml
         DEPLOYMENT_NAME_SUFFIX: external-persistence
 
-- name: upgrade-acquire-pool
+- name: experimental-acquire-pool
   public: true
   serial: true
   plan:
@@ -628,17 +628,17 @@ jobs:
     - get: cf-deployment-develop
       trigger: true
       passed: [unit-test-ops-files, unit-test-update-releases-coverage]
-    - put: upgrade-pool
+    - put: experimental-pool
       params: {acquire: true}
 
-- name: upgrade-release-pool
+- name: experimental-release-pool
   public: true
   plan:
-  - get: upgrade-pool
-    passed: [ upgrade-rats, upgrade-cats, upgrade-cats-windows2016, upgrade-smoke-tests ]
+  - get: experimental-pool
+    passed: [ experimental-rats, experimental-cats, experimental-cats-windows2016, experimental-smoke-tests ]
     trigger: true
-  - put: upgrade-pool
-    params: {release: upgrade-pool}
+  - put: experimental-pool
+    params: {release: experimental-pool}
 
 - name: stable-acquire-pool
   public: true
@@ -686,24 +686,24 @@ jobs:
       put: stable-pool
       params: {release: stable-pool}
 
-- name: upgrade-release-pool-manual
+- name: experimental-release-pool-manual
   public: true
   plan:
-  - get: upgrade-pool
+  - get: experimental-pool
   ensure:
     try:
-      put: upgrade-pool
-      params: {release: upgrade-pool}
+      put: experimental-pool
+      params: {release: experimental-pool}
 
-- name: upgrade-deploy
+- name: experimental-deploy
   serial_groups: [ hermione-wats, hermione-wats2016, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
   - do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-acquire-pool ]
+      passed: [ experimental-acquire-pool ]
     - aggregate:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
@@ -714,7 +714,7 @@ jobs:
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
       - get: windows-stemcell-bosh-release
-    - task: bosh-upload-stemcell-upgrade
+    - task: bosh-upload-stemcell-experimental
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-develop
@@ -736,7 +736,7 @@ jobs:
         vars-files: hermione-env-vars-store
       params:
         RUNTIME_CONFIG_FILE: runtime-config.yml
-    - task: deploy-turbulence-api-upgrade
+    - task: deploy-turbulence-api-experimental
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         cf-deployment: hermione-env-turbulence-manifest
@@ -963,46 +963,46 @@ jobs:
           repository: updated-integration-configs
           rebase: true
 
-- name: upgrade-cats
+- name: experimental-cats
   serial_groups: [ hermione-cats ]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-set-feature-flags ]
+      passed: [ experimental-set-feature-flags ]
     - aggregate:
       - get: cf-acceptance-tests
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-concourse-tasks
     - task: run-cats
       input_mapping:
         integration-config: hermione-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
 
-- name: upgrade-cats-windows2016
+- name: experimental-cats-windows2016
   serial_groups: [ hermione-cats-windows2016 ]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-set-feature-flags ]
+      passed: [ experimental-set-feature-flags ]
     - aggregate:
       - get: cf-acceptance-tests
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-concourse-tasks
     - task: run-cats
       input_mapping:
@@ -1012,21 +1012,21 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: wats2016_integration_config.json
 
-- name: upgrade-smoke-tests
+- name: experimental-smoke-tests
   serial_groups: [hermione-smokes]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 1h
     do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-set-feature-flags ]
+      passed: [ experimental-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
       - get: hermione-env-director-state
       - get: cf-deployment-develop
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-concourse-tasks
   - task: bosh-run-errand-smoke-tests
     file: runtime-ci/tasks/run-errand/task.yml
@@ -1183,21 +1183,21 @@ jobs:
           diego_docker
           task_creation
 
-- name: upgrade-set-feature-flags
+- name: experimental-set-feature-flags
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-deploy ]
+      passed: [ experimental-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: hermione-env-vars-store
       - get: cf-deployment-develop
-        passed: [ upgrade-deploy ]
+        passed: [ experimental-deploy ]
     - task: set-feature-flags
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
@@ -1305,24 +1305,24 @@ jobs:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
 
-- name: upgrade-rats
+- name: experimental-rats
   serial_groups: [ hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
-    - get: upgrade-pool
+    - get: experimental-pool
       trigger: true
-      passed: [ upgrade-set-feature-flags ]
+      passed: [ experimental-set-feature-flags ]
     - aggregate:
       - get: runtime-ci
       - get: github-routing-release-master
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-develop
-        passed: [ upgrade-set-feature-flags ]
+        passed: [ experimental-set-feature-flags ]
     - task: run-rats
       input_mapping:
         routing-release: github-routing-release-master
@@ -1363,12 +1363,12 @@ jobs:
     passed:
     - fresh-cats
     - lite-cats
-    - upgrade-cats
-    - upgrade-cats-windows2016
+    - experimental-cats
+    - experimental-cats-windows2016
     - lite-rats
-    - upgrade-rats
+    - experimental-rats
     - fresh-rats
-    - upgrade-smoke-tests
+    - experimental-smoke-tests
     - ops-test
   - put: cf-deployment-release-candidate
     params:
