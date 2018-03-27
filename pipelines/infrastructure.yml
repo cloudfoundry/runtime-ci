@@ -45,10 +45,10 @@ groups:
   - run-bosh-cleanup-upgrade
   - remove-claimed-lock-upgrade
 
-- name: experimental
+- name: exploratory
   jobs:
-  - setup-infrastructure-experimental
-  - destroy-infrastructure-experimental
+  - setup-infrastructure-exploratory
+  - destroy-infrastructure-exploratory
 
 resources:
 # Pools
@@ -296,7 +296,7 @@ jobs:
   - put: fresh-pool
     params: {release: fresh-pool}
 
-- name: setup-infrastructure-experimental
+- name: setup-infrastructure-exploratory
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -762,7 +762,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-experimental
+- name: destroy-infrastructure-exploratory
   serial: true
   public: true
   build_logs_to_retain: 100
