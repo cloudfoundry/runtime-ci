@@ -27,7 +27,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    private_key: ((cfdct_readwrite_deploy_key))
+    private_key: ((cfdct_readwrite_deploy_key.private_key))
     paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
 - name: uptimer
   type: git
@@ -95,31 +95,31 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 - name: run-rats-pipeline-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/run-rats
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: relint-base-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/relint-base
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: bosh-cli-image
   type: docker-image
   source:
     repository: relintdockerhubpushbot/bosh-cli
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
@@ -164,7 +164,7 @@ jobs:
       params:
         TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
         TRACKER_STORY_STATE: delivered
-        TRACKER_API_TOKEN: ((cf_mega_api_token))
+        TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
         DESCRIPTION_FILE: version.json
 
 - name: build-relint-base-docker-image
