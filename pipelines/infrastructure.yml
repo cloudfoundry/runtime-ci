@@ -36,14 +36,14 @@ groups:
   - remove-claimed-lock-stable
   - run-bosh-cleanup-stable
 
-- name: upgrade
+- name: experimental
   jobs:
-  - add-claimed-lock-upgrade
-  - setup-infrastructure-upgrade
-  - update-infrastructure-upgrade
-  - destroy-infrastructure-upgrade
-  - run-bosh-cleanup-upgrade
-  - remove-claimed-lock-upgrade
+  - add-claimed-lock-experimental
+  - setup-infrastructure-experimental
+  - update-infrastructure-experimental
+  - destroy-infrastructure-experimental
+  - run-bosh-cleanup-experimental
+  - remove-claimed-lock-experimental
 
 - name: exploratory
   jobs:
@@ -84,12 +84,12 @@ resources:
     pool: cf-deployment/stable
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
-- name: upgrade-pool
+- name: experimental-pool
   type: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
-    pool: cf-deployment/upgrade
+    pool: cf-deployment/experimental
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 # Plan patches
@@ -244,7 +244,7 @@ jobs:
   - put: stable-pool
     params: {add_claimed: stable-pool}
 
-- name: add-claimed-lock-upgrade
+- name: add-claimed-lock-experimental
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -255,9 +255,9 @@ jobs:
     params:
       NAME: hermione
     output_mapping:
-      pool-resource: upgrade-pool
-  - put: upgrade-pool
-    params: {add_claimed: upgrade-pool}
+      pool-resource: experimental-pool
+  - put: experimental-pool
+    params: {add_claimed: experimental-pool}
 
 # Setup infrastructure
 - name: setup-infrastructure-fresh
@@ -424,14 +424,14 @@ jobs:
   - put: stable-pool
     params: {release: stable-pool}
 
-- name: setup-infrastructure-upgrade
+- name: setup-infrastructure-experimental
   serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: upgrade-pool
+  - get: experimental-pool
     trigger: true
-    passed: [ add-claimed-lock-upgrade ]
+    passed: [ add-claimed-lock-experimental ]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
@@ -448,7 +448,7 @@ jobs:
       BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
       BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
       LB_DOMAIN: hermione.cf-app.com
-      BBL_ENV_NAME: hermione-upgrade
+      BBL_ENV_NAME: hermione-experimental
     input_mapping:
       bbl-state: hermione-env-director-state
       bbl-config: hermione-env-director-state
@@ -457,8 +457,8 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - put: upgrade-pool
-    params: {release: upgrade-pool}
+  - put: experimental-pool
+    params: {release: experimental-pool}
 
 # Update infrastructure
 - name: update-infrastructure-fresh
@@ -597,7 +597,7 @@ jobs:
     - put: stable-pool
       params: {release: stable-pool}
 
-- name: update-infrastructure-upgrade
+- name: update-infrastructure-experimental
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -605,7 +605,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - put: upgrade-pool
+      - put: experimental-pool
         params: {acquire: true}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
@@ -629,8 +629,8 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
-    - put: upgrade-pool
-      params: {release: upgrade-pool}
+    - put: experimental-pool
+      params: {release: experimental-pool}
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
@@ -737,13 +737,13 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-upgrade
+- name: destroy-infrastructure-experimental
   serial_groups: [hermione]
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - put: upgrade-pool
+    - put: experimental-pool
       params: {claim: hermione}
     - get: hermione-env-director-state
     - get: runtime-ci
@@ -860,23 +860,23 @@ jobs:
   - put: stable-pool
     params: {remove: stable-pool}
 
-- name: remove-claimed-lock-upgrade
+- name: remove-claimed-lock-experimental
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: upgrade-pool
-    passed: [ destroy-infrastructure-upgrade ]
+  - get: experimental-pool
+    passed: [ destroy-infrastructure-experimental ]
     trigger: true
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
       NAME: hermione
     output_mapping:
-      pool-resource: upgrade-pool
-  - put: upgrade-pool
-    params: {remove: upgrade-pool}
+      pool-resource: experimental-pool
+  - put: experimental-pool
+    params: {remove: experimental-pool}
 
 # BOSH cleanup
 - name: run-bosh-cleanup-lite
@@ -928,7 +928,7 @@ jobs:
       input_mapping:
         bbl-state: bellatrix-env-director-state
 
-- name: run-bosh-cleanup-upgrade
+- name: run-bosh-cleanup-experimental
   serial: true
   public: true
   build_logs_to_retain: 100
