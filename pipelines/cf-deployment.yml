@@ -81,6 +81,7 @@ groups:
   - stable-periodic-cats
   - stable-release-pool-manual
   - stable-update-cats-cfd-branch
+  - cleanup-stable-periodic-cats
 
 resource_types:
 - name: terraform
