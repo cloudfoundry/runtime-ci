@@ -93,11 +93,6 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
-- name: windows-stemcell-bosh-release
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-windows2012R2-go_agent
-
 - name: fresh-pool
   type: pool
   source:
@@ -713,7 +708,6 @@ jobs:
       - get: hermione-env-turbulence-vars
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
-      - get: windows-stemcell-bosh-release
     - task: bosh-upload-stemcell-experimental
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -721,13 +715,6 @@ jobs:
         bbl-state: hermione-env-director-state
       params:
         INFRASTRUCTURE: aws
-    - task: bosh-upload-windows-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-      input_mapping:
-        stemcell: windows-stemcell-bosh-release
-        bbl-state: hermione-env-director-state
-      params:
-        STEMCELL_NAME: '*.tgz'
     - task: bosh-update-runtime-config
       file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
       input_mapping:
@@ -780,15 +767,9 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
-          operations/windows-cell.yml
-          operations/scale-windows-cells.yml
-          operations/windows2016-cell.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-s3-blobstore.yml
-          operations/experimental/enable-instance-identity-credentials-windows2016.yml
           operations/experimental/secure-service-credentials.yml
-          operations/experimental/secure-service-credentials-windows-cell.yml
-          operations/experimental/secure-service-credentials-windows2016-cell.yml
           operations/use-external-dbs.yml
           operations/experimental/secure-service-credentials-external-db.yml
           operations/experimental/use-silk-release.yml
@@ -796,15 +777,11 @@ jobs:
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers.yml
           operations/experimental/use-bosh-dns-for-containers-with-silk-release.yml
-          operations/experimental/use-bosh-dns-for-windows2016-containers.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
-          operations/experimental/disable-consul-windows.yml
-          operations/experimental/disable-consul-windows2016.yml
           operations/experimental/enable-service-discovery.yml
-          operations/test/windows2016-debug.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: true
