@@ -1,0 +1,14 @@
+#!/bin/bash -exu
+
+set +x
+  cf_api=$(jq -r .api integration-config/integration_config.json)
+  cf_user=$(jq -r .admin_user integration-config/integration_config.json)
+  cf_password=$(jq -r .admin_password integration-config/integration_config.json)
+
+  cf api ${cf_api} --skip-ssl-validation
+  cf auth ${cf_user} ${cf_password}
+set -x
+
+cf orgs | grep -e "^CATS-[0-9]" | cut -d ' ' -f1 | xargs -P 16 -I{} cf delete-org {} -f || true
+cf quotas | grep -e "^CATS-[0-9]" | cut -d ' ' -f1 | xargs -P 16 -I{} cf delete-quota {} -f || true
+cf service-brokers | grep -e "^CATS-[0-9]" | cut -d ' ' -f1 | xargs -P 16 -I{} cf delete-service-broker {} -f || true

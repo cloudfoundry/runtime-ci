@@ -1085,6 +1085,24 @@ jobs:
         integration-config: bellatrix-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
 
+- name: cleanup-stable-periodic-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: stable-pool
+      trigger: true
+      passed: [ stable-periodic-cats ]
+    - aggregate:
+      - get: runtime-ci
+      - get: bellatrix-env-integration-configs
+    - task: cleanup-stable-periodic-cats
+      file: runtime-ci/tasks/cleanup-after-cats/task.yml
+      input_mapping:
+        integration-config: bellatrix-env-integration-configs
+
 - name: stable-update-cats-cfd-branch
   public: true
   build_logs_to_retain: 100
