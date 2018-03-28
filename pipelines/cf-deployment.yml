@@ -12,7 +12,6 @@ groups:
   - fresh-enable-docker-and-tasks
   - lite-cats
   - experimental-cats
-  - experimental-cats-windows2016
   - experimental-set-feature-flags
   - experimental-smoke-tests
   - fresh-rats
@@ -40,7 +39,6 @@ groups:
   - unit-test-update-releases-coverage
   - experimental-acquire-pool
   - experimental-cats
-  - experimental-cats-windows2016
   - experimental-deploy
   - experimental-set-feature-flags
   - experimental-rats
@@ -226,7 +224,6 @@ resources:
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
-    - wats2016_integration_config.json
     - rats_integration_config.json
 - name: hermione-env-vars-store
   type: git
@@ -631,7 +628,7 @@ jobs:
   public: true
   plan:
   - get: experimental-pool
-    passed: [ experimental-rats, experimental-cats, experimental-cats-windows2016, experimental-smoke-tests ]
+    passed: [ experimental-rats, experimental-cats, experimental-smoke-tests ]
     trigger: true
   - put: experimental-pool
     params: {release: experimental-pool}
@@ -692,7 +689,7 @@ jobs:
       params: {release: experimental-pool}
 
 - name: experimental-deploy
-  serial_groups: [ hermione-wats, hermione-wats2016, hermione-cats, hermione-smokes, hermione-rats ]
+  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -963,32 +960,6 @@ jobs:
       input_mapping:
         integration-config: hermione-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
-
-- name: experimental-cats-windows2016
-  serial_groups: [ hermione-cats-windows2016 ]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: experimental-pool
-      trigger: true
-      passed: [ experimental-set-feature-flags ]
-    - aggregate:
-      - get: cf-acceptance-tests
-      - get: hermione-env-integration-configs
-      - get: hermione-env-vars-store
-        passed: [ experimental-set-feature-flags ]
-      - get: cf-deployment-develop
-        passed: [ experimental-set-feature-flags ]
-      - get: cf-deployment-concourse-tasks
-    - task: run-cats
-      input_mapping:
-        integration-config: hermione-env-integration-configs
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
-      params:
-        NODES: 6
-        CONFIG_FILE_PATH: wats2016_integration_config.json
 
 - name: experimental-smoke-tests
   serial_groups: [hermione-smokes]
@@ -1360,7 +1331,6 @@ jobs:
     - fresh-cats
     - lite-cats
     - experimental-cats
-    - experimental-cats-windows2016
     - lite-rats
     - experimental-rats
     - fresh-rats
