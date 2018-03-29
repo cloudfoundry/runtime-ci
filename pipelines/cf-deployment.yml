@@ -36,6 +36,7 @@ groups:
   - experimental-release-pool
   - experimental-release-pool-manual
   - experimental-smoke-tests
+  - experimental-ops-files
   - bless-manifest
 - name: fr
   jobs:
@@ -579,6 +580,18 @@ jobs:
     try:
       put: experimental-pool
       params: {release: experimental-pool}
+
+- name: experimental-ops-files
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: experimental-pool
+      trigger: true
+      passed: [ experimental-acquire-pool ]
+    - get: runtime-ci
+  - task: experimental-ops-files
+    file: runtime-ci/tasks/summarize-ops-files/task.yml
 
 - name: experimental-deploy
   serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
