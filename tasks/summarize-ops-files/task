@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -e "\033[1;36mThis deployment uses the following ops-files:\033[0m"
+list=$(bosh interpolate runtime-ci/pipelines/cf-deployment.yml \
+  --path /jobs/name=experimental-deploy/plan/0/do/task=bosh-deploy-cf/params/OPS_FILES \
+  | grep experimental)
+
+for ops_file in $list; do
+  echo -e "  \033[0;36m$ops_file\033[0m"
+done
