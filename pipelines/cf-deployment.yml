@@ -5,7 +5,6 @@ groups:
   - fresh-deploy
   - lite-deploy
   - experimental-deploy
-
   - lint-cf-deployment-manifest
   - branch-freshness
   - fresh-cats
@@ -18,21 +17,13 @@ groups:
   - lite-enable-docker-and-tasks
   - lite-rats
   - experimental-rats
-  - ops-test
   - unit-test-ops-files
   - unit-test-update-releases-coverage
-
   - bless-manifest
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
   - release-notes-template
-- name: ops
-  jobs:
-  - unit-test-ops-files
-  - unit-test-update-releases-coverage
-  - ops-acquire-pool
-  - ops-test
 - name: ex
   jobs:
   - unit-test-ops-files
@@ -124,13 +115,6 @@ resources:
     pool: cf-deployment/stable
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
-- name: ops-pool
-  type: pool
-  source:
-    uri: git@github.com:cloudfoundry/relint-ci-pools
-    branch: master
-    pool: cf-deployment/ops
-    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 - name: bellatrix-env-director-state
   type: git
   source:
@@ -185,15 +169,6 @@ resources:
     - syslog-vars.yml
     - bbs-key-label.yml
     - gcs-vars.yml
-- name: trelawney-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/trelawney-env.git
-    private_key: ((trelawney_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
-    - google_account_creds.json
 - name: half-hourly
   type: time
   source:
@@ -359,17 +334,6 @@ jobs:
       trigger: true
       passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: fresh-pool
-      params: {acquire: true}
-
-- name: ops-acquire-pool
-  serial: true
-  public: true
-  plan:
-  - aggregate:
-    - get: cf-deployment-develop
-      trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
-    - put: ops-pool
       params: {acquire: true}
 
 - name: lite-acquire-pool
@@ -540,78 +504,6 @@ jobs:
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-
-- name: ops-test
-  serial_groups: [trelawney]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - ensure:
-      put: ops-pool
-      params: {release: ops-pool}
-    do:
-    - get: ops-pool
-      trigger: true
-      passed: [ ops-acquire-pool ]
-    - aggregate:
-      - get: runtime-ci
-      - get: cf-deployment-concourse-tasks
-      - get: cf-deployment-develop
-      - get: trelawney-env-director-state
-    - task: bosh-upload-stemcell-ops
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        bbl-state: trelawney-env-director-state
-      params:
-        INFRASTRUCTURE: google
-    - task: bosh-dry-run-with-ops-cf-internal-mysql
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: |
-          operations/scale-to-one-az.yml
-          operations/experimental/skip-consul-locks.yml
-          operations/experimental/use-bosh-dns.yml
-          operations/experimental/use-bosh-dns-for-containers.yml
-        DEPLOYMENT_NAME_SUFFIX: internal-mysql
-    - task: bosh-dry-run-with-ops-cf-internal-postgres
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: |
-          operations/use-postgres.yml
-          operations/experimental/enable-prefer-declarative-healthchecks.yml
-        DEPLOYMENT_NAME_SUFFIX: internal-postgres
-    - task: bosh-dry-run-with-ops-cf-external-persistence
-      file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-      input_mapping:
-        bbl-state: trelawney-env-director-state
-        cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
-        vars-files: cf-deployment-develop
-      params:
-        SYSTEM_DOMAIN: trelawney.cf-app.com
-        OPS_FILES: |
-          operations/scale-to-one-az.yml
-          operations/experimental/skip-consul-locks.yml
-          operations/use-s3-blobstore.yml
-          operations/use-external-dbs.yml
-          operations/experimental/enable-iptables-logger.yml
-        VARS_FILES: |
-          operations/example-vars-files/vars-use-s3-blobstore.yml
-          operations/example-vars-files/vars-use-external-dbs.yml
-        DEPLOYMENT_NAME_SUFFIX: external-persistence
 
 - name: experimental-acquire-pool
   public: true
@@ -1335,7 +1227,6 @@ jobs:
     - experimental-rats
     - fresh-rats
     - experimental-smoke-tests
-    - ops-test
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
