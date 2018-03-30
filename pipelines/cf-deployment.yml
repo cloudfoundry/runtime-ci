@@ -611,7 +611,7 @@ jobs:
       bbl-state: trelawney-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
-      vars-files: trelawney-env-vars-store
+      vars-files: trelawney-env-director-state
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: |
