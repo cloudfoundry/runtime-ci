@@ -31,8 +31,8 @@ converts(){
 
 ## ----------------------------------------------------------------------
 
-#number of seconds in a week
-ONE_WEEK=604800
+#number of seconds in eight days
+EIGHT_DAYS=691200
 
 #current time in epoch time
 CURRENT_TIME="$(date +%s)"
@@ -63,7 +63,7 @@ for PIPELINE in $PIPELINE_INCLUDE; do
   fi
 
   #get all jobs that haven't run in over a week
-  stale_jobs="$(echo $stale_jobs | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson ONE_WEEK "$ONE_WEEK" 'map(select($CURRENT_TIME - .[4] > $ONE_WEEK))')"
+  stale_jobs="$(echo $stale_jobs | jq --argjson CURRENT_TIME "$CURRENT_TIME" --argjson EIGHT_DAYS "$EIGHT_DAYS" 'map(select($CURRENT_TIME - .[4] > $EIGHT_DAYS))')"
 
   ## ----------------------------------------------------------------------
 
