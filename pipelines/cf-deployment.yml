@@ -810,6 +810,7 @@ jobs:
         OPS_FILES: |
           operations/aws.yml
           operations/test/add-datadog-firehose-nozzle.yml
+          operations/use-compiled-releases.yml
           operations/use-s3-blobstore.yml
           operations/experimental/secure-service-credentials.yml
           operations/use-external-dbs.yml
