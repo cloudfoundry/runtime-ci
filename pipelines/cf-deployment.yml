@@ -3,12 +3,16 @@ groups:
 - name: cf-deployment
   jobs:
   - fresh-deploy
+  - upgrade-deploy
   - lite-deploy
   - experimental-deploy
   - lint-cf-deployment-manifest
   - branch-freshness
   - fresh-cats
   - fresh-enable-docker-and-tasks
+  - upgrade-enable-docker-and-tasks
+  - upgrade-cats
+  - upgrade-rats
   - lite-cats
   - experimental-cats
   - experimental-set-feature-flags
@@ -50,6 +54,17 @@ groups:
   - fresh-rats
   - fresh-release-pool-manual
   - bless-manifest
+- name: up
+  jobs:
+  - unit-test-ops-files
+  - unit-test-update-releases-coverage
+  - upgrade-acquire-pool
+  - upgrade-deploy
+  - upgrade-enable-docker-and-tasks
+  - upgrade-cats
+  - upgrade-rats
+  - upgrade-release-pool-manual
+  - bless-manifest
 - name: li
   jobs:
   - unit-test-ops-files
@@ -84,12 +99,30 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
+- name: gcp-windows2012-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-windows2012R2-go_agent
+
+- name: gcp-windows2016-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-windows2016-go_agent
+
 - name: fresh-pool
   type: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/fresh
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+
+- name: upgrade-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/upgrade
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: lite-pool
@@ -170,6 +203,24 @@ resources:
     - syslog-vars.yml
     - bbs-key-label.yml
     - gcs-vars.yml
+- name: trelawney-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/trelawney-env.git
+    private_key: ((trelawney_env_readwrite_deploy_key.private_key))
+    paths:
+    - bbl-state
+- name: trelawney-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/trelawney-env.git
+    private_key: ((trelawney_env_readwrite_deploy_key.private_key))
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+    - wats2016_integration_config.json
 - name: half-hourly
   type: time
   source:
@@ -335,6 +386,17 @@ jobs:
       trigger: true
       passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: fresh-pool
+      params: {acquire: true}
+
+- name: upgrade-acquire-pool
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+    - put: upgrade-pool
       params: {acquire: true}
 
 - name: lite-acquire-pool
@@ -506,6 +568,72 @@ jobs:
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
 
+- name: upgrade-deploy
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: upgrade-pool
+    trigger: true
+    passed: [upgrade-acquire-pool]
+  - aggregate:
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: runtime-ci
+    - get: trelawney-env-integration-configs
+    - get: trelawney-env-director-state
+    - get: gcp-windows2012-stemcell
+    - get: gcp-windows2016-stemcell
+  - task: bosh-upload-stemcell-upgrade
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-develop
+      bbl-state: trelawney-env-director-state
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-upload-windows2012-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: gcp-windows2012-stemcell
+      bbl-state: trelawney-env-director-state
+    params:
+      STEMCELL_NAME: '*.tgz'
+  - task: bosh-upload-windows2016-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    input_mapping:
+      stemcell: gcp-windows2016-stemcell
+      bbl-state: trelawney-env-director-state
+    params:
+      STEMCELL_NAME: '*.tgz'
+  - task: bosh-deploy-cf
+    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+      vars-files: trelawney-env-vars-store
+    params:
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      OPS_FILES: |
+        operations/windows-cell.yml
+        operations/windows2016-cell.yml
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+  - task: update-integration-configs
+    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+    input_mapping:
+      vars-store: trelawney-env-vars-store
+      integration-configs: trelawney-env-integration-configs
+    ensure:
+      put: trelawney-env-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+
 - name: experimental-acquire-pool
   public: true
   serial: true
@@ -553,6 +681,15 @@ jobs:
     try:
       put: fresh-pool
       params: {release: fresh-pool}
+
+- name: upgrade-release-pool-manual
+  public: true
+  plan:
+  - get: upgrade-pool
+  ensure:
+    try:
+      put: upgrade-pool
+      params: {release: upgrade-pool}
 
 - name: lite-release-pool-manual
   public: true
@@ -1030,6 +1167,31 @@ jobs:
           diego_docker
           task_creation
 
+- name: upgrade-enable-docker-and-tasks
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-deploy]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-develop
+        passed: [upgrade-deploy]
+      - get: trelawney-env-director-state
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      input_mapping:
+        bbl-state: trelawney-env-director-state
+      params:
+        SYSTEM_DOMAIN: trelawney.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
+
 - name: lite-enable-docker-and-tasks
   serial: true
   public: true
@@ -1105,6 +1267,29 @@ jobs:
       params:
         CAPTURE_LOGS: true
 
+- name: upgrade-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-enable-docker-and-tasks]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+      - get: trelawney-env-integration-configs
+      - get: cf-deployment-develop
+        passed: [upgrade-enable-docker-and-tasks]
+    - task: run-cats
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
+      input_mapping:
+        integration-config: trelawney-env-integration-configs
+      params:
+        CAPTURE_LOGS: true
+
 - name: lite-cats
   serial_groups: [ snitch-cats ]
   public: true
@@ -1152,6 +1337,28 @@ jobs:
       input_mapping:
         routing-release: github-routing-release-master
         integration-config: luna-env-integration-configs
+
+- name: upgrade-rats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-enable-docker-and-tasks]
+    - aggregate:
+      - get: runtime-ci
+      - get: github-routing-release-master
+      - get: trelawney-env-integration-configs
+      - get: cf-deployment-develop
+        passed: [upgrade-enable-docker-and-tasks]
+    - task: run-rats
+      file: runtime-ci/tasks/run-rats/task.yml
+      input_mapping:
+        routing-release: github-routing-release-master
+        integration-config: trelawney-env-integration-configs
 
 - name: lite-rats
   serial_groups: [ snitch-rats ]
@@ -1236,8 +1443,10 @@ jobs:
     - fresh-cats
     - lite-cats
     - experimental-cats
+    - upgrade-cats
     - lite-rats
     - experimental-rats
+    - upgrade-rats
     - fresh-rats
     - experimental-smoke-tests
   - put: cf-deployment-release-candidate
