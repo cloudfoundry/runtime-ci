@@ -12,6 +12,7 @@ groups:
   - fresh-enable-docker-and-tasks
   - upgrade-enable-docker-and-tasks
   - upgrade-cats
+  - upgrade-cats-windows2016
   - upgrade-rats
   - lite-cats
   - experimental-cats
@@ -61,8 +62,9 @@ groups:
   - upgrade-acquire-pool
   - upgrade-deploy
   - upgrade-enable-docker-and-tasks
-  - upgrade-cats
   - upgrade-rats
+  - upgrade-cats
+  - upgrade-cats-windows2016
   - upgrade-release-pool-manual
   - bless-manifest
 - name: li
@@ -1289,6 +1291,30 @@ jobs:
         integration-config: trelawney-env-integration-configs
       params:
         CAPTURE_LOGS: true
+
+- name: upgrade-cats-windows2016
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: upgrade-pool
+      trigger: true
+      passed: [upgrade-enable-docker-and-tasks]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+      - get: trelawney-env-integration-configs
+      - get: cf-deployment-develop
+        passed: [upgrade-enable-docker-and-tasks]
+    - task: run-cats
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
+      input_mapping:
+        integration-config: trelawney-env-integration-configs
+      params:
+        CAPTURE_LOGS: true
+        CONFIG_FILE_PATH: cats_windows2016_integration_config.json
 
 - name: lite-cats
   serial_groups: [ snitch-cats ]
