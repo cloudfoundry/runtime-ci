@@ -10,7 +10,7 @@ groups:
   - branch-freshness
   - fresh-cats
   - fresh-enable-docker-and-tasks
-  - upgrade-enable-docker-and-tasks
+  - upgrade-set-feature-flags
   - upgrade-cats
   - upgrade-cats-windows2016
   - upgrade-rats
@@ -61,7 +61,7 @@ groups:
   - unit-test-update-releases-coverage
   - upgrade-acquire-pool
   - upgrade-deploy
-  - upgrade-enable-docker-and-tasks
+  - upgrade-set-feature-flags
   - upgrade-rats
   - upgrade-cats
   - upgrade-cats-windows2016
@@ -1170,7 +1170,7 @@ jobs:
           diego_docker
           task_creation
 
-- name: upgrade-enable-docker-and-tasks
+- name: upgrade-set-feature-flags
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -1194,6 +1194,7 @@ jobs:
         ENABLED_FEATURE_FLAGS: |
           diego_docker
           task_creation
+          service_instance_sharing
 
 - name: lite-enable-docker-and-tasks
   serial: true
@@ -1279,13 +1280,13 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [upgrade-enable-docker-and-tasks]
+      passed: [upgrade-set-feature-flags]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
-        passed: [upgrade-enable-docker-and-tasks]
+        passed: [upgrade-set-feature-flags]
     - task: run-cats
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
@@ -1302,13 +1303,13 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [upgrade-enable-docker-and-tasks]
+      passed: [upgrade-set-feature-flags]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
-        passed: [upgrade-enable-docker-and-tasks]
+        passed: [upgrade-set-feature-flags]
     - task: run-cats
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
@@ -1375,13 +1376,13 @@ jobs:
     do:
     - get: upgrade-pool
       trigger: true
-      passed: [upgrade-enable-docker-and-tasks]
+      passed: [upgrade-set-feature-flags]
     - aggregate:
       - get: runtime-ci
       - get: github-routing-release-master
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
-        passed: [upgrade-enable-docker-and-tasks]
+        passed: [upgrade-set-feature-flags]
     - task: run-rats
       file: runtime-ci/tasks/run-rats/task.yml
       input_mapping:
