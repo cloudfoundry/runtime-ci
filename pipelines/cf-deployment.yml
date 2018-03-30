@@ -66,6 +66,7 @@ groups:
   - upgrade-cats
   - upgrade-cats-windows2016
   - upgrade-release-pool-manual
+  - upgrade-release-pool
   - bless-manifest
 - name: li
   jobs:
@@ -692,6 +693,15 @@ jobs:
     try:
       put: upgrade-pool
       params: {release: upgrade-pool}
+
+- name: upgrade-release-pool
+  public: true
+  plan:
+  - get: upgrade-pool
+    passed: [ upgrade-rats, upgrade-cats, upgrade-cats-windows2016 ]
+    trigger: true
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
 
 - name: lite-release-pool-manual
   public: true
