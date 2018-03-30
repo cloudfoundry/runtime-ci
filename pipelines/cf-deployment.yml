@@ -628,7 +628,7 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      vars-store: trelawney-env-vars-store
+      bbl-state: trelawney-env-director-state
       integration-configs: trelawney-env-integration-configs
     ensure:
       put: trelawney-env-integration-configs
