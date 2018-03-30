@@ -16,16 +16,15 @@ groups:
   - update-infrastructure-lite
   - remove-claimed-lock-lite
   - run-bosh-cleanup-lite
-  - run-bosh-cleanup-ops
 
-- name: ops
+- name: upgrade
   jobs:
-  - add-claimed-lock-ops
-  - setup-infrastructure-ops
-  - update-infrastructure-ops
-  - destroy-infrastructure-ops
-  - remove-claimed-lock-ops
-  - run-bosh-cleanup-ops
+  - add-claimed-lock-upgrade
+  - setup-infrastructure-upgrade
+  - update-infrastructure-upgrade
+  - destroy-infrastructure-upgrade
+  - remove-claimed-lock-upgrade
+  - run-bosh-cleanup-upgrade
 
 - name: stable
   jobs:
@@ -70,12 +69,12 @@ resources:
     pool: cf-deployment/lite
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
-- name: ops-pool
+- name: upgrade-pool
   type: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
-    pool: cf-deployment/ops
+    pool: cf-deployment/upgrade
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 - name: stable-pool
@@ -223,7 +222,7 @@ jobs:
   - put: lite-pool
     params: {add_claimed: lite-pool}
 
-- name: add-claimed-lock-ops
+- name: add-claimed-lock-upgrade
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -234,9 +233,9 @@ jobs:
     params:
       NAME: trelawney
     output_mapping:
-      pool-resource: ops-pool
-  - put: ops-pool
-    params: {add_claimed: ops-pool}
+      pool-resource: upgrade-pool
+  - put: upgrade-pool
+    params: {add_claimed: upgrade-pool}
 
 - name: add-claimed-lock-stable
   serial: true
@@ -396,14 +395,14 @@ jobs:
   - put: lite-pool
     params: {release: lite-pool}
 
-- name: setup-infrastructure-ops
+- name: setup-infrastructure-upgrade
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: ops-pool
+  - get: upgrade-pool
     trigger: true
-    passed: [ add-claimed-lock-ops ]
+    passed: [add-claimed-lock-upgrade]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
@@ -426,8 +425,8 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - put: ops-pool
-    params: {release: ops-pool}
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
 
 - name: setup-infrastructure-stable
   serial: true
@@ -569,7 +568,7 @@ jobs:
     - put: lite-pool
       params: {release: lite-pool}
 
-- name: update-infrastructure-ops
+- name: update-infrastructure-upgrade
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -577,7 +576,7 @@ jobs:
   - timeout: 4h
     do:
     - aggregate:
-      - put: ops-pool
+      - put: upgrade-pool
         params: {acquire: true}
       - get: runtime-ci
       - get: trelawney-env-director-state
@@ -599,8 +598,8 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
-    - put: ops-pool
-      params: {release: ops-pool}
+    - put: upgrade-pool
+      params: {release: upgrade-pool}
 
 - name: update-infrastructure-stable
   serial: true
@@ -727,13 +726,13 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-ops
+- name: destroy-infrastructure-upgrade
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - put: ops-pool
+    - put: upgrade-pool
       params: {claim: trelawney}
     - get: trelawney-env-director-state
     - get: runtime-ci
@@ -887,23 +886,23 @@ jobs:
   - put: lite-pool
     params: {remove: lite-pool}
 
-- name: remove-claimed-lock-ops
+- name: remove-claimed-lock-upgrade
   serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - get: runtime-ci
-  - get: ops-pool
-    passed: [ destroy-infrastructure-ops ]
+  - get: upgrade-pool
+    passed: [ destroy-infrastructure-upgrade ]
     trigger: true
   - task: prepare-to-modify-pool-resource
     file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
     params:
       NAME: trelawney
     output_mapping:
-      pool-resource: ops-pool
-  - put: ops-pool
-    params: {remove: ops-pool}
+      pool-resource: upgrade-pool
+  - put: upgrade-pool
+    params: {remove: upgrade-pool}
 
 - name: remove-claimed-lock-stable
   serial: true
@@ -959,14 +958,13 @@ jobs:
       input_mapping:
         bbl-state: snitch-env-director-state
 
-- name: run-bosh-cleanup-ops
+- name: run-bosh-cleanup-upgrade
   build_logs_to_retain: 100
   public: true
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: trelawney-env-director-state
-      passed: [ setup-infrastructure-ops ]
     - get: weekly
       trigger: true
   - task: run-bosh-cleanup
