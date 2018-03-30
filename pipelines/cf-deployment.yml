@@ -1315,6 +1315,7 @@ jobs:
       params:
         CAPTURE_LOGS: true
         CONFIG_FILE_PATH: cats_windows2016_integration_config.json
+        NODES: 8
 
 - name: lite-cats
   serial_groups: [ snitch-cats ]
