@@ -1471,6 +1471,7 @@ jobs:
     - lite-cats
     - experimental-cats
     - upgrade-cats
+    - upgrade-cats-windows2016
     - lite-rats
     - experimental-rats
     - upgrade-rats
