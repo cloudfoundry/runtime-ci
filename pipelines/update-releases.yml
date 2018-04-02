@@ -422,7 +422,7 @@ jobs:
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: backup-and-restore-sdk
+      RELEASE_NAME: haproxy
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
       UPDATED_OPS_FILE_PATH: use-haproxy.yml
