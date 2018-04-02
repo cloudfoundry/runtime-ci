@@ -799,20 +799,12 @@ jobs:
         vars-store: hermione-env-vars-store
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
-    - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-      input_mapping:
-        base-ops-files: cf-deployment-develop
-        new-ops-files: hermione-env-vars-store
-      params:
-        BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "scale-windows-cells.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
-        ops-files: collected-ops-files
+        ops-files: cf-deployment-develop
         vars-store: hermione-env-vars-store
         vars-files: hermione-env-vars-store
       params:
