@@ -426,23 +426,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
       UPDATED_OPS_FILE_PATH: use-haproxy.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/use-haproxy.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: haproxy
-      OPS_FILES: "base-ops-files/use-haproxy.yml"
+      OPS_FILES: "use-haproxy.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: "vars-files/haproxy-vars.yml"
   - task: bosh-delete-deployment
@@ -494,23 +487,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-backup-restore.yml
       UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: bbr
-      OPS_FILES: "base-ops-files/enable-backup-restore.yml"
+      OPS_FILES: "enable-backup-restore.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -561,23 +547,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/enable-nfs-volume-service.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: broker-registrar
-      OPS_FILES: "base-ops-files/enable-nfs-volume-service.yml"
+      OPS_FILES: "enable-nfs-volume-service.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -628,23 +607,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/enable-nfs-volume-service.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: nfs-volume
-      OPS_FILES: "base-ops-files/enable-nfs-volume-service.yml"
+      OPS_FILES: "enable-nfs-volume-service.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -3207,23 +3179,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
       UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: credhub
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/secure-service-credentials.yml"
+      OPS_FILES: "secure-service-credentials.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -3438,23 +3403,16 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-bpm.yml
       UPDATED_OPS_FILE_PATH: enable-bpm.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      NEW_OPS_FILES: "operations/experimental/enable-backup-restore.yml"
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
+      ops-files: updated-ops-file
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: bpm
-      OPS_FILES: "enable-backup-restore.yml base-ops-files/enable-bpm.yml"
+      OPS_FILES: "enable-bpm.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
