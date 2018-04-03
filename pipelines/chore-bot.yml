@@ -37,6 +37,7 @@ jobs:
   plan:
   - get: chore-bot-source
   - get: chore-bot-config-and-manifest
+    trigger: true
   - get: runtime-ci
   - task: unit-tests
     file: runtime-ci/tasks/run-chore-bot-tests/task.yml
