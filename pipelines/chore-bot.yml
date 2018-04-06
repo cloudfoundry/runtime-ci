@@ -5,14 +5,14 @@ resources:
   source:
     branch: master
     uri: git@github.com:pivotal-cf-experimental/relint-trackerbot.git
-    private_key: ((relint_trackerbot_deploy_key))
+    private_key: ((relint_trackerbot_read_deploy_key.private_key))
 
 - name: chore-bot-config-and-manifest
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/runtime-ci-private.git
-    private_key: ((runtime_ci_private_deploy_key))
+    private_key: ((runtime_ci_private_read_deploy_key.private_key))
     paths:
     - chore_bot
 
@@ -26,8 +26,8 @@ resources:
   type: cf
   source:
     api: https://api.run.pivotal.io
-    username: ((pws_username))
-    password: ((pws_password))
+    username: ((pws_user.username))
+    password: ((pws_user.password))
     organization: release-integration
     space: concourse-bot
 
