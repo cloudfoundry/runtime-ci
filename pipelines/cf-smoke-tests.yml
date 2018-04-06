@@ -36,7 +36,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-smoke-tests-release.git
-    private_key: ((cf_smoke_tests_readwrite_deploy_key))
+    private_key: ((cf_smoke_tests_readwrite_deploy_key.private_key))
     ignore_paths:
     - releases/**
     - .final_builds/**
@@ -47,14 +47,14 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
 
 - name: bellatrix-env-vars-store
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-vars.yml
 
@@ -65,7 +65,7 @@ resources:
     driver: git
     uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
     branch: master
-    private_key: ((cf_relint_ci_semver_private_key))
+    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
     file: cf-smoke-tests-version
 
