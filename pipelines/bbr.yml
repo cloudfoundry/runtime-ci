@@ -17,10 +17,6 @@ groups:
   - update-infrastructure
 
 resources:
-- name: bbl-6-docker-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 - name: runtime-ci
   type: git
   source:
@@ -119,9 +115,7 @@ jobs:
     - get: runtime-ci
     - get: baba-yaga-env-director-state
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: setup-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
       BBL_IAAS: gcp
@@ -155,9 +149,7 @@ jobs:
       - get: runtime-ci
       - get: baba-yaga-env-director-state
       - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
     - task: update-infrastructure
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
@@ -189,14 +181,11 @@ jobs:
     - get: baba-yaga-env-director-state
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: bbl-6-docker-image
   - task: guarantee-no-existing-cf-deployment
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: baba-yaga-env-director-state
   - task: destroy-infrastructure
-    image: bbl-6-docker-image
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
       bbl-state: baba-yaga-env-director-state
@@ -238,9 +227,7 @@ jobs:
       - get: baba-yaga-env-director-state
       - get: daily
         trigger: true
-      - get: bbl-6-docker-image
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
@@ -284,9 +271,7 @@ jobs:
       - get: baba-yaga-env-director-state
       - get: baba-yaga-env-integration-configs
       - get: persi-ci
-      - get: bbl-6-docker-image
     - task: bosh-upload-stemcell
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
         cf-deployment: cf-deployment-rc
@@ -302,7 +287,6 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: "enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
@@ -325,7 +309,6 @@ jobs:
           repository: updated-vars-store
           rebase: true
     - task: run-bosh-cleanup
-      image: bbl-6-docker-image
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
