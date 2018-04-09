@@ -317,14 +317,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
-- name: snitch-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: ((snitch_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-vars.yml
 - name: snitch-env-integration-configs
   type: git
   source:
@@ -929,7 +921,6 @@ jobs:
       - get: cf-deployment-develop
       - get: bosh-deployment
       - get: snitch-env-director-state
-      - get: snitch-env-vars-store
       - get: snitch-env-integration-configs
     - task: guarantee-no-existing-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -943,13 +934,12 @@ jobs:
       params:
         INFRASTRUCTURE: bosh-lite
     - task: bosh-deploy-cf-deployment
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
         cf-deployment: cf-deployment-develop
-        vars-store: snitch-env-vars-store
         ops-files: cf-deployment-develop
-        vars-files: snitch-env-vars-store
+        vars-files: snitch-env-director-state
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: |
@@ -957,21 +947,16 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/bosh-lite.yml
           operations/use-postgres.yml
-      ensure:
-        put: snitch-env-vars-store
-        params:
-          repository: updated-vars-store
-          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: snitch-env-vars-store
+        bbl-state: snitch-env-director-state
         integration-configs: snitch-env-integration-configs
       ensure:
         put: snitch-env-integration-configs
@@ -1204,13 +1189,13 @@ jobs:
       passed: [ lite-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: snitch-env-vars-store
+      - get: snitch-env-director-state
       - get: cf-deployment-develop
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
       input_mapping:
-        vars-store: snitch-env-vars-store
+        bbl-state: snitch-env-director-state
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
         ENABLED_FEATURE_FLAGS: |
@@ -1328,8 +1313,6 @@ jobs:
       - get: cf-acceptance-tests
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
-      - get: snitch-env-vars-store
-        passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-integration-configs
       - get: cf-deployment-concourse-tasks
     - task: run-cats
@@ -1397,8 +1380,6 @@ jobs:
       - get: runtime-ci
       - get: github-routing-release-master
       - get: snitch-env-integration-configs
-      - get: snitch-env-vars-store
-        passed: [ lite-enable-docker-and-tasks ]
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
     - task: run-rats
