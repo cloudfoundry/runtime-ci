@@ -160,14 +160,6 @@ resources:
     private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
-- name: bellatrix-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-vars.yml
 - name: bellatrix-env-integration-configs
   type: git
   source:
@@ -862,7 +854,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-master
-      - get: bellatrix-env-vars-store
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
     - task: bosh-upload-stemcell-stable
@@ -873,31 +864,25 @@ jobs:
       params:
         INFRASTRUCTURE: google
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
         cf-deployment: cf-deployment-master
         ops-files: cf-deployment-master
-        vars-store: bellatrix-env-vars-store
         vars-files: bellatrix-env-vars-store
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
         OPS_FILES: "operations/scale-database-cluster.yml"
-      ensure:
-        put: bellatrix-env-vars-store
-        params:
-          repository: updated-vars-store
-          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: bellatrix-env-vars-store
+        bbl-state: bellatrix-env-director-state
         integration-configs: bellatrix-env-integration-configs
       ensure:
         put: bellatrix-env-integration-configs
@@ -1065,14 +1050,14 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-      - get: bellatrix-env-vars-store
       - get: bellatrix-env-integration-configs
+      - get: bellatrix-env-director-state
       - get: cf-deployment-master
         passed: [ stable-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
       input_mapping:
-        vars-store: bellatrix-env-vars-store
+        bbl-state: bellatrix-env-director-state
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
         ENABLED_FEATURE_FLAGS: |
