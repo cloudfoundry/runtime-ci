@@ -869,7 +869,7 @@ jobs:
         bbl-state: bellatrix-env-director-state
         cf-deployment: cf-deployment-master
         ops-files: cf-deployment-master
-        vars-files: bellatrix-env-vars-store
+        vars-files: bellatrix-env-director-state
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
         OPS_FILES: "operations/scale-database-cluster.yml"
