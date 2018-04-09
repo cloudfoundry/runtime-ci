@@ -1,57 +1,133 @@
+## ======================================================================
+## GENERATED FILE. DO NOT EDIT
+## ======================================================================
+
 ---
+## ======================================================================
+##   __ _ _ __ ___  _   _ _ __  ___
+##  / _` | '__/ _ \| | | | '_ \/ __|
+## | (_| | | | (_) | |_| | |_) \__ \
+##  \__, |_|  \___/ \__,_| .__/|___/
+##  |___/                |_|
+## ======================================================================
+
 groups:
-- name: update-releases
+- name: update-base-releases
   jobs:
-  - update-bbr
+
   - update-binary-buildpack
-  - update-bosh-dns
-  - update-broker-registrar
+
   - update-capi
+
   - update-cf-mysql
-  - update-cf-app-sd
+
   - update-cf-networking
+
   - update-cf-smoke-tests
-  - update-cf-syslog-drain-release
+
+  - update-cf-syslog-drain
+
   - update-cflinuxfs2
+
   - update-consul
+
   - update-diego
+
   - update-dotnet-core-buildpack
+
   - update-garden-runc
+
   - update-go-buildpack
-  - update-credhub
+
   - update-java-buildpack
-  - update-haproxy
+
   - update-loggregator
+
   - update-nats
-  - update-nfs-volume
+
   - update-nodejs-buildpack
+
   - update-php-buildpack
-  - update-postgres
+
   - update-python-buildpack
+
   - update-routing
+
   - update-ruby-buildpack
-  - update-silk
+
   - update-staticfile-buildpack
+
   - update-statsd-injector
-  - update-stemcell-and-recompile-releases
-  - update-syslog
-  - update-bpm
+
   - update-uaa
-  - update-windows-2012-releases
-  - update-windows-2016-releases
-  - update-windows-2016-offline-releases
+
+- name: update-ops-releases
+  jobs:
+
+  - update-backup-and-restore-sdk
+
+  - update-bpm
+
+  - update-broker-registrar
+
+  - update-cf-app-sd
+
+  - update-credhub
+
+  - update-haproxy
+
+  - update-nfs-volume
+
+  - update-postgres
+
+  - update-silk
+
+  - update-syslog
+
+  - update-bosh-dns
+
+- name: update-windows-stemcells-and-releases
+  jobs:
+
   - update-windows-stemcell
+  - update-windows-2012-releases
+
   - update-windows2016-stemcell
+  - update-windows-2016-releases
+
+# - name: TODO
+#   jobs:
+  - update-stemcell-and-recompile-releases
+  - update-windows-2016-offline-releases
+
 - name: infrastructure
   jobs:
   - setup-infrastructure-compilation
   - destroy-infrastructure-compilation
   - run-bosh-cleanup-compilation
+
+## ======================================================================
+##                                           _
+##  _ __ ___  ___  ___  _   _ _ __ ___ ___  | |_ _   _ _ __   ___  ___
+## | '__/ _ \/ __|/ _ \| | | | '__/ __/ _ \ | __| | | | '_ \ / _ \/ __|
+## | | |  __/\__ \ (_) | |_| | | | (_|  __/ | |_| |_| | |_) |  __/\__ \
+## |_|  \___||___/\___/ \__,_|_|  \___\___|  \__|\__, | .__/ \___||___/
+##                                               |___/|_|
+## ======================================================================
+
 resource_types:
 - name: gcs-resource
   type: docker-image
   source:
     repository: frodenas/gcs-resource
+
+## ======================================================================
+##  _ __ ___  ___  ___  _   _ _ __ ___ ___  ___
+## | '__/ _ \/ __|/ _ \| | | | '__/ __/ _ \/ __|
+## | | |  __/\__ \ (_) | |_| | | | (_|  __/\__ \
+## |_|  \___||___/\___/ \__,_|_|  \___\___||___/
+## ======================================================================
+
 resources:
 - name: cf-deployment-develop
   type: git
@@ -75,7 +151,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
-
 - name: stemcell
   type: bosh-io-stemcell
   source:
@@ -88,31 +163,41 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-windows2016-go_agent
-
-- name: bbr-release
+- name: garden-windows-bosh-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/backup-and-restore-sdk-release
+    repository: cloudfoundry-incubator/garden-windows-bosh-release
+- name: hwc-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/hwc-buildpack-release
+- name: windows-utilities-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/windows-utilities-release
+- name: winc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/winc-release
+- name: windows2016fs-online-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/windows2016fs-online-release
+- name: windows2016fs-release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: windows2016fs-release
+    access_token: ((release_integration_download_bot_access_token))
+
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/binary-buildpack-release
-- name: bosh-dns-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/bosh-dns-release
-- name: broker-registrar-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-community/broker-registrar-boshrelease
 - name: capi-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/capi-release
-- name: cf-app-sd-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-app-sd-release
 - name: cf-mysql-release
   type: bosh-io-release
   source:
@@ -121,10 +206,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-networking-release
-- name: silk-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/silk-release
 - name: cf-smoke-tests-release
   type: bosh-io-release
   source:
@@ -153,30 +234,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/garden-runc-release
-- name: garden-windows-bosh-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/garden-windows-bosh-release
 - name: go-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/go-buildpack-release
-- name: haproxy-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/haproxy-boshrelease
-- name: credhub-release
-  type: bosh-io-release
-  source:
-    repository: pivotal-cf/credhub-release
-- name: bpm-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/bpm-release
-- name: hwc-buildpack-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/hwc-buildpack-release
 - name: java-buildpack-release
   type: bosh-io-release
   source:
@@ -189,10 +250,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/nats-release
-- name: nfs-volume-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/nfs-volume-release
 - name: nodejs-buildpack-release
   type: bosh-io-release
   source:
@@ -201,10 +258,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/php-buildpack-release
-- name: postgres-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/postgres-release
 - name: python-buildpack-release
   type: bosh-io-release
   source:
@@ -225,32 +278,56 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/statsd-injector-release
-- name: syslog-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/syslog-release
 - name: uaa-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
-- name: winc-release
+
+- name: backup-and-restore-sdk-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/winc-release
-- name: windows-utilities-release
+    repository: cloudfoundry-incubator/backup-and-restore-sdk-release
+- name: bpm-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/windows-utilities-release
-- name: windows2016fs-online-release
+    repository: cloudfoundry-incubator/bpm-release
+- name: broker-registrar-release
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/windows2016fs-online-release
-- name: windows2016fs-release
-  type: github-release
+    repository: cloudfoundry-community/broker-registrar-boshrelease
+- name: cf-app-sd-release
+  type: bosh-io-release
   source:
-    owner: cloudfoundry-incubator
-    repository: windows2016fs-release
-    access_token: ((release_integration_download_bot_access_token))
+    repository: cloudfoundry/cf-app-sd-release
+- name: credhub-release
+  type: bosh-io-release
+  source:
+    repository: pivotal-cf/credhub-release
+- name: haproxy-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/haproxy-boshrelease
+- name: nfs-volume-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nfs-volume-release
+- name: postgres-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/postgres-release
+- name: silk-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/silk-release
+- name: syslog-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/syslog-release
+- name: bosh-dns-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bosh-dns-release
+
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -389,6 +466,7 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+
 - name: daily
   type: time
   source:
@@ -396,9 +474,20 @@ resources:
     stop: 3:30 -0700
     interval: 24h
 
+## ======================================================================
+##    _       _
+##   (_) ___ | |__  ___
+##   | |/ _ \| '_ \/ __|
+##   | | (_) | |_) \__ \
+##  _/ |\___/|_.__/|___/
+## |__/
+## ======================================================================
+
 jobs:
-- name: update-haproxy
-  serial: true
+
+- name: update-binary-buildpack
+  serial_groups:
+  - update-binary-buildpack
   public: true
   build_logs_to_retain: 100
   plan:
@@ -407,7 +496,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: haproxy-release
+    - get: binary-buildpack-release
       trigger: true
       params:
         tarball: false
@@ -415,50 +504,1675 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-haproxy
+  - task: update-release-binary-buildpack
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: haproxy-release
+      release: binary-buildpack-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: haproxy
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
-      UPDATED_OPS_FILE_PATH: use-haproxy.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+      RELEASE_NAME: binary-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
+      manifest: updated-deployment-manifest
     params:
-      DEPLOYMENT_NAME_SUFFIX: haproxy
-      OPS_FILES: "use-haproxy.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: "vars-files/haproxy-vars.yml"
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      RELEASE_NAME: binary-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
+      ops-files: cf-deployment-develop
+      bosh-io-release: binary-buildpack-release
+      compiled-release-tarball: exported-release
     params:
-      DEPLOYMENT_NAME: cf-dry-run-haproxy
+      RELEASE_NAME: binary-buildpack
+  - put: binary-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
     params:
-      OPS_FILE_NAME: use-haproxy.yml
-      OPS_FILE_DESTINATION: operations/use-haproxy.yml
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
-- name: update-bbr
+- name: update-capi
+  serial_groups:
+  - update-capi
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: capi-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-capi
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: capi-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: capi
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: capi
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-capi
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: capi
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: capi-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: capi
+  - put: capi-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-mysql
+  serial_groups:
+  - update-cf-mysql
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-mysql-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-mysql
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-mysql-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-mysql
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-mysql
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-mysql
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-mysql
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-mysql-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-mysql
+  - put: cf-mysql-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-networking
+  serial_groups:
+  - update-cf-networking
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-networking-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-networking
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-networking-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-networking
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-networking
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-networking
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-networking
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-networking
+  - put: cf-networking-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-smoke-tests
+  serial_groups:
+  - update-cf-smoke-tests
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-smoke-tests-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-smoke-tests
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-smoke-tests-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-smoke-tests
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-smoke-tests
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-smoke-tests
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-smoke-tests
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-smoke-tests
+  - put: cf-smoke-tests-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-syslog-drain
+  serial_groups:
+  - update-cf-syslog-drain
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-syslog-drain-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-syslog-drain
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cf-syslog-drain-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-syslog-drain
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-syslog-drain
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-syslog-drain
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-syslog-drain
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-syslog-drain-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-syslog-drain
+  - put: cf-syslog-drain-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cflinuxfs2
+  serial_groups:
+  - update-cflinuxfs2
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cflinuxfs2-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cflinuxfs2
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: cflinuxfs2-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cflinuxfs2
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cflinuxfs2
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cflinuxfs2
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cflinuxfs2
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cflinuxfs2-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cflinuxfs2
+  - put: cflinuxfs2-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-consul
+  serial_groups:
+  - update-consul
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: consul-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-consul
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: consul-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: consul
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: consul
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-consul
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: consul
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: consul-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: consul
+  - put: consul-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-diego
+  serial_groups:
+  - update-diego
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: diego-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-diego
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: diego-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: diego
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: diego
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-diego
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: diego
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: diego-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: diego
+  - put: diego-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-dotnet-core-buildpack
+  serial_groups:
+  - update-dotnet-core-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: dotnet-core-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-dotnet-core-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: dotnet-core-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: dotnet-core-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+  - put: dotnet-core-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-garden-runc
+  serial_groups:
+  - update-garden-runc
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: garden-runc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-garden-runc
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: garden-runc-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: garden-runc
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: garden-runc
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-garden-runc
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: garden-runc
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: garden-runc-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: garden-runc
+  - put: garden-runc-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-go-buildpack
+  serial_groups:
+  - update-go-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: go-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-go-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: go-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: go-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: go-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: go-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: go-buildpack
+  - put: go-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-java-buildpack
+  serial_groups:
+  - update-java-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: java-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-java-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: java-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: java-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: java-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: java-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: java-buildpack
+  - put: java-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-loggregator
+  serial_groups:
+  - update-loggregator
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: loggregator-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-loggregator
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: loggregator-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: loggregator
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: loggregator
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-loggregator
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: loggregator
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: loggregator-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: loggregator
+  - put: loggregator-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-nats
+  serial_groups:
+  - update-nats
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: nats-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-nats
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: nats-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: nats
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: nats
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-nats
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: nats
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nats-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nats
+  - put: nats-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-nodejs-buildpack
+  serial_groups:
+  - update-nodejs-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: nodejs-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-nodejs-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: nodejs-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: nodejs-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: nodejs-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nodejs-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nodejs-buildpack
+  - put: nodejs-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-php-buildpack
+  serial_groups:
+  - update-php-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: php-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-php-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: php-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: php-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: php-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: php-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: php-buildpack
+  - put: php-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-python-buildpack
+  serial_groups:
+  - update-python-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: python-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-python-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: python-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: python-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: python-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: python-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: python-buildpack
+  - put: python-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-routing
+  serial_groups:
+  - update-routing
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: routing-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-routing
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: routing-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: routing
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: routing
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-routing
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: routing
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: routing-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: routing
+  - put: routing-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-ruby-buildpack
+  serial_groups:
+  - update-ruby-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: ruby-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-ruby-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: ruby-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: ruby-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: ruby-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: ruby-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: ruby-buildpack
+  - put: ruby-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-staticfile-buildpack
+  serial_groups:
+  - update-staticfile-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: staticfile-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-staticfile-buildpack
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: staticfile-buildpack-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: staticfile-buildpack
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: staticfile-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: staticfile-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: staticfile-buildpack
+  - put: staticfile-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-statsd-injector
+  serial_groups:
+  - update-statsd-injector
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: statsd-injector-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-statsd-injector
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: statsd-injector-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: statsd-injector
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: statsd-injector
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-statsd-injector
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: statsd-injector
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: statsd-injector-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: statsd-injector
+  - put: statsd-injector-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-uaa
+  serial_groups:
+  - update-uaa
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: uaa-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-uaa
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: uaa-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: uaa
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: uaa
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-uaa
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: uaa
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: uaa-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: uaa
+  - put: uaa-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-backup-and-restore-sdk
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -468,7 +2182,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: bbr-release
+    - get: backup-and-restore-sdk-release
       trigger: true
       params:
         tarball: false
@@ -476,10 +2190,10 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-bbr
+  - task: update-release-backup-and-restore-sdk
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: bbr-release
+      release: backup-and-restore-sdk-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
@@ -493,17 +2207,20 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: bbr
-      OPS_FILES: "enable-backup-restore.yml"
+      DEPLOYMENT_NAME_SUFFIX: backup-and-restore-sdk
+      OPS_FILES: enable-backup-restore.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-bbr
+      DEPLOYMENT_NAME: cf-dry-run-backup-and-restore-sdk
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -513,6 +2230,69 @@ jobs:
     params:
       OPS_FILE_NAME: enable-backup-restore.yml
       OPS_FILE_DESTINATION: operations/experimental/enable-backup-restore.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-bpm
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: bpm-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-bpm
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: bpm-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: bpm
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-bpm.yml
+      UPDATED_OPS_FILE_PATH: enable-bpm.yml
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: bpm
+      OPS_FILES: enable-bpm.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bpm
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: enable-bpm.yml
+      OPS_FILE_DESTINATION: operations/experimental/enable-bpm.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -553,11 +2333,14 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
       DEPLOYMENT_NAME_SUFFIX: broker-registrar
-      OPS_FILES: "enable-nfs-volume-service.yml"
+      OPS_FILES: enable-nfs-volume-service.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -573,205 +2356,6 @@ jobs:
     params:
       OPS_FILE_NAME: enable-nfs-volume-service.yml
       OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-nfs-volume
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: nfs-volume-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-nfs-volume
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: nfs-volume-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: nfs-volume
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
-      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: nfs-volume
-      OPS_FILES: "enable-nfs-volume-service.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-nfs-volume
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: enable-nfs-volume-service.yml
-      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-binary-buildpack
-  serial_groups: [update-binary-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: binary-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-binary-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: binary-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: binary-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: binary-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: binary-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: binary-buildpack
-  - put: binary-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-capi
-  serial_groups: [update-capi]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: stemcell
-      passed: [ update-stemcell-and-recompile-releases ]
-      params:
-        tarball: false
-    - get: capi-release
-      trigger: true
-      params:
-        tarball: false
-  - task: update-release-capi
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: capi-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: capi
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: capi
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-capi
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: capi
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: capi-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: capi
-  - put: capi-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -812,11 +2396,14 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
       DEPLOYMENT_NAME_SUFFIX: cf-app-sd
       OPS_FILES: enable-service-discovery.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -837,17 +2424,17 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-cf-networking
-  serial_groups: [update-cf-networking]
+- name: update-credhub
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-    - get: cf-networking-release
+    - get: greengrass-env-director-state
+    - get: credhub-release
       trigger: true
       params:
         tarball: false
@@ -855,112 +2442,37 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-networking
+  - task: update-release-credhub
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: cf-networking-release
+      release: credhub-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: cf-networking
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cf-networking
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-networking
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-networking
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-networking-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-networking
-  - put: cf-networking-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-silk
-  serial_groups: [update-silk]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: greengrass-env-director-state
-    - get: cf-deployment-develop
-    - get: silk-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-    - get: cf-deployment-concourse-tasks
-  - task: update-release-silk
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: silk-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: silk
+      RELEASE_NAME: credhub
       TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-silk-release.yml
-      UPDATED_OPS_FILE_PATH: use-silk-release.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
+      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: silk
-      OPS_FILES: "use-silk-release.yml"
+      DEPLOYMENT_NAME_SUFFIX: credhub
+      OPS_FILES: secure-service-credentials.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-silk
+      DEPLOYMENT_NAME: cf-dry-run-credhub
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -968,15 +2480,15 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: use-silk-release.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-silk-release.yml
+      OPS_FILE_NAME: secure-service-credentials.yml
+      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
-- name: update-cf-smoke-tests
-  serial_groups: [update-cf-smoke-tests]
+- name: update-haproxy
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -985,7 +2497,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: cf-smoke-tests-release
+    - get: haproxy-release
       trigger: true
       params:
         tarball: false
@@ -993,982 +2505,111 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-smoke-tests
+  - task: update-release-haproxy
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: cf-smoke-tests-release
+      release: haproxy-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: cf-smoke-tests
+      RELEASE_NAME: haproxy
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
+      UPDATED_OPS_FILE_PATH: use-haproxy.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: cf-smoke-tests
+      DEPLOYMENT_NAME_SUFFIX: haproxy
+      OPS_FILES: use-haproxy.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
+      VARS_FILES: vars-files/haproxy-vars.yml
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-smoke-tests
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-smoke-tests
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-smoke-tests-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-smoke-tests
-  - put: cf-smoke-tests-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
+      DEPLOYMENT_NAME: cf-dry-run-haproxy
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: use-haproxy.yml
+      OPS_FILE_DESTINATION: operations/use-haproxy.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
-- name: update-cf-syslog-drain-release
-  serial_groups: [cf-syslog-drain-release]
+- name: update-nfs-volume
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
-    - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-    - get: stemcell
-      passed: [ update-stemcell-and-recompile-releases ]
-      params:
-        tarball: false
-    - get: cf-syslog-drain-release
+    - get: greengrass-env-director-state
+    - get: nfs-volume-release
       trigger: true
       params:
         tarball: false
-  - task: update-release-cf-syslog-drain-release
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-nfs-volume
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: cf-syslog-drain-release
+      release: nfs-volume-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: cf-syslog-drain
+      RELEASE_NAME: nfs-volume
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
+      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: cf-syslog-drain-release
+      DEPLOYMENT_NAME_SUFFIX: nfs-volume
+      OPS_FILES: enable-nfs-volume-service.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-syslog-drain-release
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-syslog-drain
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-syslog-drain-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-syslog-drain
-  - put: cf-syslog-drain-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
+      DEPLOYMENT_NAME: cf-dry-run-nfs-volume
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-cflinuxfs2
-  serial_groups: [update-cflinuxfs2]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: cflinuxfs2-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cflinuxfs2
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: cflinuxfs2-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cflinuxfs2
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cflinuxfs2
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cflinuxfs2
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cflinuxfs2
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cflinuxfs2-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cflinuxfs2
-  - put: cflinuxfs2-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-consul
-  serial_groups: [update-consul]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: consul-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-consul
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: consul-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: consul
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: consul
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-consul
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: consul
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: consul-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: consul
-  - put: consul-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-diego
-  serial_groups: [update-diego]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: diego-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-diego
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: diego-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: diego
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: diego
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-diego
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: diego
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: diego-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: diego
-  - put: diego-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-dotnet-core-buildpack
-  serial_groups: [update-dotnet-core-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: dotnet-core-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-dotnet-core-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: dotnet-core-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: dotnet-core-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: dotnet-core-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: dotnet-core-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: dotnet-core-buildpack
-  - put: dotnet-core-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-garden-runc
-  serial_groups: [update-garden-runc]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: garden-runc-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-garden-runc
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: garden-runc-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: garden-runc
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: garden-runc
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-garden-runc
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: garden-runc
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: garden-runc-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: garden-runc
-  - put: garden-runc-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-go-buildpack
-  serial_groups: [update-go-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: go-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-go-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: go-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: go-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: go-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: go-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: go-buildpack
-  - put: go-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-java-buildpack
-  serial_groups: [update-java-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: java-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-java-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: java-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: java-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: java-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: java-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: java-buildpack
-  - put: java-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-loggregator
-  serial_groups: [update-loggregator]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: loggregator-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-loggregator
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: loggregator-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: loggregator
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: loggregator
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-loggregator
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: loggregator
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: loggregator-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: loggregator
-  - put: loggregator-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-cf-mysql
-  serial_groups: [update-cf-mysql]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: greengrass-env-director-state
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: stemcell
-      passed: [ update-stemcell-and-recompile-releases ]
-      params:
-        tarball: false
-    - get: cf-mysql-release
-      trigger: true
-      params:
-        tarball: false
-  - task: update-release-cf-mysql
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: cf-mysql-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-mysql
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cf-mysql
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-mysql
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-mysql
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-mysql-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: cf-mysql
-  - put: cf-mysql-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-nats
-  serial_groups: [update-nats]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: nats-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-nats
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: nats-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: nats
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-      MANIFEST_DESTINATION: cf-deployment.yml
-    params:
-      DEPLOYMENT_NAME_SUFFIX: nats
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-nats
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: nats
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: nats-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: nats
-  - put: nats-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-nodejs-buildpack
-  serial_groups: [update-nodejs-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: nodejs-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-nodejs-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: nodejs-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: nodejs-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: nodejs-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: nodejs-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: nodejs-buildpack
-  - put: nodejs-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-php-buildpack
-  serial_groups: [update-php-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: php-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-php-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: php-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: php-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: php-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: php-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: php-buildpack
-  - put: php-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: enable-nfs-volume-service.yml
+      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -2009,11 +2650,14 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
       DEPLOYMENT_NAME_SUFFIX: postgres
-      OPS_FILES: "use-postgres.yml"
+      OPS_FILES: use-postgres.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -2034,8 +2678,8 @@ jobs:
       rebase: true
       repository: updated-repo
 
-- name: update-python-buildpack
-  serial_groups: [update-python-buildpack]
+- name: update-silk
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2044,7 +2688,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: python-buildpack-release
+    - get: silk-release
       trigger: true
       params:
         tarball: false
@@ -2052,129 +2696,53 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-python-buildpack
+  - task: update-release-silk
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: python-buildpack-release
+      release: silk-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: python-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: python-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: python-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: python-buildpack
-  - put: python-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-routing
-  serial_groups: [update-routing]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: routing-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-routing
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: routing-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: routing
+      RELEASE_NAME: silk
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-silk-release.yml
+      UPDATED_OPS_FILE_PATH: use-silk-release.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: routing
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+      DEPLOYMENT_NAME_SUFFIX: silk
+      OPS_FILES: use-silk-release.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-routing
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: routing
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: routing-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: routing
-  - put: routing-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
+      DEPLOYMENT_NAME: cf-dry-run-silk
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: use-silk-release.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-silk-release.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
-- name: update-ruby-buildpack
-  serial_groups: [update-ruby-buildpack]
+- name: update-syslog
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2183,7 +2751,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: ruby-buildpack-release
+    - get: syslog-release
       trigger: true
       params:
         tarball: false
@@ -2191,189 +2759,55 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-ruby-buildpack
+  - task: update-release-syslog
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: ruby-buildpack-release
+      release: syslog-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: ruby-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: ruby-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: ruby-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: ruby-buildpack
-  - put: ruby-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-staticfile-buildpack
-  serial_groups: [update-staticfile-buildpack]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: staticfile-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-staticfile-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: staticfile-buildpack-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: staticfile-buildpack
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: staticfile-buildpack
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: staticfile-buildpack-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: staticfile-buildpack
-  - put: staticfile-buildpack-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-statsd-injector
-  serial_groups: [update-statsd-injector]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: statsd-injector-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-statsd-injector
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: statsd-injector-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: statsd-injector
+      RELEASE_NAME: syslog
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
+      UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
+      vars-files: cf-deployment-develop
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: statsd-injector
+      DEPLOYMENT_NAME_SUFFIX: syslog
+      OPS_FILES: enable-component-syslog.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
+      VARS_FILES: operations/addons/example-vars-files/vars-enable-component-syslog.yml
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-statsd-injector
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: statsd-injector
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: statsd-injector-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: statsd-injector
-  - put: statsd-injector-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
+      DEPLOYMENT_NAME: cf-dry-run-syslog
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: enable-component-syslog.yml
+      OPS_FILE_DESTINATION: operations/addons/enable-component-syslog.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
 
-- name: update-uaa
-  serial_groups: [update-uaa]
+- name: update-bosh-dns
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2382,7 +2816,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: greengrass-env-director-state
-    - get: uaa-release
+    - get: bosh-dns-release
       trigger: true
       params:
         tarball: false
@@ -2390,65 +2824,95 @@ jobs:
       params:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-uaa
+  - task: update-release-bosh-dns
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      release: uaa-release
+      release: bosh-dns-release
       deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: uaa
+      RELEASE_NAME: bosh-dns
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
+      UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
       vars-files: greengrass-env-director-state
+
     params:
-      DEPLOYMENT_NAME_SUFFIX: uaa
-      OPS_FILES: "operations/experimental/enable-backup-restore.yml"
+      DEPLOYMENT_NAME_SUFFIX: bosh-dns
+      OPS_FILES: use-bosh-dns.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
+
   - task: bosh-delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-uaa
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: uaa
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: uaa-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: uaa
-  - put: uaa-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
+      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
     params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+      OPS_FILE_NAME: use-bosh-dns.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
+
+  - task: update-release-bosh-dns-rename-network-and-deployment
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: bosh-dns-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: bosh-dns
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
+      UPDATED_OPS_FILE_PATH: use-bosh-dns-rename-network-and-deployment.yml
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: cf-deployment-develop
+    params:
+      DEPLOYMENT_NAME_SUFFIX: bosh-dns
+      OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+      VARS_FILES: "operations/example-vars-files/vars-rename-network-and-deployment.yml"
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-bosh-dns-rename-network-and-deployment.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+
 
 - name: update-windows-stemcell
   public: true
@@ -2465,6 +2929,7 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
+
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -2494,9 +2959,11 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
+
       windows-stemcell: windows2016-stemcell
     params:
       USE_WINDOWS2016: true
+
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -2511,14 +2978,16 @@ jobs:
       rebase: true
       repository: updated-repo
 
+
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
   - update-binary-buildpack
   - update-capi
+  - update-cf-mysql
   - update-cf-networking
   - update-cf-smoke-tests
-  - update-cf-syslog-drain-release
+  - update-cf-syslog-drain
   - update-cflinuxfs2
   - update-consul
   - update-diego
@@ -2527,7 +2996,6 @@ jobs:
   - update-go-buildpack
   - update-java-buildpack
   - update-loggregator
-  - update-cf-mysql
   - update-nats
   - update-nodejs-buildpack
   - update-php-buildpack
@@ -2537,6 +3005,7 @@ jobs:
   - update-staticfile-buildpack
   - update-statsd-injector
   - update-uaa
+
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -2613,6 +3082,7 @@ jobs:
     - get: uaa-release
       params:
         tarball: false
+
     - get: stemcell
       trigger: true
       params:
@@ -2647,6 +3117,15 @@ jobs:
         exported-release: exported-release-capi
       params:
         RELEASE_NAME: capi
+    - task: compile-release-cf-mysql
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-mysql
+      params:
+        RELEASE_NAME: cf-mysql
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2746,15 +3225,6 @@ jobs:
         exported-release: exported-release-loggregator
       params:
         RELEASE_NAME: loggregator
-    - task: compile-release-cf-mysql
-      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        manifest: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-cf-mysql
-      params:
-        RELEASE_NAME: cf-mysql
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -2836,34 +3306,35 @@ jobs:
         exported-release: exported-release-uaa
       params:
         RELEASE_NAME: uaa
+
   - task: update-compiled-releases-ops-stemcell
     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
+      binary-buildpack-release-tarball: exported-release-binary-buildpack
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-cf-mysql
-      nats-release-tarball: exported-release-nats
-      routing-release-tarball: exported-release-routing
+      cf-networking-release-tarball: exported-release-cf-networking
+      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
+      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
+      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
       consul-release-tarball: exported-release-consul
       diego-release-tarball: exported-release-diego
-      loggregator-release-tarball: exported-release-loggregator
-      uaa-release-tarball: exported-release-uaa
-      garden-runc-release-tarball: exported-release-garden-runc
-      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
-      binary-buildpack-release-tarball: exported-release-binary-buildpack
       dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
+      garden-runc-release-tarball: exported-release-garden-runc
       go-buildpack-release-tarball: exported-release-go-buildpack
       java-buildpack-release-tarball: exported-release-java-buildpack
+      loggregator-release-tarball: exported-release-loggregator
+      nats-release-tarball: exported-release-nats
       nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
       php-buildpack-release-tarball: exported-release-php-buildpack
       python-buildpack-release-tarball: exported-release-python-buildpack
+      routing-release-tarball: exported-release-routing
       ruby-buildpack-release-tarball: exported-release-ruby-buildpack
       staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
       statsd-injector-release-tarball: exported-release-statsd-injector
-      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
-      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
       uaa-release-tarball: exported-release-uaa
-      cf-networking-release-tarball: exported-release-cf-networking
+
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -2957,6 +3428,7 @@ jobs:
       params:
         file: exported-release-uaa/*.tgz
         predefined_acl: publicRead
+
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -2973,6 +3445,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
+
 - name: update-windows-2012-releases
   serial: true
   public: true
@@ -2985,10 +3458,12 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
+    
     - get: garden-windows-bosh-release
       trigger: true
       params:
         tarball: false
+    
     - get: hwc-buildpack-release
       trigger: true
       params:
@@ -3002,9 +3477,11 @@ jobs:
     file: runtime-ci/tasks/update-windows-releases/task-2012.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
+      
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
+      
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -3055,10 +3532,16 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
+    
     - get: winc-release
       trigger: true
       params:
         tarball: false
+    - get: windows2016fs-online-release
+      trigger: true
+      params:
+        tarball: false
+    
     - get: hwc-buildpack-release
       trigger: true
       params:
@@ -3067,16 +3550,14 @@ jobs:
       trigger: true
       params:
         tarball: false
-    - get: windows2016fs-online-release
-      trigger: true
-      params:
-        tarball: false
     - get: windows2016-stemcell
   - task: update-windows-releases
     file: runtime-ci/tasks/update-windows-releases/task-2016.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
+      
       windows2016fs-release: windows2016fs-online-release
+      
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -3115,6 +3596,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
+
 - name: update-windows-2016-offline-releases
   serial: true
   public: true
@@ -3145,290 +3627,6 @@ jobs:
     params:
       OPS_FILE_NAME: use-offline-windows2016fs.yml
       OPS_FILE_DESTINATION: operations/experimental/use-offline-windows2016fs.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-credhub
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: credhub-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-credhub
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: credhub-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: credhub
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
-      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: credhub
-      OPS_FILES: "secure-service-credentials.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-credhub
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: secure-service-credentials.yml
-      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-bosh-dns
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: bosh-dns-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-bosh-dns
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: bosh-dns-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bosh-dns
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
-      UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bosh-dns
-      OPS_FILES: "use-bosh-dns.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-bosh-dns.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-  - task: update-release-bosh-dns-rename-network-and-deployment
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: bosh-dns-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bosh-dns
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
-      UPDATED_OPS_FILE_PATH: use-bosh-dns-rename-network-and-deployment.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: cf-deployment-develop
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bosh-dns
-      OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: "operations/example-vars-files/vars-rename-network-and-deployment.yml"
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-bosh-dns-rename-network-and-deployment.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-syslog
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: syslog-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-syslog
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: syslog-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: syslog
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
-      UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: cf-deployment-develop
-    params:
-      DEPLOYMENT_NAME_SUFFIX: syslog
-      OPS_FILES: "enable-component-syslog.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: |
-        operations/addons/example-vars-files/vars-enable-component-syslog.yml
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-syslog
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: enable-component-syslog.yml
-      OPS_FILE_DESTINATION: operations/addons/enable-component-syslog.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-bpm
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: greengrass-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: bpm-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-bpm
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: bpm-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bpm
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-bpm.yml
-      UPDATED_OPS_FILE_PATH: enable-bpm.yml
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bpm
-      OPS_FILES: "enable-bpm.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bpm
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: enable-bpm.yml
-      OPS_FILE_DESTINATION: operations/experimental/enable-bpm.yml
   - put: cf-deployment-develop
     params:
       rebase: true
