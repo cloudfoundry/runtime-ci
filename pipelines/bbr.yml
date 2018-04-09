@@ -46,14 +46,6 @@ resources:
     private_key: ((baba_yaga_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
-- name: baba-yaga-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/baba-yaga-env.git
-    private_key: ((baba_yaga_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-vars.yml
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -267,7 +259,6 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-rc
-      - get: baba-yaga-env-vars-store
       - get: baba-yaga-env-director-state
       - get: baba-yaga-env-integration-configs
       - get: persi-ci
@@ -287,13 +278,12 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: "enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
         cf-deployment: cf-deployment-rc
         ops-files: collected-ops-files
-        vars-store: baba-yaga-env-vars-store
-        vars-files: baba-yaga-env-vars-store
+        vars-files: baba-yaga-env-director-state
       params:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         OPS_FILES: |
@@ -303,11 +293,6 @@ jobs:
           operations/enable-nfs-volume-service.yml
           operations/experimental/enable-nfs-broker-backup.yml
           operations/enable-nfs-test-server.yml
-      ensure:
-        put: baba-yaga-env-vars-store
-        params:
-          repository: updated-vars-store
-          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
@@ -327,14 +312,13 @@ jobs:
     - aggregate:
       - get: bbr-github-release
       - get: baba-yaga-env-director-state
-      - get: baba-yaga-env-vars-store
+      - get: cf-deployment-concourse-tasks
       - get: drats-master
       - get: runtime-ci
     - task: generate-drats-config
       file: runtime-ci/tasks/generate-drats-config/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        vars-store: baba-yaga-env-vars-store
       params:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
     - task: run-drats

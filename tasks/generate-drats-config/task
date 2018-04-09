@@ -2,19 +2,22 @@
 
 set -eu
 
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+setup_bosh_env_vars
 pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
-  BOSH_ENVIRONMENT=$(bbl director-address)
   BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
   BOSH_GW_HOST=$(bbl jumpbox-address)
-  BOSH_CA_CERT=$(bbl director-ca-cert)
-  BOSH_CLIENT=$(bbl director-username)
-  BOSH_CLIENT_SECRET=$(bbl director-password)
 popd > /dev/null
+
+cf_admin_password=$(get_password_from_credhub "cf_admin_password")
+nfs_broker_password=$(get_password_from_credhub "nfs-broker-password")
 
 echo '{}' | jq \
 --arg cf_deployment_name ${DEPLOYMENT_NAME} \
 --arg cf_api_url "https://api.${SYSTEM_DOMAIN}" \
---arg cf_admin_password $(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/cf_admin_password) \
+--arg cf_admin_password ${cf_admin_password} \
 --arg bosh_environment "${BOSH_ENVIRONMENT}" \
 --arg bosh_gw_host "${BOSH_GW_HOST}" \
 --arg bosh_gw_private_key "${BOSH_GW_PRIVATE_KEY}" \
@@ -22,7 +25,7 @@ echo '{}' | jq \
 --arg bosh_client "${BOSH_CLIENT}" \
 --arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
---arg nfs_broker_password $(bosh interpolate vars-store/${VARS_STORE_FILE} --path=/nfs-broker-password) \
+--arg nfs_broker_password ${nfs_broker_password} \
 --arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
 '{
     "cf_deployment_name": $cf_deployment_name,
