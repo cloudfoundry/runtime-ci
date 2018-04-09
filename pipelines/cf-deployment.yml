@@ -193,7 +193,7 @@ resources:
     paths:
     - integration_config.json
     - rats_integration_config.json
-- name: luna-env-vars-store
+- name: luna-env-vars-files
   type: git
   source:
     branch: master
@@ -201,7 +201,6 @@ resources:
     private_key: ((luna_env_readwrite_deploy_key.private_key))
     paths:
     - deployment-name.yml
-    - deployment-vars.yml
     - network-name.yml
     - syslog-vars.yml
     - bbs-key-label.yml
@@ -492,7 +491,7 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
-    - get: luna-env-vars-store
+    - get: luna-env-vars-files
     - get: luna-env-integration-configs
     - get: luna-env-director-state
   - task: guarantee-no-existing-cf-deployment
@@ -509,13 +508,12 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: cf-deployment-develop
-      vars-store: luna-env-vars-store
-      vars-files: luna-env-vars-store
+      vars-files: luna-env-vars-files
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: |
@@ -536,28 +534,18 @@ jobs:
         bbs-key-label.yml
         syslog-vars.yml
         gcs-vars.yml
-      REGENERATE_VARS_STORE: true
-    ensure:
-      put: luna-env-vars-store
-      params:
-        repository: updated-vars-store
-        rebase: true
+      REGENERATE_CREDENTIALS: true
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
   - task: update-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
-      vars-store: luna-env-vars-store
+      bbl-state: luna-env-director-state
       integration-configs: luna-env-integration-configs
-    ensure:
-      put: luna-env-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
   - task: ensure-gcloud-backend-service-healthy
     file: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task.yml
     input_mapping:
@@ -1160,13 +1148,13 @@ jobs:
       passed: [ fresh-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: luna-env-vars-store
+      - get: luna-env-director-state
       - get: cf-deployment-develop
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
       input_mapping:
-        vars-store: luna-env-vars-store
+        bbl-state: luna-env-director-state
       params:
         SYSTEM_DOMAIN: luna.cf-app.com
         ENABLED_FEATURE_FLAGS: |
@@ -1263,7 +1251,6 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-      - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
@@ -1360,7 +1347,6 @@ jobs:
     - aggregate:
       - get: runtime-ci
       - get: github-routing-release-master
-      - get: luna-env-vars-store
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
