@@ -546,6 +546,11 @@ jobs:
     input_mapping:
       bbl-state: luna-env-director-state
       integration-configs: luna-env-integration-configs
+    ensure:
+      put: luna-env-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - task: ensure-gcloud-backend-service-healthy
     file: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task.yml
     input_mapping:
