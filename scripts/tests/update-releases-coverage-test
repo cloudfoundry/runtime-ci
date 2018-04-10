@@ -23,8 +23,8 @@ check_files() {
     exit 1
   fi
 
-  if [ ! -f pipelines/update-releases.yml ]; then
-    echo "pipeline/update-releases.yml not found.  Exiting..."
+  if [ ! -f pipelines/output/update-releases.yml ]; then
+    echo "pipelines/output/update-releases.yml not found.  Exiting..."
     exit 1
   fi
 }
@@ -33,7 +33,7 @@ main() {
   releases=$(bosh int ../cf-deployment-develop/cf-deployment.yml --path=/releases | grep name | cut -d ' ' -f3 | sort)
 
   for release in $releases; do
-    grep "update-$release" pipelines/update-releases.yml &> /dev/null
+    grep "update-$release" pipelines/output/update-releases.yml &> /dev/null
     if [ $? == 0 ]; then
       pass "update-$release is being updated by the update-releases pipeline."
     else
