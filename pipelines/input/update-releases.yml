@@ -98,6 +98,12 @@ opsReleases:
   repository: cloudfoundry/bosh-dns-release
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: use-bosh-dns.yml
+- name: bits-service
+  repository: cloudfoundry-incubator/bits-service-release
+  cfDeploymentOpsFileDir: operations/experimental
+  opsFile: bits-service.yml
+  varsFilesInput: greengrass-env-director-state
+
 
 windowsVersSupported:
 - name: windows
