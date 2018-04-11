@@ -792,7 +792,6 @@ jobs:
           operations/use-compiled-releases.yml
           operations/use-s3-blobstore.yml
           operations/experimental/secure-service-credentials.yml
-          operations/use-external-dbs.yml
           operations/experimental/secure-service-credentials-external-db.yml
           operations/experimental/use-silk-release.yml
           operations/experimental/use-silk-release-external-db.yml
@@ -806,6 +805,7 @@ jobs:
           operations/experimental/enable-service-discovery.yml
           operations/experimental/enable-bpm.yml
           operations/experimental/use-log-cache.yml
+          operations/experimental/use-pxc.yml
         VARS_FILES: "datadog-deployment-vars.yml rds-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: true
