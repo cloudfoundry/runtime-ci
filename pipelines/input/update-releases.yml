@@ -103,6 +103,11 @@ opsReleases:
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: bits-service.yml
   varsFilesInput: greengrass-env-director-state
+- name: log-cache
+  repository: cloudfoundry/log-cache-release
+  cfDeploymentOpsFileDir: operations/experimental
+  opsFile: use-log-cache.yml
+  varsFilesInput: greengrass-env-director-state
 
 
 windowsVersSupported:

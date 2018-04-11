@@ -88,6 +88,8 @@ groups:
 
   - update-bits-service
 
+  - update-log-cache
+
 - name: update-windows-stemcells-and-releases
   jobs:
 
@@ -333,6 +335,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/bits-service-release
+- name: log-cache-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/log-cache-release
 
 - name: binary-buildpack-release-gcs
   type: gcs-resource
@@ -2976,6 +2982,69 @@ jobs:
     params:
       OPS_FILE_NAME: bits-service.yml
       OPS_FILE_DESTINATION: operations/experimental/bits-service.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-log-cache
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: log-cache-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-log-cache
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: log-cache-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: log-cache
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-log-cache.yml
+      UPDATED_OPS_FILE_PATH: use-log-cache.yml
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: log-cache
+      OPS_FILES: use-log-cache.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-log-cache
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-log-cache.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-log-cache.yml
   - put: cf-deployment-develop
     params:
       rebase: true
