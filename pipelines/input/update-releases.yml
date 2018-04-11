@@ -108,6 +108,11 @@ opsReleases:
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: use-log-cache.yml
   varsFilesInput: greengrass-env-director-state
+- name: pxc
+  repository: cloudfoundry-incubator/pxc-release
+  cfDeploymentOpsFileDir: operations/experimental
+  opsFile: use-pxc.yml
+  varsFilesInput: greengrass-env-director-state
 
 
 windowsVersSupported:

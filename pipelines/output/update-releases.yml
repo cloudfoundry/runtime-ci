@@ -90,6 +90,8 @@ groups:
 
   - update-log-cache
 
+  - update-pxc
+
 - name: update-windows-stemcells-and-releases
   jobs:
 
@@ -339,6 +341,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/log-cache-release
+- name: pxc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/pxc-release
 
 - name: binary-buildpack-release-gcs
   type: gcs-resource
@@ -3045,6 +3051,69 @@ jobs:
     params:
       OPS_FILE_NAME: use-log-cache.yml
       OPS_FILE_DESTINATION: operations/experimental/use-log-cache.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-pxc
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: pxc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-pxc
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: pxc-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: pxc
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-pxc.yml
+      UPDATED_OPS_FILE_PATH: use-pxc.yml
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: pxc
+      OPS_FILES: use-pxc.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-pxc
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-pxc.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-pxc.yml
   - put: cf-deployment-develop
     params:
       rebase: true
