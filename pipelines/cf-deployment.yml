@@ -838,6 +838,24 @@ jobs:
         params:
           repository: updated-integration-configs
           rebase: true
+    - task: open-asgs-for-credhub
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        vars-store: hermione-env-vars-store
+      params:
+        INSTANCE_GROUP_NAME: credhub
+        SYSTEM_DOMAIN: hermione.cf-app.com
+        SECURITY_GROUP_NAME: credhub
+    - task: open-asgs-for-uaa
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: hermione-env-director-state
+        vars-store: hermione-env-vars-store
+      params:
+        INSTANCE_GROUP_NAME: uaa
+        SYSTEM_DOMAIN: hermione.cf-app.com
+        SECURITY_GROUP_NAME: uaa
 
 - name: stable-deploy
   serial_groups: [ bellatrix-smokes ]

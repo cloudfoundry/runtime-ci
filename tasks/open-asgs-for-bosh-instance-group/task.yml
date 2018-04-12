@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: bbl-state
+- name: runtime-ci
+- name: vars-store
+- name: cf-deployment-concourse-tasks
+
+run:
+  path: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task
+
+params:
+  BBL_STATE_DIR: bbl-state
+  DEPLOYMENT_NAME: cf
+  INSTANCE_GROUP_NAME:
+  VARS_STORE_PATH: deployment-vars.yml
+  SYSTEM_DOMAIN:
+  SECURITY_GROUP_NAME:
