@@ -49,22 +49,20 @@
           ca_cert: "((diego_rep_agent.ca))"
           cert: "((diego_rep_agent.certificate))"
           key: "((diego_rep_agent.private_key))"
-    - name: metron_agent_windows
-      release: loggregator
+    - name: funtimes_thingie_neatjob
+      release: funtimes-thingie
       properties:
-        syslog_daemon_config:
-          enable: false
-        metron_agent:
-          deployment: "((system_domain))"
-        metron_endpoint:
+        funtimes_daemon_config:
+          be_fun: false
+        deployment: "((system_domain))"
+        funtimes_endpoint:
           shared_secret: "((dropsonde_shared_secret))"
-        loggregator:
+        funtimes:
           tls:
-            ca_cert: "((loggregator_tls_metron.ca))"
-            metron:
-              cert: "((loggregator_tls_metron.certificate))"
-              key: "((loggregator_tls_metron.private_key))"
-
+            ca_cert: "((funtimes_tls_thingie.ca))"
+            thingie:
+              cert: "((funtimes_tls_thingie.certificate))"
+              key: "((funtimes_tls_thingie.private_key))"
 - type: replace
   path: /releases/-
   value:

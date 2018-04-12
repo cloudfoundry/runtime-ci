@@ -88,7 +88,7 @@ var _ = Describe("UpdateReleases", func() {
 		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-version", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(string(updatedOpsFile)).To(Equal(string(desiredOpsFile)))
+		Expect(string(updatedOpsFile)).To(MatchYAML(string(desiredOpsFile)))
 		Expect(changes).To(Equal("Updated opsfile with release2-release updated-release2-version"))
 	})
 
