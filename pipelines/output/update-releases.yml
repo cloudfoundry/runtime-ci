@@ -43,6 +43,8 @@ groups:
 
   - update-loggregator
 
+  - update-loggregator-agent
+
   - update-nats
 
   - update-nodejs-buildpack
@@ -252,6 +254,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/loggregator-release
+- name: loggregator-agent-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/loggregator-agent-release
 - name: nats-release
   type: bosh-io-release
   source:
@@ -430,6 +436,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: loggregator-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: loggregator-agent-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: loggregator-agent-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: nats-release-gcs
   type: gcs-resource
   source:
@@ -1536,6 +1548,86 @@ jobs:
     params:
       RELEASE_NAME: loggregator
   - put: loggregator-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-loggregator-agent
+  serial_groups:
+  - update-loggregator-agent
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: loggregator-agent-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-loggregator-agent
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: loggregator-agent-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: loggregator-agent
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: loggregator-agent
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-loggregator-agent
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: loggregator-agent
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: loggregator-agent-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: loggregator-agent
+  - put: loggregator-agent-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -3203,6 +3295,7 @@ jobs:
   - update-go-buildpack
   - update-java-buildpack
   - update-loggregator
+  - update-loggregator-agent
   - update-nats
   - update-nodejs-buildpack
   - update-php-buildpack
@@ -3260,6 +3353,9 @@ jobs:
       params:
         tarball: false
     - get: loggregator-release
+      params:
+        tarball: false
+    - get: loggregator-agent-release
       params:
         tarball: false
     - get: nats-release
@@ -3432,6 +3528,15 @@ jobs:
         exported-release: exported-release-loggregator
       params:
         RELEASE_NAME: loggregator
+    - task: compile-release-loggregator-agent
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-loggregator-agent
+      params:
+        RELEASE_NAME: loggregator-agent
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -3532,6 +3637,7 @@ jobs:
       go-buildpack-release-tarball: exported-release-go-buildpack
       java-buildpack-release-tarball: exported-release-java-buildpack
       loggregator-release-tarball: exported-release-loggregator
+      loggregator-agent-release-tarball: exported-release-loggregator-agent
       nats-release-tarball: exported-release-nats
       nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
       php-buildpack-release-tarball: exported-release-php-buildpack
@@ -3598,6 +3704,10 @@ jobs:
     - put: loggregator-release-gcs
       params:
         file: exported-release-loggregator/*.tgz
+        predefined_acl: publicRead
+    - put: loggregator-agent-release-gcs
+      params:
+        file: exported-release-loggregator-agent/*.tgz
         predefined_acl: publicRead
     - put: nats-release-gcs
       params:
