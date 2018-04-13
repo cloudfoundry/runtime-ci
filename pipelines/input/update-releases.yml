@@ -26,8 +26,8 @@ baseReleases:
   repository: cloudfoundry/go-buildpack-release
 - name: java-buildpack
   repository: cloudfoundry/java-buildpack-release
-- name: loggregator-agent
-  repository: cloudfoundry/loggregator-agent-release
+- name: loggregator
+  repository: cloudfoundry/loggregator-release
 - name: nats
   repository: cloudfoundry/nats-release
 - name: nodejs-buildpack
