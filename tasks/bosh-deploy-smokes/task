@@ -3,6 +3,15 @@
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
+function move_cf_admin_password() {
+  cf_admin_password=$(get_password_from_credhub "cf_admin_password")
+  bosh_director_name=$(jq -r .bosh.directorName bbl-state/${BBL_STATE_DIR}/bbl-state.json)
+
+  set +x
+    credhub s -n /${bosh_director_name}/cf-smoke-tests/cf_admin_password -t password -w ${cf_admin_password}
+  set -x
+}
+
 function bosh_deploy() {
   local root_dir=$PWD
   pushd cf-smoke-tests-release
@@ -58,7 +67,6 @@ EOF
       -n \
       -d "${RELEASE_NAME}" \
       interpolate smokes-dev-release.yml \
-      --vars-store "${root_dir}/vars-store/${VARS_STORE_FILE}" \
       -v system_domain="${SYSTEM_DOMAIN}" > interpolated-manifest.yml
 
     bosh \
@@ -72,6 +80,7 @@ EOF
 
 function main() {
   setup_bosh_env_vars
+  move_cf_admin_password
   bosh_deploy
 }
 

@@ -49,15 +49,6 @@ resources:
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
 
-- name: bellatrix-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-vars.yml
-
 # Semantic Version
 - name: cf-smoke-tests-version
   type: semver
@@ -83,11 +74,9 @@ jobs:
     - get: cf-smoke-tests-release
       trigger: true
     - get: bellatrix-env-director-state
-    - get: bellatrix-env-vars-store
   - task: deploy-smoke-tests-errand
     file: runtime-ci/tasks/bosh-deploy-smokes/task.yml
     input_mapping:
-      vars-store: bellatrix-env-vars-store
       bbl-state: bellatrix-env-director-state
     params:
       SYSTEM_DOMAIN: bellatrix.cf-app.com
