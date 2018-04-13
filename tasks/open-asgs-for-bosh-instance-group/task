@@ -26,8 +26,8 @@ function main() {
   local asgs_json=$(mktemp)
   create_asg_json ${asgs_json}
 
-  cf delete-security-group ${SECURITY_GROUP_NAME}
-  cf create-security-group ${SECURITY_GROUP_NAME} ${asgs_json}
+  cf delete-security-group ${SECURITY_GROUP_NAME} -f
+  cf create-security-group ${SECURITY_GROUP_NAME} ${asgs_json} -f
 }
 
 main
