@@ -29,6 +29,9 @@ function main() {
 
   cf delete-security-group ${SECURITY_GROUP_NAME} -f
   cf create-security-group ${SECURITY_GROUP_NAME} ${asgs_json}
+
+  cf bind-running-security-group ${SECURITY_GROUP_NAME}
+  cf bind-staging-security-group ${SECURITY_GROUP_NAME}
 }
 
 main
