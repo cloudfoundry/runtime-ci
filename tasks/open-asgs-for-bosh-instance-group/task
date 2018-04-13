@@ -11,7 +11,7 @@ function create_asg_json() {
   local instance_group_ips
   instance_group_ips=$(bosh is | grep ${INSTANCE_GROUP_NAME} | awk '{print $4}')
 
-  runtime-ci/tasks/open-asgs-for-bosh-instance-group/write_asgs_json.rb ${instance_group_ips} ${asg_json_path}
+  runtime-ci/tasks/open-asgs-for-bosh-instance-group/write_asgs_json.rb "${instance_group_ips}" ${asg_json_path}
 }
 
 function main() {

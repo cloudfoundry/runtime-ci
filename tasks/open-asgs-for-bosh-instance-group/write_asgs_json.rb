@@ -8,7 +8,7 @@ destination_file = ARGV[1]
 asgs=[]
 
 ips.split(/\s/).each do |ip|
-  asgs << {protocol: 'tcp', destination: ip}
+  asgs << {protocol: 'tcp', destination: ip, ports: "[1-65535]"}
 end
 
 File.open(destination_file,"w") do |f|
