@@ -795,7 +795,6 @@ jobs:
           operations/experimental/use-pxc.yml
           operations/experimental/secure-service-credentials-with-pxc-release.yml
           operations/experimental/use-silk-release.yml
-          operations/experimental/use-silk-release-external-db.yml
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers.yml
           operations/experimental/use-bosh-dns-for-containers-with-silk-release.yml
