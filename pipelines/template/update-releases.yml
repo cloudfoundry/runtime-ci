@@ -567,7 +567,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: use-offline-windows2016fs.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-offline-windows2016fs.yml
+      OPS_FILE_DESTINATION: operations/use-offline-windows2016fs.yml
   - put: cf-deployment-develop
     params:
       rebase: true
