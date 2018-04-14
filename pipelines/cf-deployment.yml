@@ -732,6 +732,7 @@ jobs:
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
+        passed: [ experimental-acquire-pool ]
       - get: hermione-env-vars-store
       - get: hermione-env-turbulence-manifest
       - get: hermione-env-turbulence-vars
