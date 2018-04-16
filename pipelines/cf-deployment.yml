@@ -593,6 +593,8 @@ jobs:
       ops-files: cf-deployment-develop
       vars-files: trelawney-env-director-state
     params:
+      DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+      FAIL_ON_DOWNTIME: true
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: |
         operations/windows-cell.yml
