@@ -1008,13 +1008,12 @@ jobs:
       trigger: true
       passed: [ experimental-set-feature-flags ]
     - aggregate:
-      - get: runtime-ci
       - get: hermione-env-director-state
       - get: cf-deployment-develop
         passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-concourse-tasks
   - task: bosh-run-errand-smoke-tests
-    file: runtime-ci/tasks/run-errand/task.yml
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
     input_mapping:
       bbl-state: hermione-env-director-state
     params:
@@ -1031,14 +1030,13 @@ jobs:
       trigger: true
       passed: [stable-deploy]
     - aggregate:
-      - get: runtime-ci
       - get: bellatrix-env-director-state
         passed: [stable-deploy]
       - get: cf-deployment-master
         passed: [stable-deploy]
       - get: cf-deployment-concourse-tasks
   - task: bosh-run-errand-smoke-tests
-    file: runtime-ci/tasks/run-errand/task.yml
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
     input_mapping:
       bbl-state: bellatrix-env-director-state
     params:
