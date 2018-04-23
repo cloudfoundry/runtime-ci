@@ -615,6 +615,10 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: ensure-api-healthy
+    file: runtime-ci/tasks/ensure-api-healthy/task.yml
+    params:
+      SYSTEM_DOMAIN: trelawney.cf-app.com
 
 - name: experimental-acquire-pool
   public: true
