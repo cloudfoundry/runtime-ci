@@ -28,6 +28,8 @@ baseReleases:
   repository: cloudfoundry/java-buildpack-release
 - name: loggregator
   repository: cloudfoundry/loggregator-release
+- name: loggregator-agent
+  repository: cloudfoundry/loggregator-agent-release
 - name: nats
   repository: cloudfoundry/nats-release
 - name: nodejs-buildpack
