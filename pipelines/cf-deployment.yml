@@ -589,6 +589,7 @@ jobs:
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
       vars-store: trelawney-env-director-state
+      bbl-state: trelawney-env-director-state
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       VARS_STORE_PATH: ""
@@ -796,6 +797,7 @@ jobs:
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
         vars-store: hermione-env-vars-store
+        bbl-state: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: bosh-deploy-cf

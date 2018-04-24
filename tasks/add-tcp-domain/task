@@ -6,6 +6,7 @@ set -eu
 source cf-deployment-concourse-tasks/shared-functions
 
 if [ -z "${VARS_STORE_PATH}" ]; then
+  setup_bosh_env_vars
   CF_PASSWORD=$(get_password_from_credhub cf_admin_password)
 else
   CF_PASSWORD=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)

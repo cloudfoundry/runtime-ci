@@ -10,9 +10,11 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 - name: vars-store
+- name: bbl-state
 
 params:
   VARS_STORE_PATH: deployment-vars.yml
+  BBL_STATE_DIR: bbl-state
   SYSTEM_DOMAIN:
 
 run:
