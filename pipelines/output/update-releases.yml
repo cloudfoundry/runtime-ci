@@ -12,8 +12,9 @@
 ## ======================================================================
 
 groups:
-- name: update-base-releases
+- name: update-base-stemcells-and-releases
   jobs:
+  - update-stemcell-and-recompile-releases
 
   - update-binary-buildpack
 
@@ -101,9 +102,6 @@ groups:
   - update-windows2016-stemcell
   - update-windows-2016-releases
 
-# - name: TODO
-#   jobs:
-  - update-stemcell-and-recompile-releases
   - update-windows-2016-offline-releases
 
 - name: infrastructure

@@ -8,8 +8,9 @@
 ## ======================================================================
 
 groups:
-- name: update-base-releases
+- name: update-base-stemcells-and-releases
   jobs:
+  - update-stemcell-and-recompile-releases
 {{range .baseReleases}}
   - update-{{.name}}
 {{end}}
@@ -24,9 +25,6 @@ groups:
   - update-{{.name}}-stemcell
   - update-{{.hyphenatedName}}-releases
 {{end}}
-# - name: TODO
-#   jobs:
-  - update-stemcell-and-recompile-releases
   - update-windows-2016-offline-releases
 
 - name: infrastructure
