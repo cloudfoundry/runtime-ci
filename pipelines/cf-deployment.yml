@@ -1420,7 +1420,7 @@ jobs:
         routing-release: github-routing-release-master
         integration-config: snitch-env-integration-configs
       params:
-        NODES: 8
+        NODES: 4
 
 - name: experimental-rats
   serial_groups: [ hermione-rats ]
