@@ -918,7 +918,10 @@ jobs:
         vars-files: bellatrix-env-director-state
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
-        OPS_FILES: "operations/scale-database-cluster.yml"
+        OPS_FILES: |
+          operations/scale-database-cluster.yml
+          operations/windows2016-cell.yml
+          operations/test/scale-windows-cells-2016.yml
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
