@@ -977,6 +977,7 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/bosh-lite.yml
           operations/use-postgres.yml
+          operations/experimental/enable-tls-cloud-controller-postgres.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
