@@ -289,9 +289,9 @@ jobs:
         OPS_FILES: |
           operations/workaround/use-4-azs-for-router.yml
           operations/use-compiled-releases.yml
-          operations/experimental/enable-backup-restore.yml
+          operations/backup-and-restore/enable-backup-restore.yml
           operations/enable-nfs-volume-service.yml
-          operations/experimental/enable-nfs-broker-backup.yml
+          operations/backup-and-restore/enable-nfs-broker-backup.yml
           operations/enable-nfs-test-server.yml
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
