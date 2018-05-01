@@ -1416,7 +1416,7 @@ jobs:
         routing-release: github-routing-release-master
         integration-config: trelawney-env-integration-configs
       params:
-        NODES: 8
+        NODES: 2
 
 - name: lite-rats
   serial_groups: [ snitch-rats ]
