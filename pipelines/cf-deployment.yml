@@ -25,7 +25,7 @@ groups:
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - bless-manifest
-  - merge-testing
+  - keep-v2-fresh
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
@@ -282,10 +282,10 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
-- name: cf-deployment-test-merge-conflict
+- name: cf-deployment-v2
   type: git
   source:
-    branch: test-merge-conflicts
+    branch: v2
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-release-candidate
@@ -1537,15 +1537,16 @@ jobs:
   - task: generate-cf-deployment-release-notes-template
     file: runtime-ci/tasks/cf-deployment-release-notes-template/task.yml
 
-- name: merge-testing
+- name: keep-v2-fresh
   public: true
   build_logs_to_retain: 100
   plan:
     - do:
       - get: runtime-ci
       - get: cf-deployment-develop
-      - get: cf-deployment-test-merge-conflict
-      - put: cf-deployment-test-merge-conflict
+        trigger: true
+      - get: cf-deployment-v2
+      - put: cf-deployment-v2
         params:
           repository: cf-deployment-develop
           merge: true
