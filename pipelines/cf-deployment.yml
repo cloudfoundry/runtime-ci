@@ -25,6 +25,7 @@ groups:
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - bless-manifest
+  - merge-testing
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
@@ -279,6 +280,12 @@ resources:
   type: git
   source:
     branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
+- name: cf-deployment-test-merge-conflict
+  type: git
+  source:
+    branch: test-merge-conflicts
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-release-candidate
@@ -1529,6 +1536,19 @@ jobs:
       trigger: true
   - task: generate-cf-deployment-release-notes-template
     file: runtime-ci/tasks/cf-deployment-release-notes-template/task.yml
+
+- name: merge-testing
+  public: true
+  build_logs_to_retain: 100
+  plan:
+    - do:
+      - get: runtime-ci
+      - get: cf-deployment-develop
+      - get: cf-deployment-test-merge-conflict
+      - put: cf-deployment-test-merge-conflict
+        params:
+          repository: cf-deployment-develop
+          merge: true
 
 - name: ship-it-patch
   public: true
