@@ -1197,6 +1197,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
+      attempts: 2
       file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
       input_mapping:
         bbl-state: luna-env-director-state
