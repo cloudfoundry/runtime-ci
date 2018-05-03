@@ -3,13 +3,19 @@ groups:
 - name: cf-deployment
   jobs:
   - fresh-deploy
+  - fresh-acquire-pool
+  - lite-release-pool
   - upgrade-deploy
+  - upgrade-acquire-pool
+  - upgrade-release-pool
   - lite-deploy
+  - lite-acquire-pool
   - experimental-deploy
   - lint-cf-deployment-manifest
   - branch-freshness
   - fresh-cats
   - fresh-enable-docker-and-tasks
+  - fresh-delete-deployment
   - upgrade-set-feature-flags
   - upgrade-cats
   - upgrade-cats-windows2016
@@ -18,6 +24,8 @@ groups:
   - experimental-cats
   - experimental-set-feature-flags
   - experimental-smoke-tests
+  - experimental-acquire-pool
+  - experimental-release-pool
   - fresh-rats
   - lite-enable-docker-and-tasks
   - lite-rats
