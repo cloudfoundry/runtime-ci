@@ -1553,7 +1553,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
-      - get: runtime-ci
       - get: cf-deployment-develop
         trigger: true
       - get: cf-deployment-v2
