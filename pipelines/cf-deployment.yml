@@ -1145,6 +1145,8 @@ jobs:
       input_mapping:
         integration-config: bellatrix-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
+      params:
+        FLAKE_ATTEMPTS: 0
 
 - name: cleanup-stable-periodic-cats
   serial: true
