@@ -33,7 +33,6 @@ groups:
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - bless-manifest
-  - keep-v2-fresh
   - ship-it-major
   - ship-it-minor
   - ship-it-patch
@@ -288,12 +287,6 @@ resources:
   type: git
   source:
     branch: develop
-    uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
-- name: cf-deployment-v2
-  type: git
-  source:
-    branch: v2
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-release-candidate
@@ -1520,14 +1513,11 @@ jobs:
     passed:
     - fresh-cats
     - lite-cats
-    - experimental-cats
     - upgrade-cats
     - upgrade-cats-windows2016
     - lite-rats
-    - experimental-rats
     - upgrade-rats
     - fresh-rats
-    - experimental-smoke-tests
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
