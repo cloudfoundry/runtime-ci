@@ -1046,6 +1046,9 @@ jobs:
       input_mapping:
         integration-config: hermione-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
+      ensure:
+        put: experimental-pool
+        params: {release: experimental-pool}
 
 - name: experimental-smoke-tests
   serial_groups: [hermione-smokes]
