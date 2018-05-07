@@ -1550,19 +1550,6 @@ jobs:
   - task: generate-cf-deployment-release-notes-template
     file: runtime-ci/tasks/cf-deployment-release-notes-template/task.yml
 
-- name: keep-v2-fresh
-  public: true
-  build_logs_to_retain: 100
-  plan:
-    - do:
-      - get: cf-deployment-develop
-        trigger: true
-      - get: cf-deployment-v2
-      - put: cf-deployment-v2
-        params:
-          repository: cf-deployment-develop
-          merge: true
-
 - name: ship-it-patch
   public: true
   build_logs_to_retain: 100
