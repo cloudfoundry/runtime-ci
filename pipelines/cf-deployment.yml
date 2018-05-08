@@ -316,6 +316,11 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
     private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
+- name: cf-test-helpers
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/cf-test-helpers
 - name: cf-deployment-master
   type: git
   source:
@@ -461,9 +466,13 @@ jobs:
   plan:
   - get: cf-acceptance-tests
     trigger: true
+  - get: cf-test-helpers
+    trigger: true
   - get: runtime-ci
   - task: run-cats-unit-tests
     file: runtime-ci/tasks/run-cats-unit-tests/task.yml
+  - task: run-cf-test-helpers-unit-tests
+    file: runtime-ci/tasks/run-cf-test-helpers-unit-tests/task.yml
 
 - name: unit-test-update-releases-coverage
   serial: true
