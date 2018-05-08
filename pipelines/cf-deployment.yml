@@ -647,7 +647,7 @@ jobs:
       APP_PUSHABILITY_THRESHOLD: 2
       RECENT_LOGS_THRESHOLD: 7
       STREAMING_LOGS_THRESHOLD: 2
-      APP_SYSLOG_AVAILABILITY_THRESHOLD: 0
+      APP_SYSLOG_AVAILABILITY_THRESHOLD: 12
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
