@@ -1,0 +1,9 @@
+#!/bin/bash -exu
+
+export GOPATH="$GOPATH:$PWD/go"
+
+go get github.com/onsi/gomega
+
+pushd go/src/github.com/cloudfoundry-incubator/cf-test-helpers
+  ginkgo -r
+popd
