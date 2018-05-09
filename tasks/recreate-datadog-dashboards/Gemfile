@@ -1,3 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'dogapi', '~> 1.25.0'
