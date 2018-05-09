@@ -1,6 +1,7 @@
 package opsfile
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -16,17 +17,25 @@ type Op struct {
 }
 
 func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+	if releaseNames == nil || len(releaseNames) == 0 {
+		err := errors.New("releaseNames provided to UpdateReleases must contain at least one release name")
+		return nil, "", err
+	}
+
 	var deserializedOpsFile []Op
 	if err := unmarshalFunc(opsFile, &deserializedOpsFile); err != nil {
 		return nil, "", err
 	}
 
 	var changes []string
+	var releaseFound bool
+
 	for _, op := range deserializedOpsFile {
 		if op.TypeField == "replace" && strings.HasPrefix(op.Path, "/releases/") {
 			valueMap := op.Value.(map[interface{}]interface{})
 			for _, releaseName := range releaseNames {
 				if valueMap["name"] == releaseName {
+					releaseFound = true
 					oldRelease := common.Release{
 						Name:    strings.TrimSpace(valueMap["name"].(string)),
 						Version: strings.TrimSpace(valueMap["version"].(string)),
@@ -57,6 +66,11 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 		}
 	}
 
+	if releaseFound == false {
+		err := errors.New(fmt.Sprintf("Opsfile does not contain release named %s", releaseNames[0]))
+		return nil, "", err
+	}
+
 	updatedOpsFile, err := marshalFunc(&deserializedOpsFile)
 	if err != nil {
 		return nil, "", err
@@ -81,10 +95,10 @@ func getReleaseFromFile(buildDir, releaseName string) (common.Release, error) {
 	version, verErr := ioutil.ReadFile(filepath.Join(releasePath, "version"))
 
 	isShaErr := shaErr != nil
-    isUrlErr := urlErr != nil
+	isUrlErr := urlErr != nil
 
-    // We accept neither or both of "sha1" and "url".  If we error out on only one or the other, something is wrong.
-    if isShaErr != isUrlErr {
+	// We accept neither or both of "sha1" and "url".  If we error out on only one or the other, something is wrong.
+	if isShaErr != isUrlErr {
 		if isShaErr {
 			return common.Release{}, shaErr
 		}

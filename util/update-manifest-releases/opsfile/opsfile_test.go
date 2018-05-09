@@ -43,7 +43,8 @@ var _ = Describe("UpdateReleases", func() {
 		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_release_removal_opsfile.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		updatedOpsFile, changes, err := opsfile.UpdateReleases(nil, "../fixtures/build", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		releaseNames := []string{"release1"}
+		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
@@ -163,12 +164,18 @@ releases:
 			Expect(err).To(MatchError(ContainSubstring("could not find expected directive name")))
 		})
 
-		It("does add a `value: null` field to remove operations", func() {
+		It("does not add a `value: null` field to remove operations", func() {
 			releases := []string{"release1"}
 
 			originalOpsFile := []byte(`
 - type: remove
   path: /stemcell
+
+- type: replace
+  path: /releases/-
+  value:
+    name: release1
+    version: foo
 `)
 			updatedOpsFile, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 
@@ -194,6 +201,27 @@ releases:
 
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, failingUnmarshalFunc)
 			Expect(err).To(MatchError("failed to unmarshal yaml"))
+		})
+
+		It("returns an error when the original ops file does not contain an expected release", func() {
+			releases := []string{"fun-times"}
+			originalOpsFile := []byte(`
+- type: replace
+  path: /releases/-
+  value:
+    name: sad-times
+    version: 1.0.0
+`)
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+			Expect(err).To(MatchError("Opsfile does not contain release named fun-times"))
+		})
+
+		It("returns an error when the release name array is nil or empty", func() {
+			_, _, err := opsfile.UpdateReleases(nil, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+			Expect(err).To(MatchError("releaseNames provided to UpdateReleases must contain at least one release name"))
+
+			_, _, err = opsfile.UpdateReleases([]string{}, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+			Expect(err).To(MatchError("releaseNames provided to UpdateReleases must contain at least one release name"))
 		})
 	})
 })

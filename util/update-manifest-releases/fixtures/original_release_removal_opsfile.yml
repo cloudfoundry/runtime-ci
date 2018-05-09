@@ -1,2 +1,10 @@
 - type: remove
   path: /releases/name=some-release?
+
+- type: replace
+  path: /releases/-
+  value:
+    name: release1
+    version: original-release1-version
+    url: original-release1-url
+    sha1: original-release1-sha1
