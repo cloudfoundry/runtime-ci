@@ -176,19 +176,13 @@ resources:
     - bbl-state
 
 # Time
-- name: weekly
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
-    interval: 168h
-
 - name: every-tuesday-night
   type: time
   source:
     start: 4:20
     stop: 4:50
     interval: 24h
+    days: [ Tuesday ]
     location: America/Los_Angeles
 
 - name: daily
@@ -983,7 +977,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: trelawney-env-director-state
-    - get: weekly
+    - get: daily
       trigger: true
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
