@@ -183,6 +183,14 @@ resources:
     stop: 3:30 -0700
     interval: 168h
 
+- name: every-tuesday-night
+  type: time
+  source:
+    start: 4:20
+    stop: 4:50
+    interval: 24h
+    location: America/Los_Angeles
+
 - name: daily
   type: time
   source:
@@ -512,6 +520,8 @@ jobs:
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: bosh-bootloader
+      - get: every-tuesday-night
+        trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -548,6 +558,8 @@ jobs:
       - get: snitch-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: bosh-bootloader
+      - get: every-tuesday-night
+        trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -581,6 +593,8 @@ jobs:
       - get: runtime-ci
       - get: trelawney-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-night
+        trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -614,6 +628,8 @@ jobs:
       - get: runtime-ci
       - get: bellatrix-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-night
+        trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -646,6 +662,8 @@ jobs:
         params: {acquire: true}
       - get: hermione-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-night
+        trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
