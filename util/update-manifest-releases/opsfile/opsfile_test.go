@@ -68,7 +68,7 @@ var _ = Describe("UpdateReleases", func() {
 	})
 
 	It("updates releases with different shas", func() {
-		releaseNames := []string{"release2"}
+		releaseNames := []string{"release1", "release2"}
 
 		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_sha_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -81,7 +81,7 @@ var _ = Describe("UpdateReleases", func() {
 	})
 
 	It("updates releases with different versions", func() {
-		releaseNames := []string{"release2"}
+		releaseNames := []string{"release1", "release2"}
 
 		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_version_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -94,7 +94,7 @@ var _ = Describe("UpdateReleases", func() {
 	})
 
 	It("updates releases with different urls", func() {
-		releaseNames := []string{"release2"}
+		releaseNames := []string{"release1", "release2"}
 
 		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_url_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -107,7 +107,7 @@ var _ = Describe("UpdateReleases", func() {
 	})
 
 	It("provides a default commit message if no version updates were performed", func() {
-		releaseNames := []string{"release2"}
+		releaseNames := []string{"release1", "release2"}
 
 		_, changes, err := opsfile.UpdateReleases(releaseNames, noChangesBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
@@ -153,7 +153,7 @@ var _ = Describe("UpdateReleases", func() {
 		})
 
 		It("returns an error when the manifest is not valid yaml", func() {
-			releases := []string{"release2"}
+			releases := []string{"release1", "release2"}
 
 			originalOpsFile := []byte(`
 %%%
@@ -187,7 +187,7 @@ releases:
 			failingMarshalFunc := func(interface{}) ([]byte, error) {
 				return nil, errors.New("failed to marshal yaml")
 			}
-			releases := []string{"release2"}
+			releases := []string{"release1", "release2"}
 
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, failingMarshalFunc, yaml.Unmarshal)
 			Expect(err).To(MatchError("failed to marshal yaml"))
@@ -197,7 +197,7 @@ releases:
 			failingUnmarshalFunc := func([]byte, interface{}) error {
 				return errors.New("failed to unmarshal yaml")
 			}
-			releases := []string{"release2"}
+			releases := []string{"release1", "release2"}
 
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, failingUnmarshalFunc)
 			Expect(err).To(MatchError("failed to unmarshal yaml"))
@@ -222,36 +222,6 @@ releases:
 
 			_, _, err = opsfile.UpdateReleases([]string{}, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError("releaseNames provided to UpdateReleases must contain at least one release name"))
-		})
-
-		It("returns an error when the original ops file specifies a release without a version", func() {
-			releases := []string{"sad-times"}
-			originalOpsFile := []byte(`
-- type: replace
-  path: /releases/-
-  value:
-    name: sad-times
-`)
-			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-			Expect(err).To(MatchError("No version for sad-times in ops-file"))
-		})
-
-		It("returns an error when the input releases array contains more than one element", func() {
-			releases := []string{"fun-times", "really-fun-times"}
-			originalOpsFile := []byte(`
-- type: replace
-  path: /releases/-
-  value:
-    name: fun-times
-    version: 1.0.0
-- type: replace
-  path: /releases/-
-  value:
-    name: really-fun-times
-    version: 1.0.0
-`)
-			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-			Expect(err).To(MatchError("Releases array should have only one release"))
 		})
 	})
 })

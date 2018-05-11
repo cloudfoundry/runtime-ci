@@ -17,11 +17,6 @@ type Op struct {
 }
 
 func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	if len(releaseNames) > 1 {
-		err := errors.New("Releases array should have only one release")
-		return nil, "", err
-	}
-
 	if releaseNames == nil || len(releaseNames) == 0 {
 		err := errors.New("releaseNames provided to UpdateReleases must contain at least one release name")
 		return nil, "", err
@@ -39,10 +34,6 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 		if op.TypeField == "replace" && strings.HasPrefix(op.Path, "/releases/") {
 			valueMap := op.Value.(map[interface{}]interface{})
 			for _, releaseName := range releaseNames {
-				if valueMap["version"] == nil {
-					err := errors.New(fmt.Sprintf("No version for %s in ops-file", releaseName))
-					return nil, "", err
-				}
 				if valueMap["name"] == releaseName {
 					releaseFound = true
 					oldRelease := common.Release{
