@@ -100,6 +100,7 @@ var _ = Describe("main", func() {
 			os.Setenv("UPDATED_OPS_FILE_PATH", "updated_ops_file.yml")
 
 			for _, release := range []map[string]string{
+				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
 				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha1": "new-release4-sha"},
 			} {
 				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
