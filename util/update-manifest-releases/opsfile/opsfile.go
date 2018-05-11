@@ -38,38 +38,38 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 	for _, op := range deserializedOpsFile {
 		if op.TypeField == "replace" && strings.HasPrefix(op.Path, "/releases/") {
 			valueMap := op.Value.(map[interface{}]interface{})
-
-			releaseName := releaseNames[0]
-			if valueMap["version"] == nil {
-				err := errors.New(fmt.Sprintf("No version for %s in ops-file", releaseName))
-				return nil, "", err
-			}
-			if valueMap["name"] == releaseName {
-				releaseFound = true
-				oldRelease := common.Release{
-					Name:    strings.TrimSpace(valueMap["name"].(string)),
-					Version: strings.TrimSpace(valueMap["version"].(string)),
-				}
-
-				newRelease, err := getReleaseFromFile(buildDir, releaseName)
-				if err != nil {
+			for _, releaseName := range releaseNames {
+				if valueMap["version"] == nil {
+					err := errors.New(fmt.Sprintf("No version for %s in ops-file", releaseName))
 					return nil, "", err
 				}
+				if valueMap["name"] == releaseName {
+					releaseFound = true
+					oldRelease := common.Release{
+						Name:    strings.TrimSpace(valueMap["name"].(string)),
+						Version: strings.TrimSpace(valueMap["version"].(string)),
+					}
 
-				if sha, ok := valueMap["sha1"]; ok {
-					oldRelease.SHA1 = strings.TrimSpace(sha.(string))
-					valueMap["sha1"] = newRelease.SHA1
-				}
+					newRelease, err := getReleaseFromFile(buildDir, releaseName)
+					if err != nil {
+						return nil, "", err
+					}
 
-				if url, ok := valueMap["url"]; ok {
-					oldRelease.URL = strings.TrimSpace(url.(string))
-					valueMap["url"] = newRelease.URL
-				}
+					if sha, ok := valueMap["sha1"]; ok {
+						oldRelease.SHA1 = strings.TrimSpace(sha.(string))
+						valueMap["sha1"] = newRelease.SHA1
+					}
 
-				valueMap["version"] = newRelease.Version
+					if url, ok := valueMap["url"]; ok {
+						oldRelease.URL = strings.TrimSpace(url.(string))
+						valueMap["url"] = newRelease.URL
+					}
 
-				if newRelease != oldRelease {
-					changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
+					valueMap["version"] = newRelease.Version
+
+					if newRelease != oldRelease {
+						changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
+					}
 				}
 			}
 		}
