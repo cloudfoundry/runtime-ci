@@ -857,7 +857,6 @@ jobs:
           operations/experimental/use-bosh-dns-for-containers-with-networking-2.yml
           operations/experimental/bits-service.yml
           operations/experimental/bits-service-s3.yml
-          operations/experimental/bits-service-golang.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
