@@ -676,7 +676,6 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: experimental-pool
       params: {acquire: true}
 
