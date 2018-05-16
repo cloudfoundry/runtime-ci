@@ -933,6 +933,7 @@ jobs:
       - get: cf-deployment-master
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
+      - get: gcp-windows2016-stemcell
     - task: bosh-upload-stemcell-stable
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -940,6 +941,13 @@ jobs:
         bbl-state: bellatrix-env-director-state
       params:
         INFRASTRUCTURE: google
+    - task: bosh-upload-windows2016-stemcell
+      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      input_mapping:
+        stemcell: gcp-windows2016-stemcell
+        bbl-state: bellatrix-env-director-state
+      params:
+        STEMCELL_NAME: '*.tgz'
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
