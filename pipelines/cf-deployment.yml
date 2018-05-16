@@ -959,6 +959,7 @@ jobs:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
         OPS_FILES: |
           operations/scale-database-cluster.yml
+          operations/windows2016-cell.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: true
         FAIL_ON_DOWNTIME: true
