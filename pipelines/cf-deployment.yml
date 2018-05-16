@@ -920,7 +920,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - on_failure:
+  - on_success:
       put: stable-pool
       params: {release: stable-pool}
     do:
