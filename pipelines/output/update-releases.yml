@@ -1,7 +1,3 @@
-## ======================================================================
-## GENERATED FILE. DO NOT EDIT
-## ======================================================================
-
 ---
 ## ======================================================================
 ##   __ _ _ __ ___  _   _ _ __  ___
@@ -2215,7 +2211,7 @@ jobs:
     params:
       RELEASE_NAME: backup-and-restore-sdk
       TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-backup-restore.yml
+      ORIGINAL_OPS_FILE_PATH: operations/backup-and-restore/enable-backup-restore.yml
       UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2245,7 +2241,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: enable-backup-restore.yml
-      OPS_FILE_DESTINATION: operations/experimental/enable-backup-restore.yml
+      OPS_FILE_DESTINATION: operations/backup-and-restore/enable-backup-restore.yml
   - put: cf-deployment-develop
     params:
       rebase: true

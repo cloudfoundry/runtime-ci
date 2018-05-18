@@ -50,7 +50,7 @@ baseReleases:
 opsReleases:
 - name: backup-and-restore-sdk
   repository: cloudfoundry-incubator/backup-and-restore-sdk-release
-  cfDeploymentOpsFileDir: operations/experimental
+  cfDeploymentOpsFileDir: operations/backup-and-restore
   opsFile: enable-backup-restore.yml
 - name: bpm
   repository: cloudfoundry-incubator/bpm-release
