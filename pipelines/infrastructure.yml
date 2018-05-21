@@ -123,6 +123,7 @@ resources:
     private_key: ((bellatrix_env_readwrite_deploy_key))
     paths:
     - bbl-state
+    - bbl-config
 
 - name: hagrid-env-director-state
   type: git
@@ -452,6 +453,7 @@ jobs:
       BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
+      BBL_CONFIG_DIR: bbl-config
     input_mapping:
       bbl-state: bellatrix-env-director-state
       bbl-config: bellatrix-env-director-state
@@ -633,6 +635,7 @@ jobs:
         BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
         BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
         LB_DOMAIN: bellatrix.cf-app.com
+        BBL_CONFIG_DIR: bbl-config
       input_mapping:
         bbl-state: bellatrix-env-director-state
         bbl-config: bellatrix-env-director-state
