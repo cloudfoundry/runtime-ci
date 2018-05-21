@@ -11,10 +11,11 @@ inputs:
 - name: runtime-ci
 - name: bosh-io-release
 - name: compiled-release-tarball
-- name: commit-message
+- name: current-commit-message
 
 outputs:
 - name: updated-compiled-releases-ops-file
+- name: commit-message
 
 run:
   path: runtime-ci/tasks/update-compiled-release-ops/task
