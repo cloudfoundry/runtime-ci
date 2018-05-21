@@ -852,10 +852,12 @@ jobs:
           operations/experimental/secure-service-credentials.yml
           operations/experimental/use-cf-networking-2.yml
           operations/experimental/enable-iptables-logger-with-networking-2.yml
-          operations/experimental/use-pxc.yml
-          operations/experimental/secure-service-credentials-with-pxc-release.yml
           operations/experimental/use-bosh-dns.yml
           operations/experimental/use-bosh-dns-for-containers-with-networking-2.yml
+          operations/experimental/perm-service.yml
+          operations/experimental/use-pxc.yml
+          operations/experimental/secure-service-credentials-with-pxc-release.yml
+          operations/experimental/perm-service-with-pxc-release.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
