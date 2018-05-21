@@ -39,8 +39,16 @@ EOF
   bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
 
+update_commit_message() {
+    local current_commit_message=$(cat commit-message/${COMMIT_MESSAGE_PATH})
+    if [[ $current_commit_message = *"No manifest release or stemcell version updates"* ]]; then
+        echo "Updated compiled releases with ${RELEASE_NAME} ${release_version}" > commit-message/${COMMIT_MESSAGE_PATH}
+    fi
+}
+
 main() {
   update_release
+  update_commit_message
 }
 
 main

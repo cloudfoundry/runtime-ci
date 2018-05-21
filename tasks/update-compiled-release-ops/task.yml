@@ -11,6 +11,7 @@ inputs:
 - name: runtime-ci
 - name: bosh-io-release
 - name: compiled-release-tarball
+- name: commit-message
 
 outputs:
 - name: updated-compiled-releases-ops-file
@@ -20,3 +21,4 @@ run:
 
 params:
   RELEASE_NAME:
+  COMMIT_MESSAGE_PATH: commit-message.txt
