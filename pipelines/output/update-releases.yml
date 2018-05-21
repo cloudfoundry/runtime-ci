@@ -58,8 +58,6 @@ groups:
 
   - update-uaa
 
-  - update-test
-
 - name: update-ops-releases
   jobs:
 
@@ -137,12 +135,6 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_private_key))
-- name: cf-deployment-test
-  type: git
-  source:
-    branch: test
-    uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: ((cf_deployment_private_key))
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -202,10 +194,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/binary-buildpack-release
-- name: test-release
-  type: bosh-io-release
-  source:
-    repository: cppforlife/test-release
 - name: capi-release
   type: bosh-io-release
   source:
@@ -358,12 +346,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: binary-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-- name: test-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: ((concourse_gcp_service_account_json))
-    regexp: test-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: capi-release-gcs
   type: gcs-resource
   source:
@@ -556,6 +538,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: binary-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: binary-buildpack
   - put: binary-buildpack-release-gcs
@@ -574,86 +557,6 @@ jobs:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
   - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-- name: update-test
-  serial_groups:
-  - update-test
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-test
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: test-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-test
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: test-release
-      deployment-configuration: cf-deployment-test
-      original-ops-file: cf-deployment-test
-    params:
-      RELEASE_NAME: test
-
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-test
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: test
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-test
-
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: test
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
-    input_mapping:
-      ops-files: cf-deployment-test
-      bosh-io-release: test-release
-      compiled-release-tarball: exported-release
-    params:
-      RELEASE_NAME: test
-  - put: test-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-test
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-test
     params:
       rebase: true
       repository: updated-repo
@@ -716,6 +619,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: capi-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: capi
   - put: capi-release-gcs
@@ -796,6 +700,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-mysql-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-mysql
   - put: cf-mysql-release-gcs
@@ -876,6 +781,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-networking-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-networking
   - put: cf-networking-release-gcs
@@ -956,6 +862,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-smoke-tests-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-smoke-tests
   - put: cf-smoke-tests-release-gcs
@@ -1036,6 +943,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cf-syslog-drain-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-syslog-drain
   - put: cf-syslog-drain-release-gcs
@@ -1116,6 +1024,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: cflinuxfs2-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cflinuxfs2
   - put: cflinuxfs2-release-gcs
@@ -1196,6 +1105,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: consul-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: consul
   - put: consul-release-gcs
@@ -1276,6 +1186,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: diego-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: diego
   - put: diego-release-gcs
@@ -1339,6 +1250,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: dotnet-core-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: dotnet-core-buildpack
   - put: dotnet-core-buildpack-release-gcs
@@ -1419,6 +1331,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: garden-runc-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: garden-runc
   - put: garden-runc-release-gcs
@@ -1482,6 +1395,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: go-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: go-buildpack
   - put: go-buildpack-release-gcs
@@ -1545,6 +1459,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: java-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: java-buildpack
   - put: java-buildpack-release-gcs
@@ -1625,6 +1540,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: loggregator-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: loggregator
   - put: loggregator-release-gcs
@@ -1705,6 +1621,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: nats-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: nats
   - put: nats-release-gcs
@@ -1768,6 +1685,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: nodejs-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: nodejs-buildpack
   - put: nodejs-buildpack-release-gcs
@@ -1831,6 +1749,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: php-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: php-buildpack
   - put: php-buildpack-release-gcs
@@ -1894,6 +1813,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: python-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: python-buildpack
   - put: python-buildpack-release-gcs
@@ -1974,6 +1894,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: routing-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: routing
   - put: routing-release-gcs
@@ -2037,6 +1958,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: ruby-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: ruby-buildpack
   - put: ruby-buildpack-release-gcs
@@ -2100,6 +2022,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: staticfile-buildpack-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: staticfile-buildpack
   - put: staticfile-buildpack-release-gcs
@@ -2180,6 +2103,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: statsd-injector-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: statsd-injector
   - put: statsd-injector-release-gcs
@@ -2260,6 +2184,7 @@ jobs:
       ops-files: cf-deployment-develop
       bosh-io-release: uaa-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: uaa
   - put: uaa-release-gcs
