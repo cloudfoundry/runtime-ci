@@ -40,7 +40,11 @@ EOF
 }
 
 update_commit_message() {
+    local release_version
+    release_version=$(cat bosh-io-release/version)
+
     local current_commit_message=$(cat commit-message/${COMMIT_MESSAGE_PATH})
+
     if [[ $current_commit_message = *"No manifest release or stemcell version updates"* ]]; then
         echo "Updated compiled releases with ${RELEASE_NAME} ${release_version}" > commit-message/${COMMIT_MESSAGE_PATH}
     fi
