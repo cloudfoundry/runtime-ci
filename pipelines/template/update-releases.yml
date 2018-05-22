@@ -262,12 +262,26 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
       UPDATED_OPS_FILE_PATH: {{.opsFile}}
+{{if contains "bits-service" .name}}
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      BASE_OPS_FILE_DIR: .
+      NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
+{{end}}
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
+{{if contains "bits-service" .name}}
+      ops-files: collected-ops-files
+{{else}}
       ops-files: updated-ops-file
+{{end}}
 {{if hasKey . "varsFiles"}}
       vars-files: {{.varsFilesInput}}
 {{else}}
@@ -275,7 +289,11 @@ jobs:
 {{end}}
     params:
       DEPLOYMENT_NAME_SUFFIX: {{.name}}
-      OPS_FILES: {{.opsFile}}
+      OPS_FILES: |
+        {{.opsFile}}
+{{if contains "bits-service" .name}}
+        bits-service-webdav.yml
+{{end}}
       SYSTEM_DOMAIN: greengrass.cf-app.com
 {{if hasKey . "varsFiles"}}
       VARS_FILES: {{.varsFiles}}
