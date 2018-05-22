@@ -17,7 +17,7 @@ function create_asg_json() {
 function main() {
   setup_bosh_env_vars
 
-  cf api api.${SYSTEM_DOMAIN}
+  cf api api.${SYSTEM_DOMAIN} --skip-ssl-validation
 
   set +x
     local cf_admin_password
