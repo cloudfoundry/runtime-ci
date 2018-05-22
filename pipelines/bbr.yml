@@ -299,7 +299,7 @@ jobs:
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        vars-store: baba-yaga-env-vars-store
+        vars-store: baba-yaga-env-director-state
       params:
         INSTANCE_GROUP_NAME: credhub
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
@@ -309,7 +309,7 @@ jobs:
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        vars-store: baba-yaga-env-vars-store
+        vars-store: baba-yaga-env-director-state
       params:
         INSTANCE_GROUP_NAME: uaa
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
