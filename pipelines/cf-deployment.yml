@@ -1094,9 +1094,6 @@ jobs:
       input_mapping:
         integration-config: hermione-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
-      ensure:
-        put: experimental-pool
-        params: {release: experimental-pool}
 
 - name: experimental-smoke-tests
   serial_groups: [hermione-smokes]
@@ -1573,9 +1570,12 @@ jobs:
     - lite-cats
     - upgrade-cats
     - upgrade-cats-windows2016
+    - experimental-cats
     - lite-rats
     - upgrade-rats
     - fresh-rats
+    - experimental-rats
+    - experimental-smoke-tests
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
