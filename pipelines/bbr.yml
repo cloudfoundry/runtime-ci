@@ -295,6 +295,26 @@ jobs:
           operations/enable-nfs-test-server.yml
           operations/experimental/secure-service-credentials.yml
           operations/backup-and-restore/enable-backup-restore-credhub.yml
+    - task: open-asgs-for-credhub
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+        vars-store: baba-yaga-env-vars-store
+      params:
+        INSTANCE_GROUP_NAME: credhub
+        SYSTEM_DOMAIN: baba-yaga.cf-app.com
+        SECURITY_GROUP_NAME: credhub
+        VARS_STORE_PATH: ""
+    - task: open-asgs-for-uaa
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+        vars-store: baba-yaga-env-vars-store
+      params:
+        INSTANCE_GROUP_NAME: uaa
+        SYSTEM_DOMAIN: baba-yaga.cf-app.com
+        SECURITY_GROUP_NAME: uaa
+        VARS_STORE_PATH: ""
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
