@@ -233,6 +233,7 @@ jobs:
       rebase: true
       repository: updated-repo
 {{end}}
+
 {{range .opsReleases}}- name: update-{{.name}}
   serial: true
   public: true
@@ -262,21 +263,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
       UPDATED_OPS_FILE_PATH: {{.opsFile}}
-{{if contains "pxc" .name}}
-  - task: update-release-{{.name}}-additional-ops-file
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: {{.name}}-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    output_mapping:
-      updated-ops-file: additional-updated-ops-file
-    params:
-      RELEASE_NAME: {{.name}}
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
-      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
-{{end}}
 {{if contains "bits-service" .name}}
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
@@ -287,7 +273,7 @@ jobs:
       BASE_OPS_FILE_DIR: .
       NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
 {{end}}
-  - task: bosh-dry-run
+  - task: bosh-dry-run-{{.name}}
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
@@ -313,13 +299,13 @@ jobs:
 {{if hasKey . "varsFiles"}}
       VARS_FILES: {{.varsFiles}}
 {{end}}
-  - task: bosh-delete-deployment
+  - task: bosh-delete-deployment-{{.name}}
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-{{.name}}
-  - task: commit-generated-manifest-and-ops
+  - task: commit-generated-manifest-and-ops-{{.name}}
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
@@ -332,6 +318,57 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+{{if contains "pxc" .name}}
+  - task: update-release-{{.name}}-additional-ops-file
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: {{.name}}-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: {{.name}}
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
+      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
+  - task: bosh-dry-run-{{.name}}-additional-ops-file
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+{{if hasKey . "varsFiles"}}
+      vars-files: {{.varsFilesInput}}
+{{else}}
+      vars-files: greengrass-env-director-state
+{{end}}
+    params:
+      DEPLOYMENT_NAME_SUFFIX: {{.name}}-additional-ops-file
+      OPS_FILES: |
+        migrate-cf-mysql-to-pxc.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+{{if hasKey . "varsFiles"}}
+      VARS_FILES: {{.varsFiles}}
+{{end}}
+  - task: bosh-delete-deployment-{{.name}}-additional-ops-file
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-{{.name}}-additional-ops-file
+  - task: commit-generated-manifest-and-ops-{{.name}}-additional-ops-file
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: migrate-cf-mysql-to-pxc.yml
+      OPS_FILE_DESTINATION: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+{{end}}
 {{if contains "bosh-dns" .name}}
   - task: update-release-bosh-dns-rename-network-and-deployment
     file: runtime-ci/tasks/update-single-release/task.yml
@@ -344,7 +381,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns-rename-network-and-deployment.yml
-  - task: bosh-dry-run
+  - task: bosh-dry-run-bosh-dns
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
@@ -356,13 +393,13 @@ jobs:
       OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: "operations/example-vars-files/vars-rename-network-and-deployment.yml"
-  - task: bosh-delete-deployment
+  - task: bosh-delete-deployment-bosh-dns
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-bosh-dns
-  - task: commit-generated-manifest-and-ops
+  - task: commit-generated-manifest-and-ops-bosh-dns
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
