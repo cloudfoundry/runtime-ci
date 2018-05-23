@@ -262,6 +262,21 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
       UPDATED_OPS_FILE_PATH: {{.opsFile}}
+{{if contains "pxc" .name}}
+  - task: update-release-{{.name}}-additional-ops-file
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: {{.name}}-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    output_mapping:
+      updated-ops-file: additional-updated-ops-file
+    params:
+      RELEASE_NAME: {{.name}}
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
+      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
+{{end}}
 {{if contains "bits-service" .name}}
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml

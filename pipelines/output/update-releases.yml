@@ -2237,6 +2237,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/backup-and-restore/enable-backup-restore.yml
       UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2304,6 +2305,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-bpm.yml
       UPDATED_OPS_FILE_PATH: enable-bpm.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2373,6 +2375,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2440,6 +2443,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-service-discovery.yml
       UPDATED_OPS_FILE_PATH: enable-service-discovery.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2509,6 +2513,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
       UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2576,6 +2581,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
       UPDATED_OPS_FILE_PATH: use-haproxy.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2647,6 +2653,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2714,6 +2721,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
       UPDATED_OPS_FILE_PATH: use-postgres.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2783,6 +2791,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-silk-release.yml
       UPDATED_OPS_FILE_PATH: use-silk-release.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2850,6 +2859,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2920,6 +2930,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -3032,6 +3043,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/bits-service.yml
       UPDATED_OPS_FILE_PATH: bits-service.yml
 
+
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -3111,6 +3123,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-log-cache.yml
       UPDATED_OPS_FILE_PATH: use-log-cache.yml
 
+
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -3178,6 +3191,21 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-pxc.yml
       UPDATED_OPS_FILE_PATH: use-pxc.yml
+
+  - task: update-release-pxc-additional-ops-file
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: pxc-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    output_mapping:
+      updated-ops-file: additional-updated-ops-file
+    params:
+      RELEASE_NAME: pxc
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/migrate-cf-mysql-to-pxc.yml
+      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
+
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
