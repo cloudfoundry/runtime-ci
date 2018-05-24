@@ -19,17 +19,13 @@ groups:
   - upgrade-set-feature-flags
   - upgrade-cats
   - upgrade-cats-windows2016
-  - upgrade-rats
   - lite-cats
   - experimental-cats
   - experimental-set-feature-flags
   - experimental-smoke-tests
   - experimental-acquire-pool
   - experimental-release-pool
-  - fresh-rats
   - lite-enable-docker-and-tasks
-  - lite-rats
-  - experimental-rats
   - unit-test-ops-files
   - unit-test-cats
   - unit-test-update-releases-coverage
@@ -47,7 +43,6 @@ groups:
   - experimental-cats
   - experimental-deploy
   - experimental-set-feature-flags
-  - experimental-rats
   - experimental-release-pool
   - experimental-release-pool-manual
   - experimental-smoke-tests
@@ -63,7 +58,6 @@ groups:
   - fresh-delete-deployment
   - fresh-deploy
   - fresh-enable-docker-and-tasks
-  - fresh-rats
   - fresh-release-pool-manual
   - bless-manifest
 - name: up
@@ -74,7 +68,6 @@ groups:
   - upgrade-acquire-pool
   - upgrade-deploy
   - upgrade-set-feature-flags
-  - upgrade-rats
   - upgrade-cats
   - upgrade-cats-windows2016
   - upgrade-release-pool-manual
@@ -89,7 +82,6 @@ groups:
   - lite-cats
   - lite-deploy
   - lite-enable-docker-and-tasks
-  - lite-rats
   - lite-release-pool
   - lite-release-pool-manual
   - bless-manifest
@@ -306,11 +298,6 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-deployment.git
-- name: github-routing-release-master
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/routing-release
 - name: cf-acceptance-tests
   type: git
   source:
@@ -685,7 +672,7 @@ jobs:
   public: true
   plan:
   - get: experimental-pool
-    passed: [ experimental-rats, experimental-cats, experimental-smoke-tests ]
+    passed: [ experimental-cats, experimental-smoke-tests ]
     trigger: true
   - put: experimental-pool
     params: {release: experimental-pool}
@@ -704,7 +691,7 @@ jobs:
   public: true
   plan:
   - get: lite-pool
-    passed: [ lite-cats, lite-rats ]
+    passed: [ lite-cats ]
     trigger: true
   - put: lite-pool
     params: {release: lite-pool}
@@ -731,7 +718,7 @@ jobs:
   public: true
   plan:
   - get: upgrade-pool
-    passed: [ upgrade-rats, upgrade-cats, upgrade-cats-windows2016 ]
+    passed: [ upgrade-cats, upgrade-cats-windows2016 ]
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
@@ -776,7 +763,7 @@ jobs:
     file: runtime-ci/tasks/summarize-ops-files/task.yml
 
 - name: experimental-deploy
-  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes, hermione-rats ]
+  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1012,7 +999,7 @@ jobs:
 
 - name: lite-deploy
   public: true
-  serial_groups: [ snitch-cats, snitch-rats ]
+  serial_groups: [ snitch-cats ]
   build_logs_to_retain: 100
   plan:
   - timeout: 4h
@@ -1438,102 +1425,6 @@ jobs:
       params:
         NODES: 4
 
-- name: fresh-rats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: fresh-pool
-      trigger: true
-      passed: [ fresh-enable-docker-and-tasks ]
-    - aggregate:
-      - get: runtime-ci
-      - get: github-routing-release-master
-      - get: luna-env-integration-configs
-      - get: cf-deployment-develop
-        passed: [ fresh-enable-docker-and-tasks ]
-    - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
-      input_mapping:
-        routing-release: github-routing-release-master
-        integration-config: luna-env-integration-configs
-      params:
-        NODES: 8
-
-- name: upgrade-rats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: upgrade-pool
-      trigger: true
-      passed: [upgrade-set-feature-flags]
-    - aggregate:
-      - get: runtime-ci
-      - get: github-routing-release-master
-      - get: trelawney-env-integration-configs
-      - get: cf-deployment-develop
-        passed: [upgrade-set-feature-flags]
-    - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
-      input_mapping:
-        routing-release: github-routing-release-master
-        integration-config: trelawney-env-integration-configs
-      params:
-        NODES: 2
-
-- name: lite-rats
-  serial_groups: [ snitch-rats ]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: lite-pool
-      trigger: true
-      passed: [ lite-enable-docker-and-tasks ]
-    - aggregate:
-      - get: runtime-ci
-      - get: github-routing-release-master
-      - get: snitch-env-integration-configs
-      - get: cf-deployment-develop
-        passed: [ lite-enable-docker-and-tasks ]
-    - task: run-rats
-      file: runtime-ci/tasks/run-rats/task.yml
-      input_mapping:
-        routing-release: github-routing-release-master
-        integration-config: snitch-env-integration-configs
-
-- name: experimental-rats
-  serial_groups: [ hermione-rats ]
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: experimental-pool
-      trigger: true
-      passed: [ experimental-set-feature-flags ]
-    - aggregate:
-      - get: runtime-ci
-      - get: github-routing-release-master
-      - get: hermione-env-integration-configs
-      - get: hermione-env-vars-store
-        passed: [ experimental-set-feature-flags ]
-      - get: cf-deployment-develop
-        passed: [ experimental-set-feature-flags ]
-    - task: run-rats
-      input_mapping:
-        routing-release: github-routing-release-master
-        integration-config: hermione-env-integration-configs
-      file: runtime-ci/tasks/run-rats/task.yml
-      params:
-        NODES: 2
-
 - name: fresh-delete-deployment
   serial: true
   public: true
@@ -1545,7 +1436,6 @@ jobs:
       trigger: true
       passed:
       - fresh-cats
-      - fresh-rats
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
@@ -1571,10 +1461,6 @@ jobs:
     - upgrade-cats
     - upgrade-cats-windows2016
     - experimental-cats
-    - lite-rats
-    - upgrade-rats
-    - fresh-rats
-    - experimental-rats
     - experimental-smoke-tests
   - put: cf-deployment-release-candidate
     params:

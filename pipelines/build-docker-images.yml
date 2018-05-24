@@ -6,7 +6,6 @@ groups:
   jobs:
   - build-relint-base-docker-image
   - build-bosh-cli-docker-image
-  - build-run-rats-docker-image
 
 resources:
 - name: runtime-ci
@@ -49,13 +48,6 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
 
-- name: runtime-ci-run-rats
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/runtime-ci.git
-    paths: [dockerfiles/run-rats/Dockerfile]
-
 - name: cf-cli
   type: github-release
   source:
@@ -95,13 +87,6 @@ resources:
   type: docker-image
   source:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-- name: run-rats-pipeline-image
-  type: docker-image
-  source:
-    repository: relintdockerhubpushbot/run-rats
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -233,19 +218,3 @@ jobs:
         build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
         build_args_file: version-json/version.json
-
-- name: build-run-rats-docker-image
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: weekly
-        trigger: true
-      - get: runtime-ci-run-rats
-        trigger: true
-    - put: run-rats-pipeline-image
-      params:
-        build: runtime-ci-run-rats/dockerfiles/run-rats
-        push: true
