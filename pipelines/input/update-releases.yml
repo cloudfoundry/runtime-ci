@@ -113,6 +113,12 @@ opsReleases:
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: use-pxc.yml
   varsFilesInput: greengrass-env-director-state
+- name: windows-syslog
+  repository: cloudfoundry/windows-syslog-release
+  cfDeploymentOpsFileDir: operations/experimental
+  opsFile: windows-enable-component-syslog.yml
+  varsFilesInput: greengrass-env-director-state
+  varsFiles: "vars-files/windows-enable-component-syslog-vars.yml"
 
 
 windowsVersSupported:

@@ -93,6 +93,8 @@ groups:
 
   - update-pxc
 
+  - update-windows-syslog
+
 - name: update-windows-stemcells-and-releases
   jobs:
 
@@ -343,6 +345,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/pxc-release
+- name: windows-syslog-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/windows-syslog-release
 
 - name: binary-buildpack-release-gcs
   type: gcs-resource
@@ -3276,6 +3282,77 @@ jobs:
     params:
       OPS_FILE_NAME: migrate-cf-mysql-to-pxc.yml
       OPS_FILE_DESTINATION: operations/experimental/migrate-cf-mysql-to-pxc.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+
+- name: update-windows-syslog
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: windows-syslog-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-windows-syslog
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: windows-syslog-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: windows-syslog
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/windows-enable-component-syslog.yml
+      UPDATED_OPS_FILE_PATH: windows-enable-component-syslog.yml
+
+  - task: bosh-dry-run-windows-syslog
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+
+      ops-files: updated-ops-file
+
+
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: windows-syslog
+      OPS_FILES: |
+        windows-enable-component-syslog.yml
+
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+
+      VARS_FILES: vars-files/windows-enable-component-syslog-vars.yml
+
+  - task: bosh-delete-deployment-windows-syslog
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-windows-syslog
+  - task: commit-generated-manifest-and-ops-windows-syslog
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: windows-enable-component-syslog.yml
+      OPS_FILE_DESTINATION: operations/experimental/windows-enable-component-syslog.yml
   - put: cf-deployment-develop
     params:
       rebase: true
