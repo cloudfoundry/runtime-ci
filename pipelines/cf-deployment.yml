@@ -95,6 +95,18 @@ groups:
   - stable-release-pool-manual
   - stable-update-cats-cfd-branch
   - cleanup-stable-periodic-cats
+- name: v2
+  jobs:
+  - unit-test-ops-files
+  - unit-test-cats
+  - unit-test-update-releases-coverage
+  - v2-acquire-pool
+  - v2-deploy
+  - v2-set-feature-flags
+  - v2-cats
+  # - v2-cats-windows2016
+  - v2-release-pool-manual
+  - v2-release-pool
 
 resource_types:
 - name: terraform
@@ -131,6 +143,14 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/upgrade
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+
+- name: v2-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/v2
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 - name: lite-pool
@@ -221,6 +241,24 @@ resources:
     - integration_config.json
     - rats_integration_config.json
     - wats2016_integration_config.json
+- name: hagrid-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
+    paths:
+    - bbl-state
+- name: hagrid-env-integration-configs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/hagrid-env.git
+    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
+    paths:
+    - integration_config.json
+    - rats_integration_config.json
+    - wats2016_integration_config.json
 - name: half-hourly
   type: time
   source:
@@ -285,6 +323,12 @@ resources:
   type: git
   source:
     branch: develop
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: ((cf_deployment_readwrite_deploy_key.private_key))
+- name: cf-deployment-v2
+  type: git
+  source:
+    branch: v2-fast
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
 - name: cf-deployment-release-candidate
@@ -389,6 +433,17 @@ jobs:
       trigger: true
       passed: [unit-test-ops-files, unit-test-update-releases-coverage]
     - put: upgrade-pool
+      params: {acquire: true}
+
+- name: v2-acquire-pool
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-develop
+      trigger: true
+      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+    - put: v2-pool
       params: {acquire: true}
 
 - name: lite-acquire-pool
@@ -657,6 +712,94 @@ jobs:
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
 
+- name: v2-deploy
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: v2-pool
+    trigger: true
+    passed: [v2-acquire-pool]
+  - aggregate:
+    - get: cf-deployment-v2
+    - get: cf-deployment-concourse-tasks
+    - get: runtime-ci
+    - get: hagrid-env-integration-configs
+    - get: hagrid-env-director-state
+    - get: gcp-windows2012-stemcell
+    - get: gcp-windows2016-stemcell
+  - task: bosh-upload-stemcell-v2
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      cf-deployment: cf-deployment-v2
+      bbl-state: hagrid-env-director-state
+    params:
+      INFRASTRUCTURE: google
+  # - task: bosh-upload-windows2012-stemcell
+  #   file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+  #   input_mapping:
+  #     stemcell: gcp-windows2012-stemcell
+  #     bbl-state: hagrid-env-director-state
+  #   params:
+  #     STEMCELL_NAME: '*.tgz'
+  # - task: bosh-upload-windows2016-stemcell
+  #   file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+  #   input_mapping:
+  #     stemcell: gcp-windows2016-stemcell
+  #     bbl-state: hagrid-env-director-state
+  #   params:
+  #     STEMCELL_NAME: '*.tgz'
+  # - task: add-tcp-domain
+  #   file: runtime-ci/tasks/add-tcp-domain/task.yml
+  #   input_mapping:
+  #     vars-store: hagrid-env-director-state
+  #     bbl-state: hagrid-env-director-state
+  #   params:
+  #     SYSTEM_DOMAIN: hagrid.cf-app.com
+  #     VARS_STORE_PATH: ""
+  - task: bosh-deploy-cf
+    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: hagrid-env-director-state
+      cf-deployment: cf-deployment-v2
+      ops-files: cf-deployment-v2
+      vars-files: hagrid-env-director-state
+    params:
+      SYSTEM_DOMAIN: hagrid.cf-app.com
+      # OPS_FILES: |
+      #   operations/windows-cell.yml
+      #   operations/windows2016-cell.yml
+      DEPLOY_WITH_UPTIME_MEASUREMENTS: false
+      MEASURE_SYSLOG_AVAILABILITY: false
+      FAIL_ON_DOWNTIME: false
+      # TCP_DOMAIN: tcp.hagrid.cf-app.com
+      # AVAILABLE_PORT: 1100
+      HTTP_AVAILABILITY_THRESHOLD: 0
+      APP_PUSHABILITY_THRESHOLD: 2
+      RECENT_LOGS_THRESHOLD: 7
+      STREAMING_LOGS_THRESHOLD: 2
+      APP_SYSLOG_AVAILABILITY_THRESHOLD: 12
+  - task: run-bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    input_mapping:
+      bbl-state: hagrid-env-director-state
+  - task: update-integration-configs
+    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+    input_mapping:
+      bbl-state: hagrid-env-director-state
+      integration-configs: hagrid-env-integration-configs
+    ensure:
+      put: hagrid-env-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: ensure-api-healthy
+    file: runtime-ci/tasks/ensure-api-healthy/task.yml
+    params:
+      SYSTEM_DOMAIN: hagrid.cf-app.com
+
 - name: experimental-acquire-pool
   public: true
   serial: true
@@ -722,6 +865,25 @@ jobs:
     trigger: true
   - put: upgrade-pool
     params: {release: upgrade-pool}
+
+- name: v2-release-pool-manual
+  public: true
+  plan:
+  - get: v2-pool
+  ensure:
+    try:
+      put: v2-pool
+      params: {release: v2-pool}
+
+- name: v2-release-pool
+  public: true
+  plan:
+  - get: v2-pool
+    # passed: [ v2-cats, v2-cats-windows2016 ]
+    passed: [ v2-cats ]
+    trigger: true
+  - put: v2-pool
+    params: {release: v2-pool}
 
 - name: lite-release-pool-manual
   public: true
@@ -1275,6 +1437,32 @@ jobs:
           task_creation
           service_instance_sharing
 
+- name: v2-set-feature-flags
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: v2-pool
+      trigger: true
+      passed: [v2-deploy]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-v2
+        passed: [v2-deploy]
+      - get: hagrid-env-director-state
+    - task: enable-docker-and-tasks
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      input_mapping:
+        bbl-state: hagrid-env-director-state
+      params:
+        SYSTEM_DOMAIN: hagrid.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
+          service_instance_sharing
+
 - name: lite-enable-docker-and-tasks
   serial: true
   public: true
@@ -1399,6 +1587,56 @@ jobs:
         CAPTURE_LOGS: true
         CONFIG_FILE_PATH: cats_windows2016_integration_config.json
         NODES: 8
+
+- name: v2-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: v2-pool
+      trigger: true
+      passed: [v2-set-feature-flags]
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cf-acceptance-tests
+        passed: [ unit-test-cats ]
+      - get: hagrid-env-integration-configs
+      - get: cf-deployment-v2
+        passed: [v2-set-feature-flags]
+    - task: run-cats
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
+      input_mapping:
+        integration-config: hagrid-env-integration-configs
+      params:
+        CAPTURE_LOGS: true
+
+# - name: v2-cats-windows2016
+#   serial: true
+#   public: true
+#   build_logs_to_retain: 100
+#   plan:
+#   - timeout: 4h
+#     do:
+#     - get: v2-pool
+#       trigger: true
+#       passed: [v2-set-feature-flags]
+#     - aggregate:
+#       - get: cf-deployment-concourse-tasks
+#       - get: cf-acceptance-tests
+#         passed: [ unit-test-cats ]
+#       - get: hagrid-env-integration-configs
+#       - get: cf-deployment-v2
+#         passed: [v2-set-feature-flags]
+#     - task: run-cats
+#       file: cf-deployment-concourse-tasks/run-cats/task.yml
+#       input_mapping:
+#         integration-config: hagrid-env-integration-configs
+#       params:
+#         CAPTURE_LOGS: true
+#         CONFIG_FILE_PATH: cats_windows2016_integration_config.json
+#         NODES: 8
 
 - name: lite-cats
   serial_groups: [ snitch-cats ]
