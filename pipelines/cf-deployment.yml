@@ -97,9 +97,8 @@ groups:
   - cleanup-stable-periodic-cats
 - name: v2
   jobs:
-  - unit-test-ops-files
+  - v2-unit-test-ops-files
   - unit-test-cats
-  - unit-test-update-releases-coverage
   - v2-acquire-pool
   - v2-deploy
   - v2-set-feature-flags
@@ -440,9 +439,9 @@ jobs:
   public: true
   plan:
   - aggregate:
-    - get: cf-deployment-develop
+    - get: cf-deployment-v2
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+      passed: [v2-unit-test-ops-files]
     - put: v2-pool
       params: {acquire: true}
 
@@ -500,6 +499,28 @@ jobs:
         RUN_SEMANTIC: true
       run:
         dir: cf-deployment-develop
+        path: scripts/test
+
+- name: v2-unit-test-ops-files
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-v2
+    trigger: true
+  - task: unit-test-ops-files
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/bosh-cli
+      inputs:
+      - name: cf-deployment-v2
+      params:
+        RUN_SEMANTIC: false
+      run:
+        dir: cf-deployment-v2
         path: scripts/test
 
 - name: unit-test-cats
