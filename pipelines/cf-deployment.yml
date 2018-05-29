@@ -771,7 +771,7 @@ jobs:
       #   operations/windows2016-cell.yml
       DEPLOY_WITH_UPTIME_MEASUREMENTS: false
       MEASURE_SYSLOG_AVAILABILITY: false
-      FAIL_ON_DOWNTIME: false
+      FAIL_ON_DOWNTIME: true
       # TCP_DOMAIN: tcp.hagrid.cf-app.com
       # AVAILABLE_PORT: 1100
       HTTP_AVAILABILITY_THRESHOLD: 0
