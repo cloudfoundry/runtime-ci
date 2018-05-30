@@ -248,6 +248,7 @@ resources:
     private_key: ((hagrid_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
+    - gcs-vars.yml
 - name: hagrid-env-integration-configs
   type: git
   source:
