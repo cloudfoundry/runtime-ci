@@ -175,6 +175,7 @@ resources:
     private_key: ((trelawney_env_readwrite_deploy_key))
     paths:
     - bbl-state
+    - bbl-config
 
 # Time
 - name: every-tuesday-morning
