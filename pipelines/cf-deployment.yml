@@ -228,8 +228,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
     private_key: ((trelawney_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
 - name: trelawney-env-integration-configs
   type: git
   source:
@@ -691,21 +689,32 @@ jobs:
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       VARS_STORE_PATH: ""
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment-develop
+      new-ops-files: trelawney-env-director-state
+    params:
+      BASE_OPS_FILE_DIR: operations
+      NEW_OPS_FILES: add-external-ips-for-cloud-sql-db.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
+      ops-files: collected-ops-files
       vars-files: trelawney-env-director-state
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       OPS_FILES: |
+        operations/use-external-dbs.yml
+        operations/add-external-ips-for-cloud-sql-db.yml
         operations/windows-cell.yml
         operations/windows2016-cell.yml
-      DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+      VARS_FILES: external-db-vars.yml
+      DEPLOY_WITH_UPTIME_MEASUREMENTS: false
       MEASURE_SYSLOG_AVAILABILITY: true
-      FAIL_ON_DOWNTIME: true
+      FAIL_ON_DOWNTIME: false
       TCP_DOMAIN: tcp.trelawney.cf-app.com
       AVAILABLE_PORT: 1100
       HTTP_AVAILABILITY_THRESHOLD: 0
