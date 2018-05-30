@@ -419,6 +419,7 @@ jobs:
       BBL_LB_CERT: ((trelawney_cf_ssl_cert))
       BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
       LB_DOMAIN: trelawney.cf-app.com
+      BBL_CONFIG_DIR: bbl-config
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
       bbl-state: trelawney-env-director-state
@@ -599,6 +600,7 @@ jobs:
         BBL_GCP_REGION: us-central1
         BBL_LB_CERT: ((trelawney_cf_ssl_cert))
         BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
+        BBL_CONFIG_DIR: bbl-config
         LB_DOMAIN: trelawney.cf-app.com
       input_mapping:
         bbl-state: trelawney-env-director-state
