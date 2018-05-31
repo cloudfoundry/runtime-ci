@@ -605,15 +605,12 @@ jobs:
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
         operations/addons/enable-component-syslog.yml
-        operations/use-gcs-blobstore.yml
-        operations/use-gcs-blobstore-service-account.yml
         operations/scale-database-cluster.yml
       VARS_FILES: |
         deployment-name.yml
         network-name.yml
         bbs-key-label.yml
         syslog-vars.yml
-        gcs-vars.yml
       REGENERATE_CREDENTIALS: true
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
