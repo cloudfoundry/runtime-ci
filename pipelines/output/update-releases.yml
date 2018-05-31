@@ -77,6 +77,8 @@ groups:
 
   - update-haproxy
 
+  - update-mapfs
+
   - update-nfs-volume
 
   - update-postgres
@@ -313,6 +315,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/haproxy-boshrelease
+- name: mapfs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/mapfs-release
 - name: nfs-volume-release
   type: bosh-io-release
   source:
@@ -2628,6 +2634,75 @@ jobs:
     params:
       OPS_FILE_NAME: use-haproxy.yml
       OPS_FILE_DESTINATION: operations/use-haproxy.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+
+- name: update-mapfs
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: mapfs-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-mapfs
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: mapfs-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: mapfs
+      TARGET: opsfile
+      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
+      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
+
+  - task: bosh-dry-run-mapfs
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+
+      ops-files: updated-ops-file
+
+
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: mapfs
+      OPS_FILES: |
+        enable-nfs-volume-service.yml
+
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+
+  - task: bosh-delete-deployment-mapfs
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-mapfs
+  - task: commit-generated-manifest-and-ops-mapfs
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: enable-nfs-volume-service.yml
+      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
   - put: cf-deployment-develop
     params:
       rebase: true

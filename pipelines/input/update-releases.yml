@@ -76,6 +76,10 @@ opsReleases:
   opsFile: use-haproxy.yml
   varsFilesInput: greengrass-env-director-state
   varsFiles: "vars-files/haproxy-vars.yml"
+- name: mapfs
+  repository: cloudfoundry/mapfs-release
+  cfDeploymentOpsFileDir: operations
+  opsFile: enable-nfs-volume-service.yml
 - name: nfs-volume
   repository: cloudfoundry/nfs-volume-release
   cfDeploymentOpsFileDir: operations
