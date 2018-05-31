@@ -1032,6 +1032,7 @@ jobs:
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-compiled-releases.yml
           operations/use-s3-blobstore.yml
+          operations/experimental/use-garden-containerd.yml
           operations/experimental/secure-service-credentials.yml
           operations/experimental/use-cf-networking-2.yml
           operations/experimental/enable-iptables-logger-with-networking-2.yml
