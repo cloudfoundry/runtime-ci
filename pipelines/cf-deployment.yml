@@ -1037,7 +1037,6 @@ jobs:
           operations/aws.yml
           operations/experimental/use-xenial-stemcell.yml
           operations/test/add-datadog-firehose-nozzle.yml
-          operations/use-compiled-releases.yml
           operations/use-s3-blobstore.yml
           operations/experimental/use-garden-containerd.yml
           operations/experimental/secure-service-credentials.yml
