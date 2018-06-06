@@ -323,7 +323,7 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
-- name: cf-deployment-v2
+- name: cf-deployment-v2-fast
   type: git
   source:
     branch: v2-fast
@@ -438,7 +438,7 @@ jobs:
   public: true
   plan:
   - aggregate:
-    - get: cf-deployment-v2
+    - get: cf-deployment-v2-fast
       trigger: true
       passed: [v2-unit-test-ops-files]
     - put: v2-pool
@@ -505,7 +505,7 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: cf-deployment-v2
+  - get: cf-deployment-v2-fast
     trigger: true
   - task: unit-test-ops-files
     config:
@@ -515,11 +515,11 @@ jobs:
         source:
           repository: relintdockerhubpushbot/bosh-cli
       inputs:
-      - name: cf-deployment-v2
+      - name: cf-deployment-v2-fast
       params:
         RUN_SEMANTIC: false
       run:
-        dir: cf-deployment-v2
+        dir: cf-deployment-v2-fast
         path: scripts/test
 
 - name: unit-test-cats
@@ -753,7 +753,7 @@ jobs:
     trigger: true
     passed: [v2-acquire-pool]
   - aggregate:
-    - get: cf-deployment-v2
+    - get: cf-deployment-v2-fast
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: hagrid-env-integration-configs
@@ -763,7 +763,7 @@ jobs:
   - task: bosh-upload-stemcell-v2
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      cf-deployment: cf-deployment-v2
+      cf-deployment: cf-deployment-v2-fast
       bbl-state: hagrid-env-director-state
     params:
       INFRASTRUCTURE: google
@@ -793,8 +793,8 @@ jobs:
     file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
     input_mapping:
       bbl-state: hagrid-env-director-state
-      cf-deployment: cf-deployment-v2
-      ops-files: cf-deployment-v2
+      cf-deployment: cf-deployment-v2-fast
+      ops-files: cf-deployment-v2-fast
       vars-files: hagrid-env-director-state
     params:
       SYSTEM_DOMAIN: hagrid.cf-app.com
@@ -1483,7 +1483,7 @@ jobs:
       passed: [v2-deploy]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-deployment-v2
+      - get: cf-deployment-v2-fast
         passed: [v2-deploy]
       - get: hagrid-env-director-state
     - task: enable-docker-and-tasks
@@ -1637,7 +1637,7 @@ jobs:
       - get: cf-acceptance-tests
         passed: [ unit-test-cats ]
       - get: hagrid-env-integration-configs
-      - get: cf-deployment-v2
+      - get: cf-deployment-v2-fast
         passed: [v2-set-feature-flags]
     - task: run-cats
       file: cf-deployment-concourse-tasks/run-cats/task.yml
@@ -1661,7 +1661,7 @@ jobs:
 #       - get: cf-acceptance-tests
 #         passed: [ unit-test-cats ]
 #       - get: hagrid-env-integration-configs
-#       - get: cf-deployment-v2
+#       - get: cf-deployment-v2-fast
 #         passed: [v2-set-feature-flags]
 #     - task: run-cats
 #       file: cf-deployment-concourse-tasks/run-cats/task.yml
