@@ -2,6 +2,8 @@
 baseReleases:
 - name: binary-buildpack
   repository: cloudfoundry/binary-buildpack-release
+- name: bpm
+  repository: cloudfoundry-incubator/bpm-release
 - name: capi
   repository: cloudfoundry/capi-release
 - name: cf-mysql
@@ -52,11 +54,6 @@ opsReleases:
   repository: cloudfoundry-incubator/backup-and-restore-sdk-release
   cfDeploymentOpsFileDir: operations/backup-and-restore
   opsFile: enable-backup-restore.yml
-- name: bpm
-  repository: cloudfoundry-incubator/bpm-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: enable-bpm.yml
-  varsFilesInput: greengrass-env-director-state
 - name: broker-registrar
   repository: cloudfoundry-community/broker-registrar-boshrelease
   cfDeploymentOpsFileDir: operations
