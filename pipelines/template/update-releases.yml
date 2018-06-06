@@ -658,7 +658,9 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      SKIP_LB_CREATION: true
+      BBL_LB_CERT: ((greengrass_cf_ssl_cert))
+      BBL_LB_KEY: ((greengrass_cf_ssl_cert_private_key))
+      LB_DOMAIN: greengrass.cf-app.com
       BBL_ENV_NAME: greengrass-compile
     input_mapping:
       bbl-state: greengrass-env-director-state
