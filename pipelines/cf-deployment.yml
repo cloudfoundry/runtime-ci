@@ -800,6 +800,7 @@ jobs:
       SYSTEM_DOMAIN: hagrid.cf-app.com
       OPS_FILES: |
         operations/use-external-blobstore.yml
+        operations/use-gcs-blobstore-service-account.yml
       VARS_FILES: |
         gcs-vars.yml
         bucket-keys.yml
