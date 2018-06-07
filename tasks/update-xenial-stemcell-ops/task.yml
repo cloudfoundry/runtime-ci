@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: ops-files
+- name: stemcell
+
+outputs:
+- name: updated-stemcell-ops-file
+- name: commit-message
+
+run:
+  path: runtime-ci/tasks/update-xenial-stemcell-ops/task
+
+params:
+  COMMIT_MESSAGE_PATH: commit-message.txt

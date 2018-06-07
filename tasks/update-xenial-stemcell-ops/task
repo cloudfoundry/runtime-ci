@@ -1,0 +1,32 @@
+#!/bin/bash -exu
+
+output_updated_stemcell() {
+  xenial_stemcell_version=$(cat stemcell/version)
+
+  local update_xenial_stemcell_ops_file=$(mktemp)
+cat > ${update_xenial_stemcell_ops_file} <<EOF
+---
+- type: replace
+  path: /path=~1stemcells~1alias=default~1version/value
+  value: ${xenial_stemcell_version}
+EOF
+
+  bosh interpolate ops-files/operations/experimental/use-xenial-stemcell.yml \
+    -o "${update_xenial_stemcell_ops_file}" > updated-stemcell-ops-file/use-xenial-stemcell.yml
+}
+
+output_commit_message() {
+  local current_stemcell_version=$(bosh interpolate ops-files/operations/experimental/use-xenial-stemcell.yml --path=/path=~1stemcells~1alias=default~1version/value)
+  if [ "${current_stemcell_version}" == "${xenial_stemcell_version}" ]; then
+    echo "No xenial stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
+  else
+    echo "Xenial stemcell updated to ${xenial_stemcell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
+  fi
+}
+
+main() {
+  output_updated_stemcell
+  output_commit_message
+}
+
+main
