@@ -46,6 +46,10 @@ export_release() {
   popd
 }
 
+delete_deployment() {
+  bosh deld -n -d cf-compilation-${RELEASE_NAME}
+}
+
 main() {
   validate_variables
   setup_bosh_env_vars
@@ -53,6 +57,8 @@ main() {
   deploy_for_compilation
 
   export_release
+
+  delete_deployment
 }
 
 main
