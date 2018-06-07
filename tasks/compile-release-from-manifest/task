@@ -9,6 +9,11 @@ validate_variables() {
 }
 
 MANIFEST_PATH=manifest/${MANIFEST_FILENAME}
+INTERPOLATED_MANIFEST_PATH=$(mktemp)
+if [ -f manifest/${STEMCELL_OPS_FILE_PATH} ]; then
+  bosh int $MANIFEST_PATH -o manifest/${STEMCELL_OPS_FILE_PATH} > ${INTERPOLATED_MANIFEST_PATH}
+  MANIFEST_PATH=${INTERPOLATED_MANIFEST_PATH}
+fi
 
 deploy_for_compilation() {
   cat << EOF > compilation-manifest.yml
@@ -37,12 +42,17 @@ EOF
 }
 
 export_release() {
+  local stemcell_os
+  stemcell_os=$(bosh interpolate ${MANIFEST_PATH} --path "/stemcells/alias=default/os")
+
   local stemcell_os_version
-  stemcell_os_version=$(bosh interpolate ${MANIFEST_PATH} --path "/stemcells/os=${STEMCELL_OS}/version")
+  stemcell_os_version=$(bosh interpolate ${MANIFEST_PATH} --path "/stemcells/os=${stemcell_os}/version")
+
   local bosh_release_version
   bosh_release_version=$(bosh interpolate ${MANIFEST_PATH} --path "/releases/name=${RELEASE_NAME}/version")
+
   pushd exported-release
-  bosh export-release -d "cf-compilation-${RELEASE_NAME}" "${RELEASE_NAME}/${bosh_release_version}" "${STEMCELL_OS}/${stemcell_os_version}"
+  bosh export-release -d "cf-compilation-${RELEASE_NAME}" "${RELEASE_NAME}/${bosh_release_version}" "${stemcell_os}/${stemcell_os_version}"
   popd
 }
 
