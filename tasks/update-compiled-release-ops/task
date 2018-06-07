@@ -36,7 +36,7 @@ cat << EOF
 EOF
 ) > "${update_release_ops_file}"
 
-  bosh interpolate ops-files/operations/use-compiled-releases.yml -o "${update_release_ops_file}" > updated-compiled-releases-ops-file/use-compiled-releases.yml
+  bosh interpolate ops-files/operations/${PATH_TO_OPS_FILE} -o "${update_release_ops_file}" > updated-compiled-releases-ops-file/use-compiled-releases.yml
 }
 
 update_commit_message() {
