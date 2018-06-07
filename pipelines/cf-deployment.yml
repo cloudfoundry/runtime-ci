@@ -128,11 +128,6 @@ resources:
   source:
     name: bosh-google-kvm-windows2016-go_agent
 
-- name: aws-xenial-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
-
 - name: fresh-pool
   type: pool
   source:
@@ -982,14 +977,13 @@ jobs:
       - get: hermione-env-turbulence-vars
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
-      - get: aws-xenial-stemcell
     - task: bosh-upload-stemcell-experimental
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
-        stemcell: aws-xenial-stemcell
+        cf-deployment: cf-deployment-develop
         bbl-state: hermione-env-director-state
       params:
-        STEMCELL_NAME: '*.tgz'
+        INFRASTRUCTURE: aws
     - task: bosh-update-runtime-config
       file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
       input_mapping:
@@ -1035,7 +1029,6 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
-          operations/experimental/use-xenial-stemcell.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-s3-blobstore.yml
           operations/experimental/use-garden-containerd.yml
