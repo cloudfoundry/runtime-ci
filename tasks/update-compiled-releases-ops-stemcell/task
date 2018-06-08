@@ -37,16 +37,22 @@ EOF
 }
 
 append_stemcell_to_compiled() {
- local release_name
- release_name=${1}
- local stemcell_version
- stemcell_version=$(cat stemcell/version)
+  local stemcell_os
+  if [ -f ops-files/${STEMCELL_OPS_FILE_PATH} ]; then
+    stemcell_os=$(bosh interpolate ops-files/cf-deployment.yml -o ops-files/${STEMCELL_OPS_FILE_PATH} --path /stemcells/alias=default/os)
+  else
+    stemcell_os=$(bosh interpolate ops-files/cf-deployment.yml --path /stemcells/alias=default/os)
+  fi
+  local release_name
+  release_name=${1}
+  local stemcell_version
+  stemcell_version=$(cat stemcell/version)
 
 cat << EOF
 - path: /releases/name=${release_name}/stemcell?
   type: replace
   value:
-    os: ubuntu-trusty
+    os: "${stemcell_os}"
     version: "${stemcell_version}"
 EOF
 }
@@ -90,7 +96,7 @@ main() {
 
  local truncated_compiled_release_ops_file
  truncated_compiled_release_ops_file=$(mktemp)
- sed -n '/stemcell/q;p' ops-files/operations/use-compiled-releases.yml > ${truncated_compiled_release_ops_file}
+ sed -n '/stemcell/q;p' ops-files/${COMPILED_RELEASES_OPS_FILE_PATH} > ${truncated_compiled_release_ops_file}
 
  bosh interpolate "${truncated_compiled_release_ops_file}" -o "${update_release_ops_file}" \
    > updated-compiled-releases-ops-file/use-compiled-releases.yml

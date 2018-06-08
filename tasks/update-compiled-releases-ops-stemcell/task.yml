@@ -62,3 +62,7 @@ outputs:
 
 run:
   path: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task
+
+params:
+  STEMCELL_OPS_FILE_PATH:
+  COMPILED_RELEASES_OPS_FILE_PATH: operations/use-compiled-releases.yml
