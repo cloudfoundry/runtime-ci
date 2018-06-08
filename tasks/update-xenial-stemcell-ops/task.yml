@@ -12,7 +12,7 @@ inputs:
 - name: stemcell
 
 outputs:
-- name: updated-stemcell-ops-file
+- name: manifest-and-updated-stemcell-ops-file
 - name: commit-message
 
 run:
