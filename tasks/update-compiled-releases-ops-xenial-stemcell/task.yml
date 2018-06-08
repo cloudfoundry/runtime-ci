@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: ops-files
+- name: stemcell
+- name: binary-buildpack-release
+- name: binary-buildpack-release-tarball
+
+outputs:
+- name: updated-compiled-releases-ops-file
+
+run:
+  path: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task
+
+params:
+  STEMCELL_OPS_FILE_PATH:
+  COMPILED_RELEASES_OPS_FILE_PATH: operations/use-compiled-releases.yml
