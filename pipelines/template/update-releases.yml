@@ -14,6 +14,12 @@ groups:
 {{range .baseReleases}}
   - update-{{.name}}
 {{end}}
+- name: update-base-xenial-stemcells-and-releases
+  jobs:
+  # - update-xenial-stemcell-and-recompile-releases
+{{range .xenialBaseReleases}}
+  - update-{{.name}}-xenial
+{{end}}
 - name: update-ops-releases
   jobs:
 {{range .opsReleases}}
@@ -90,6 +96,10 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-windows2016-go_agent
+- name: xenial-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-xenial-go_agent
 - name: garden-windows-bosh-release
   type: bosh-io-release
   source:
@@ -228,6 +238,89 @@ jobs:
       MANIFEST_DESTINATION: cf-deployment.yml
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+{{end}}
+
+# This Xenial-specific job is meant to be temporary, and should be removed once
+# Xenial becomes the one true stemcell.  It's missing elements such as updating
+# specific release versions, and updates compiled releases in an experimental
+# opsfile.
+{{range .xenialBaseReleases}}
+- name: update-{{.name}}-xenial
+  serial_groups:
+  - update-{{.name}}
+  - update-{{.name}}-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: {{.name}}-release
+      passed:
+      - update-{{.name}}
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      # passed:
+      # - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: {{.name}}
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: {{.name}}-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: {{.name}}
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: {{.name}}-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -519,6 +612,82 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+
+# - name: update-xenial-stemcell-and-recompile-releases
+#   public: true
+#   serial_groups:
+#   - update-stemcell-and-recompile-releases
+# {{range .baseReleases}}
+#   - update-{{.name}}
+#   - update-{{.name}}-xenial
+# {{end}}
+#   build_logs_to_retain: 100
+#   plan:
+#   - aggregate:
+#     - get: runtime-ci
+#     - get: greengrass-env-director-state
+#     - get: cf-deployment-develop
+#     - get: cf-deployment-concourse-tasks
+# {{range .baseReleases}}
+#     - get: {{.name}}-release
+#       params:
+#         tarball: false
+# {{end}}
+#     - get: xenial-stemcell
+#       resource: stemcell
+#       trigger: true
+#       params:
+#         tarball: false
+#   - task: update-xenial-stemcell-ops-file
+#     file: runtime-ci/tasks/update-xenial-stemcell-ops/task.yml
+#     input_mapping:
+#       ops-files: cf-deployment-develop
+#   - task: bosh-upload-xenial-stemcell
+#     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+#     input_mapping:
+#       bbl-state: greengrass-env-director-state
+#     params:
+#       STEMCELL_NAME: '*.tgz'
+#   - aggregate:
+# {{range .baseReleases}}
+#     - task: compile-release-{{.name}}
+#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+#       input_mapping:
+#         bbl-state: greengrass-env-director-state
+#         manifest: updated-stemcell-ops-file
+#       output_mapping:
+#         exported-release: exported-release-{{.name}}
+#       params:
+#         RELEASE_NAME: {{.name}}
+#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+# {{end}}
+#   - task: update-compiled-releases-ops-stemcell
+#     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
+#     input_mapping:
+#       ops-files: cf-deployment-develop
+# {{range .baseReleases}}      {{.name}}-release-tarball: exported-release-{{.name}}
+# {{end}}
+#   - aggregate:
+# {{range .baseReleases}}    - put: {{.name}}-release-gcs
+#       params:
+#         file: exported-release-{{.name}}/*.tgz
+#         predefined_acl: publicRead
+# {{end}}
+#   - task: commit-generated-manifest-and-ops
+#     file: runtime-ci/tasks/commit-generated-manifest/task.yml
+#     input_mapping:
+#       repo: cf-deployment-develop
+#       ops-file: updated-compiled-releases-ops-file
+#       manifest: updated-deployment-manifest
+#     params:
+#       MANIFEST_NAME: cf-deployment.yml
+#       MANIFEST_DESTINATION: cf-deployment.yml
+#       OPS_FILE_NAME: use-compiled-releases.yml
+#       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+#   - put: cf-deployment-develop
+#     params:
+#       rebase: true
+#       repository: updated-repo
 
 {{range .windowsVersSupported}}
 - name: update-{{.hyphenatedName}}-releases
