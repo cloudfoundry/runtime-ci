@@ -66,9 +66,55 @@ groups:
 
 - name: update-base-xenial-stemcells-and-releases
   jobs:
-  # - update-xenial-stemcell-and-recompile-releases
+  - update-xenial-stemcell-and-recompile-releases
 
   - update-binary-buildpack-xenial
+
+  - update-bpm-xenial
+
+  - update-capi-xenial
+
+  - update-cf-mysql-xenial
+
+  - update-cf-networking-xenial
+
+  - update-cf-smoke-tests-xenial
+
+  - update-cf-syslog-drain-xenial
+
+  - update-cflinuxfs2-xenial
+
+  - update-consul-xenial
+
+  - update-diego-xenial
+
+  - update-dotnet-core-buildpack-xenial
+
+  - update-garden-runc-xenial
+
+  - update-go-buildpack-xenial
+
+  - update-java-buildpack-xenial
+
+  - update-loggregator-xenial
+
+  - update-nats-xenial
+
+  - update-nodejs-buildpack-xenial
+
+  - update-php-buildpack-xenial
+
+  - update-python-buildpack-xenial
+
+  - update-routing-xenial
+
+  - update-ruby-buildpack-xenial
+
+  - update-staticfile-buildpack-xenial
+
+  - update-statsd-injector-xenial
+
+  - update-uaa-xenial
 
 - name: update-ops-releases
   jobs:
@@ -556,6 +602,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: binary-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -620,6 +673,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: bpm
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -701,6 +761,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: capi
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -782,6 +849,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-mysql
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -863,6 +937,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-networking
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -944,6 +1025,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-smoke-tests
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1025,6 +1113,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-syslog-drain
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1106,6 +1201,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cflinuxfs2
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1187,6 +1289,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: consul
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1268,6 +1377,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: diego
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1349,6 +1465,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: dotnet-core-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1413,6 +1536,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: garden-runc
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1494,6 +1624,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: go-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1558,6 +1695,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: java-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1622,6 +1766,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: loggregator
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1703,6 +1854,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: nats
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -1784,6 +1942,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: nodejs-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1848,6 +2013,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: php-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1912,6 +2084,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: python-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -1976,6 +2155,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: routing
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2057,6 +2243,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: ruby-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2121,6 +2314,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: staticfile-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
@@ -2185,6 +2385,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: statsd-injector
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2266,6 +2473,13 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: uaa
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
 
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -2347,8 +2561,8 @@ jobs:
         tarball: false
     - get: stemcell
       resource: xenial-stemcell
-      # passed:
-      # - update-xenial-stemcell-and-recompile-releases
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
   - task: bosh-upload-xenial-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     params:
@@ -2386,6 +2600,1777 @@ jobs:
       RELEASE_NAME: binary-buildpack
       PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
   - put: binary-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-bpm-xenial
+  serial_groups:
+  - update-bpm
+  - update-bpm-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: bpm-release
+      passed:
+      - update-bpm
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: bpm
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: bpm-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: bpm
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: bpm-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-capi-xenial
+  serial_groups:
+  - update-capi
+  - update-capi-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: capi-release
+      passed:
+      - update-capi
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: capi
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: capi-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: capi
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: capi-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-mysql-xenial
+  serial_groups:
+  - update-cf-mysql
+  - update-cf-mysql-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-mysql-release
+      passed:
+      - update-cf-mysql
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-mysql
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-mysql-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-mysql
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-mysql-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-networking-xenial
+  serial_groups:
+  - update-cf-networking
+  - update-cf-networking-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-networking-release
+      passed:
+      - update-cf-networking
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-networking
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-networking
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-networking-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-smoke-tests-xenial
+  serial_groups:
+  - update-cf-smoke-tests
+  - update-cf-smoke-tests-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-smoke-tests-release
+      passed:
+      - update-cf-smoke-tests
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-smoke-tests-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cf-syslog-drain-xenial
+  serial_groups:
+  - update-cf-syslog-drain
+  - update-cf-syslog-drain-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-syslog-drain-release
+      passed:
+      - update-cf-syslog-drain
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-syslog-drain
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cf-syslog-drain-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cf-syslog-drain
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-syslog-drain-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-cflinuxfs2-xenial
+  serial_groups:
+  - update-cflinuxfs2
+  - update-cflinuxfs2-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cflinuxfs2-release
+      passed:
+      - update-cflinuxfs2
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cflinuxfs2
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: cflinuxfs2-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: cflinuxfs2
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cflinuxfs2-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-consul-xenial
+  serial_groups:
+  - update-consul
+  - update-consul-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: consul-release
+      passed:
+      - update-consul
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: consul
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: consul-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: consul
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: consul-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-diego-xenial
+  serial_groups:
+  - update-diego
+  - update-diego-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: diego-release
+      passed:
+      - update-diego
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: diego
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: diego-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: diego
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: diego-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-dotnet-core-buildpack-xenial
+  serial_groups:
+  - update-dotnet-core-buildpack
+  - update-dotnet-core-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: dotnet-core-buildpack-release
+      passed:
+      - update-dotnet-core-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: dotnet-core-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: dotnet-core-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-garden-runc-xenial
+  serial_groups:
+  - update-garden-runc
+  - update-garden-runc-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: garden-runc-release
+      passed:
+      - update-garden-runc
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: garden-runc
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: garden-runc-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: garden-runc
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: garden-runc-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-go-buildpack-xenial
+  serial_groups:
+  - update-go-buildpack
+  - update-go-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: go-buildpack-release
+      passed:
+      - update-go-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: go-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: go-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: go-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: go-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-java-buildpack-xenial
+  serial_groups:
+  - update-java-buildpack
+  - update-java-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: java-buildpack-release
+      passed:
+      - update-java-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: java-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: java-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: java-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: java-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-loggregator-xenial
+  serial_groups:
+  - update-loggregator
+  - update-loggregator-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: loggregator-release
+      passed:
+      - update-loggregator
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: loggregator
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: loggregator-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: loggregator
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: loggregator-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-nats-xenial
+  serial_groups:
+  - update-nats
+  - update-nats-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: nats-release
+      passed:
+      - update-nats
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: nats
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nats-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nats
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: nats-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-nodejs-buildpack-xenial
+  serial_groups:
+  - update-nodejs-buildpack
+  - update-nodejs-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: nodejs-buildpack-release
+      passed:
+      - update-nodejs-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: nodejs-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: nodejs-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: nodejs-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: nodejs-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-php-buildpack-xenial
+  serial_groups:
+  - update-php-buildpack
+  - update-php-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: php-buildpack-release
+      passed:
+      - update-php-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: php-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: php-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: php-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: php-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-python-buildpack-xenial
+  serial_groups:
+  - update-python-buildpack
+  - update-python-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: python-buildpack-release
+      passed:
+      - update-python-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: python-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: python-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: python-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: python-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-routing-xenial
+  serial_groups:
+  - update-routing
+  - update-routing-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: routing-release
+      passed:
+      - update-routing
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: routing
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: routing-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: routing
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: routing-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-ruby-buildpack-xenial
+  serial_groups:
+  - update-ruby-buildpack
+  - update-ruby-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: ruby-buildpack-release
+      passed:
+      - update-ruby-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: ruby-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: ruby-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: ruby-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: ruby-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-staticfile-buildpack-xenial
+  serial_groups:
+  - update-staticfile-buildpack
+  - update-staticfile-buildpack-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: staticfile-buildpack-release
+      passed:
+      - update-staticfile-buildpack
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: staticfile-buildpack
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: staticfile-buildpack-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: staticfile-buildpack
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: staticfile-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-statsd-injector-xenial
+  serial_groups:
+  - update-statsd-injector
+  - update-statsd-injector-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: statsd-injector-release
+      passed:
+      - update-statsd-injector
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: statsd-injector
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: statsd-injector-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: statsd-injector
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: statsd-injector-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-uaa-xenial
+  serial_groups:
+  - update-uaa
+  - update-uaa-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: uaa-release
+      passed:
+      - update-uaa
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: uaa
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: uaa-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: uaa
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: uaa-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -4096,610 +6081,681 @@ jobs:
       rebase: true
       repository: updated-repo
 
-# - name: update-xenial-stemcell-and-recompile-releases
-#   public: true
-#   serial_groups:
-#   - update-stemcell-and-recompile-releases
-# 
-#   - update-binary-buildpack
-#   - update-binary-buildpack-xenial
-# 
-#   - update-bpm
-#   - update-bpm-xenial
-# 
-#   - update-capi
-#   - update-capi-xenial
-# 
-#   - update-cf-mysql
-#   - update-cf-mysql-xenial
-# 
-#   - update-cf-networking
-#   - update-cf-networking-xenial
-# 
-#   - update-cf-smoke-tests
-#   - update-cf-smoke-tests-xenial
-# 
-#   - update-cf-syslog-drain
-#   - update-cf-syslog-drain-xenial
-# 
-#   - update-cflinuxfs2
-#   - update-cflinuxfs2-xenial
-# 
-#   - update-consul
-#   - update-consul-xenial
-# 
-#   - update-diego
-#   - update-diego-xenial
-# 
-#   - update-dotnet-core-buildpack
-#   - update-dotnet-core-buildpack-xenial
-# 
-#   - update-garden-runc
-#   - update-garden-runc-xenial
-# 
-#   - update-go-buildpack
-#   - update-go-buildpack-xenial
-# 
-#   - update-java-buildpack
-#   - update-java-buildpack-xenial
-# 
-#   - update-loggregator
-#   - update-loggregator-xenial
-# 
-#   - update-nats
-#   - update-nats-xenial
-# 
-#   - update-nodejs-buildpack
-#   - update-nodejs-buildpack-xenial
-# 
-#   - update-php-buildpack
-#   - update-php-buildpack-xenial
-# 
-#   - update-python-buildpack
-#   - update-python-buildpack-xenial
-# 
-#   - update-routing
-#   - update-routing-xenial
-# 
-#   - update-ruby-buildpack
-#   - update-ruby-buildpack-xenial
-# 
-#   - update-staticfile-buildpack
-#   - update-staticfile-buildpack-xenial
-# 
-#   - update-statsd-injector
-#   - update-statsd-injector-xenial
-# 
-#   - update-uaa
-#   - update-uaa-xenial
-# 
-#   build_logs_to_retain: 100
-#   plan:
-#   - aggregate:
-#     - get: runtime-ci
-#     - get: greengrass-env-director-state
-#     - get: cf-deployment-develop
-#     - get: cf-deployment-concourse-tasks
-# 
-#     - get: binary-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: bpm-release
-#       params:
-#         tarball: false
-# 
-#     - get: capi-release
-#       params:
-#         tarball: false
-# 
-#     - get: cf-mysql-release
-#       params:
-#         tarball: false
-# 
-#     - get: cf-networking-release
-#       params:
-#         tarball: false
-# 
-#     - get: cf-smoke-tests-release
-#       params:
-#         tarball: false
-# 
-#     - get: cf-syslog-drain-release
-#       params:
-#         tarball: false
-# 
-#     - get: cflinuxfs2-release
-#       params:
-#         tarball: false
-# 
-#     - get: consul-release
-#       params:
-#         tarball: false
-# 
-#     - get: diego-release
-#       params:
-#         tarball: false
-# 
-#     - get: dotnet-core-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: garden-runc-release
-#       params:
-#         tarball: false
-# 
-#     - get: go-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: java-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: loggregator-release
-#       params:
-#         tarball: false
-# 
-#     - get: nats-release
-#       params:
-#         tarball: false
-# 
-#     - get: nodejs-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: php-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: python-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: routing-release
-#       params:
-#         tarball: false
-# 
-#     - get: ruby-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: staticfile-buildpack-release
-#       params:
-#         tarball: false
-# 
-#     - get: statsd-injector-release
-#       params:
-#         tarball: false
-# 
-#     - get: uaa-release
-#       params:
-#         tarball: false
-# 
-#     - get: xenial-stemcell
-#       resource: stemcell
-#       trigger: true
-#       params:
-#         tarball: false
-#   - task: update-xenial-stemcell-ops-file
-#     file: runtime-ci/tasks/update-xenial-stemcell-ops/task.yml
-#     input_mapping:
-#       ops-files: cf-deployment-develop
-#   - task: bosh-upload-xenial-stemcell
-#     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-#     input_mapping:
-#       bbl-state: greengrass-env-director-state
-#     params:
-#       STEMCELL_NAME: '*.tgz'
-#   - aggregate:
-# 
-#     - task: compile-release-binary-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-binary-buildpack
-#       params:
-#         RELEASE_NAME: binary-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-bpm
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-bpm
-#       params:
-#         RELEASE_NAME: bpm
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-capi
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-capi
-#       params:
-#         RELEASE_NAME: capi
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-cf-mysql
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-cf-mysql
-#       params:
-#         RELEASE_NAME: cf-mysql
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-cf-networking
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-cf-networking
-#       params:
-#         RELEASE_NAME: cf-networking
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-cf-smoke-tests
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-cf-smoke-tests
-#       params:
-#         RELEASE_NAME: cf-smoke-tests
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-cf-syslog-drain
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-cf-syslog-drain
-#       params:
-#         RELEASE_NAME: cf-syslog-drain
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-cflinuxfs2
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-cflinuxfs2
-#       params:
-#         RELEASE_NAME: cflinuxfs2
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-consul
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-consul
-#       params:
-#         RELEASE_NAME: consul
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-diego
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-diego
-#       params:
-#         RELEASE_NAME: diego
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-dotnet-core-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-dotnet-core-buildpack
-#       params:
-#         RELEASE_NAME: dotnet-core-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-garden-runc
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-garden-runc
-#       params:
-#         RELEASE_NAME: garden-runc
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-go-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-go-buildpack
-#       params:
-#         RELEASE_NAME: go-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-java-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-java-buildpack
-#       params:
-#         RELEASE_NAME: java-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-loggregator
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-loggregator
-#       params:
-#         RELEASE_NAME: loggregator
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-nats
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-nats
-#       params:
-#         RELEASE_NAME: nats
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-nodejs-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-nodejs-buildpack
-#       params:
-#         RELEASE_NAME: nodejs-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-php-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-php-buildpack
-#       params:
-#         RELEASE_NAME: php-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-python-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-python-buildpack
-#       params:
-#         RELEASE_NAME: python-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-routing
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-routing
-#       params:
-#         RELEASE_NAME: routing
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-ruby-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-ruby-buildpack
-#       params:
-#         RELEASE_NAME: ruby-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-staticfile-buildpack
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-staticfile-buildpack
-#       params:
-#         RELEASE_NAME: staticfile-buildpack
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-statsd-injector
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-statsd-injector
-#       params:
-#         RELEASE_NAME: statsd-injector
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#     - task: compile-release-uaa
-#       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-#       input_mapping:
-#         bbl-state: greengrass-env-director-state
-#         manifest: updated-stemcell-ops-file
-#       output_mapping:
-#         exported-release: exported-release-uaa
-#       params:
-#         RELEASE_NAME: uaa
-#         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-# 
-#   - task: update-compiled-releases-ops-stemcell
-#     file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
-#     input_mapping:
-#       ops-files: cf-deployment-develop
-#       binary-buildpack-release-tarball: exported-release-binary-buildpack
-#       bpm-release-tarball: exported-release-bpm
-#       capi-release-tarball: exported-release-capi
-#       cf-mysql-release-tarball: exported-release-cf-mysql
-#       cf-networking-release-tarball: exported-release-cf-networking
-#       cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
-#       cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
-#       cflinuxfs2-release-tarball: exported-release-cflinuxfs2
-#       consul-release-tarball: exported-release-consul
-#       diego-release-tarball: exported-release-diego
-#       dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
-#       garden-runc-release-tarball: exported-release-garden-runc
-#       go-buildpack-release-tarball: exported-release-go-buildpack
-#       java-buildpack-release-tarball: exported-release-java-buildpack
-#       loggregator-release-tarball: exported-release-loggregator
-#       nats-release-tarball: exported-release-nats
-#       nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
-#       php-buildpack-release-tarball: exported-release-php-buildpack
-#       python-buildpack-release-tarball: exported-release-python-buildpack
-#       routing-release-tarball: exported-release-routing
-#       ruby-buildpack-release-tarball: exported-release-ruby-buildpack
-#       staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
-#       statsd-injector-release-tarball: exported-release-statsd-injector
-#       uaa-release-tarball: exported-release-uaa
-# 
-#   - aggregate:
-#     - put: binary-buildpack-release-gcs
-#       params:
-#         file: exported-release-binary-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: bpm-release-gcs
-#       params:
-#         file: exported-release-bpm/*.tgz
-#         predefined_acl: publicRead
-#     - put: capi-release-gcs
-#       params:
-#         file: exported-release-capi/*.tgz
-#         predefined_acl: publicRead
-#     - put: cf-mysql-release-gcs
-#       params:
-#         file: exported-release-cf-mysql/*.tgz
-#         predefined_acl: publicRead
-#     - put: cf-networking-release-gcs
-#       params:
-#         file: exported-release-cf-networking/*.tgz
-#         predefined_acl: publicRead
-#     - put: cf-smoke-tests-release-gcs
-#       params:
-#         file: exported-release-cf-smoke-tests/*.tgz
-#         predefined_acl: publicRead
-#     - put: cf-syslog-drain-release-gcs
-#       params:
-#         file: exported-release-cf-syslog-drain/*.tgz
-#         predefined_acl: publicRead
-#     - put: cflinuxfs2-release-gcs
-#       params:
-#         file: exported-release-cflinuxfs2/*.tgz
-#         predefined_acl: publicRead
-#     - put: consul-release-gcs
-#       params:
-#         file: exported-release-consul/*.tgz
-#         predefined_acl: publicRead
-#     - put: diego-release-gcs
-#       params:
-#         file: exported-release-diego/*.tgz
-#         predefined_acl: publicRead
-#     - put: dotnet-core-buildpack-release-gcs
-#       params:
-#         file: exported-release-dotnet-core-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: garden-runc-release-gcs
-#       params:
-#         file: exported-release-garden-runc/*.tgz
-#         predefined_acl: publicRead
-#     - put: go-buildpack-release-gcs
-#       params:
-#         file: exported-release-go-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: java-buildpack-release-gcs
-#       params:
-#         file: exported-release-java-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: loggregator-release-gcs
-#       params:
-#         file: exported-release-loggregator/*.tgz
-#         predefined_acl: publicRead
-#     - put: nats-release-gcs
-#       params:
-#         file: exported-release-nats/*.tgz
-#         predefined_acl: publicRead
-#     - put: nodejs-buildpack-release-gcs
-#       params:
-#         file: exported-release-nodejs-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: php-buildpack-release-gcs
-#       params:
-#         file: exported-release-php-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: python-buildpack-release-gcs
-#       params:
-#         file: exported-release-python-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: routing-release-gcs
-#       params:
-#         file: exported-release-routing/*.tgz
-#         predefined_acl: publicRead
-#     - put: ruby-buildpack-release-gcs
-#       params:
-#         file: exported-release-ruby-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: staticfile-buildpack-release-gcs
-#       params:
-#         file: exported-release-staticfile-buildpack/*.tgz
-#         predefined_acl: publicRead
-#     - put: statsd-injector-release-gcs
-#       params:
-#         file: exported-release-statsd-injector/*.tgz
-#         predefined_acl: publicRead
-#     - put: uaa-release-gcs
-#       params:
-#         file: exported-release-uaa/*.tgz
-#         predefined_acl: publicRead
-# 
-#   - task: commit-generated-manifest-and-ops
-#     file: runtime-ci/tasks/commit-generated-manifest/task.yml
-#     input_mapping:
-#       repo: cf-deployment-develop
-#       ops-file: updated-compiled-releases-ops-file
-#       manifest: updated-deployment-manifest
-#     params:
-#       MANIFEST_NAME: cf-deployment.yml
-#       MANIFEST_DESTINATION: cf-deployment.yml
-#       OPS_FILE_NAME: use-compiled-releases.yml
-#       OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-#   - put: cf-deployment-develop
-#     params:
-#       rebase: true
-#       repository: updated-repo
+- name: update-xenial-stemcell-and-recompile-releases
+  public: true
+  serial_groups:
+  - update-stemcell-and-recompile-releases
+
+  - update-binary-buildpack
+  - update-binary-buildpack-xenial
+
+  - update-bpm
+  - update-bpm-xenial
+
+  - update-capi
+  - update-capi-xenial
+
+  - update-cf-mysql
+  - update-cf-mysql-xenial
+
+  - update-cf-networking
+  - update-cf-networking-xenial
+
+  - update-cf-smoke-tests
+  - update-cf-smoke-tests-xenial
+
+  - update-cf-syslog-drain
+  - update-cf-syslog-drain-xenial
+
+  - update-cflinuxfs2
+  - update-cflinuxfs2-xenial
+
+  - update-consul
+  - update-consul-xenial
+
+  - update-diego
+  - update-diego-xenial
+
+  - update-dotnet-core-buildpack
+  - update-dotnet-core-buildpack-xenial
+
+  - update-garden-runc
+  - update-garden-runc-xenial
+
+  - update-go-buildpack
+  - update-go-buildpack-xenial
+
+  - update-java-buildpack
+  - update-java-buildpack-xenial
+
+  - update-loggregator
+  - update-loggregator-xenial
+
+  - update-nats
+  - update-nats-xenial
+
+  - update-nodejs-buildpack
+  - update-nodejs-buildpack-xenial
+
+  - update-php-buildpack
+  - update-php-buildpack-xenial
+
+  - update-python-buildpack
+  - update-python-buildpack-xenial
+
+  - update-routing
+  - update-routing-xenial
+
+  - update-ruby-buildpack
+  - update-ruby-buildpack-xenial
+
+  - update-staticfile-buildpack
+  - update-staticfile-buildpack-xenial
+
+  - update-statsd-injector
+  - update-statsd-injector-xenial
+
+  - update-uaa
+  - update-uaa-xenial
+
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: greengrass-env-director-state
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+
+    - get: binary-buildpack-release
+      passed: [update-binary-buildpack]
+      params:
+        tarball: false
+
+    - get: bpm-release
+      passed: [update-bpm]
+      params:
+        tarball: false
+
+    - get: capi-release
+      passed: [update-capi]
+      params:
+        tarball: false
+
+    - get: cf-mysql-release
+      passed: [update-cf-mysql]
+      params:
+        tarball: false
+
+    - get: cf-networking-release
+      passed: [update-cf-networking]
+      params:
+        tarball: false
+
+    - get: cf-smoke-tests-release
+      passed: [update-cf-smoke-tests]
+      params:
+        tarball: false
+
+    - get: cf-syslog-drain-release
+      passed: [update-cf-syslog-drain]
+      params:
+        tarball: false
+
+    - get: cflinuxfs2-release
+      passed: [update-cflinuxfs2]
+      params:
+        tarball: false
+
+    - get: consul-release
+      passed: [update-consul]
+      params:
+        tarball: false
+
+    - get: diego-release
+      passed: [update-diego]
+      params:
+        tarball: false
+
+    - get: dotnet-core-buildpack-release
+      passed: [update-dotnet-core-buildpack]
+      params:
+        tarball: false
+
+    - get: garden-runc-release
+      passed: [update-garden-runc]
+      params:
+        tarball: false
+
+    - get: go-buildpack-release
+      passed: [update-go-buildpack]
+      params:
+        tarball: false
+
+    - get: java-buildpack-release
+      passed: [update-java-buildpack]
+      params:
+        tarball: false
+
+    - get: loggregator-release
+      passed: [update-loggregator]
+      params:
+        tarball: false
+
+    - get: nats-release
+      passed: [update-nats]
+      params:
+        tarball: false
+
+    - get: nodejs-buildpack-release
+      passed: [update-nodejs-buildpack]
+      params:
+        tarball: false
+
+    - get: php-buildpack-release
+      passed: [update-php-buildpack]
+      params:
+        tarball: false
+
+    - get: python-buildpack-release
+      passed: [update-python-buildpack]
+      params:
+        tarball: false
+
+    - get: routing-release
+      passed: [update-routing]
+      params:
+        tarball: false
+
+    - get: ruby-buildpack-release
+      passed: [update-ruby-buildpack]
+      params:
+        tarball: false
+
+    - get: staticfile-buildpack-release
+      passed: [update-staticfile-buildpack]
+      params:
+        tarball: false
+
+    - get: statsd-injector-release
+      passed: [update-statsd-injector]
+      params:
+        tarball: false
+
+    - get: uaa-release
+      passed: [update-uaa]
+      params:
+        tarball: false
+
+    - get: stemcell
+      resource: xenial-stemcell
+      trigger: true
+  - task: update-xenial-stemcell-ops-file
+    file: runtime-ci/tasks/update-xenial-stemcell-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      STEMCELL_NAME: '*.tgz'
+  - aggregate:
+
+    - task: compile-release-binary-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-binary-buildpack
+      params:
+        RELEASE_NAME: binary-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-bpm
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-bpm
+      params:
+        RELEASE_NAME: bpm
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-capi
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-capi
+      params:
+        RELEASE_NAME: capi
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-cf-mysql
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cf-mysql
+      params:
+        RELEASE_NAME: cf-mysql
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-cf-networking
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cf-networking
+      params:
+        RELEASE_NAME: cf-networking
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-cf-smoke-tests
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cf-smoke-tests
+      params:
+        RELEASE_NAME: cf-smoke-tests
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-cf-syslog-drain
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cf-syslog-drain
+      params:
+        RELEASE_NAME: cf-syslog-drain
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-cflinuxfs2
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cflinuxfs2
+      params:
+        RELEASE_NAME: cflinuxfs2
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-consul
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-consul
+      params:
+        RELEASE_NAME: consul
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-diego
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-diego
+      params:
+        RELEASE_NAME: diego
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-dotnet-core-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-dotnet-core-buildpack
+      params:
+        RELEASE_NAME: dotnet-core-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-garden-runc
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-garden-runc
+      params:
+        RELEASE_NAME: garden-runc
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-go-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-go-buildpack
+      params:
+        RELEASE_NAME: go-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-java-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-java-buildpack
+      params:
+        RELEASE_NAME: java-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-loggregator
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-loggregator
+      params:
+        RELEASE_NAME: loggregator
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-nats
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-nats
+      params:
+        RELEASE_NAME: nats
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-nodejs-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-nodejs-buildpack
+      params:
+        RELEASE_NAME: nodejs-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-php-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-php-buildpack
+      params:
+        RELEASE_NAME: php-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-python-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-python-buildpack
+      params:
+        RELEASE_NAME: python-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-routing
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-routing
+      params:
+        RELEASE_NAME: routing
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-ruby-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-ruby-buildpack
+      params:
+        RELEASE_NAME: ruby-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-staticfile-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-staticfile-buildpack
+      params:
+        RELEASE_NAME: staticfile-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-statsd-injector
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-statsd-injector
+      params:
+        RELEASE_NAME: statsd-injector
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-uaa
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-uaa
+      params:
+        RELEASE_NAME: uaa
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+  - task: update-compiled-releases-ops-stemcell
+    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
+    params:
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+      COMPILED_RELEASE_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+
+      binary-buildpack-release-tarball: exported-release-binary-buildpack
+
+      bpm-release-tarball: exported-release-bpm
+
+      capi-release-tarball: exported-release-capi
+
+      cf-mysql-release-tarball: exported-release-cf-mysql
+
+      cf-networking-release-tarball: exported-release-cf-networking
+
+      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
+
+      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
+
+      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
+
+      consul-release-tarball: exported-release-consul
+
+      diego-release-tarball: exported-release-diego
+
+      dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
+
+      garden-runc-release-tarball: exported-release-garden-runc
+
+      go-buildpack-release-tarball: exported-release-go-buildpack
+
+      java-buildpack-release-tarball: exported-release-java-buildpack
+
+      loggregator-release-tarball: exported-release-loggregator
+
+      nats-release-tarball: exported-release-nats
+
+      nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
+
+      php-buildpack-release-tarball: exported-release-php-buildpack
+
+      python-buildpack-release-tarball: exported-release-python-buildpack
+
+      routing-release-tarball: exported-release-routing
+
+      ruby-buildpack-release-tarball: exported-release-ruby-buildpack
+
+      staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
+
+      statsd-injector-release-tarball: exported-release-statsd-injector
+
+      uaa-release-tarball: exported-release-uaa
+
+  - aggregate:
+
+    - put: binary-buildpack-release-gcs
+      params:
+        file: exported-release-binary-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: bpm-release-gcs
+      params:
+        file: exported-release-bpm/*.tgz
+        predefined_acl: publicRead
+
+    - put: capi-release-gcs
+      params:
+        file: exported-release-capi/*.tgz
+        predefined_acl: publicRead
+
+    - put: cf-mysql-release-gcs
+      params:
+        file: exported-release-cf-mysql/*.tgz
+        predefined_acl: publicRead
+
+    - put: cf-networking-release-gcs
+      params:
+        file: exported-release-cf-networking/*.tgz
+        predefined_acl: publicRead
+
+    - put: cf-smoke-tests-release-gcs
+      params:
+        file: exported-release-cf-smoke-tests/*.tgz
+        predefined_acl: publicRead
+
+    - put: cf-syslog-drain-release-gcs
+      params:
+        file: exported-release-cf-syslog-drain/*.tgz
+        predefined_acl: publicRead
+
+    - put: cflinuxfs2-release-gcs
+      params:
+        file: exported-release-cflinuxfs2/*.tgz
+        predefined_acl: publicRead
+
+    - put: consul-release-gcs
+      params:
+        file: exported-release-consul/*.tgz
+        predefined_acl: publicRead
+
+    - put: diego-release-gcs
+      params:
+        file: exported-release-diego/*.tgz
+        predefined_acl: publicRead
+
+    - put: dotnet-core-buildpack-release-gcs
+      params:
+        file: exported-release-dotnet-core-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: garden-runc-release-gcs
+      params:
+        file: exported-release-garden-runc/*.tgz
+        predefined_acl: publicRead
+
+    - put: go-buildpack-release-gcs
+      params:
+        file: exported-release-go-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: java-buildpack-release-gcs
+      params:
+        file: exported-release-java-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: loggregator-release-gcs
+      params:
+        file: exported-release-loggregator/*.tgz
+        predefined_acl: publicRead
+
+    - put: nats-release-gcs
+      params:
+        file: exported-release-nats/*.tgz
+        predefined_acl: publicRead
+
+    - put: nodejs-buildpack-release-gcs
+      params:
+        file: exported-release-nodejs-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: php-buildpack-release-gcs
+      params:
+        file: exported-release-php-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: python-buildpack-release-gcs
+      params:
+        file: exported-release-python-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: routing-release-gcs
+      params:
+        file: exported-release-routing/*.tgz
+        predefined_acl: publicRead
+
+    - put: ruby-buildpack-release-gcs
+      params:
+        file: exported-release-ruby-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: staticfile-buildpack-release-gcs
+      params:
+        file: exported-release-staticfile-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: statsd-injector-release-gcs
+      params:
+        file: exported-release-statsd-injector/*.tgz
+        predefined_acl: publicRead
+
+    - put: uaa-release-gcs
+      params:
+        file: exported-release-uaa/*.tgz
+        predefined_acl: publicRead
+
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 
 
 - name: update-windows-2012-releases

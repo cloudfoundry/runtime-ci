@@ -49,10 +49,6 @@ baseReleases:
 - name: uaa
   repository: cloudfoundry/uaa-release
 
-xenialBaseReleases:
-- name: binary-buildpack
-  repository: cloudfoundry/binary-buildpack-release
-
 opsReleases:
 - name: backup-and-restore-sdk
   repository: cloudfoundry-incubator/backup-and-restore-sdk-release
