@@ -12,6 +12,8 @@ inputs:
 - name: stemcell
 - name: binary-buildpack-release
 - name: binary-buildpack-release-tarball
+- name: bpm-release
+- name: bpm-release-tarball
 - name: capi-release
 - name: capi-release-tarball
 - name: cf-mysql-release

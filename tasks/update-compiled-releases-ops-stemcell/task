@@ -60,6 +60,7 @@ EOF
 main() {
  local releases
  releases=(
+   bpm
    capi
    cf-mysql
    binary-buildpack
