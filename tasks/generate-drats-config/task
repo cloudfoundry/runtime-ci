@@ -14,8 +14,10 @@ set +x
   popd > /dev/null
 set -x
 
-cf_admin_password=$(get_password_from_credhub "cf_admin_password")
-nfs_broker_password=$(get_password_from_credhub "nfs-broker-password")
+set +x
+  cf_admin_password=$(get_password_from_credhub "cf_admin_password")
+  nfs_broker_password=$(get_password_from_credhub "nfs-broker-password")
+set -x
 
 set +x
 echo '{}' | jq \
