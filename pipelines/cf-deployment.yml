@@ -1025,13 +1025,11 @@ jobs:
           operations/experimental/use-xenial-stemcell.yml
           operations/experimental/use-compiled-releases-xenial-stemcell.yml
           operations/test/add-datadog-firehose-nozzle.yml
+          operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
           operations/experimental/use-garden-containerd.yml
           operations/experimental/secure-service-credentials.yml
-          operations/experimental/use-cf-networking-2.yml
-          operations/experimental/enable-iptables-logger-with-networking-2.yml
           operations/experimental/use-bosh-dns.yml
-          operations/experimental/use-bosh-dns-for-containers-with-networking-2.yml
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
           operations/experimental/secure-service-credentials-with-pxc-release.yml
@@ -1043,7 +1041,6 @@ jobs:
           operations/experimental/enable-bpm.yml
           operations/experimental/use-log-cache.yml
           operations/experimental/enable-routing-integrity.yml
-          operations/experimental/enable-prefer-declarative-healthchecks.yml
         VARS_FILES: "datadog-deployment-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: true
