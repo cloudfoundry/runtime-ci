@@ -30,6 +30,8 @@ baseReleases:
   repository: cloudfoundry/java-buildpack-release
 - name: loggregator
   repository: cloudfoundry/loggregator-release
+- name: loggregator-agent
+  repository: cloudfoundry/loggregator-agent-release
 - name: nats
   repository: cloudfoundry/nats-release
 - name: nodejs-buildpack
@@ -42,6 +44,8 @@ baseReleases:
   repository: cloudfoundry-incubator/cf-routing-release
 - name: ruby-buildpack
   repository: cloudfoundry/ruby-buildpack-release
+- name: silk
+  repository: cloudfoundry/silk-release
 - name: staticfile-buildpack
   repository: cloudfoundry/staticfile-buildpack-release
 - name: statsd-injector
@@ -85,10 +89,6 @@ opsReleases:
   repository: cloudfoundry/postgres-release
   cfDeploymentOpsFileDir: operations
   opsFile: use-postgres.yml
-- name: silk
-  repository: cloudfoundry/silk-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: use-silk-release.yml
 - name: syslog
   repository: cloudfoundry/syslog-release
   cfDeploymentOpsFileDir: operations/addons

@@ -75,6 +75,7 @@ main() {
    go-buildpack
    java-buildpack
    loggregator
+   loggregator-agent
    nats
    nodejs-buildpack
    php-buildpack
@@ -82,6 +83,7 @@ main() {
    routing
    ruby-buildpack
    cf-mysql
+   silk
    staticfile-buildpack
    statsd-injector
    uaa

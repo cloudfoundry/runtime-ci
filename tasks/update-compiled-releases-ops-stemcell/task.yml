@@ -38,6 +38,8 @@ inputs:
 - name: go-buildpack-release-tarball
 - name: java-buildpack-release
 - name: java-buildpack-release-tarball
+- name: loggregator-agent-release
+- name: loggregator-agent-release-tarball
 - name: loggregator-release
 - name: loggregator-release-tarball
 - name: nats-release
@@ -52,6 +54,8 @@ inputs:
 - name: routing-release-tarball
 - name: ruby-buildpack-release
 - name: ruby-buildpack-release-tarball
+- name: silk-release
+- name: silk-release-tarball
 - name: staticfile-buildpack-release
 - name: staticfile-buildpack-release-tarball
 - name: statsd-injector-release
