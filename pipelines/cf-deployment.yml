@@ -713,7 +713,7 @@ jobs:
         operations/add-external-ips-for-cloud-sql-db.yml
         operations/windows-cell.yml
         operations/windows2016-cell.yml
-        operations/use-gcs-blobstore.yml
+        operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
       VARS_FILES: |
         external-db-vars.yml
