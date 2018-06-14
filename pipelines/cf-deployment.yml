@@ -1052,13 +1052,13 @@ jobs:
           operations/use-compiled-releases.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/experimental/use-bosh-dns.yml
+          operations/use-postgres.yml
+          operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/disable-consul.yml
           operations/bosh-lite.yml
           operations/experimental/disable-consul-bosh-lite.yml
-          operations/use-postgres.yml
-          operations/experimental/enable-tls-cloud-controller-postgres.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
