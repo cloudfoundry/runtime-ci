@@ -857,6 +857,7 @@ jobs:
           operations/experimental/use-garden-containerd.yml
           operations/experimental/secure-service-credentials.yml
           operations/experimental/use-bosh-dns.yml
+          operations/experimental/use-bosh-dns-for-containers.yml
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
           operations/experimental/secure-service-credentials-with-pxc-release.yml
