@@ -317,6 +317,12 @@ jobs:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         SECURITY_GROUP_NAME: uaa
         VARS_STORE_PATH: ""
+    - task: run-nfs-broker-push-errand
+      file: cf-deployment-concourse-tasks/run-errand/task.yml
+      input_mapping:
+        bbl-state: baba-yaga-env-director-state
+      params:
+        ERRAND_NAME: nfs-broker-push
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
