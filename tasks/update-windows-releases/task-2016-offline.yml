@@ -21,5 +21,5 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  ORIGINAL_OPS_FILE_PATH: operations/experimental/use-offline-windows2016fs.yml
+  ORIGINAL_OPS_FILE_PATH: operations/use-offline-windows2016fs.yml
   UPDATED_OPS_FILE_PATH: use-offline-windows2016fs.yml
