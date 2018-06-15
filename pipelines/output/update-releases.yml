@@ -4771,6 +4771,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/backup-and-restore/enable-backup-restore.yml
       UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-backup-and-restore-sdk
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -4840,6 +4847,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-broker-registrar
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -4909,6 +4923,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-service-discovery.yml
       UPDATED_OPS_FILE_PATH: enable-service-discovery.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-cf-app-sd
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -4978,6 +4999,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
       UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-credhub
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5047,6 +5075,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
       UPDATED_OPS_FILE_PATH: use-haproxy.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-haproxy
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5118,6 +5153,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-mapfs
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5187,6 +5229,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-nfs-volume
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5256,6 +5305,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
       UPDATED_OPS_FILE_PATH: use-postgres.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-postgres
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5325,6 +5381,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-syslog
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5396,6 +5459,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-bosh-dns
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5517,6 +5587,13 @@ jobs:
       BASE_OPS_FILE_DIR: .
       NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-bits-service
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5588,6 +5665,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-log-cache.yml
       UPDATED_OPS_FILE_PATH: use-log-cache.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-log-cache
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5657,6 +5741,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-pxc.yml
       UPDATED_OPS_FILE_PATH: use-pxc.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-pxc
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -5772,6 +5863,13 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/windows-enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: windows-enable-component-syslog.yml
 
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run-windows-syslog
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
