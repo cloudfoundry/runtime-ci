@@ -854,6 +854,8 @@ jobs:
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
+          operations/experimental/bits-service.yml
+          operations/experimental/bits-service-s3.yml
           operations/experimental/use-garden-containerd.yml
           operations/experimental/secure-service-credentials.yml
           operations/experimental/use-bosh-dns.yml
@@ -1479,8 +1481,8 @@ jobs:
     - lite-cats
     - upgrade-cats
     - upgrade-cats-windows2016
-    - experimental-cats
-    - experimental-smoke-tests
+    # - experimental-cats
+    # - experimental-smoke-tests
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
