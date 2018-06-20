@@ -696,8 +696,10 @@ jobs:
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
-      manifest: cf-deployment-develop
+      manifest: manifest-and-updated-stemcell-ops-file
     params:
+      MANIFEST_NAME: use-xenial-stemcell.yml
+      MANIFEST_DESTINATION: operations/experimental/use-xenial-stemcell.yml
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-deployment-develop
