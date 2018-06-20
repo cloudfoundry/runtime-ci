@@ -17,6 +17,7 @@ EOF
   # HACK: We are copying cf-deployment.yml here to pass these as one input
   # to the compile-release-from-manifest task later
   cp ops-files/cf-deployment.yml manifest-and-updated-stemcell-ops-file/cf-deployment.yml
+  cp ops-files/operations/experimental/use-compiled-releases-xenial-stemcell.yml manifest-and-updated-stemcell-ops-file/use-compiled-releases-xenial-stemcell.yml
 }
 
 output_commit_message() {
