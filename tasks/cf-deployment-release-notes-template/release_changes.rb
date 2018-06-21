@@ -34,7 +34,7 @@ class ReleaseUpdates
     end
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
-      return [] unless manifest
+      return [] if manifest.nil? || manifest.empty?
       return manifest['releases'] + manifest['stemcells'] unless opsfile
 
       manifest.select do |op|
