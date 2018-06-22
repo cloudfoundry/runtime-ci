@@ -104,7 +104,7 @@ jobs:
           inputs:
           - name: cf-deployment-all-branches
           params:
-            RUN_SEMANTIC: true
+            RUN_SEMANTIC: false
           run:
             dir: cf-deployment-all-branches
             path: scripts/test
