@@ -241,6 +241,7 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
+
 - name: hermione-env-director-state
   type: git
   source:
@@ -249,6 +250,7 @@ resources:
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
+
 - name: hermione-env-integration-configs
   type: git
   source:
@@ -257,7 +259,8 @@ resources:
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
-    - rats_integration_config.json
+    - reporter_config.json
+
 - name: hermione-env-vars-store
   type: git
   source:
