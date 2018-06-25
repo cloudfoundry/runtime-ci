@@ -171,6 +171,7 @@ resources:
     paths:
     - bbl-state
     - ha-proxy-vars.yml
+
 - name: bellatrix-env-integration-configs
   type: git
   source:
@@ -179,6 +180,8 @@ resources:
     private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - integration_config.json
+    - reporter_config.json
+
 - name: luna-env-director-state
   type: git
   source:
@@ -1193,9 +1196,9 @@ jobs:
           task_creation
           service_instance_sharing
     - task: run-cats
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: bellatrix-env-integration-configs
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
       params:
         FLAKE_ATTEMPTS: 0
 
