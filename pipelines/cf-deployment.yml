@@ -644,6 +644,10 @@ jobs:
         operations/windows2016-cell.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
+        operations/use-bosh-dns.yml
+        operations/use-bosh-dns-for-containers.yml
+        operations/use-bosh-dns-for-windows2016-containers.yml
+        operations/enable-service-discovery.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
@@ -870,7 +874,6 @@ jobs:
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
-          operations/enable-service-discovery.yml
           operations/experimental/enable-bpm.yml
           operations/experimental/use-log-cache.yml
           operations/experimental/enable-routing-integrity.yml
