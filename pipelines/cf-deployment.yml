@@ -870,7 +870,7 @@ jobs:
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
-          operations/experimental/enable-service-discovery.yml
+          operations/enable-service-discovery.yml
           operations/experimental/enable-bpm.yml
           operations/experimental/use-log-cache.yml
           operations/experimental/enable-routing-integrity.yml
