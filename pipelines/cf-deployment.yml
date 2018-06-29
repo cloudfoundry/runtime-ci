@@ -620,6 +620,11 @@ jobs:
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       VARS_STORE_PATH: ""
+  - task: configure-domain-for-service-discovery
+    file: runtime-ci/tasks/configure-default-domain-for-service-discovery/task.yml
+    input_mapping:
+      vars-store: trelawney-env-director-state
+      bbl-state: trelawney-env-director-state
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -1303,8 +1308,6 @@ jobs:
           diego_docker
           task_creation
           service_instance_sharing
-    - task: configure-domain-for-service-discovery
-      file: runtime-ci/configure-default-domain-for-service-discovery/task.yml
 
 - name: lite-enable-docker-and-tasks
   serial: true
