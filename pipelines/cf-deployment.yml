@@ -1303,6 +1303,8 @@ jobs:
           diego_docker
           task_creation
           service_instance_sharing
+    - task: configure-domain-for-service-discovery
+      file: runtime-ci/configure-default-domain-for-service-discovery/task.yml
 
 - name: lite-enable-docker-and-tasks
   serial: true
