@@ -625,6 +625,9 @@ jobs:
     input_mapping:
       vars-store: trelawney-env-director-state
       bbl-state: trelawney-env-director-state
+    params:
+      VARS_STORE_PATH: ""
+      SYSTEM_DOMAIN: trelawney.cf-app.com
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
