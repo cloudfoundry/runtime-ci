@@ -995,7 +995,6 @@ jobs:
         OPS_FILES: |
           operations/scale-database-cluster.yml
           operations/windows2016-cell.yml
-          operations/use-4-azs-for-router.yml
           operations/use-haproxy.yml
           operations/use-haproxy-public-network.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
