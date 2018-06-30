@@ -873,6 +873,8 @@ jobs:
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
           operations/experimental/use-garden-containerd.yml
+          operations/experimental/bits-service.yml
+          operations/experimental/bits-service-s3.yml
           operations/experimental/secure-service-credentials.yml
           operations/use-bosh-dns.yml
           operations/use-bosh-dns-for-containers.yml
