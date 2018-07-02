@@ -4,7 +4,7 @@
 source cf-deployment-concourse-tasks/shared-functions
 
 function move_cf_admin_password() {
-  cf_admin_password=$(get_password_from_credhub "cf_admin_password")
+  setup_password_from_credhub "cf_admin_password"
   bosh_director_name=$(jq -r .bosh.directorName bbl-state/${BBL_STATE_DIR}/bbl-state.json)
 
   set +x
