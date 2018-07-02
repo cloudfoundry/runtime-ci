@@ -677,6 +677,7 @@ jobs:
     file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      WATS_INTEGRATION_CONFIG_FILE: cats_windows2016_integration_config.json
     input_mapping:
       bbl-state: trelawney-env-director-state
       integration-configs: trelawney-env-integration-configs
