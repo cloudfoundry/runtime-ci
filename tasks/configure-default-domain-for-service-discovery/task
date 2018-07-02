@@ -7,7 +7,7 @@ if [ -z "${VARS_STORE_PATH}" ]; then
   setup_bosh_env_vars
   setup_password_from_credhub cf_admin_password
 else
-  CF_PASSWORD=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
+  cf_admin_password=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
 fi
 
 echo "Setting target to api.${SYSTEM_DOMAIN}"
