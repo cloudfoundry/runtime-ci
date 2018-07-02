@@ -5,18 +5,20 @@ set -eu
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
-if [ -z "${VARS_STORE_PATH}" ]; then
-  setup_bosh_env_vars
-  CF_PASSWORD=$(get_password_from_credhub cf_admin_password)
-else
-  CF_PASSWORD=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
-fi
+set +x
+  if [ -z "${VARS_STORE_PATH}" ]; then
+    setup_bosh_env_vars
+    CF_PASSWORD=$(get_password_from_credhub cf_admin_password)
+  else
+    CF_PASSWORD=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
+  fi
 
-echo "Setting target to api.${SYSTEM_DOMAIN}"
-cf api --skip-ssl-validation api.${SYSTEM_DOMAIN}
+  echo "Setting target to api.${SYSTEM_DOMAIN}"
+  cf api --skip-ssl-validation api.${SYSTEM_DOMAIN}
 
-echo "Authenticating as admin"
-cf auth admin "${CF_PASSWORD}"
+  echo "Authenticating as admin"
+  cf auth admin "${CF_PASSWORD}"
+set -x
 
 echo "Creating tcp domain"
 cf create-shared-domain tcp.${SYSTEM_DOMAIN} --router-group default-tcp || true
