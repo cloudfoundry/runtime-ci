@@ -558,6 +558,10 @@ jobs:
       - get: bosh-bootloader
       - get: every-tuesday-morning
         trigger: true
+    - task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: snitch-env-director-state
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
