@@ -339,8 +339,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
     private_key: ((snitch_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
 - name: bosh-deployment
   type: git
   source:
@@ -1059,16 +1057,25 @@ jobs:
         bbl-state: snitch-env-director-state
       params:
         INFRASTRUCTURE: bosh-lite
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-develop
+        new-ops-files: snitch-env-director-state
+      params:
+        BASE_OPS_FILE_DIR: operations
+        NEW_OPS_FILES: use-default-route-registrar-timeout-for-api.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
         cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
+        ops-files: collected-ops-files
         vars-files: snitch-env-director-state
       params:
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: |
+          operations/use-default-route-registrar-timeout-for-api.yml
           operations/use-compiled-releases.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/experimental/use-bosh-dns.yml
