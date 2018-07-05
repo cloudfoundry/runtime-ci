@@ -44,6 +44,15 @@ groups:
   - run-bosh-cleanup-experimental
   - remove-claimed-lock-experimental
 
+- name: cats
+  jobs:
+  - add-claimed-lock-cats
+  - setup-infrastructure-cats
+  - update-infrastructure-cats
+  - destroy-infrastructure-cats
+  - run-bosh-cleanup-cats
+  - remove-claimed-lock-cats
+
 - name: exploratory
   jobs:
   - setup-infrastructure-hagrid
@@ -91,6 +100,14 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
     pool: cf-deployment/experimental
+    private_key: ((relint_ci_pools_readwrite_deploy_key))
+
+- name: cats-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cats
     private_key: ((relint_ci_pools_readwrite_deploy_key))
 
 # Plan patches
@@ -176,6 +193,13 @@ resources:
     paths:
     - bbl-state
     - bbl-config
+
+- name: cats-env-director-state
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cats-env.git
+    private_key: ((cats_env_readwrite_deploy_key.private_key))
 
 # Time
 - name: every-tuesday-morning
@@ -270,6 +294,21 @@ jobs:
       pool-resource: experimental-pool
   - put: experimental-pool
     params: {add_claimed: experimental-pool}
+
+- name: add-claimed-lock-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cats
+    output_mapping:
+      pool-resource: cats-pool
+  - put: cats-pool
+    params: {add_claimed: cats-pool}
 
 # Setup infrastructure
 - name: setup-infrastructure-fresh
@@ -503,6 +542,38 @@ jobs:
   - put: experimental-pool
     params: {release: experimental-pool}
 
+- name: setup-infrastructure-cats
+  serial_groups: [cats]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cats-pool
+    trigger: true
+    passed: [ add-claimed-lock-cats ]
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: cats-env-director-state
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_REGION: us-central1
+      BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
+      LB_DOMAIN: cats.cf-app.com
+      BBL_ENV_NAME: cats
+    input_mapping:
+      bbl-state: cats-env-director-state
+      bbl-config: cats-env-director-state
+    ensure:
+      put: cats-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: cats-pool
+    params: {release: cats-pool}
+
 # Update infrastructure
 - name: update-infrastructure-fresh
   serial: true
@@ -691,6 +762,41 @@ jobs:
     - put: experimental-pool
       params: {release: experimental-pool}
 
+- name: update-infrastructure-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - put: cats-pool
+        params: {acquire: true}
+      - get: cats-env-director-state
+      - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-morning
+        trigger: true
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_IAAS: gcp
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_REGION: us-central1
+        BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
+        BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
+        LB_DOMAIN: cats.cf-app.com
+        BBL_ENV_NAME: cats
+      input_mapping:
+        bbl-state: cats-env-director-state
+        bbl-config: cats-env-director-state
+      ensure:
+        put: cats-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: cats-pool
+      params: {release: cats-pool}
+
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
   serial: true
@@ -817,6 +923,31 @@ jobs:
       bbl-state: hermione-env-director-state
     ensure:
       put: hermione-env-director-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-cats
+  serial_groups: [cats]
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: cats-pool
+      params: {claim: cats}
+    - get: cats-env-director-state
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: cats-env-director-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: cats-env-director-state
+    ensure:
+      put: cats-env-director-state
       params:
         repository: updated-bbl-state
         rebase: true
@@ -962,6 +1093,24 @@ jobs:
   - put: experimental-pool
     params: {remove: experimental-pool}
 
+- name: remove-claimed-lock-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: cats-pool
+    passed: [ destroy-infrastructure-cats ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cats
+    output_mapping:
+      pool-resource: cats-pool
+  - put: cats-pool
+    params: {remove: cats-pool}
+
 # BOSH cleanup
 - name: run-bosh-cleanup-lite
   serial: true
@@ -1027,3 +1176,20 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
+
+- name: run-bosh-cleanup-cats
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: cats-env-director-state
+      - get: daily
+        trigger: true
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: cats-env-director-state
