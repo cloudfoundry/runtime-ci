@@ -320,7 +320,6 @@ jobs:
     trigger: true
     passed: [ add-claimed-lock-fresh ]
   - aggregate:
-    - get: runtime-ci
     - get: luna-env-director-state
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
@@ -353,7 +352,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: runtime-ci
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
@@ -382,7 +380,6 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
-    - get: runtime-ci
     - get: maxime-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
@@ -414,7 +411,6 @@ jobs:
     trigger: true
     passed: [ add-claimed-lock-lite ]
   - aggregate:
-    - get: runtime-ci
     - get: snitch-env-director-state
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
@@ -448,7 +444,6 @@ jobs:
     passed: [add-claimed-lock-upgrade]
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: runtime-ci
     - get: trelawney-env-director-state
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
@@ -481,7 +476,6 @@ jobs:
     trigger: true
     passed: [ add-claimed-lock-stable ]
   - aggregate:
-    - get: runtime-ci
     - get: bellatrix-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: setup-infrastructure
@@ -517,7 +511,6 @@ jobs:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: hermione-env-director-state
-    - get: runtime-ci
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -585,7 +578,6 @@ jobs:
     - aggregate:
       - put: fresh-pool
         params: {acquire: true}
-      - get: runtime-ci
       - get: luna-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: bosh-bootloader
@@ -623,7 +615,6 @@ jobs:
     - aggregate:
       - put: lite-pool
         params: {acquire: true}
-      - get: runtime-ci
       - get: snitch-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: bosh-bootloader
@@ -663,7 +654,6 @@ jobs:
     - aggregate:
       - put: upgrade-pool
         params: {acquire: true}
-      - get: runtime-ci
       - get: trelawney-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: every-tuesday-morning
@@ -699,7 +689,6 @@ jobs:
     - aggregate:
       - put: stable-pool
         params: {acquire: true}
-      - get: runtime-ci
       - get: bellatrix-env-director-state
       - get: cf-deployment-concourse-tasks
       - get: every-tuesday-morning
@@ -807,7 +796,6 @@ jobs:
     - put: fresh-pool
       params: {claim: luna}
     - get: luna-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -834,7 +822,6 @@ jobs:
     - put: lite-pool
       params: {claim: snitch}
     - get: snitch-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - try:
       do:
@@ -863,7 +850,6 @@ jobs:
     - put: upgrade-pool
       params: {claim: trelawney}
     - get: trelawney-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
@@ -886,7 +872,6 @@ jobs:
     - put: stable-pool
       params: {claim: bellatrix}
     - get: bellatrix-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -911,7 +896,6 @@ jobs:
     - put: experimental-pool
       params: {claim: hermione}
     - get: hermione-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -936,7 +920,6 @@ jobs:
     - put: cats-pool
       params: {claim: cats}
     - get: cats-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -959,7 +942,6 @@ jobs:
   plan:
   - aggregate:
     - get: hagrid-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -984,7 +966,6 @@ jobs:
   plan:
   - aggregate:
     - get: maxime-env-director-state
-    - get: runtime-ci
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
