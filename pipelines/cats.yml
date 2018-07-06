@@ -216,6 +216,9 @@ jobs:
       trigger: true
       passed: [ run-cats ]
     - aggregate:
+      - get: cf-acceptance-tests
+        passed: [ run-cats]
+        trigger: true
       - get: runtime-ci
       - get: cats-env-integration-configs
     - task: cleanup-cats
