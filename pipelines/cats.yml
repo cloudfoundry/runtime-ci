@@ -40,10 +40,17 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
-- name: cf-acceptance-tests
+- name: cf-acceptance-tests-develop
   type: git
   source:
-    branch: master
+    branch: develop
+    uri: git@github.com:ishustava/cf-acceptance-tests.git
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
+
+- name: cf-acceptance-tests-rc
+  type: git
+  source:
+    branch: release-candidate
     uri: git@github.com:ishustava/cf-acceptance-tests.git
     private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
@@ -68,14 +75,15 @@ resources:
 #     branch: master
 #     private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
 #     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
+#     initial_version: 0.0.0
 #     file: cats-version-test
 
-# - name: deliver-tracker-story
-#   type: tracker
-#   source:
-#     token: ((cf_relint_tracker_api_token))
-#     project_id: "1382120"
-#     tracker_url: https://www.pivotaltracker.com
+- name: deliver-tracker-story
+  type: tracker
+  source:
+    token: ((cf_relint_tracker_api_token))
+    project_id: "1382120"
+    tracker_url: https://www.pivotaltracker.com
 
 jobs:
 - name: unit-test
@@ -83,13 +91,15 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: cf-acceptance-tests
+  - get: cf-acceptance-tests-develop
     trigger: true
   - get: cf-test-helpers
     trigger: true
   - get: runtime-ci
   - task: run-cats-unit-tests
     file: runtime-ci/tasks/run-cats-unit-tests/task.yml
+    input_mapping:
+      cf-acceptance-tests: cf-acceptance-tests-develop
   - task: run-cf-test-helpers-unit-tests
     file: runtime-ci/tasks/run-cf-test-helpers-unit-tests/task.yml
 
@@ -174,7 +184,7 @@ jobs:
       passed: [ deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-develop
         trigger: true
         passed: [ unit-test ]
       - get: cats-env-integration-configs
@@ -193,8 +203,26 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: cats-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-develop
       params:
         FLAKE_ATTEMPTS: 0
+
+- name: bless-cats
+  public: true
+  serial: true
+  build_logs_to_retain: 100
+  plan:
+  - get: cf-acceptance-tests-develop
+    trigger: true
+    passed:
+    - run-cats
+  - put: cf-acceptance-tests-rc
+    params:
+      repository: cf-acceptance-tests-develop
+  - put: deliver-tracker-story
+    params:
+      repos:
+        - cf-acceptance-tests-develop
 
 - name: release-pool
   public: true
@@ -216,7 +244,7 @@ jobs:
       trigger: true
       passed: [ run-cats ]
     - aggregate:
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-develop
         passed: [ run-cats]
         trigger: true
       - get: runtime-ci
