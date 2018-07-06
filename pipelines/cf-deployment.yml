@@ -27,7 +27,6 @@ groups:
   - experimental-release-pool
   - lite-enable-docker-and-tasks
   - unit-test-ops-files
-  - unit-test-cats
   - unit-test-update-releases-coverage
   - bless-manifest
   - ship-it-major
@@ -37,7 +36,6 @@ groups:
 - name: ex
   jobs:
   - unit-test-ops-files
-  - unit-test-cats
   - unit-test-update-releases-coverage
   - experimental-acquire-pool
   - experimental-cats
@@ -51,7 +49,6 @@ groups:
 - name: fr
   jobs:
   - unit-test-ops-files
-  - unit-test-cats
   - unit-test-update-releases-coverage
   - fresh-acquire-pool
   - fresh-cats
@@ -63,7 +60,6 @@ groups:
 - name: up
   jobs:
   - unit-test-ops-files
-  - unit-test-cats
   - unit-test-update-releases-coverage
   - upgrade-acquire-pool
   - upgrade-deploy
@@ -76,7 +72,6 @@ groups:
 - name: li
   jobs:
   - unit-test-ops-files
-  - unit-test-cats
   - unit-test-update-releases-coverage
   - lite-acquire-pool
   - lite-cats
@@ -313,11 +308,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
     private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
-- name: cf-test-helpers
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry-incubator/cf-test-helpers
 - name: cf-deployment-master
   type: git
   source:
@@ -453,21 +443,6 @@ jobs:
       run:
         dir: cf-deployment-develop
         path: scripts/test
-
-- name: unit-test-cats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - get: cf-acceptance-tests
-    trigger: true
-  - get: cf-test-helpers
-    trigger: true
-  - get: runtime-ci
-  - task: run-cats-unit-tests
-    file: runtime-ci/tasks/run-cats-unit-tests/task.yml
-  - task: run-cf-test-helpers-unit-tests
-    file: runtime-ci/tasks/run-cf-test-helpers-unit-tests/task.yml
 
 - name: unit-test-update-releases-coverage
   serial: true
@@ -1116,7 +1091,6 @@ jobs:
       passed: [ experimental-set-feature-flags ]
     - aggregate:
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: hermione-env-integration-configs
       - get: hermione-env-vars-store
         passed: [ experimental-set-feature-flags ]
@@ -1204,7 +1178,6 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: bellatrix-env-integration-configs
       - get: bellatrix-env-director-state
       - get: cf-deployment-master
@@ -1261,7 +1234,6 @@ jobs:
       - get: cf-deployment-master
         passed: [ stable-periodic-cats ]
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
         passed: [ stable-periodic-cats ]
     - task: update-branch
       file: runtime-ci/tasks/update-cats-branch-with-cf-deployment-version/task.yml
@@ -1386,7 +1358,6 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
@@ -1410,7 +1381,6 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
         passed: [upgrade-set-feature-flags]
@@ -1434,7 +1404,6 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
         passed: [upgrade-set-feature-flags]
@@ -1459,7 +1428,6 @@ jobs:
       passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
       - get: cf-acceptance-tests
-        passed: [ unit-test-cats ]
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-integration-configs
