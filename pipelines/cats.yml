@@ -78,7 +78,7 @@ resources:
 #     tracker_url: https://www.pivotaltracker.com
 
 jobs:
-- name: unit-test-cats
+- name: unit-test
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -101,9 +101,9 @@ jobs:
     - get: cf-deployment-master
       trigger: true
     - put: cats-pool
-      params: {acquire: true}
+      params: {claim: cats}
 
-- name: cats-release-pool-manual
+- name: release-pool-manual
   public: true
   plan:
   - get: cats-pool
@@ -113,6 +113,7 @@ jobs:
       params: {release: cats-pool}
 
 - name: deploy
+  serial_groups: [ cats ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -160,20 +161,8 @@ jobs:
         repository: updated-integration-configs
         rebase: true
 
-- name: acquire-pool-cats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: cf-acceptance-tests
-      trigger: true
-      passed: [ unit-test-cats ]
-    - put: cats-pool
-      params: {claim: cats}
-
-- name: cats
+- name: run-cats
+  serial_groups: [ cats ]
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -182,11 +171,12 @@ jobs:
     do:
     - get: cats-pool
       trigger: true
-      passed: [ acquire-pool-cats, deploy ]
+      passed: [ deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests
-        passed: [ acquire-pool-cats ]
+        trigger: true
+        passed: [ unit-test ]
       - get: cats-env-integration-configs
       - get: cats-env-director-state
     - task: enable-docker-and-tasks
@@ -206,11 +196,11 @@ jobs:
       params:
         FLAKE_ATTEMPTS: 0
 
-- name: cats-release-pool
+- name: release-pool
   public: true
   plan:
   - get: cats-pool
-    passed: [ cats ]
+    passed: [ run-cats ]
     trigger: true
   - put: cats-pool
     params: {release: cats-pool}
@@ -224,7 +214,7 @@ jobs:
     do:
     - get: cats-pool
       trigger: true
-      passed: [ cats ]
+      passed: [ run-cats ]
     - aggregate:
       - get: runtime-ci
       - get: cats-env-integration-configs
