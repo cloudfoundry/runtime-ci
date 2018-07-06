@@ -45,14 +45,14 @@ resources:
   source:
     branch: develop
     uri: git@github.com:ishustava/cf-acceptance-tests.git
-    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
+    private_key: ((shustava_cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: cf-acceptance-tests-rc
   type: git
   source:
     branch: release-candidate
     uri: git@github.com:ishustava/cf-acceptance-tests.git
-    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
+    private_key: ((shustava_cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: cf-test-helpers
   type: git
