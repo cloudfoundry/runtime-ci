@@ -222,8 +222,6 @@ jobs:
       input_mapping:
         integration-config: cats-env-integration-configs
         cf-acceptance-tests: cf-acceptance-tests-develop
-      params:
-        FLAKE_ATTEMPTS: 0
 
 - name: bless-cats
   public: true
