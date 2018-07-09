@@ -108,6 +108,17 @@ jobs:
   - task: run-cf-test-helpers-unit-tests
     file: runtime-ci/tasks/run-cf-test-helpers-unit-tests/task.yml
 
+- name: acquire-pool-cats
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-acceptance-tests-develop
+      trigger: true
+      passed: [ unit-test ]
+    - put: cats-pool
+      params: {claim: cats}
+
 - name: acquire-pool
   public: true
   serial: true
@@ -132,49 +143,53 @@ jobs:
   public: true
   build_logs_to_retain: 100
   plan:
-  - get: cats-pool
-    trigger: true
-    passed: [ acquire-pool ]
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment-master
-    - get: cats-env-director-state
-    - get: cats-env-integration-configs
-  - task: bosh-upload-stemcell-cats
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-master
-      bbl-state: cats-env-director-state
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: cats-env-director-state
-      cf-deployment: cf-deployment-master
-      ops-files: cf-deployment-master
-      vars-files: cats-env-director-state
-    params:
-      SYSTEM_DOMAIN: cats.cf-app.com
-      OPS_FILES: |
-        operations/use-compiled-releases.yml
-  - task: run-bosh-cleanup
-    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-    input_mapping:
-      bbl-state: cats-env-director-state
-  - task: update-integration-configs
-    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
-    params:
-      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
-    input_mapping:
-      bbl-state: cats-env-director-state
-      integration-configs: cats-env-integration-configs
-    ensure:
-      put: cats-env-integration-configs
+  - on_success:
+      put: cats-pool
+      params: {release: cats-pool}
+    do:
+    - get: cats-pool
+      trigger: true
+      passed: [ acquire-pool ]
+    - aggregate:
+      - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-master
+      - get: cats-env-director-state
+      - get: cats-env-integration-configs
+    - task: bosh-upload-stemcell-cats
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      input_mapping:
+        cf-deployment: cf-deployment-master
+        bbl-state: cats-env-director-state
       params:
-        repository: updated-integration-configs
-        rebase: true
+        INFRASTRUCTURE: google
+    - task: bosh-deploy-cf
+      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      input_mapping:
+        bbl-state: cats-env-director-state
+        cf-deployment: cf-deployment-master
+        ops-files: cf-deployment-master
+        vars-files: cats-env-director-state
+      params:
+        SYSTEM_DOMAIN: cats.cf-app.com
+        OPS_FILES: |
+          operations/use-compiled-releases.yml
+    - task: run-bosh-cleanup
+      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+      input_mapping:
+        bbl-state: cats-env-director-state
+    - task: update-integration-configs
+      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+      params:
+        CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      input_mapping:
+        bbl-state: cats-env-director-state
+        integration-configs: cats-env-integration-configs
+      ensure:
+        put: cats-env-integration-configs
+        params:
+          repository: updated-integration-configs
+          rebase: true
 
 - name: run-cats
   serial_groups: [ cats ]
@@ -186,12 +201,10 @@ jobs:
     do:
     - get: cats-pool
       trigger: true
-      passed: [ deploy ]
+      passed: [ acquire-pool-cats ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests-develop
-        trigger: true
-        passed: [ unit-test ]
       - get: cats-env-integration-configs
       - get: cats-env-director-state
     - task: enable-docker-and-tasks
