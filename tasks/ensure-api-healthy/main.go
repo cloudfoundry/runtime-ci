@@ -22,9 +22,7 @@ func main() {
 		numSuccessResponses int
 	)
 
-	startTime := time.Now()
-
-	for time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC {
+	for startTime := time.Now(); time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC; time.Sleep(5 * time.Second) {
 		resp, err := client.Get(v2InfoURL)
 		if err != nil || resp.StatusCode != 200 {
 			numSuccessResponses = 0
@@ -51,7 +49,6 @@ func main() {
 			fmt.Println("API is healthy!")
 			os.Exit(0)
 		}
-		time.Sleep(5 * time.Second)
 	}
 
 	fmt.Printf("API is unhealthy: could not get %d successful API responses in the row with %ds timeout\n", MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES, MAX_TIMEOUT_IN_SEC)
