@@ -29,7 +29,10 @@ class ReleaseUpdates
       filepath = File.join(input_name, filename)
       if File.exists? filepath
         file_text = File.read(filepath)
-        YAML.load(file_text)
+        parsed_yaml = YAML.load(file_text)
+
+        return nil unless parsed_yaml
+        parsed_yaml
       end
     end
 
