@@ -5456,7 +5456,7 @@ jobs:
     params:
       RELEASE_NAME: bosh-dns
       TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns.yml
+      ORIGINAL_OPS_FILE_PATH: operations/use-bosh-dns.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
 
   - task: bosh-upload-stemcell
@@ -5498,7 +5498,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: use-bosh-dns.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns.yml
+      OPS_FILE_DESTINATION: operations/use-bosh-dns.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5514,7 +5514,7 @@ jobs:
     params:
       RELEASE_NAME: bosh-dns
       TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
+      ORIGINAL_OPS_FILE_PATH: operations/use-bosh-dns-rename-network-and-deployment.yml
       UPDATED_OPS_FILE_PATH: use-bosh-dns-rename-network-and-deployment.yml
   - task: bosh-dry-run-bosh-dns
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
@@ -5527,7 +5527,7 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: bosh-dns
       OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
       SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: "operations/example-vars-files/vars-rename-network-and-deployment.yml"
+      VARS_FILES: "operations/example-vars-files/vars-rename-network.yml operations/example-vars-files/vars-rename-deployment.yml"
   - task: bosh-delete-deployment-bosh-dns
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5542,7 +5542,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: use-bosh-dns-rename-network-and-deployment.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-bosh-dns-rename-network-and-deployment.yml
+      OPS_FILE_DESTINATION: operations/use-bosh-dns-rename-network-and-deployment.yml
   - put: cf-deployment-develop
     params:
       rebase: true
