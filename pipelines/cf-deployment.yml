@@ -1476,8 +1476,8 @@ jobs:
     - lite-cats
     - upgrade-cats
     - upgrade-cats-windows2016
-    - experimental-cats
-    - experimental-smoke-tests
+    # - experimental-cats
+    # - experimental-smoke-tests
   - put: cf-deployment-release-candidate
     params:
       repository: cf-deployment-develop
