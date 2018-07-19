@@ -18,6 +18,8 @@ groups:
 
   - update-binary-buildpack
 
+  - update-bosh-dns-aliases
+
   - update-bpm
 
   - update-capi
@@ -73,6 +75,8 @@ groups:
   - update-xenial-stemcell-and-recompile-releases
 
   - update-binary-buildpack-xenial
+
+  - update-bosh-dns-aliases-xenial
 
   - update-bpm-xenial
 
@@ -264,6 +268,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/binary-buildpack-release
+- name: bosh-dns-aliases-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bosh-dns-aliases-release
 - name: bpm-release
   type: bosh-io-release
   source:
@@ -428,6 +436,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: binary-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: bosh-dns-aliases-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: bosh-dns-aliases-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: bpm-release-gcs
   type: gcs-resource
   source:
@@ -649,6 +663,94 @@ jobs:
     params:
       RELEASE_NAME: binary-buildpack
   - put: binary-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-bosh-dns-aliases
+  serial_groups:
+  - update-bosh-dns-aliases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: bosh-dns-aliases-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-bosh-dns-aliases
+    file: runtime-ci/tasks/update-single-release/task.yml
+    input_mapping:
+      release: bosh-dns-aliases-release
+      deployment-configuration: cf-deployment-develop
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: bosh-dns-aliases
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-bosh-dns-aliases
+
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: bosh-dns-aliases-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+  - put: bosh-dns-aliases-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -2798,6 +2900,83 @@ jobs:
       RELEASE_NAME: binary-buildpack
       PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
   - put: binary-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
+- name: update-bosh-dns-aliases-xenial
+  serial_groups:
+  - update-bosh-dns-aliases
+  - update-bosh-dns-aliases-xenial
+  - update-stemcell-and-recompile-releases
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: bosh-dns-aliases-release
+      passed:
+      - update-bosh-dns-aliases
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: current-commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      ops-files: cf-deployment-develop
+      bosh-io-release: bosh-dns-aliases-release
+      compiled-release-tarball: exported-release
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: bosh-dns-aliases-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -5982,6 +6161,7 @@ jobs:
   public: true
   serial_groups:
   - update-binary-buildpack
+  - update-bosh-dns-aliases
   - update-bpm
   - update-capi
   - update-cf-mysql
@@ -6016,6 +6196,9 @@ jobs:
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
     - get: binary-buildpack-release
+      params:
+        tarball: false
+    - get: bosh-dns-aliases-release
       params:
         tarball: false
     - get: bpm-release
@@ -6119,6 +6302,15 @@ jobs:
         exported-release: exported-release-binary-buildpack
       params:
         RELEASE_NAME: binary-buildpack
+    - task: compile-release-bosh-dns-aliases
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-bosh-dns-aliases
+      params:
+        RELEASE_NAME: bosh-dns-aliases
     - task: compile-release-bpm
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6350,6 +6542,7 @@ jobs:
     input_mapping:
       ops-files: cf-deployment-develop
       binary-buildpack-release-tarball: exported-release-binary-buildpack
+      bosh-dns-aliases-release-tarball: exported-release-bosh-dns-aliases
       bpm-release-tarball: exported-release-bpm
       capi-release-tarball: exported-release-capi
       cf-mysql-release-tarball: exported-release-cf-mysql
@@ -6380,6 +6573,10 @@ jobs:
     - put: binary-buildpack-release-gcs
       params:
         file: exported-release-binary-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: bosh-dns-aliases-release-gcs
+      params:
+        file: exported-release-bosh-dns-aliases/*.tgz
         predefined_acl: publicRead
     - put: bpm-release-gcs
       params:
@@ -6506,6 +6703,9 @@ jobs:
   - update-binary-buildpack
   - update-binary-buildpack-xenial
 
+  - update-bosh-dns-aliases
+  - update-bosh-dns-aliases-xenial
+
   - update-bpm
   - update-bpm-xenial
 
@@ -6591,6 +6791,11 @@ jobs:
 
     - get: binary-buildpack-release
       passed: [update-binary-buildpack]
+      params:
+        tarball: false
+
+    - get: bosh-dns-aliases-release
+      passed: [update-bosh-dns-aliases]
       params:
         tarball: false
 
@@ -6743,6 +6948,17 @@ jobs:
         exported-release: exported-release-binary-buildpack
       params:
         RELEASE_NAME: binary-buildpack
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+
+    - task: compile-release-bosh-dns-aliases
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-bosh-dns-aliases
+      params:
+        RELEASE_NAME: bosh-dns-aliases
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
 
     - task: compile-release-bpm
@@ -7030,6 +7246,8 @@ jobs:
 
       binary-buildpack-release-tarball: exported-release-binary-buildpack
 
+      bosh-dns-aliases-release-tarball: exported-release-bosh-dns-aliases
+
       bpm-release-tarball: exported-release-bpm
 
       capi-release-tarball: exported-release-capi
@@ -7085,6 +7303,11 @@ jobs:
     - put: binary-buildpack-release-gcs
       params:
         file: exported-release-binary-buildpack/*.tgz
+        predefined_acl: publicRead
+
+    - put: bosh-dns-aliases-release-gcs
+      params:
+        file: exported-release-bosh-dns-aliases/*.tgz
         predefined_acl: publicRead
 
     - put: bpm-release-gcs
