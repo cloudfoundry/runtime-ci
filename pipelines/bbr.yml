@@ -293,8 +293,6 @@ jobs:
           operations/enable-nfs-volume-service.yml
           operations/backup-and-restore/enable-backup-restore-nfs-broker.yml
           operations/enable-nfs-test-server.yml
-          operations/experimental/use-bosh-dns.yml
-          operations/experimental/use-bosh-dns-for-containers.yml
           operations/experimental/secure-service-credentials.yml
           operations/backup-and-restore/enable-backup-restore-credhub.yml
     - task: open-asgs-for-credhub

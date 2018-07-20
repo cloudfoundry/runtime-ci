@@ -625,9 +625,6 @@ jobs:
         operations/windows2016-cell.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
-        operations/use-bosh-dns.yml
-        operations/use-bosh-dns-for-containers.yml
-        operations/use-bosh-dns-for-windows2016-containers.yml
         operations/enable-service-discovery.yml
       VARS_FILES: |
         external-db-vars.yml
@@ -816,7 +813,7 @@ jobs:
         MANIFEST_FILE: turbulence.yml
         SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
         VARS_STORE_FILE: turbulence-deployment-vars.yml
-        OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml experiments/operations/add-bosh-dns-bosh-io-release.yml"
+        OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml"
       ensure:
         put: hermione-env-turbulence-vars
         params:
@@ -850,8 +847,6 @@ jobs:
           operations/experimental/bits-service.yml
           operations/experimental/bits-service-s3.yml
           operations/experimental/secure-service-credentials.yml
-          operations/use-bosh-dns.yml
-          operations/use-bosh-dns-for-containers.yml
           operations/scale-database-cluster.yml
           operations/experimental/perm-service.yml
           operations/experimental/use-pxc.yml
@@ -1055,7 +1050,6 @@ jobs:
           operations/use-default-route-registrar-timeout-for-api.yml
           operations/use-compiled-releases.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
-          operations/experimental/use-bosh-dns.yml
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/experimental/skip-consul-cell-registrations.yml

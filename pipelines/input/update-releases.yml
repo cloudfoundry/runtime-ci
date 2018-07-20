@@ -97,10 +97,6 @@ opsReleases:
   opsFile: enable-component-syslog.yml
   varsFilesInput: cf-deployment-develop
   varsFiles: "operations/addons/example-vars-files/vars-enable-component-syslog.yml"
-- name: bosh-dns
-  repository: cloudfoundry/bosh-dns-release
-  cfDeploymentOpsFileDir: operations
-  opsFile: use-bosh-dns.yml
 - name: bits-service
   repository: cloudfoundry-incubator/bits-service-release
   cfDeploymentOpsFileDir: operations/experimental

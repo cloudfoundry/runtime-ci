@@ -149,8 +149,6 @@ groups:
 
   - update-syslog
 
-  - update-bosh-dns
-
   - update-bits-service
 
   - update-log-cache
@@ -409,10 +407,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/syslog-release
-- name: bosh-dns-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/bosh-dns-release
 - name: bits-service-release
   type: bosh-io-release
   source:
@@ -4995,7 +4989,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-broker-registrar
   serial: true
   public: true
@@ -5071,7 +5065,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-cf-app-sd
   serial: true
   public: true
@@ -5147,7 +5141,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-credhub
   serial: true
   public: true
@@ -5223,7 +5217,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-haproxy
   serial: true
   public: true
@@ -5301,7 +5295,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-mapfs
   serial: true
   public: true
@@ -5377,7 +5371,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-nfs-volume
   serial: true
   public: true
@@ -5453,7 +5447,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-postgres
   serial: true
   public: true
@@ -5529,7 +5523,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-syslog
   serial: true
   public: true
@@ -5607,126 +5601,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
-- name: update-bosh-dns
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: bosh-dns-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-bosh-dns
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: bosh-dns-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bosh-dns
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/use-bosh-dns.yml
-      UPDATED_OPS_FILE_PATH: use-bosh-dns.yml
-
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-bosh-dns
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-
-      ops-files: updated-ops-file
-
-
-      vars-files: greengrass-env-director-state
-
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bosh-dns
-      OPS_FILES: |
-        use-bosh-dns.yml
-
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-
-  - task: bosh-delete-deployment-bosh-dns
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
-  - task: commit-generated-manifest-and-ops-bosh-dns
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-bosh-dns.yml
-      OPS_FILE_DESTINATION: operations/use-bosh-dns.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
-
-  - task: update-release-bosh-dns-rename-network-and-deployment
-    file: runtime-ci/tasks/update-single-release/task.yml
-    input_mapping:
-      release: bosh-dns-release
-      deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bosh-dns
-      TARGET: opsfile
-      ORIGINAL_OPS_FILE_PATH: operations/use-bosh-dns-rename-network-and-deployment.yml
-      UPDATED_OPS_FILE_PATH: use-bosh-dns-rename-network-and-deployment.yml
-  - task: bosh-dry-run-bosh-dns
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: cf-deployment-develop
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bosh-dns
-      OPS_FILES: "use-bosh-dns-rename-network-and-deployment.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: "operations/example-vars-files/vars-rename-network.yml operations/example-vars-files/vars-rename-deployment.yml"
-  - task: bosh-delete-deployment-bosh-dns
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bosh-dns
-  - task: commit-generated-manifest-and-ops-bosh-dns
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-bosh-dns-rename-network-and-deployment.yml
-      OPS_FILE_DESTINATION: operations/use-bosh-dns-rename-network-and-deployment.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-
+  #
 - name: update-bits-service
   serial: true
   public: true
@@ -5813,7 +5688,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-log-cache
   serial: true
   public: true
@@ -5889,7 +5764,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-pxc
   serial: true
   public: true
@@ -6011,7 +5886,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 - name: update-windows-syslog
   serial: true
   public: true
@@ -6089,7 +5964,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
+  #
 
 
 - name: update-windows-stemcell
