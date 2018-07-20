@@ -4989,7 +4989,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-broker-registrar
   serial: true
   public: true
@@ -5065,7 +5064,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-cf-app-sd
   serial: true
   public: true
@@ -5141,7 +5139,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-credhub
   serial: true
   public: true
@@ -5217,7 +5214,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-haproxy
   serial: true
   public: true
@@ -5295,7 +5291,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-mapfs
   serial: true
   public: true
@@ -5371,7 +5366,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-nfs-volume
   serial: true
   public: true
@@ -5447,7 +5441,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-postgres
   serial: true
   public: true
@@ -5523,7 +5516,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-syslog
   serial: true
   public: true
@@ -5601,7 +5593,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-bits-service
   serial: true
   public: true
@@ -5688,7 +5679,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-log-cache
   serial: true
   public: true
@@ -5764,7 +5754,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-pxc
   serial: true
   public: true
@@ -5886,7 +5875,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 - name: update-windows-syslog
   serial: true
   public: true
@@ -5964,7 +5952,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-  #
 
 
 - name: update-windows-stemcell
