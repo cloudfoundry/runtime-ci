@@ -506,8 +506,7 @@ jobs:
       OPS_FILES: |
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/use-compiled-releases.yml
-        operations/rename-network.yml
-        operations/rename-deployment.yml
+        operations/rename-network-and-deployment.yml
         operations/set-bbs-active-key.yml
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
