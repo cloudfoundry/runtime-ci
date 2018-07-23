@@ -718,6 +718,13 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       STEMCELL_NAME: '*.tgz'
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
