@@ -494,12 +494,20 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       INFRASTRUCTURE: google
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment-develop
+      new-ops-files: luna-env-director-state
+    params:
+      BASE_OPS_FILE_DIR: operations
+      NEW_OPS_FILES: rename-isolation-segment-network.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
+      ops-files: collected-ops-files
       vars-files: luna-env-vars-files
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
@@ -510,6 +518,7 @@ jobs:
         operations/set-bbs-active-key.yml
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
+        operations/rename-isolation-segment-network.yml
         operations/addons/enable-component-syslog.yml
         operations/scale-database-cluster.yml
       VARS_FILES: |
