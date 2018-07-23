@@ -183,8 +183,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
     private_key: ((luna_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
 - name: luna-env-integration-configs
   type: git
   source:
