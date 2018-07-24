@@ -30,6 +30,8 @@ baseReleases:
   repository: cloudfoundry/go-buildpack-release
 - name: java-buildpack
   repository: cloudfoundry/java-buildpack-release
+- name: log-cache
+  repository: cloudfoundry/log-cache-release
 - name: loggregator
   repository: cloudfoundry/loggregator-release
 - name: loggregator-agent
@@ -101,11 +103,6 @@ opsReleases:
   repository: cloudfoundry-incubator/bits-service-release
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: bits-service.yml
-  varsFilesInput: greengrass-env-director-state
-- name: log-cache
-  repository: cloudfoundry/log-cache-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: use-log-cache.yml
   varsFilesInput: greengrass-env-director-state
 - name: pxc
   repository: cloudfoundry-incubator/pxc-release
