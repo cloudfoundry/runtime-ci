@@ -863,7 +863,6 @@ jobs:
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
           operations/experimental/enable-bpm.yml
-          operations/experimental/use-log-cache.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
         VARS_FILES: "datadog-deployment-vars.yml s3-vars.yml"
