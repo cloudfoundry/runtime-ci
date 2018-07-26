@@ -1066,8 +1066,6 @@ jobs:
     - aggregate:
       - get: cf-acceptance-tests
       - get: hermione-env-integration-configs
-      - get: hermione-env-vars-store
-        passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-develop
         passed: [ experimental-set-feature-flags ]
       - get: cf-deployment-concourse-tasks
@@ -1305,13 +1303,13 @@ jobs:
       passed: [ experimental-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: hermione-env-vars-store
       - get: cf-deployment-develop
         passed: [ experimental-deploy ]
+      - get: hermione-env-director-state
     - task: set-feature-flags
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
       input_mapping:
-        vars-store: hermione-env-vars-store
+        bbl-state: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
         ENABLED_FEATURE_FLAGS: |
