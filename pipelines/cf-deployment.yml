@@ -811,6 +811,7 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
+          operations/experimental/enable-bpm.yml
           operations/experimental/use-xenial-stemcell.yml
           operations/experimental/use-compiled-releases-xenial-stemcell.yml
           operations/test/add-datadog-firehose-nozzle.yml
@@ -829,7 +830,6 @@ jobs:
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
-          operations/experimental/enable-bpm.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
         VARS_FILES: "datadog-deployment-vars.yml s3-vars.yml"
