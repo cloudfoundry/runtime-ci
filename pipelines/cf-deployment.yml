@@ -488,7 +488,7 @@ jobs:
       BASE_OPS_FILE_DIR: operations
       NEW_OPS_FILES: rename-isolation-segment-network.yml
   - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+    file: cf-deployment-concourse-tasks//bosh-deploy/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
       cf-deployment: cf-deployment-develop
@@ -517,7 +517,7 @@ jobs:
     input_mapping:
       bbl-state: luna-env-director-state
   - task: update-integration-configs
-    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
     input_mapping:
@@ -601,7 +601,7 @@ jobs:
       BASE_OPS_FILE_DIR: operations
       NEW_OPS_FILES: add-external-ips-for-cloud-sql-db.yml
   - task: bosh-deploy-cf
-    file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
       cf-deployment: cf-deployment-develop
@@ -635,7 +635,7 @@ jobs:
     input_mapping:
       bbl-state: trelawney-env-director-state
   - task: update-integration-configs
-    file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
       CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       WATS_INTEGRATION_CONFIG_FILE: cats_windows2016_integration_config.json
@@ -816,7 +816,7 @@ jobs:
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
@@ -863,7 +863,7 @@ jobs:
       input_mapping:
         bbl-state: hermione-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
@@ -939,7 +939,7 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: "use-4-azs-for-router.yml"
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
         cf-deployment: cf-deployment-master
@@ -967,7 +967,7 @@ jobs:
       input_mapping:
         bbl-state: bellatrix-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
@@ -1016,7 +1016,7 @@ jobs:
         BASE_OPS_FILE_DIR: operations
         NEW_OPS_FILES: use-default-route-registrar-timeout-for-api.yml
     - task: bosh-deploy-cf-deployment
-      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
         cf-deployment: cf-deployment-develop
@@ -1041,7 +1041,7 @@ jobs:
       input_mapping:
         bbl-state: snitch-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
@@ -1155,7 +1155,7 @@ jobs:
       - get: cf-deployment-master
         passed: [ stable-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
       params:
@@ -1231,7 +1231,7 @@ jobs:
         passed: [ fresh-deploy ]
     - task: enable-docker-and-tasks
       attempts: 2
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: luna-env-director-state
       params:
@@ -1256,7 +1256,7 @@ jobs:
         passed: [upgrade-deploy]
       - get: trelawney-env-director-state
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: trelawney-env-director-state
       params:
@@ -1282,7 +1282,7 @@ jobs:
       - get: cf-deployment-develop
         passed: [ lite-deploy ]
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
       params:
@@ -1307,7 +1307,7 @@ jobs:
         passed: [ experimental-deploy ]
       - get: hermione-env-director-state
     - task: set-feature-flags
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
       params:

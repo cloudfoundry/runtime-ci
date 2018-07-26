@@ -278,7 +278,7 @@ jobs:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: "enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
         cf-deployment: cf-deployment-rc

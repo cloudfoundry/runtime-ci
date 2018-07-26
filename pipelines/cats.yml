@@ -164,7 +164,7 @@ jobs:
       params:
         INFRASTRUCTURE: google
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: cats-env-director-state
         cf-deployment: cf-deployment-master
@@ -179,7 +179,7 @@ jobs:
       input_mapping:
         bbl-state: cats-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
@@ -208,7 +208,7 @@ jobs:
       - get: cats-env-integration-configs
       - get: cats-env-director-state
     - task: enable-docker-and-tasks
-      file: cf-deployment-concourse-tasks/credhub-compatible/set-feature-flags/task.yml
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
       input_mapping:
         bbl-state: cats-env-director-state
       params:
