@@ -789,7 +789,7 @@ jobs:
         cf-deployment: hermione-env-turbulence-manifest
         bbl-state: hermione-env-director-state
         ops-files: runtime-ci
-        vars-files: hermione-env-turbulence-vars
+        vars-files: hermione-env-director-state
       params:
         MANIFEST_FILE: turbulence.yml
         SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
