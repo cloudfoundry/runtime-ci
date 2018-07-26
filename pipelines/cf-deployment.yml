@@ -254,27 +254,13 @@ resources:
     - integration_config.json
     - reporter_config.json
 
-- name: hermione-env-vars-store
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-vars.yml
-    - datadog-deployment-vars.yml
-    - s3-vars.yml
-    - runtime-config.yml
-    - confab-timeout-vars.yml
-    - scale-windows-cells.yml
 - name: hermione-env-turbulence-vars
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
-    paths:
-    - turbulence-deployment-vars.yml
+
 - name: hermione-env-turbulence-manifest
   type: git
   source:
@@ -283,6 +269,7 @@ resources:
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - turbulence.yml
+
 - name: cf-deployment-develop
   type: git
   source:
@@ -594,11 +581,9 @@ jobs:
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
-      vars-store: trelawney-env-director-state
       bbl-state: trelawney-env-director-state
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
-      VARS_STORE_PATH: ""
   - task: configure-domain-for-service-discovery
     file: runtime-ci/tasks/configure-default-domain-for-service-discovery/task.yml
     input_mapping:
@@ -786,7 +771,6 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: cf-deployment-develop
         passed: [ experimental-acquire-pool ]
-      - get: hermione-env-vars-store
       - get: hermione-env-turbulence-manifest
       - get: hermione-env-turbulence-vars
       - get: hermione-env-director-state
@@ -803,8 +787,8 @@ jobs:
       file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
-        runtime-configs: hermione-env-vars-store
-        vars-files: hermione-env-vars-store
+        runtime-configs: hermione-env-director-state
+        vars-files: hermione-env-director-state
       params:
         RUNTIME_CONFIG_FILE: runtime-config.yml
     - task: deploy-turbulence-api-experimental
@@ -828,18 +812,16 @@ jobs:
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
-        vars-store: hermione-env-vars-store
         bbl-state: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
     - task: bosh-deploy-cf
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
         ops-files: cf-deployment-develop
-        vars-store: hermione-env-vars-store
-        vars-files: hermione-env-vars-store
+        vars-files: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
@@ -876,21 +858,16 @@ jobs:
         STREAMING_LOGS_THRESHOLD: 3
         APP_SYSLOG_AVAILABILITY_THRESHOLD: 3
         FAIL_ON_DOWNTIME: true
-      ensure:
-        put: hermione-env-vars-store
-        params:
-          repository: updated-vars-store
-          rebase: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
     - task: update-integration-configs
-      file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+      file: cf-deployment-concourse-tasks/credhub-compatible/update-integration-configs/task.yml
       params:
         CATS_INTEGRATION_CONFIG_FILE: integration_config.json
       input_mapping:
-        vars-store: hermione-env-vars-store
+        bbl-state: hermione-env-director-state
         integration-configs: hermione-env-integration-configs
       ensure:
         put: hermione-env-integration-configs
@@ -901,7 +878,6 @@ jobs:
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
-        vars-store: hermione-env-vars-store
       params:
         INSTANCE_GROUP_NAME: credhub
         SYSTEM_DOMAIN: hermione.cf-app.com
@@ -910,7 +886,6 @@ jobs:
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
-        vars-store: hermione-env-vars-store
       params:
         INSTANCE_GROUP_NAME: uaa
         SYSTEM_DOMAIN: hermione.cf-app.com
@@ -952,11 +927,9 @@ jobs:
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
-        vars-store: bellatrix-env-director-state
         bbl-state: bellatrix-env-director-state
       params:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
-        VARS_STORE_PATH: ""
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:

@@ -5,12 +5,8 @@ set -eu
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
-if [ -z "${VARS_STORE_PATH}" ]; then
-  setup_bosh_env_vars
-  setup_password_from_credhub cf_admin_password
-else
-  cf_admin_password=$(bosh interpolate vars-store/${VARS_STORE_PATH} --path=/cf_admin_password)
-fi
+setup_bosh_env_vars
+setup_password_from_credhub cf_admin_password
 
 echo "Setting target to api.${SYSTEM_DOMAIN}"
 cf api --skip-ssl-validation api.${SYSTEM_DOMAIN}

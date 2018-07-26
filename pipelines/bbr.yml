@@ -299,22 +299,18 @@ jobs:
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        vars-store: baba-yaga-env-director-state
       params:
         INSTANCE_GROUP_NAME: credhub
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         SECURITY_GROUP_NAME: credhub
-        VARS_STORE_PATH: ""
     - task: open-asgs-for-uaa
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
-        vars-store: baba-yaga-env-director-state
       params:
         INSTANCE_GROUP_NAME: uaa
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         SECURITY_GROUP_NAME: uaa
-        VARS_STORE_PATH: ""
     - task: run-nfs-broker-push-errand
       file: cf-deployment-concourse-tasks/run-errand/task.yml
       input_mapping:
