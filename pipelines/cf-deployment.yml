@@ -254,13 +254,6 @@ resources:
     - integration_config.json
     - reporter_config.json
 
-- name: hermione-env-turbulence-vars
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_readwrite_deploy_key.private_key))
-
 - name: hermione-env-turbulence-manifest
   type: git
   source:
@@ -772,7 +765,6 @@ jobs:
       - get: cf-deployment-develop
         passed: [ experimental-acquire-pool ]
       - get: hermione-env-turbulence-manifest
-      - get: hermione-env-turbulence-vars
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
       - get: aws-xenial-stemcell
@@ -795,20 +787,13 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         cf-deployment: hermione-env-turbulence-manifest
-        vars-store: hermione-env-turbulence-vars
         bbl-state: hermione-env-director-state
         ops-files: runtime-ci
         vars-files: hermione-env-turbulence-vars
       params:
         MANIFEST_FILE: turbulence.yml
         SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
-        VARS_STORE_FILE: turbulence-deployment-vars.yml
         OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml"
-      ensure:
-        put: hermione-env-turbulence-vars
-        params:
-          repository: updated-vars-store
-          rebase: true
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
