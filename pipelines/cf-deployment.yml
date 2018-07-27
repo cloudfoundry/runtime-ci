@@ -811,7 +811,6 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
-          operations/experimental/enable-bpm.yml
           operations/experimental/use-xenial-stemcell.yml
           operations/experimental/use-compiled-releases-xenial-stemcell.yml
           operations/test/add-datadog-firehose-nozzle.yml
