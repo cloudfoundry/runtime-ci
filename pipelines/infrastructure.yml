@@ -941,6 +941,8 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: daily
+      trigger: true
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
@@ -965,6 +967,8 @@ jobs:
   build_logs_to_retain: 100
   plan:
   - aggregate:
+    - get: daily
+      trigger: true
     - get: maxime-env-director-state
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
