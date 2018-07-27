@@ -945,10 +945,11 @@ jobs:
       trigger: true
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
-  - task: guarantee-no-existing-cf-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: hagrid-env-director-state
+  - try:
+      task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: hagrid-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
@@ -971,10 +972,11 @@ jobs:
       trigger: true
     - get: maxime-env-director-state
     - get: cf-deployment-concourse-tasks
-  - task: guarantee-no-existing-cf-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: maxime-env-director-state
+  - try:
+      task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: maxime-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
