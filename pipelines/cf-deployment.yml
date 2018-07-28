@@ -241,8 +241,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
     private_key: ((hermione_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
 
 - name: hermione-env-integration-configs
   type: git
@@ -800,12 +798,20 @@ jobs:
         bbl-state: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: cf-deployment-develop
+        new-ops-files: hermione-env-director-state
+      params:
+        BASE_OPS_FILE_DIR: operations
+        NEW_OPS_FILES: enable-pxc-debug-logs.yml
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
         cf-deployment: cf-deployment-develop
-        ops-files: cf-deployment-develop
+        ops-files: collected-ops-files
         vars-files: hermione-env-director-state
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
@@ -823,6 +829,7 @@ jobs:
           operations/scale-database-cluster.yml
           operations/experimental/perm-service.yml
           operations/experimental/use-pxc.yml
+          operations/enable-pxc-debug-logs.yml
           operations/experimental/secure-service-credentials-with-pxc-release.yml
           operations/experimental/perm-service-with-pxc-release.yml
           operations/stop-skipping-tls-validation.yml
