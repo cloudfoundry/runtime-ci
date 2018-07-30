@@ -950,17 +950,18 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: hagrid-env-director-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: hagrid-env-director-state
-    params:
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-    ensure:
-      put: hagrid-env-director-state
+  - try:
+      task: destroy-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+      input_mapping:
+        bbl-state: hagrid-env-director-state
       params:
-        repository: updated-bbl-state
-        rebase: true
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      ensure:
+        put: hagrid-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
 
 - name: destroy-infrastructure-maxime
   serial: true
@@ -977,17 +978,18 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: maxime-env-director-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: maxime-env-director-state
-    params:
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-    ensure:
-      put: maxime-env-director-state
+  - try:
+      task: destroy-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+      input_mapping:
+        bbl-state: maxime-env-director-state
       params:
-        repository: updated-bbl-state
-        rebase: true
+        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      ensure:
+        put: maxime-env-director-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
 
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
