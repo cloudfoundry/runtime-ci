@@ -19,7 +19,6 @@ run:
 
 params:
   BBL_STATE_DIR: bbl-state
-  USE_VARS_STORE: true
   VARS_FILES:
   DEPLOYMENT_NAME_SUFFIX:
   SYSTEM_DOMAIN:
