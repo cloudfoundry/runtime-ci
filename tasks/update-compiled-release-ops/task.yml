@@ -24,4 +24,4 @@ run:
 params:
   RELEASE_NAME:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  PATH_TO_OPS_FILE: use-compiled-releases.yml
+  PATH_TO_OPS_FILE: operations/use-compiled-releases.yml
