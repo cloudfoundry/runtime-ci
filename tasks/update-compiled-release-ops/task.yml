@@ -16,7 +16,7 @@ inputs:
 
 outputs:
 - name: updated-compiled-releases-ops-file
-- name: commit-message
+- name: updated-commit-message
 
 run:
   path: runtime-ci/tasks/update-compiled-release-ops/task
