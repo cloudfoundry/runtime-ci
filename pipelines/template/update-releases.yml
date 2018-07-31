@@ -11,26 +11,26 @@ groups:
 - name: update-base-stemcells-and-releases
   jobs:
   - update-stemcell-and-recompile-releases
-{{range .baseReleases}}
+{{- range .baseReleases}}
   - update-{{.name}}
-{{end}}
+{{- end}}
 - name: update-base-xenial-stemcells-and-releases
   jobs:
   - update-xenial-stemcell-and-recompile-releases
-{{range .baseReleases}}
+{{- range .baseReleases}}
   - update-{{.name}}-xenial
-{{end}}
+{{- end}}
 - name: update-ops-releases
   jobs:
-{{range .opsReleases}}
+{{- range .opsReleases}}
   - update-{{.name}}
-{{end}}
+{{- end}}
 - name: update-windows-stemcells-and-releases
   jobs:
-{{range .windowsVersSupported}}
+{{- range .windowsVersSupported}}
   - update-{{.name}}-stemcell
   - update-{{.hyphenatedName}}-releases
-{{end}}
+{{- end}}
   - update-windows-2016-offline-releases
 
 - name: infrastructure
@@ -126,24 +126,26 @@ resources:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
     access_token: ((release_integration_download_bot_access_token))
-
-{{range .baseReleases}}- name: {{.name}}-release
+{{- range .baseReleases}}
+- name: {{.name}}-release
   type: bosh-io-release
   source:
     repository: {{.repository}}
-{{end}}
-{{range .opsReleases}}- name: {{.name}}-release
+{{- end}}
+{{- range .opsReleases}}
+- name: {{.name}}-release
   type: bosh-io-release
   source:
     repository: {{.repository}}
-{{end}}
-{{range .baseReleases}}- name: {{.name}}-release-gcs
+{{- end}}
+{{- range .baseReleases}}
+- name: {{.name}}-release-gcs
   type: gcs-resource
   source:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: {{.name}}-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-{{end}}
+{{- end}}
 - name: daily
   type: time
   source:
@@ -161,7 +163,7 @@ resources:
 ## ======================================================================
 
 jobs:
-{{range .baseReleases}}
+{{- range .baseReleases}}
 - name: update-{{.name}}
   serial_groups:
   - update-{{.name}}
@@ -196,7 +198,7 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-{{if not (contains "buildpack" .name)}}
+{{- if not (contains "buildpack" .name)}}
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -213,7 +215,7 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-{{.name}}
-{{end}}
+{{- end}}
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -249,13 +251,13 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{end}}
+{{- end}}
 
 # This Xenial-specific job is meant to be temporary, and should be removed once
 # Xenial becomes the one true stemcell.  It's missing elements such as updating
 # specific release versions, and updates compiled releases in an experimental
 # opsfile.
-{{range .baseReleases}}
+{{- range .baseReleases}}
 - name: update-{{.name}}-xenial
   serial_groups:
   - update-{{.name}}
@@ -314,7 +316,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: {{.name}}
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: {{.name}}-release-gcs
     params:
       file: exported-release/*.tgz
@@ -332,9 +334,10 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{end}}
+{{- end}}
 
-{{range .opsReleases}}- name: update-{{.name}}
+{{- range .opsReleases}}
+- name: update-{{.name}}
   serial: true
   public: true
   build_logs_to_retain: 100
@@ -363,7 +366,7 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
       UPDATED_OPS_FILE_PATH: {{.opsFile}}
-{{if contains "bits-service" .name}}
+{{- if contains "bits-service" .name}}
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -372,7 +375,7 @@ jobs:
     params:
       BASE_OPS_FILE_DIR: .
       NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
-{{end}}
+{{- end}}
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -385,27 +388,27 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-{{if contains "bits-service" .name}}
+{{- if contains "bits-service" .name}}
       ops-files: collected-ops-files
 {{else}}
       ops-files: updated-ops-file
-{{end}}
-{{if hasKey . "varsFiles"}}
+{{- end}}
+{{- if hasKey . "varsFiles"}}
       vars-files: {{.varsFilesInput}}
 {{else}}
       vars-files: greengrass-env-director-state
-{{end}}
+{{- end}}
     params:
       DEPLOYMENT_NAME_SUFFIX: {{.name}}
       OPS_FILES: |
         {{.opsFile}}
-{{if contains "bits-service" .name}}
+{{- if contains "bits-service" .name}}
         bits-service-webdav.yml
-{{end}}
+{{- end}}
       SYSTEM_DOMAIN: greengrass.cf-app.com
-{{if hasKey . "varsFiles"}}
+{{- if hasKey . "varsFiles"}}
       VARS_FILES: {{.varsFiles}}
-{{end}}
+{{- end}}
   - task: bosh-delete-deployment-{{.name}}
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -425,7 +428,7 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{if contains "pxc" .name}}
+{{- if contains "pxc" .name}}
   - task: update-release-{{.name}}-additional-ops-file
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
@@ -443,19 +446,19 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
-{{if hasKey . "varsFiles"}}
+{{- if hasKey . "varsFiles"}}
       vars-files: {{.varsFilesInput}}
 {{else}}
       vars-files: greengrass-env-director-state
-{{end}}
+{{- end}}
     params:
       DEPLOYMENT_NAME_SUFFIX: {{.name}}-additional-ops-file
       OPS_FILES: |
         migrate-cf-mysql-to-pxc.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-{{if hasKey . "varsFiles"}}
+{{- if hasKey . "varsFiles"}}
       VARS_FILES: {{.varsFiles}}
-{{end}}
+{{- end}}
   - task: bosh-delete-deployment-{{.name}}-additional-ops-file
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -475,9 +478,9 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{end}}
-{{end}}
-{{range .windowsVersSupported}}
+{{- end}}
+{{- end}}
+{{- range .windowsVersSupported}}
 - name: update-{{.name}}-stemcell
   public: true
   build_logs_to_retain: 100
@@ -493,11 +496,11 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
-{{if contains "windows2016" .name}}
+{{- if contains "windows2016" .name}}
       windows-stemcell: windows2016-stemcell
     params:
       USE_WINDOWS2016: true
-{{end}}
+{{- end}}
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -511,13 +514,14 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{end}}
+{{- end}}
 
 - name: update-stemcell-and-recompile-releases
   public: true
   serial_groups:
-{{range .baseReleases}}  - update-{{.name}}
-{{end}}
+{{- range .baseReleases}}
+  - update-{{.name}}
+{{- end}}
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -525,10 +529,11 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-{{range .baseReleases}}    - get: {{.name}}-release
+{{- range .baseReleases}}
+    - get: {{.name}}-release
       params:
         tarball: false
-{{end}}
+{{- end}}
     - get: stemcell
       trigger: true
       params:
@@ -545,7 +550,8 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - aggregate:
-{{range .baseReleases}}    - task: compile-release-{{.name}}
+{{- range .baseReleases}}
+    - task: compile-release-{{.name}}
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
         bbl-state: greengrass-env-director-state
@@ -554,19 +560,32 @@ jobs:
         exported-release: exported-release-{{.name}}
       params:
         RELEASE_NAME: {{.name}}
-{{end}}
-  - task: update-compiled-releases-ops-stemcell
-    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
+{{- end}}
+{{- range .baseReleases}}
+  - task: update-compiled-releases-ops-{{.name}}
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
+    {{- if hasKey . "bootstrap"}}
       ops-files: cf-deployment-develop
-{{range .baseReleases}}      {{.name}}-release-tarball: exported-release-{{.name}}
-{{end}}
+    {{- else}}
+      ops-files: updated-compiled-releases-ops-file
+    {{- end}}
+      bosh-io-release: {{.name}}-release
+      compiled-release-tarball: exported-release-{{.name}}
+    params:
+      RELEASE_NAME: {{.name}}
+    {{- if not (hasKey . "bootstrap")}}
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+    {{- end}}
+{{- end}}
   - aggregate:
-{{range .baseReleases}}    - put: {{.name}}-release-gcs
+{{- range .baseReleases}}
+    - put: {{.name}}-release-gcs
       params:
         file: exported-release-{{.name}}/*.tgz
         predefined_acl: publicRead
-{{end}}
+{{- end}}
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -587,10 +606,10 @@ jobs:
   public: true
   serial_groups:
   - update-stemcell-and-recompile-releases
-{{range .baseReleases}}
+{{- range .baseReleases}}
   - update-{{.name}}
   - update-{{.name}}-xenial
-{{end}}
+{{- end}}
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -598,12 +617,12 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-{{range .baseReleases}}
+{{- range .baseReleases}}
     - get: {{.name}}-release
       passed: [update-{{.name}}]
       params:
         tarball: false
-{{end}}
+{{- end}}
     - get: stemcell
       resource: xenial-stemcell
       trigger: true
@@ -618,7 +637,7 @@ jobs:
     params:
       STEMCELL_NAME: '*.tgz'
   - aggregate:
-{{range .baseReleases}}
+{{- range .baseReleases}}
     - task: compile-release-{{.name}}
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -629,24 +648,34 @@ jobs:
       params:
         RELEASE_NAME: {{.name}}
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-{{end}}
-  - task: update-compiled-releases-ops-stemcell
-    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
-    params:
-      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
-      COMPILED_RELEASE_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+{{- end}}
+{{- range .baseReleases}}
+  - task: update-compiled-releases-ops-{{.name}}
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
+    {{- if hasKey . "bootstrap"}}
       ops-files: cf-deployment-develop
-{{range .baseReleases}}
-      {{.name}}-release-tarball: exported-release-{{.name}}
-{{end}}
+    {{- else}}
+      ops-files: updated-compiled-releases-ops-file
+    {{- end}}
+      bosh-io-release: {{.name}}-release
+      compiled-release-tarball: exported-release-{{.name}}
+    params:
+      RELEASE_NAME: {{.name}}
+    {{- if hasKey . "bootstrap"}}
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+    {{- else}}
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+    {{- end}}
+{{- end}}
   - aggregate:
-{{range .baseReleases}}
+{{- range .baseReleases}}
     - put: {{.name}}-release-gcs
       params:
         file: exported-release-{{.name}}/*.tgz
         predefined_acl: publicRead
-{{end}}
+{{- end}}
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -663,7 +692,7 @@ jobs:
       rebase: true
       repository: updated-repo
 
-{{range .windowsVersSupported}}
+{{- range .windowsVersSupported}}
 - name: update-{{.hyphenatedName}}-releases
   serial: true
   public: true
@@ -676,7 +705,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
-    {{if contains "windows2016" .name}}
+    {{- if contains "windows2016" .name}}
     - get: winc-release
       trigger: true
       params:
@@ -690,7 +719,7 @@ jobs:
       trigger: true
       params:
         tarball: false
-    {{end}}
+    {{- end}}
     - get: hwc-buildpack-release
       trigger: true
       params:
@@ -704,13 +733,13 @@ jobs:
     file: runtime-ci/tasks/update-windows-releases/{{.updateWindowsReleasesTask}}
     input_mapping:
       original-ops-file: cf-deployment-develop
-      {{if contains "windows2016" .name}}
+      {{- if contains "windows2016" .name}}
       windows2016fs-release: windows2016fs-online-release
       {{else}}
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
-      {{end}}
+      {{- end}}
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -755,7 +784,7 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-{{end}}
+{{- end}}
 
 - name: update-windows-2016-offline-releases
   serial: true

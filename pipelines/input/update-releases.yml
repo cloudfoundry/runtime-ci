@@ -2,6 +2,7 @@
 baseReleases:
 - name: binary-buildpack
   repository: cloudfoundry/binary-buildpack-release
+  bootstrap: true
 - name: bosh-dns-aliases
   repository: cloudfoundry/bosh-dns-aliases-release
 - name: bpm

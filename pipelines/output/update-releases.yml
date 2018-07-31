@@ -15,159 +15,85 @@ groups:
 - name: update-base-stemcells-and-releases
   jobs:
   - update-stemcell-and-recompile-releases
-
   - update-binary-buildpack
-
   - update-bosh-dns-aliases
-
   - update-bpm
-
   - update-capi
-
   - update-cf-mysql
-
   - update-cf-networking
-
   - update-cf-smoke-tests
-
   - update-cf-syslog-drain
-
   - update-cflinuxfs2
-
   - update-consul
-
   - update-diego
-
   - update-dotnet-core-buildpack
-
   - update-garden-runc
-
   - update-go-buildpack
-
   - update-java-buildpack
-
   - update-log-cache
-
   - update-loggregator
-
   - update-loggregator-agent
-
   - update-nats
-
   - update-nodejs-buildpack
-
   - update-php-buildpack
-
   - update-python-buildpack
-
   - update-routing
-
   - update-ruby-buildpack
-
   - update-silk
-
   - update-staticfile-buildpack
-
   - update-statsd-injector
-
   - update-uaa
-
 - name: update-base-xenial-stemcells-and-releases
   jobs:
   - update-xenial-stemcell-and-recompile-releases
-
   - update-binary-buildpack-xenial
-
   - update-bosh-dns-aliases-xenial
-
   - update-bpm-xenial
-
   - update-capi-xenial
-
   - update-cf-mysql-xenial
-
   - update-cf-networking-xenial
-
   - update-cf-smoke-tests-xenial
-
   - update-cf-syslog-drain-xenial
-
   - update-cflinuxfs2-xenial
-
   - update-consul-xenial
-
   - update-diego-xenial
-
   - update-dotnet-core-buildpack-xenial
-
   - update-garden-runc-xenial
-
   - update-go-buildpack-xenial
-
   - update-java-buildpack-xenial
-
   - update-log-cache-xenial
-
   - update-loggregator-xenial
-
   - update-loggregator-agent-xenial
-
   - update-nats-xenial
-
   - update-nodejs-buildpack-xenial
-
   - update-php-buildpack-xenial
-
   - update-python-buildpack-xenial
-
   - update-routing-xenial
-
   - update-ruby-buildpack-xenial
-
   - update-silk-xenial
-
   - update-staticfile-buildpack-xenial
-
   - update-statsd-injector-xenial
-
   - update-uaa-xenial
-
 - name: update-ops-releases
   jobs:
-
   - update-backup-and-restore-sdk
-
   - update-broker-registrar
-
   - update-cf-app-sd
-
   - update-credhub
-
   - update-haproxy
-
   - update-mapfs
-
   - update-nfs-volume
-
   - update-postgres
-
   - update-syslog
-
   - update-bits-service
-
   - update-pxc
-
   - update-windows-syslog
-
 - name: update-windows-stemcells-and-releases
   jobs:
-
   - update-windows-stemcell
   - update-windows-2012-releases
-
   - update-windows2016-stemcell
   - update-windows-2016-releases
-
   - update-windows-2016-offline-releases
 
 - name: infrastructure
@@ -263,7 +189,6 @@ resources:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
     access_token: ((release_integration_download_bot_access_token))
-
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
@@ -376,7 +301,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
-
 - name: backup-and-restore-sdk-release
   type: bosh-io-release
   source:
@@ -425,7 +349,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/windows-syslog-release
-
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -594,7 +517,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-
 - name: daily
   type: time
   source:
@@ -612,7 +534,6 @@ resources:
 ## ======================================================================
 
 jobs:
-
 - name: update-binary-buildpack
   serial_groups:
   - update-binary-buildpack
@@ -647,7 +568,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -683,7 +603,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-bosh-dns-aliases
   serial_groups:
   - update-bosh-dns-aliases
@@ -718,7 +637,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -735,7 +653,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-bosh-dns-aliases
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -771,7 +688,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-bpm
   serial_groups:
   - update-bpm
@@ -806,7 +722,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -823,7 +738,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-bpm
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -859,7 +773,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-capi
   serial_groups:
   - update-capi
@@ -894,7 +807,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -911,7 +823,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-capi
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -947,7 +858,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-mysql
   serial_groups:
   - update-cf-mysql
@@ -982,7 +892,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -999,7 +908,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-cf-mysql
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1035,7 +943,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-networking
   serial_groups:
   - update-cf-networking
@@ -1070,7 +977,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1087,7 +993,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-cf-networking
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1123,7 +1028,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-smoke-tests
   serial_groups:
   - update-cf-smoke-tests
@@ -1158,7 +1062,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1175,7 +1078,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-cf-smoke-tests
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1211,7 +1113,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-syslog-drain
   serial_groups:
   - update-cf-syslog-drain
@@ -1246,7 +1147,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1263,7 +1163,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-cf-syslog-drain
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1299,7 +1198,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cflinuxfs2
   serial_groups:
   - update-cflinuxfs2
@@ -1334,7 +1232,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1351,7 +1248,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-cflinuxfs2
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1387,7 +1283,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-consul
   serial_groups:
   - update-consul
@@ -1422,7 +1317,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1439,7 +1333,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-consul
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1475,7 +1368,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-diego
   serial_groups:
   - update-diego
@@ -1510,7 +1402,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1527,7 +1418,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-diego
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1563,7 +1453,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-dotnet-core-buildpack
   serial_groups:
   - update-dotnet-core-buildpack
@@ -1598,7 +1487,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1634,7 +1522,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-garden-runc
   serial_groups:
   - update-garden-runc
@@ -1669,7 +1556,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1686,7 +1572,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-garden-runc
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1722,7 +1607,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-go-buildpack
   serial_groups:
   - update-go-buildpack
@@ -1757,7 +1641,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1793,7 +1676,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-java-buildpack
   serial_groups:
   - update-java-buildpack
@@ -1828,7 +1710,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1864,7 +1745,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-log-cache
   serial_groups:
   - update-log-cache
@@ -1899,7 +1779,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -1916,7 +1795,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-log-cache
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -1952,7 +1830,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-loggregator
   serial_groups:
   - update-loggregator
@@ -1987,7 +1864,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2004,7 +1880,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-loggregator
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2040,7 +1915,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-loggregator-agent
   serial_groups:
   - update-loggregator-agent
@@ -2075,7 +1949,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2092,7 +1965,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-loggregator-agent
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2128,7 +2000,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-nats
   serial_groups:
   - update-nats
@@ -2163,7 +2034,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2180,7 +2050,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-nats
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2216,7 +2085,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-nodejs-buildpack
   serial_groups:
   - update-nodejs-buildpack
@@ -2251,7 +2119,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2287,7 +2154,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-php-buildpack
   serial_groups:
   - update-php-buildpack
@@ -2322,7 +2188,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2358,7 +2223,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-python-buildpack
   serial_groups:
   - update-python-buildpack
@@ -2393,7 +2257,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2429,7 +2292,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-routing
   serial_groups:
   - update-routing
@@ -2464,7 +2326,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2481,7 +2342,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-routing
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2517,7 +2377,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-ruby-buildpack
   serial_groups:
   - update-ruby-buildpack
@@ -2552,7 +2411,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2588,7 +2446,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-silk
   serial_groups:
   - update-silk
@@ -2623,7 +2480,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2640,7 +2496,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-silk
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2676,7 +2531,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-staticfile-buildpack
   serial_groups:
   - update-staticfile-buildpack
@@ -2711,7 +2565,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2747,7 +2600,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-statsd-injector
   serial_groups:
   - update-statsd-injector
@@ -2782,7 +2634,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2799,7 +2650,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-statsd-injector
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2835,7 +2685,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-uaa
   serial_groups:
   - update-uaa
@@ -2870,7 +2719,6 @@ jobs:
       cf-deployment: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-
   - task: bosh-dry-run
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
@@ -2887,7 +2735,6 @@ jobs:
       bbl-state: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME: cf-dry-run-uaa
-
   - task: compile-release
     file: runtime-ci/tasks/compile-release-from-manifest/task.yml
     input_mapping:
@@ -2924,12 +2771,10 @@ jobs:
       rebase: true
       repository: updated-repo
 
-
 # This Xenial-specific job is meant to be temporary, and should be removed once
 # Xenial becomes the one true stemcell.  It's missing elements such as updating
 # specific release versions, and updates compiled releases in an experimental
 # opsfile.
-
 - name: update-binary-buildpack-xenial
   serial_groups:
   - update-binary-buildpack
@@ -2988,7 +2833,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: binary-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: binary-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3006,7 +2851,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-bosh-dns-aliases-xenial
   serial_groups:
   - update-bosh-dns-aliases
@@ -3065,7 +2909,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: bosh-dns-aliases
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: bosh-dns-aliases-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3083,7 +2927,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-bpm-xenial
   serial_groups:
   - update-bpm
@@ -3142,7 +2985,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: bpm
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: bpm-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3160,7 +3003,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-capi-xenial
   serial_groups:
   - update-capi
@@ -3219,7 +3061,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: capi
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: capi-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3237,7 +3079,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-mysql-xenial
   serial_groups:
   - update-cf-mysql
@@ -3296,7 +3137,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cf-mysql
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-mysql-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3314,7 +3155,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-networking-xenial
   serial_groups:
   - update-cf-networking
@@ -3373,7 +3213,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cf-networking
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-networking-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3391,7 +3231,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-smoke-tests-xenial
   serial_groups:
   - update-cf-smoke-tests
@@ -3450,7 +3289,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cf-smoke-tests
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-smoke-tests-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3468,7 +3307,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-syslog-drain-xenial
   serial_groups:
   - update-cf-syslog-drain
@@ -3527,7 +3365,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cf-syslog-drain
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cf-syslog-drain-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3545,7 +3383,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cflinuxfs2-xenial
   serial_groups:
   - update-cflinuxfs2
@@ -3604,7 +3441,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: cflinuxfs2
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: cflinuxfs2-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3622,7 +3459,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-consul-xenial
   serial_groups:
   - update-consul
@@ -3681,7 +3517,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: consul
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: consul-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3699,7 +3535,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-diego-xenial
   serial_groups:
   - update-diego
@@ -3758,7 +3593,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: diego
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: diego-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3776,7 +3611,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-dotnet-core-buildpack-xenial
   serial_groups:
   - update-dotnet-core-buildpack
@@ -3835,7 +3669,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: dotnet-core-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: dotnet-core-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3853,7 +3687,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-garden-runc-xenial
   serial_groups:
   - update-garden-runc
@@ -3912,7 +3745,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: garden-runc
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: garden-runc-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3930,7 +3763,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-go-buildpack-xenial
   serial_groups:
   - update-go-buildpack
@@ -3989,7 +3821,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: go-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: go-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4007,7 +3839,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-java-buildpack-xenial
   serial_groups:
   - update-java-buildpack
@@ -4066,7 +3897,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: java-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: java-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4084,7 +3915,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-log-cache-xenial
   serial_groups:
   - update-log-cache
@@ -4143,7 +3973,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: log-cache
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: log-cache-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4161,7 +3991,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-loggregator-xenial
   serial_groups:
   - update-loggregator
@@ -4220,7 +4049,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: loggregator
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: loggregator-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4238,7 +4067,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-loggregator-agent-xenial
   serial_groups:
   - update-loggregator-agent
@@ -4297,7 +4125,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: loggregator-agent
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: loggregator-agent-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4315,7 +4143,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-nats-xenial
   serial_groups:
   - update-nats
@@ -4374,7 +4201,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: nats
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: nats-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4392,7 +4219,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-nodejs-buildpack-xenial
   serial_groups:
   - update-nodejs-buildpack
@@ -4451,7 +4277,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: nodejs-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: nodejs-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4469,7 +4295,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-php-buildpack-xenial
   serial_groups:
   - update-php-buildpack
@@ -4528,7 +4353,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: php-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: php-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4546,7 +4371,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-python-buildpack-xenial
   serial_groups:
   - update-python-buildpack
@@ -4605,7 +4429,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: python-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: python-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4623,7 +4447,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-routing-xenial
   serial_groups:
   - update-routing
@@ -4682,7 +4505,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: routing
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: routing-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4700,7 +4523,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-ruby-buildpack-xenial
   serial_groups:
   - update-ruby-buildpack
@@ -4759,7 +4581,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: ruby-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: ruby-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4777,7 +4599,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-silk-xenial
   serial_groups:
   - update-silk
@@ -4836,7 +4657,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: silk
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: silk-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4854,7 +4675,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-staticfile-buildpack-xenial
   serial_groups:
   - update-staticfile-buildpack
@@ -4913,7 +4733,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: staticfile-buildpack
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: staticfile-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4931,7 +4751,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-statsd-injector-xenial
   serial_groups:
   - update-statsd-injector
@@ -4990,7 +4809,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: statsd-injector
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: statsd-injector-release-gcs
     params:
       file: exported-release/*.tgz
@@ -5008,7 +4827,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-uaa-xenial
   serial_groups:
   - update-uaa
@@ -5067,7 +4885,7 @@ jobs:
       compiled-release-tarball: exported-release
     params:
       RELEASE_NAME: uaa
-      PATH_TO_OPS_FILE: experimental/use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
   - put: uaa-release-gcs
     params:
       file: exported-release/*.tgz
@@ -5085,8 +4903,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
-
 - name: update-backup-and-restore-sdk
   serial: true
   public: true
@@ -5116,7 +4932,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/backup-and-restore/enable-backup-restore.yml
       UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5129,19 +4944,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: backup-and-restore-sdk
       OPS_FILES: |
         enable-backup-restore.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-backup-and-restore-sdk
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5161,7 +4970,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-broker-registrar
   serial: true
   public: true
@@ -5191,7 +4999,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5204,19 +5011,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: broker-registrar
       OPS_FILES: |
         enable-nfs-volume-service.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-broker-registrar
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5236,7 +5037,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-cf-app-sd
   serial: true
   public: true
@@ -5266,7 +5066,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-service-discovery.yml
       UPDATED_OPS_FILE_PATH: enable-service-discovery.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5279,19 +5078,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: cf-app-sd
       OPS_FILES: |
         enable-service-discovery.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-cf-app-sd
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5311,7 +5104,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-credhub
   serial: true
   public: true
@@ -5341,7 +5133,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
       UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5354,19 +5145,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: credhub
       OPS_FILES: |
         secure-service-credentials.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-credhub
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5386,7 +5171,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-haproxy
   serial: true
   public: true
@@ -5416,7 +5200,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
       UPDATED_OPS_FILE_PATH: use-haproxy.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5429,21 +5212,15 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
 
     params:
       DEPLOYMENT_NAME_SUFFIX: haproxy
       OPS_FILES: |
         use-haproxy.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
       VARS_FILES: vars-files/haproxy-vars.yml
-
   - task: bosh-delete-deployment-haproxy
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5463,7 +5240,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-mapfs
   serial: true
   public: true
@@ -5493,7 +5269,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5506,19 +5281,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: mapfs
       OPS_FILES: |
         enable-nfs-volume-service.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-mapfs
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5538,7 +5307,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-nfs-volume
   serial: true
   public: true
@@ -5568,7 +5336,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
       UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5581,19 +5348,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: nfs-volume
       OPS_FILES: |
         enable-nfs-volume-service.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-nfs-volume
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5613,7 +5374,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-postgres
   serial: true
   public: true
@@ -5643,7 +5403,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
       UPDATED_OPS_FILE_PATH: use-postgres.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5656,19 +5415,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: postgres
       OPS_FILES: |
         use-postgres.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-postgres
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5688,7 +5441,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-syslog
   serial: true
   public: true
@@ -5718,7 +5470,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5731,21 +5482,15 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: cf-deployment-develop
 
     params:
       DEPLOYMENT_NAME_SUFFIX: syslog
       OPS_FILES: |
         enable-component-syslog.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
       VARS_FILES: operations/addons/example-vars-files/vars-enable-component-syslog.yml
-
   - task: bosh-delete-deployment-syslog
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5765,7 +5510,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-bits-service
   serial: true
   public: true
@@ -5795,7 +5539,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/bits-service.yml
       UPDATED_OPS_FILE_PATH: bits-service.yml
-
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -5804,7 +5547,6 @@ jobs:
     params:
       BASE_OPS_FILE_DIR: .
       NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5817,21 +5559,15 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: collected-ops-files
 
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: bits-service
       OPS_FILES: |
         bits-service.yml
-
         bits-service-webdav.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-bits-service
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5851,7 +5587,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-pxc
   serial: true
   public: true
@@ -5881,7 +5616,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-pxc.yml
       UPDATED_OPS_FILE_PATH: use-pxc.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5894,19 +5628,13 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: pxc
       OPS_FILES: |
         use-pxc.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-pxc
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5926,7 +5654,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
   - task: update-release-pxc-additional-ops-file
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
@@ -5944,15 +5671,12 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: updated-ops-file
-
       vars-files: greengrass-env-director-state
-
     params:
       DEPLOYMENT_NAME_SUFFIX: pxc-additional-ops-file
       OPS_FILES: |
         migrate-cf-mysql-to-pxc.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
   - task: bosh-delete-deployment-pxc-additional-ops-file
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -5972,7 +5696,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-windows-syslog
   serial: true
   public: true
@@ -6002,7 +5725,6 @@ jobs:
       TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/windows-enable-component-syslog.yml
       UPDATED_OPS_FILE_PATH: windows-enable-component-syslog.yml
-
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -6015,21 +5737,15 @@ jobs:
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-
       ops-files: updated-ops-file
-
-
       vars-files: greengrass-env-director-state
 
     params:
       DEPLOYMENT_NAME_SUFFIX: windows-syslog
       OPS_FILES: |
         windows-enable-component-syslog.yml
-
       SYSTEM_DOMAIN: greengrass.cf-app.com
-
       VARS_FILES: vars-files/windows-enable-component-syslog-vars.yml
-
   - task: bosh-delete-deployment-windows-syslog
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -6049,9 +5765,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
-
-
 - name: update-windows-stemcell
   public: true
   build_logs_to_retain: 100
@@ -6067,7 +5780,6 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
-
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -6081,7 +5793,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-windows2016-stemcell
   public: true
   build_logs_to_retain: 100
@@ -6097,11 +5808,9 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
-
       windows-stemcell: windows2016-stemcell
     params:
       USE_WINDOWS2016: true
-
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -6115,7 +5824,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 
 - name: update-stemcell-and-recompile-releases
   public: true
@@ -6148,7 +5856,6 @@ jobs:
   - update-staticfile-buildpack
   - update-statsd-injector
   - update-uaa
-
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -6240,7 +5947,6 @@ jobs:
     - get: uaa-release
       params:
         tarball: false
-
     - get: stemcell
       trigger: true
       params:
@@ -6509,40 +6215,285 @@ jobs:
         exported-release: exported-release-uaa
       params:
         RELEASE_NAME: uaa
-
-  - task: update-compiled-releases-ops-stemcell
-    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
+  - task: update-compiled-releases-ops-binary-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
       ops-files: cf-deployment-develop
-      binary-buildpack-release-tarball: exported-release-binary-buildpack
-      bosh-dns-aliases-release-tarball: exported-release-bosh-dns-aliases
-      bpm-release-tarball: exported-release-bpm
-      capi-release-tarball: exported-release-capi
-      cf-mysql-release-tarball: exported-release-cf-mysql
-      cf-networking-release-tarball: exported-release-cf-networking
-      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
-      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
-      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
-      consul-release-tarball: exported-release-consul
-      diego-release-tarball: exported-release-diego
-      dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
-      garden-runc-release-tarball: exported-release-garden-runc
-      go-buildpack-release-tarball: exported-release-go-buildpack
-      java-buildpack-release-tarball: exported-release-java-buildpack
-      log-cache-release-tarball: exported-release-log-cache
-      loggregator-release-tarball: exported-release-loggregator
-      loggregator-agent-release-tarball: exported-release-loggregator-agent
-      nats-release-tarball: exported-release-nats
-      nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
-      php-buildpack-release-tarball: exported-release-php-buildpack
-      python-buildpack-release-tarball: exported-release-python-buildpack
-      routing-release-tarball: exported-release-routing
-      ruby-buildpack-release-tarball: exported-release-ruby-buildpack
-      silk-release-tarball: exported-release-silk
-      staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
-      statsd-injector-release-tarball: exported-release-statsd-injector
-      uaa-release-tarball: exported-release-uaa
-
+      bosh-io-release: binary-buildpack-release
+      compiled-release-tarball: exported-release-binary-buildpack
+    params:
+      RELEASE_NAME: binary-buildpack
+  - task: update-compiled-releases-ops-bosh-dns-aliases
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: bosh-dns-aliases-release
+      compiled-release-tarball: exported-release-bosh-dns-aliases
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-bpm
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: bpm-release
+      compiled-release-tarball: exported-release-bpm
+    params:
+      RELEASE_NAME: bpm
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-capi
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: capi-release
+      compiled-release-tarball: exported-release-capi
+    params:
+      RELEASE_NAME: capi
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-mysql
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-mysql-release
+      compiled-release-tarball: exported-release-cf-mysql
+    params:
+      RELEASE_NAME: cf-mysql
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-networking
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release-cf-networking
+    params:
+      RELEASE_NAME: cf-networking
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-smoke-tests
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release-cf-smoke-tests
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-syslog-drain
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-syslog-drain-release
+      compiled-release-tarball: exported-release-cf-syslog-drain
+    params:
+      RELEASE_NAME: cf-syslog-drain
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cflinuxfs2
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cflinuxfs2-release
+      compiled-release-tarball: exported-release-cflinuxfs2
+    params:
+      RELEASE_NAME: cflinuxfs2
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-consul
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: consul-release
+      compiled-release-tarball: exported-release-consul
+    params:
+      RELEASE_NAME: consul
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-diego
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: diego-release
+      compiled-release-tarball: exported-release-diego
+    params:
+      RELEASE_NAME: diego
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-dotnet-core-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: dotnet-core-buildpack-release
+      compiled-release-tarball: exported-release-dotnet-core-buildpack
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-garden-runc
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: garden-runc-release
+      compiled-release-tarball: exported-release-garden-runc
+    params:
+      RELEASE_NAME: garden-runc
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-go-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: go-buildpack-release
+      compiled-release-tarball: exported-release-go-buildpack
+    params:
+      RELEASE_NAME: go-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-java-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: java-buildpack-release
+      compiled-release-tarball: exported-release-java-buildpack
+    params:
+      RELEASE_NAME: java-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-log-cache
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: log-cache-release
+      compiled-release-tarball: exported-release-log-cache
+    params:
+      RELEASE_NAME: log-cache
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-loggregator
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: loggregator-release
+      compiled-release-tarball: exported-release-loggregator
+    params:
+      RELEASE_NAME: loggregator
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-loggregator-agent
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: loggregator-agent-release
+      compiled-release-tarball: exported-release-loggregator-agent
+    params:
+      RELEASE_NAME: loggregator-agent
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-nats
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: nats-release
+      compiled-release-tarball: exported-release-nats
+    params:
+      RELEASE_NAME: nats
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-nodejs-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: nodejs-buildpack-release
+      compiled-release-tarball: exported-release-nodejs-buildpack
+    params:
+      RELEASE_NAME: nodejs-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-php-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: php-buildpack-release
+      compiled-release-tarball: exported-release-php-buildpack
+    params:
+      RELEASE_NAME: php-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-python-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: python-buildpack-release
+      compiled-release-tarball: exported-release-python-buildpack
+    params:
+      RELEASE_NAME: python-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-routing
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: routing-release
+      compiled-release-tarball: exported-release-routing
+    params:
+      RELEASE_NAME: routing
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-ruby-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: ruby-buildpack-release
+      compiled-release-tarball: exported-release-ruby-buildpack
+    params:
+      RELEASE_NAME: ruby-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-silk
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: silk-release
+      compiled-release-tarball: exported-release-silk
+    params:
+      RELEASE_NAME: silk
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-staticfile-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: staticfile-buildpack-release
+      compiled-release-tarball: exported-release-staticfile-buildpack
+    params:
+      RELEASE_NAME: staticfile-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-statsd-injector
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: statsd-injector-release
+      compiled-release-tarball: exported-release-statsd-injector
+    params:
+      RELEASE_NAME: statsd-injector
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-uaa
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: uaa-release
+      compiled-release-tarball: exported-release-uaa
+    params:
+      RELEASE_NAME: uaa
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -6656,7 +6607,6 @@ jobs:
       params:
         file: exported-release-uaa/*.tgz
         predefined_acl: publicRead
-
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -6677,91 +6627,62 @@ jobs:
   public: true
   serial_groups:
   - update-stemcell-and-recompile-releases
-
   - update-binary-buildpack
   - update-binary-buildpack-xenial
-
   - update-bosh-dns-aliases
   - update-bosh-dns-aliases-xenial
-
   - update-bpm
   - update-bpm-xenial
-
   - update-capi
   - update-capi-xenial
-
   - update-cf-mysql
   - update-cf-mysql-xenial
-
   - update-cf-networking
   - update-cf-networking-xenial
-
   - update-cf-smoke-tests
   - update-cf-smoke-tests-xenial
-
   - update-cf-syslog-drain
   - update-cf-syslog-drain-xenial
-
   - update-cflinuxfs2
   - update-cflinuxfs2-xenial
-
   - update-consul
   - update-consul-xenial
-
   - update-diego
   - update-diego-xenial
-
   - update-dotnet-core-buildpack
   - update-dotnet-core-buildpack-xenial
-
   - update-garden-runc
   - update-garden-runc-xenial
-
   - update-go-buildpack
   - update-go-buildpack-xenial
-
   - update-java-buildpack
   - update-java-buildpack-xenial
-
   - update-log-cache
   - update-log-cache-xenial
-
   - update-loggregator
   - update-loggregator-xenial
-
   - update-loggregator-agent
   - update-loggregator-agent-xenial
-
   - update-nats
   - update-nats-xenial
-
   - update-nodejs-buildpack
   - update-nodejs-buildpack-xenial
-
   - update-php-buildpack
   - update-php-buildpack-xenial
-
   - update-python-buildpack
   - update-python-buildpack-xenial
-
   - update-routing
   - update-routing-xenial
-
   - update-ruby-buildpack
   - update-ruby-buildpack-xenial
-
   - update-silk
   - update-silk-xenial
-
   - update-staticfile-buildpack
   - update-staticfile-buildpack-xenial
-
   - update-statsd-injector
   - update-statsd-injector-xenial
-
   - update-uaa
   - update-uaa-xenial
-
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -6769,147 +6690,118 @@ jobs:
     - get: greengrass-env-director-state
     - get: cf-deployment-develop
     - get: cf-deployment-concourse-tasks
-
     - get: binary-buildpack-release
       passed: [update-binary-buildpack]
       params:
         tarball: false
-
     - get: bosh-dns-aliases-release
       passed: [update-bosh-dns-aliases]
       params:
         tarball: false
-
     - get: bpm-release
       passed: [update-bpm]
       params:
         tarball: false
-
     - get: capi-release
       passed: [update-capi]
       params:
         tarball: false
-
     - get: cf-mysql-release
       passed: [update-cf-mysql]
       params:
         tarball: false
-
     - get: cf-networking-release
       passed: [update-cf-networking]
       params:
         tarball: false
-
     - get: cf-smoke-tests-release
       passed: [update-cf-smoke-tests]
       params:
         tarball: false
-
     - get: cf-syslog-drain-release
       passed: [update-cf-syslog-drain]
       params:
         tarball: false
-
     - get: cflinuxfs2-release
       passed: [update-cflinuxfs2]
       params:
         tarball: false
-
     - get: consul-release
       passed: [update-consul]
       params:
         tarball: false
-
     - get: diego-release
       passed: [update-diego]
       params:
         tarball: false
-
     - get: dotnet-core-buildpack-release
       passed: [update-dotnet-core-buildpack]
       params:
         tarball: false
-
     - get: garden-runc-release
       passed: [update-garden-runc]
       params:
         tarball: false
-
     - get: go-buildpack-release
       passed: [update-go-buildpack]
       params:
         tarball: false
-
     - get: java-buildpack-release
       passed: [update-java-buildpack]
       params:
         tarball: false
-
     - get: log-cache-release
       passed: [update-log-cache]
       params:
         tarball: false
-
     - get: loggregator-release
       passed: [update-loggregator]
       params:
         tarball: false
-
     - get: loggregator-agent-release
       passed: [update-loggregator-agent]
       params:
         tarball: false
-
     - get: nats-release
       passed: [update-nats]
       params:
         tarball: false
-
     - get: nodejs-buildpack-release
       passed: [update-nodejs-buildpack]
       params:
         tarball: false
-
     - get: php-buildpack-release
       passed: [update-php-buildpack]
       params:
         tarball: false
-
     - get: python-buildpack-release
       passed: [update-python-buildpack]
       params:
         tarball: false
-
     - get: routing-release
       passed: [update-routing]
       params:
         tarball: false
-
     - get: ruby-buildpack-release
       passed: [update-ruby-buildpack]
       params:
         tarball: false
-
     - get: silk-release
       passed: [update-silk]
       params:
         tarball: false
-
     - get: staticfile-buildpack-release
       passed: [update-staticfile-buildpack]
       params:
         tarball: false
-
     - get: statsd-injector-release
       passed: [update-statsd-injector]
       params:
         tarball: false
-
     - get: uaa-release
       passed: [update-uaa]
       params:
         tarball: false
-
     - get: stemcell
       resource: xenial-stemcell
       trigger: true
@@ -6924,7 +6816,6 @@ jobs:
     params:
       STEMCELL_NAME: '*.tgz'
   - aggregate:
-
     - task: compile-release-binary-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6935,7 +6826,6 @@ jobs:
       params:
         RELEASE_NAME: binary-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-bosh-dns-aliases
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6946,7 +6836,6 @@ jobs:
       params:
         RELEASE_NAME: bosh-dns-aliases
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-bpm
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6957,7 +6846,6 @@ jobs:
       params:
         RELEASE_NAME: bpm
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-capi
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6968,7 +6856,6 @@ jobs:
       params:
         RELEASE_NAME: capi
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-cf-mysql
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6979,7 +6866,6 @@ jobs:
       params:
         RELEASE_NAME: cf-mysql
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -6990,7 +6876,6 @@ jobs:
       params:
         RELEASE_NAME: cf-networking
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-cf-smoke-tests
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7001,7 +6886,6 @@ jobs:
       params:
         RELEASE_NAME: cf-smoke-tests
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-cf-syslog-drain
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7012,7 +6896,6 @@ jobs:
       params:
         RELEASE_NAME: cf-syslog-drain
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-cflinuxfs2
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7023,7 +6906,6 @@ jobs:
       params:
         RELEASE_NAME: cflinuxfs2
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-consul
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7034,7 +6916,6 @@ jobs:
       params:
         RELEASE_NAME: consul
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7045,7 +6926,6 @@ jobs:
       params:
         RELEASE_NAME: diego
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-dotnet-core-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7056,7 +6936,6 @@ jobs:
       params:
         RELEASE_NAME: dotnet-core-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-garden-runc
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7067,7 +6946,6 @@ jobs:
       params:
         RELEASE_NAME: garden-runc
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-go-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7078,7 +6956,6 @@ jobs:
       params:
         RELEASE_NAME: go-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-java-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7089,7 +6966,6 @@ jobs:
       params:
         RELEASE_NAME: java-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-log-cache
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7100,7 +6976,6 @@ jobs:
       params:
         RELEASE_NAME: log-cache
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-loggregator
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7111,7 +6986,6 @@ jobs:
       params:
         RELEASE_NAME: loggregator
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-loggregator-agent
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7122,7 +6996,6 @@ jobs:
       params:
         RELEASE_NAME: loggregator-agent
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-nats
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7133,7 +7006,6 @@ jobs:
       params:
         RELEASE_NAME: nats
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7144,7 +7016,6 @@ jobs:
       params:
         RELEASE_NAME: nodejs-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-php-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7155,7 +7026,6 @@ jobs:
       params:
         RELEASE_NAME: php-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-python-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7166,7 +7036,6 @@ jobs:
       params:
         RELEASE_NAME: python-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7177,7 +7046,6 @@ jobs:
       params:
         RELEASE_NAME: routing
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-ruby-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7188,7 +7056,6 @@ jobs:
       params:
         RELEASE_NAME: ruby-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-silk
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7199,7 +7066,6 @@ jobs:
       params:
         RELEASE_NAME: silk
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-staticfile-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7210,7 +7076,6 @@ jobs:
       params:
         RELEASE_NAME: staticfile-buildpack
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-statsd-injector
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7221,7 +7086,6 @@ jobs:
       params:
         RELEASE_NAME: statsd-injector
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
     - task: compile-release-uaa
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -7232,213 +7096,399 @@ jobs:
       params:
         RELEASE_NAME: uaa
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
-
-  - task: update-compiled-releases-ops-stemcell
-    file: runtime-ci/tasks/update-compiled-releases-ops-stemcell/task.yml
-    params:
-      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
-      COMPILED_RELEASE_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-binary-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
+      bbl-state: greengrass-env-director-state
       ops-files: cf-deployment-develop
-
-      binary-buildpack-release-tarball: exported-release-binary-buildpack
-
-      bosh-dns-aliases-release-tarball: exported-release-bosh-dns-aliases
-
-      bpm-release-tarball: exported-release-bpm
-
-      capi-release-tarball: exported-release-capi
-
-      cf-mysql-release-tarball: exported-release-cf-mysql
-
-      cf-networking-release-tarball: exported-release-cf-networking
-
-      cf-smoke-tests-release-tarball: exported-release-cf-smoke-tests
-
-      cf-syslog-drain-release-tarball: exported-release-cf-syslog-drain
-
-      cflinuxfs2-release-tarball: exported-release-cflinuxfs2
-
-      consul-release-tarball: exported-release-consul
-
-      diego-release-tarball: exported-release-diego
-
-      dotnet-core-buildpack-release-tarball: exported-release-dotnet-core-buildpack
-
-      garden-runc-release-tarball: exported-release-garden-runc
-
-      go-buildpack-release-tarball: exported-release-go-buildpack
-
-      java-buildpack-release-tarball: exported-release-java-buildpack
-
-      log-cache-release-tarball: exported-release-log-cache
-
-      loggregator-release-tarball: exported-release-loggregator
-
-      loggregator-agent-release-tarball: exported-release-loggregator-agent
-
-      nats-release-tarball: exported-release-nats
-
-      nodejs-buildpack-release-tarball: exported-release-nodejs-buildpack
-
-      php-buildpack-release-tarball: exported-release-php-buildpack
-
-      python-buildpack-release-tarball: exported-release-python-buildpack
-
-      routing-release-tarball: exported-release-routing
-
-      ruby-buildpack-release-tarball: exported-release-ruby-buildpack
-
-      silk-release-tarball: exported-release-silk
-
-      staticfile-buildpack-release-tarball: exported-release-staticfile-buildpack
-
-      statsd-injector-release-tarball: exported-release-statsd-injector
-
-      uaa-release-tarball: exported-release-uaa
-
+      bosh-io-release: binary-buildpack-release
+      compiled-release-tarball: exported-release-binary-buildpack
+    params:
+      RELEASE_NAME: binary-buildpack
+      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-bosh-dns-aliases
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: bosh-dns-aliases-release
+      compiled-release-tarball: exported-release-bosh-dns-aliases
+    params:
+      RELEASE_NAME: bosh-dns-aliases
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-bpm
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: bpm-release
+      compiled-release-tarball: exported-release-bpm
+    params:
+      RELEASE_NAME: bpm
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-capi
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: capi-release
+      compiled-release-tarball: exported-release-capi
+    params:
+      RELEASE_NAME: capi
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-cf-mysql
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-mysql-release
+      compiled-release-tarball: exported-release-cf-mysql
+    params:
+      RELEASE_NAME: cf-mysql
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-cf-networking
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-networking-release
+      compiled-release-tarball: exported-release-cf-networking
+    params:
+      RELEASE_NAME: cf-networking
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-cf-smoke-tests
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-smoke-tests-release
+      compiled-release-tarball: exported-release-cf-smoke-tests
+    params:
+      RELEASE_NAME: cf-smoke-tests
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-cf-syslog-drain
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cf-syslog-drain-release
+      compiled-release-tarball: exported-release-cf-syslog-drain
+    params:
+      RELEASE_NAME: cf-syslog-drain
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-cflinuxfs2
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: cflinuxfs2-release
+      compiled-release-tarball: exported-release-cflinuxfs2
+    params:
+      RELEASE_NAME: cflinuxfs2
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-consul
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: consul-release
+      compiled-release-tarball: exported-release-consul
+    params:
+      RELEASE_NAME: consul
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-diego
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: diego-release
+      compiled-release-tarball: exported-release-diego
+    params:
+      RELEASE_NAME: diego
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-dotnet-core-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: dotnet-core-buildpack-release
+      compiled-release-tarball: exported-release-dotnet-core-buildpack
+    params:
+      RELEASE_NAME: dotnet-core-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-garden-runc
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: garden-runc-release
+      compiled-release-tarball: exported-release-garden-runc
+    params:
+      RELEASE_NAME: garden-runc
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-go-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: go-buildpack-release
+      compiled-release-tarball: exported-release-go-buildpack
+    params:
+      RELEASE_NAME: go-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-java-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: java-buildpack-release
+      compiled-release-tarball: exported-release-java-buildpack
+    params:
+      RELEASE_NAME: java-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-log-cache
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: log-cache-release
+      compiled-release-tarball: exported-release-log-cache
+    params:
+      RELEASE_NAME: log-cache
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-loggregator
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: loggregator-release
+      compiled-release-tarball: exported-release-loggregator
+    params:
+      RELEASE_NAME: loggregator
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-loggregator-agent
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: loggregator-agent-release
+      compiled-release-tarball: exported-release-loggregator-agent
+    params:
+      RELEASE_NAME: loggregator-agent
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-nats
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: nats-release
+      compiled-release-tarball: exported-release-nats
+    params:
+      RELEASE_NAME: nats
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-nodejs-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: nodejs-buildpack-release
+      compiled-release-tarball: exported-release-nodejs-buildpack
+    params:
+      RELEASE_NAME: nodejs-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-php-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: php-buildpack-release
+      compiled-release-tarball: exported-release-php-buildpack
+    params:
+      RELEASE_NAME: php-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-python-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: python-buildpack-release
+      compiled-release-tarball: exported-release-python-buildpack
+    params:
+      RELEASE_NAME: python-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-routing
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: routing-release
+      compiled-release-tarball: exported-release-routing
+    params:
+      RELEASE_NAME: routing
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-ruby-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: ruby-buildpack-release
+      compiled-release-tarball: exported-release-ruby-buildpack
+    params:
+      RELEASE_NAME: ruby-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-silk
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: silk-release
+      compiled-release-tarball: exported-release-silk
+    params:
+      RELEASE_NAME: silk
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-staticfile-buildpack
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: staticfile-buildpack-release
+      compiled-release-tarball: exported-release-staticfile-buildpack
+    params:
+      RELEASE_NAME: staticfile-buildpack
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-statsd-injector
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: statsd-injector-release
+      compiled-release-tarball: exported-release-statsd-injector
+    params:
+      RELEASE_NAME: statsd-injector
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+  - task: update-compiled-releases-ops-uaa
+    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      ops-files: updated-compiled-releases-ops-file
+      bosh-io-release: uaa-release
+      compiled-release-tarball: exported-release-uaa
+    params:
+      RELEASE_NAME: uaa
+      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
   - aggregate:
-
     - put: binary-buildpack-release-gcs
       params:
         file: exported-release-binary-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: bosh-dns-aliases-release-gcs
       params:
         file: exported-release-bosh-dns-aliases/*.tgz
         predefined_acl: publicRead
-
     - put: bpm-release-gcs
       params:
         file: exported-release-bpm/*.tgz
         predefined_acl: publicRead
-
     - put: capi-release-gcs
       params:
         file: exported-release-capi/*.tgz
         predefined_acl: publicRead
-
     - put: cf-mysql-release-gcs
       params:
         file: exported-release-cf-mysql/*.tgz
         predefined_acl: publicRead
-
     - put: cf-networking-release-gcs
       params:
         file: exported-release-cf-networking/*.tgz
         predefined_acl: publicRead
-
     - put: cf-smoke-tests-release-gcs
       params:
         file: exported-release-cf-smoke-tests/*.tgz
         predefined_acl: publicRead
-
     - put: cf-syslog-drain-release-gcs
       params:
         file: exported-release-cf-syslog-drain/*.tgz
         predefined_acl: publicRead
-
     - put: cflinuxfs2-release-gcs
       params:
         file: exported-release-cflinuxfs2/*.tgz
         predefined_acl: publicRead
-
     - put: consul-release-gcs
       params:
         file: exported-release-consul/*.tgz
         predefined_acl: publicRead
-
     - put: diego-release-gcs
       params:
         file: exported-release-diego/*.tgz
         predefined_acl: publicRead
-
     - put: dotnet-core-buildpack-release-gcs
       params:
         file: exported-release-dotnet-core-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: garden-runc-release-gcs
       params:
         file: exported-release-garden-runc/*.tgz
         predefined_acl: publicRead
-
     - put: go-buildpack-release-gcs
       params:
         file: exported-release-go-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: java-buildpack-release-gcs
       params:
         file: exported-release-java-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: log-cache-release-gcs
       params:
         file: exported-release-log-cache/*.tgz
         predefined_acl: publicRead
-
     - put: loggregator-release-gcs
       params:
         file: exported-release-loggregator/*.tgz
         predefined_acl: publicRead
-
     - put: loggregator-agent-release-gcs
       params:
         file: exported-release-loggregator-agent/*.tgz
         predefined_acl: publicRead
-
     - put: nats-release-gcs
       params:
         file: exported-release-nats/*.tgz
         predefined_acl: publicRead
-
     - put: nodejs-buildpack-release-gcs
       params:
         file: exported-release-nodejs-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: php-buildpack-release-gcs
       params:
         file: exported-release-php-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: python-buildpack-release-gcs
       params:
         file: exported-release-python-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: routing-release-gcs
       params:
         file: exported-release-routing/*.tgz
         predefined_acl: publicRead
-
     - put: ruby-buildpack-release-gcs
       params:
         file: exported-release-ruby-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: silk-release-gcs
       params:
         file: exported-release-silk/*.tgz
         predefined_acl: publicRead
-
     - put: staticfile-buildpack-release-gcs
       params:
         file: exported-release-staticfile-buildpack/*.tgz
         predefined_acl: publicRead
-
     - put: statsd-injector-release-gcs
       params:
         file: exported-release-statsd-injector/*.tgz
         predefined_acl: publicRead
-
     - put: uaa-release-gcs
       params:
         file: exported-release-uaa/*.tgz
         predefined_acl: publicRead
-
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -7454,8 +7504,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
-
 - name: update-windows-2012-releases
   serial: true
   public: true
@@ -7468,12 +7516,10 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
-    
     - get: garden-windows-bosh-release
       trigger: true
       params:
         tarball: false
-    
     - get: hwc-buildpack-release
       trigger: true
       params:
@@ -7487,11 +7533,9 @@ jobs:
     file: runtime-ci/tasks/update-windows-releases/task-2012.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
-      
       garden-windows-release: garden-windows-bosh-release
       hwc-buildpack-release: hwc-buildpack-release
       windows-utilities-release: windows-utilities-release
-      
   - task: bosh-upload-windows-stemcell
     file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
@@ -7536,7 +7580,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 - name: update-windows-2016-releases
   serial: true
   public: true
@@ -7549,7 +7592,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
-    
     - get: winc-release
       trigger: true
       params:
@@ -7572,7 +7614,6 @@ jobs:
     file: runtime-ci/tasks/update-windows-releases/task-2016.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
-      
       windows2016fs-release: windows2016fs-online-release
       
   - task: bosh-upload-windows-stemcell
@@ -7619,7 +7660,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-
 
 - name: update-windows-2016-offline-releases
   serial: true
