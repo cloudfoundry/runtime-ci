@@ -12,6 +12,7 @@ inputs:
 - name: bosh-io-release
 - name: compiled-release-tarball
 - name: current-commit-message
+  optional: true
 
 outputs:
 - name: updated-compiled-releases-ops-file

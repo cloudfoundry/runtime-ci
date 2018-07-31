@@ -40,6 +40,10 @@ EOF
 }
 
 update_commit_message() {
+    if [ ! -d current-commit-message ]; then
+      return
+    fi
+
     local release_version
     release_version=$(cat bosh-io-release/version)
 
