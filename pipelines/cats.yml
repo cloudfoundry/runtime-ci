@@ -44,22 +44,22 @@ resources:
   type: git
   source:
     branch: develop
-    uri: git@github.com:ishustava/cf-acceptance-tests.git
-    private_key: ((shustava_cf_acceptance_tests_readwrite_deploy_key.private_key))
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: cf-acceptance-tests-rc
   type: git
   source:
     branch: release-candidate
-    uri: git@github.com:ishustava/cf-acceptance-tests.git
-    private_key: ((shustava_cf_acceptance_tests_readwrite_deploy_key.private_key))
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: cf-acceptance-tests-master
   type: git
   source:
     branch: master
-    uri: git@github.com:ishustava/cf-acceptance-tests.git
-    private_key: ((shustava_cf_acceptance_tests_readwrite_deploy_key.private_key))
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
 - name: cf-deployment-master
   type: git
@@ -73,7 +73,8 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/cf-test-helpers
-- name: cats-version-test
+
+- name: cats-version
   type: semver
   source:
     driver: git
@@ -81,7 +82,7 @@ resources:
     branch: master
     private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
     git_user: "CF MEGA BOT <cf-mega@pivotal.io>"
-    file: cats-version-test
+    file: cats-version
 
 - name: deliver-tracker-story
   type: tracker
@@ -275,7 +276,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
-      - get: cats-version-test
+      - get: cats-version
         params: {bump: patch}
       - get: cf-acceptance-tests-develop
       - get: cf-acceptance-tests-rc
@@ -283,9 +284,9 @@ jobs:
       - put: cf-acceptance-tests-master
         params:
           repository: cf-acceptance-tests-rc
-          tag: cats-version-test/version
+          tag: cats-version/version
           tag_prefix: v
-      - put: cats-version-test
+      - put: cats-version
         params: {bump: patch}
 
 - name: ship-it-minor
@@ -293,7 +294,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
-      - get: cats-version-test
+      - get: cats-version
         params: {bump: minor}
       - get: cf-acceptance-tests-develop
       - get: cf-acceptance-tests-rc
@@ -301,9 +302,9 @@ jobs:
       - put: cf-acceptance-tests-master
         params:
           repository: cf-acceptance-tests-rc
-          tag: cats-version-test/version
+          tag: cats-version/version
           tag_prefix: v
-      - put: cats-version-test
+      - put: cats-version
         params: {bump: minor}
 
 - name: ship-it-major
@@ -311,7 +312,7 @@ jobs:
   build_logs_to_retain: 100
   plan:
     - do:
-      - get: cats-version-test
+      - get: cats-version
         params: {bump: major}
       - get: cf-acceptance-tests-develop
       - get: cf-acceptance-tests-rc
@@ -319,7 +320,7 @@ jobs:
       - put: cf-acceptance-tests-master
         params:
           repository: cf-acceptance-tests-rc
-          tag: cats-version-test/version
+          tag: cats-version/version
           tag_prefix: v
-      - put: cats-version-test
+      - put: cats-version
         params: {bump: major}
