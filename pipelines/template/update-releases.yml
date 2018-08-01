@@ -242,6 +242,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -327,6 +328,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -666,7 +668,7 @@ jobs:
     {{- if hasKey . "bootstrap"}}
       PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
     {{- else}}
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
     {{- end}}
 {{- end}}
   - aggregate:

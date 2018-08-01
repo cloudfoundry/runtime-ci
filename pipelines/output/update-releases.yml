@@ -594,6 +594,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -679,6 +680,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -764,6 +766,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -849,6 +852,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -934,6 +938,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1019,6 +1024,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1104,6 +1110,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1189,6 +1196,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1274,6 +1282,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1359,6 +1368,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1444,6 +1454,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1513,6 +1524,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1598,6 +1610,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1667,6 +1680,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1736,6 +1750,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1821,6 +1836,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1906,6 +1922,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -1991,6 +2008,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2076,6 +2094,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2145,6 +2164,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2214,6 +2234,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2283,6 +2304,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2368,6 +2390,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2437,6 +2460,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2522,6 +2546,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2591,6 +2616,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2676,6 +2702,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2761,6 +2788,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
+      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
@@ -2844,6 +2872,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -2920,6 +2949,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -2996,6 +3026,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3072,6 +3103,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3148,6 +3180,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3224,6 +3257,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3300,6 +3334,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3376,6 +3411,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3452,6 +3488,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3528,6 +3565,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3604,6 +3642,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3680,6 +3719,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3756,6 +3796,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3832,6 +3873,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3908,6 +3950,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3984,6 +4027,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4060,6 +4104,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4136,6 +4181,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4212,6 +4258,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4288,6 +4335,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4364,6 +4412,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4440,6 +4489,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4516,6 +4566,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4592,6 +4643,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4668,6 +4720,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4744,6 +4797,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4820,6 +4874,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4896,6 +4951,7 @@ jobs:
       repo: cf-deployment-develop
       ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
+      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -7115,7 +7171,7 @@ jobs:
       compiled-release-tarball: exported-release-bosh-dns-aliases
     params:
       RELEASE_NAME: bosh-dns-aliases
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-bpm
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7125,7 +7181,7 @@ jobs:
       compiled-release-tarball: exported-release-bpm
     params:
       RELEASE_NAME: bpm
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-capi
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7135,7 +7191,7 @@ jobs:
       compiled-release-tarball: exported-release-capi
     params:
       RELEASE_NAME: capi
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-mysql
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7145,7 +7201,7 @@ jobs:
       compiled-release-tarball: exported-release-cf-mysql
     params:
       RELEASE_NAME: cf-mysql
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-networking
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7155,7 +7211,7 @@ jobs:
       compiled-release-tarball: exported-release-cf-networking
     params:
       RELEASE_NAME: cf-networking
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-smoke-tests
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7165,7 +7221,7 @@ jobs:
       compiled-release-tarball: exported-release-cf-smoke-tests
     params:
       RELEASE_NAME: cf-smoke-tests
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-syslog-drain
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7175,7 +7231,7 @@ jobs:
       compiled-release-tarball: exported-release-cf-syslog-drain
     params:
       RELEASE_NAME: cf-syslog-drain
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cflinuxfs2
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7185,7 +7241,7 @@ jobs:
       compiled-release-tarball: exported-release-cflinuxfs2
     params:
       RELEASE_NAME: cflinuxfs2
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-consul
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7195,7 +7251,7 @@ jobs:
       compiled-release-tarball: exported-release-consul
     params:
       RELEASE_NAME: consul
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-diego
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7205,7 +7261,7 @@ jobs:
       compiled-release-tarball: exported-release-diego
     params:
       RELEASE_NAME: diego
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-dotnet-core-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7215,7 +7271,7 @@ jobs:
       compiled-release-tarball: exported-release-dotnet-core-buildpack
     params:
       RELEASE_NAME: dotnet-core-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-garden-runc
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7225,7 +7281,7 @@ jobs:
       compiled-release-tarball: exported-release-garden-runc
     params:
       RELEASE_NAME: garden-runc
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-go-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7235,7 +7291,7 @@ jobs:
       compiled-release-tarball: exported-release-go-buildpack
     params:
       RELEASE_NAME: go-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-java-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7245,7 +7301,7 @@ jobs:
       compiled-release-tarball: exported-release-java-buildpack
     params:
       RELEASE_NAME: java-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-log-cache
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7255,7 +7311,7 @@ jobs:
       compiled-release-tarball: exported-release-log-cache
     params:
       RELEASE_NAME: log-cache
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7265,7 +7321,7 @@ jobs:
       compiled-release-tarball: exported-release-loggregator
     params:
       RELEASE_NAME: loggregator
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator-agent
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7275,7 +7331,7 @@ jobs:
       compiled-release-tarball: exported-release-loggregator-agent
     params:
       RELEASE_NAME: loggregator-agent
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nats
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7285,7 +7341,7 @@ jobs:
       compiled-release-tarball: exported-release-nats
     params:
       RELEASE_NAME: nats
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nodejs-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7295,7 +7351,7 @@ jobs:
       compiled-release-tarball: exported-release-nodejs-buildpack
     params:
       RELEASE_NAME: nodejs-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-php-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7305,7 +7361,7 @@ jobs:
       compiled-release-tarball: exported-release-php-buildpack
     params:
       RELEASE_NAME: php-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-python-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7315,7 +7371,7 @@ jobs:
       compiled-release-tarball: exported-release-python-buildpack
     params:
       RELEASE_NAME: python-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-routing
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7325,7 +7381,7 @@ jobs:
       compiled-release-tarball: exported-release-routing
     params:
       RELEASE_NAME: routing
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-ruby-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7335,7 +7391,7 @@ jobs:
       compiled-release-tarball: exported-release-ruby-buildpack
     params:
       RELEASE_NAME: ruby-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-silk
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7345,7 +7401,7 @@ jobs:
       compiled-release-tarball: exported-release-silk
     params:
       RELEASE_NAME: silk
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-staticfile-buildpack
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7355,7 +7411,7 @@ jobs:
       compiled-release-tarball: exported-release-staticfile-buildpack
     params:
       RELEASE_NAME: staticfile-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-statsd-injector
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7365,7 +7421,7 @@ jobs:
       compiled-release-tarball: exported-release-statsd-injector
     params:
       RELEASE_NAME: statsd-injector
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - task: update-compiled-releases-ops-uaa
     file: runtime-ci/tasks/update-compiled-release-ops/task.yml
     input_mapping:
@@ -7375,7 +7431,7 @@ jobs:
       compiled-release-tarball: exported-release-uaa
     params:
       RELEASE_NAME: uaa
-      PATH_TO_OPS_FILE: use-compiled-releases-xenial-stemcell.yml
+      PATH_TO_OPS_FILE: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
