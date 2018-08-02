@@ -50,9 +50,9 @@ update_commit_message() {
     local current_commit_message=$(cat current-commit-message/${COMMIT_MESSAGE_PATH})
 
     if [[ $current_commit_message = *"No manifest release or stemcell version updates"* ]]; then
-      echo "Updated compiled releases with ${RELEASE_NAME} ${release_version}" > commit-message/${COMMIT_MESSAGE_PATH}
+      echo "Updated compiled releases with ${RELEASE_NAME} ${release_version}" > updated-commit-message/${COMMIT_MESSAGE_PATH}
     else
-      echo "${current_commit_message}" > commit-message/${COMMIT_MESSAGE_PATH}
+      echo "${current_commit_message}" > updated-commit-message/${COMMIT_MESSAGE_PATH}
     fi
 }
 
