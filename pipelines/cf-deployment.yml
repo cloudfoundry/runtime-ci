@@ -464,6 +464,7 @@ jobs:
       bbl-state: luna-env-director-state
     params:
       DEPLOYMENT_NAME: luna-cf
+      IGNORE_ERRORS: true
   - task: bosh-upload-stemcell-fresh
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -975,6 +976,8 @@ jobs:
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
+      params:
+        IGNORE_ERRORS: true
     - task: bosh-upload-stemcell-lite
       file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
       input_mapping:
@@ -1406,6 +1409,7 @@ jobs:
         bbl-state: luna-env-director-state
       params:
         DEPLOYMENT_NAME: luna-cf
+        IGNORE_ERRORS: true
     - put: fresh-pool
       params: {release: fresh-pool}
 
