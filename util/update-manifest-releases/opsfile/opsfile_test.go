@@ -121,7 +121,7 @@ var _ = Describe("UpdateReleases", func() {
 		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_non_empty_url_and_sha_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		updatedOpsFile, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		updatedOpsFile, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).Should(MatchYAML(desiredOpsFile))
