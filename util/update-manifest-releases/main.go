@@ -13,6 +13,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 )
 
 func getReleaseNames(buildDir string) ([]string, error) {
@@ -31,6 +32,21 @@ func getReleaseNames(buildDir string) ([]string, error) {
 	return releases, nil
 }
 
+func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error {
+	commitMessageFile := filepath.Join(buildDir, "commit-message", commitMessagePath)
+
+	// We are ignoring error here
+	// because we don't care if commit message file does not exist
+	existingCommitMessage, err := ioutil.ReadFile(commitMessageFile)
+
+	if err != nil || string(existingCommitMessage) == common.NoChangesCommitMessage {
+		if err := ioutil.WriteFile(commitMessageFile, []byte(commitMessage), 0666); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc) ([]byte, string, error)
 
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
@@ -44,7 +60,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 		return err
 	}
 
-	if err := ioutil.WriteFile(filepath.Join(buildDir, "commit-message", commitMessagePath), []byte(commitMessage), 0666); err != nil {
+	if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
 		return err
 	}
 
@@ -88,6 +104,20 @@ func main() {
 			buildDir,
 			commitMessagePath,
 			opsfile.UpdateReleases,
+		); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+	} else if target == "compiledReleasesOpsfile" {
+		if err = update(
+			releases,
+			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
+			os.Getenv("UPDATED_OPS_FILE_PATH"),
+			"original-ops-file",
+			"updated-ops-file",
+			buildDir,
+			commitMessagePath,
+			compiledreleasesops.UpdateCompiledReleases,
 		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

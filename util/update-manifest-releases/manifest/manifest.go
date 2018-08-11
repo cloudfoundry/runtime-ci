@@ -130,7 +130,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", err
 	}
 
-	changeMessage := "No manifest release or stemcell version updates"
+	changeMessage := common.NoChangesCommitMessage
 	if len(changes) > 0 {
 		changeMessage = fmt.Sprintf("Updated manifest with %s", strings.Join(changes, ", "))
 	}

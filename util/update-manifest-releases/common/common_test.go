@@ -5,7 +5,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 )
-
 var _ = Describe("Common", func() {
 	var (
 		buildDir          string
@@ -58,5 +57,51 @@ var _ = Describe("Common", func() {
 				Expect(err.Error()).To(Equal("open ../fixtures/broken-build/missing-version-release/version: no such file or directory"))
 			})
 		})
+	})
+
+	Context("#StemcellInfoFromTarballName", func() {
+		It("parses a stemcell version from a valid release tarball names", func() {
+			// release and stemcell name with no dashes
+			stemcellVersion, stemcellName, err := common.StemcellInfoFromTarballName("release-1.0-stemcell-name-2.0-4-5-6.tgz", "release", "1.0")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stemcellVersion).To(Equal("2.0"))
+			Expect(stemcellName).To(Equal("stemcell-name"))
+
+			// release and stemcell name with one dashe
+			stemcellVersion, stemcellName, err = common.StemcellInfoFromTarballName("release-name-1.0-stemcell-name-2.0-45-23-44.tgz", "release-name",  "1.0")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stemcellVersion).To(Equal("2.0"))
+			Expect(stemcellName).To(Equal("stemcell-name"))
+
+			// release and stemcell name with many dashes
+			stemcellVersion, stemcellName, err = common.StemcellInfoFromTarballName("release-name-long-1.0-stemcell-name-long-2.0-4-5-6.tgz", "release-name-long",  "1.0")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stemcellVersion).To(Equal("2.0"))
+			Expect(stemcellName).To(Equal("stemcell-name-long"))
+
+			// stemcell version with no dots
+			stemcellVersion, _, err = common.StemcellInfoFromTarballName("release-name-1.0-stemcell-name-2-4-5-6.tgz", "release-name", "1.0")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stemcellVersion).To(Equal("2"))
+
+			// stemcell version with many dots
+			stemcellVersion, _, err = common.StemcellInfoFromTarballName("release-name-1.0-stemcell-name-2.1.3-4-5-6.tgz", "release-name", "1.0")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stemcellVersion).To(Equal("2.1.3"))
+		})
+
+		It("should fail if the tarball name does not start with the release name or release version", func() {
+			_, _, err := common.StemcellInfoFromTarballName("release-1.0-stemcell-2.0-4-5-6.tgz", "different-release", "1.0")
+			Expect(err).To(HaveOccurred())
+
+			_, _, err = common.StemcellInfoFromTarballName("release-1.0-stemcell-2.0-4-5-6.tgz", "release", "1000000.0")
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("should fail if the tarball name has an incorrect number of timestamp words", func() {
+			_, _, err := common.StemcellInfoFromTarballName("release-1.0-stemcell-2-3-4.tgz", "release", "1.0")
+			Expect(err).To(HaveOccurred())
+		})
+
 	})
 })
