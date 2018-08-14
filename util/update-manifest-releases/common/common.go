@@ -1,4 +1,5 @@
 package common
+
 import (
 	"path/filepath"
 	"fmt"
@@ -10,10 +11,16 @@ type MarshalFunc func(interface{}) ([]byte, error)
 type UnmarshalFunc func([]byte, interface{}) error
 
 type Release struct {
-	Name    string `yaml:"name"`
-	URL     string `yaml:"url"`
-	Version string `yaml:"version"`
-	SHA1    string `yaml:"sha1"`
+	Name     string             `yaml:"name"`
+	URL      string             `yaml:"url"`
+	Version  string             `yaml:"version"`
+	SHA1     string             `yaml:"sha1"`
+	Stemcell StemcellForRelease `yaml:"stemcell,omitempty"`
+}
+
+type StemcellForRelease struct {
+	OS      string `yaml:"os,omitempty"`
+	Version string `yaml:"version,omitempty"`
 }
 
 func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
