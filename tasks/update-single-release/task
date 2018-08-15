@@ -9,6 +9,14 @@ function main() {
 
   ln -s release "${RELEASE_NAME}-release"
 
+  if [ -d compiled-release-tarball ]; then
+    ln -s compiled-release-tarball "${RELEASE_NAME}-compiled-release-tarball"
+  fi
+
+  if [ -d current-commit-message ]; then
+    cp current-commit-message/${COMMIT_MESSAGE_PATH} commit-message/${COMMIT_MESSAGE_PATH}
+  fi
+
   mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 

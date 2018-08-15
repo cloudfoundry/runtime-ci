@@ -12,6 +12,10 @@ inputs:
 - name: deployment-configuration # repo containing the original manifest
 - name: release
 - name: stemcell
+- name: compiled-release-tarball
+  optional: true
+- name: current-commit-message
+  optional: true
 
 outputs:
 - name: commit-message
@@ -27,11 +31,11 @@ params:
   UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   RELEASE_NAME: 
   TARGET: manifest
-  # Either `manifest` or `opsfile`
+  # Either `manifest`, `opsfile` or `compiledReleasesOpsfile`
   # If `manifest` is specified, then the following needs to be filled:
   #   ORIGINAL_DEPLOYMENT_MANIFEST_PATH
   #   UPDATED_DEPLOYMENT_MANIFEST_PATH
-  # If `opsfile` is specified then the following needs to be filled:
+  # If `opsfile` or `compiledReleasesOpsfile` is specified then the following needs to be filled:
   #   ORIGINAL_OPS_FILE_PATH
   #   UPDATED_OPS_FILE_PATH
   ORIGINAL_OPS_FILE_PATH:
