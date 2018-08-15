@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: original-ops-file
 - name: deployment-configuration # repo containing the original manifest
+  optional: true
 - name: release
 - name: stemcell
 - name: compiled-release-tarball
