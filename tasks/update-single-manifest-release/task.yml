@@ -17,7 +17,7 @@ outputs:
 - name: updated-deployment-manifest
 
 run:
-  path: runtime-ci/tasks/update-manifest-release/task
+  path: runtime-ci/tasks/update-single-manifest-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
