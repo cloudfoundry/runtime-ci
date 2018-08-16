@@ -28,20 +28,23 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 	var commitMessage string
 
 	for _, releaseName := range releaseNames {
-		for i, op := range deserializedOpsFile {
-			newRelease, err := getCompiledReleaseForBuild(buildDir, releaseName)
-			if err != nil {
-				return nil, "", err
-			}
+		var newRelease common.Release
+		var err error
 
+		for i, op := range deserializedOpsFile {
 			matchingURLPath := fmt.Sprintf("/releases/name=%s/url", releaseName)
 			matchingVersionPath := fmt.Sprintf("/releases/name=%s/version", releaseName)
 			matchingSha1Path := fmt.Sprintf("/releases/name=%s/sha1", releaseName)
 			matchingStemcellPath := fmt.Sprintf("/releases/name=%s/stemcell?", releaseName)
 
 			if strings.Contains(op.Path, matchingURLPath) {
-				deserializedOpsFile[i].Value = newRelease.URL
+				newRelease, err = getCompiledReleaseForBuild(buildDir, releaseName)
+				if err != nil {
+					return nil, "", err
+				}
 				foundRelease = true
+
+				deserializedOpsFile[i].Value = newRelease.URL
 			} else if strings.Contains(op.Path, matchingVersionPath) {
 				deserializedOpsFile[i].Value = newRelease.Version
 			} else if strings.Contains(op.Path, matchingSha1Path) {
