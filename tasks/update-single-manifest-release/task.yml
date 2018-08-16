@@ -7,19 +7,20 @@ image_resource:
     repository: golang
 
 inputs:
-- name: deployment-configuration
 - name: runtime-ci
   path: go/src/github.com/cloudfoundry/runtime-ci
-- name: stemcell
+- name: deployment-configuration # repo containing the original manifest
+- name: release
 
 outputs:
 - name: commit-message
 - name: updated-deployment-manifest
 
 run:
-  path: runtime-ci/tasks/update-stemcell-manifest-section/task
+  path: runtime-ci/tasks/update-manifest-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
   ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  RELEASE_NAME:

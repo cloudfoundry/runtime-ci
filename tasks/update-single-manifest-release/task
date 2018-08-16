@@ -7,8 +7,10 @@ function main() {
   export GOPATH="${root_dir}/go"
   export PATH=$GOPATH/bin:$PATH
 
+  ln -s release "${RELEASE_NAME}-release"
+
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    go run main.go --build-dir "${root_dir}"
+    go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target manifest
   popd
 }
 

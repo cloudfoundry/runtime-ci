@@ -184,11 +184,10 @@ jobs:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
   - task: update-release-{{.name}}
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
     input_mapping:
       release: {{.name}}-release
       deployment-configuration: cf-deployment-develop
-      original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: {{.name}}
   - task: upload-stemcell
@@ -243,9 +242,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: updated-deployment-manifest
-      commit-message: updated-commit-message
     params:
       MANIFEST_NAME: cf-deployment.yml
       MANIFEST_DESTINATION: cf-deployment.yml
