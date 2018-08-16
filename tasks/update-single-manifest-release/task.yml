@@ -17,7 +17,7 @@ outputs:
 - name: updated-deployment-manifest
 
 run:
-  path: runtime-ci/tasks/update-single-manifest-release/task
+  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-manifest-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
