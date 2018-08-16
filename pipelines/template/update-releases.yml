@@ -224,14 +224,17 @@ jobs:
     params:
       RELEASE_NAME: {{.name}}
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: {{.name}}-release
+      original-ops-file: cf-deployment-develop
+      release: {{.name}}-release
       compiled-release-tarball: exported-release
       current-commit-message: commit-message
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: {{.name}}
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: {{.name}}-release-gcs
     params:
       file: exported-release/*.tgz
