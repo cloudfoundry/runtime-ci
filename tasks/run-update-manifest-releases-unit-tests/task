@@ -5,6 +5,7 @@ function main() {
   root_dir="${1}"
 
   export GOPATH="${root_dir}/go"
+  export PATH=$GOPATH/bin:$PATH
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     go get github.com/onsi/ginkgo/...
