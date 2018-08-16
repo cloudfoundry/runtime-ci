@@ -11,6 +11,7 @@ inputs:
   path: go/src/github.com/cloudfoundry/runtime-ci
 - name: deployment-configuration # repo containing the original manifest
 - name: release
+- name: stemcell
 
 outputs:
 - name: commit-message
