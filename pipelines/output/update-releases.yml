@@ -5717,14 +5717,12 @@ jobs:
       rebase: true
       repository: updated-repo
   - task: update-release-pxc-additional-ops-file
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
     input_mapping:
       release: pxc-release
-      deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: pxc
-      TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: operations/experimental/migrate-cf-mysql-to-pxc.yml
       UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
   - task: bosh-dry-run-pxc-additional-ops-file
@@ -7186,7 +7184,7 @@ jobs:
         RELEASE_NAME: uaa
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
   - task: update-compiled-releases-ops-binary-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: cf-deployment-develop
       release: binary-buildpack-release
@@ -7197,7 +7195,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-bosh-dns-aliases
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: bosh-dns-aliases-release
@@ -7208,7 +7206,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-bpm
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: bpm-release
@@ -7219,7 +7217,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-capi
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: capi-release
@@ -7230,7 +7228,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-mysql
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: cf-mysql-release
@@ -7241,7 +7239,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-networking
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: cf-networking-release
@@ -7252,7 +7250,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-smoke-tests
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: cf-smoke-tests-release
@@ -7263,7 +7261,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-syslog-drain
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: cf-syslog-drain-release
@@ -7274,7 +7272,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cflinuxfs2
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: cflinuxfs2-release
@@ -7285,7 +7283,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-consul
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: consul-release
@@ -7296,7 +7294,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-diego
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: diego-release
@@ -7307,7 +7305,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-dotnet-core-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: dotnet-core-buildpack-release
@@ -7318,7 +7316,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-garden-runc
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: garden-runc-release
@@ -7329,7 +7327,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-go-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: go-buildpack-release
@@ -7340,7 +7338,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-java-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: java-buildpack-release
@@ -7351,7 +7349,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-log-cache
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: log-cache-release
@@ -7362,7 +7360,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: loggregator-release
@@ -7373,7 +7371,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator-agent
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: loggregator-agent-release
@@ -7384,7 +7382,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nats
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: nats-release
@@ -7395,7 +7393,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nodejs-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: nodejs-buildpack-release
@@ -7406,7 +7404,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-php-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: php-buildpack-release
@@ -7417,7 +7415,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-python-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: python-buildpack-release
@@ -7428,7 +7426,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-routing
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: routing-release
@@ -7439,7 +7437,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-ruby-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: ruby-buildpack-release
@@ -7450,7 +7448,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-silk
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: silk-release
@@ -7461,7 +7459,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-staticfile-buildpack
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: staticfile-buildpack-release
@@ -7472,7 +7470,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-statsd-injector
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: statsd-injector-release
@@ -7483,7 +7481,7 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-uaa
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
       original-compiled-releases-ops-file: updated-compiled-releases-ops-file
       release: uaa-release

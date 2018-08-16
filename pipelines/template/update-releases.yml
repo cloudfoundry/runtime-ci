@@ -431,14 +431,12 @@ jobs:
       repository: updated-repo
 {{- if contains "pxc" .name}}
   - task: update-release-{{.name}}-additional-ops-file
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
     input_mapping:
       release: {{.name}}-release
-      deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: {{.name}}
-      TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
       UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
   - task: bosh-dry-run-{{.name}}-additional-ops-file
@@ -655,7 +653,7 @@ jobs:
 {{- end}}
 {{- range .baseReleases}}
   - task: update-compiled-releases-ops-{{.name}}
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
     {{- if hasKey . "bootstrap"}}
       original-compiled-releases-ops-file: cf-deployment-develop
