@@ -2854,14 +2854,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: binary-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: binary-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: binary-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: binary-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -2870,9 +2872,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -2931,14 +2932,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: bosh-dns-aliases-release
+      original-ops-file: cf-deployment-develop
+      release: bosh-dns-aliases-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: bosh-dns-aliases
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: bosh-dns-aliases-release-gcs
     params:
       file: exported-release/*.tgz
@@ -2947,9 +2950,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3008,14 +3010,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: bpm-release
+      original-ops-file: cf-deployment-develop
+      release: bpm-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: bpm
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: bpm-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3024,9 +3028,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3085,14 +3088,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: capi-release
+      original-ops-file: cf-deployment-develop
+      release: capi-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: capi
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: capi-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3101,9 +3106,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3162,14 +3166,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-mysql-release
+      original-ops-file: cf-deployment-develop
+      release: cf-mysql-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: cf-mysql
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cf-mysql-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3178,9 +3184,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3239,14 +3244,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-networking-release
+      original-ops-file: cf-deployment-develop
+      release: cf-networking-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: cf-networking
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cf-networking-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3255,9 +3262,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3316,14 +3322,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-smoke-tests-release
+      original-ops-file: cf-deployment-develop
+      release: cf-smoke-tests-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: cf-smoke-tests
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cf-smoke-tests-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3332,9 +3340,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3393,14 +3400,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cf-syslog-drain-release
+      original-ops-file: cf-deployment-develop
+      release: cf-syslog-drain-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: cf-syslog-drain
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cf-syslog-drain-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3409,9 +3418,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3470,14 +3478,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: cflinuxfs2-release
+      original-ops-file: cf-deployment-develop
+      release: cflinuxfs2-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: cflinuxfs2
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cflinuxfs2-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3486,9 +3496,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3547,14 +3556,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: consul-release
+      original-ops-file: cf-deployment-develop
+      release: consul-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: consul
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: consul-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3563,9 +3574,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3624,14 +3634,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: diego-release
+      original-ops-file: cf-deployment-develop
+      release: diego-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: diego
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: diego-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3640,9 +3652,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3701,14 +3712,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: dotnet-core-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: dotnet-core-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: dotnet-core-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: dotnet-core-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3717,9 +3730,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3778,14 +3790,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: garden-runc-release
+      original-ops-file: cf-deployment-develop
+      release: garden-runc-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: garden-runc
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: garden-runc-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3794,9 +3808,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3855,14 +3868,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: go-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: go-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: go-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: go-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3871,9 +3886,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -3932,14 +3946,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: java-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: java-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: java-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: java-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -3948,9 +3964,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4009,14 +4024,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: log-cache-release
+      original-ops-file: cf-deployment-develop
+      release: log-cache-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: log-cache
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: log-cache-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4025,9 +4042,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4086,14 +4102,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: loggregator-release
+      original-ops-file: cf-deployment-develop
+      release: loggregator-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: loggregator
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: loggregator-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4102,9 +4120,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4163,14 +4180,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: loggregator-agent-release
+      original-ops-file: cf-deployment-develop
+      release: loggregator-agent-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: loggregator-agent
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: loggregator-agent-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4179,9 +4198,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4240,14 +4258,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: nats-release
+      original-ops-file: cf-deployment-develop
+      release: nats-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: nats
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: nats-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4256,9 +4276,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4317,14 +4336,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: nodejs-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: nodejs-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: nodejs-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: nodejs-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4333,9 +4354,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4394,14 +4414,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: php-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: php-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: php-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: php-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4410,9 +4432,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4471,14 +4492,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: python-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: python-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: python-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: python-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4487,9 +4510,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4548,14 +4570,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: routing-release
+      original-ops-file: cf-deployment-develop
+      release: routing-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: routing
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: routing-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4564,9 +4588,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4625,14 +4648,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: ruby-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: ruby-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: ruby-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: ruby-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4641,9 +4666,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4702,14 +4726,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: silk-release
+      original-ops-file: cf-deployment-develop
+      release: silk-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: silk
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: silk-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4718,9 +4744,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4779,14 +4804,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: staticfile-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: staticfile-buildpack-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: staticfile-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: staticfile-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4795,9 +4822,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4856,14 +4882,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: statsd-injector-release
+      original-ops-file: cf-deployment-develop
+      release: statsd-injector-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: statsd-injector
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: statsd-injector-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4872,9 +4900,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -4933,14 +4960,16 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      ops-files: cf-deployment-develop
-      bosh-io-release: uaa-release
+      original-ops-file: cf-deployment-develop
+      release: uaa-release
       compiled-release-tarball: exported-release
     params:
+      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: uaa
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: uaa-release-gcs
     params:
       file: exported-release/*.tgz
@@ -4949,9 +4978,8 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: cf-deployment-develop
-      commit-message: updated-commit-message
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
       OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
@@ -7153,285 +7181,341 @@ jobs:
         RELEASE_NAME: uaa
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
   - task: update-compiled-releases-ops-binary-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: cf-deployment-develop
-      bosh-io-release: binary-buildpack-release
+      original-ops-file: cf-deployment-develop
+      release: binary-buildpack-release
       compiled-release-tarball: exported-release-binary-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: binary-buildpack
-      PATH_TO_OPS_FILE: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-bosh-dns-aliases
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: bosh-dns-aliases-release
+      original-ops-file: updated-ops-file
+      release: bosh-dns-aliases-release
       compiled-release-tarball: exported-release-bosh-dns-aliases
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: bosh-dns-aliases
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-bpm
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: bpm-release
+      original-ops-file: updated-ops-file
+      release: bpm-release
       compiled-release-tarball: exported-release-bpm
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: bpm
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-capi
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: capi-release
+      original-ops-file: updated-ops-file
+      release: capi-release
       compiled-release-tarball: exported-release-capi
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: capi
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-mysql
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: cf-mysql-release
+      original-ops-file: updated-ops-file
+      release: cf-mysql-release
       compiled-release-tarball: exported-release-cf-mysql
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-mysql
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-networking
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: cf-networking-release
+      original-ops-file: updated-ops-file
+      release: cf-networking-release
       compiled-release-tarball: exported-release-cf-networking
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-networking
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-smoke-tests
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: cf-smoke-tests-release
+      original-ops-file: updated-ops-file
+      release: cf-smoke-tests-release
       compiled-release-tarball: exported-release-cf-smoke-tests
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-smoke-tests
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-syslog-drain
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: cf-syslog-drain-release
+      original-ops-file: updated-ops-file
+      release: cf-syslog-drain-release
       compiled-release-tarball: exported-release-cf-syslog-drain
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cf-syslog-drain
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cflinuxfs2
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: cflinuxfs2-release
+      original-ops-file: updated-ops-file
+      release: cflinuxfs2-release
       compiled-release-tarball: exported-release-cflinuxfs2
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: cflinuxfs2
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-consul
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: consul-release
+      original-ops-file: updated-ops-file
+      release: consul-release
       compiled-release-tarball: exported-release-consul
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: consul
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-diego
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: diego-release
+      original-ops-file: updated-ops-file
+      release: diego-release
       compiled-release-tarball: exported-release-diego
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: diego
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-dotnet-core-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: dotnet-core-buildpack-release
+      original-ops-file: updated-ops-file
+      release: dotnet-core-buildpack-release
       compiled-release-tarball: exported-release-dotnet-core-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: dotnet-core-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-garden-runc
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: garden-runc-release
+      original-ops-file: updated-ops-file
+      release: garden-runc-release
       compiled-release-tarball: exported-release-garden-runc
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: garden-runc
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-go-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: go-buildpack-release
+      original-ops-file: updated-ops-file
+      release: go-buildpack-release
       compiled-release-tarball: exported-release-go-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: go-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-java-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: java-buildpack-release
+      original-ops-file: updated-ops-file
+      release: java-buildpack-release
       compiled-release-tarball: exported-release-java-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: java-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-log-cache
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: log-cache-release
+      original-ops-file: updated-ops-file
+      release: log-cache-release
       compiled-release-tarball: exported-release-log-cache
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: log-cache
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: loggregator-release
+      original-ops-file: updated-ops-file
+      release: loggregator-release
       compiled-release-tarball: exported-release-loggregator
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: loggregator
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-loggregator-agent
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: loggregator-agent-release
+      original-ops-file: updated-ops-file
+      release: loggregator-agent-release
       compiled-release-tarball: exported-release-loggregator-agent
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: loggregator-agent
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nats
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: nats-release
+      original-ops-file: updated-ops-file
+      release: nats-release
       compiled-release-tarball: exported-release-nats
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: nats
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nodejs-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: nodejs-buildpack-release
+      original-ops-file: updated-ops-file
+      release: nodejs-buildpack-release
       compiled-release-tarball: exported-release-nodejs-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: nodejs-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-php-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: php-buildpack-release
+      original-ops-file: updated-ops-file
+      release: php-buildpack-release
       compiled-release-tarball: exported-release-php-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: php-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-python-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: python-buildpack-release
+      original-ops-file: updated-ops-file
+      release: python-buildpack-release
       compiled-release-tarball: exported-release-python-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: python-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-routing
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: routing-release
+      original-ops-file: updated-ops-file
+      release: routing-release
       compiled-release-tarball: exported-release-routing
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: routing
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-ruby-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: ruby-buildpack-release
+      original-ops-file: updated-ops-file
+      release: ruby-buildpack-release
       compiled-release-tarball: exported-release-ruby-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: ruby-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-silk
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: silk-release
+      original-ops-file: updated-ops-file
+      release: silk-release
       compiled-release-tarball: exported-release-silk
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: silk
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-staticfile-buildpack
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: staticfile-buildpack-release
+      original-ops-file: updated-ops-file
+      release: staticfile-buildpack-release
       compiled-release-tarball: exported-release-staticfile-buildpack
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: staticfile-buildpack
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-statsd-injector
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: statsd-injector-release
+      original-ops-file: updated-ops-file
+      release: statsd-injector-release
       compiled-release-tarball: exported-release-statsd-injector
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: statsd-injector
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-uaa
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
-      ops-files: updated-compiled-releases-ops-file
-      bosh-io-release: uaa-release
+      original-ops-file: updated-ops-file
+      release: uaa-release
       compiled-release-tarball: exported-release-uaa
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: uaa
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      TARGET: compiledReleasesOpsfile
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -7549,7 +7633,7 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
+      ops-file: updated-ops-file
       manifest: manifest-and-updated-stemcell-ops-file
     params:
       MANIFEST_NAME: use-xenial-stemcell.yml
