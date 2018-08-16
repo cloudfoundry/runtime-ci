@@ -223,14 +223,13 @@ jobs:
     params:
       RELEASE_NAME: {{.name}}
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
-      original-ops-file: cf-deployment-develop
+      original-compiled-releases-ops-file: cf-deployment-develop
       release: {{.name}}-release
       compiled-release-tarball: exported-release
       current-commit-message: commit-message
     params:
-      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: {{.name}}
       ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
@@ -242,7 +241,7 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-ops-file
+      ops-file: updated-compiled-releases-ops-file
       manifest: updated-deployment-manifest
     params:
       MANIFEST_NAME: cf-deployment.yml
@@ -311,13 +310,13 @@ jobs:
         - '-c'
         - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
   - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
-      original-ops-file: cf-deployment-develop
+      original-compiled-releases-ops-file: cf-deployment-develop
       release: {{.name}}-release
       compiled-release-tarball: exported-release
+      current-commit-message: commit-message
     params:
-      TARGET: compiledReleasesOpsfile
       RELEASE_NAME: {{.name}}
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
@@ -329,7 +328,7 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-ops-file
+      ops-file: updated-compiled-releases-ops-file
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: use-compiled-releases.yml
@@ -360,14 +359,12 @@ jobs:
         tarball: false
       passed: [ update-stemcell-and-recompile-releases ]
   - task: update-release-{{.name}}
-    file: runtime-ci/tasks/update-single-release/task.yml
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
     input_mapping:
       release: {{.name}}-release
-      deployment-configuration: cf-deployment-develop
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: {{.name}}
-      TARGET: opsfile
       ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
       UPDATED_OPS_FILE_PATH: {{.opsFile}}
 {{- if contains "bits-service" .name}}
@@ -567,21 +564,24 @@ jobs:
 {{- end}}
 {{- range .baseReleases}}
   - task: update-compiled-releases-ops-{{.name}}
-    file: runtime-ci/tasks/update-compiled-release-ops/task.yml
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
-      bbl-state: greengrass-env-director-state
     {{- if hasKey . "bootstrap"}}
-      ops-files: cf-deployment-develop
+      original-compiled-releases-ops-file: cf-deployment-develop
     {{- else}}
-      ops-files: updated-compiled-releases-ops-file
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
     {{- end}}
-      bosh-io-release: {{.name}}-release
+      release: {{.name}}-release
       compiled-release-tarball: exported-release-{{.name}}
+      current-commit-message: commit-message
     params:
       RELEASE_NAME: {{.name}}
     {{- if not (hasKey . "bootstrap")}}
-      PATH_TO_OPS_FILE: use-compiled-releases.yml
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+    {{- else}}
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
     {{- end}}
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
 {{- end}}
   - aggregate:
 {{- range .baseReleases}}
@@ -658,16 +658,15 @@ jobs:
     file: runtime-ci/tasks/update-single-release/task.yml
     input_mapping:
     {{- if hasKey . "bootstrap"}}
-      original-ops-file: cf-deployment-develop
+      original-compiled-releases-ops-file: cf-deployment-develop
     {{- else}}
-      original-ops-file: updated-ops-file
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
     {{- end}}
       release: {{.name}}-release
       compiled-release-tarball: exported-release-{{.name}}
       current-commit-message: commit-message
     params:
       RELEASE_NAME: {{.name}}
-      TARGET: compiledReleasesOpsfile
     {{- if hasKey . "bootstrap"}}
       ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
     {{- else}}
@@ -686,7 +685,7 @@ jobs:
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
-      ops-file: updated-ops-file
+      ops-file: updated-compiled-releases-ops-file
       manifest: manifest-and-updated-stemcell-ops-file
     params:
       MANIFEST_NAME: use-xenial-stemcell.yml
