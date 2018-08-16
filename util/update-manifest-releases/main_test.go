@@ -407,4 +407,197 @@ stemcells:
 			})
 		})
 	})
+
+	Context("compiled releases opsfile", func() {
+		const (
+			originalOpsFile string = `
+---
+- path: /releases/name=release1/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz
+- path: /releases/name=release1/version
+  type: replace
+  value: 0.0.0
+- path: /releases/name=release1/sha1
+  type: replace
+  value: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
+- path: /releases/name=release1/stemcell?
+  type: replace
+  value:
+    os: stemcell1
+    version: "0.0"
+- path: /releases/name=release2/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
+- path: /releases/name=release2/version
+  type: replace
+  value: 0.0.1
+- path: /releases/name=release2/sha1
+  type: replace
+  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+- path: /releases/name=release2/stemcell?
+  type: replace
+  value:
+    os: stemcell1
+    version: "0.0"
+`
+			expectedOpsFile string = `
+---
+- path: /releases/name=release1/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz
+- path: /releases/name=release1/version
+  type: replace
+  value: 0.2.0
+- path: /releases/name=release1/sha1
+  type: replace
+  value: 8867c88b56e0bfb82cffaf15a66bc8d107d6754a
+- path: /releases/name=release1/stemcell?
+  type: replace
+  value:
+    os: stemcell2
+    version: "2.0"
+- path: /releases/name=release2/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
+- path: /releases/name=release2/version
+  type: replace
+  value: 0.0.1
+- path: /releases/name=release2/sha1
+  type: replace
+  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+- path: /releases/name=release2/stemcell?
+  type: replace
+  value:
+    os: stemcell1
+    version: "0.0"
+`
+		)
+
+		BeforeEach(func() {
+			for _, dir := range []string{
+				"commit-message",
+				"original-compiled-releases-ops-file",
+				"updated-compiled-releases-ops-file",
+			} {
+				err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+			}
+
+			err = ioutil.WriteFile(filepath.Join(buildDir, "original-compiled-releases-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+
+			inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
+			outputPath = os.Getenv("UPDATED_OPS_FILE_PATH")
+
+			os.Setenv("ORIGINAL_OPS_FILE_PATH", "original_ops_file.yml")
+			os.Setenv("UPDATED_OPS_FILE_PATH", "updated_ops_file.yml")
+
+			for _, release := range []map[string]string{
+				{"name": "release1", "version": "0.2.0", "url": "https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz", "sha1": "4ee0dfe1f1b9acd14c18863061268f4156c291a4"},
+			} {
+				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
+				err = os.Mkdir(releaseDir, os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				for _, value := range []string{"version", "url", "sha1"} {
+					err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+					Expect(err).NotTo(HaveOccurred())
+				}
+
+				compiledReleaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-compiled-release-tarball", release["name"]))
+				err = os.Mkdir(compiledReleaseDir, os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				compiledReleaseTarballName := "release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz"
+				err = ioutil.WriteFile(filepath.Join(compiledReleaseDir, compiledReleaseTarballName), []byte("anything"), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+			}
+		})
+
+		AfterEach(func() {
+			os.Setenv("ORIGINAL_OPS_FILE_PATH", inputPath)
+			os.Setenv("UPDATED_OPS_FILE_PATH", outputPath)
+		})
+
+		It("updates the original ops file with new releases", func() {
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "updated_ops_file.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
+		})
+
+		It("does not overwrite the commit message if it says that there are changes", func() {
+			ioutil.WriteFile(filepath.Join(buildDir, "commit-message", os.Getenv("COMMIT_MESSAGE_PATH")), []byte("previous commit message with changes"), 0666)
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(string(commitMessage)).To(Equal("previous commit message with changes"))
+		})
+
+		It("updates commit message if current commit message says that there are no changes", func() {
+			ioutil.WriteFile(filepath.Join(buildDir, "commit-message", os.Getenv("COMMIT_MESSAGE_PATH")), []byte("No manifest release or stemcell version updates"), 0666)
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(string(commitMessage)).To(Equal("Updated compiled releases with release1 0.2.0"))
+		})
+
+		Context("failure cases", func() {
+			It("errors when the build dir does not exist", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring(fmt.Sprintf("%v: no such file or directory", fakeDirName)))
+			})
+
+			It("errors when the original ops file does not exist", func() {
+				os.Setenv("ORIGINAL_OPS_FILE_PATH", emptyDir)
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("no such file or directory"))
+			})
+
+			It("errors when the directory to write out the updated ops file path does not exist", func() {
+				os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
+			})
+		})
+	})
 })

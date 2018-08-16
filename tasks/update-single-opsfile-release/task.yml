@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+
+inputs:
+- name: runtime-ci
+  path: go/src/github.com/cloudfoundry/runtime-ci
+- name: original-ops-file
+- name: release
+
+outputs:
+- name: commit-message
+- name: updated-ops-file
+
+run:
+  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-opsfile-release/task
+
+params:
+  COMMIT_MESSAGE_PATH: commit-message.txt
+  RELEASE_NAME:
+  ORIGINAL_OPS_FILE_PATH:
+  UPDATED_OPS_FILE_PATH:

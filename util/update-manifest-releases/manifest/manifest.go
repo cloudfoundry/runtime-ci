@@ -88,35 +88,19 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	var changes []string
 	cfDeploymentReleasesAndStemcells := Manifest{}
 	for _, release := range releasesAndStemcells.Releases {
-		newRelease := common.Release{}
+		var newRelease common.Release
 
 		if _, found := releaseMap[release.Name]; found {
-			newRelease.Name = release.Name
+			var err error
 
-			releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", release.Name))
-
-			sha1, err := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
-			newRelease.SHA1 = strings.TrimSpace(string(sha1))
+			newRelease, err = common.GetReleaseFromFile(buildDir, release.Name)
 			if err != nil {
 				return nil, "", err
 			}
-
-			url, err := ioutil.ReadFile(filepath.Join(releasePath, "url"))
-			if err != nil {
-				return nil, "", err
-			}
-			newRelease.URL = strings.TrimSpace(string(url))
-
-			version, err := ioutil.ReadFile(filepath.Join(releasePath, "version"))
-			if err != nil {
-				return nil, "", err
-			}
-			newRelease.Version = strings.TrimSpace(string(version))
 
 			if releasesByName[newRelease.Name] != newRelease {
 				changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
 			}
-
 		} else {
 			newRelease = release
 		}
@@ -146,7 +130,7 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", err
 	}
 
-	changeMessage := "No manifest release or stemcell version updates"
+	changeMessage := common.NoChangesCommitMessage
 	if len(changes) > 0 {
 		changeMessage = fmt.Sprintf("Updated manifest with %s", strings.Join(changes, ", "))
 	}
