@@ -39,7 +39,7 @@ func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error
 	// because we don't care if commit message file does not exist
 	existingCommitMessage, err := ioutil.ReadFile(commitMessageFile)
 
-	if err != nil || string(existingCommitMessage) == common.NoChangesCommitMessage {
+	if err != nil || strings.TrimSpace(string(existingCommitMessage)) == common.NoChangesCommitMessage {
 		if err := ioutil.WriteFile(commitMessageFile, []byte(commitMessage), 0666); err != nil {
 			return err
 		}
