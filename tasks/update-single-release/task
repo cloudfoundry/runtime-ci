@@ -20,10 +20,11 @@ function main() {
   mkdir -p "${GOPATH}/src/github.com/cloudfoundry"
   ln -s "${root_dir}/runtime-ci" "${GOPATH}/src/github.com/cloudfoundry/runtime-ci"
 
-  go get github.com/onsi/ginkgo/...
-
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    ginkgo -r -randomizeSuites -randomizeAllSpecs .
+    if ${RUN_UNIT_TESTS}; then
+      go get github.com/onsi/ginkgo/...
+      ginkgo -r -randomizeSuites -randomizeAllSpecs .
+    fi
 
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target "${TARGET}"
   popd
