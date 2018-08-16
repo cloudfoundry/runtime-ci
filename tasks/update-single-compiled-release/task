@@ -1,0 +1,21 @@
+#!/bin/bash -exu
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  export GOPATH="${root_dir}/go"
+  export PATH=$GOPATH/bin:$PATH
+
+  ln -s release "${RELEASE_NAME}-release"
+
+  ln -s compiled-release-tarball "${RELEASE_NAME}-compiled-release-tarball"
+
+  cp current-commit-message/${COMMIT_MESSAGE_PATH} commit-message/${COMMIT_MESSAGE_PATH}
+
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+    go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target "compiledReleasesOpsfile"
+  popd
+}
+
+main "${PWD}"
