@@ -163,9 +163,6 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
-    - ha-proxy-vars.yml
 
 - name: bellatrix-env-integration-configs
   type: git
@@ -912,7 +909,9 @@ jobs:
         new-ops-files: bellatrix-env-director-state
       params:
         BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "use-4-azs-for-router.yml"
+        NEW_OPS_FILES: |
+          use-4-azs-for-router.yml
+          decrease-cc-event-retention.yml
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -927,6 +926,7 @@ jobs:
           operations/windows2016-cell.yml
           operations/use-haproxy.yml
           operations/use-haproxy-public-network.yml
+          operations/decrease-cc-event-retention.yml
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
         MEASURE_SYSLOG_AVAILABILITY: true
         TCP_DOMAIN: tcp.bellatrix.cf-app.com
