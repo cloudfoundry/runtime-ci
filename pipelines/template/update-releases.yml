@@ -303,12 +303,12 @@ jobs:
         type: docker-image
         source: {repository: alpine}
       outputs:
-      - name: current-commit-message
+      - name: commit-message
       run:
         path: /bin/sh
         args:
         - '-c'
-        - 'echo "No manifest release or stemcell version updates" > current-commit-message/commit-message.txt'
+        - 'echo "No manifest release or stemcell version updates" > commit-message/commit-message.txt'
   - task: update-compiled-release-ops
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
