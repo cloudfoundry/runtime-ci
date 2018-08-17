@@ -1423,6 +1423,8 @@ jobs:
     passed:
     - fresh-cats
     - lite-cats
+    - experimental-cats
+    - experimental-smoke-tests
     - upgrade-cats
     - upgrade-cats-windows2016
   - put: cf-deployment-release-candidate
