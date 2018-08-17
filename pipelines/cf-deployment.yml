@@ -102,21 +102,6 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources:
-- name: gcp-windows2012-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-windows2012R2-go_agent
-
-- name: gcp-windows2016-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-windows2016-go_agent
-
-- name: aws-xenial-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
-
 - name: fresh-pool
   type: pool
   source:
@@ -546,29 +531,17 @@ jobs:
     - get: runtime-ci
     - get: trelawney-env-integration-configs
     - get: trelawney-env-director-state
-    - get: gcp-windows2012-stemcell
-    - get: gcp-windows2016-stemcell
   - task: bosh-upload-stemcell-upgrade
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
     input_mapping:
       cf-deployment: cf-deployment-develop
       bbl-state: trelawney-env-director-state
+      ops-files: cf-deployment-develop
     params:
       INFRASTRUCTURE: google
-  - task: bosh-upload-windows2012-stemcell
-    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: gcp-windows2012-stemcell
-      bbl-state: trelawney-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
-  - task: bosh-upload-windows2016-stemcell
-    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: gcp-windows2016-stemcell
-      bbl-state: trelawney-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
+      OPS_FILES: |
+        operations/windows-cell.yml
+        operations/windows2016-cell.yml
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
@@ -757,14 +730,16 @@ jobs:
       - get: hermione-env-turbulence-manifest
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
-      - get: aws-xenial-stemcell
     - task: bosh-upload-stemcell-experimental
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
       input_mapping:
-        stemcell: aws-xenial-stemcell
+        cf-deployment: cf-deployment-develop
         bbl-state: hermione-env-director-state
+        ops-files: cf-deployment-develop
       params:
-        STEMCELL_NAME: '*.tgz'
+        INFRASTRUCTURE: aws
+        OPS_FILES: |
+          operations/experimental/use-xenial-stemcell.yml
     - task: bosh-update-runtime-config
       file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
       input_mapping:
@@ -881,21 +856,16 @@ jobs:
       - get: cf-deployment-master
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
-      - get: gcp-windows2016-stemcell
     - task: bosh-upload-stemcell-stable
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+      file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
       input_mapping:
         cf-deployment: cf-deployment-master
         bbl-state: bellatrix-env-director-state
+        ops-files: cf-deployment-master
       params:
         INFRASTRUCTURE: google
-    - task: bosh-upload-windows2016-stemcell
-      file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-      input_mapping:
-        stemcell: gcp-windows2016-stemcell
-        bbl-state: bellatrix-env-director-state
-      params:
-        STEMCELL_NAME: '*.tgz'
+        OPS_FILES: |
+          operations/windows2016-cell.yml
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
