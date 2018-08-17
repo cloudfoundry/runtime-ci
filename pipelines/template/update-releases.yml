@@ -574,7 +574,7 @@ jobs:
       current-commit-message: commit-message
     params:
       RELEASE_NAME: {{.name}}
-    {{- if not (hasKey . "bootstrap")}}
+    {{- if hasKey . "bootstrap"}}
       ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
     {{- else}}
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
