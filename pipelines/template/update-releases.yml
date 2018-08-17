@@ -262,8 +262,6 @@ jobs:
 - name: update-{{.name}}-xenial
   serial_groups:
   - update-{{.name}}
-  - update-{{.name}}-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:

@@ -2806,8 +2806,6 @@ jobs:
 - name: update-binary-buildpack-xenial
   serial_groups:
   - update-binary-buildpack
-  - update-binary-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2884,8 +2882,6 @@ jobs:
 - name: update-bosh-dns-aliases-xenial
   serial_groups:
   - update-bosh-dns-aliases
-  - update-bosh-dns-aliases-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -2962,8 +2958,6 @@ jobs:
 - name: update-bpm-xenial
   serial_groups:
   - update-bpm
-  - update-bpm-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3040,8 +3034,6 @@ jobs:
 - name: update-capi-xenial
   serial_groups:
   - update-capi
-  - update-capi-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3118,8 +3110,6 @@ jobs:
 - name: update-cf-mysql-xenial
   serial_groups:
   - update-cf-mysql
-  - update-cf-mysql-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3196,8 +3186,6 @@ jobs:
 - name: update-cf-networking-xenial
   serial_groups:
   - update-cf-networking
-  - update-cf-networking-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3274,8 +3262,6 @@ jobs:
 - name: update-cf-smoke-tests-xenial
   serial_groups:
   - update-cf-smoke-tests
-  - update-cf-smoke-tests-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3352,8 +3338,6 @@ jobs:
 - name: update-cf-syslog-drain-xenial
   serial_groups:
   - update-cf-syslog-drain
-  - update-cf-syslog-drain-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3430,8 +3414,6 @@ jobs:
 - name: update-cflinuxfs2-xenial
   serial_groups:
   - update-cflinuxfs2
-  - update-cflinuxfs2-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3508,8 +3490,6 @@ jobs:
 - name: update-consul-xenial
   serial_groups:
   - update-consul
-  - update-consul-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3586,8 +3566,6 @@ jobs:
 - name: update-diego-xenial
   serial_groups:
   - update-diego
-  - update-diego-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3664,8 +3642,6 @@ jobs:
 - name: update-dotnet-core-buildpack-xenial
   serial_groups:
   - update-dotnet-core-buildpack
-  - update-dotnet-core-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3742,8 +3718,6 @@ jobs:
 - name: update-garden-runc-xenial
   serial_groups:
   - update-garden-runc
-  - update-garden-runc-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3820,8 +3794,6 @@ jobs:
 - name: update-go-buildpack-xenial
   serial_groups:
   - update-go-buildpack
-  - update-go-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3898,8 +3870,6 @@ jobs:
 - name: update-java-buildpack-xenial
   serial_groups:
   - update-java-buildpack
-  - update-java-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -3976,8 +3946,6 @@ jobs:
 - name: update-log-cache-xenial
   serial_groups:
   - update-log-cache
-  - update-log-cache-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4054,8 +4022,6 @@ jobs:
 - name: update-loggregator-xenial
   serial_groups:
   - update-loggregator
-  - update-loggregator-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4132,8 +4098,6 @@ jobs:
 - name: update-loggregator-agent-xenial
   serial_groups:
   - update-loggregator-agent
-  - update-loggregator-agent-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4210,8 +4174,6 @@ jobs:
 - name: update-nats-xenial
   serial_groups:
   - update-nats
-  - update-nats-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4288,8 +4250,6 @@ jobs:
 - name: update-nodejs-buildpack-xenial
   serial_groups:
   - update-nodejs-buildpack
-  - update-nodejs-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4366,8 +4326,6 @@ jobs:
 - name: update-php-buildpack-xenial
   serial_groups:
   - update-php-buildpack
-  - update-php-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4444,8 +4402,6 @@ jobs:
 - name: update-python-buildpack-xenial
   serial_groups:
   - update-python-buildpack
-  - update-python-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4522,8 +4478,6 @@ jobs:
 - name: update-routing-xenial
   serial_groups:
   - update-routing
-  - update-routing-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4600,8 +4554,6 @@ jobs:
 - name: update-ruby-buildpack-xenial
   serial_groups:
   - update-ruby-buildpack
-  - update-ruby-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4678,8 +4630,6 @@ jobs:
 - name: update-silk-xenial
   serial_groups:
   - update-silk
-  - update-silk-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4756,8 +4706,6 @@ jobs:
 - name: update-staticfile-buildpack-xenial
   serial_groups:
   - update-staticfile-buildpack
-  - update-staticfile-buildpack-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4834,8 +4782,6 @@ jobs:
 - name: update-statsd-injector-xenial
   serial_groups:
   - update-statsd-injector
-  - update-statsd-injector-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
@@ -4912,8 +4858,6 @@ jobs:
 - name: update-uaa-xenial
   serial_groups:
   - update-uaa
-  - update-uaa-xenial
-  - update-stemcell-and-recompile-releases
   public: true
   build_logs_to_retain: 100
   plan:
