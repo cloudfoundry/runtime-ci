@@ -542,9 +542,6 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
-        operations/improve-diego-log-format.yml
-        operations/improve-diego-log-format-windows.yml
-        operations/improve-diego-log-format-windows2016.yml
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
@@ -576,6 +573,9 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/enable-service-discovery.yml
+        operations/improve-diego-log-format.yml
+        operations/improve-diego-log-format-windows.yml
+        operations/improve-diego-log-format-windows2016.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
