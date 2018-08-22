@@ -88,6 +88,7 @@ groups:
   - update-bits-service
   - update-pxc
   - update-windows-syslog
+  - update-cf-cli
 - name: update-windows-stemcells-and-releases
   jobs:
   - update-windows-stemcell
@@ -349,6 +350,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/windows-syslog-release
+- name: cf-cli-release
+  type: bosh-io-release
+  source:
+    repository: bosh-packages/cf-cli-release
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -5763,6 +5768,71 @@ jobs:
     params:
       OPS_FILE_NAME: windows-enable-component-syslog.yml
       OPS_FILE_DESTINATION: operations/experimental/windows-enable-component-syslog.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-cf-cli
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-cli-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-cli
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: cf-cli-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-cli
+      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
+      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-cf-cli
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-cli
+      OPS_FILES: |
+        enable-nfs-volume-service.yml
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment-cf-cli
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-cli
+  - task: commit-generated-manifest-and-ops-cf-cli
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: enable-nfs-volume-service.yml
+      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
   - put: cf-deployment-develop
     params:
       rebase: true

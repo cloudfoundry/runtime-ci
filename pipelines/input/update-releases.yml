@@ -116,7 +116,10 @@ opsReleases:
   opsFile: windows-enable-component-syslog.yml
   varsFilesInput: greengrass-env-director-state
   varsFiles: "vars-files/windows-enable-component-syslog-vars.yml"
-
+- name: cf-cli
+  repository: bosh-packages/cf-cli-release
+  cfDeploymentOpsFileDir: operations
+  opsFile: enable-nfs-volume-service.yml
 
 windowsVersSupported:
 - name: windows
