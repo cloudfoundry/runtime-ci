@@ -795,6 +795,7 @@ jobs:
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
+          operations/experimental/disable-consul-windows1803.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/add-cflinuxfs3.yml
