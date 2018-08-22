@@ -780,7 +780,7 @@ jobs:
         OPS_FILES: |
           operations/aws.yml
           operations/experimental/use-xenial-stemcell.yml
-          operations/experimental/use-compiled-releases-xenial-stemcell.yml
+          operations/experimental/windows1803-cell.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
