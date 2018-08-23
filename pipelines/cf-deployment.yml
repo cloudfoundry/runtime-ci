@@ -743,25 +743,6 @@ jobs:
         INFRASTRUCTURE: aws
         OPS_FILES: |
           operations/experimental/use-xenial-stemcell.yml
-    - task: bosh-update-runtime-config
-      file: runtime-ci/tasks/bosh-update-runtime-config/task.yml
-      input_mapping:
-        bbl-state: hermione-env-director-state
-        runtime-configs: hermione-env-director-state
-        vars-files: hermione-env-director-state
-      params:
-        RUNTIME_CONFIG_FILE: runtime-config.yml
-    - task: deploy-turbulence-api-experimental
-      file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-      input_mapping:
-        cf-deployment: hermione-env-turbulence-manifest
-        bbl-state: hermione-env-director-state
-        ops-files: runtime-ci
-        vars-files: hermione-env-director-state
-      params:
-        MANIFEST_FILE: turbulence.yml
-        SYSTEM_DOMAIN: cf-app.com # not used, this is a required by the task
-        OPS_FILES: "experiments/operations/add-turbulence-bosh-io-release.yml"
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:

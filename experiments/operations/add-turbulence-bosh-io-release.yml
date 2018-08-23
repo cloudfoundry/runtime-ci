@@ -1,8 +1,0 @@
----
-- type: replace
-  path: /releases?/name=turbulence?
-  value:
-    name: turbulence
-    url: https://bosh.io/d/github.com/cppforlife/turbulence-release?v=0.6
-    version: "0.6"
-    sha1: 5222108e2aa500bb60205d7a0e6f654dde391f36
