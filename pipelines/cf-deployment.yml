@@ -743,6 +743,7 @@ jobs:
         INFRASTRUCTURE: aws
         OPS_FILES: |
           operations/experimental/use-xenial-stemcell.yml
+          operations/experimental/windows1803-cell.yml
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
