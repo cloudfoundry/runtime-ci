@@ -210,6 +210,7 @@ jobs:
       - get: cats-env-director-state
     - task: enable-docker-and-tasks
       file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      attempts: 3
       input_mapping:
         bbl-state: cats-env-director-state
       params:
