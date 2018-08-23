@@ -769,6 +769,7 @@ jobs:
           operations/experimental/bits-service.yml
           operations/experimental/bits-service-s3.yml
           operations/experimental/secure-service-credentials.yml
+          operations/experimental/secure-service-credentials-windows2016-cell.yml
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
           operations/experimental/secure-service-credentials-with-pxc-release.yml
