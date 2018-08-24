@@ -743,7 +743,6 @@ jobs:
         INFRASTRUCTURE: aws
         OPS_FILES: |
           operations/experimental/use-xenial-stemcell.yml
-          operations/experimental/windows1803-cell.yml
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
@@ -782,7 +781,6 @@ jobs:
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/add-cflinuxfs3.yml
-          operations/experimental/enable-bpm-garden.yml
           operations/experimental/use-logcache-for-cloud-controller-app-stats.yml
           operations/experimental/set-cpu-weight.yml
         VARS_FILES: "datadog-deployment-vars.yml s3-vars.yml"
