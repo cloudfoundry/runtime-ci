@@ -869,7 +869,6 @@ jobs:
       params:
         BASE_OPS_FILE_DIR: "operations"
         NEW_OPS_FILES: |
-          use-4-azs-for-router.yml
           decrease-cc-event-retention.yml
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
