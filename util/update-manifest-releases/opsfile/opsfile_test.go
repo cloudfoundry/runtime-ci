@@ -19,7 +19,6 @@ var _ = Describe("UpdateReleases", func() {
 		noChangesBuildDir string
 
 		originalOpsFile []byte
-		desiredOpsFile  []byte
 	)
 
 	BeforeEach(func() {
@@ -28,9 +27,6 @@ var _ = Describe("UpdateReleases", func() {
 		noChangesBuildDir = "../fixtures/nochanges-build"
 
 		var err error
-
-		desiredOpsFile, err = ioutil.ReadFile("../fixtures/updated_ops_file.yml")
-		Expect(err).NotTo(HaveOccurred())
 
 		originalOpsFile, err = ioutil.ReadFile("../fixtures/original_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
