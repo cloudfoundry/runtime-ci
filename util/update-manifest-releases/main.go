@@ -8,13 +8,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 )
+
+var cfDeploymentIgnoreFilesAndDirs = []string{"cf-deployment.yml", ".git", "scripts"}
 
 func getReleaseNames(buildDir string) ([]string, error) {
 	files, err := ioutil.ReadDir(buildDir)
@@ -49,23 +51,66 @@ func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error
 
 type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc) ([]byte, string, error)
 
+func isIgnored(name string, ignoreList []string) bool {
+	for _, ignoreName := range ignoreList {
+		if name == ignoreName {
+			return true
+		}
+	}
+	return false
+}
+
+func findOpsFiles(searchDir string, ignoreFilesAndDirs []string) (map[string]string, error) {
+	foundFiles := make(map[string]string)
+
+	err := filepath.Walk(searchDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if isIgnored(info.Name(), ignoreFilesAndDirs) {
+			return filepath.SkipDir
+		} else if !info.IsDir() && filepath.Ext(info.Name()) == ".yml" {
+			foundFiles[path] = info.Name()
+		}
+
+		return nil
+	})
+
+	return foundFiles, err
+}
+
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
-	originalFile, err := ioutil.ReadFile(filepath.Join(buildDir, inputDir, inputPath))
-	if err != nil {
-		return err
+	filesToUpdate := make(map[string]string)
+	var err error
+
+	if inputPath == "" && outputPath == "" {
+		filesToUpdate, err = findOpsFiles(filepath.Join(buildDir, inputDir), cfDeploymentIgnoreFilesAndDirs)
+		if err != nil {
+			return err
+		}
+	} else {
+		filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
 	}
 
-	updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
-	if err != nil {
-		return err
-	}
+	for inputPath, outputFileName := range filesToUpdate {
+		originalFile, err := ioutil.ReadFile(inputPath)
+		if err != nil {
+			return err
+		}
 
-	if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
-		return err
-	}
+		updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
+		if err != nil {
+			return err
+		}
 
-	if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputPath), updatedFile, 0666); err != nil {
-		return err
+		if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
+			return err
+		}
+
+		if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputFileName), updatedFile, 0666); err != nil {
+			return err
+		}
 	}
 
 	return nil

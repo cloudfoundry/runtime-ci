@@ -64,7 +64,7 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
-		Expect(changes).To(Equal("Updated opsfile with non-append-release updated-non-append-version"))
+		Expect(changes).To(Equal("Updated ops file(s) with non-append-release updated-non-append-version"))
 	})
 
 	It("updates releases with different shas", func() {
@@ -77,7 +77,7 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(MatchYAML(desiredOpsFile))
-		Expect(changes).To(Equal("Updated opsfile with release2-release original-release2-version"))
+		Expect(changes).To(Equal("Updated ops file(s) with release2-release original-release2-version"))
 	})
 
 	It("updates releases with different versions", func() {
@@ -90,7 +90,7 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(MatchYAML(string(desiredOpsFile)))
-		Expect(changes).To(Equal("Updated opsfile with release2-release updated-release2-version"))
+		Expect(changes).To(Equal("Updated ops file(s) with release2-release updated-release2-version"))
 	})
 
 	It("updates releases with different urls", func() {
@@ -103,7 +103,7 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(string(updatedOpsFile)).To(MatchYAML(desiredOpsFile))
-		Expect(changes).To(Equal("Updated opsfile with release2-release original-release2-version"))
+		Expect(changes).To(Equal("Updated ops file(s) with release2-release original-release2-version"))
 	})
 
 	It("provides a default commit message if no version updates were performed", func() {

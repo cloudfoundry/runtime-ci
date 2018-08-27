@@ -46,7 +46,7 @@ var _ = Describe("main", func() {
 
 	Context("opsfile", func() {
 		const (
-			originalOpsFile string = `
+			originalOpsFile = `
 - type: replace
   path: /releases/-
   value:
@@ -62,7 +62,7 @@ var _ = Describe("main", func() {
     version: original-release4-version
     sha1: original-release4-sha
 `
-			expectedOpsFile string = `
+			expectedOpsFile = `
 - type: replace
   path: /releases/-
   value:
@@ -77,6 +77,54 @@ var _ = Describe("main", func() {
     url: new-release4-url
     version: new-release4-version
     sha1: new-release4-sha
+`
+			anotherOriginalOpsFileWithRelease4 = `
+- type: replace
+  path: /releases/-
+  value:
+    name: release2
+    url: original-release2-url
+    version: original-release2-version
+    sha1: original-release2-sha
+- type: replace
+  path: /releases/-
+  value:
+    name: release4
+    url: original-release4-url
+    version: original-release4-version
+    sha1: original-release4-sha
+`
+			anotherExpectedOpsFileWithRelease4 = `
+- type: replace
+  path: /releases/-
+  value:
+    name: release2
+    url: original-release2-url
+    version: original-release2-version
+    sha1: original-release2-sha
+- type: replace
+  path: /releases/-
+  value:
+    name: release4
+    url: new-release4-url
+    version: new-release4-version
+    sha1: new-release4-sha
+`
+			opsFileWithoutRelease4 = `
+- type: replace
+  path: /releases/-
+  value:
+    name: release2
+    url: original-release2-url
+    version: original-release2-version
+    sha1: original-release2-sha
+- type: replace
+  path: /releases/-
+  value:
+    name: release5
+    url: original-release5-url
+    version: original-release5-version
+    sha1: original-release5-sha
 `
 		)
 
@@ -119,6 +167,97 @@ var _ = Describe("main", func() {
 			os.Setenv("UPDATED_OPS_FILE_PATH", outputPath)
 		})
 
+		Context("when there is more than one ops file containing desired release", func() {
+			BeforeEach(func() {
+				os.Unsetenv("ORIGINAL_OPS_FILE_PATH")
+				os.Unsetenv("UPDATED_OPS_FILE_PATH")
+
+				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "another_original_ops_file.yml"), []byte(anotherOriginalOpsFileWithRelease4), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "ops_file_that_should_stay_the_same.yml"), []byte(opsFileWithoutRelease4), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				for _, release := range []map[string]string{
+					{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
+					{"name": "release5", "version": "original-release5-version", "url": "original-release5-url", "sha1": "original-release5-sha"},
+				} {
+					releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
+					err = os.Mkdir(releaseDir, os.ModePerm)
+					Expect(err).NotTo(HaveOccurred())
+
+					for _, value := range []string{"version", "url", "sha1"} {
+						err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+						Expect(err).NotTo(HaveOccurred())
+					}
+				}
+			})
+
+			It("updates both ops files with the release and no other ops files", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(0))
+
+				updatedOpsFile1, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
+				Expect(err).NotTo(HaveOccurred())
+
+				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "another_original_ops_file.yml"))
+				Expect(err).NotTo(HaveOccurred())
+
+				nonUpdatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(updatedOpsFile1).To(MatchYAML(expectedOpsFile))
+				Expect(updatedOpsFile2).To(MatchYAML(anotherExpectedOpsFileWithRelease4))
+				Expect(nonUpdatedOpsFile).To(MatchYAML(opsFileWithoutRelease4))
+			})
+
+			It("doesn't error if input directory contains cf-deployment.yml", func() {
+				manifest := `
+name: cf-deployment
+releases:
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: original-stemcell-version
+`
+				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "cf-deployment.yml"), []byte(manifest), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(0))
+			})
+
+			It("doesn't error scripts directory contains vars files", func() {
+				vars := `
+some_client: some_value
+`
+				err = os.Mkdir(filepath.Join(buildDir, "original-ops-file", "scripts"), os.ModePerm)
+
+				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "scripts", "vars-store.yml"), []byte(vars), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(0))
+			})
+		})
+
 		It("updates the original ops file with new releases", func() {
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -142,7 +281,7 @@ var _ = Describe("main", func() {
 			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(string(commitMessage)).To(Equal("Updated opsfile with release4-release new-release4-version"))
+			Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
 		})
 
 		Context("failure cases", func() {
@@ -197,7 +336,7 @@ var _ = Describe("main", func() {
 
 	Context("manifest", func() {
 		const (
-			expectedReleasesAndStemcells string = `
+			expectedReleasesAndStemcells = `
 name: cf-deployment
 releases:
 - name: release1
@@ -222,7 +361,7 @@ stemcells:
   version: updated-stemcell-version
 `
 
-			expectedSingleReleaseAndStemcells string = `
+			expectedSingleReleaseAndStemcells = `
 name: cf-deployment
 releases:
 - name: release1
@@ -243,7 +382,7 @@ stemcells:
   version: updated-stemcell-version
 `
 
-			originalManifest string = `
+			originalManifest = `
 name: cf-deployment
 releases:
 - name: release1
