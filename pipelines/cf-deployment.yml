@@ -573,9 +573,6 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/enable-service-discovery.yml
-        operations/improve-diego-log-format.yml
-        operations/improve-diego-log-format-windows.yml
-        operations/improve-diego-log-format-windows2016.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
