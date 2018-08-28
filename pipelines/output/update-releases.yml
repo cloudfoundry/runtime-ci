@@ -43,6 +43,7 @@ groups:
   - update-staticfile-buildpack
   - update-statsd-injector
   - update-uaa
+  - update-credhub
 - name: update-base-xenial-stemcells-and-releases
   jobs:
   - update-xenial-stemcell-and-recompile-releases
@@ -74,12 +75,12 @@ groups:
   - update-staticfile-buildpack-xenial
   - update-statsd-injector-xenial
   - update-uaa-xenial
+  - update-credhub-xenial
 - name: update-ops-releases
   jobs:
   - update-backup-and-restore-sdk
   - update-broker-registrar
   - update-cf-app-sd
-  - update-credhub
   - update-haproxy
   - update-mapfs
   - update-nfs-volume
@@ -302,6 +303,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
+- name: credhub-release
+  type: bosh-io-release
+  source:
+    repository: pivotal-cf/credhub-release
 - name: backup-and-restore-sdk-release
   type: bosh-io-release
   source:
@@ -314,10 +319,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-app-sd-release
-- name: credhub-release
-  type: bosh-io-release
-  source:
-    repository: pivotal-cf/credhub-release
 - name: haproxy-release
   type: bosh-io-release
   source:
@@ -522,6 +523,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: uaa-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: credhub-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: credhub-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: daily
   type: time
   source:
@@ -2803,6 +2810,92 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-credhub
+  serial_groups:
+  - update-credhub
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: credhub-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-credhub
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: credhub-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: credhub
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: credhub
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-credhub
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: credhub
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: credhub-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: credhub
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - put: credhub-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 
 # This Xenial-specific job is meant to be temporary, and should be removed once
 # Xenial becomes the one true stemcell.  It's missing elements such as updating
@@ -4936,6 +5029,82 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-credhub-xenial
+  serial_groups:
+  - update-credhub
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: credhub-release
+      passed:
+      - update-credhub
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: credhub
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: credhub-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: credhub
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - put: credhub-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 - name: update-backup-and-restore-sdk
   serial: true
   public: true
@@ -5127,71 +5296,6 @@ jobs:
     params:
       OPS_FILE_NAME: enable-service-discovery.yml
       OPS_FILE_DESTINATION: operations/experimental/enable-service-discovery.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-credhub
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: credhub-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-credhub
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: credhub-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: credhub
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/secure-service-credentials.yml
-      UPDATED_OPS_FILE_PATH: secure-service-credentials.yml
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-credhub
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: credhub
-      OPS_FILES: |
-        secure-service-credentials.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-credhub
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-credhub
-  - task: commit-generated-manifest-and-ops-credhub
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: secure-service-credentials.yml
-      OPS_FILE_DESTINATION: operations/experimental/secure-service-credentials.yml
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5928,6 +6032,7 @@ jobs:
   - update-staticfile-buildpack
   - update-statsd-injector
   - update-uaa
+  - update-credhub
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -6017,6 +6122,9 @@ jobs:
       params:
         tarball: false
     - get: uaa-release
+      params:
+        tarball: false
+    - get: credhub-release
       params:
         tarball: false
     - get: stemcell
@@ -6287,6 +6395,15 @@ jobs:
         exported-release: exported-release-uaa
       params:
         RELEASE_NAME: uaa
+    - task: compile-release-credhub
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-credhub
+      params:
+        RELEASE_NAME: credhub
   - task: update-compiled-releases-ops-binary-buildpack
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -6595,6 +6712,17 @@ jobs:
       RELEASE_NAME: uaa
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-credhub
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: credhub-release
+      compiled-release-tarball: exported-release-credhub
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: credhub
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -6708,6 +6836,10 @@ jobs:
       params:
         file: exported-release-uaa/*.tgz
         predefined_acl: publicRead
+    - put: credhub-release-gcs
+      params:
+        file: exported-release-credhub/*.tgz
+        predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -6784,6 +6916,8 @@ jobs:
   - update-statsd-injector-xenial
   - update-uaa
   - update-uaa-xenial
+  - update-credhub
+  - update-credhub-xenial
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -6901,6 +7035,10 @@ jobs:
         tarball: false
     - get: uaa-release
       passed: [update-uaa]
+      params:
+        tarball: false
+    - get: credhub-release
+      passed: [update-credhub]
       params:
         tarball: false
     - get: stemcell
@@ -7196,6 +7334,16 @@ jobs:
         exported-release: exported-release-uaa
       params:
         RELEASE_NAME: uaa
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+    - task: compile-release-credhub
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-credhub
+      params:
+        RELEASE_NAME: credhub
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
   - task: update-compiled-releases-ops-binary-buildpack
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
@@ -7505,6 +7653,17 @@ jobs:
       RELEASE_NAME: uaa
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-credhub
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: credhub-release
+      compiled-release-tarball: exported-release-credhub
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: credhub
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -7617,6 +7776,10 @@ jobs:
     - put: uaa-release-gcs
       params:
         file: exported-release-uaa/*.tgz
+        predefined_acl: publicRead
+    - put: credhub-release-gcs
+      params:
+        file: exported-release-credhub/*.tgz
         predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml

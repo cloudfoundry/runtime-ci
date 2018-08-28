@@ -57,6 +57,8 @@ baseReleases:
   repository: cloudfoundry/statsd-injector-release
 - name: uaa
   repository: cloudfoundry/uaa-release
+- name: credhub
+  repository: pivotal-cf/credhub-release
 
 opsReleases:
 - name: backup-and-restore-sdk
@@ -71,11 +73,6 @@ opsReleases:
   repository: cloudfoundry/cf-app-sd-release
   cfDeploymentOpsFileDir: operations/experimental
   opsFile: enable-service-discovery.yml
-- name: credhub
-  repository: pivotal-cf/credhub-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: secure-service-credentials.yml
-  varsFilesInput: greengrass-env-director-state
 - name: haproxy
   repository: cloudfoundry-incubator/haproxy-boshrelease
   cfDeploymentOpsFileDir: operations
