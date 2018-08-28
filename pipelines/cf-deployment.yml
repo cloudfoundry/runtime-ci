@@ -515,6 +515,22 @@ jobs:
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
+  - task: open-asgs-for-credhub
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: luna-env-director-state
+    params:
+      INSTANCE_GROUP_NAME: credhub
+      SYSTEM_DOMAIN: luna.cf-app.com
+      SECURITY_GROUP_NAME: credhub
+  - task: open-asgs-for-uaa
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: luna-env-director-state
+    params:
+      INSTANCE_GROUP_NAME: uaa
+      SYSTEM_DOMAIN: luna.cf-app.com
+      SECURITY_GROUP_NAME: uaa
 
 - name: upgrade-deploy
   serial: true
@@ -607,6 +623,22 @@ jobs:
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: trelawney.cf-app.com
+  - task: open-asgs-for-credhub
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+    params:
+      INSTANCE_GROUP_NAME: credhub
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      SECURITY_GROUP_NAME: credhub
+  - task: open-asgs-for-uaa
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+    params:
+      INSTANCE_GROUP_NAME: uaa
+      SYSTEM_DOMAIN: trelawney.cf-app.com
+      SECURITY_GROUP_NAME: uaa
 
 - name: experimental-acquire-pool
   public: true
@@ -765,11 +797,8 @@ jobs:
           operations/experimental/use-garden-containerd.yml
           operations/experimental/bits-service.yml
           operations/experimental/bits-service-s3.yml
-          operations/experimental/secure-service-credentials.yml
-          operations/experimental/secure-service-credentials-windows2016-cell.yml
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
-          operations/experimental/secure-service-credentials-with-pxc-release.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/skip-consul-locks.yml
           operations/experimental/skip-consul-cell-registrations.yml
@@ -985,6 +1014,22 @@ jobs:
         params:
           repository: updated-integration-configs
           rebase: true
+    - task: open-asgs-for-credhub
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: snitch-env-director-state
+      params:
+        INSTANCE_GROUP_NAME: credhub
+        SYSTEM_DOMAIN: snitch.cf-app.com
+        SECURITY_GROUP_NAME: credhub
+    - task: open-asgs-for-uaa
+      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: snitch-env-director-state
+      params:
+        INSTANCE_GROUP_NAME: uaa
+        SYSTEM_DOMAIN: snitch.cf-app.com
+        SECURITY_GROUP_NAME: uaa
 
 - name: experimental-cats
   serial_groups: [ hermione-cats ]
