@@ -31,11 +31,12 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 		var newRelease common.Release
 		var err error
 
+		matchingURLPath := fmt.Sprintf("/releases/name=%s/url", releaseName)
+		matchingVersionPath := fmt.Sprintf("/releases/name=%s/version", releaseName)
+		matchingSHA1Path := fmt.Sprintf("/releases/name=%s/sha1", releaseName)
+		matchingStemcellPath := fmt.Sprintf("/releases/name=%s/stemcell?", releaseName)
+
 		for i, op := range deserializedOpsFile {
-			matchingURLPath := fmt.Sprintf("/releases/name=%s/url", releaseName)
-			matchingVersionPath := fmt.Sprintf("/releases/name=%s/version", releaseName)
-			matchingSha1Path := fmt.Sprintf("/releases/name=%s/sha1", releaseName)
-			matchingStemcellPath := fmt.Sprintf("/releases/name=%s/stemcell?", releaseName)
 
 			if strings.Contains(op.Path, matchingURLPath) {
 				newRelease, err = getCompiledReleaseForBuild(buildDir, releaseName)
@@ -47,7 +48,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 				deserializedOpsFile[i].Value = newRelease.URL
 			} else if strings.Contains(op.Path, matchingVersionPath) {
 				deserializedOpsFile[i].Value = newRelease.Version
-			} else if strings.Contains(op.Path, matchingSha1Path) {
+			} else if strings.Contains(op.Path, matchingSHA1Path) {
 				deserializedOpsFile[i].Value = newRelease.SHA1
 			} else if strings.Contains(op.Path, matchingStemcellPath) {
 				deserializedOpsFile[i].Value = newRelease.Stemcell
@@ -56,7 +57,35 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 			commitMessage = fmt.Sprintf("Updated compiled releases with %s %s", newRelease.Name, newRelease.Version)
 		}
 		if !foundRelease {
-			return nil, "", fmt.Errorf("could not find release '%s' in the ops file", releaseName)
+			newRelease, err = getCompiledReleaseForBuild(buildDir, releaseName)
+			if err != nil {
+				return nil, "", err
+			}
+			newReleaseOpsURL := opsfile.Op{
+				TypeField: "replace",
+				Path: matchingURLPath,
+				Value: newRelease.URL,
+			}
+
+			newReleaseOpsVersion := opsfile.Op{
+				TypeField: "replace",
+				Path: matchingVersionPath,
+				Value: newRelease.Version,
+			}
+
+			newReleaseOpsSHA1 := opsfile.Op{
+				TypeField: "replace",
+				Path: matchingSHA1Path,
+				Value: newRelease.SHA1,
+			}
+
+			newReleaseOpsStemcell := opsfile.Op{
+				TypeField: "replace",
+				Path: matchingStemcellPath,
+				Value: newRelease.Stemcell,
+			}
+			deserializedOpsFile = append(deserializedOpsFile, newReleaseOpsURL, newReleaseOpsSHA1, newReleaseOpsVersion, newReleaseOpsStemcell)
+			commitMessage = fmt.Sprintf("Updated compiled releases with %s %s", newRelease.Name, newRelease.Version)
 		}
 	}
 

@@ -54,11 +54,14 @@ var _ = Describe("UpdateCompiledReleases", func() {
 		Expect(err.Error()).To(ContainSubstring("could not find necessary release info:"))
 	})
 
-	It("returns error when it could not find desired release in the ops file", func() {
+	It("adds release if it cannot be found in the ops file", func() {
 		releaseNames := []string{"extraneous"}
+		desiredOpsFile, err = ioutil.ReadFile("../fixtures/updated_compiled_releases_ops_file_with_new_release.yml")
+		Expect(err).NotTo(HaveOccurred())
 
-		_, _, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(Equal("could not find release 'extraneous' in the ops file"))
+		updatedOpsFile, commitMessage, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(commitMessage).To(Equal("Updated compiled releases with extraneous 0.1.0"))
+		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
 	})
 })
