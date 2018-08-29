@@ -293,7 +293,6 @@ jobs:
           operations/enable-nfs-volume-service.yml
           operations/backup-and-restore/enable-backup-restore-nfs-broker.yml
           operations/enable-nfs-test-server.yml
-          operations/backup-and-restore/enable-backup-restore-credhub.yml
     - task: open-asgs-for-credhub
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
