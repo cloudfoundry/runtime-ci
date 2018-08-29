@@ -800,8 +800,6 @@ jobs:
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
-          operations/experimental/skip-consul-locks.yml
-          operations/experimental/skip-consul-cell-registrations.yml
           operations/experimental/disable-consul.yml
           operations/experimental/disable-consul-windows1803.yml
           operations/experimental/enable-routing-integrity.yml
@@ -992,8 +990,6 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
-          operations/experimental/skip-consul-cell-registrations.yml
-          operations/experimental/skip-consul-locks.yml
           operations/experimental/disable-consul.yml
           operations/bosh-lite.yml
           operations/experimental/disable-consul-bosh-lite.yml
