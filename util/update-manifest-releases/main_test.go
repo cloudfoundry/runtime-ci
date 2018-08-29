@@ -231,7 +231,7 @@ var _ = Describe("main", func() {
 				Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
 			})
 
-			It("doesn't error if input directory contains cf-deployment.yml", func() {
+			It("ignores cf-deployment.yml", func() {
 				manifest := `
 name: cf-deployment
 releases:
@@ -256,6 +256,18 @@ stemcells:
 
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(0))
+
+				updatedOpsFile1, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
+				Expect(err).NotTo(HaveOccurred())
+
+				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
+				Expect(err).NotTo(HaveOccurred())
+
+				_, err = ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
+				Expect(err).To(HaveOccurred())
+
+				Expect(updatedOpsFile1).To(MatchYAML(expectedOpsFile))
+				Expect(updatedOpsFile2).To(MatchYAML(anotherExpectedOpsFileWithRelease4))
 			})
 
 			It("doesn't error scripts directory contains vars files", func() {

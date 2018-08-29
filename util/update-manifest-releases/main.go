@@ -16,7 +16,8 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 )
 
-var cfDeploymentIgnoreFilesAndDirs = []string{"cf-deployment.yml", ".git", "scripts"}
+var cfDeploymentIgnoreDirs = []string{"cf-deployment.yml", ".git", "scripts"}
+var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml"}
 
 func getReleaseNames(buildDir string) ([]string, error) {
 	files, err := ioutil.ReadDir(buildDir)
@@ -58,7 +59,7 @@ func isIgnored(name string, ignoreList []string) bool {
 	return false
 }
 
-func findOpsFiles(searchDir string, ignoreFilesAndDirs []string) (map[string]string, error) {
+func findOpsFiles(searchDir string, ignoreDirs, ignoreFiles []string) (map[string]string, error) {
 	foundFiles := make(map[string]string)
 
 	err := filepath.Walk(searchDir, func(path string, info os.FileInfo, err error) error {
@@ -66,9 +67,9 @@ func findOpsFiles(searchDir string, ignoreFilesAndDirs []string) (map[string]str
 			return err
 		}
 
-		if isIgnored(info.Name(), ignoreFilesAndDirs) {
+		if info.IsDir() && isIgnored(info.Name(), ignoreDirs) {
 			return filepath.SkipDir
-		} else if !info.IsDir() && filepath.Ext(info.Name()) == ".yml" {
+		} else if !info.IsDir() && filepath.Ext(info.Name()) == ".yml" && !isIgnored(info.Name(), ignoreFiles) {
 			foundFiles[path] = strings.TrimPrefix(path, searchDir)
 		}
 
@@ -83,7 +84,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 	var err error
 
 	if inputPath == "" && outputPath == "" {
-		filesToUpdate, err = findOpsFiles(filepath.Join(buildDir, inputDir), cfDeploymentIgnoreFilesAndDirs)
+		filesToUpdate, err = findOpsFiles(filepath.Join(buildDir, inputDir), cfDeploymentIgnoreDirs, cfDeploymentIgnoreFiles)
 		if err != nil {
 			return err
 		}
