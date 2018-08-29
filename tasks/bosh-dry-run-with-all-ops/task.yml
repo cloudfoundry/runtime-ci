@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: bbl-state
+- name: cf-deployment
+- name: ops-files
+- name: vars-files
+- name: runtime-ci
+- name: cf-deployment-concourse-tasks
+
+run:
+  path: runtime-ci/tasks/bosh-dry-run-with-ops/task
+
+params:
+  BBL_STATE_DIR: bbl-state
+  VARS_FILES:
+  DEPLOYMENT_NAME_SUFFIX:
+  SYSTEM_DOMAIN:

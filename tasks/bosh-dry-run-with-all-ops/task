@@ -1,0 +1,74 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function create_dry_run_opsfile() {
+  # The ops file will be generated
+  # in the directory of the ops-files input.
+  # This could lead to a name collision,
+  # but it shouldn't and probably won't.
+  mkdir -p ops-files/operations
+  cat << EOF > ops-files/operations/dry-run.yml
+---
+- type: replace
+  path: /name
+  value: cf-dry-run-${DEPLOYMENT_NAME_SUFFIX}
+
+- type: replace
+  path: /stemcells/alias=default/version
+  value: latest
+EOF
+}
+
+function setup_interpolate_env_vars_for_dry_run() {
+  local ops_file
+  ops_file=$1
+
+  export MANIFEST_FILE
+  MANIFEST_FILE=cf-deployment.yml
+
+  OPS_FILES="$ops_file operations/dry-run.yml"
+}
+
+function bosh_deploy_dry_run() {
+  local deployment_name
+  deployment_name=$(bosh interpolate "${INTERPOLATED_MANIFEST}" --path /name)
+
+  bosh \
+    -n \
+    -d "${deployment_name}" \
+    deploy \
+    --dry-run \
+    "${INTERPOLATED_MANIFEST}"
+}
+
+function bosh_delete_dry_run_deployment {
+  local deployment_name
+  deployment_name=$(bosh interpolate "${INTERPOLATED_MANIFEST}" --path /name)
+
+  bosh \
+    -n \
+    -d "${deployment_name}" \
+    delete-deployment
+}
+
+function main() {
+  setup_bosh_env_vars
+  create_dry_run_opsfile
+
+  local ops_to_test
+  ops_to_test=$(find ops-files -name \*.yml)
+
+  for ops in $ops_to_test; do
+    echo "Running 'bosh --dry-run' for ${ops}"
+
+    setup_interpolate_env_vars_for_dry_run $ops
+    bosh_interpolate
+    bosh_deploy_dry_run
+    bosh_delete_dry_run_deployment
+  done
+}
+
+main
