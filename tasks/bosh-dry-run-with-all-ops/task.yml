@@ -15,7 +15,7 @@ inputs:
 - name: cf-deployment-concourse-tasks
 
 run:
-  path: runtime-ci/tasks/bosh-dry-run-with-ops/task
+  path: runtime-ci/tasks/bosh-dry-run-with-all-ops/task
 
 params:
   BBL_STATE_DIR: bbl-state
