@@ -37,8 +37,6 @@ func getReleaseNames(buildDir string) ([]string, error) {
 func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error {
 	commitMessageFile := filepath.Join(buildDir, "commit-message", commitMessagePath)
 
-	// We are ignoring error here
-	// because we don't care if commit message file does not exist
 	existingCommitMessage, err := ioutil.ReadFile(commitMessageFile)
 
 	if err != nil || strings.TrimSpace(string(existingCommitMessage)) == common.NoChangesCommitMessage {
@@ -104,12 +102,15 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 			return err
 		}
 
-		if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
-			return err
-		}
+		fmt.Println(commitMessage)
+		if commitMessage != common.NoOpsFileChangesCommitMessage {
+			if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
+				return err
+			}
 
-		if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputFileName), updatedFile, 0666); err != nil {
-			return err
+			if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputFileName), updatedFile, 0666); err != nil {
+				return err
+			}
 		}
 	}
 

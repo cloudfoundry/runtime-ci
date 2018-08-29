@@ -193,7 +193,7 @@ var _ = Describe("main", func() {
 				}
 			})
 
-			It("updates both ops files with the release and no other ops files", func() {
+			It("updates both ops files with the release and doesn't include non-updated ops files in the output directory", func() {
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
@@ -206,12 +206,24 @@ var _ = Describe("main", func() {
 				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "another_original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				nonUpdatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
-				Expect(err).NotTo(HaveOccurred())
+				_, err = ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
+				Expect(err).To(HaveOccurred())
 
 				Expect(updatedOpsFile1).To(MatchYAML(expectedOpsFile))
 				Expect(updatedOpsFile2).To(MatchYAML(anotherExpectedOpsFileWithRelease4))
-				Expect(nonUpdatedOpsFile).To(MatchYAML(opsFileWithoutRelease4))
+			})
+
+			It("writes the commit message to COMMIT_MESSAGE_PATH", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(0))
+
+				commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
 			})
 
 			It("doesn't error if input directory contains cf-deployment.yml", func() {

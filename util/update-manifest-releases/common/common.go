@@ -10,6 +10,7 @@ import (
 )
 
 const NoChangesCommitMessage = "No manifest release or stemcell version updates"
+const NoOpsFileChangesCommitMessage = "No opsfile release updates"
 
 type MarshalFunc func(interface{}) ([]byte, error)
 type UnmarshalFunc func([]byte, interface{}) error
