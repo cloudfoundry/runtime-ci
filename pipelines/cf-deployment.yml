@@ -990,9 +990,7 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
-          operations/experimental/disable-consul.yml
           operations/bosh-lite.yml
-          operations/experimental/disable-consul-bosh-lite.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
