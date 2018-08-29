@@ -59,7 +59,7 @@ function main() {
   create_dry_run_opsfile
 
   local ops_to_test
-  ops_to_test=$(find ops-files -name \*.yml)
+  ops_to_test=$(find ops-files -name \*.yml | cut -d'/' -f 2,3,4,5 | grep -v 'operations/dry-run.yml')
 
   for ops in $ops_to_test; do
     echo "Running 'bosh --dry-run' for ${ops}"
