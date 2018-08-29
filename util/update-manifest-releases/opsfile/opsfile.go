@@ -14,15 +14,17 @@ type Op struct {
 	Value     interface{} `yaml:"value,omitempty"`
 }
 
+const BadReleaseOpsFormatErrorMessage = "cannot update ops file: make sure all release information is updated with one operation in the ops file"
+
 func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	if releaseNames == nil || len(releaseNames) == 0 {
 		err := errors.New("releaseNames provided to UpdateReleases must contain at least one release name")
-		return nil, "", err
+		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 
 	var deserializedOpsFile []Op
 	if err := unmarshalFunc(opsFile, &deserializedOpsFile); err != nil {
-		return nil, "", err
+		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 
 	var changes []string
@@ -30,7 +32,11 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 
 	for _, op := range deserializedOpsFile {
 		if op.TypeField == "replace" && strings.HasPrefix(op.Path, "/releases/") {
-			valueMap := op.Value.(map[interface{}]interface{})
+			valueMap, ok := op.Value.(map[interface{}]interface{})
+			if !ok {
+				return nil, common.NoOpsFileChangesCommitMessage, errors.New(BadReleaseOpsFormatErrorMessage)
+			}
+
 			for _, releaseName := range releaseNames {
 				if valueMap["name"] == releaseName {
 					releaseFound = true
@@ -71,7 +77,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 
 	updatedOpsFile, err := marshalFunc(&deserializedOpsFile)
 	if err != nil {
-		return nil, "", err
+		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 
 	changeMessage := "No opsfile release updates"

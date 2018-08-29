@@ -82,21 +82,19 @@ func findOpsFiles(searchDir string, ignoreDirs, ignoreFiles []string) (map[strin
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
 	filesToUpdate := make(map[string]string)
 	var err error
-	ignoreNotFoundReleaseErrors := false
+	ignoreNotFoundAndBadFormatErrors := false
 
 	if inputPath == "" && outputPath == "" {
 		filesToUpdate, err = findOpsFiles(filepath.Join(buildDir, inputDir), cfDeploymentIgnoreDirs, cfDeploymentIgnoreFiles)
 		if err != nil {
 			return err
 		}
-		ignoreNotFoundReleaseErrors = true
+		ignoreNotFoundAndBadFormatErrors = true
 	} else {
 		filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
 	}
 
 	for inputPath, outputFileName := range filesToUpdate {
-		fmt.Printf("Updating file: %s", inputPath)
-
 		originalFile, err := ioutil.ReadFile(inputPath)
 		if err != nil {
 			return err
@@ -104,8 +102,11 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 
 		updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
 		if err != nil {
-			if !(strings.Contains(err.Error(), "Opsfile does not contain release named") && ignoreNotFoundReleaseErrors) {
-				fmt.Println(inputPath)
+			isNotFoundError := strings.Contains(err.Error(), "Opsfile does not contain release named")
+			isBadFormatError := err.Error() == opsfile.BadReleaseOpsFormatErrorMessage
+			isNotFoundOrBadFormat := isNotFoundError || isBadFormatError
+
+			if !(isNotFoundOrBadFormat && ignoreNotFoundAndBadFormatErrors) {
 				return err
 			}
 		}
@@ -122,6 +123,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 				return err
 			}
 
+			fmt.Printf("Updating file: %s\n", inputPath)
 			if err := ioutil.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputFileName)), updatedFile, 0666); err != nil {
 				return err
 			}

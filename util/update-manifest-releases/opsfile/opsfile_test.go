@@ -219,5 +219,22 @@ releases:
 			_, _, err = opsfile.UpdateReleases([]string{}, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError("releaseNames provided to UpdateReleases must contain at least one release name"))
 		})
+
+		It("returns an error when the ops file has separate ops for each release value", func() {
+			releases := []string{"fun-times"}
+			originalOpsFile := []byte(`
+- path: /releases/name=test/url
+  type: replace
+  value: release-url
+- path: /releases/name=test/version
+  type: replace
+  value: 0.0.0
+- path: /releases/name=test/sha1
+  type: replace
+  value: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
+`)
+			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+			Expect(err).To(MatchError(opsfile.BadReleaseOpsFormatErrorMessage))
+		})
 	})
 })
