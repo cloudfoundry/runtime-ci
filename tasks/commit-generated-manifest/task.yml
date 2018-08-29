@@ -25,3 +25,6 @@ params:
   OPS_FILE_DESTINATION:
   MANIFEST_DESTINATION:
   COMMIT_MESSAGE_PATH: commit-message.txt
+  COMMIT_ALL_OPS_FILES: false
+  # Commits all ops files changes
+  # rather than committing individual ops files
