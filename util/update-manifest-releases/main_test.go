@@ -172,7 +172,12 @@ var _ = Describe("main", func() {
 				os.Unsetenv("ORIGINAL_OPS_FILE_PATH")
 				os.Unsetenv("UPDATED_OPS_FILE_PATH")
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "another_original_ops_file.yml"), []byte(anotherOriginalOpsFileWithRelease4), os.ModePerm)
+				anotherOpsFileDir := filepath.Join(buildDir, "original-ops-file", "nested-dir")
+
+				err = os.MkdirAll(anotherOpsFileDir, os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				err = ioutil.WriteFile(filepath.Join(anotherOpsFileDir, "another_original_ops_file.yml"), []byte(anotherOriginalOpsFileWithRelease4), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "ops_file_that_should_stay_the_same.yml"), []byte(opsFileWithoutRelease4), os.ModePerm)
@@ -203,7 +208,7 @@ var _ = Describe("main", func() {
 				updatedOpsFile1, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "another_original_ops_file.yml"))
+				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
 				_, err = ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
@@ -296,6 +301,23 @@ some_client: some_value
 			Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
 		})
 
+
+		It("creates nested directories when the directory to write out the updated ops file path does not exist", func() {
+			updatedOpsFilePath := filepath.Join("doesnt-exist", "updated_ops_file.yml")
+			os.Setenv("UPDATED_OPS_FILE_PATH", updatedOpsFilePath)
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", updatedOpsFilePath))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
+		})
+
 		Context("failure cases", func() {
 			It("errors when the build dir does not exist", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
@@ -322,18 +344,6 @@ some_client: some_value
 
 			It("errors when the directory to write out the commit message does not exist", func() {
 				os.Setenv("COMMIT_MESSAGE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
-
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
-				Expect(err).NotTo(HaveOccurred())
-
-				Eventually(session).Should(gexec.Exit())
-				Expect(session.ExitCode()).To(Equal(1))
-
-				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
-			})
-
-			It("errors when the directory to write out the updated ops file path does not exist", func() {
-				os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
@@ -496,6 +506,22 @@ stemcells:
 			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version, ubuntu-trusty stemcell updated-stemcell-version"))
 		})
 
+
+		It("creates nested directory when the directory to write out the updated manifest does not exist", func() {
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join("doesnt-exist", "updated-manifest.yml"))
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "doesnt-exist", "updated-manifest.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
+		})
+
 		Context("failure cases", func() {
 			It("errors when the build dir does not exist", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
@@ -522,18 +548,6 @@ stemcells:
 
 			It("errors when the directory to write out the commit message does not exist", func() {
 				os.Setenv("COMMIT_MESSAGE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
-
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
-				Expect(err).NotTo(HaveOccurred())
-
-				Eventually(session).Should(gexec.Exit())
-				Expect(session.ExitCode()).To(Equal(1))
-
-				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
-			})
-
-			It("errors when the directory to write out the updated manifest does not exist", func() {
-				os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join(emptyDir, "doesnt-exist"))
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
@@ -714,6 +728,22 @@ stemcells:
 			Expect(string(commitMessage)).To(Equal("Updated compiled releases with release1 0.2.0"))
 		})
 
+
+		It("creates nested directory when the directory to write out the updated ops file path does not exist", func() {
+			os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join("doesnt-exist", "updated_ops_file.yml"))
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "doesnt-exist", "updated_ops_file.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
+		})
+
 		Context("failure cases", func() {
 			It("errors when the build dir does not exist", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
@@ -736,18 +766,6 @@ stemcells:
 				Expect(session.ExitCode()).To(Equal(1))
 
 				Expect(string(session.Err.Contents())).To(ContainSubstring("no such file or directory"))
-			})
-
-			It("errors when the directory to write out the updated ops file path does not exist", func() {
-				os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
-
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
-				Expect(err).NotTo(HaveOccurred())
-
-				Eventually(session).Should(gexec.Exit())
-				Expect(session.ExitCode()).To(Equal(1))
-
-				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
 			})
 		})
 	})

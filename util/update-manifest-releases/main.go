@@ -69,7 +69,7 @@ func findOpsFiles(searchDir string, ignoreFilesAndDirs []string) (map[string]str
 		if isIgnored(info.Name(), ignoreFilesAndDirs) {
 			return filepath.SkipDir
 		} else if !info.IsDir() && filepath.Ext(info.Name()) == ".yml" {
-			foundFiles[path] = info.Name()
+			foundFiles[path] = strings.TrimPrefix(path, searchDir)
 		}
 
 		return nil
@@ -102,13 +102,19 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 			return err
 		}
 
-		fmt.Println(commitMessage)
 		if commitMessage != common.NoOpsFileChangesCommitMessage {
 			if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
 				return err
 			}
 
-			if err := ioutil.WriteFile(filepath.Join(buildDir, outputDir, outputFileName), updatedFile, 0666); err != nil {
+			updatedOpsFilePath := filepath.Join(buildDir, outputDir, filepath.Dir(outputFileName))
+
+			err := os.MkdirAll(updatedOpsFilePath, os.ModePerm)
+			if err != nil {
+				return err
+			}
+
+			if err := ioutil.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputFileName)), updatedFile, 0666); err != nil {
 				return err
 			}
 		}
