@@ -66,7 +66,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 
 	if releaseFound == false {
 		err := errors.New(fmt.Sprintf("Opsfile does not contain release named %s", releaseNames[0]))
-		return nil, "", err
+		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 
 	updatedOpsFile, err := marshalFunc(&deserializedOpsFile)

@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 )
 
-var cfDeploymentIgnoreDirs = []string{"cf-deployment.yml", ".git", "scripts"}
+var cfDeploymentIgnoreDirs = []string{"cf-deployment.yml", ".git", "scripts", "example-vars-files", "iaas-support"}
 var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml"}
 
 func getReleaseNames(buildDir string) ([]string, error) {
@@ -82,12 +82,14 @@ func findOpsFiles(searchDir string, ignoreDirs, ignoreFiles []string) (map[strin
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
 	filesToUpdate := make(map[string]string)
 	var err error
+	ignoreNotFoundReleaseErrors := false
 
 	if inputPath == "" && outputPath == "" {
 		filesToUpdate, err = findOpsFiles(filepath.Join(buildDir, inputDir), cfDeploymentIgnoreDirs, cfDeploymentIgnoreFiles)
 		if err != nil {
 			return err
 		}
+		ignoreNotFoundReleaseErrors = true
 	} else {
 		filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
 	}
@@ -100,7 +102,10 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 
 		updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
 		if err != nil {
-			return err
+			if !(strings.Contains(err.Error(), "Opsfile does not contain release named") && ignoreNotFoundReleaseErrors) {
+				fmt.Println(inputPath)
+				return err
+			}
 		}
 
 		if commitMessage != common.NoOpsFileChangesCommitMessage {
