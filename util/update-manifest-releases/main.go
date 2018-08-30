@@ -11,13 +11,13 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
-	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 )
 
 var cfDeploymentIgnoreDirs = []string{"cf-deployment.yml", ".git", "scripts", "example-vars-files", "iaas-support"}
-var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml"}
+var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml", "use-offline-windows2016fs.yml"}
 
 func getReleaseNames(buildDir string) ([]string, error) {
 	files, err := ioutil.ReadDir(buildDir)
