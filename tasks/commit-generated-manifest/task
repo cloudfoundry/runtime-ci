@@ -18,7 +18,7 @@ function main() {
   fi
 
   if [ "${COMMIT_ALL_OPS_FILES}" = true ]; then
-    cp -R ./ops-file/* ./repo/
+    cp -R ./ops-file/. ./repo/
   elif [ ! -z "${OPS_FILE_NAME}" ] && [ ! -z "${OPS_FILE_DESTINATION}" ]; then
     cp ./ops-file/"${OPS_FILE_NAME}" ./repo/"${OPS_FILE_DESTINATION}"
     copy_ops=true
