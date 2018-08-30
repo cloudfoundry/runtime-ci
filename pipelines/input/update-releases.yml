@@ -92,14 +92,20 @@ opsReleases:
   varsFiles: "vars-files/windows-enable-component-syslog-vars.yml"
 - name: cf-cli
   repository: bosh-packages/cf-cli-release
+- name: hwc-buildpack
+  repository: cloudfoundry-incubator/hwc-buildpack-release
+- name: windows-utilities
+  repository: cloudfoundry-incubator/windows-utilities-release
+- name: garden-windows
+  repository: cloudfoundry-incubator/garden-windows-bosh-release
+- name: winc
+  repository: cloudfoundry-incubator/winc-release
+- name: windows2016fs
+  repository: cloudfoundry-incubator/windows2016fs-online-release
 
 windowsVersSupported:
 - name: windows
-  hyphenatedName: windows-2012
-  updateWindowsReleasesTask: task-2012.yml
 - name: windows2016
-  hyphenatedName: windows-2016
-  updateWindowsReleasesTask: task-2016.yml
 
 extraBoshIOReleases:
 resources:

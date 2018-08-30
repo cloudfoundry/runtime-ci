@@ -30,7 +30,6 @@ groups:
   jobs:
 {{- range .windowsVersSupported}}
   - update-{{.name}}-stemcell
-  - update-{{.hyphenatedName}}-releases
 {{- end}}
   - update-windows-2016-offline-releases
 
@@ -101,27 +100,7 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-xenial-go_agent
-- name: garden-windows-bosh-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/garden-windows-bosh-release
-- name: hwc-buildpack-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/hwc-buildpack-release
-- name: windows-utilities-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/windows-utilities-release
-- name: winc-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/winc-release
-- name: windows2016fs-online-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/windows2016fs-online-release
-- name: windows2016fs-release
+- name: windows2016fs-offline-release
   type: github-release
   source:
     owner: cloudfoundry-incubator
@@ -696,100 +675,6 @@ jobs:
       rebase: true
       repository: updated-repo
 
-{{- range .windowsVersSupported}}
-- name: update-{{.hyphenatedName}}-releases
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: greengrass-env-director-state
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-      params:
-        tarball: false
-    {{- if contains "windows2016" .name}}
-    - get: winc-release
-      trigger: true
-      params:
-        tarball: false
-    - get: windows2016fs-online-release
-      trigger: true
-      params:
-        tarball: false
-    {{else}}
-    - get: garden-windows-bosh-release
-      trigger: true
-      params:
-        tarball: false
-    {{- end}}
-    - get: hwc-buildpack-release
-      trigger: true
-      params:
-        tarball: false
-    - get: windows-utilities-release
-      trigger: true
-      params:
-        tarball: false
-    - get: {{.name}}-stemcell
-  - task: update-windows-releases
-    file: runtime-ci/tasks/update-windows-releases/{{.updateWindowsReleasesTask}}
-    input_mapping:
-      original-ops-file: cf-deployment-develop
-      {{- if contains "windows2016" .name}}
-      windows2016fs-release: windows2016fs-online-release
-      {{else}}
-      garden-windows-release: garden-windows-bosh-release
-      hwc-buildpack-release: hwc-buildpack-release
-      windows-utilities-release: windows-utilities-release
-      {{- end}}
-  - task: bosh-upload-windows-stemcell
-    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
-    input_mapping:
-      stemcell: {{.name}}-stemcell
-      bbl-state: greengrass-env-director-state
-    params:
-      STEMCELL_NAME: '*.tgz'
-  - task: upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: {{.hyphenatedName}}-releases
-      OPS_FILES: "{{.name}}-cell.yml"
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-{{.hyphenatedName}}-releases
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: {{.name}}-cell.yml
-      OPS_FILE_DESTINATION: operations/{{.name}}-cell.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-{{- end}}
-
 - name: update-windows-2016-offline-releases
   serial: true
   public: true
@@ -802,7 +687,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
       params:
         tarball: false
-    - get: windows2016fs-release
+    - get: windows2016fs-offline-release
       trigger: true
       params:
         tarball: false
