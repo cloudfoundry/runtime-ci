@@ -693,9 +693,14 @@ jobs:
         tarball: false
     - get: windows2016-stemcell
   - task: update-windows-releases
-    file: runtime-ci/tasks/update-windows-releases/task-2016-offline.yml
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
     input_mapping:
       original-ops-file: cf-deployment-develop
+      release: windows2016fs-offline-release
+    params:
+      RELEASE_NAME: windows2016fs
+      ORIGINAL_OPS_FILE_PATH: operations/use-offline-windows2016fs.yml
+      UPDATED_OPS_FILE_PATH: use-offline-windows2016fs.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -703,8 +708,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: use-offline-windows2016fs.yml
-      OPS_FILE_DESTINATION: operations/use-offline-windows2016fs.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
