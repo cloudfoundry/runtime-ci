@@ -92,6 +92,7 @@ groups:
   - update-garden-windows
   - update-winc
   - update-windows2016fs
+  - update-cflinuxfs3
 - name: update-windows-stemcells-and-releases
   jobs:
   - update-windows-stemcell
@@ -359,6 +360,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/windows2016fs-online-release
+- name: cflinuxfs3-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs3-release
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -6022,6 +6027,60 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: windows2016fs
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops-windows2016fs
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-cflinuxfs3
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cflinuxfs3-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cflinuxfs3
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: cflinuxfs3-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cflinuxfs3
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-cflinuxfs3
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cflinuxfs3
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-cflinuxfs3
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop

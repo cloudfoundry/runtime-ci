@@ -102,6 +102,8 @@ opsReleases:
   repository: cloudfoundry-incubator/winc-release
 - name: windows2016fs
   repository: cloudfoundry-incubator/windows2016fs-online-release
+- name: cflinuxfs3
+  repository: cloudfoundry/cflinuxfs3-release
 
 windowsVersSupported:
 - name: windows
