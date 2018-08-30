@@ -22,6 +22,7 @@ groups:
 {{- end}}
 - name: update-ops-releases
   jobs:
+  - update-bits-service
 {{- range .opsReleases}}
   - update-{{.name}}
 {{- end}}
@@ -126,6 +127,10 @@ resources:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
     access_token: ((release_integration_download_bot_access_token))
+- name: bits-service-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/bits-service-release
 {{- range .baseReleases}}
 - name: {{.name}}-release
   type: bosh-io-release
@@ -363,18 +368,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: {{.name}}
-      ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
-      UPDATED_OPS_FILE_PATH: {{.opsFile}}
-{{- if contains "bits-service" .name}}
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      BASE_OPS_FILE_DIR: .
-      NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
-{{- end}}
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -383,15 +376,11 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-{{.name}}
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-{{- if contains "bits-service" .name}}
-      ops-files: collected-ops-files
-{{else}}
       ops-files: updated-ops-file
-{{- end}}
 {{- if hasKey . "varsFiles"}}
       vars-files: {{.varsFilesInput}}
 {{else}}
@@ -399,21 +388,10 @@ jobs:
 {{- end}}
     params:
       DEPLOYMENT_NAME_SUFFIX: {{.name}}
-      OPS_FILES: |
-        {{.opsFile}}
-{{- if contains "bits-service" .name}}
-        bits-service-webdav.yml
-{{- end}}
       SYSTEM_DOMAIN: greengrass.cf-app.com
 {{- if hasKey . "varsFiles"}}
       VARS_FILES: {{.varsFiles}}
 {{- end}}
-  - task: bosh-delete-deployment-{{.name}}
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-{{.name}}
   - task: commit-generated-manifest-and-ops-{{.name}}
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -421,62 +399,87 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: {{.opsFile}}
-      OPS_FILE_DESTINATION: {{.cfDeploymentOpsFileDir}}/{{.opsFile}}
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
-{{- if contains "pxc" .name}}
-  - task: update-release-{{.name}}-additional-ops-file
+{{- end}}
+
+- name: update-bits-service
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: bits-service-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-bits-service
     file: runtime-ci/tasks/update-single-opsfile-release/task.yml
     input_mapping:
-      release: {{.name}}-release
+      release: bits-service-release
       original-ops-file: cf-deployment-develop
     params:
-      RELEASE_NAME: {{.name}}
-      ORIGINAL_OPS_FILE_PATH: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
-      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
-  - task: bosh-dry-run-{{.name}}-additional-ops-file
+      RELEASE_NAME: bits-service
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/bits-service.yml
+      UPDATED_OPS_FILE_PATH: bits-service.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: updated-ops-file
+      new-ops-files: cf-deployment-develop
+    params:
+      BASE_OPS_FILE_DIR: .
+      NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-bits-service
     file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-{{- if hasKey . "varsFiles"}}
-      vars-files: {{.varsFilesInput}}
-{{else}}
-      vars-files: greengrass-env-director-state
-{{- end}}
+      ops-files: collected-ops-files
     params:
-      DEPLOYMENT_NAME_SUFFIX: {{.name}}-additional-ops-file
+      DEPLOYMENT_NAME_SUFFIX: bits-service
       OPS_FILES: |
-        migrate-cf-mysql-to-pxc.yml
+        bits-service.yml
+        bits-service-webdav.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-{{- if hasKey . "varsFiles"}}
-      VARS_FILES: {{.varsFiles}}
-{{- end}}
-  - task: bosh-delete-deployment-{{.name}}-additional-ops-file
+  - task: bosh-delete-deployment-bits-service
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
     params:
-      DEPLOYMENT_NAME: cf-dry-run-{{.name}}-additional-ops-file
-  - task: commit-generated-manifest-and-ops-{{.name}}-additional-ops-file
+      DEPLOYMENT_NAME: cf-dry-run-bits-service
+  - task: commit-generated-manifest-and-ops-bits-service
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: migrate-cf-mysql-to-pxc.yml
-      OPS_FILE_DESTINATION: {{.cfDeploymentOpsFileDir}}/migrate-cf-mysql-to-pxc.yml
+      OPS_FILE_NAME: bits-service.yml
+      OPS_FILE_DESTINATION: operations/experimental/bits-service.yml
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
-{{- end}}
-{{- end}}
+
 {{- range .windowsVersSupported}}
 - name: update-{{.name}}-stemcell
   public: true

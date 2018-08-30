@@ -63,60 +63,35 @@ baseReleases:
 opsReleases:
 - name: backup-and-restore-sdk
   repository: cloudfoundry-incubator/backup-and-restore-sdk-release
-  cfDeploymentOpsFileDir: operations/backup-and-restore
-  opsFile: enable-backup-restore.yml
 - name: broker-registrar
   repository: cloudfoundry-community/broker-registrar-boshrelease
-  cfDeploymentOpsFileDir: operations
-  opsFile: enable-nfs-volume-service.yml
 - name: cf-app-sd
   repository: cloudfoundry/cf-app-sd-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: enable-service-discovery.yml
 - name: haproxy
   repository: cloudfoundry-incubator/haproxy-boshrelease
-  cfDeploymentOpsFileDir: operations
-  opsFile: use-haproxy.yml
   varsFilesInput: greengrass-env-director-state
   varsFiles: "vars-files/haproxy-vars.yml"
 - name: mapfs
   repository: cloudfoundry/mapfs-release
-  cfDeploymentOpsFileDir: operations
-  opsFile: enable-nfs-volume-service.yml
 - name: nfs-volume
   repository: cloudfoundry/nfs-volume-release
-  cfDeploymentOpsFileDir: operations
-  opsFile: enable-nfs-volume-service.yml
+- name: smb-volume
+  repository: cloudfoundry/smb-volume-release
 - name: postgres
   repository: cloudfoundry/postgres-release
-  cfDeploymentOpsFileDir: operations
-  opsFile: use-postgres.yml
 - name: syslog
   repository: cloudfoundry/syslog-release
-  cfDeploymentOpsFileDir: operations/addons
-  opsFile: enable-component-syslog.yml
   varsFilesInput: cf-deployment-develop
   varsFiles: "operations/addons/example-vars-files/vars-enable-component-syslog.yml"
-- name: bits-service
-  repository: cloudfoundry-incubator/bits-service-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: bits-service.yml
-  varsFilesInput: greengrass-env-director-state
 - name: pxc
   repository: cloudfoundry-incubator/pxc-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: use-pxc.yml
   varsFilesInput: greengrass-env-director-state
 - name: windows-syslog
   repository: cloudfoundry/windows-syslog-release
-  cfDeploymentOpsFileDir: operations/experimental
-  opsFile: windows-enable-component-syslog.yml
   varsFilesInput: greengrass-env-director-state
   varsFiles: "vars-files/windows-enable-component-syslog-vars.yml"
 - name: cf-cli
   repository: bosh-packages/cf-cli-release
-  cfDeploymentOpsFileDir: operations
-  opsFile: enable-nfs-volume-service.yml
 
 windowsVersSupported:
 - name: windows

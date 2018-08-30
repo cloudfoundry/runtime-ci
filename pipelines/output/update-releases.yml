@@ -1,7 +1,3 @@
-## ======================================================================
-## GENERATED FILE. DO NOT EDIT
-## ======================================================================
-
 ---
 ## ======================================================================
 ##   __ _ _ __ ___  _   _ _ __  ___
@@ -78,15 +74,16 @@ groups:
   - update-credhub-xenial
 - name: update-ops-releases
   jobs:
+  - update-bits-service
   - update-backup-and-restore-sdk
   - update-broker-registrar
   - update-cf-app-sd
   - update-haproxy
   - update-mapfs
   - update-nfs-volume
+  - update-smb-volume
   - update-postgres
   - update-syslog
-  - update-bits-service
   - update-pxc
   - update-windows-syslog
   - update-cf-cli
@@ -191,6 +188,10 @@ resources:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
     access_token: ((release_integration_download_bot_access_token))
+- name: bits-service-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/bits-service-release
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
@@ -331,6 +332,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/nfs-volume-release
+- name: smb-volume-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/smb-volume-release
 - name: postgres-release
   type: bosh-io-release
   source:
@@ -339,10 +344,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/syslog-release
-- name: bits-service-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/bits-service-release
 - name: pxc-release
   type: bosh-io-release
   source:
@@ -5130,8 +5131,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: backup-and-restore-sdk
-      ORIGINAL_OPS_FILE_PATH: operations/backup-and-restore/enable-backup-restore.yml
-      UPDATED_OPS_FILE_PATH: enable-backup-restore.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5140,7 +5139,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-backup-and-restore-sdk
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5148,15 +5147,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: backup-and-restore-sdk
-      OPS_FILES: |
-        enable-backup-restore.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-backup-and-restore-sdk
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-backup-and-restore-sdk
   - task: commit-generated-manifest-and-ops-backup-and-restore-sdk
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5164,8 +5155,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-backup-restore.yml
-      OPS_FILE_DESTINATION: operations/backup-and-restore/enable-backup-restore.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5195,8 +5185,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: broker-registrar
-      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
-      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5205,7 +5193,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-broker-registrar
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5213,15 +5201,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: broker-registrar
-      OPS_FILES: |
-        enable-nfs-volume-service.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-broker-registrar
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-broker-registrar
   - task: commit-generated-manifest-and-ops-broker-registrar
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5229,8 +5209,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-nfs-volume-service.yml
-      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5260,8 +5239,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: cf-app-sd
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/enable-service-discovery.yml
-      UPDATED_OPS_FILE_PATH: enable-service-discovery.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5270,7 +5247,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-cf-app-sd
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5278,15 +5255,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: cf-app-sd
-      OPS_FILES: |
-        enable-service-discovery.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-cf-app-sd
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-app-sd
   - task: commit-generated-manifest-and-ops-cf-app-sd
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5294,8 +5263,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-service-discovery.yml
-      OPS_FILE_DESTINATION: operations/experimental/enable-service-discovery.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5325,8 +5293,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: haproxy
-      ORIGINAL_OPS_FILE_PATH: operations/use-haproxy.yml
-      UPDATED_OPS_FILE_PATH: use-haproxy.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5335,7 +5301,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-haproxy
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5344,16 +5310,8 @@ jobs:
 
     params:
       DEPLOYMENT_NAME_SUFFIX: haproxy
-      OPS_FILES: |
-        use-haproxy.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: vars-files/haproxy-vars.yml
-  - task: bosh-delete-deployment-haproxy
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-haproxy
   - task: commit-generated-manifest-and-ops-haproxy
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5361,8 +5319,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: use-haproxy.yml
-      OPS_FILE_DESTINATION: operations/use-haproxy.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5392,8 +5349,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: mapfs
-      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
-      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5402,7 +5357,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-mapfs
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5410,15 +5365,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: mapfs
-      OPS_FILES: |
-        enable-nfs-volume-service.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-mapfs
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-mapfs
   - task: commit-generated-manifest-and-ops-mapfs
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5426,8 +5373,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-nfs-volume-service.yml
-      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5457,8 +5403,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: nfs-volume
-      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
-      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5467,7 +5411,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-nfs-volume
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5475,15 +5419,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: nfs-volume
-      OPS_FILES: |
-        enable-nfs-volume-service.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-nfs-volume
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-nfs-volume
   - task: commit-generated-manifest-and-ops-nfs-volume
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5491,8 +5427,61 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-nfs-volume-service.yml
-      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-smb-volume
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: smb-volume-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-smb-volume
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: smb-volume-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: smb-volume
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-smb-volume
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: smb-volume
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-smb-volume
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5522,8 +5511,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: postgres
-      ORIGINAL_OPS_FILE_PATH: operations/use-postgres.yml
-      UPDATED_OPS_FILE_PATH: use-postgres.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5532,7 +5519,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-postgres
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5540,15 +5527,7 @@ jobs:
       vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: postgres
-      OPS_FILES: |
-        use-postgres.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-postgres
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-postgres
   - task: commit-generated-manifest-and-ops-postgres
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5556,8 +5535,7 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: use-postgres.yml
-      OPS_FILE_DESTINATION: operations/use-postgres.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
@@ -5587,8 +5565,6 @@ jobs:
       original-ops-file: cf-deployment-develop
     params:
       RELEASE_NAME: syslog
-      ORIGINAL_OPS_FILE_PATH: operations/addons/enable-component-syslog.yml
-      UPDATED_OPS_FILE_PATH: enable-component-syslog.yml
   - task: bosh-upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -5597,7 +5573,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
   - task: bosh-dry-run-syslog
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
@@ -5606,16 +5582,8 @@ jobs:
 
     params:
       DEPLOYMENT_NAME_SUFFIX: syslog
-      OPS_FILES: |
-        enable-component-syslog.yml
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: operations/addons/example-vars-files/vars-enable-component-syslog.yml
-  - task: bosh-delete-deployment-syslog
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-syslog
   - task: commit-generated-manifest-and-ops-syslog
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -5623,12 +5591,176 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: enable-component-syslog.yml
-      OPS_FILE_DESTINATION: operations/addons/enable-component-syslog.yml
+      COMMIT_ALL_OPS_FILES: true
   - put: cf-deployment-develop
     params:
       rebase: true
       repository: updated-repo
+- name: update-pxc
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: pxc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-pxc
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: pxc-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: pxc
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-pxc
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: pxc
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-pxc
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-windows-syslog
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: windows-syslog-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-windows-syslog
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: windows-syslog-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: windows-syslog
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-windows-syslog
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+
+    params:
+      DEPLOYMENT_NAME_SUFFIX: windows-syslog
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+      VARS_FILES: vars-files/windows-enable-component-syslog-vars.yml
+  - task: commit-generated-manifest-and-ops-windows-syslog
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-cf-cli
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-cli-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-cli
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: cf-cli-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-cli
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-cf-cli
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-cli
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-cf-cli
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+
 - name: update-bits-service
   serial: true
   public: true
@@ -5677,8 +5809,6 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
-
-      vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: bits-service
       OPS_FILES: |
@@ -5700,243 +5830,6 @@ jobs:
     params:
       OPS_FILE_NAME: bits-service.yml
       OPS_FILE_DESTINATION: operations/experimental/bits-service.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-pxc
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: pxc-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-pxc
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: pxc-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: pxc
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-pxc.yml
-      UPDATED_OPS_FILE_PATH: use-pxc.yml
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-pxc
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: pxc
-      OPS_FILES: |
-        use-pxc.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-pxc
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-pxc
-  - task: commit-generated-manifest-and-ops-pxc
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: use-pxc.yml
-      OPS_FILE_DESTINATION: operations/experimental/use-pxc.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-  - task: update-release-pxc-additional-ops-file
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: pxc-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: pxc
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/migrate-cf-mysql-to-pxc.yml
-      UPDATED_OPS_FILE_PATH: migrate-cf-mysql-to-pxc.yml
-  - task: bosh-dry-run-pxc-additional-ops-file
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: pxc-additional-ops-file
-      OPS_FILES: |
-        migrate-cf-mysql-to-pxc.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-pxc-additional-ops-file
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-pxc-additional-ops-file
-  - task: commit-generated-manifest-and-ops-pxc-additional-ops-file
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: migrate-cf-mysql-to-pxc.yml
-      OPS_FILE_DESTINATION: operations/experimental/migrate-cf-mysql-to-pxc.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-windows-syslog
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: windows-syslog-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-windows-syslog
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: windows-syslog-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: windows-syslog
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/windows-enable-component-syslog.yml
-      UPDATED_OPS_FILE_PATH: windows-enable-component-syslog.yml
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-windows-syslog
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-
-    params:
-      DEPLOYMENT_NAME_SUFFIX: windows-syslog
-      OPS_FILES: |
-        windows-enable-component-syslog.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-      VARS_FILES: vars-files/windows-enable-component-syslog-vars.yml
-  - task: bosh-delete-deployment-windows-syslog
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-windows-syslog
-  - task: commit-generated-manifest-and-ops-windows-syslog
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: windows-enable-component-syslog.yml
-      OPS_FILE_DESTINATION: operations/experimental/windows-enable-component-syslog.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-cf-cli
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: cf-cli-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-cli
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: cf-cli-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-cli
-      ORIGINAL_OPS_FILE_PATH: operations/enable-nfs-volume-service.yml
-      UPDATED_OPS_FILE_PATH: enable-nfs-volume-service.yml
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-cf-cli
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cf-cli
-      OPS_FILES: |
-        enable-nfs-volume-service.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-cf-cli
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-cli
-  - task: commit-generated-manifest-and-ops-cf-cli
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: enable-nfs-volume-service.yml
-      OPS_FILE_DESTINATION: operations/enable-nfs-volume-service.yml
   - put: cf-deployment-develop
     params:
       rebase: true
