@@ -1,6 +1,7 @@
 #!/bin/bash -exu
 
 update_windows_stemcell_opsfile() {
+  local windows_stemcell_version
   windows_stemcell_version=$(cat windows-stemcell/version)
 
   local windows_stack
@@ -32,13 +33,16 @@ output_commit_message() {
   local current_stemcell_version
   current_stemcell_version=$(bosh interpolate ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH} --path=/path=~1stemcells~1-/value/version)
 
+  local windows_stemcell_version
+  windows_stemcell_version=$(cat windows-stemcell/version)
+
   local windows_stack
   windows_stack=$(cat windows-stemcell/url | cut -d'/' -f6 | cut -d'-' -f4)
 
-  if [ "${current_stemcell_version}" == "${windows_cell_version}" ]; then
+  if [ "${current_stemcell_version}" == "${windows_stemcell_version}" ]; then
     echo "No windows stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
   else
-    echo "${windows_stack} stemcell updated to ${windows_cell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
+    echo "${windows_stack} stemcell updated to ${windows_stemcell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
   fi
 }
 
