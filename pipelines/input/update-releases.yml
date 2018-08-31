@@ -112,6 +112,9 @@ windowsVersSupported:
 - name: windows2016
   opsFile: windows2016-cell.yml
   opsFileDir: operations
+- name: windows1803
+  opsFile: windows1803-cell.yml
+  opsFileDir: operations/experimental
 
 extraBoshIOReleases:
 resources:
