@@ -589,6 +589,10 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/enable-service-discovery.yml
+        operations/experimental/disable-consul.yml
+        operations/experimental/disable-consul-windows.yml
+        operations/experimental/disable-consul-windows2016.yml
+        operations/experimental/use-xenial-stemcell.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
