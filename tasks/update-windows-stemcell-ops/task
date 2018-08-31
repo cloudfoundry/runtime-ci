@@ -5,7 +5,8 @@ update_windows_stemcell_opsfile() {
   windows_stemcell_version=$(cat windows-stemcell/version)
 
   local windows_stack
-  windows_stack=$(cat windows-stemcell/url | cut -d'/' -f6 | cut -d'-' -f4)
+  # e.g https://bosh-windows-stemcells-production.s3.amazonaws.com/1803/light-bosh-stemcell-1803.1-google-kvm-windows1803-go_agent.tgz
+  windows_stack=$(cat windows-stemcell/url | cut -d/ -f5 | cut -d- -f7)
 
   local stemcell_alias
   stemcell_alias=$(bosh int ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH} --path=/path=~1stemcells~1-/value/alias)
