@@ -1,3 +1,7 @@
+## ======================================================================
+## GENERATED FILE. DO NOT EDIT
+## ======================================================================
+
 ---
 ## ======================================================================
 ##   __ _ _ __ ___  _   _ _ __  ___
@@ -95,7 +99,7 @@ groups:
   - update-cflinuxfs3
 - name: update-windows-stemcells-and-releases
   jobs:
-  - update-windows-stemcell
+  - update-windows2012R2-stemcell
   - update-windows2016-stemcell
   - update-windows-2016-offline-releases
 
@@ -154,7 +158,7 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-trusty-go_agent
-- name: windows-stemcell
+- name: windows2012R2-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-windows2012R2-go_agent
@@ -6166,14 +6170,14 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-- name: update-windows-stemcell
+- name: update-windows2012R2-stemcell
   public: true
   build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-develop
-    - get: windows-stemcell
+    - get: windows2012R2-stemcell
       trigger: true
       params:
         tarball: false
@@ -6181,6 +6185,10 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
+      windows-stemcell: windows2012R2-stemcell
+    params:
+      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows-cell.yml
+      UPDATED_WINDOWS_OPS_FILE_PATH: windows-cell.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -6211,7 +6219,8 @@ jobs:
       ops-files: cf-deployment-develop
       windows-stemcell: windows2016-stemcell
     params:
-      USE_WINDOWS2016: true
+      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows2016-cell.yml
+      UPDATED_WINDOWS_OPS_FILE_PATH: windows2016-cell.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:

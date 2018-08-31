@@ -20,4 +20,5 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  USE_WINDOWS2016: false
+  ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows-cell.yml
+  UPDATED_WINDOWS_OPS_FILE_PATH: windows-cell.yml

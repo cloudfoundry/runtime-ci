@@ -106,8 +106,12 @@ opsReleases:
   repository: cloudfoundry/cflinuxfs3-release
 
 windowsVersSupported:
-- name: windows
+- name: windows2012R2
+  opsFile: windows-cell.yml
+  opsFileDir: operations
 - name: windows2016
+  opsFile: windows2016-cell.yml
+  opsFileDir: operations
 
 extraBoshIOReleases:
 resources:

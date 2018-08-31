@@ -88,7 +88,7 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-trusty-go_agent
-- name: windows-stemcell
+- name: windows2012R2-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-windows2012R2-go_agent
@@ -475,11 +475,10 @@ jobs:
     file: runtime-ci/tasks/update-windows-stemcell-ops/task.yml
     input_mapping:
       ops-files: cf-deployment-develop
-{{- if contains "windows2016" .name}}
-      windows-stemcell: windows2016-stemcell
+      windows-stemcell: {{.name}}-stemcell
     params:
-      USE_WINDOWS2016: true
-{{- end}}
+      ORIGINAL_WINDOWS_OPS_FILE_PATH: {{.opsFileDir}}/{{.opsFile}}
+      UPDATED_WINDOWS_OPS_FILE_PATH: {{.opsFile}}
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -487,8 +486,8 @@ jobs:
       ops-file: updated-stemcell-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: {{.name}}-cell.yml
-      OPS_FILE_DESTINATION: operations/{{.name}}-cell.yml
+      OPS_FILE_NAME: {{.opsFile}}
+      OPS_FILE_DESTINATION: {{.opsFileDir}}/{{.opsFile}}
   - put: cf-deployment-develop
     params:
       rebase: true
