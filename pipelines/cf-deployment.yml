@@ -558,6 +558,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/use-xenial-stemcell.yml
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
