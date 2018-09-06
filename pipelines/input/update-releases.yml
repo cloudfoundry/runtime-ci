@@ -104,6 +104,8 @@ opsReleases:
   repository: cloudfoundry-incubator/windows2016fs-online-release
 - name: cflinuxfs3
   repository: cloudfoundry/cflinuxfs3-release
+- name: node-exporter
+  repository: cloudfoundry-community/node-exporter-boshrelease
 
 windowsVersSupported:
 - name: windows2012R2

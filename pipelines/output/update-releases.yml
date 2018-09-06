@@ -97,6 +97,7 @@ groups:
   - update-winc
   - update-windows2016fs
   - update-cflinuxfs3
+  - update-node-exporter
 - name: update-windows-stemcells-and-releases
   jobs:
   - update-windows2012R2-stemcell
@@ -361,6 +362,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs3-release
+- name: node-exporter-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-community/node-exporter-boshrelease
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -6090,6 +6095,60 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: cflinuxfs3
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops-cflinuxfs3
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-node-exporter
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: node-exporter-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-node-exporter
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: node-exporter-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: node-exporter
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run-node-exporter
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: node-exporter
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-node-exporter
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
