@@ -49,6 +49,7 @@ echo '{}' | jq \
     "nfs_broker_user": "nfs-broker",
     "nfs_broker_password": $nfs_broker_password,
     "nfs_broker_url": $nfs_broker_url,
+    "nfs_create_service_broker": true,
     "timeout_in_minutes": 30,
     "delete_and_redeploy_cf": false,
     "include_cf-app": true,
