@@ -354,8 +354,8 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows.yml
-        operations/windows2016.yml
+        operations/windows-cell.yml
+        operations/windows2016-cell.yml
   - task: bosh-dry-run-{{.name}}
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
