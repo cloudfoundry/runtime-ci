@@ -1040,6 +1040,8 @@ jobs:
       input_mapping:
         integration-config: hermione-env-integration-configs
       file: cf-deployment-concourse-tasks/run-cats/task.yml
+      params:
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: experimental-smoke-tests
   serial_groups: [hermione-smokes]
@@ -1137,6 +1139,7 @@ jobs:
         integration-config: bellatrix-env-integration-configs
       params:
         FLAKE_ATTEMPTS: 0
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: cleanup-stable-periodic-cats
   serial: true
@@ -1306,6 +1309,7 @@ jobs:
         integration-config: luna-env-integration-configs
       params:
         CAPTURE_LOGS: true
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: upgrade-cats
   serial: true
@@ -1329,6 +1333,7 @@ jobs:
         integration-config: trelawney-env-integration-configs
       params:
         CAPTURE_LOGS: true
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: upgrade-cats-windows2016
   serial: true
@@ -1354,6 +1359,7 @@ jobs:
         CAPTURE_LOGS: true
         CONFIG_FILE_PATH: cats_windows2016_integration_config.json
         NODES: 8
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: lite-cats
   serial_groups: [ snitch-cats ]
@@ -1377,6 +1383,7 @@ jobs:
         integration-config: snitch-env-integration-configs
       params:
         NODES: 4
+        RELINT_VERBOSE_AUTH: "true"
 
 - name: fresh-delete-deployment
   serial: true
