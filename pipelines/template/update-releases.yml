@@ -356,6 +356,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-{{.name}}
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:

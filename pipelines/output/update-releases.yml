@@ -5164,6 +5164,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-backup-and-restore-sdk
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5222,6 +5223,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-broker-registrar
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5280,6 +5282,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-cf-app-sd
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5338,6 +5341,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-haproxy
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5398,6 +5402,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-mapfs
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5456,6 +5461,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-nfs-volume
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5514,6 +5520,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-smb-volume
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5572,6 +5579,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-postgres
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5630,6 +5638,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-syslog
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5690,6 +5699,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-pxc
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5748,6 +5758,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows-syslog
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5808,6 +5819,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-cf-cli
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5866,6 +5878,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-hwc-buildpack
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5924,6 +5937,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows-utilities
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -5982,6 +5996,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-garden-windows
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -6040,6 +6055,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-winc
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -6098,6 +6114,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows2016fs
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -6156,6 +6173,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-cflinuxfs3
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
@@ -6214,6 +6232,7 @@ jobs:
       OPS_FILES: |
         operations/windows-cell.yml
         operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-node-exporter
     file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
     input_mapping:
