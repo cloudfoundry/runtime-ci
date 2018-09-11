@@ -593,7 +593,6 @@ jobs:
         operations/experimental/disable-consul.yml
         operations/experimental/disable-consul-windows.yml
         operations/experimental/disable-consul-windows2016.yml
-        operations/experimental/use-xenial-stemcell.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
