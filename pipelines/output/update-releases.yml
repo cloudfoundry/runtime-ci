@@ -8236,7 +8236,8 @@ jobs:
       ops-file: updated-ops-file
       manifest: cf-deployment-develop
     params:
-      COMMIT_ALL_OPS_FILES: true
+      OPS_FILE_DESTINATION: operations/use-offline-windows2016fs.yml
+      OPS_FILE_NAME: use-offline-windows2016fs.yml
   - put: cf-deployment-develop
     params:
       rebase: true
