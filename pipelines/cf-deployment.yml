@@ -820,7 +820,7 @@ jobs:
         HTTP_AVAILABILITY_THRESHOLD: 0
         RECENT_LOGS_THRESHOLD: 11
         STREAMING_LOGS_THRESHOLD: 3
-        APP_SYSLOG_AVAILABILITY_THRESHOLD: 3
+        APP_SYSLOG_AVAILABILITY_THRESHOLD: 5
         FAIL_ON_DOWNTIME: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
