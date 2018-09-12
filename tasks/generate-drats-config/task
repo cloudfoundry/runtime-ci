@@ -31,6 +31,7 @@ echo '{}' | jq \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
 --arg nfs_broker_password ${nfs_broker_password} \
 --arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
+--arg credhub_client_secret "$(get_password_from_credhub credhub_admin_client_secret)" \
 '{
     "cf_deployment_name": $cf_deployment_name,
     "cf_api_url": $cf_api_url,
@@ -58,5 +59,7 @@ echo '{}' | jq \
     "include_cf-credhub": true,
     "include_cf-routing": true,
     "include_app-uptime": true,
-    "include_cf-nfsbroker": true
+    "include_cf-nfsbroker": true,
+    "credhub_client_name": "credhub_admin_client",
+    "credhub_client_secret": $credhub_client_secret
 }' > drats-config/drats_integration_config.json
