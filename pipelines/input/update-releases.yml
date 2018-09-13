@@ -63,8 +63,6 @@ baseReleases:
 opsReleases:
 - name: backup-and-restore-sdk
   repository: cloudfoundry-incubator/backup-and-restore-sdk-release
-- name: broker-registrar
-  repository: cloudfoundry-community/broker-registrar-boshrelease
 - name: cf-app-sd
   repository: cloudfoundry/cf-app-sd-release
 - name: haproxy

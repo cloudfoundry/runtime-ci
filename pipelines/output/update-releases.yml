@@ -80,7 +80,6 @@ groups:
   jobs:
   - update-bits-service
   - update-backup-and-restore-sdk
-  - update-broker-registrar
   - update-cf-app-sd
   - update-haproxy
   - update-mapfs
@@ -294,10 +293,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/backup-and-restore-sdk-release
-- name: broker-registrar-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-community/broker-registrar-boshrelease
 - name: cf-app-sd-release
   type: bosh-io-release
   source:
@@ -5176,65 +5171,6 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: backup-and-restore-sdk
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops-backup-and-restore-sdk
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      COMMIT_ALL_OPS_FILES: true
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-broker-registrar
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: broker-registrar-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-broker-registrar
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: broker-registrar-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: broker-registrar
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
-        operations/windows-cell.yml
-        operations/windows2016-cell.yml
-        operations/experimental/windows1803-cell.yml
-  - task: bosh-dry-run-broker-registrar
-    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: broker-registrar
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops-broker-registrar
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
