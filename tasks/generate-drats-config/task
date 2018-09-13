@@ -15,7 +15,6 @@ set +x
 set -x
 
 setup_password_from_credhub "cf_admin_password"
-setup_password_from_credhub "nfs-broker-password" "nfs_broker_password"
 
 set +x
 echo '{}' | jq \
@@ -29,7 +28,6 @@ echo '{}' | jq \
 --arg bosh_client "${BOSH_CLIENT}" \
 --arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
---arg nfs_broker_password ${nfs_broker_password} \
 --arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
 --arg credhub_client_secret "$(get_password_from_credhub credhub_admin_client_secret)" \
 '{
@@ -47,10 +45,7 @@ echo '{}' | jq \
     "ssh_proxy_private_key": $bosh_gw_private_key,
     "nfs_service_name": "nfs",
     "nfs_plan_name": "Existing",
-    "nfs_broker_user": "nfs-broker",
-    "nfs_broker_password": $nfs_broker_password,
     "nfs_broker_url": $nfs_broker_url,
-    "nfs_create_service_broker": true,
     "timeout_in_minutes": 30,
     "delete_and_redeploy_cf": false,
     "include_cf-app": true,
