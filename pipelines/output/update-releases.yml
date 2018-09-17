@@ -6240,6 +6240,7 @@ jobs:
       bbl-state: greengrass-env-director-state
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
+      vars-files: greengrass-env-director-state
     params:
       DEPLOYMENT_NAME_SUFFIX: bits-service
       OPS_FILES: |
