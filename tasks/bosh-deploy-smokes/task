@@ -63,8 +63,8 @@ releases:
   version: create
   url: file://cf-smoke-tests-release
 - name: cf-cli
-  version: create
-  url: file://cf-cli-release
+  version: latest
+  url: file://cf-cli-release/*.tgz
 EOF
 
   bosh \
