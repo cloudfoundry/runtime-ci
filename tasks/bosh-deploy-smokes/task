@@ -14,8 +14,7 @@ function move_cf_admin_password() {
 
 function bosh_deploy() {
   local root_dir=$PWD
-  pushd cf-smoke-tests-release
-    cat << EOF > smokes-dev-release.yml
+  cat << EOF > smokes-dev-release.yml
 ---
 name: cf-smoke-tests
 update:
@@ -62,25 +61,23 @@ stemcells:
 releases:
 - name: cf-smoke-tests
   version: create
-  url: file://.
+  url: file://cf-smoke-tests-release
 - name: cf-cli
   version: create
-  url: file://.
+  url: file://cf-cli-release
 EOF
 
-    bosh \
-      -n \
-      -d "${RELEASE_NAME}" \
-      interpolate smokes-dev-release.yml \
-      -v system_domain="${SYSTEM_DOMAIN}" > interpolated-manifest.yml
+  bosh \
+    -n \
+    -d "${RELEASE_NAME}" \
+    interpolate smokes-dev-release.yml \
+    -v system_domain="${SYSTEM_DOMAIN}" > interpolated-manifest.yml
 
-    bosh \
-      -n \
-      deploy \
-      -d "${RELEASE_NAME}" \
-      interpolated-manifest.yml
-
-  popd
+  bosh \
+    -n \
+    deploy \
+    -d "${RELEASE_NAME}" \
+    interpolated-manifest.yml
 }
 
 function main() {
