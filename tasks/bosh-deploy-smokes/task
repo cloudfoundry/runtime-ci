@@ -38,6 +38,8 @@ instance_groups:
   networks:
   - name: default
   jobs:
+  - name: cf-cli-6-linux
+    release: cf-cli
   - name: smoke_tests
     release: cf-smoke-tests
     properties:
@@ -59,6 +61,9 @@ stemcells:
   version: latest
 releases:
 - name: cf-smoke-tests
+  version: create
+  url: file://.
+- name: cf-cli
   version: create
   url: file://.
 EOF
