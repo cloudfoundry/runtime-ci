@@ -64,7 +64,7 @@ releases:
   url: file://cf-smoke-tests-release
 - name: cf-cli
   version: latest
-  url: file://cf-cli-release/*.tgz
+  url: file://cf-cli-release/release.tgz
 EOF
 
   bosh \
