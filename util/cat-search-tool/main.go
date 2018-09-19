@@ -37,7 +37,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rows, err := db.Query(`select distinct
+
+	rows, err := db.Query(`select
 	'https://release-integration.ci.cf-app.com/teams/main/pipelines/cf-deployment/jobs/stable-periodic-cats/builds/' || builds.name
 	from build_events
 	join builds on build_events.build_id=builds.id
@@ -86,7 +87,7 @@ func connect() (*sql.DB, error) {
 		log.Fatal(err)
 	}
 
-	return nil, nil
+	return db, nil
 }
 
 func parseTerraform(output string) (host, password string) {
