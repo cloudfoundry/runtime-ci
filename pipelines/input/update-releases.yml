@@ -59,6 +59,8 @@ baseReleases:
   repository: cloudfoundry/uaa-release
 - name: credhub
   repository: pivotal-cf/credhub-release
+- name: cf-cli
+  repository: bosh-packages/cf-cli-release
 
 opsReleases:
 - name: backup-and-restore-sdk
@@ -88,8 +90,6 @@ opsReleases:
   repository: cloudfoundry/windows-syslog-release
   varsFilesInput: greengrass-env-director-state
   varsFiles: "vars-files/windows-enable-component-syslog-vars.yml"
-- name: cf-cli
-  repository: bosh-packages/cf-cli-release
 - name: hwc-buildpack
   repository: cloudfoundry-incubator/hwc-buildpack-release
 - name: windows-utilities

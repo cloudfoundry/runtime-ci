@@ -44,6 +44,7 @@ groups:
   - update-statsd-injector
   - update-uaa
   - update-credhub
+  - update-cf-cli
 - name: update-base-xenial-stemcells-and-releases
   jobs:
   - update-xenial-stemcell-and-recompile-releases
@@ -76,6 +77,7 @@ groups:
   - update-statsd-injector-xenial
   - update-uaa-xenial
   - update-credhub-xenial
+  - update-cf-cli-xenial
 - name: update-ops-releases
   jobs:
   - update-bits-service
@@ -89,7 +91,6 @@ groups:
   - update-syslog
   - update-pxc
   - update-windows-syslog
-  - update-cf-cli
   - update-hwc-buildpack
   - update-windows-utilities
   - update-garden-windows
@@ -289,6 +290,10 @@ resources:
   type: bosh-io-release
   source:
     repository: pivotal-cf/credhub-release
+- name: cf-cli-release
+  type: bosh-io-release
+  source:
+    repository: bosh-packages/cf-cli-release
 - name: backup-and-restore-sdk-release
   type: bosh-io-release
   source:
@@ -329,10 +334,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/windows-syslog-release
-- name: cf-cli-release
-  type: bosh-io-release
-  source:
-    repository: bosh-packages/cf-cli-release
 - name: hwc-buildpack-release
   type: bosh-io-release
   source:
@@ -535,6 +536,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: credhub-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: cf-cli-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: cf-cli-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: windows2012R2-stemcell
   type: bosh-io-stemcell
   source:
@@ -2914,6 +2921,92 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-cf-cli
+  serial_groups:
+  - update-cf-cli
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-cli-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cf-cli
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: cf-cli-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-cli
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cf-cli
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cf-cli
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cf-cli
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: cf-cli-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cf-cli
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - put: cf-cli-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 
 # This Xenial-specific job is meant to be temporary, and should be removed once
 # Xenial becomes the one true stemcell.  It's missing elements such as updating
@@ -5123,6 +5216,82 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-cf-cli-xenial
+  serial_groups:
+  - update-cf-cli
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cf-cli-release
+      passed:
+      - update-cf-cli
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      resource: xenial-stemcell
+      passed:
+      - update-xenial-stemcell-and-recompile-releases
+  - task: bosh-upload-xenial-stemcell
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    params:
+      STEMCELL_NAME: '*.tgz'
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: cf-deployment-develop
+    params:
+      RELEASE_NAME: cf-cli
+      STEMCELL_OPS_FILE_PATH: operations/experimental/use-xenial-stemcell.yml
+  - task: create-noop-commit-message
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: commit-message
+      run:
+        path: /bin/sh
+        args:
+        - '-c'
+        - 'echo "No manifest release or stemcell version updates" > commit-message/commit-message.txt'
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: cf-cli-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cf-cli
+      ORIGINAL_OPS_FILE_PATH: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - put: cf-cli-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-compiled-releases-ops-file
+      manifest: cf-deployment-develop
+    params:
+      OPS_FILE_NAME: use-compiled-releases.yml
+      OPS_FILE_DESTINATION: operations/experimental/use-compiled-releases-xenial-stemcell.yml
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 - name: update-backup-and-restore-sdk
   serial: true
   public: true
@@ -5708,65 +5877,6 @@ jobs:
       SYSTEM_DOMAIN: greengrass.cf-app.com
       VARS_FILES: vars-files/windows-enable-component-syslog-vars.yml
   - task: commit-generated-manifest-and-ops-windows-syslog
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      COMMIT_ALL_OPS_FILES: true
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-cf-cli
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: cf-cli-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-cli
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: cf-cli-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-cli
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
-        operations/windows-cell.yml
-        operations/windows2016-cell.yml
-        operations/experimental/windows1803-cell.yml
-  - task: bosh-dry-run-cf-cli
-    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cf-cli
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops-cf-cli
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
@@ -6395,6 +6505,7 @@ jobs:
   - update-statsd-injector
   - update-uaa
   - update-credhub
+  - update-cf-cli
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -6487,6 +6598,9 @@ jobs:
       params:
         tarball: false
     - get: credhub-release
+      params:
+        tarball: false
+    - get: cf-cli-release
       params:
         tarball: false
     - get: stemcell
@@ -6766,6 +6880,15 @@ jobs:
         exported-release: exported-release-credhub
       params:
         RELEASE_NAME: credhub
+    - task: compile-release-cf-cli
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cf-cli
+      params:
+        RELEASE_NAME: cf-cli
   - task: update-compiled-releases-ops-binary-buildpack
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -7085,6 +7208,17 @@ jobs:
       RELEASE_NAME: credhub
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-cli
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: cf-cli-release
+      compiled-release-tarball: exported-release-cf-cli
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cf-cli
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -7202,6 +7336,10 @@ jobs:
       params:
         file: exported-release-credhub/*.tgz
         predefined_acl: publicRead
+    - put: cf-cli-release-gcs
+      params:
+        file: exported-release-cf-cli/*.tgz
+        predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -7280,6 +7418,8 @@ jobs:
   - update-uaa-xenial
   - update-credhub
   - update-credhub-xenial
+  - update-cf-cli
+  - update-cf-cli-xenial
   build_logs_to_retain: 100
   plan:
   - aggregate:
@@ -7401,6 +7541,10 @@ jobs:
         tarball: false
     - get: credhub-release
       passed: [update-credhub]
+      params:
+        tarball: false
+    - get: cf-cli-release
+      passed: [update-cf-cli]
       params:
         tarball: false
     - get: stemcell
@@ -7706,6 +7850,16 @@ jobs:
         exported-release: exported-release-credhub
       params:
         RELEASE_NAME: credhub
+        STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
+    - task: compile-release-cf-cli
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: manifest-and-updated-stemcell-ops-file
+      output_mapping:
+        exported-release: exported-release-cf-cli
+      params:
+        RELEASE_NAME: cf-cli
         STEMCELL_OPS_FILE_PATH: use-xenial-stemcell.yml
   - task: update-compiled-releases-ops-binary-buildpack
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
@@ -8026,6 +8180,17 @@ jobs:
       RELEASE_NAME: credhub
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cf-cli
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: cf-cli-release
+      compiled-release-tarball: exported-release-cf-cli
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cf-cli
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - aggregate:
     - put: binary-buildpack-release-gcs
       params:
@@ -8142,6 +8307,10 @@ jobs:
     - put: credhub-release-gcs
       params:
         file: exported-release-credhub/*.tgz
+        predefined_acl: publicRead
+    - put: cf-cli-release-gcs
+      params:
+        file: exported-release-cf-cli/*.tgz
         predefined_acl: publicRead
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
