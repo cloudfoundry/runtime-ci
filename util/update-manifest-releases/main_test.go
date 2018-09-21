@@ -467,6 +467,9 @@ stemcells:
 			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
+			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+
 			inputPath = os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
 			outputPath = os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH")
 

@@ -36,6 +36,25 @@ func mergeReleases(manifestReleases []common.Release, updatingReleases []string)
 	return allReleases
 }
 
+func stemcellOSfromURL(url string) (string, error) {
+	// url example:
+	// https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-0.1-google-kvm-ubuntu-foo-go_agent.tgz
+	urlSplit := strings.Split(url, "/")
+	tarballName:= urlSplit[len(urlSplit) - 1]
+
+	versionRegex := regexp.MustCompile(`(ubuntu-\w+)`)
+
+	allMatches := versionRegex.FindAllStringSubmatch(tarballName, 1)
+
+	if len(allMatches) != 1 {
+		return "", fmt.Errorf("Stemcell URL syntax doesn't contain 'ubuntu':  %s", url)
+	}
+
+	osMatch := allMatches[0][1]
+
+	return osMatch, nil
+}
+
 func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
@@ -113,16 +132,26 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	}
 	trimmedStemcellVersion := strings.TrimSpace(string(stemcellVersion))
 
+	stemcellURL, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "url"))
+	if err != nil {
+		return nil, "", err
+	}
+
+	stemcellOS, err := stemcellOSfromURL(string(stemcellURL))
+	if err != nil {
+		return nil, "", err
+	}
+
 	cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
 		{
 			Alias:   "default",
-			OS:      "ubuntu-trusty",
+			OS:      stemcellOS,
 			Version: trimmedStemcellVersion,
 		},
 	}
 
 	if stemcellsVersions["default"] != trimmedStemcellVersion {
-		changes = append(changes, fmt.Sprintf("ubuntu-trusty stemcell %s", trimmedStemcellVersion))
+		changes = append(changes, fmt.Sprintf("%s stemcell %s", stemcellOS, trimmedStemcellVersion))
 	}
 
 	cfDeploymentReleasesAndStemcellsYaml, err := marshalFunc(cfDeploymentReleasesAndStemcells)

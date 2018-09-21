@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"regexp"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
@@ -16,11 +16,10 @@ import (
 
 var _ = Describe("UpdateReleasesAndStemcells", func() {
 	var (
-		brokenBuildDir    string
-		goodBuildDir      string
-		noChangesBuildDir string
+		brokenBuildDir              string
+		goodBuildDir                string
+		noChangesBuildDir           string
 
-		updatedReleasesAndStemcellsFixture []byte
 		cfDeploymentManifest               []byte
 	)
 
@@ -31,14 +30,11 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 
 		var err error
 
-		updatedReleasesAndStemcellsFixture, err = ioutil.ReadFile("../fixtures/updated_releases_and_stemcells.yml")
-		Expect(err).NotTo(HaveOccurred())
-
 		cfDeploymentManifest, err = ioutil.ReadFile("../fixtures/cf-deployment.yml")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
-	It("when the sha changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+	It("updates the releases and stemcells without modifying the rest and returns the list of changes when the sha changes", func() {
 		releases := []string{"release1", "release2"}
 		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_sha_releases_and_stemcells.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -60,7 +56,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(changes).To(Equal("Updated manifest with release2-release original-release2-version, ubuntu-trusty stemcell updated-stemcell-version"))
 	})
 
-	It("when the version changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+	It("updates the releases and stemcells without modifying the rest and returns the list of changes when the version changes", func() {
 		releases := []string{"release1", "release2"}
 		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_version_releases_and_stemcells.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -82,7 +78,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(changes).To(Equal("Updated manifest with release2-release updated-release2-version, ubuntu-trusty stemcell updated-stemcell-version"))
 	})
 
-	It("when the url changes, updates the releases and stemcells without modifying the rest and returns the list of changes", func() {
+	It("updates the releases and stemcells without modifying the rest and returns the list of changes when the url changes", func() {
 		releases := []string{"release1", "release2"}
 		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_url_releases_and_stemcells.yml")
 		Expect(err).NotTo(HaveOccurred())
@@ -112,7 +108,7 @@ var _ = Describe("UpdateReleasesAndStemcells", func() {
 		Expect(changes).To(Equal("No manifest release or stemcell version updates"))
 	})
 
-	It("when there exist update releases that are not in the manifest releases, it adds them to resulting list of releases", func() {
+	It("adds them to resulting list of releases when there are updates to the releases that are not in the manifest releases", func() {
 		updateReleases := []string{"release1"}
 		cfDeploymentManifest := []byte(`
 name: my-deployment
@@ -148,6 +144,17 @@ stemcells:
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(changes).To(Equal("Updated manifest with release1-release original-release1-version, release2-release original-release2-version, ubuntu-trusty stemcell original-stemcell-version"))
+	})
+
+	It("takes stemcell OS from the stemcell input when the OS is different from the one in the base manifest", func() {
+		updatedReleasesAndStemcellsFixture, err := ioutil.ReadFile("../fixtures/updated_stemcell_os_and_releases.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedManifest, changes, err := manifest.UpdateReleasesAndStemcells(nil, "../fixtures/build-with-different-stemcell-os", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
+
+		Expect(err).NotTo(HaveOccurred())
+		Expect(updatedManifest).To(MatchYAML(updatedReleasesAndStemcellsFixture))
+		Expect(changes).To(Equal("Updated manifest with ubuntu-foo stemcell 0.1"))
 	})
 
 	Context("failure cases", func() {
