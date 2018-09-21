@@ -201,7 +201,7 @@ resources:
     paths:
     - integration_config.json
     - rats_integration_config.json
-    - wats2016_integration_config.json
+    - cats_windows2016_integration_config.json
 - name: half-hourly
   type: time
   source:
