@@ -774,7 +774,6 @@ jobs:
       params:
         INFRASTRUCTURE: aws
         OPS_FILES: |
-          operations/experimental/use-xenial-stemcell.yml
           operations/experimental/windows1803-cell.yml
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
@@ -793,7 +792,6 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
-          operations/experimental/use-xenial-stemcell.yml
           operations/experimental/windows1803-cell.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-external-blobstore.yml
