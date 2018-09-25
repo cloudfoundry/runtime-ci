@@ -24,7 +24,6 @@ groups:
   - update-cf-smoke-tests
   - update-cf-syslog-drain
   - update-cflinuxfs2
-  - update-consul
   - update-diego
   - update-dotnet-core-buildpack
   - update-garden-runc
@@ -173,10 +172,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-release
-- name: consul-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/consul-release
 - name: diego-release
   type: bosh-io-release
   source:
@@ -379,12 +374,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: cflinuxfs2-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-- name: consul-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: ((concourse_gcp_service_account_json))
-    regexp: consul-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: diego-release-gcs
   type: gcs-resource
   source:
@@ -1274,92 +1263,6 @@ jobs:
       ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - put: cflinuxfs2-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-compiled-releases-ops-file
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      OPS_FILE_NAME: use-compiled-releases.yml
-      OPS_FILE_DESTINATION: operations/use-compiled-releases.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-consul
-  serial_groups:
-  - update-consul
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: consul-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-consul
-    file: runtime-ci/tasks/update-single-manifest-release/task.yml
-    input_mapping:
-      release: consul-release
-      deployment-configuration: cf-deployment-develop
-    params:
-      RELEASE_NAME: consul
-  - task: upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: consul
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-consul
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: consul
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-single-compiled-release/task.yml
-    input_mapping:
-      original-compiled-releases-ops-file: cf-deployment-develop
-      release: consul-release
-      compiled-release-tarball: exported-release
-      current-commit-message: commit-message
-    params:
-      RELEASE_NAME: consul
-      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
-      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
-  - put: consul-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -4163,7 +4066,6 @@ jobs:
   - update-cf-smoke-tests
   - update-cf-syslog-drain
   - update-cflinuxfs2
-  - update-consul
   - update-diego
   - update-dotnet-core-buildpack
   - update-garden-runc
@@ -4216,9 +4118,6 @@ jobs:
       params:
         tarball: false
     - get: cflinuxfs2-release
-      params:
-        tarball: false
-    - get: consul-release
       params:
         tarball: false
     - get: diego-release
@@ -4378,15 +4277,6 @@ jobs:
         exported-release: exported-release-cflinuxfs2
       params:
         RELEASE_NAME: cflinuxfs2
-    - task: compile-release-consul
-      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        manifest: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-consul
-      params:
-        RELEASE_NAME: consul
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -4666,17 +4556,6 @@ jobs:
       RELEASE_NAME: cflinuxfs2
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
-  - task: update-compiled-releases-ops-consul
-    file: runtime-ci/tasks/update-single-compiled-release/task.yml
-    input_mapping:
-      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
-      release: consul-release
-      compiled-release-tarball: exported-release-consul
-      current-commit-message: commit-message
-    params:
-      RELEASE_NAME: consul
-      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
-      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-diego
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -4933,10 +4812,6 @@ jobs:
     - put: cflinuxfs2-release-gcs
       params:
         file: exported-release-cflinuxfs2/*.tgz
-        predefined_acl: publicRead
-    - put: consul-release-gcs
-      params:
-        file: exported-release-consul/*.tgz
         predefined_acl: publicRead
     - put: diego-release-gcs
       params:

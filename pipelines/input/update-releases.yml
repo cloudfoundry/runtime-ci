@@ -19,8 +19,6 @@ baseReleases:
   repository: cloudfoundry/cf-syslog-drain-release
 - name: cflinuxfs2
   repository: cloudfoundry/cflinuxfs2-release
-- name: consul
-  repository: cloudfoundry-incubator/consul-release
 - name: diego
   repository: cloudfoundry/diego-release
 - name: dotnet-core-buildpack
