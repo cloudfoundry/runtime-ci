@@ -154,7 +154,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key))
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key)
     paths:
     - bbl-state
     - bbl-config
@@ -164,7 +164,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hagrid-env.git
-    private_key: ((hagrid_env_readwrite_deploy_key))
+    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
 
 - name: maxime-env-director-state
   type: git
@@ -178,7 +178,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_private_key))
+    private_key: ((hermione_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
     - bbl-config
@@ -188,7 +188,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key))
+    private_key: ((luna_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 
@@ -197,7 +197,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/snitch-env.git
-    private_key: ((snitch_env_private_key))
+    private_key: ((snitch_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
 
@@ -206,7 +206,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/trelawney-env.git
-    private_key: ((trelawney_env_readwrite_deploy_key))
+    private_key: ((trelawney_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
     - bbl-config
@@ -374,8 +374,8 @@ jobs:
       # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
       BBL_GCP_REGION: us-west1
       BBL_IAAS: gcp
-      BBL_LB_CERT: ((luna_cf_ssl_cert))
-      BBL_LB_KEY: ((luna_cf_ssl_cert_private_key))
+      BBL_LB_CERT: ((luna_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((luna_cf_lb_cert.private_key))
       LB_DOMAIN: luna.cf-app.com
     input_mapping:
       bbl-state: luna-env-director-state
@@ -493,8 +493,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: ((trelawney_cf_ssl_cert))
-      BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
+      BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
       LB_DOMAIN: trelawney.cf-app.com
       BBL_CONFIG_DIR: bbl-config
       BBL_ENV_NAME: trelawney-fresh
@@ -526,8 +526,8 @@ jobs:
       BBL_IAAS: gcp
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
-      BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
+      BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
       LB_DOMAIN: bellatrix.cf-app.com
       BBL_ENV_NAME: bellatrix-stable
       BBL_CONFIG_DIR: bbl-config
@@ -772,8 +772,8 @@ jobs:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: ((bellatrix_cf_ssl_cert))
-        BBL_LB_KEY: ((bellatrix_cf_ssl_cert_private_key))
+        BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
+        BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
         LB_DOMAIN: bellatrix.cf-app.com
         BBL_CONFIG_DIR: bbl-config
       input_mapping:
