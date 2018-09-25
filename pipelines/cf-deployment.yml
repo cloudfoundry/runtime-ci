@@ -589,9 +589,6 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/enable-service-discovery.yml
-        operations/experimental/disable-consul.yml
-        operations/experimental/disable-consul-windows.yml
-        operations/experimental/disable-consul-windows2016.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
@@ -802,8 +799,6 @@ jobs:
           operations/scale-database-cluster.yml
           operations/experimental/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
-          operations/experimental/disable-consul.yml
-          operations/experimental/disable-consul-windows1803.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/add-cflinuxfs3.yml
