@@ -260,6 +260,12 @@ resources:
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-deployment.git
+- name: cf-acceptance-tests-rc
+  type: git
+  source:
+    branch: release-candidate
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 - name: cf-acceptance-tests
   type: git
   source:
@@ -1038,7 +1044,7 @@ jobs:
       trigger: true
       passed: [ experimental-set-feature-flags ]
     - aggregate:
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-rc
       - get: hermione-env-integration-configs
       - get: cf-deployment-develop
         passed: [ experimental-set-feature-flags ]
@@ -1046,6 +1052,7 @@ jobs:
     - task: run-cats
       input_mapping:
         integration-config: hermione-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-rc
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       params:
         RELINT_VERBOSE_AUTH: "true"
@@ -1306,7 +1313,7 @@ jobs:
       passed: [ fresh-enable-docker-and-tasks ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-rc
       - get: luna-env-integration-configs
       - get: cf-deployment-develop
         passed: [ fresh-enable-docker-and-tasks ]
@@ -1314,6 +1321,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: luna-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-rc
       params:
         CAPTURE_LOGS: true
         RELINT_VERBOSE_AUTH: "true"
@@ -1330,7 +1338,7 @@ jobs:
       passed: [upgrade-set-feature-flags]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-rc
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
         passed: [upgrade-set-feature-flags]
@@ -1338,6 +1346,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: trelawney-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-rc
       params:
         CAPTURE_LOGS: true
         RELINT_VERBOSE_AUTH: "true"
@@ -1354,7 +1363,7 @@ jobs:
       passed: [upgrade-set-feature-flags]
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-rc
       - get: trelawney-env-integration-configs
       - get: cf-deployment-develop
         passed: [upgrade-set-feature-flags]
@@ -1362,6 +1371,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: trelawney-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-rc
       params:
         CAPTURE_LOGS: true
         CONFIG_FILE_PATH: cats_windows2016_integration_config.json
@@ -1379,7 +1389,7 @@ jobs:
       trigger: true
       passed: [ lite-enable-docker-and-tasks ]
     - aggregate:
-      - get: cf-acceptance-tests
+      - get: cf-acceptance-tests-rc
       - get: cf-deployment-develop
         passed: [ lite-enable-docker-and-tasks ]
       - get: snitch-env-integration-configs
@@ -1388,6 +1398,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: snitch-env-integration-configs
+        cf-acceptance-tests: cf-acceptance-tests-rc
       params:
         NODES: 4
         RELINT_VERBOSE_AUTH: "true"
