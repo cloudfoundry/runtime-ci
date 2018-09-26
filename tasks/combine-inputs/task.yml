@@ -22,4 +22,4 @@ params:
   # - Optional
 
 run:
-  path: runtime-ci/combine-inputs/task
+  path: runtime-ci/tasks/combine-inputs/task
