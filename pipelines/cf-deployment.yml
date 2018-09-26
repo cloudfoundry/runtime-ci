@@ -899,10 +899,7 @@ jobs:
         OPS_FILES: |
           operations/scale-database-cluster.yml
           operations/windows2016-cell.yml
-          operations/use-haproxy.yml
-          operations/use-haproxy-public-network.yml
           operations/decrease-cc-event-retention.yml
-        VARS_FILES: ha-proxy-vars.yml
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
