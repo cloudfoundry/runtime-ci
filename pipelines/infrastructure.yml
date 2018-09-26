@@ -154,7 +154,7 @@ resources:
   source:
     branch: master
     uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key.private_key)
+    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
     - bbl-config
