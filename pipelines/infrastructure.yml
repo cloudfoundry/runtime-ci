@@ -133,7 +133,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-bootloader
-    tag_filter: v6.2.3
 
 # Code repos
 - name: cf-deployment-concourse-tasks
@@ -587,6 +586,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: cats-env-director-state
+    - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -596,10 +596,11 @@ jobs:
       BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
       BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
       LB_DOMAIN: cats.cf-app.com
+      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
       BBL_ENV_NAME: cats
     input_mapping:
       bbl-state: cats-env-director-state
-      bbl-config: cats-env-director-state
+      bbl-config: bosh-bootloader
     ensure:
       put: cats-env-director-state
       params:
@@ -835,6 +836,7 @@ jobs:
         params: {acquire: true}
       - get: cats-env-director-state
       - get: cf-deployment-concourse-tasks
+      - get: bosh-bootloader
       - get: every-tuesday-morning
         trigger: true
     - task: update-infrastructure
@@ -846,10 +848,11 @@ jobs:
         BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
         BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
         LB_DOMAIN: cats.cf-app.com
+        BBL_CONFIG_DIR: plan-patches/network-lb-gcp
         BBL_ENV_NAME: cats
       input_mapping:
         bbl-state: cats-env-director-state
-        bbl-config: cats-env-director-state
+        bbl-config: bosh-bootloader
       ensure:
         put: cats-env-director-state
         params:
