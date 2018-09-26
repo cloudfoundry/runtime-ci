@@ -486,6 +486,18 @@ jobs:
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: trelawney-env-director-state
+    - get: runtime-ci
+    - get: bosh-bootloader
+  - task: combine-bbl-plan-patches
+    file: runtime-ci/tasks/combine-inputs/task.yml
+    input_mapping:
+      first-input: trelawney-env-director-state
+      second-input: bosh-bootloader
+    params:
+      FIRST_DIR: bbl-config
+      SECOND_DIR: plan-patches/network-lb-gcp
+    output_mapping:
+      combined-inputs: combined-plan-patches
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -495,11 +507,11 @@ jobs:
       BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
       BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
       LB_DOMAIN: trelawney.cf-app.com
-      BBL_CONFIG_DIR: bbl-config
+      BBL_CONFIG_DIR: .
       BBL_ENV_NAME: trelawney-fresh
     input_mapping:
       bbl-state: trelawney-env-director-state
-      bbl-config: trelawney-env-director-state
+      bbl-config: combined-plan-patches
     ensure:
       put: trelawney-env-director-state
       params:
@@ -732,19 +744,31 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: every-tuesday-morning
         trigger: true
+      - get: runtime-ci
+      - get: bosh-bootloader
+    - task: combine-bbl-plan-patches
+      file: runtime-ci/tasks/combine-inputs/task.yml
+      input_mapping:
+        first-input: trelawney-env-director-state
+        second-input: bosh-bootloader
+      params:
+        FIRST_DIR: bbl-config
+        SECOND_DIR: plan-patches/network-lb-gcp
+      output_mapping:
+        combined-inputs: combined-plan-patches
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
         BBL_IAAS: gcp
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: ((trelawney_cf_ssl_cert))
-        BBL_LB_KEY: ((trelawney_cf_ssl_cert_private_key))
-        BBL_CONFIG_DIR: bbl-config
+        BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
+        BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
+        BBL_CONFIG_DIR: .
         LB_DOMAIN: trelawney.cf-app.com
       input_mapping:
         bbl-state: trelawney-env-director-state
-        bbl-config: trelawney-env-director-state
+        bbl-config: combined-plan-patches
       ensure:
         put: trelawney-env-director-state
         params:
