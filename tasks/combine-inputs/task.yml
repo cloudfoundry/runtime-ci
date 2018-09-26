@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: first-input
+- name: second-input
+
+outputs:
+- name: combined-inputs
+
+params:
+  FIRST_DIR:
+  # - Optional
+
+  SECOND_DIR:
+  # - Optional
+
+run:
+  path: runtime-ci/combine-inputs/task

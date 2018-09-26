@@ -1,0 +1,14 @@
+#!/bin/bash -eux
+
+if [ -z ${FIRST_DIR} ]; then
+  cp -r first-input/* combined-inputs/
+else
+  cp -r first-input/${FIRST_DIR}/* combined-inputs/
+fi
+
+if [ -z ${SECOND_DIR} ]; then
+  cp -r second-input/* combined-inputs/
+else
+  cp -r second-input/${SECOND_DIR}/* combined-inputs/
+fi
+
