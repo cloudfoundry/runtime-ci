@@ -395,9 +395,11 @@ jobs:
   - aggregate:
     - get: hagrid-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
       BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: hagrid-fresh
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -408,7 +410,7 @@ jobs:
       LB_DOMAIN: hagrid.cf-app.com
     input_mapping:
       bbl-state: hagrid-env-director-state
-      bbl-config: hagrid-env-director-state
+      bbl-config: bosh-bootloader
     ensure:
       put: hagrid-env-director-state
       params:
@@ -423,9 +425,11 @@ jobs:
   - aggregate:
     - get: maxime-env-director-state
     - get: cf-deployment-concourse-tasks
+    - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
       BBL_STATE_DIR: bbl-state
       BBL_ENV_NAME: maxime-explore
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
@@ -436,7 +440,7 @@ jobs:
       LB_DOMAIN: maxime.cf-app.com
     input_mapping:
       bbl-state: maxime-env-director-state
-      bbl-config: maxime-env-director-state
+      bbl-config: bosh-bootloader
     ensure:
       put: maxime-env-director-state
       params:
