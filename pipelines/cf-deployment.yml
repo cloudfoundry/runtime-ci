@@ -562,7 +562,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
@@ -590,7 +590,7 @@ jobs:
       OPS_FILES: |
         operations/use-external-dbs.yml
         operations/add-external-ips-for-cloud-sql-db.yml
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml

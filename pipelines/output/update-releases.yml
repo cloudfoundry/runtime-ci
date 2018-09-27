@@ -2907,7 +2907,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-backup-and-restore-sdk
@@ -2966,7 +2966,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-cf-app-sd
@@ -3025,7 +3025,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-haproxy
@@ -3086,7 +3086,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-mapfs
@@ -3145,7 +3145,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-nfs-volume
@@ -3204,7 +3204,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-smb-volume
@@ -3263,7 +3263,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-postgres
@@ -3322,7 +3322,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-syslog
@@ -3383,7 +3383,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-pxc
@@ -3442,7 +3442,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows-syslog
@@ -3503,7 +3503,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-hwc-buildpack
@@ -3562,7 +3562,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows-utilities
@@ -3621,7 +3621,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-garden-windows
@@ -3680,7 +3680,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-winc
@@ -3739,7 +3739,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-windows2016fs
@@ -3798,7 +3798,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-cflinuxfs3
@@ -3857,7 +3857,7 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows-cell.yml
+        operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
         operations/experimental/windows1803-cell.yml
   - task: bosh-dry-run-node-exporter
@@ -3974,8 +3974,8 @@ jobs:
       ops-files: cf-deployment-develop
       windows-stemcell: windows2012R2-stemcell
     params:
-      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows-cell.yml
-      UPDATED_WINDOWS_OPS_FILE_PATH: windows-cell.yml
+      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows2012R2-cell.yml
+      UPDATED_WINDOWS_OPS_FILE_PATH: windows2012R2-cell.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
@@ -3983,8 +3983,8 @@ jobs:
       ops-file: updated-stemcell-ops-file
       manifest: cf-deployment-develop
     params:
-      OPS_FILE_NAME: windows-cell.yml
-      OPS_FILE_DESTINATION: operations/windows-cell.yml
+      OPS_FILE_NAME: windows2012R2-cell.yml
+      OPS_FILE_DESTINATION: operations/windows2012R2-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true

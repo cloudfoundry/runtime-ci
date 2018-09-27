@@ -20,5 +20,5 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows-cell.yml
-  UPDATED_WINDOWS_OPS_FILE_PATH: windows-cell.yml
+  ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows2012R2-cell.yml
+  UPDATED_WINDOWS_OPS_FILE_PATH: windows2012R2-cell.yml
