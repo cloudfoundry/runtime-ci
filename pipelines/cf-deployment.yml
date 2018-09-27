@@ -799,7 +799,7 @@ jobs:
           operations/experimental/bits-service.yml
           operations/experimental/bits-service-s3.yml
           operations/scale-database-cluster.yml
-          operations/experimental/use-pxc.yml
+          operations/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
