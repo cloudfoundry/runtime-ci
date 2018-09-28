@@ -56,7 +56,7 @@ instance_groups:
 
 stemcells:
 - alias: default
-  os: ubuntu-trusty
+  os: ubuntu-xenial
   version: latest
 releases:
 - name: cf-smoke-tests
