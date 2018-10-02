@@ -61,7 +61,7 @@ OPSFILES
       it 'includes a header' do
         expect(renderer.render(release_updates: release_updates)).to include(
 <<-HEADER
-| Release | New Version | Old Version |
+| Release | Old Version | New Version |
 | ------- | ----------- | ----------- |
 HEADER
         )
@@ -69,13 +69,13 @@ HEADER
 
       it 'places the table header immediately after the section header' do
         rendered_output = renderer.render(release_updates: release_updates)
-        expect(rendered_output).to include ("## Release and Stemcell Updates\n| Release | New Version | Old Version |")
+        expect(rendered_output).to include ("## Release and Stemcell Updates\n| Release | Old Version | New Version |")
       end
 
-      it 'shows the release name, new version, and old version for each release' do
+      it 'shows the release name, old version, and new version for each release' do
         rendered_output = renderer.render(release_updates: release_updates)
-        expect(rendered_output).to include('| release-1 | 1.3.0 | 1.1.0 |')
-        expect(rendered_output).to include('| release-2 | 1.4.0 | 1.2.0 |')
+        expect(rendered_output).to include('| release-1 | 1.1.0 | 1.3.0 |')
+        expect(rendered_output).to include('| release-2 | 1.2.0 | 1.4.0 |')
       end
 
       context 'when some versions are nil' do
@@ -95,8 +95,8 @@ HEADER
 
         it 'renders them as empty strings' do
           rendered_output = renderer.render(release_updates: release_updates)
-          expect(rendered_output).to include('| release-1 |  | 1.1.0 |')
-          expect(rendered_output).to include('| release-2 | 1.4.0 |  |')
+          expect(rendered_output).to include('| release-1 | 1.1.0 |  |')
+          expect(rendered_output).to include('| release-2 |  | 1.4.0 |')
         end
       end
     end
