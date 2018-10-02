@@ -758,11 +758,11 @@ jobs:
         BBL_GCP_REGION: us-central1
         BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
         BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
-        BBL_CONFIG_DIR: bbl-state
+        BBL_CONFIG_DIR: bbl-config
         LB_DOMAIN: trelawney.cf-app.com
       input_mapping:
         bbl-state: trelawney-env-director-state
-        bbl-config: combined-plan-patches
+        bbl-config: trelawney-env-director-state
       ensure:
         put: trelawney-env-director-state
         params:
