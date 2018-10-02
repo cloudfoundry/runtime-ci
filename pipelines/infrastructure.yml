@@ -682,8 +682,8 @@ jobs:
         BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
         # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
         BBL_GCP_REGION: us-west1
-        BBL_LB_CERT: ((luna_cf_ssl_cert))
-        BBL_LB_KEY: ((luna_cf_ssl_cert_private_key))
+        BBL_LB_CERT: ((luna_cf_lb_cert.certificate))
+        BBL_LB_KEY: ((luna_cf_lb_cert.private_key))
         LB_DOMAIN: luna.cf-app.com
       input_mapping:
         bbl-state: luna-env-director-state
