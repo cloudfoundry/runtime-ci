@@ -482,6 +482,7 @@ jobs:
         operations/use-compiled-releases.yml
         operations/rename-network-and-deployment.yml
         operations/set-bbs-active-key.yml
+        operations/bits-service/use-bits-service.yml
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
         operations/rename-isolation-segment-network.yml
