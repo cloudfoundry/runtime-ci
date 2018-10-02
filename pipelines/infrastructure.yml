@@ -489,17 +489,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: trelawney-env-director-state
     - get: runtime-ci
-    - get: bosh-bootloader
-  - task: combine-bbl-plan-patches
-    file: runtime-ci/tasks/combine-inputs/task.yml
-    input_mapping:
-      first-input: trelawney-env-director-state
-      second-input: bosh-bootloader
-    params:
-      FIRST_DIR: bbl-config
-      SECOND_DIR: plan-patches/network-lb-gcp
-    output_mapping:
-      combined-inputs: combined-plan-patches
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
@@ -509,11 +498,11 @@ jobs:
       BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
       BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
       LB_DOMAIN: trelawney.cf-app.com
-      BBL_CONFIG_DIR: .
-      BBL_ENV_NAME: trelawney-fresh
+      BBL_CONFIG_DIR: bbl-config
+      BBL_ENV_NAME: trelawney-upgrade
     input_mapping:
       bbl-state: trelawney-env-director-state
-      bbl-config: combined-plan-patches
+      bbl-config: trelawney-env-director-state
     ensure:
       put: trelawney-env-director-state
       params:
@@ -761,17 +750,6 @@ jobs:
       - get: every-tuesday-morning
         trigger: true
       - get: runtime-ci
-      - get: bosh-bootloader
-    - task: combine-bbl-plan-patches
-      file: runtime-ci/tasks/combine-inputs/task.yml
-      input_mapping:
-        first-input: trelawney-env-director-state
-        second-input: bosh-bootloader
-      params:
-        FIRST_DIR: bbl-config
-        SECOND_DIR: plan-patches/network-lb-gcp
-      output_mapping:
-        combined-inputs: combined-plan-patches
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
@@ -780,7 +758,7 @@ jobs:
         BBL_GCP_REGION: us-central1
         BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
         BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
-        BBL_CONFIG_DIR: .
+        BBL_CONFIG_DIR: bbl-state
         LB_DOMAIN: trelawney.cf-app.com
       input_mapping:
         bbl-state: trelawney-env-director-state
