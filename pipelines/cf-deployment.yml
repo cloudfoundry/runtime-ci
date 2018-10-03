@@ -592,6 +592,8 @@ jobs:
         operations/add-external-ips-for-cloud-sql-db.yml
         operations/windows2012R2-cell.yml
         operations/windows2016-cell.yml
+        operations/use-compiled-releases.yml
+        operations/experimental/use-compiled-releases-windows.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/experimental/bits-service.yml
@@ -794,6 +796,8 @@ jobs:
         OPS_FILES: |
           operations/aws.yml
           operations/experimental/windows1803-cell.yml
+          operations/use-compiled-releases.yml
+          operations/experimental/use-compiled-releases-windows.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
