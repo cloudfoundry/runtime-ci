@@ -25,7 +25,8 @@ jobs:
     - timeout: 4h
       do:
       - aggregate:
-        - get: maxime-env
         - get: cf-deployment-concourse-tasks
+        - get: bbl-state
+          resource: maxime-env
       - task: test-uptime
-        file: maxime-env/tasks/run-uptimer/task.yml
+        file: bbl-state/tasks/run-uptimer/task.yml
