@@ -1,0 +1,30 @@
+---
+groups:
+- name: maxime-uptimer
+  jobs:
+  - test-uptime
+
+resources:
+- name: maxime-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/maxime-env.git
+    private_key: ((maxime_env_readwrite_deploy_key.private_key))
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+jobs:
+  - name: test-uptime
+    serial: true
+    build_logs_to_retain: 100
+    plan:
+    - timeout: 4h
+    - aggregate:
+      - get: maxime-env
+      - get: cf-deployment-concourse-tasks
+    - task: test-uptime
+      file: maxime-env/tasks/run-uptimer/task.yml
