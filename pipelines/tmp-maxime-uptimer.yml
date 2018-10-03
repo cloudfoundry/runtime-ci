@@ -23,8 +23,9 @@ jobs:
     build_logs_to_retain: 100
     plan:
     - timeout: 4h
-    - aggregate:
-      - get: maxime-env
-      - get: cf-deployment-concourse-tasks
-    - task: test-uptime
-      file: maxime-env/tasks/run-uptimer/task.yml
+      do:
+      - aggregate:
+        - get: maxime-env
+        - get: cf-deployment-concourse-tasks
+      - task: test-uptime
+        file: maxime-env/tasks/run-uptimer/task.yml
