@@ -19,6 +19,7 @@ resources:
 
 jobs:
   - name: test-uptime
+    public: true
     serial: true
     build_logs_to_retain: 100
     plan:
