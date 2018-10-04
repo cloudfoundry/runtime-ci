@@ -800,8 +800,8 @@ jobs:
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
           operations/experimental/use-garden-containerd.yml
-          operations/bits-service/bits-service.yml
-          operations/bits-service/bits-service-s3.yml
+          operations/bits-service/use-bits-service.yml
+          operations/bits-service/configure-bits-service-s3.yml
           operations/scale-database-cluster.yml
           operations/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
