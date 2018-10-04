@@ -596,8 +596,6 @@ jobs:
         operations/experimental/use-compiled-releases-windows.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
-        operations/experimental/bits-service.yml
-        operations/experimental/bits-service-gcs-service-account.yml
         operations/enable-service-discovery.yml
       VARS_FILES: |
         external-db-vars.yml
