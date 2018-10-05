@@ -1,0 +1,197 @@
+groups:
+- name: acceptance
+  jobs:
+  - setup-infrastructure
+  - deploy-cf
+  - delete-deployment
+  - destroy-infrastructure
+  - run-cats
+resources:
+- name: relint-acceptance-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((relint_acceptance_deploy_key))
+    uri: git@github.com:cloudfoundry/relint-acceptance-env.git
+- name: cf-deployment-release-candidate
+  type: git
+  source:
+    branch: release-candidate
+    uri: https://github.com/cloudfoundry/cf-deployment
+- name: relint-acceptance-integration-config
+  type: git
+  source:
+    branch: master
+    paths:
+    - integration_config.json
+    private_key: ((relint_acceptance_deploy_key))
+    uri: git@github.com:cloudfoundry/relint-acceptance-env.git
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+jobs:
+- name: setup-infrastructure
+  serial: true
+  serial_groups:
+  - relint-acceptance
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-acceptance-bbl-state
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_GCP_REGION: us-west1
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_IAAS: gcp
+      BBL_LB_CERT: ((relint_acceptance_lb_cert.certificate))
+      BBL_LB_KEY: ((relint_acceptance_lb_cert.private_key))
+      BBL_STATE_DIR: bbl-state
+      LB_DOMAIN: relint-acceptance.cf-app.com
+    input_mapping:
+      bbl-config: relint-acceptance-bbl-state
+      bbl-state: relint-acceptance-bbl-state
+    ensure:
+      put: relint-acceptance-bbl-state
+      params:
+        rebase: true
+        repository: updated-bbl-state
+- name: deploy-cf
+  serial: true
+  serial_groups:
+  - relint-acceptance
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: relint-acceptance-bbl-state
+      passed:
+      - setup-infrastructure
+      trigger: true
+    - get: relint-acceptance-integration-config
+    - get: cf-deployment-release-candidate
+      trigger: true
+    - get: cf-deployment-concourse-tasks
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+      cf-deployment: cf-deployment-release-candidate
+  - task: bosh-deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+      DEPLOY_WITH_UPTIME_MEASUREMENTS: false
+      FAIL_ON_DOWNTIME: false
+      OPS_FILES: |
+        # operations/scale-database-cluster.yml
+        operations/experimental/fast-deploy-with-downtime-and-danger.yml
+        operations/scale-to-one-az.yml
+        operations/use-compiled-releases.yml
+        # operations/windows2016-cell.yml
+      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+      cf-deployment: cf-deployment-release-candidate
+      ops-files: cf-deployment-release-candidate
+      vars-files: relint-acceptance-bbl-state
+  - task: update-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+      integration-configs: relint-acceptance-integration-config
+    ensure:
+      put: relint-acceptance-integration-config
+      params:
+        rebase: true
+        repository: updated-integration-configs
+  - task: bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+- name: run-cats
+  serial: true
+  serial_groups:
+  - relint-acceptance
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-release-candidate
+      passed:
+      - deploy-cf
+      trigger: true
+    - get: relint-acceptance-integration-config
+      trigger: true
+    - get: cf-acceptance-tests
+    - get: relint-acceptance-bbl-state
+      passed:
+      - deploy-cf
+      trigger: true
+    - get: cf-deployment-concourse-tasks
+  - task: set-feature-flags
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+      DISABLED_FEATURE_FLAGS: ""
+      ENABLED_FEATURE_FLAGS: user_org_creation diego_docker service_instance_sharing
+      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+  - task: run-cats
+    file: cf-deployment-concourse-tasks/run-cats/task.yml
+    params:
+      CONFIG_FILE_PATH: integration_config.json
+      NODES: 12
+    input_mapping:
+      integration-config: relint-acceptance-integration-config
+- name: delete-deployment
+  serial: true
+  serial_groups:
+  - relint-acceptance
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-acceptance-bbl-state
+  - task: delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
+      DEPLOYMENT_NAME: cf
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+- name: destroy-infrastructure
+  serial: true
+  serial_groups:
+  - relint-acceptance
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: relint-acceptance-bbl-state
+    - get: cf-deployment-concourse-tasks
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_STATE_DIR: bbl-state
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+    ensure:
+      put: relint-acceptance-bbl-state
+      params:
+        rebase: true
+        repository: updated-bbl-state
