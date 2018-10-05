@@ -11,7 +11,7 @@ resources:
   type: git
   source:
     branch: master
-    private_key: ((relint_acceptance_deploy_key))
+    private_key: ((relint_acceptance_deploy_key.private_key))
     uri: git@github.com:cloudfoundry/relint-acceptance-env.git
 - name: cf-deployment-release-candidate
   type: git
@@ -24,7 +24,7 @@ resources:
     branch: master
     paths:
     - integration_config.json
-    private_key: ((relint_acceptance_deploy_key))
+    private_key: ((relint_acceptance_deploy_key.private_key))
     uri: git@github.com:cloudfoundry/relint-acceptance-env.git
 - name: cf-acceptance-tests
   type: git
