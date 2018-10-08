@@ -95,11 +95,9 @@ jobs:
       DEPLOY_WITH_UPTIME_MEASUREMENTS: false
       FAIL_ON_DOWNTIME: false
       OPS_FILES: |
-        # operations/scale-database-cluster.yml
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/scale-to-one-az.yml
         operations/use-compiled-releases.yml
-        # operations/windows2016-cell.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
