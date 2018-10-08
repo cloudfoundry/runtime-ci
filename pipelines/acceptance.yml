@@ -39,6 +39,7 @@ resources:
 jobs:
 - name: setup-infrastructure
   serial: true
+  public: true
   serial_groups:
   - relint-acceptance
   build_logs_to_retain: 100
@@ -66,6 +67,7 @@ jobs:
         repository: updated-bbl-state
 - name: deploy-cf
   serial: true
+  public: true
   serial_groups:
   - relint-acceptance
   build_logs_to_retain: 100
@@ -125,6 +127,7 @@ jobs:
       bbl-state: relint-acceptance-bbl-state
 - name: run-cats
   serial: true
+  public: true
   serial_groups:
   - relint-acceptance
   build_logs_to_retain: 100
@@ -160,6 +163,7 @@ jobs:
       integration-config: relint-acceptance-integration-config
 - name: delete-deployment
   serial: true
+  public: true
   serial_groups:
   - relint-acceptance
   build_logs_to_retain: 100
@@ -176,6 +180,7 @@ jobs:
       bbl-state: relint-acceptance-bbl-state
 - name: destroy-infrastructure
   serial: true
+  public: true
   serial_groups:
   - relint-acceptance
   build_logs_to_retain: 100
