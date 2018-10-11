@@ -67,12 +67,6 @@ jobs:
       INFRASTRUCTURE: google
       OPS_FILES: |
         operations/windows2016-cell.yml
-  - task: add-tcp-domain
-    file: runtime-ci/tasks/add-tcp-domain/task.yml
-    input_mapping:
-      bbl-state: hagrid-env-director-state
-    params:
-      SYSTEM_DOMAIN: hagrid.cf-app.com
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -98,7 +92,8 @@ jobs:
         operations/experimental/use-compiled-releases-windows.yml
         operations/enable-service-discovery.yml
         operations/update-credhub.yml
-      DEPLOY_WITH_UPTIME_MEASUREMENTS: true
+        operations/experimental/fast-deploy-with-downtime-and-danger.yml
+      DEPLOY_WITH_UPTIME_MEASUREMENTS: false
       MEASURE_SYSLOG_AVAILABILITY: true
       FAIL_ON_DOWNTIME: true
       TCP_DOMAIN: tcp.hagrid.cf-app.com
@@ -157,7 +152,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: hagrid-env-integration-configs
-        cf-acceptance-tests: cf-acceptance-tests-rc
+        cf-acceptance-tests: cf-acceptance-tests-master
       params:
         CAPTURE_LOGS: true
         RELINT_VERBOSE_AUTH: "true"
