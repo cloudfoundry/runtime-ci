@@ -29,7 +29,7 @@ instance_groups:
   azs:
   - z1
   instances: 1
-  vm_type: m3.medium
+  vm_type: small
   stemcell: default
   update:
     max_in_flight: 1
@@ -59,7 +59,9 @@ instance_groups:
   azs:
   - z1
   instances: 1
-  vm_type: m3.medium
+  vm_type: small
+  vm_extensions:
+  - 100GB_ephemeral_disk
   stemcell: windows2016
   update:
     max_in_flight: 1
