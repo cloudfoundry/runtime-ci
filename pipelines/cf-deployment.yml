@@ -249,6 +249,7 @@ resources:
     branch: develop
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((cf_deployment_readwrite_deploy_key.private_key))
+    ignore_path: og-tests
 - name: cf-deployment-release-candidate
   type: git
   source:
