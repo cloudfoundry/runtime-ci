@@ -108,6 +108,13 @@ jobs:
     params:
       DEPLOYMENT_NAME: cf-smoke-tests
       ERRAND_NAME: smoke_tests
+  - task: run-smokes-windows
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: bellatrix-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-smoke-tests
+      ERRAND_NAME: smoke_tests_windows
 
 - name: delete-smokes-deployment
   build_logs_to_retain: 100

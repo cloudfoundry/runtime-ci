@@ -54,10 +54,40 @@ instance_groups:
         enable_etcd_cluster_check_tests: ${ENABLE_ETCD_CLUSTER_CHECK_TESTS}
         etcd_ip_address: ${ETCD_IP_ADDRESS}
 
+- name: smoke-tests-windows
+  lifecycle: errand
+  azs:
+  - z1
+  instances: 1
+  vm_type: m3.medium
+  stemcell: windows2016
+  update:
+    max_in_flight: 1
+    serial: true
+  networks:
+  - name: default
+  jobs:
+  - name: smoke_tests_windows
+    release: cf-smoke-tests
+    properties:
+      smoke_tests:
+        api: "https://api.((system_domain))"
+        apps_domain: "((system_domain))"
+        user: admin
+        password: "((cf_admin_password))"
+        org: cf_smoke_tests_org
+        space: cf_smoke_tests_space
+        cf_dial_timeout_in_seconds: 300
+        skip_ssl_validation: true
+
 stemcells:
 - alias: default
   os: ubuntu-xenial
   version: latest
+- alias: windows2016
+  os: windows2016
+  version: latest
+
 releases:
 - name: cf-smoke-tests
   version: create
