@@ -23,6 +23,14 @@ update:
   max_in_flight: 5
   serial: false
   update_watch_time: 5000-1200000
+addons:
+- name: bpm
+  include:
+    stemcell:
+    - os: ubuntu-xenial
+  jobs:
+  - name: bpm
+    release: bpm
 instance_groups:
 - name: smoke-tests
   lifecycle: errand
@@ -96,7 +104,8 @@ releases:
   url: file://cf-smoke-tests-release
 - name: cf-cli
   version: latest
-  url: file://cf-cli-release/release.tgz
+- name: bpm
+  version: latest
 EOF
 
   bosh \

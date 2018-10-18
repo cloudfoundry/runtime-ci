@@ -9,7 +9,6 @@ image_resource:
 inputs:
 - name: bbl-state
 - name: cf-smoke-tests-release
-- name: cf-cli-release
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 
