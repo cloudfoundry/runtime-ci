@@ -41,11 +41,6 @@ resources:
     - releases/**
     - .final_builds/**
 
-- name: cf-cli-release
-  type: bosh-io-release
-  source:
-    repository: bosh-packages/cf-cli-release
-
 # ENV
 - name: bellatrix-env-director-state
   type: git
@@ -76,7 +71,6 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
-    - get: cf-cli-release
     - get: cf-smoke-tests-release
       trigger: true
     - get: bellatrix-env-director-state
