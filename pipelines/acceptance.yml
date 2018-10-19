@@ -18,6 +18,11 @@ resources:
   source:
     branch: release-candidate
     uri: https://github.com/cloudfoundry/cf-deployment
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci
 - name: relint-acceptance-integration-config
   type: git
   source:
@@ -81,6 +86,7 @@ jobs:
     - get: cf-deployment-release-candidate
       trigger: true
     - get: cf-deployment-concourse-tasks
+    - get: runtime-ci
   - task: upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
     params:
@@ -98,6 +104,7 @@ jobs:
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/scale-to-one-az.yml
         operations/use-compiled-releases.yml
+        operations/experimental/add-deployment-updater.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
@@ -117,6 +124,22 @@ jobs:
       params:
         rebase: true
         repository: updated-integration-configs
+  - task: open-asgs-for-credhub
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+    params:
+      INSTANCE_GROUP_NAME: credhub
+      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
+      SECURITY_GROUP_NAME: credhub
+  - task: open-asgs-for-uaa
+    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+    params:
+      INSTANCE_GROUP_NAME: uaa
+      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
+      SECURITY_GROUP_NAME: uaa
   - task: bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     params:
