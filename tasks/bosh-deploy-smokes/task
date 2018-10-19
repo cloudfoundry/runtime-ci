@@ -59,8 +59,6 @@ instance_groups:
         space: cf_smoke_tests_space
         cf_dial_timeout_in_seconds: 300
         skip_ssl_validation: true
-        enable_etcd_cluster_check_tests: ${ENABLE_ETCD_CLUSTER_CHECK_TESTS}
-        etcd_ip_address: ${ETCD_IP_ADDRESS}
 
 - name: smoke-tests-windows
   lifecycle: errand
