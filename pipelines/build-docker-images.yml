@@ -107,6 +107,12 @@ resources:
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
+- name: ubuntu-bionic-image
+  type: docker-image
+  source:
+    repository: ubuntu
+    tag: bionic
+
 jobs:
 - name: build-cf-deployment-concourse-tasks-docker-image
   public: true
@@ -131,6 +137,8 @@ jobs:
       - get: credhub-cli-github-release
         trigger: true
       - get: cf-cli
+        trigger: true
+      - get: ubuntu-bionic-image
         trigger: true
     - task: update-dockerfile-versions
       file: runtime-ci/tasks/update-cf-d-ct-dockerfile-versions/task.yml
