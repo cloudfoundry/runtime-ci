@@ -115,6 +115,7 @@ resources:
 
 jobs:
 - name: build-cf-deployment-concourse-tasks-docker-image
+  serial: true
   public: true
   build_logs_to_retain: 100
   plan:
