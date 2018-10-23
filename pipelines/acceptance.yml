@@ -89,11 +89,14 @@ jobs:
     - get: runtime-ci
   - task: upload-stemcell
     file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-    params:
-      BBL_STATE_DIR: bbl-state
     input_mapping:
-      bbl-state: relint-acceptance-bbl-state
       cf-deployment: cf-deployment-release-candidate
+      bbl-state: relint-acceptance-bbl-state
+      ops-files: cf-deployment-release-candidate
+    params:
+      INFRASTRUCTURE: google
+      OPS_FILES: |
+        operations/experimental/windows1803-cell.yml
   - task: bosh-deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     params:
@@ -103,8 +106,9 @@ jobs:
       OPS_FILES: |
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/scale-to-one-az.yml
+        operations/experimental/windows1803-cell.yml
         operations/use-compiled-releases.yml
-        operations/experimental/add-deployment-updater.yml
+        operations/experimental/use-compiled-releases-windows.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
@@ -197,6 +201,12 @@ jobs:
     params:
       BBL_STATE_DIR: bbl-state
       DEPLOYMENT_NAME: cf
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+  - task: bosh-cleanup
+    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
+    params:
+      BBL_STATE_DIR: bbl-state
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
 - name: destroy-infrastructure
