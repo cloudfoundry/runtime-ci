@@ -406,7 +406,7 @@ jobs:
       BBL_IAAS: gcp
       BBL_LB_CERT: ((hagrid_cf_ssl_cert))
       BBL_LB_KEY: ((hagrid_cf_ssl_cert_private_key))
-      LB_DOMAIN: hagrid.cf-app.com
+      LB_DOMAIN: hagrid.relint.rocks
     input_mapping:
       bbl-state: hagrid-env-director-state
       bbl-config: hagrid-env-director-state
