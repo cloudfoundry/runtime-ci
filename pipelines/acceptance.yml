@@ -55,7 +55,8 @@ jobs:
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
-      BBL_GCP_REGION: us-west1
+      BBL_ENV_NAME: relint-acceptance
+      BBL_GCP_REGION: us-central1
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_IAAS: gcp
       BBL_LB_CERT: ((relint_acceptance_lb_cert.certificate))
