@@ -14,7 +14,6 @@ function move_cf_admin_password() {
 
 function bosh_deploy() {
   bosh create-release --dir cf-smoke-tests-release --tarball smokes.tgz --timestamp-version
-  bosh upload-release --dir cf-smoke-tests-release ./smokes.tgz
 
   local root_dir=$PWD
   cat << EOF > smokes-dev-release.yml
@@ -102,6 +101,7 @@ stemcells:
 releases:
 - name: cf-smoke-tests
   version: latest
+  url: file://smokes.tgz
 - name: cf-cli
   version: latest
 - name: bpm
