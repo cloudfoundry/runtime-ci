@@ -15,7 +15,6 @@ groups:
   - destroy-infrastructure-lite
   - update-infrastructure-lite
   - remove-claimed-lock-lite
-  - run-bosh-cleanup-lite
 
 - name: upgrade
   jobs:
@@ -24,7 +23,6 @@ groups:
   - update-infrastructure-upgrade
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-upgrade
-  - run-bosh-cleanup-upgrade
 
 - name: stable
   jobs:
@@ -33,7 +31,6 @@ groups:
   - update-infrastructure-stable
   - destroy-infrastructure-stable
   - remove-claimed-lock-stable
-  - run-bosh-cleanup-stable
 
 - name: experimental
   jobs:
@@ -41,7 +38,6 @@ groups:
   - setup-infrastructure-experimental
   - update-infrastructure-experimental
   - destroy-infrastructure-experimental
-  - run-bosh-cleanup-experimental
   - remove-claimed-lock-experimental
 
 - name: cats
@@ -50,7 +46,6 @@ groups:
   - setup-infrastructure-cats
   - update-infrastructure-cats
   - destroy-infrastructure-cats
-  - run-bosh-cleanup-cats
   - remove-claimed-lock-cats
 
 - name: bbr
@@ -59,7 +54,6 @@ groups:
   - setup-infrastructure-bbr
   - update-infrastructure-bbr
   - destroy-infrastructure-bbr
-  - run-bosh-cleanup-bbr
   - remove-claimed-lock-bbr
 
 - name: exploratory
@@ -1284,103 +1278,3 @@ jobs:
       pool-resource: bbr-pool
   - put: bbr-pool
     params: {remove: bbr-pool}
-
-# BOSH cleanup
-- name: run-bosh-cleanup-lite
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: snitch-env-director-state
-      - get: daily
-        trigger: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: snitch-env-director-state
-
-- name: run-bosh-cleanup-upgrade
-  build_logs_to_retain: 100
-  public: true
-  plan:
-  - aggregate:
-    - get: cf-deployment-concourse-tasks
-    - get: trelawney-env-director-state
-    - get: daily
-      trigger: true
-  - task: run-bosh-cleanup
-    file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-    input_mapping:
-      bbl-state: trelawney-env-director-state
-
-- name: run-bosh-cleanup-stable
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: bellatrix-env-director-state
-      - get: daily
-        trigger: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: bellatrix-env-director-state
-
-- name: run-bosh-cleanup-experimental
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: hermione-env-director-state
-      - get: daily
-        trigger: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: hermione-env-director-state
-
-- name: run-bosh-cleanup-cats
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: cats-env-director-state
-      - get: daily
-        trigger: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: cats-env-director-state
-
-- name: run-bosh-cleanup-bbr
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: baba-yaga-env-director-state
-      - get: daily
-        trigger: true
-    - task: run-bosh-cleanup
-      file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
-      input_mapping:
-        bbl-state: baba-yaga-env-director-state
