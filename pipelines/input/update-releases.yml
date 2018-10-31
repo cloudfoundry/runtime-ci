@@ -19,6 +19,8 @@ baseReleases:
   repository: cloudfoundry/cf-syslog-drain-release
 - name: cflinuxfs2
   repository: cloudfoundry/cflinuxfs2-release
+- name: cflinuxfs3
+  repository: cloudfoundry/cflinuxfs3-release
 - name: diego
   repository: cloudfoundry/diego-release
 - name: dotnet-core-buildpack
@@ -98,8 +100,6 @@ opsReleases:
   repository: cloudfoundry-incubator/winc-release
 - name: windows2016fs
   repository: cloudfoundry-incubator/windows2016fs-online-release
-- name: cflinuxfs3
-  repository: cloudfoundry/cflinuxfs3-release
 - name: node-exporter
   repository: cloudfoundry-community/node-exporter-boshrelease
 

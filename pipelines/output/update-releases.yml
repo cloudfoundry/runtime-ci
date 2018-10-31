@@ -24,6 +24,7 @@ groups:
   - update-cf-smoke-tests
   - update-cf-syslog-drain
   - update-cflinuxfs2
+  - update-cflinuxfs3
   - update-diego
   - update-dotnet-core-buildpack
   - update-garden-runc
@@ -62,7 +63,6 @@ groups:
   - update-garden-windows
   - update-winc
   - update-windows2016fs
-  - update-cflinuxfs3
   - update-node-exporter
 - name: update-windows-stemcells-and-releases
   jobs:
@@ -172,6 +172,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-release
+- name: cflinuxfs3-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs3-release
 - name: diego-release
   type: bosh-io-release
   source:
@@ -312,10 +316,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/windows2016fs-online-release
-- name: cflinuxfs3-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cflinuxfs3-release
 - name: node-exporter-release
   type: bosh-io-release
   source:
@@ -374,6 +374,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: cflinuxfs2-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: cflinuxfs3-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: cflinuxfs3-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: diego-release-gcs
   type: gcs-resource
   source:
@@ -1363,6 +1369,103 @@ jobs:
       first-input: updated-compiled-releases-ops-file
       second-input: updated-ops-file
   - put: cflinuxfs2-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: combined-inputs
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-cflinuxfs3
+  serial_groups:
+  - update-cflinuxfs3
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: cflinuxfs3-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-cflinuxfs3
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: cflinuxfs3-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: cflinuxfs3
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: cflinuxfs3
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-cflinuxfs3
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: cflinuxfs3
+  - task: update-additional-ops-files-cflinuxfs3
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: cflinuxfs3-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: cflinuxfs3
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: cflinuxfs3-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cflinuxfs3
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml
+  - task: combine-inputs
+    file: runtime-ci/tasks/combine-inputs/task.yml
+    input_mapping:
+      first-input: updated-compiled-releases-ops-file
+      second-input: updated-ops-file
+  - put: cflinuxfs3-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -4083,65 +4186,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-- name: update-cflinuxfs3
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: cflinuxfs3-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cflinuxfs3
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: cflinuxfs3-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cflinuxfs3
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
-        operations/windows2012R2-cell.yml
-        operations/windows2016-cell.yml
-        operations/experimental/windows1803-cell.yml
-  - task: bosh-dry-run-cflinuxfs3
-    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cflinuxfs3
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops-cflinuxfs3
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      COMMIT_ALL_OPS_FILES: true
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
 - name: update-node-exporter
   serial: true
   public: true
@@ -4385,6 +4429,7 @@ jobs:
   - update-cf-smoke-tests
   - update-cf-syslog-drain
   - update-cflinuxfs2
+  - update-cflinuxfs3
   - update-diego
   - update-dotnet-core-buildpack
   - update-garden-runc
@@ -4437,6 +4482,9 @@ jobs:
       params:
         tarball: false
     - get: cflinuxfs2-release
+      params:
+        tarball: false
+    - get: cflinuxfs3-release
       params:
         tarball: false
     - get: diego-release
@@ -4596,6 +4644,15 @@ jobs:
         exported-release: exported-release-cflinuxfs2
       params:
         RELEASE_NAME: cflinuxfs2
+    - task: compile-release-cflinuxfs3
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-cflinuxfs3
+      params:
+        RELEASE_NAME: cflinuxfs3
     - task: compile-release-diego
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -4875,6 +4932,17 @@ jobs:
       RELEASE_NAME: cflinuxfs2
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-cflinuxfs3
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: cflinuxfs3-release
+      compiled-release-tarball: exported-release-cflinuxfs3
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: cflinuxfs3
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-diego
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -5131,6 +5199,10 @@ jobs:
     - put: cflinuxfs2-release-gcs
       params:
         file: exported-release-cflinuxfs2/*.tgz
+        predefined_acl: publicRead
+    - put: cflinuxfs3-release-gcs
+      params:
+        file: exported-release-cflinuxfs3/*.tgz
         predefined_acl: publicRead
     - put: diego-release-gcs
       params:

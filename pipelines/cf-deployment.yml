@@ -809,7 +809,6 @@ jobs:
           operations/stop-skipping-tls-validation.yml
           operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
-          operations/experimental/add-cflinuxfs3.yml
           operations/experimental/set-cpu-weight.yml
         VARS_FILES: "datadog-deployment-vars.yml s3-vars.yml"
         DEPLOY_WITH_UPTIME_MEASUREMENTS: true
