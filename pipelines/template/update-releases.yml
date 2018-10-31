@@ -16,7 +16,6 @@ groups:
 {{- end}}
 - name: update-ops-releases
   jobs:
-  - update-bits-service
 {{- range .opsReleases}}
   - update-{{.name}}
 {{- end}}
@@ -88,10 +87,6 @@ resources:
     owner: cloudfoundry-incubator
     repository: windows2016fs-release
     access_token: ((release_integration_download_bot_access_token))
-- name: bits-service-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/bits-service-release
 {{- range .baseReleases}}
 - name: {{.name}}-release
   type: bosh-io-release
@@ -305,81 +300,6 @@ jobs:
       rebase: true
       repository: updated-repo
 {{- end}}
-
-- name: update-bits-service
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: bits-service-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-bits-service
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: bits-service-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: bits-service
-      ORIGINAL_OPS_FILE_PATH: operations/experimental/bits-service.yml
-      UPDATED_OPS_FILE_PATH: bits-service.yml
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: updated-ops-file
-      new-ops-files: cf-deployment-develop
-    params:
-      BASE_OPS_FILE_DIR: .
-      NEW_OPS_FILES: operations/experimental/bits-service-webdav.yml
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run-bits-service
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: collected-ops-files
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: bits-service
-      OPS_FILES: |
-        bits-service.yml
-        bits-service-webdav.yml
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment-bits-service
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-bits-service
-  - task: commit-generated-manifest-and-ops-bits-service
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      OPS_FILE_NAME: bits-service.yml
-      OPS_FILE_DESTINATION: operations/experimental/bits-service.yml
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
 
 {{- range .windowsVersSupported}}
 - name: update-{{.name}}-stemcell
