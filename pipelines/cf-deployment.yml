@@ -793,7 +793,6 @@ jobs:
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
-          operations/experimental/use-create-swap-delete-vm-strategy.yml
           operations/aws.yml
           operations/experimental/windows1803-cell.yml
           operations/use-compiled-releases.yml
