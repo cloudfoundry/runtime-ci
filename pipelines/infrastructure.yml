@@ -398,8 +398,8 @@ jobs:
       BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_IAAS: gcp
-      BBL_LB_CERT: ((hagrid_cf_ssl_cert))
-      BBL_LB_KEY: ((hagrid_cf_ssl_cert_private_key))
+      BBL_LB_CERT: ((hagrid_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((hagrid_cf_lb_cert.private_key))
       LB_DOMAIN: hagrid.relint.rocks
     input_mapping:
       bbl-state: hagrid-env-director-state
