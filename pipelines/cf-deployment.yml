@@ -806,7 +806,6 @@ jobs:
           operations/scale-database-cluster.yml
           operations/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
-          operations/experimental/enable-routing-integrity.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/set-cpu-weight.yml
         VARS_FILES: "datadog-deployment-vars.yml s3-vars.yml"
