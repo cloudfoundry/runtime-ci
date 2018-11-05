@@ -598,6 +598,7 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/enable-service-discovery.yml
+        operations/enable-nfs-volume-service.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
@@ -611,6 +612,12 @@ jobs:
       RECENT_LOGS_THRESHOLD: 8
       STREAMING_LOGS_THRESHOLD: 2
       APP_SYSLOG_AVAILABILITY_THRESHOLD: 12
+  - task: run-nfs-broker-push-errand
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: trelawney-env-director-state
+    params:
+      ERRAND_NAME: nfs-broker-push
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
