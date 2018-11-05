@@ -109,20 +109,12 @@ jobs:
         bbl-state: baba-yaga-env-director-state
       params:
         INFRASTRUCTURE: google
-    - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-      input_mapping:
-        base-ops-files: cf-deployment-rc
-        new-ops-files: baba-yaga-env-director-state
-      params:
-        BASE_OPS_FILE_DIR: "operations"
-        NEW_OPS_FILES: "enable-nfs-test-server.yml"
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
         cf-deployment: cf-deployment-rc
-        ops-files: collected-ops-files
+        ops-files: cf-deployment-rc
         vars-files: baba-yaga-env-director-state
       params:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
