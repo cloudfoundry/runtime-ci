@@ -973,7 +973,9 @@ jobs:
         new-ops-files: snitch-env-director-state
       params:
         BASE_OPS_FILE_DIR: operations
-        NEW_OPS_FILES: use-default-route-registrar-timeout-for-api.yml
+        NEW_OPS_FILES: |
+          use-default-route-registrar-timeout-for-api.yml
+          scale-diego-api.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -990,6 +992,7 @@ jobs:
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/bosh-lite.yml
+          operations/scale-diego-api.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
