@@ -62,6 +62,7 @@ groups:
   - update-windows-utilities
   - update-garden-windows
   - update-winc
+  - update-windows1803fs
   - update-windows2016fs
   - update-node-exporter
 - name: update-windows-stemcells-and-releases
@@ -312,6 +313,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/winc-release
+- name: windows1803fs-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/windows1803fs-online-release
 - name: windows2016fs-release
   type: bosh-io-release
   source:
@@ -4175,6 +4180,65 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: winc
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops-winc
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-windows1803fs
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: windows1803fs-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-windows1803fs
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: windows1803fs-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: windows1803fs
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+      OPS_FILES: |
+        operations/windows2012R2-cell.yml
+        operations/windows2016-cell.yml
+        operations/experimental/windows1803-cell.yml
+  - task: bosh-dry-run-windows1803fs
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: windows1803fs
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-windows1803fs
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
