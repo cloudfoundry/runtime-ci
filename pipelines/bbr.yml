@@ -28,7 +28,6 @@ resources:
     private_key: ((baba_yaga_env_readwrite_deploy_key.private_key))
     paths:
     - bbl-state
-    - enable-nfs-test-server.yml
 - name: baba-yaga-env-integration-configs
   type: git
   source:
