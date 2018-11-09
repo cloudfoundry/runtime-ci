@@ -97,7 +97,6 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-        operations/windows1803-cell.yml
   - task: bosh-deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     params:
@@ -107,10 +106,7 @@ jobs:
       OPS_FILES: |
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/scale-to-one-az.yml
-        operations/experimental/add-cflinuxfs3.yml
-        operations/windows1803-cell.yml
         operations/use-compiled-releases.yml
-        operations/experimental/use-compiled-releases-windows.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
