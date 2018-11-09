@@ -121,8 +121,6 @@ jobs:
         OPS_FILES: |
           operations/use-compiled-releases.yml
           operations/backup-and-restore/enable-backup-restore.yml
-          operations/enable-nfs-volume-service.yml
-          operations/backup-and-restore/enable-backup-restore-nfs-broker.yml
     - task: open-asgs-for-credhub
       file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
@@ -139,12 +137,6 @@ jobs:
         INSTANCE_GROUP_NAME: uaa
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         SECURITY_GROUP_NAME: uaa
-    - task: run-nfs-broker-push-errand
-      file: cf-deployment-concourse-tasks/run-errand/task.yml
-      input_mapping:
-        bbl-state: baba-yaga-env-director-state
-      params:
-        ERRAND_NAME: nfs-broker-push
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
