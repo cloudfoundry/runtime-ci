@@ -775,8 +775,7 @@ jobs:
         ops-files: cf-deployment-develop
       params:
         INFRASTRUCTURE: aws
-        OPS_FILES: |
-          operations/experimental/windows1803-cell.yml
+        OPS_FILES: operations/windows1803-cell.yml
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
@@ -794,7 +793,7 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
           operations/aws.yml
-          operations/experimental/windows1803-cell.yml
+          operations/windows1803-cell.yml
           operations/use-compiled-releases.yml
           operations/experimental/use-compiled-releases-windows.yml
           operations/test/add-datadog-firehose-nozzle.yml
