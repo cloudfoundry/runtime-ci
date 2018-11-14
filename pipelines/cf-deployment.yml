@@ -595,8 +595,10 @@ jobs:
         operations/windows2012R2-cell.yml
         operations/windows1803-cell.yml
         operations/experimental/use-compiled-releases-windows.yml
+        operations/bits-service/use-bits-service.yml
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
+        operations/bits-service/configure-bits-service-gcs-service-account.yml
         operations/enable-service-discovery.yml
       VARS_FILES: |
         external-db-vars.yml
