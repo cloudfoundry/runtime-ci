@@ -116,7 +116,7 @@ jobs:
       RECENT_LOGS_THRESHOLD: 8
       STREAMING_LOGS_THRESHOLD: 2
       APP_SYSLOG_AVAILABILITY_THRESHOLD: 12
-      FAIL_ON_DOWNTIME: false
+      FAIL_ON_DOWNTIME: true
       OPS_FILES: |
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
         operations/scale-to-one-az.yml
