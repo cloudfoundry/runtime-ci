@@ -97,6 +97,12 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
+  - task: add-tcp-domain
+    file: runtime-ci/tasks/add-tcp-domain/task.yml
+    input_mapping:
+      bbl-state: relint-acceptance-bbl-state
+    params:
+      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
   - task: bosh-deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     params:
