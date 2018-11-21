@@ -4449,7 +4449,7 @@ jobs:
       ops-files: cf-deployment-develop
       windows-stemcell: windows1803-stemcell
     params:
-      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/experimental/windows1803-cell.yml
+      ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows1803-cell.yml
       UPDATED_WINDOWS_OPS_FILE_PATH: windows1803-cell.yml
   - task: commit-generated-manifest-and-ops
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
@@ -4459,7 +4459,7 @@ jobs:
       manifest: cf-deployment-develop
     params:
       OPS_FILE_NAME: windows1803-cell.yml
-      OPS_FILE_DESTINATION: operations/experimental/windows1803-cell.yml
+      OPS_FILE_DESTINATION: operations/windows1803-cell.yml
   - put: cf-deployment-develop
     params:
       rebase: true

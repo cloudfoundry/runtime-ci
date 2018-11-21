@@ -116,7 +116,7 @@ windowsVersSupported:
   opsFileDir: operations
 - name: windows1803
   opsFile: windows1803-cell.yml
-  opsFileDir: operations/experimental
+  opsFileDir: operations
 
 extraBoshIOReleases:
 resources:
