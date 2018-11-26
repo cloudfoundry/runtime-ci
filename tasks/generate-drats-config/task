@@ -28,6 +28,7 @@ echo '{}' | jq \
 --arg bosh_client "${BOSH_CLIENT}" \
 --arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
+--arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
 --arg credhub_client_secret "$(get_password_from_credhub credhub_admin_client_secret)" \
 '{
     "cf_deployment_name": $cf_deployment_name,
@@ -42,6 +43,9 @@ echo '{}' | jq \
     "ssh_proxy_host": $bosh_gw_host,
     "ssh_proxy_cidr": $ssh_destination_cidr,
     "ssh_proxy_private_key": $bosh_gw_private_key,
+    "nfs_service_name": "nfs",
+    "nfs_plan_name": "Existing",
+    "nfs_broker_url": $nfs_broker_url,
     "timeout_in_minutes": 30,
     "delete_and_redeploy_cf": false,
     "include_cf-app": true,
@@ -50,6 +54,7 @@ echo '{}' | jq \
     "include_cf-credhub": true,
     "include_cf-routing": true,
     "include_app-uptime": true,
+    "include_cf-nfsbroker": true,
     "credhub_client_name": "credhub_admin_client",
     "credhub_client_secret": $credhub_client_secret
 }' > drats-config/drats_integration_config.json
