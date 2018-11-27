@@ -22,6 +22,7 @@ groups:
   - lite-cats
   - experimental-cats
   - experimental-set-feature-flags
+  - experimental-smoke-tests
   - experimental-acquire-pool
   - experimental-release-pool
   - lite-enable-docker-and-tasks
@@ -42,6 +43,7 @@ groups:
   - experimental-set-feature-flags
   - experimental-release-pool
   - experimental-release-pool-manual
+  - experimental-smoke-tests
   - experimental-ops-files
   - bless-manifest
 - name: fr
@@ -662,7 +664,7 @@ jobs:
   public: true
   plan:
   - get: experimental-pool
-    passed: [ experimental-cats ]
+    passed: [ experimental-cats, experimental-smoke-tests ]
     trigger: true
   - put: experimental-pool
     params: {release: experimental-pool}
@@ -753,7 +755,7 @@ jobs:
     file: runtime-ci/tasks/summarize-ops-files/task.yml
 
 - name: experimental-deploy
-  serial_groups: [ hermione-wats, hermione-cats ]
+  serial_groups: [ hermione-wats, hermione-cats, hermione-smokes ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1053,6 +1055,30 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       params:
         RELINT_VERBOSE_AUTH: "true"
+
+- name: experimental-smoke-tests
+  public: true
+  serial_groups: [ hermione-smokes ]
+  build_logs_to_retain: 100
+  plan:
+  - do:
+    - get: experimental-pool
+      passed:
+      - experimental-set-feature-flags
+      trigger: true
+    - aggregate:
+      - get: hermione-env-director-state
+      - get: cf-deployment-develop
+        passed:
+        - experimental-set-feature-flags
+      - get: cf-deployment-concourse-tasks
+    timeout: 1h
+  - task: bosh-run-errand-smoke-tests
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    params:
+      ERRAND_NAME: smoke-tests
+    input_mapping:
+      bbl-state: hermione-env-director-state
 
 - name: stable-smoke-tests
   serial_groups: [bellatrix-smokes]
@@ -1413,6 +1439,7 @@ jobs:
     - fresh-cats
     - lite-cats
     - experimental-cats
+    - experimental-smoke-tests
     - upgrade-cats
     - upgrade-cats-windows2016
   - put: cf-deployment-release-candidate
