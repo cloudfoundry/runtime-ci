@@ -965,8 +965,10 @@ jobs:
       input_mapping:
         cf-deployment: cf-deployment-develop
         bbl-state: snitch-env-director-state
+        ops-files: snitch-env-director-state
       params:
         INFRASTRUCTURE: bosh-lite
+        OPS_FILES: use-trusty.yml
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
@@ -976,7 +978,7 @@ jobs:
         BASE_OPS_FILE_DIR: operations
         NEW_OPS_FILES: |
           use-default-route-registrar-timeout-for-api.yml
-          scale-diego-api.yml
+          use-trusty.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -993,7 +995,7 @@ jobs:
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/bosh-lite.yml
-          operations/scale-diego-api.yml
+          operations/use-trusty.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
