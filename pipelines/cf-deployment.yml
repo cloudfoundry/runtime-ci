@@ -990,7 +990,6 @@ jobs:
         SYSTEM_DOMAIN: snitch.cf-app.com
         OPS_FILES: |
           operations/use-default-route-registrar-timeout-for-api.yml
-          operations/use-compiled-releases.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
