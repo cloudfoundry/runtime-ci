@@ -1,12 +1,4 @@
 ---
-groups:
-- name: cf-smoke-tests-release
-  jobs:
-  - deploy-updated-smokes
-  - run-smokes-errand
-  - delete-smokes-deployment
-  - create-final-release
-
 resources:
 # Weekly Trigger
 - name: weekly-trigger
@@ -49,6 +41,14 @@ resources:
     uri: git@github.com:cloudfoundry/bellatrix-env.git
     private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
 
+- name: stable-pool
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: cf-deployment/stable
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+
 # Semantic Version
 - name: cf-smoke-tests-version
   type: semver
@@ -61,18 +61,31 @@ resources:
     file: cf-smoke-tests-version
 
 jobs:
+- name: stable-acquire-pool
+  public: true
+  serial: true
+  plan:
+  - get: weekly-trigger
+    trigger: true
+  - aggregate:
+    - get: cf-smoke-tests-release
+      trigger: true
+    - put: stable-pool
+      params: {acquire: true}
+
 - name: deploy-updated-smokes
   build_logs_to_retain: 100
   serial_groups: [smoke_tests]
   public: true
   plan:
-  - get: weekly-trigger
+  - get: stable-pool
     trigger: true
+    passed: [stable-acquire-pool]
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-smoke-tests-release
-      trigger: true
+      passed: [stable-acquire-pool]
     - get: bellatrix-env-director-state
   - task: deploy-smoke-tests-errand
     file: runtime-ci/tasks/bosh-deploy-smokes/task.yml
@@ -86,14 +99,13 @@ jobs:
   serial_groups: [smoke_tests]
   public: true
   plan:
-  - get: weekly-trigger
-    passed: [deploy-updated-smokes]
+  - get: stable-pool
     trigger: true
+    passed: [deploy-updated-smokes]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: cf-smoke-tests-release
       passed: [deploy-updated-smokes]
-      trigger: true
     - get: bellatrix-env-director-state
   - task: run-smokes
     file: cf-deployment-concourse-tasks/run-errand/task.yml
@@ -115,14 +127,13 @@ jobs:
   serial_groups: [smoke_tests]
   public: true
   plan:
-  - get: weekly-trigger
-    passed: [run-smokes-errand]
+  - get: stable-pool
     trigger: true
+    passed: [run-smokes-errand]
   - aggregate:
     - get: cf-deployment-concourse-tasks
     - get: cf-smoke-tests-release
       passed: [run-smokes-errand]
-      trigger: true
     - get: bellatrix-env-director-state
   - task: delete-smoke-tests-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
@@ -130,16 +141,20 @@ jobs:
       bbl-state: bellatrix-env-director-state
     params:
       DEPLOYMENT_NAME: cf-smoke-tests
+  - put: stable-pool
+    params: {release: stable-pool}
 
 - name: create-final-release
   build_logs_to_retain: 100
   serial: true
   public: true
   plan:
+  - get: stable-pool
+    trigger: true
+    passed: [run-smokes-errand]
   - aggregate:
     - get: runtime-ci
     - get: cf-smoke-tests-release
-      trigger: true
       passed: [run-smokes-errand]
     - get: semantic-version
       resource: cf-smoke-tests-version
