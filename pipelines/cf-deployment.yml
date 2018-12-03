@@ -488,8 +488,6 @@ jobs:
         operations/set-bbs-active-key.yml
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-router.yml
-        operations/test/add-persistent-isolation-segment-logging-system.yml
-        operations/test/alter-router-for-log-agent.yml
         operations/rename-isolation-segment-network.yml
         operations/addons/enable-component-syslog.yml
         operations/scale-database-cluster.yml
@@ -605,6 +603,8 @@ jobs:
         operations/use-gcs-blobstore-service-account.yml
         operations/bits-service/configure-bits-service-gcs-service-account.yml
         operations/enable-service-discovery.yml
+        operations/test/add-persistent-isolation-segment-diego-cell.yml
+        operations/test/add-persistent-isolation-segment-logging-system.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
