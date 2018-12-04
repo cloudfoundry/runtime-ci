@@ -149,12 +149,10 @@ jobs:
   serial: true
   public: true
   plan:
-  - get: stable-pool
-    trigger: true
-    passed: [run-smokes-errand]
   - aggregate:
     - get: runtime-ci
     - get: cf-smoke-tests-release
+      trigger: true
       passed: [run-smokes-errand]
     - get: semantic-version
       resource: cf-smoke-tests-version
