@@ -16,7 +16,6 @@ groups:
   - fresh-cats
   - fresh-enable-docker-and-tasks
   - fresh-delete-deployment
-  - fresh-smoke-tests
   - upgrade-set-feature-flags
   - upgrade-cats
   - upgrade-cats-windows2016
@@ -57,7 +56,6 @@ groups:
   - fresh-deploy
   - fresh-enable-docker-and-tasks
   - fresh-release-pool-manual
-  - fresh-smoke-tests
   - bless-manifest
 - name: up
   jobs:
@@ -436,7 +434,6 @@ jobs:
 - name: fresh-deploy
   serial: true
   public: true
-  serial_groups: [luna-smokes]
   build_logs_to_retain: 100
   plan:
   - get: fresh-pool
@@ -1085,31 +1082,6 @@ jobs:
     input_mapping:
       bbl-state: hermione-env-director-state
 
-- name: fresh-smoke-tests
-  public: true
-  serial_groups: [luna-smokes]
-  build_logs_to_retain: 100
-  plan:
-  - do:
-    - get: fresh-pool
-      passed:
-      - fresh-enable-docker-and-tasks
-      trigger: true
-    - aggregate:
-      - get: luna-env-director-state
-      - get: cf-deployment-develop
-        passed:
-        - fresh-enable-docker-and-tasks
-      - get: cf-deployment-concourse-tasks
-    timeout: 1h
-  - task: bosh-run-errand-smoke-tests
-    file: cf-deployment-concourse-tasks/run-errand/task.yml
-    params:
-      DEPLOYMENT_NAME: luna-cf
-      ERRAND_NAME: smoke-tests
-    input_mapping:
-      bbl-state: luna-env-director-state
-
 - name: stable-smoke-tests
   serial_groups: [bellatrix-smokes]
   public: true
@@ -1445,7 +1417,6 @@ jobs:
       trigger: true
       passed:
       - fresh-cats
-      - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
@@ -1468,7 +1439,6 @@ jobs:
     trigger: true
     passed:
     - fresh-cats
-    - fresh-smoke-tests
     - lite-cats
     - experimental-cats
     - experimental-smoke-tests
