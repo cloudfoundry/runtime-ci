@@ -16,6 +16,7 @@ groups:
   - fresh-cats
   - fresh-enable-docker-and-tasks
   - fresh-delete-deployment
+  - fresh-smoke-tests
   - upgrade-set-feature-flags
   - upgrade-cats
   - upgrade-cats-windows2016
@@ -56,6 +57,7 @@ groups:
   - fresh-deploy
   - fresh-enable-docker-and-tasks
   - fresh-release-pool-manual
+  - fresh-smoke-tests
   - bless-manifest
 - name: up
   jobs:
@@ -432,7 +434,7 @@ jobs:
         path: scripts/tests/update-releases-coverage-test
 
 - name: fresh-deploy
-  serial: true
+  serial_groups: [ luna-smokes ]
   public: true
   build_logs_to_retain: 100
   plan:
@@ -1081,6 +1083,30 @@ jobs:
       ERRAND_NAME: smoke-tests
     input_mapping:
       bbl-state: hermione-env-director-state
+
+- name: fresh-smoke-tests
+  public: true
+  serial_groups: [ luna-smokes ]
+  build_logs_to_retain: 100
+  plan:
+  - do:
+    - get: fresh-pool
+      passed:
+      - fresh-enable-docker-and-tasks
+      trigger: true
+    - aggregate:
+      - get: luna-env-director-state
+      - get: cf-deployment-develop
+        passed:
+        - fresh-enable-docker-and-tasks
+      - get: cf-deployment-concourse-tasks
+    timeout: 1h
+  - task: bosh-run-errand-smoke-tests
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    params:
+      ERRAND_NAME: smoke-tests
+    input_mapping:
+      bbl-state: luna-env-director-state
 
 - name: stable-smoke-tests
   serial_groups: [bellatrix-smokes]
