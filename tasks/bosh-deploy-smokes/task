@@ -3,15 +3,6 @@
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
-function move_cf_admin_password() {
-  setup_password_from_credhub "cf_admin_password"
-  bosh_director_name=$(jq -r .bosh.directorName bbl-state/${BBL_STATE_DIR}/bbl-state.json)
-
-  set +x
-    credhub s -n /${bosh_director_name}/cf-smoke-tests/cf_admin_password -t password -w ${cf_admin_password}
-  set -x
-}
-
 function bosh_deploy() {
   local root_dir=$PWD
   cat << EOF > smokes-dev-release.yml
@@ -54,7 +45,7 @@ instance_groups:
         api: "https://api.((system_domain))"
         apps_domain: "((system_domain))"
         user: admin
-        password: "((cf_admin_password))"
+        password: "((/bosh-bellatrix-stable/cf/cf_admin_password))"
         org: cf_smoke_tests_org
         space: cf_smoke_tests_space
         cf_dial_timeout_in_seconds: 300
@@ -82,7 +73,7 @@ instance_groups:
         api: "https://api.((system_domain))"
         apps_domain: "((system_domain))"
         user: admin
-        password: "((cf_admin_password))"
+        password: "((/bosh-bellatrix-stable/cf/cf_admin_password))"
         org: cf_smoke_tests_org
         space: cf_smoke_tests_space
         cf_dial_timeout_in_seconds: 300
@@ -121,7 +112,6 @@ EOF
 
 function main() {
   setup_bosh_env_vars
-  move_cf_admin_password
   bosh_deploy
 }
 
