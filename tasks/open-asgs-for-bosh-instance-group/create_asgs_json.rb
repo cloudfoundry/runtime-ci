@@ -33,7 +33,7 @@ def get_ips_from_bosh_output(instance_group_name)
     end
   end
 
-  instance_ips
+  instance_ips.flatten
 end
 
 instance_name = ARGV[0]
