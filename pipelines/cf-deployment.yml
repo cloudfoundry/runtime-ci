@@ -971,7 +971,6 @@ jobs:
         ops-files: snitch-env-director-state
       params:
         INFRASTRUCTURE: bosh-lite
-        OPS_FILES: use-trusty.yml
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
@@ -981,7 +980,7 @@ jobs:
         BASE_OPS_FILE_DIR: operations
         NEW_OPS_FILES: |
           use-default-route-registrar-timeout-for-api.yml
-          use-trusty.yml
+          change-postgres-max-connections.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -994,10 +993,11 @@ jobs:
         OPS_FILES: |
           operations/use-default-route-registrar-timeout-for-api.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
+          operations/use-compiled-releases.yml
           operations/use-postgres.yml
           operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/bosh-lite.yml
-          operations/use-trusty.yml
+          operations/change-postgres-max-connections.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
