@@ -489,7 +489,7 @@ jobs:
         operations/test/add-persistent-isolation-segment-router.yml
         operations/rename-isolation-segment-network.yml
         operations/addons/enable-component-syslog.yml
-        operations/scale-database-cluster.yml
+        operations/use-postgres.yml
       VARS_FILES: |
         deployment-name.yml
         network-name.yml
