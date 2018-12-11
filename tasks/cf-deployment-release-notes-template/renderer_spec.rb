@@ -9,6 +9,8 @@ describe 'Renderer' do
       update = double('ReleaseUpdate')
       allow(update).to receive(:old_version) { '1.1.0' }
       allow(update).to receive(:new_version) { '1.3.0' }
+      allow(update).to receive(:old_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0' }
+      allow(update).to receive(:new_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.3.0' }
       update
     end
 
@@ -16,6 +18,8 @@ describe 'Renderer' do
       update = double('ReleaseUpdate')
       allow(update).to receive(:old_version) { '1.2.0' }
       allow(update).to receive(:new_version) { '1.4.0' }
+      allow(update).to receive(:old_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.2.0' }
+      allow(update).to receive(:new_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0' }
       update
     end
 
@@ -74,8 +78,8 @@ HEADER
 
       it 'shows the release name, old version, and new version for each release' do
         rendered_output = renderer.render(release_updates: release_updates)
-        expect(rendered_output).to include('| release-1 | 1.1.0 | 1.3.0 |')
-        expect(rendered_output).to include('| release-2 | 1.2.0 | 1.4.0 |')
+        expect(rendered_output).to include('| release-1 | [1.1.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0) | [1.3.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.3.0) |')
+        expect(rendered_output).to include('| release-2 | [1.2.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.2.0) | [1.4.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0) |')
       end
 
       context 'when some versions are nil' do
@@ -83,6 +87,7 @@ HEADER
           update = double('ReleaseUpdate')
           allow(update).to receive(:old_version) { '1.1.0' }
           allow(update).to receive(:new_version) { nil }
+          allow(update).to receive(:old_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0' }
           update
         end
 
@@ -90,13 +95,14 @@ HEADER
           update = double('ReleaseUpdate')
           allow(update).to receive(:old_version) { nil }
           allow(update).to receive(:new_version) { '1.4.0' }
+          allow(update).to receive(:new_url)     { 'https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0' }
           update
         end
 
         it 'renders them as empty strings' do
           rendered_output = renderer.render(release_updates: release_updates)
-          expect(rendered_output).to include('| release-1 | 1.1.0 |  |')
-          expect(rendered_output).to include('| release-2 |  | 1.4.0 |')
+          expect(rendered_output).to include('| release-1 | [1.1.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0) |  |')
+          expect(rendered_output).to include('| release-2 |  | [1.4.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0) |')
         end
       end
     end

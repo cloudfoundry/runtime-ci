@@ -30,8 +30,10 @@ describe 'ReleaseUpdates' do
 releases:
 - name: release-1
   version: 1.1.0
+  url: https://bosh.io/d/github.com/org/release-1?v=1.1.0
 - name: release-2
   version: 2.1.0
+  url: https://bosh.io/d/github.com/org/release-2?v=2.1.0
 stemcells:
 - os: ubuntu-trusty
   version: 1
@@ -43,8 +45,10 @@ HEREDOC
 releases:
 - name: release-1
   version: 1.2.0
+  url: https://bosh.io/d/github.com/org/release-1?v=1.2.0
 - name: release-2
   version: 2.2.0
+  url: https://bosh.io/d/github.com/org/release-2?v=2.2.0
 stemcells:
 - os: ubuntu-trusty
   version: 2
@@ -60,6 +64,12 @@ HEREDOC
 
       expect(release_2_update.old_version).to eq '2.1.0'
       expect(release_2_update.new_version).to eq '2.2.0'
+
+      expect(release_1_update.old_url).to eq 'https://github.com/org/release-1/releases/tag/v1.1.0'
+      expect(release_1_update.new_url).to eq 'https://github.com/org/release-1/releases/tag/v1.2.0'
+
+      expect(release_2_update.old_url).to eq 'https://github.com/org/release-2/releases/tag/v2.1.0'
+      expect(release_2_update.new_url).to eq 'https://github.com/org/release-2/releases/tag/v2.2.0'
     end
 
     it 'reads the inputs, and returns a list of stemcell updates' do

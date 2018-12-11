@@ -2,7 +2,7 @@ require 'yaml'
 require 'hashdiff'
 
 class ReleaseUpdate
-  attr_accessor :old_version, :new_version
+  attr_accessor :old_version, :new_version, :old_url, :new_url
 end
 
 class ReleaseUpdates
@@ -63,16 +63,31 @@ class ReleaseUpdates
 
     name = change[2]['name'] || change[2]['os']
     version = change[2]['version']
+    url = change[2]['url'] ? convert_bosh_io_to_github_url(change[2]['url']) : nil
 
     release_update = @updates[name] || ReleaseUpdate.new
 
     if op == '+'
       release_update.new_version = version
+      release_update.new_url = url
     elsif op == '-'
       release_update.old_version = version
+      release_update.old_url = url
     end
 
     @updates[name] = release_update
+  end
+
+  def convert_bosh_io_to_github_url(url)
+    require 'uri'
+    u = URI(url)
+
+    github_string = u.path.sub('/d/','')
+    host, *path = github_string.split('/')
+    version = URI.decode_www_form(u.query).assoc('v').last
+    project_path = '/' + path.join('/') + '/releases/tag/v' + version
+
+    URI::HTTPS.build(host:host, path:project_path).to_s
   end
 
   def get_update_by_name(release_name)

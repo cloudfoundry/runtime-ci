@@ -27,8 +27,17 @@ HEADER
 
     table = ""
     release_updates.each do |release_name, release_update|
-      table << "| #{release_name} | #{release_update.old_version} | #{release_update.new_version} |\n"
+      table << "| #{release_name} | #{render_version(release_update, 'old')} | #{render_version(release_update, 'new')} |\n"
     end
     "#{header}#{table}"
+  end
+
+  def render_version(release_update, type)
+    version = release_update.send(type + '_version')
+
+    url_method = type + '_url'
+    url = release_update.respond_to?(url_method) ? release_update.send(url_method) : nil
+
+    return url ? "[#{version}](#{url})" : version
   end
 end
