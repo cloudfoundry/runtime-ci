@@ -82,6 +82,8 @@ class ReleaseUpdates
     require 'uri'
     u = URI(url)
 
+    raise 'Unexpected URL format' unless u.host.match 'bosh.io'
+
     github_string = u.path.sub('/d/','')
     host, *path = github_string.split('/')
     version = URI.decode_www_form(u.query).assoc('v').last
