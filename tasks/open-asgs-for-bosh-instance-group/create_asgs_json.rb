@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby -w
 # frozen_string_literal: true
 
 require 'json'
@@ -21,23 +21,26 @@ def get_ips_from_bosh_output(instance_group_name)
 
   stdout, _, exitcode = Open3.capture3('bosh is --json')
 
-  if exitcode != 0
-    puts "'bosh is --json' returned an error: #{stdout}"
-    exit(1)
-  end
+  raise "'bosh is --json' returned an error: #{stdout}" if exitcode != 0
 
-  instances = JSON.parse(stdout)['Tables'][0]['Rows']
+  bosh_tables = JSON.parse(stdout)['Tables']
+  raise 'More than one bosh deployment detected' unless bosh_tables.size == 1
+
+  instances = bosh_tables.first['Rows']
   instances.each do |is|
     if is['instance'].include? instance_group_name
       instance_ips << is['ips'].split(/\s/).select { |ip| ip.start_with? '10.' }
     end
   end
 
-  instance_ips.flatten
+  instance_ips.flatten!
+
+  raise 'No IPs detected' if instance_ips.empty?
+
+  instance_ips
 end
 
-instance_name = ARGV[0]
-destination_file = ARGV[1]
+instance_name, destination_file = ARGV
 
 instance_group_ips = get_ips_from_bosh_output(instance_name)
 write_asgs_json(instance_group_ips, destination_file)
