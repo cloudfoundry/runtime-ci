@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/ruby -w
 # frozen_string_literal: true
 
 require 'json'
