@@ -529,6 +529,7 @@ jobs:
     input_mapping:
       bbl-state: luna-env-director-state
     params:
+      BOSH_DEPLOYMENT: luna-cf
       INSTANCE_GROUP_NAME: credhub
       SYSTEM_DOMAIN: luna.cf-app.com
       SECURITY_GROUP_NAME: credhub
@@ -537,6 +538,7 @@ jobs:
     input_mapping:
       bbl-state: luna-env-director-state
     params:
+      BOSH_DEPLOYMENT: luna-cf
       INSTANCE_GROUP_NAME: uaa
       SYSTEM_DOMAIN: luna.cf-app.com
       SECURITY_GROUP_NAME: uaa
