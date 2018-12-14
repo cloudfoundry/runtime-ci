@@ -41,6 +41,8 @@ def get_instance_ips(instances, instance_group_name)
   instance_ips.flatten!
 end
 
+raise 'BOSH_DEPLOYMENT is required, but not set' unless ENV['BOSH_DEPLOYMENT']
+
 instance_name, destination_file = ARGV
 
 instance_group_ips = get_ips_from_bosh_output(instance_name)
