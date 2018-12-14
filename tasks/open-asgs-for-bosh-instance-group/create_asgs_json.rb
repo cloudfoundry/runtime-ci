@@ -19,14 +19,19 @@ end
 def get_ips_from_bosh_output(instance_group_name)
   instance_ips = []
 
-  stdout, _, exitcode = Open3.capture3('bosh is --json')
+  stdout, _, exitcode = Open3.capture3('\bosh is --json')
 
   raise "'bosh is --json' returned an error: #{stdout}" if exitcode != 0
 
-  bosh_tables = JSON.parse(stdout)['Tables']
-  raise 'More than one bosh deployment detected' unless bosh_tables.size == 1
+  instances = JSON.parse(stdout)['Tables'].first['Rows']
+  instance_ips = get_instance_ips(instances, instance_group_name)
 
-  instances = bosh_tables.first['Rows']
+  raise 'No IPs detected' if instance_ips.empty?
+
+  instance_ips
+end
+
+def get_instance_ips(instances, instance_group_name)
   instances.each do |is|
     if is['instance'].include? instance_group_name
       instance_ips << is['ips'].split(/\s/).select { |ip| ip.start_with? '10.' }
@@ -34,10 +39,6 @@ def get_ips_from_bosh_output(instance_group_name)
   end
 
   instance_ips.flatten!
-
-  raise 'No IPs detected' if instance_ips.empty?
-
-  instance_ips
 end
 
 instance_name, destination_file = ARGV
