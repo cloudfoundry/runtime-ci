@@ -32,6 +32,7 @@ def get_ips_from_bosh_output(instance_group_name)
 end
 
 def get_instance_ips(instances, instance_group_name)
+  instance_ips = []
   instances.each do |is|
     if is['instance'].include? instance_group_name
       instance_ips << is['ips'].split(/\s/).select { |ip| ip.start_with? '10.' }
