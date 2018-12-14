@@ -4,6 +4,8 @@
 require 'json'
 require 'open3'
 
+PRIVATE_IP_REGEX = /^10\./.freeze
+
 def write_asgs_json(instance_group_ips, destination_file)
   asgs = []
 
@@ -32,14 +34,11 @@ def get_ips_from_bosh_output(instance_group_name)
 end
 
 def get_instance_ips(instances, instance_group_name)
-  instance_ips = []
-  instances.each do |is|
-    if is['instance'].include? instance_group_name
-      instance_ips << is['ips'].split(/\s/).select { |ip| ip.start_with? '10.' }
-    end
+  filtered_instances = instances.select do |is|
+    is['instance'].include? instance_group_name
   end
 
-  instance_ips.flatten!
+  filtered_instances.flat_map { |is| is['ips'].split.grep PRIVATE_IP_REGEX }
 end
 
 raise 'BOSH_DEPLOYMENT is required, but not set' unless ENV['BOSH_DEPLOYMENT']
