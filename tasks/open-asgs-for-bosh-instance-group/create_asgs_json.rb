@@ -21,9 +21,9 @@ end
 def get_ips_from_bosh_output(instance_group_name)
   instance_ips = []
 
-  stdout, _, exitcode = Open3.capture3('\bosh is --json')
+  stdout, stderr, exitcode = Open3.capture3('\bosh is --json')
 
-  raise "'bosh is --json' returned an error: #{stdout}" if exitcode != 0
+  raise "'bosh is --json' returned an error: #{stdout}\n#{stderr}" if exitcode != 0
 
   instances = JSON.parse(stdout)['Tables'].first['Rows']
   instance_ips = get_instance_ips(instances, instance_group_name)
