@@ -1011,6 +1011,7 @@ jobs:
         NEW_OPS_FILES: |
           use-default-route-registrar-timeout-for-api.yml
           change-postgres-max-connections.yml
+          use-debug-level-logging.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -1028,6 +1029,9 @@ jobs:
           operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/bosh-lite.yml
           operations/change-postgres-max-connections.yml
+          operations/test/add-datadog-firehose-nozzle.yml
+          operations/use-debug-level-logging.yml
+        VARS_FILES: ddog.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
