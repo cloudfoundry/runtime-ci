@@ -27,6 +27,7 @@ groups:
   - experimental-acquire-pool
   - experimental-release-pool
   - lite-enable-docker-and-tasks
+  - unit-test-golang-tests
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - bless-manifest
@@ -36,6 +37,7 @@ groups:
   - release-notes-template
 - name: ex
   jobs:
+  - unit-test-golang-tests
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - experimental-acquire-pool
@@ -49,6 +51,7 @@ groups:
   - bless-manifest
 - name: fr
   jobs:
+  - unit-test-golang-tests
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - fresh-acquire-pool
@@ -61,6 +64,7 @@ groups:
   - bless-manifest
 - name: up
   jobs:
+  - unit-test-golang-tests
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - upgrade-acquire-pool
@@ -73,6 +77,7 @@ groups:
   - bless-manifest
 - name: li
   jobs:
+  - unit-test-golang-tests
   - unit-test-ops-files
   - unit-test-update-releases-coverage
   - lite-acquire-pool
@@ -84,6 +89,7 @@ groups:
   - bless-manifest
 - name: st
   jobs:
+  - unit-test-golang-tests
   - stable-acquire-pool
   - stable-deploy
   - stable-smoke-tests
@@ -388,6 +394,28 @@ jobs:
         - -exc
         - |
           ruby -e "require 'yaml'; YAML.load_file('./cf-deployment-develop/cf-deployment.yml')"
+
+- name: unit-test-golang-tests
+  serial: true
+  public: true
+  # build_logs_to_retain: 100
+  plan:
+  - get: cf-deployment-develop
+    trigger: true
+  - task: unit-test-golang-ops-files
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: relintdockerhubpushbot/bosh-cli
+      inputs:
+      - name: cf-deployment-develop
+      # params:
+      #   RUN_SEMANTIC: true
+      run:
+        dir: cf-deployment-develop/og-tests
+        path: bin/test
 
 - name: unit-test-ops-files
   serial: true
