@@ -3,7 +3,7 @@
 set -eux
 
 has_no_commits_in_last_month () {
-  [[ -z $(git log -1 --since='1 month ago' -s "$1") ]]
+  [[ -z $(git log -1 --since='2 months ago' -s "$1") ]]
 }
 
 fetch_all_branches () {
@@ -24,7 +24,7 @@ popd
 
 num_stale_branches=${#stale_branches[@]}
 if [[ $num_stale_branches -ne 0 ]]; then
-  echo "The following branches have not been updated in the last month:"
+  echo "The following branches have not been updated in the last two months:"
   echo "${stale_branches[@]}"
   exit 1
 fi

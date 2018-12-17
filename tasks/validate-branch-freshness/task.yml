@@ -12,5 +12,3 @@ inputs:
 
 run:
   path: runtime-ci/tasks/validate-branch-freshness/task
-
-params:
