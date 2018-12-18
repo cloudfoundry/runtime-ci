@@ -1,6 +1,7 @@
 require 'rspec'
 require 'fileutils'
 require_relative './release_changes.rb'
+require 'webmock/rspec'
 
 describe 'ReleaseUpdates' do
   describe 'load_from_files' do
@@ -14,6 +15,8 @@ describe 'ReleaseUpdates' do
     end
 
     before do
+      stub_request(:get, /github.com\/org\/release/)
+
       File.open(File.join('cf-deployment-master', filename), 'w') do |f|
         f.write(file_contents_master)
       end
@@ -306,6 +309,7 @@ HEREDOC
       end
 
       it 'treats the release as having been deleted' do
+
           stemcell_update = updates.get_update_by_name('ubuntu-trusty')
           expect(stemcell_update.old_version).to eq 1
           expect(stemcell_update.new_version).to eq nil
@@ -379,6 +383,37 @@ HEREDOC
         expect(subject.get_update_by_name(name).old_version).to eq '26'
       end
     end
+  end
+
+  describe '#convert_bosh_io_to_github_url' do
+    before do
+      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
+        f.write(file_contents_master)
+      end
+    end
+
+    let(:filename) { 'cf-deployment.yml' }
+    let(:opsfile) { false }
+    let(:file_contents_master) do
+<<-HEREDOC
+releases:
+- name: release-1
+  version: 1.1.0
+  url: https://bosh.io/d/github.com/org/release-1?v=1.1.0
+stemcells:
+- os: ubuntu-trusty
+  version: 1
+HEREDOC
+    end
+
+    it 'checks v prefixed url first and falls back to the plain if it fails' do
+
+      stub_request(:get, "https://github.com/org/release-1/releases/tag/v1.1.0").to_return(status: 404)
+      stub_request(:get, "https://github.com/org/release-1/releases/tag/1.1.0")
+
+      ReleaseUpdates.load_from_files('cf-deployment.yml')
+    end
+
   end
 
   describe '#merge!' do

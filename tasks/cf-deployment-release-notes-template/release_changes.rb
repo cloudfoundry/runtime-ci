@@ -1,5 +1,7 @@
 require 'yaml'
 require 'hashdiff'
+require 'net/http'
+require 'uri'
 
 class ReleaseUpdate
   attr_accessor :old_version, :new_version, :old_url, :new_url
@@ -63,7 +65,7 @@ class ReleaseUpdates
 
     name = change[2]['name'] || change[2]['os']
     version = change[2]['version']
-    url = change[2]['url'] ? convert_bosh_io_to_github_url(change[2]['url']) : nil
+    url = change[2]['url'] ? convert_bosh_io_to_github_url(change[2]['url']).to_s : nil
 
     release_update = @updates[name] || ReleaseUpdate.new
 
@@ -79,7 +81,19 @@ class ReleaseUpdates
   end
 
   def convert_bosh_io_to_github_url(url)
-    require 'uri'
+     gh_v_url = generate_github_url(url, 'v')
+     gh_url = generate_github_url(url, '')
+
+     if Net::HTTP.get_response(gh_v_url).code == '200'
+       return gh_v_url
+     elsif Net::HTTP.get_response(gh_url).code == '200'
+       return gh_url
+     else
+       raise 'Unable to confirm release URL'
+     end
+  end
+
+  def generate_github_url(url, prefix = '')
     u = URI(url)
 
     raise 'Unexpected URL format' unless u.host.match 'bosh.io'
@@ -87,9 +101,15 @@ class ReleaseUpdates
     github_string = u.path.sub('/d/','')
     host, *path = github_string.split('/')
     version = URI.decode_www_form(u.query).assoc('v').last
-    project_path = '/' + path.join('/') + '/releases/tag/v' + version
 
-    URI::HTTPS.build(host:host, path:project_path).to_s
+    project_path = []
+    project_path.concat(path)
+    project_path << 'releases'
+    project_path << 'tag'
+    project_path << prefix + version
+
+    URI::HTTPS.build(host: host,
+                     path: '/' + project_path.join('/'))
   end
 
   def get_update_by_name(release_name)
