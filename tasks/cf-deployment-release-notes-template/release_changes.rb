@@ -47,7 +47,8 @@ class ReleaseUpdates
       end.collect do |op|
         {
           "name" => op["value"]["name"] || op['value']['os'],
-          "version" => op["value"]["version"]
+          "version" => op["value"]["version"],
+          "url" => op["value"]["url"]
         }
       end
     end
@@ -81,16 +82,20 @@ class ReleaseUpdates
   end
 
   def convert_bosh_io_to_github_url(url)
-     gh_v_url = generate_github_url(url, 'v')
-     gh_url = generate_github_url(url, '')
+    tag_prefixes = ['v', '']
 
-     if Net::HTTP.get_response(gh_v_url).code == '200'
-       return gh_v_url
-     elsif Net::HTTP.get_response(gh_url).code == '200'
-       return gh_url
-     else
-       raise 'Unable to confirm release URL'
-     end
+    tag_prefixes.each do |prefix|
+      generated_url = generate_github_url(url, prefix)
+      generated_url_response = Net::HTTP.get_response(generated_url)
+
+      ok = generated_url_response.code == '200'
+      redirect = generated_url_response.code == '301'
+
+      return generated_url if ok
+      return generated_url_response.header['location'] if redirect
+    end
+
+    raise 'Unable to confirm release URL'
   end
 
   def generate_github_url(url, prefix = '')

@@ -15,7 +15,7 @@ describe 'ReleaseUpdates' do
     end
 
     before do
-      stub_request(:get, /github.com\/org\/release/)
+      stub_request(:get, /github.com/)
 
       File.open(File.join('cf-deployment-master', filename), 'w') do |f|
         f.write(file_contents_master)
@@ -98,6 +98,7 @@ HEREDOC
   value:
     name: hwc-buildpack
     version: 2.3.4
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/hwc-buildpack-release?v=2.3.4
 - type: replace
   path: /stemcells/-
   value:
@@ -120,6 +121,7 @@ HEREDOC
   value:
     name: hwc-buildpack
     version: 2.4.0
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/hwc-buildpack-release?v=2.4.0
 - type: replace
   path: /stemcells/-
   value:
@@ -414,6 +416,13 @@ HEREDOC
       ReleaseUpdates.load_from_files('cf-deployment.yml')
     end
 
+    it 'handles redirect' do
+      stub_request(:get, "https://github.com/org/release-1/releases/tag/v1.1.0")
+        .to_return(status: 301, headers: {'location': 'new/location'})
+      release_update = ReleaseUpdates.load_from_files('cf-deployment.yml')
+      release = release_update.get_update_by_name("release-1")
+      expect(release.old_url).to eq 'new/location'
+    end
   end
 
   describe '#merge!' do
