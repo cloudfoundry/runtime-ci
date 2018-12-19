@@ -610,7 +610,9 @@ jobs:
       new-ops-files: trelawney-env-director-state
     params:
       BASE_OPS_FILE_DIR: operations
-      NEW_OPS_FILES: add-external-ips-for-cloud-sql-db.yml
+      NEW_OPS_FILES: |
+        add-external-ips-for-cloud-sql-db.yml
+        bits-service-retry.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -631,6 +633,7 @@ jobs:
         operations/use-external-blobstore.yml
         operations/use-gcs-blobstore-service-account.yml
         operations/bits-service/configure-bits-service-gcs-service-account.yml
+        operations/bits-service-retry.yml
         operations/enable-service-discovery.yml
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-logging-system.yml
