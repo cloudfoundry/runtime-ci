@@ -81,16 +81,27 @@ class ReleaseUpdates
   end
 
   def convert_bosh_io_to_github_url(url)
-     gh_v_url = generate_github_url(url, 'v')
-     gh_url = generate_github_url(url, '')
+     # p url
 
-     if Net::HTTP.get_response(gh_v_url).code == '200'
-       return gh_v_url
-     elsif Net::HTTP.get_response(gh_url).code == '200'
-       return gh_url
-     else
-       raise 'Unable to confirm release URL'
+     gh_v_url = generate_github_url(url, 'v')
+     gh_v_url_response = Net::HTTP.get_response(gh_v_url)
+
+     if gh_v_url_response.code == '200'
+       return gh_v_url_response.uri
+     elsif gh_v_url_response.code == '301'
+       return gh_v_url_response.header['location']
      end
+
+     gh_url = generate_github_url(url, '')
+     gh_url_response = Net::HTTP.get_response(gh_url)
+
+     if gh_url_response.code == '200'
+       return gh_url_response.uri
+     elsif gh_url_response.code == '301'
+       return gh_url_response.header['location']
+     end
+
+     raise 'Unable to confirm release URL'
   end
 
   def generate_github_url(url, prefix = '')
