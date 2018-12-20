@@ -345,7 +345,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+      passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
     - put: fresh-pool
       params: {acquire: true}
 
@@ -356,7 +356,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+      passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
     - put: upgrade-pool
       params: {acquire: true}
 
@@ -367,7 +367,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+      passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
     - put: lite-pool
       params: {acquire: true}
 
@@ -691,7 +691,7 @@ jobs:
   - aggregate:
     - get: cf-deployment-develop
       trigger: true
-      passed: [unit-test-ops-files, unit-test-update-releases-coverage]
+      passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
     - put: experimental-pool
       params: {acquire: true}
 
