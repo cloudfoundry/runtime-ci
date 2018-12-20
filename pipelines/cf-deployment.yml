@@ -89,7 +89,6 @@ groups:
   - bless-manifest
 - name: st
   jobs:
-  - unit-test-golang-tests
   - stable-acquire-pool
   - stable-deploy
   - stable-smoke-tests
