@@ -1476,6 +1476,7 @@ jobs:
       trigger: true
       passed:
       - fresh-cats
+      - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: luna-env-director-state
@@ -1498,6 +1499,7 @@ jobs:
     trigger: true
     passed:
     - fresh-cats
+    - fresh-smoke-tests
     - lite-cats
     - experimental-cats
     - experimental-smoke-tests
