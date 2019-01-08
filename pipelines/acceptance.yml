@@ -97,12 +97,6 @@ jobs:
     params:
       INFRASTRUCTURE: google
       OPS_FILES: |
-  - task: add-tcp-domain
-    file: runtime-ci/tasks/add-tcp-domain/task.yml
-    input_mapping:
-      bbl-state: relint-acceptance-bbl-state
-    params:
-      SYSTEM_DOMAIN: relint-acceptance.cf-app.com
   - task: bosh-deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     params:
@@ -118,10 +112,8 @@ jobs:
       APP_SYSLOG_AVAILABILITY_THRESHOLD: 12
       FAIL_ON_DOWNTIME: true
       OPS_FILES: |
-        operations/experimental/fast-deploy-with-downtime-and-danger.yml
-        operations/scale-to-one-az.yml
         operations/use-compiled-releases.yml
-        operations/experimental/use-compiled-releases-windows.yml
+        operations/experimental/fast-deploy-with-downtime-and-danger.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
