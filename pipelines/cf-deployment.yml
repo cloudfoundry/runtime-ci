@@ -497,7 +497,9 @@ jobs:
       new-ops-files: luna-env-director-state
     params:
       BASE_OPS_FILE_DIR: operations
-      NEW_OPS_FILES: rename-isolation-segment-network.yml
+      NEW_OPS_FILES: |
+        rename-isolation-segment-network.yml
+        change-postgres-max-connections.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -517,6 +519,8 @@ jobs:
         operations/rename-isolation-segment-network.yml
         operations/addons/enable-component-syslog.yml
         operations/use-postgres.yml
+        operations/experimental/enable-tls-cloud-controller-postgres.yml
+        operations/change-postgres-max-connections.yml
       VARS_FILES: |
         deployment-name.yml
         network-name.yml
@@ -1012,7 +1016,6 @@ jobs:
         BASE_OPS_FILE_DIR: operations
         NEW_OPS_FILES: |
           use-default-route-registrar-timeout-for-api.yml
-          change-postgres-max-connections.yml
           use-debug-level-logging.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -1027,10 +1030,7 @@ jobs:
           operations/use-default-route-registrar-timeout-for-api.yml
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-compiled-releases.yml
-          operations/use-postgres.yml
-          operations/experimental/enable-tls-cloud-controller-postgres.yml
           operations/bosh-lite.yml
-          operations/change-postgres-max-connections.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-debug-level-logging.yml
         VARS_FILES: ddog.yml
