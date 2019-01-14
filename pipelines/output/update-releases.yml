@@ -19,7 +19,6 @@ groups:
   - update-bosh-dns-aliases
   - update-bpm
   - update-capi
-  - update-cf-mysql
   - update-cf-networking
   - update-cf-smoke-tests
   - update-cf-syslog-drain
@@ -37,6 +36,7 @@ groups:
   - update-nodejs-buildpack
   - update-php-buildpack
   - update-python-buildpack
+  - update-pxc
   - update-routing
   - update-ruby-buildpack
   - update-silk
@@ -56,7 +56,6 @@ groups:
   - update-smb-volume
   - update-postgres
   - update-syslog
-  - update-pxc
   - update-windows-syslog
   - update-hwc-buildpack
   - update-windows-utilities
@@ -149,10 +148,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/capi-release
-- name: cf-mysql-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-mysql-release
 - name: cf-networking-release
   type: bosh-io-release
   source:
@@ -221,6 +216,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/python-buildpack-release
+- name: pxc-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/pxc-release
 - name: routing-release
   type: bosh-io-release
   source:
@@ -289,10 +288,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/syslog-release
-- name: pxc-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/pxc-release
 - name: windows-syslog-release
   type: bosh-io-release
   source:
@@ -349,12 +344,6 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: capi-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
-- name: cf-mysql-release-gcs
-  type: gcs-resource
-  source:
-    bucket: cf-deployment-compiled-releases
-    json_key: ((concourse_gcp_service_account_json))
-    regexp: cf-mysql-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: cf-networking-release-gcs
   type: gcs-resource
   source:
@@ -457,6 +446,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: python-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: pxc-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: pxc-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: routing-release-gcs
   type: gcs-resource
   source:
@@ -889,103 +884,6 @@ jobs:
       first-input: updated-compiled-releases-ops-file
       second-input: updated-ops-file
   - put: capi-release-gcs
-    params:
-      file: exported-release/*.tgz
-      predefined_acl: publicRead
-  - task: commit-generated-manifest-and-ops
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: combined-inputs
-      manifest: updated-deployment-manifest
-    params:
-      MANIFEST_NAME: cf-deployment.yml
-      MANIFEST_DESTINATION: cf-deployment.yml
-      COMMIT_ALL_OPS_FILES: true
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
-- name: update-cf-mysql
-  serial_groups:
-  - update-cf-mysql
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: cf-mysql-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-cf-mysql
-    file: runtime-ci/tasks/update-single-manifest-release/task.yml
-    input_mapping:
-      release: cf-mysql-release
-      deployment-configuration: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-mysql
-  - task: upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-  - task: bosh-dry-run
-    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: updated-deployment-manifest
-      ops-files: cf-deployment-develop
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: cf-mysql
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: bosh-delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME: cf-dry-run-cf-mysql
-  - task: compile-release
-    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      manifest: updated-deployment-manifest
-    params:
-      RELEASE_NAME: cf-mysql
-  - task: update-additional-ops-files-cf-mysql
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: cf-mysql-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: cf-mysql
-  - task: update-compiled-release-ops
-    file: runtime-ci/tasks/update-single-compiled-release/task.yml
-    input_mapping:
-      original-compiled-releases-ops-file: cf-deployment-develop
-      release: cf-mysql-release
-      compiled-release-tarball: exported-release
-      current-commit-message: commit-message
-    params:
-      RELEASE_NAME: cf-mysql
-      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
-      UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml
-  - task: combine-inputs
-    file: runtime-ci/tasks/combine-inputs/task.yml
-    input_mapping:
-      first-input: updated-compiled-releases-ops-file
-      second-input: updated-ops-file
-  - put: cf-mysql-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -2556,6 +2454,103 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-pxc
+  serial_groups:
+  - update-pxc
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: pxc-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-pxc
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: pxc-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: pxc
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: bosh-dry-run
+    file: runtime-ci/tasks/bosh-dry-run-with-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: updated-deployment-manifest
+      ops-files: cf-deployment-develop
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: pxc
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: bosh-delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME: cf-dry-run-pxc
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: pxc
+  - task: update-additional-ops-files-pxc
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: pxc-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: pxc
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: pxc-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: pxc
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml
+  - task: combine-inputs
+    file: runtime-ci/tasks/combine-inputs/task.yml
+    input_mapping:
+      first-input: updated-compiled-releases-ops-file
+      second-input: updated-ops-file
+  - put: pxc-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: combined-inputs
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 - name: update-routing
   serial_groups:
   - update-routing
@@ -3835,65 +3830,6 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
-- name: update-pxc
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: runtime-ci
-    - get: cf-deployment-develop
-    - get: cf-deployment-concourse-tasks
-    - get: greengrass-env-director-state
-    - get: pxc-release
-      trigger: true
-      params:
-        tarball: false
-    - get: stemcell
-      params:
-        tarball: false
-      passed: [ update-stemcell-and-recompile-releases ]
-  - task: update-release-pxc
-    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
-    input_mapping:
-      release: pxc-release
-      original-ops-file: cf-deployment-develop
-    params:
-      RELEASE_NAME: pxc
-  - task: bosh-upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
-        operations/windows2012R2-cell.yml
-        operations/windows2016-cell.yml
-        operations/windows1803-cell.yml
-  - task: bosh-dry-run-pxc
-    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
-    input_mapping:
-      bbl-state: greengrass-env-director-state
-      cf-deployment: cf-deployment-develop
-      ops-files: updated-ops-file
-      vars-files: greengrass-env-director-state
-    params:
-      DEPLOYMENT_NAME_SUFFIX: pxc
-      SYSTEM_DOMAIN: greengrass.cf-app.com
-  - task: commit-generated-manifest-and-ops-pxc
-    file: runtime-ci/tasks/commit-generated-manifest/task.yml
-    input_mapping:
-      repo: cf-deployment-develop
-      ops-file: updated-ops-file
-      manifest: cf-deployment-develop
-    params:
-      COMMIT_ALL_OPS_FILES: true
-  - put: cf-deployment-develop
-    params:
-      rebase: true
-      repository: updated-repo
 - name: update-windows-syslog
   serial: true
   public: true
@@ -4472,7 +4408,6 @@ jobs:
   - update-bosh-dns-aliases
   - update-bpm
   - update-capi
-  - update-cf-mysql
   - update-cf-networking
   - update-cf-smoke-tests
   - update-cf-syslog-drain
@@ -4490,6 +4425,7 @@ jobs:
   - update-nodejs-buildpack
   - update-php-buildpack
   - update-python-buildpack
+  - update-pxc
   - update-routing
   - update-ruby-buildpack
   - update-silk
@@ -4515,9 +4451,6 @@ jobs:
       params:
         tarball: false
     - get: capi-release
-      params:
-        tarball: false
-    - get: cf-mysql-release
       params:
         tarball: false
     - get: cf-networking-release
@@ -4569,6 +4502,9 @@ jobs:
       params:
         tarball: false
     - get: python-buildpack-release
+      params:
+        tarball: false
+    - get: pxc-release
       params:
         tarball: false
     - get: routing-release
@@ -4647,15 +4583,6 @@ jobs:
         exported-release: exported-release-capi
       params:
         RELEASE_NAME: capi
-    - task: compile-release-cf-mysql
-      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
-      input_mapping:
-        bbl-state: greengrass-env-director-state
-        manifest: updated-deployment-manifest
-      output_mapping:
-        exported-release: exported-release-cf-mysql
-      params:
-        RELEASE_NAME: cf-mysql
     - task: compile-release-cf-networking
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -4809,6 +4736,15 @@ jobs:
         exported-release: exported-release-python-buildpack
       params:
         RELEASE_NAME: python-buildpack
+    - task: compile-release-pxc
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-pxc
+      params:
+        RELEASE_NAME: pxc
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -4923,17 +4859,6 @@ jobs:
       current-commit-message: commit-message
     params:
       RELEASE_NAME: capi
-      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
-      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
-  - task: update-compiled-releases-ops-cf-mysql
-    file: runtime-ci/tasks/update-single-compiled-release/task.yml
-    input_mapping:
-      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
-      release: cf-mysql-release
-      compiled-release-tarball: exported-release-cf-mysql
-      current-commit-message: commit-message
-    params:
-      RELEASE_NAME: cf-mysql
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-cf-networking
@@ -5123,6 +5048,17 @@ jobs:
       RELEASE_NAME: python-buildpack
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-pxc
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: pxc-release
+      compiled-release-tarball: exported-release-pxc
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: pxc
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-routing
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -5228,10 +5164,6 @@ jobs:
       params:
         file: exported-release-capi/*.tgz
         predefined_acl: publicRead
-    - put: cf-mysql-release-gcs
-      params:
-        file: exported-release-cf-mysql/*.tgz
-        predefined_acl: publicRead
     - put: cf-networking-release-gcs
       params:
         file: exported-release-cf-networking/*.tgz
@@ -5299,6 +5231,10 @@ jobs:
     - put: python-buildpack-release-gcs
       params:
         file: exported-release-python-buildpack/*.tgz
+        predefined_acl: publicRead
+    - put: pxc-release-gcs
+      params:
+        file: exported-release-pxc/*.tgz
         predefined_acl: publicRead
     - put: routing-release-gcs
       params:

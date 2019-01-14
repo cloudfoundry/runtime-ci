@@ -9,8 +9,6 @@ baseReleases:
   repository: cloudfoundry-incubator/bpm-release
 - name: capi
   repository: cloudfoundry/capi-release
-- name: cf-mysql
-  repository: cloudfoundry/cf-mysql-release
 - name: cf-networking
   repository: cloudfoundry/cf-networking-release
 - name: cf-smoke-tests
@@ -45,6 +43,8 @@ baseReleases:
   repository: cloudfoundry/php-buildpack-release
 - name: python-buildpack
   repository: cloudfoundry/python-buildpack-release
+- name: pxc
+  repository: cloudfoundry-incubator/pxc-release
 - name: routing
   repository: cloudfoundry-incubator/cf-routing-release
 - name: ruby-buildpack
@@ -85,9 +85,6 @@ opsReleases:
   repository: cloudfoundry/syslog-release
   varsFilesInput: cf-deployment-develop
   varsFiles: "operations/addons/example-vars-files/vars-enable-component-syslog.yml"
-- name: pxc
-  repository: cloudfoundry-incubator/pxc-release
-  varsFilesInput: greengrass-env-director-state
 - name: windows-syslog
   repository: cloudfoundry/windows-syslog-release
   varsFilesInput: greengrass-env-director-state
