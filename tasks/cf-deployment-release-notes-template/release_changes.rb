@@ -101,7 +101,7 @@ class ReleaseUpdates
   def generate_github_url(url, prefix = '')
     u = URI(url)
 
-    raise 'Unexpected URL format' unless u.host.match 'bosh.io'
+    raise "Unexpected URL format: ${u} does not match bosh.io" unless u.host.match 'bosh.io'
 
     github_string = u.path.sub('/d/','')
     host, *path = github_string.split('/')
