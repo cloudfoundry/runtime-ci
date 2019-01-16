@@ -33,10 +33,12 @@ groups:
   - update-loggregator
   - update-loggregator-agent
   - update-nats
+  - update-nginx-buildpack
   - update-nodejs-buildpack
   - update-php-buildpack
   - update-python-buildpack
   - update-pxc
+  - update-r-buildpack
   - update-routing
   - update-ruby-buildpack
   - update-silk
@@ -204,6 +206,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/nats-release
+- name: nginx-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nginx-buildpack-release
 - name: nodejs-buildpack-release
   type: bosh-io-release
   source:
@@ -220,6 +226,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/pxc-release
+- name: r-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/r-buildpack-release
 - name: routing-release
   type: bosh-io-release
   source:
@@ -428,6 +438,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: nats-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: nginx-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: nginx-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: nodejs-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -452,6 +468,12 @@ resources:
     bucket: cf-deployment-compiled-releases
     json_key: ((concourse_gcp_service_account_json))
     regexp: pxc-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
+- name: r-buildpack-release-gcs
+  type: gcs-resource
+  source:
+    bucket: cf-deployment-compiled-releases
+    json_key: ((concourse_gcp_service_account_json))
+    regexp: r-buildpack-[^-]+-ubuntu-trusty-[^-]+-(\d+)-(\d+)-(\d+).*\.tgz
 - name: routing-release-gcs
   type: gcs-resource
   source:
@@ -2211,6 +2233,87 @@ jobs:
     params:
       rebase: true
       repository: updated-repo
+- name: update-nginx-buildpack
+  serial_groups:
+  - update-nginx-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: nginx-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-nginx-buildpack
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: nginx-buildpack-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: nginx-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: nginx-buildpack
+  - task: update-additional-ops-files-nginx-buildpack
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: nginx-buildpack-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: nginx-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: nginx-buildpack-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: nginx-buildpack
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml
+  - task: combine-inputs
+    file: runtime-ci/tasks/combine-inputs/task.yml
+    input_mapping:
+      first-input: updated-compiled-releases-ops-file
+      second-input: updated-ops-file
+  - put: nginx-buildpack-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: combined-inputs
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
 - name: update-nodejs-buildpack
   serial_groups:
   - update-nodejs-buildpack
@@ -2534,6 +2637,87 @@ jobs:
       first-input: updated-compiled-releases-ops-file
       second-input: updated-ops-file
   - put: pxc-release-gcs
+    params:
+      file: exported-release/*.tgz
+      predefined_acl: publicRead
+  - task: commit-generated-manifest-and-ops
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: combined-inputs
+      manifest: updated-deployment-manifest
+    params:
+      MANIFEST_NAME: cf-deployment.yml
+      MANIFEST_DESTINATION: cf-deployment.yml
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-r-buildpack
+  serial_groups:
+  - update-r-buildpack
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: r-buildpack-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-r-buildpack
+    file: runtime-ci/tasks/update-single-manifest-release/task.yml
+    input_mapping:
+      release: r-buildpack-release
+      deployment-configuration: cf-deployment-develop
+    params:
+      RELEASE_NAME: r-buildpack
+  - task: upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+  - task: compile-release
+    file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      manifest: updated-deployment-manifest
+    params:
+      RELEASE_NAME: r-buildpack
+  - task: update-additional-ops-files-r-buildpack
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: r-buildpack-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: r-buildpack
+  - task: update-compiled-release-ops
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: cf-deployment-develop
+      release: r-buildpack-release
+      compiled-release-tarball: exported-release
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: r-buildpack
+      ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml
+  - task: combine-inputs
+    file: runtime-ci/tasks/combine-inputs/task.yml
+    input_mapping:
+      first-input: updated-compiled-releases-ops-file
+      second-input: updated-ops-file
+  - put: r-buildpack-release-gcs
     params:
       file: exported-release/*.tgz
       predefined_acl: publicRead
@@ -4422,10 +4606,12 @@ jobs:
   - update-loggregator
   - update-loggregator-agent
   - update-nats
+  - update-nginx-buildpack
   - update-nodejs-buildpack
   - update-php-buildpack
   - update-python-buildpack
   - update-pxc
+  - update-r-buildpack
   - update-routing
   - update-ruby-buildpack
   - update-silk
@@ -4495,6 +4681,9 @@ jobs:
     - get: nats-release
       params:
         tarball: false
+    - get: nginx-buildpack-release
+      params:
+        tarball: false
     - get: nodejs-buildpack-release
       params:
         tarball: false
@@ -4505,6 +4694,9 @@ jobs:
       params:
         tarball: false
     - get: pxc-release
+      params:
+        tarball: false
+    - get: r-buildpack-release
       params:
         tarball: false
     - get: routing-release
@@ -4709,6 +4901,15 @@ jobs:
         exported-release: exported-release-nats
       params:
         RELEASE_NAME: nats
+    - task: compile-release-nginx-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-nginx-buildpack
+      params:
+        RELEASE_NAME: nginx-buildpack
     - task: compile-release-nodejs-buildpack
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -4745,6 +4946,15 @@ jobs:
         exported-release: exported-release-pxc
       params:
         RELEASE_NAME: pxc
+    - task: compile-release-r-buildpack
+      file: runtime-ci/tasks/compile-release-from-manifest/task.yml
+      input_mapping:
+        bbl-state: greengrass-env-director-state
+        manifest: updated-deployment-manifest
+      output_mapping:
+        exported-release: exported-release-r-buildpack
+      params:
+        RELEASE_NAME: r-buildpack
     - task: compile-release-routing
       file: runtime-ci/tasks/compile-release-from-manifest/task.yml
       input_mapping:
@@ -5015,6 +5225,17 @@ jobs:
       RELEASE_NAME: nats
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-nginx-buildpack
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: nginx-buildpack-release
+      compiled-release-tarball: exported-release-nginx-buildpack
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: nginx-buildpack
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-nodejs-buildpack
     file: runtime-ci/tasks/update-single-compiled-release/task.yml
     input_mapping:
@@ -5057,6 +5278,17 @@ jobs:
       current-commit-message: commit-message
     params:
       RELEASE_NAME: pxc
+      ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
+      UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
+  - task: update-compiled-releases-ops-r-buildpack
+    file: runtime-ci/tasks/update-single-compiled-release/task.yml
+    input_mapping:
+      original-compiled-releases-ops-file: updated-compiled-releases-ops-file
+      release: r-buildpack-release
+      compiled-release-tarball: exported-release-r-buildpack
+      current-commit-message: commit-message
+    params:
+      RELEASE_NAME: r-buildpack
       ORIGINAL_OPS_FILE_PATH: use-compiled-releases.yml
       UPDATED_OPS_FILE_PATH: use-compiled-releases.yml
   - task: update-compiled-releases-ops-routing
@@ -5220,6 +5452,10 @@ jobs:
       params:
         file: exported-release-nats/*.tgz
         predefined_acl: publicRead
+    - put: nginx-buildpack-release-gcs
+      params:
+        file: exported-release-nginx-buildpack/*.tgz
+        predefined_acl: publicRead
     - put: nodejs-buildpack-release-gcs
       params:
         file: exported-release-nodejs-buildpack/*.tgz
@@ -5235,6 +5471,10 @@ jobs:
     - put: pxc-release-gcs
       params:
         file: exported-release-pxc/*.tgz
+        predefined_acl: publicRead
+    - put: r-buildpack-release-gcs
+      params:
+        file: exported-release-r-buildpack/*.tgz
         predefined_acl: publicRead
     - put: routing-release-gcs
       params:

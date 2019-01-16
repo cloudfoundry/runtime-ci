@@ -18,8 +18,8 @@ pass() {
 }
 
 check_files() {
-  if [ ! -f ../cf-deployment-develop/cf-deployment.yml ]; then
-    echo "../cf-deployment-develop/cf-deployment.yml not found.  Exiting..."
+  if [ ! -f ../cf-deployment/cf-deployment.yml ]; then
+    echo "../cf-deployment/cf-deployment.yml not found.  Exiting..."
     exit 1
   fi
 
@@ -30,7 +30,7 @@ check_files() {
 }
 
 main() {
-  releases=$(bosh int ../cf-deployment-develop/cf-deployment.yml --path=/releases | grep name | cut -d ' ' -f3 | sort)
+  releases=$(bosh int ../cf-deployment/cf-deployment.yml --path=/releases | grep name | cut -d ' ' -f3 | sort)
 
   for release in $releases; do
     grep "update-$release" pipelines/output/update-releases.yml &> /dev/null

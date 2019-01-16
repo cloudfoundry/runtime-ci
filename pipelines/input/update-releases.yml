@@ -37,6 +37,8 @@ baseReleases:
   repository: cloudfoundry/loggregator-agent-release
 - name: nats
   repository: cloudfoundry/nats-release
+- name: nginx-buildpack
+  repository: cloudfoundry/nginx-buildpack-release
 - name: nodejs-buildpack
   repository: cloudfoundry/nodejs-buildpack-release
 - name: php-buildpack
@@ -45,6 +47,8 @@ baseReleases:
   repository: cloudfoundry/python-buildpack-release
 - name: pxc
   repository: cloudfoundry-incubator/pxc-release
+- name: r-buildpack
+  repository: cloudfoundry/r-buildpack-release
 - name: routing
   repository: cloudfoundry-incubator/cf-routing-release
 - name: ruby-buildpack
