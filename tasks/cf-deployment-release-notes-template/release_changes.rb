@@ -66,7 +66,7 @@ class ReleaseUpdates
 
     name = change[2]['name'] || change[2]['os']
     version = change[2]['version']
-    url = change[2]['url'] ? convert_bosh_io_to_github_url(change[2]['url']).to_s : nil
+    url = change[2]['url'] ? convert_bosh_io_to_github_url(change[2]['url']) : nil
 
     release_update = @updates[name] || ReleaseUpdate.new
 
@@ -94,7 +94,7 @@ class ReleaseUpdates
       ok = generated_url_response.code == '200'
       redirect = generated_url_response.code == '301'
 
-      return generated_url if ok
+      return generated_url.to_s if ok
       return generated_url_response.header['location'] if redirect
     end
 
