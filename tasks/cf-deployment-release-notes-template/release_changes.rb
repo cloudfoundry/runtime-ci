@@ -86,6 +86,9 @@ class ReleaseUpdates
 
     tag_prefixes.each do |prefix|
       generated_url = generate_github_url(url, prefix)
+
+      return nil unless generated_url
+
       generated_url_response = Net::HTTP.get_response(generated_url)
 
       ok = generated_url_response.code == '200'
@@ -101,7 +104,7 @@ class ReleaseUpdates
   def generate_github_url(url, prefix = '')
     u = URI(url)
 
-    raise "Unexpected URL format: ${u} does not match bosh.io" unless u.host.match 'bosh.io'
+    return nil unless u.host.match 'bosh.io'
 
     github_string = u.path.sub('/d/','')
     host, *path = github_string.split('/')

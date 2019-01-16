@@ -423,6 +423,14 @@ HEREDOC
       release = release_update.get_update_by_name("release-1")
       expect(release.old_url).to eq 'new/location'
     end
+
+    context 'release located outside of bosh.io' do
+      let(:url) { 'https://not-bosh-at-all.io/some-release' }
+      it 'should return an empty url' do
+        ru = ReleaseUpdates.new
+        expect(ru.send(:convert_bosh_io_to_github_url, url)).to eq(nil)
+      end
+    end
   end
 
   describe '#merge!' do
