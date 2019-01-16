@@ -60,7 +60,7 @@ function main() {
 
   local ops_to_test
   set +e
-  ops_to_test=$(find ops-files -name \*.yml | cut -d'/' -f 2,3,4,5 | grep -v 'operations/dry-run.yml')
+  ops_to_test=$(find ops-files -name '*.yml' -not -path '*/community/*' | cut -d'/' -f 2,3,4,5 | grep -v 'operations/dry-run.yml')
   set -e
 
   for ops in $ops_to_test; do
