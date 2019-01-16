@@ -1032,7 +1032,6 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-compiled-releases.yml
           operations/bosh-lite.yml
-          operations/use-postgres.yml
           operations/test/add-datadog-firehose-nozzle.yml
           operations/use-debug-level-logging.yml
         VARS_FILES: ddog.yml
