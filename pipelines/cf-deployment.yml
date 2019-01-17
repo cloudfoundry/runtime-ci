@@ -842,7 +842,6 @@ jobs:
           operations/bits-service/use-bits-service.yml
           operations/bits-service/configure-bits-service-s3.yml
           operations/scale-database-cluster.yml
-          operations/use-pxc.yml
           operations/stop-skipping-tls-validation.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/set-cpu-weight.yml
@@ -942,7 +941,6 @@ jobs:
           operations/scale-database-cluster.yml
           operations/windows2016-cell.yml
           operations/decrease-cc-event-retention.yml
-          operations/use-pxc.yml
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
