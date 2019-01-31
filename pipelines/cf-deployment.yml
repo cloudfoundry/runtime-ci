@@ -843,6 +843,7 @@ jobs:
           operations/bits-service/configure-bits-service-s3.yml
           operations/scale-database-cluster.yml
           operations/stop-skipping-tls-validation.yml
+          operations/experimental/add-deployment-updater.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/set-cpu-weight.yml
           operations/experimental/deploy-forwarder-agent.yml
@@ -1461,7 +1462,7 @@ jobs:
         integration-config: snitch-env-integration-configs
         cf-acceptance-tests: cf-acceptance-tests-rc
       params:
-        NODES: 4
+        NODES: 16
         RELINT_VERBOSE_AUTH: "true"
 
 - name: fresh-delete-deployment
