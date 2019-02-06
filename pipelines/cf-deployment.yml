@@ -1464,7 +1464,7 @@ jobs:
         integration-config: snitch-env-integration-configs
         cf-acceptance-tests: cf-acceptance-tests-rc
       params:
-        NODES: 16
+        NODES: 8
         RELINT_VERBOSE_AUTH: "true"
 
 - name: fresh-delete-deployment
