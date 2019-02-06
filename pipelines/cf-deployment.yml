@@ -616,6 +616,7 @@ jobs:
       NEW_OPS_FILES: |
         add-external-ips-for-cloud-sql-db.yml
         bits-service-retry.yml
+        increase-doppler-vm-type-from-minimal-to-small.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -641,6 +642,7 @@ jobs:
         operations/test/add-persistent-isolation-segment-diego-cell.yml
         operations/test/add-persistent-isolation-segment-logging-system.yml
         operations/test/isolated-logging-system-with-windows-cells.yml
+        operations/increase-doppler-vm-type-from-minimal-to-small.yml
       VARS_FILES: |
         external-db-vars.yml
         gcs-vars.yml
