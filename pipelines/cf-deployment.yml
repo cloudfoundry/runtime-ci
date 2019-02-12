@@ -556,7 +556,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
   - task: open-asgs-for-credhub
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
     params:
@@ -565,7 +565,7 @@ jobs:
       SYSTEM_DOMAIN: luna.cf-app.com
       SECURITY_GROUP_NAME: credhub
   - task: open-asgs-for-uaa
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: luna-env-director-state
     params:
@@ -674,7 +674,7 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: open-asgs-for-credhub
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
     params:
@@ -682,7 +682,7 @@ jobs:
       SYSTEM_DOMAIN: trelawney.cf-app.com
       SECURITY_GROUP_NAME: credhub
   - task: open-asgs-for-uaa
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: trelawney-env-director-state
     params:
@@ -878,7 +878,7 @@ jobs:
           repository: updated-integration-configs
           rebase: true
     - task: open-asgs-for-credhub
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
       params:
@@ -886,7 +886,7 @@ jobs:
         SYSTEM_DOMAIN: hermione.cf-app.com
         SECURITY_GROUP_NAME: credhub
     - task: open-asgs-for-uaa
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: hermione-env-director-state
       params:
@@ -961,7 +961,7 @@ jobs:
           repository: updated-integration-configs
           rebase: true
     - task: open-asgs-for-credhub
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
       params:
@@ -969,7 +969,7 @@ jobs:
         SYSTEM_DOMAIN: bellatrix.cf-app.com
         SECURITY_GROUP_NAME: credhub
     - task: open-asgs-for-uaa
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: bellatrix-env-director-state
       params:
@@ -1054,7 +1054,7 @@ jobs:
           repository: updated-integration-configs
           rebase: true
     - task: open-asgs-for-credhub
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
       params:
@@ -1062,7 +1062,7 @@ jobs:
         SYSTEM_DOMAIN: snitch.cf-app.com
         SECURITY_GROUP_NAME: credhub
     - task: open-asgs-for-uaa
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: snitch-env-director-state
       params:
