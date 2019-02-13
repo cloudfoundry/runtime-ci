@@ -1020,6 +1020,7 @@ jobs:
         NEW_OPS_FILES: |
           use-default-route-registrar-timeout-for-api.yml
           use-debug-level-logging.yml
+          use-datadog-agent-addon.yml
     - task: bosh-deploy-cf-deployment
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
@@ -1034,8 +1035,8 @@ jobs:
           operations/experimental/fast-deploy-with-downtime-and-danger.yml
           operations/use-compiled-releases.yml
           operations/bosh-lite.yml
-          operations/test/add-datadog-firehose-nozzle.yml
           operations/use-debug-level-logging.yml
+          operations/use-datadog-agent-addon.yml
         VARS_FILES: ddog.yml
         REGENERATE_CREDENTIALS: true
     - task: run-bosh-cleanup
