@@ -140,7 +140,7 @@ jobs:
         rebase: true
         repository: updated-integration-configs
   - task: open-asgs-for-credhub
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
     params:
@@ -148,7 +148,7 @@ jobs:
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
       SECURITY_GROUP_NAME: credhub
   - task: open-asgs-for-uaa
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
     params:
@@ -214,7 +214,7 @@ jobs:
         rebase: true
         repository: updated-integration-configs
   - task: open-asgs-for-credhub
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
     params:
@@ -222,7 +222,7 @@ jobs:
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
       SECURITY_GROUP_NAME: credhub
   - task: open-asgs-for-uaa
-    file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
     params:
