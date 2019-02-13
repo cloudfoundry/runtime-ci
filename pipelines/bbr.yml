@@ -123,7 +123,7 @@ jobs:
           operations/enable-nfs-volume-service.yml
           operations/backup-and-restore/enable-backup-restore-nfs-broker.yml
     - task: open-asgs-for-credhub
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
       params:
@@ -131,7 +131,7 @@ jobs:
         SYSTEM_DOMAIN: baba-yaga.cf-app.com
         SECURITY_GROUP_NAME: credhub
     - task: open-asgs-for-uaa
-      file: runtime-ci/tasks/open-asgs-for-bosh-instance-group/task.yml
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
       input_mapping:
         bbl-state: baba-yaga-env-director-state
       params:
