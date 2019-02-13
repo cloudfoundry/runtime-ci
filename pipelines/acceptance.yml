@@ -119,6 +119,7 @@ jobs:
       FAIL_ON_DOWNTIME: true
       OPS_FILES: |
         operations/use-compiled-releases.yml
+        operations/experimental/use-create-swap-delete-vm-strategy.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
@@ -192,6 +193,7 @@ jobs:
       OPS_FILES: |
         operations/use-compiled-releases.yml
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
+        operations/experimental/use-create-swap-delete-vm-strategy.yml
       SYSTEM_DOMAIN: relint-acceptance.cf-app.com
     input_mapping:
       bbl-state: relint-acceptance-bbl-state
