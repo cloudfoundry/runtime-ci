@@ -4,7 +4,7 @@ groups:
   jobs:
   - fresh-deploy
   - fresh-acquire-pool
-  - lite-release-pool
+  # - lite-release-pool
   - upgrade-deploy
   - upgrade-acquire-pool
   - upgrade-release-pool
@@ -84,7 +84,7 @@ groups:
   - lite-cats
   - lite-deploy
   - lite-enable-docker-and-tasks
-  - lite-release-pool
+  # - lite-release-pool
   - lite-release-pool-manual
   - bless-manifest
 - name: st
@@ -213,6 +213,10 @@ resources:
   type: time
   source:
     interval: 30m
+- name: hourly
+  type: time
+  source:
+    interval: 60m
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -364,10 +368,14 @@ jobs:
   serial: true
   public: true
   plan:
-  - aggregate:
-    - get: cf-deployment-develop
-      trigger: true
-      passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
+  - timeout: 4h
+    do:
+    - aggregate:
+      - get: cf-deployment-develop
+        trigger: true
+        passed: [unit-test-ops-files, unit-test-golang-tests, unit-test-update-releases-coverage]
+      - get: hourly
+        trigger: true
     - put: lite-pool
       params: {acquire: true}
 
@@ -720,14 +728,14 @@ jobs:
     - put: stable-pool
       params: {acquire: true}
 
-- name: lite-release-pool
-  public: true
-  plan:
-  - get: lite-pool
-    passed: [ lite-cats ]
-    trigger: true
-  - put: lite-pool
-    params: {release: lite-pool}
+# - name: lite-release-pool
+#   public: true
+#   plan:
+#   - get: lite-pool
+#     passed: [ lite-cats ]
+#     trigger: true
+#   - put: lite-pool
+#     params: {release: lite-pool}
 
 - name: fresh-release-pool-manual
   public: true
@@ -1468,6 +1476,10 @@ jobs:
       params:
         NODES: 4
         RELINT_VERBOSE_AUTH: "true"
+      ensure:
+        put: lite-pool
+        params: {release: lite-pool}
+
 
 - name: fresh-delete-deployment
   serial: true
