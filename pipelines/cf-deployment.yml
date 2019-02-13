@@ -491,13 +491,6 @@ jobs:
     params:
       DEPLOYMENT_NAME: luna-cf
       IGNORE_ERRORS: true
-  - task: bosh-upload-stemcell-fresh
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-      bbl-state: luna-env-director-state
-    params:
-      INFRASTRUCTURE: google
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -597,17 +590,6 @@ jobs:
     - get: runtime-ci
     - get: trelawney-env-integration-configs
     - get: trelawney-env-director-state
-  - task: bosh-upload-stemcell-upgrade
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-develop
-      bbl-state: trelawney-env-director-state
-      ops-files: cf-deployment-develop
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
-        operations/windows2012R2-cell.yml
-        operations/windows1803-cell.yml
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
@@ -820,14 +802,6 @@ jobs:
       - get: hermione-env-turbulence-manifest
       - get: hermione-env-director-state
       - get: hermione-env-integration-configs
-    - task: bosh-upload-stemcell-experimental
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        bbl-state: hermione-env-director-state
-        ops-files: cf-deployment-develop
-      params:
-        INFRASTRUCTURE: aws
     - task: add-tcp-domain
       file: runtime-ci/tasks/add-tcp-domain/task.yml
       input_mapping:
@@ -921,16 +895,6 @@ jobs:
       - get: cf-deployment-master
       - get: bellatrix-env-director-state
       - get: bellatrix-env-integration-configs
-    - task: bosh-upload-stemcell-stable
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-master
-        bbl-state: bellatrix-env-director-state
-        ops-files: cf-deployment-master
-      params:
-        INFRASTRUCTURE: google
-        OPS_FILES: |
-          operations/windows2016-cell.yml
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
@@ -1010,14 +974,6 @@ jobs:
         bbl-state: snitch-env-director-state
       params:
         IGNORE_ERRORS: true
-    - task: bosh-upload-stemcell-lite
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-develop
-        bbl-state: snitch-env-director-state
-        ops-files: snitch-env-director-state
-      params:
-        INFRASTRUCTURE: bosh-lite
     - task: collect-ops-files
       file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
       input_mapping:
@@ -1047,6 +1003,7 @@ jobs:
           operations/use-datadog-agent-addon.yml
         VARS_FILES: ddog.yml
         REGENERATE_CREDENTIALS: true
+        BOSH_LITE: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
       input_mapping:
