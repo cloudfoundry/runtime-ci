@@ -157,13 +157,6 @@ jobs:
       - get: cf-deployment-master
       - get: cats-env-director-state
       - get: cats-env-integration-configs
-    - task: bosh-upload-stemcell-cats
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-master
-        bbl-state: cats-env-director-state
-      params:
-        INFRASTRUCTURE: google
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
