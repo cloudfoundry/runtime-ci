@@ -88,15 +88,6 @@ jobs:
       trigger: true
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
-  - task: upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-release-candidate
-      bbl-state: relint-acceptance-bbl-state
-      ops-files: cf-deployment-release-candidate
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
   - task: add-tcp-domain
     file: runtime-ci/tasks/add-tcp-domain/task.yml
     input_mapping:
@@ -176,15 +167,6 @@ jobs:
     - get: cf-deployment-release-candidate
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
-  - task: upload-stemcell
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcells/task.yml
-    input_mapping:
-      cf-deployment: cf-deployment-release-candidate
-      bbl-state: relint-acceptance-bbl-state
-      ops-files: cf-deployment-release-candidate
-    params:
-      INFRASTRUCTURE: google
-      OPS_FILES: |
   - task: bosh-deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     params:
