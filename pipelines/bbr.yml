@@ -101,13 +101,6 @@ jobs:
       - get: baba-yaga-env-director-state
       - get: baba-yaga-env-integration-configs
       - get: persi-ci
-    - task: bosh-upload-stemcell
-      file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-      input_mapping:
-        cf-deployment: cf-deployment-rc
-        bbl-state: baba-yaga-env-director-state
-      params:
-        INFRASTRUCTURE: google
     - task: bosh-deploy-cf
       file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
       input_mapping:
