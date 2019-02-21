@@ -1056,6 +1056,9 @@ jobs:
       bbl-state: hermione-env-director-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    params:
+      BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
     input_mapping:
       bbl-state: hermione-env-director-state
     ensure:
