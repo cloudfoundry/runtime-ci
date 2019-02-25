@@ -854,6 +854,7 @@ jobs:
         BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
+        BBL_CONFIG_DIR: bbl-config
       input_mapping:
         bbl-state: hermione-env-director-state
         bbl-config: hermione-env-director-state
