@@ -1002,7 +1002,7 @@ jobs:
         VARS_FILES: |
           ddog.yml
           external-db-vars.yml
-        REGENERATE_CREDENTIALS: true
+        REGENERATE_CREDENTIALS: false
         BOSH_LITE: true
     - task: run-bosh-cleanup
       file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
