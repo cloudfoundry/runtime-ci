@@ -818,7 +818,6 @@ jobs:
       params:
         SYSTEM_DOMAIN: hermione.cf-app.com
         OPS_FILES: |
-          operations/aws.yml
           operations/use-compiled-releases.yml
           operations/use-external-blobstore.yml
           operations/use-s3-blobstore.yml
