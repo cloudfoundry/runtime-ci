@@ -576,9 +576,6 @@ jobs:
       BBL_AWS_REGION: us-west-2
       BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
       BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
-      BBL_LB_CERT: ((hermione_lbs_ssl_cert))
-      BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
-      BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-experimental
     input_mapping:
@@ -850,9 +847,6 @@ jobs:
         BBL_AWS_REGION: us-west-2
         BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
         BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
-        BBL_LB_CERT: ((hermione_lbs_ssl_cert))
-        BBL_LB_KEY: ((hermione_lbs_ssl_signing_key))
-        BBL_LB_CERT_CHAIN: ((hermione_lbs_ssl_cert_chain))
         LB_DOMAIN: hermione.cf-app.com
         BBL_CONFIG_DIR: bbl-config
       input_mapping:
