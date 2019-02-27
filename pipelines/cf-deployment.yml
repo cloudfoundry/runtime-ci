@@ -826,7 +826,6 @@ jobs:
           operations/scale-database-cluster.yml
           operations/stop-skipping-tls-validation.yml
           operations/use-operator-provided-router-tls-certificates.yml
-          operations/experimental/add-deployment-updater.yml
           operations/experimental/enable-iptables-logger.yml
           operations/experimental/set-cpu-weight.yml
           operations/experimental/deploy-forwarder-agent.yml
