@@ -146,20 +146,48 @@ jobs:
           path: cf-deployment-all-branches
           status: pending
           context: ((unit_tests_context))
-      - task: unit-test-ops-files
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: relintdockerhubpushbot/bosh-cli
-          inputs:
-          - name: cf-deployment-all-branches
-          params:
-            RUN_SEMANTIC: false
-          run:
-            dir: cf-deployment-all-branches
-            path: scripts/test
+      - do:
+        - task: check-no-ops-file-are-deleted
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: relintdockerhubpushbot/bosh-cli
+            inputs:
+            - name: cf-deployment-all-branches
+            params:
+              RUN_SEMANTIC: false
+            run:
+              dir: cf-deployment-all-branches
+              path: bash
+              args:
+              - -c
+              - |
+                #!/bin/bash
+
+                export TERM=xterm
+                git fetch -q origin develop:develop
+                removed_ops_files_count="$(git diff --name-only --relative=operations --diff-filter=D develop HEAD | wc -l)"
+                if [[ "${removed_ops_files_count}" != "0" ]]; then
+                  echo -e 'One or more operations files were deleted, please follow these practices: \nhttps://github.com/cloudfoundry/cf-deployment/blob/38874f5a2c2dce847b132cb076f6611e26e96572/ops-file-promotion-workflow.md'
+                  git diff --name-only --relative=operations --diff-filter=D develop HEAD
+                  exit 1
+                fi
+        - task: unit-test-ops-files
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: relintdockerhubpushbot/bosh-cli
+            inputs:
+            - name: cf-deployment-all-branches
+            params:
+              RUN_SEMANTIC: false
+            run:
+              dir: cf-deployment-all-branches
+              path: scripts/test
         on_failure:
           do:
           - task: write-pr-check-failure-comment
