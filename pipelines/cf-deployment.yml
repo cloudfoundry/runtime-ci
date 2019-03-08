@@ -14,7 +14,6 @@ groups:
   - lint-cf-deployment-manifest
   - branch-freshness
   - fresh-cats
-  - fresh-enable-docker-and-tasks
   - fresh-delete-deployment
   - fresh-smoke-tests
   - upgrade-set-feature-flags
@@ -58,7 +57,6 @@ groups:
   - fresh-cats
   - fresh-delete-deployment
   - fresh-deploy
-  - fresh-enable-docker-and-tasks
   - fresh-release-pool-manual
   - fresh-smoke-tests
   - bless-manifest
@@ -166,33 +164,13 @@ resources:
     - integration_config.json
     - reporter_config.json
 
-- name: luna-env-director-state
+- name: relint-envs
   type: git
   source:
     branch: master
-    uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key.private_key))
-- name: luna-env-integration-configs
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key.private_key))
-    paths:
-    - integration_config.json
-    - rats_integration_config.json
-- name: luna-env-vars-files
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/luna-env.git
-    private_key: ((luna_env_readwrite_deploy_key.private_key))
-    paths:
-    - deployment-name.yml
-    - network-name.yml
-    - syslog-vars.yml
-    - bbs-key-label.yml
-    - gcs-vars.yml
+    uri: git@github.com:cloudfoundry/relint-envs.git
+    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
+
 - name: trelawney-env-director-state
   type: git
   source:
@@ -481,34 +459,34 @@ jobs:
       passed: [fresh-acquire-pool]
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
-    - get: luna-env-vars-files
-    - get: luna-env-integration-configs
-    - get: luna-env-director-state
+    - get: relint-envs
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: luna-env-director-state
+      bbl-state: relint-envs
     params:
+      BBL_STATE_DIR: environments/test/luna/bbl-state
       DEPLOYMENT_NAME: luna-cf
       IGNORE_ERRORS: true
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
       base-ops-files: cf-deployment-develop
-      new-ops-files: luna-env-director-state
+      new-ops-files: relint-envs
     params:
       BASE_OPS_FILE_DIR: operations
       NEW_OPS_FILES: |
-        rename-isolation-segment-network.yml
-        change-postgres-max-connections.yml
+        environments/test/luna/rename-isolation-segment-network.yml
+        environments/test/luna/change-postgres-max-connections.yml
   - task: bosh-deploy-cf
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
-      bbl-state: luna-env-director-state
+      bbl-state: relint-envs
       cf-deployment: cf-deployment-develop
       ops-files: collected-ops-files
-      vars-files: luna-env-vars-files
+      vars-files: relint-envs
     params:
+      BBL_STATE_DIR: environments/test/luna/bbl-state
       SYSTEM_DOMAIN: luna.cf-app.com
       OPS_FILES: |
         operations/experimental/fast-deploy-with-downtime-and-danger.yml
@@ -523,57 +501,74 @@ jobs:
         operations/experimental/enable-tls-cloud-controller-postgres.yml
         operations/change-postgres-max-connections.yml
       VARS_FILES: |
-        deployment-name.yml
-        network-name.yml
-        bbs-key-label.yml
-        syslog-vars.yml
+        environments/test/luna/deployment-name.yml
+        environments/test/luna/network-name.yml
+        environments/test/luna/bbs-key-label.yml
+        environments/test/luna/syslog-vars.yml
       REGENERATE_CREDENTIALS: true
   - task: run-bosh-cleanup
     file: cf-deployment-concourse-tasks/bosh-cleanup/task.yml
     input_mapping:
-      bbl-state: luna-env-director-state
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/luna/bbl-state
   - task: update-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     params:
-      CATS_INTEGRATION_CONFIG_FILE: integration_config.json
+      BBL_STATE_DIR: environments/test/luna/bbl-state
+      CATS_INTEGRATION_CONFIG_FILE: environments/test/luna/integration_config.json
     input_mapping:
-      bbl-state: luna-env-director-state
-      integration-configs: luna-env-integration-configs
+      bbl-state: relint-envs
+      integration-configs: relint-envs
     ensure:
-      put: luna-env-integration-configs
+      put: relint-envs
       params:
         repository: updated-integration-configs
         rebase: true
   - task: ensure-gcloud-backend-service-healthy
     file: runtime-ci/tasks/ensure-gcloud-backend-service-healthy/task.yml
     input_mapping:
-      google-creds-dir: luna-env-director-state
+      google-creds-dir: relint-envs
     params:
       GCP_PROJECT_ID: ((luna_gcp_project))
       GCP_BACKEND_SERVICE: ((luna_router_backend_service))
-      GOOGLE_ACCOUNT_CREDS_PATH: google_account_creds.json
+      GOOGLE_ACCOUNT_CREDS_PATH: environments/test/luna/google_account_creds.json
   - task: ensure-api-healthy
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: luna.cf-app.com
-  - task: open-asgs-for-credhub
-    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
-    input_mapping:
-      bbl-state: luna-env-director-state
-    params:
-      BOSH_DEPLOYMENT: luna-cf
-      INSTANCE_GROUP_NAME: credhub
-      SYSTEM_DOMAIN: luna.cf-app.com
-      SECURITY_GROUP_NAME: credhub
-  - task: open-asgs-for-uaa
-    file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
-    input_mapping:
-      bbl-state: luna-env-director-state
-    params:
-      BOSH_DEPLOYMENT: luna-cf
-      INSTANCE_GROUP_NAME: uaa
-      SYSTEM_DOMAIN: luna.cf-app.com
-      SECURITY_GROUP_NAME: uaa
+  - aggregate:
+    - task: open-asgs-for-credhub
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/luna/bbl-state
+        BOSH_DEPLOYMENT: luna-cf
+        INSTANCE_GROUP_NAME: credhub
+        SYSTEM_DOMAIN: luna.cf-app.com
+        SECURITY_GROUP_NAME: credhub
+    - task: open-asgs-for-uaa
+      file: cf-deployment-concourse-tasks/open-asgs-for-bosh-instance-group/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/luna/bbl-state
+        BOSH_DEPLOYMENT: luna-cf
+        INSTANCE_GROUP_NAME: uaa
+        SYSTEM_DOMAIN: luna.cf-app.com
+        SECURITY_GROUP_NAME: uaa
+    - task: enable-docker-and-tasks
+      attempts: 2
+      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/luna/bbl-state
+        SYSTEM_DOMAIN: luna.cf-app.com
+        ENABLED_FEATURE_FLAGS: |
+          diego_docker
+          task_creation
 
 - name: upgrade-deploy
   serial: true
@@ -1091,23 +1086,22 @@ jobs:
   plan:
   - do:
     - get: fresh-pool
-      passed:
-      - fresh-enable-docker-and-tasks
+      passed: [ fresh-deploy ]
       trigger: true
     - aggregate:
-      - get: luna-env-director-state
+      - get: relint-envs
       - get: cf-deployment-develop
-        passed:
-        - fresh-enable-docker-and-tasks
+        passed: [ fresh-deploy ]
       - get: cf-deployment-concourse-tasks
     timeout: 1h
   - task: bosh-run-errand-smoke-tests
     file: cf-deployment-concourse-tasks/run-errand/task.yml
     params:
+      BBL_STATE_DIR: environments/test/luna/bbl-state
       ERRAND_NAME: smoke-tests
       DEPLOYMENT_NAME: luna-cf
     input_mapping:
-      bbl-state: luna-env-director-state
+      bbl-state: relint-envs
 
 - name: stable-smoke-tests
   serial_groups: [bellatrix-smokes]
@@ -1228,32 +1222,6 @@ jobs:
       params:
         DEPLOY_KEY: ((cf_acceptance_tests_readwrite_deploy_key.private_key))
 
-- name: fresh-enable-docker-and-tasks
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - timeout: 4h
-    do:
-    - get: fresh-pool
-      trigger: true
-      passed: [ fresh-deploy ]
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: luna-env-director-state
-      - get: cf-deployment-develop
-        passed: [ fresh-deploy ]
-    - task: enable-docker-and-tasks
-      attempts: 2
-      file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-      input_mapping:
-        bbl-state: luna-env-director-state
-      params:
-        SYSTEM_DOMAIN: luna.cf-app.com
-        ENABLED_FEATURE_FLAGS: |
-          diego_docker
-          task_creation
-
 - name: upgrade-set-feature-flags
   serial: true
   public: true
@@ -1340,19 +1308,21 @@ jobs:
     do:
     - get: fresh-pool
       trigger: true
-      passed: [ fresh-enable-docker-and-tasks ]
+      passed: [ fresh-deploy ]
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: cf-acceptance-tests-rc
-      - get: luna-env-integration-configs
+      - get: relint-envs
       - get: cf-deployment-develop
-        passed: [ fresh-enable-docker-and-tasks ]
+        passed: [ fresh-deploy ]
     - task: run-cats
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
-        integration-config: luna-env-integration-configs
+        integration-config: relint-envs
         cf-acceptance-tests: cf-acceptance-tests-rc
       params:
+        CONFIG_FILE_PATH: environments/test/luna/integration_config.json
+        REPORTER_CONFIG_FILE_PATH: environments/test/luna/reporter_config.json
         CAPTURE_LOGS: true
         RELINT_VERBOSE_AUTH: "true"
 
@@ -1451,12 +1421,13 @@ jobs:
       - fresh-smoke-tests
     - aggregate:
       - get: cf-deployment-concourse-tasks
-      - get: luna-env-director-state
+      - get: relint-envs
     - task: delete-deployment-cf
       file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
       input_mapping:
-        bbl-state: luna-env-director-state
+        bbl-state: relint-envs
       params:
+        BBL_STATE_DIR: environments/test/luna/bbl-state
         DEPLOYMENT_NAME: luna-cf
         IGNORE_ERRORS: true
     - put: fresh-pool
