@@ -159,21 +159,30 @@ jobs:
             params:
               RUN_SEMANTIC: false
             run:
-              dir: cf-deployment-all-branches
+              dir: ""
               path: bash
               args:
               - -c
               - |
                 #!/bin/bash
 
-                export TERM=xterm
-                git fetch -q origin develop:develop
-                removed_ops_files_count="$(git diff --name-only --relative=operations --diff-filter=D develop HEAD | wc -l)"
-                if [[ "${removed_ops_files_count}" != "0" ]]; then
-                  echo -e 'One or more operations files were deleted, please follow these practices: \nhttps://github.com/cloudfoundry/cf-deployment/blob/38874f5a2c2dce847b132cb076f6611e26e96572/ops-file-promotion-workflow.md'
-                  git diff --name-only --relative=operations --diff-filter=D develop HEAD
-                  exit 1
-                fi
+                cp -r cf-deployment-all-branches /tmp/
+                pushd cf-deployment-all-branches
+                  export TERM=xterm
+
+                  git config --global user.email "test"
+                  git config --global user.name "test"
+
+                  git fetch -q origin develop:develop
+                  git merge develop --no-edit -q
+
+                  removed_ops_files_count="$(git diff --name-only --relative=operations --diff-filter=D develop HEAD | wc -l)"
+                  if [[ "${removed_ops_files_count}" != "0" ]]; then
+                    echo -e 'One or more operations files were deleted, please follow these practices: \nhttps://github.com/cloudfoundry/cf-deployment/blob/38874f5a2c2dce847b132cb076f6611e26e96572/ops-file-promotion-workflow.md'
+                    git diff --name-only --relative=operations --diff-filter=D develop HEAD
+                    exit 1
+                  fi
+                popd
         - task: unit-test-ops-files
           config:
             platform: linux
