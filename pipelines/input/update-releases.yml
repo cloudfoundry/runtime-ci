@@ -107,6 +107,8 @@ opsReleases:
   repository: cloudfoundry-incubator/windows2016fs-online-release
 - name: node-exporter
   repository: cloudfoundry-community/node-exporter-boshrelease
+- name: leadership-election
+  repository: cloudfoundry/leadership-election-release
 
 windowsVersSupported:
 - name: windows2012R2

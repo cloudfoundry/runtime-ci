@@ -66,6 +66,7 @@ groups:
   - update-windows1803fs
   - update-windows2016fs
   - update-node-exporter
+  - update-leadership-election
 - name: update-windows-stemcells-and-releases
   jobs:
   - update-windows2012R2-stemcell
@@ -330,6 +331,10 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-community/node-exporter-boshrelease
+- name: leadership-election-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/leadership-election-release
 - name: binary-buildpack-release-gcs
   type: gcs-resource
   source:
@@ -4477,6 +4482,65 @@ jobs:
       DEPLOYMENT_NAME_SUFFIX: node-exporter
       SYSTEM_DOMAIN: greengrass.cf-app.com
   - task: commit-generated-manifest-and-ops-node-exporter
+    file: runtime-ci/tasks/commit-generated-manifest/task.yml
+    input_mapping:
+      repo: cf-deployment-develop
+      ops-file: updated-ops-file
+      manifest: cf-deployment-develop
+    params:
+      COMMIT_ALL_OPS_FILES: true
+  - put: cf-deployment-develop
+    params:
+      rebase: true
+      repository: updated-repo
+- name: update-leadership-election
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-develop
+    - get: cf-deployment-concourse-tasks
+    - get: greengrass-env-director-state
+    - get: leadership-election-release
+      trigger: true
+      params:
+        tarball: false
+    - get: stemcell
+      params:
+        tarball: false
+      passed: [ update-stemcell-and-recompile-releases ]
+  - task: update-release-leadership-election
+    file: runtime-ci/tasks/update-single-opsfile-release/task.yml
+    input_mapping:
+      release: leadership-election-release
+      original-ops-file: cf-deployment-develop
+    params:
+      RELEASE_NAME: leadership-election
+  - task: bosh-upload-stemcell
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: cf-deployment-develop
+    params:
+      INFRASTRUCTURE: google
+      OPS_FILES: |
+        operations/windows2012R2-cell.yml
+        operations/windows2016-cell.yml
+        operations/windows1803-cell.yml
+  - task: bosh-dry-run-leadership-election
+    file: runtime-ci/tasks/bosh-dry-run-with-all-ops/task.yml
+    input_mapping:
+      bbl-state: greengrass-env-director-state
+      cf-deployment: cf-deployment-develop
+      ops-files: updated-ops-file
+      vars-files: greengrass-env-director-state
+    params:
+      DEPLOYMENT_NAME_SUFFIX: leadership-election
+      SYSTEM_DOMAIN: greengrass.cf-app.com
+  - task: commit-generated-manifest-and-ops-leadership-election
     file: runtime-ci/tasks/commit-generated-manifest/task.yml
     input_mapping:
       repo: cf-deployment-develop
