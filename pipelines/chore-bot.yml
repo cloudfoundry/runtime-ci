@@ -49,3 +49,5 @@ jobs:
     params:
       path: chore-bot-source-with-config
       manifest: chore-bot-config-and-manifest/chore_bot/manifest.yml
+      environment_variables:
+        TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
