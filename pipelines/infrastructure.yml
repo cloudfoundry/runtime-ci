@@ -58,8 +58,6 @@ groups:
 
 - name: exploratory
   jobs:
-  - setup-infrastructure-hagrid
-  - destroy-infrastructure-hagrid
   - setup-infrastructure-maxime
   - destroy-infrastructure-maxime
 
@@ -151,13 +149,6 @@ resources:
     paths:
     - bbl-state
     - bbl-config
-
-- name: hagrid-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/hagrid-env.git
-    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
 
 - name: maxime-env-director-state
   type: git
@@ -377,35 +368,6 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
-
-- name: setup-infrastructure-hagrid
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: hagrid-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_CONFIG_DIR: bbl-config
-      BBL_STATE_DIR: bbl-state
-      BBL_ENV_NAME: hagrid-fresh
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_IAAS: gcp
-      BBL_LB_CERT: ((hagrid_cf_lb_cert.certificate))
-      BBL_LB_KEY: ((hagrid_cf_lb_cert.private_key))
-      LB_DOMAIN: hagrid.relint.rocks
-    input_mapping:
-      bbl-state: hagrid-env-director-state
-      bbl-config: hagrid-env-director-state
-    ensure:
-      put: hagrid-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
 
 - name: setup-infrastructure-maxime
   serial: true
@@ -1113,34 +1075,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-
-- name: destroy-infrastructure-hagrid
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: hagrid-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - try:
-      task: guarantee-no-existing-cf-deployment
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-      input_mapping:
-        bbl-state: hagrid-env-director-state
-  - try:
-      task: destroy-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-      input_mapping:
-        bbl-state: hagrid-env-director-state
-      params:
-        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      ensure:
-        put: hagrid-env-director-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
 
 - name: destroy-infrastructure-maxime
   serial: true
