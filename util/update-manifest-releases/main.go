@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
 
-var cfDeploymentIgnoreDirs = []string{".git", "scripts", "example-vars-files", "iaas-support"}
+var cfDeploymentIgnoreDirs = []string{".git", "scripts", "example-vars-files", "iaas-support", "ci"}
 var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml", ".overcommit.yml", "use-offline-windows2016fs.yml"}
 
 func getReleaseNames(buildDir string) ([]string, error) {
