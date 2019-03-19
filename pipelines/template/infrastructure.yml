@@ -1,0 +1,232 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:template", "template")
+
+#@ def combine_bbl_configs(env={}):
+- task: combine-bbl-configs
+  file: runtime-ci/tasks/combine-inputs/task.yml
+  input_mapping:
+    first-input: bosh-bootloader
+    second-input: relint-envs
+  params:
+    FIRST_DIR: #@ env.bbl.plan_patch
+    SECOND_DIR: #@ "{}/bbl-config".format(env.path)
+#@ end
+
+#@ def bbl_up(env={}):
+- task: setup-infrastructure
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  params:
+    BBL_STATE_DIR: #@ "{}/bbl-state".format(env.path)
+    BBL_IAAS: #@ env.iaas
+    BBL_ENV_NAME: #@ "{}-{}".format(env.env_name, env.name)
+    #@ if/end env.BBL_CONFIG_DIR:
+    BBL_CONFIG_DIR: #@ env.BBL_CONFIG_DIR
+    #@ if env.iaas=="gcp":
+    BBL_GCP_SERVICE_ACCOUNT_KEY: #@ "{}/google_account_creds.json".format(env.path)
+    #@ else:
+    BBL_AWS_ACCESS_KEY_ID: #@ "(({}_aws_access_key_id))".format(env.env_name)
+    BBL_AWS_SECRET_ACCESS_KEY: #@ "(({}_aws_secret_access_key))".format(env.env_name)
+    #@ end
+    BBL_GCP_REGION: #@ env.region
+    LB_DOMAIN: #@ "{}.cf-app.com".format(env.env_name)
+    #@ if env.SKIP_LB_CREATION:
+    SKIP_LB_CREATION: true
+    #@ else:
+    BBL_LB_CERT: #@ "(({}_cf_lb_cert.certificate))".format(env.env_name)
+    BBL_LB_KEY: #@ "(({}_cf_lb_cert.private_key))".format(env.env_name)
+    #@ end
+  input_mapping:
+    bbl-state: relint-envs
+    bbl-config: bosh-bootloader
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+#@ end
+
+---
+groups:
+#@ for env in data.values.envs:
+- name: #@ env.name
+  jobs:
+  - #@ "add-claimed-lock-{}".format(env.name)
+  - #@ "setup-infrastructure-{}".format(env.name)
+  - #@ "update-infrastructure-{}".format(env.name)
+  - #@ "destroy-infrastructure-{}".format(env.name)
+  - #@ "remove-claimed-lock-{}".format(env.name)
+#@ end
+
+resources:
+#! Pools
+#@ for env in data.values.envs:
+- name: #@ "{}-pool".format(env.name)
+  type: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: master
+    pool: #@ "cf-deployment/{}".format(env.name)
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+#@ end
+
+#! Plan patches
+- name: bosh-bootloader
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-bootloader
+
+#! Code repos
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+
+- name: relint-envs
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/relint-envs.git
+    private_key: ((hagrid_env_readwrite_deploy_key.private_key))
+
+#! Time
+- name: every-tuesday-morning
+  type: time
+  source:
+    start: 4:20
+    stop: 4:50
+    interval: 24h
+    days: [ Tuesday ]
+    location: America/Los_Angeles
+
+- name: daily
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 3:30 -0700
+    interval: 24h
+
+jobs:
+#@ for env in data.values.envs:
+- name: #@ "add-claimed-lock-{}".format(env.name)
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: #@ env.env_name
+    output_mapping:
+      pool-resource: #@ "{}-pool".format(env.name)
+  - put: #@ "{}-pool".format(env.name)
+    params:
+      add_claimed: #@ "{}-pool".format(env.name)
+
+- name: #@ "setup-infrastructure-{}".format(env.name)
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: #@ "{}-pool".format(env.name)
+    trigger: true
+    passed:
+    - #@ "add-claimed-lock-{}".format(env.name)
+  - aggregate:
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+    - get: bosh-bootloader
+  #@ if/end env.bbl:
+  - #@ template.replace(combine_bbl_configs(env))
+  - #@ template.replace(bbl_up(env))
+  - put: #@ "{}-pool".format(env.name)
+    params:
+      release: #@ "{}-pool".format(env.name)
+
+- name: #@ "update-infrastructure-{}".format(env.name)
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 12h
+    do:
+    - aggregate:
+      - put: #@ "{}-pool".format(env.name)
+        params:
+          acquire: true
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-bootloader
+      - get: every-tuesday-morning
+        trigger: true
+    #@ if/end env.bbl:
+    - #@ template.replace(combine_bbl_configs(env))
+    - #@ template.replace(bbl_up(env))
+    - put: #@ "{}-pool".format(env.name)
+      params:
+        release: #@ "{}-pool".format(env.name)
+
+- name: #@ "destroy-infrastructure-{}".format(env.name)
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - aggregate:
+    - put: #@ "{}-pool".format(env.name)
+      params:
+        claim: #@ env.env_name
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  #@ if/end env.delete_deployment:
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: #@ "{}/bbl-state".format(env.path)
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      #@ if env.iaas=="gcp":
+      BBL_GCP_SERVICE_ACCOUNT_KEY: #@ "{}/google_account_creds.json".format(env.path)
+      #@ else:
+      BBL_AWS_ACCESS_KEY_ID: #@ "(({}_aws_access_key_id))".format(env.env_name)
+      BBL_AWS_SECRET_ACCESS_KEY: #@ "(({}_aws_secret_access_key))".format(env.env_name)
+      #@ end
+      BBL_STATE_DIR: #@ "{}/bbl-state".format(env.path)
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: #@ "remove-claimed-lock-{}".format(env.name)
+  serial: true
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - get: runtime-ci
+  - get: #@ "{}-pool".format(env.name)
+    passed:
+    - #@ "destroy-infrastructure-{}".format(env.name)
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: #@ env.env_name
+    output_mapping:
+      pool-resource: #@ "{}-pool".format(env.name)
+  - put: #@ "{}-pool".format(env.name)
+    params:
+      remove: #@ "{}-pool".format(env.name)
+#@ end

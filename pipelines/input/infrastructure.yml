@@ -1,0 +1,75 @@
+#@data/values
+---
+envs:
+- name: fresh
+  env_name: luna
+  path: environments/test/luna
+  iaas: gcp
+  region: us-west1
+  BBL_CONFIG_DIR: plan-patches/iso-segs-gcp
+  SKIP_LB_CREATION: false
+  delete_deployment: true
+  bbl: {}
+
+- name: lite
+  env_name: snitch
+  path: environments/test/snitch-lite
+  iaas: gcp
+  region: us-central1
+  BBL_CONFIG_DIR: .
+  SKIP_LB_CREATION: true
+  delete_deployment: true
+  bbl:
+    plan_patch: plan-patches/bosh-lite-gcp
+
+- name: upgrade
+  env_name: trelawney
+  path: environments/test/trelawney
+  iaas: gcp
+  region: us-central1
+  BBL_CONFIG_DIR: bbl-config
+  SKIP_LB_CREATION: false
+  delete_deployment: false
+  bbl: {}
+
+- name: stable
+  env_name: bellatrix
+  path: environments/test/bellatrix
+  iaas: gcp
+  region: us-central1
+  BBL_CONFIG_DIR: .
+  SKIP_LB_CREATION: false
+  delete_deployment: true
+  bbl:
+    plan_patch: plan-patches/network-lb-gcp
+
+# aws env missing BBL_CONFIG_DIR, needs aws keys
+- name: experimental
+  env_name: hermione
+  path: environments/test/hermione
+  iaas: aws
+  region: us-west-2
+  BBL_CONFIG_DIR: null
+  SKIP_LB_CREATION: false
+  delete_deployment: true
+  bbl: {}
+
+- name: cats
+  env_name: cats
+  path: environments/test/cats
+  iaas: gcp
+  region: us-central1
+  BBL_CONFIG_DIR: plan-patches/network-lb-gcp
+  SKIP_LB_CREATION: false
+  delete_deployment: true
+  bbl: {}
+
+- name: bbr
+  env_name: baba-yaga
+  path: environments/test/baba-yaga
+  iaas: gcp
+  region: us-central1
+  BBL_CONFIG_DIR: plan-patches/network-lb-gcp
+  SKIP_LB_CREATION: false
+  delete_deployment: true
+  bbl: {}

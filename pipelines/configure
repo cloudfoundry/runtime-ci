@@ -4,6 +4,19 @@ main() {
   local CF_D_PIPELINES=(acceptance build-docker-images chore-bot infrastructure runtime-ci)
   local PIPELINE=${1?"Valid input ${CF_D_PIPELINES[@]}"}
 
+  if [[ "${PIPELINE}" == "infrastructure" ]]; then
+  cat > "${PROJECT_DIR}/pipelines/${PIPELINE}.yml" <<EOF
+## ======================================================================
+## GENERATED FILE. DO NOT EDIT
+## ======================================================================
+EOF
+
+  ytt template \
+    -f "${PROJECT_DIR}/pipelines/template/${PIPELINE}.yml" \
+    -f "${PROJECT_DIR}/pipelines/input/${PIPELINE}.yml" \
+    >> "${PROJECT_DIR}/pipelines/${PIPELINE}.yml"
+fi
+
   set -ex
   fly -t relint-ci sp -p "${PIPELINE}" -c "${PROJECT_DIR}/pipelines/${PIPELINE}.yml"
 }
