@@ -2,18 +2,32 @@
 
 set -u
 
-pushd runtime-ci >> /dev/null
-  FAIL=false
-  for task_file in tasks/*/task.yml; do
-    ack "$task_file" pipelines >> /dev/null
-    EXIT_STATUS=$?
-    if [[ $EXIT_STATUS -ne 0 ]]; then
-      FAIL=true
-      echo "$task_file is not used in any pipeline"
-    fi
-  done
-popd >> /dev/null
+main() {
+  local PIPELINE_REPOS=(runtime-ci cf-deployment cf-acceptance-tests cf-smoke-tests-release relint-acceptance-env)
 
-if $FAIL; then
-  exit 1
-fi
+  pushd runtime-ci >> /dev/null
+    FAIL=false
+    for task_file in tasks/*/task.yml; do
+      FOUND_IN_REPO=false
+      for repo in ${PIPELINE_REPOS[@]}; do
+        ack "$task_file" ../$repo/ci >> /dev/null
+        if [[ $? -eq 0 ]]; then
+          FOUND_IN_REPO=true
+          break
+        fi
+      done
+
+      if [[ $FOUND_IN_REPO == "false" ]]; then
+        FAIL=true
+        echo "$task_file is not used in any pipeline"
+      fi
+    done
+
+    if $FAIL; then
+      exit 1
+    fi
+  popd >> /dev/null
+
+}
+
+main "$@"

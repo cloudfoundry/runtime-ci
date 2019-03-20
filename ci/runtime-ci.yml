@@ -5,6 +5,39 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
+- name: cf-deployment
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-deployment.git
+    paths:
+    - ci/*
+
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
+    paths:
+    - ci/*
+
+- name: cf-smoke-tests-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-smoke-tests-release.git
+    paths:
+    - ci/*
+
+- name: relint-acceptance-env
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/relint-acceptance-env.git
+    private_key: ((relint_acceptance_deploy_key.private_key))
+    paths:
+    - ci/*
+
 - name: daily
   type: time
   source:
@@ -29,6 +62,14 @@ jobs:
   plan:
   - aggregate:
     - get: runtime-ci
+      trigger: true
+    - get: cf-deployment
+      trigger: true
+    - get: cf-acceptance-tests
+      trigger: true
+    - get: cf-smoke-tests-release
+      trigger: true
+    - get: relint-acceptance-env
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml

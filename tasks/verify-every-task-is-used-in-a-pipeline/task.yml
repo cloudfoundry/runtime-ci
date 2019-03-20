@@ -8,6 +8,10 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: cf-deployment
+- name: cf-acceptance-tests
+- name: cf-smoke-tests-release
+- name: relint-acceptance-env
 
 run:
   path: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task
