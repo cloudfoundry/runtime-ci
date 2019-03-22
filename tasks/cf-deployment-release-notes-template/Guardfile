@@ -1,18 +1,14 @@
-#vi:syn=ruby
+# vi:syn=ruby
 
 rspec_options = {
-			cmd:            'bundle exec rspec',
-			spec_paths:     ['.'],
-			all_on_start:   true
+			cmd:          'bundle exec rspec',
+			spec_paths:   ['.'],
+			all_on_start: true
 }
 
 guard :rspec, rspec_options do
-	watch(%r{^.+\.rb$})       { |m| puts "#{m[0]} changed."; '.' }
+	watch(%r{^.+\.rb$}) do |m|
+		puts "#{m[0]} changed."
+		'.'
+	end
 end
-
-# guard :shell do
-#   watch /.*\.rb$/ do |m|
-# 	  # `bundle exec rspec --force-color release_changes_spec.rb:475`
-# 	  `bundle exec rspec --force-color .`
-# 	end
-# end

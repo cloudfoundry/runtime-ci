@@ -23,9 +23,6 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    guard-shell (0.7.1)
-      guard (>= 2.0.0)
-      guard-compat (~> 1.0)
     hashdiff (0.3.4)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -72,7 +69,6 @@ PLATFORMS
 DEPENDENCIES
   guard
   guard-rspec
-  guard-shell
   hashdiff
   rspec
   webmock

@@ -1,11 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'rspec'
 gem 'hashdiff'
+gem 'rspec'
 gem 'webmock'
 
 group :development do
   gem 'guard'
-  gem 'guard-shell', require: false
   gem 'guard-rspec', require: false
 end
