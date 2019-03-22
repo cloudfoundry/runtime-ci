@@ -17,8 +17,8 @@ class ReleaseUpdates
       master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
-      changeSet = HashDiff.diff(master_releases_list, release_candidate_releases_list)
-      changeSet.each do |change|
+      change_set = HashDiff.diff(master_releases_list, release_candidate_releases_list)
+      change_set.each do |change|
         release_updates.load_change(change)
       end
 
@@ -29,13 +29,11 @@ class ReleaseUpdates
 
     def load_yaml_file(input_name, filename)
       filepath = File.join(input_name, filename)
-      if File.exists? filepath
-        file_text = File.read(filepath)
-        parsed_yaml = YAML.load(file_text)
 
-        return nil unless parsed_yaml
-        parsed_yaml
-      end
+      return nil unless File.exist? filepath
+
+      file_text = File.read(filepath)
+      YAML.load(file_text) || nil
     end
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
@@ -81,43 +79,60 @@ class ReleaseUpdates
     @updates[name] = release_update
   end
 
-  def convert_bosh_io_to_github_url(url)
+  def convert_bosh_io_to_github_url(bosh_url)
+    bosh_uri = URI(bosh_url)
+
+    return nil unless bosh_uri.host.match 'bosh.io'
+
+    generated_github_uri = generate_github_uri_from_bosh_io(bosh_uri)
+
+    find_correct_github_url_with_prefix(generated_github_uri)
+  end
+
+  def find_correct_github_url_with_prefix(generated_github_uri)
     tag_prefixes = ['v', '']
 
     tag_prefixes.each do |prefix|
-      generated_url = generate_github_url(url, prefix)
+      prefixed_github_uri = inject_tag_prefix_into_github_uri(generated_github_uri, prefix)
+      return nil unless prefixed_github_uri
 
-      return nil unless generated_url
-
-      generated_url_response = Net::HTTP.get_response(generated_url)
+      generated_url_response = Net::HTTP.get_response(prefixed_github_uri)
 
       ok = generated_url_response.code == '200'
       redirect = generated_url_response.code == '301'
 
-      return generated_url.to_s if ok
-      return generated_url_response.header['location'] if redirect
+      return prefixed_github_uri.to_s if ok
+
+      generated_url_response.header['location']
+      new_location = generated_url_response.header['location']
+
+      return find_correct_github_url_with_prefix(URI(new_location)) if redirect
     end
 
-    raise 'Unable to confirm release URL'
+    nil
   end
 
-  def generate_github_url(url, prefix = '')
-    u = URI(url)
-
-    return nil unless u.host.match 'bosh.io'
-
-    github_string = u.path.sub('/d/','')
+  def generate_github_uri_from_bosh_io(bosh_uri)
+    github_string = bosh_uri.path.sub('/d/', '')
     host, *path = github_string.split('/')
-    version = URI.decode_www_form(u.query).assoc('v').last
+    version = URI.decode_www_form(bosh_uri.query).assoc('v').last
 
     project_path = []
     project_path.concat(path)
     project_path << 'releases'
     project_path << 'tag'
-    project_path << prefix + version
+    project_path << version
 
     URI::HTTPS.build(host: host,
                      path: '/' + project_path.join('/'))
+  end
+
+  def inject_tag_prefix_into_github_uri(uri, prefix)
+    raise 'github.com url expected' unless uri&.host&.match 'github.com'
+
+    new_uri = uri.clone
+    new_uri.path = uri.path.gsub(%r{tag/v?}, 'tag/' + prefix)
+    new_uri
   end
 
   def get_update_by_name(release_name)

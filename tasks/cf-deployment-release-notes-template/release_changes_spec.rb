@@ -1,9 +1,24 @@
+require 'tmpdir'
 require 'rspec'
 require 'fileutils'
 require_relative './release_changes.rb'
 require 'webmock/rspec'
 
 describe 'ReleaseUpdates' do
+  before(:all) do
+    @current_work_dir = Dir.pwd
+    @tmp_work_dir = Dir.mktmpdir('cf-deployment-test')
+
+    Dir.chdir(@tmp_work_dir)
+  end
+
+  after(:all) do
+    Dir.chdir(@current_work_dir)
+    FileUtils.rm_rf(@tmp_work_dir) if File.exists?(@tmp_work_dir)
+  end
+
+  let(:ru) { ReleaseUpdates.new }
+
   describe 'load_from_files' do
     before(:all) do
       FileUtils.mkdir_p('cf-deployment-master/operations')
@@ -408,28 +423,65 @@ stemcells:
 HEREDOC
     end
 
-    it 'checks v prefixed url first and falls back to the plain if it fails' do
-
-      stub_request(:get, "https://github.com/org/release-1/releases/tag/v1.1.0").to_return(status: 404)
-      stub_request(:get, "https://github.com/org/release-1/releases/tag/1.1.0")
-
-      ReleaseUpdates.load_from_files('cf-deployment.yml')
-    end
-
-    it 'handles redirect' do
-      stub_request(:get, "https://github.com/org/release-1/releases/tag/v1.1.0")
-        .to_return(status: 301, headers: {'location': 'new/location'})
-      release_update = ReleaseUpdates.load_from_files('cf-deployment.yml')
-      release = release_update.get_update_by_name("release-1")
-      expect(release.old_url).to eq 'new/location'
-    end
-
     context 'release located outside of bosh.io' do
       let(:url) { 'https://not-bosh-at-all.io/some-release' }
       it 'should return an empty url' do
-        ru = ReleaseUpdates.new
         expect(ru.send(:convert_bosh_io_to_github_url, url)).to eq(nil)
       end
+    end
+  end
+
+  describe '#find_correct_github_url_with_prefix' do
+
+    context 'handles github redirect' do
+      before do
+        stub_request(:get, 'https://github.com/org/release-1/releases/tag/v1.1.0')
+          .to_return(status: 301, headers: {'location': 'https://github.com/new-org/release-1/releases/tag/v1.1.0'})
+      end
+
+      it 'same tag prefix' do
+        stub_request(:get, 'https://github.com/new-org/release-1/releases/tag/v1.1.0')
+          .to_return(status: 200)
+        release_update = ReleaseUpdates.load_from_files('cf-deployment.yml')
+        release = release_update.get_update_by_name("release-1")
+
+        expect(release.old_url).to eq 'https://github.com/new-org/release-1/releases/tag/v1.1.0'
+      end
+
+      it 'different tag prefix' do
+        stub_request(:get, 'https://github.com/new-org/release-1/releases/tag/v1.1.0')
+          .to_return(status: 404)
+        stub_request(:get, 'https://github.com/new-org/release-1/releases/tag/1.1.0')
+          .to_return(status: 200)
+
+        release_update = ReleaseUpdates.load_from_files('cf-deployment.yml')
+        release = release_update.get_update_by_name("release-1")
+
+        expect(release.old_url).to eq 'https://github.com/new-org/release-1/releases/tag/1.1.0'
+      end
+    end
+  end
+
+  describe '#generate_github_uri_from_bosh_io' do
+    let(:input_uri) { URI('https://bosh.io/d/github.com/org/release-1?v=1.1.0') }
+    let(:output_uri) { URI('https://github.com/org/release-1/releases/tag/1.1.0') }
+
+    it 'convert bosh.io url to github.com' do
+        expect(ru.send(:generate_github_uri_from_bosh_io, input_uri)).to eq(output_uri)
+    end
+  end
+
+  describe '#inject_tag_prefix_into_github_uri' do
+    let(:input_uri) { URI('https://github.com/org/release-1/releases/tag/1.1.0') }
+    let(:output_uri) { URI('https://github.com/org/release-1/releases/tag/1.1.0') }
+    let(:output_uri_with_tag_prefix) { URI('https://github.com/org/release-1/releases/tag/v1.1.0') }
+
+    it 'inject empty prefix' do
+        expect(ru.send(:inject_tag_prefix_into_github_uri, input_uri, '')).to eq(output_uri)
+    end
+
+    it 'inject v prefix' do
+        expect(ru.send(:inject_tag_prefix_into_github_uri, input_uri, 'v')).to eq(output_uri_with_tag_prefix)
     end
   end
 
