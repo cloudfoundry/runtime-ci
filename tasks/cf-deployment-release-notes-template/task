@@ -3,8 +3,6 @@ set -exu
 
 SCRIPT_DIR=runtime-ci/tasks/cf-deployment-release-notes-template
 pushd $SCRIPT_DIR
-  gem uninstall bundler
-  gem install bundler --version '2.0.1'
   bundle install
 popd
 
