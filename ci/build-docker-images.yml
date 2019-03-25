@@ -168,6 +168,9 @@ jobs:
       params:
         TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
         TRACKER_STORY_STATE: delivered
+        TRACKER_STORY_LABELS: |
+          needs-pm
+          new-cf-dct-release
         TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
         DESCRIPTION_FILE: version.json
 

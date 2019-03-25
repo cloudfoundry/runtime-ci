@@ -1,4 +1,18 @@
 #!/bin/bash -exu
+parse_labels() {
+  local labels
+  labels=""
+  for label in ${TRACKER_STORY_LABELS}
+  do
+    if [ -z "${labels}" ]; then
+      labels="\"${label}\""
+    else
+      labels="${labels}, \"${label}\""
+    fi
+  done
+
+  echo "${labels}"
+}
 
 create_tracker_request_body() {
   cat << EOF
@@ -7,15 +21,23 @@ create_tracker_request_body() {
   "story_type": "${TRACKER_STORY_TYPE}",
   "current_state": "${TRACKER_STORY_STATE}",
   "estimate": ${TRACKER_STORY_ESTIMATE},
-  "labels": ["needs-pm", "new-cf-dct-release"]
+  "labels": [${labels}]
 }
 EOF
 }
 
 set +x
 
-curl -f \
-  -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d "$(create_tracker_request_body)" \
-  "https://www.pivotaltracker.com/services/v5/projects/${TRACKER_PROJECT_ID}/stories"
+
+main() {
+  local labels
+  labels=$(parse_labels)
+
+  curl -f \
+    -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d "$(create_tracker_request_body)" \
+    "https://www.pivotaltracker.com/services/v5/projects/${TRACKER_PROJECT_ID}/stories"
+}
+
+main
