@@ -5,6 +5,9 @@ set -exu
 RUNTIME_CI_DIR="${PWD}/${RUNTIME_CI_DIR:?"\$RUNTIME_CI_DIR not set"}"
 
 pushd "${RUNTIME_CI_DIR}" > /dev/null
+  PARSED_BUNDLE_VERSION=$(sed -n '/BUNDLED WITH/{;n;p;}' Gemfile.lock)
+  gem uninstall bundler
+  gem install bundler --version "$PARSED_BUNDLE_VERSION"
   bundle install
   bundle exec rspec \
     --color \
