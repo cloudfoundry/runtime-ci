@@ -3,7 +3,7 @@ set -exu
 
 SCRIPT_DIR=runtime-ci/tasks/cf-deployment-release-notes-template
 pushd $SCRIPT_DIR
-  bundle install
+  bundle install --without development
 popd
 
 BUNDLE_GEMFILE=$SCRIPT_DIR/Gemfile \
