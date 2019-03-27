@@ -15,10 +15,10 @@ RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
 ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
-# https://golang.org/dl/ SHA256 Checksum: 1dfe664fa3d8ad714bbd15a36627992effd150ddabd7523931f077b3926d736d
+# https://golang.org/dl/ SHA256 Checksum: 2a3fdabf665496a0db5f41ec6af7a9b15a49fbe71a85a50ca38b1f13a103aeec
 RUN \
-  wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.11.2.linux-amd64.tar.gz -C /usr/local && \
+  wget https://dl.google.com/go/go1.12.1.linux-amd64.tar.gz -P /tmp && \
+  tar xzvf /tmp/go1.12.1.linux-amd64.tar.gz -C /usr/local && \
   mkdir $GOPATH && \
   go get -u github.com/onsi/ginkgo/... && \
   rm -rf /tmp/*
