@@ -270,13 +270,29 @@ stemcells:
 				Expect(updatedOpsFile2).To(MatchYAML(anotherExpectedOpsFileWithRelease4))
 			})
 
-			It("doesn't error scripts directory contains vars files", func() {
+			It("doesn't error if the scripts directory contains yml files", func() {
 				vars := `
 some_client: some_value
 `
 				err = os.Mkdir(filepath.Join(buildDir, "original-ops-file", "scripts"), os.ModePerm)
 
 				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "scripts", "vars-store.yml"), []byte(vars), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(0))
+			})
+
+			It("doesn't error if the units directory contains yml files", func() {
+				vars := `
+some_client: some_value
+`
+				err = os.Mkdir(filepath.Join(buildDir, "original-ops-file", "units"), os.ModePerm)
+
+				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "units", "vars-store.yml"), []byte(vars), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
@@ -312,7 +328,6 @@ some_client: some_value
 
 			Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
 		})
-
 
 		It("creates nested directories when the directory to write out the updated ops file path does not exist", func() {
 			updatedOpsFilePath := filepath.Join("doesnt-exist", "updated_ops_file.yml")
@@ -520,7 +535,6 @@ stemcells:
 
 			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version, ubuntu-trusty stemcell updated-stemcell-version"))
 		})
-
 
 		It("creates nested directory when the directory to write out the updated manifest does not exist", func() {
 			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join("doesnt-exist", "updated-manifest.yml"))
@@ -742,7 +756,6 @@ stemcells:
 
 			Expect(string(commitMessage)).To(Equal("Updated compiled releases with release1 0.2.0"))
 		})
-
 
 		It("creates nested directory when the directory to write out the updated ops file path does not exist", func() {
 			os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join("doesnt-exist", "updated_ops_file.yml"))
