@@ -140,16 +140,6 @@ resources:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 # Env repos
-- name: bellatrix-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/bellatrix-env.git
-    private_key: ((bellatrix_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
-    - bbl-config
-
 - name: maxime-env-director-state
   type: git
   source:
@@ -466,25 +456,26 @@ jobs:
     trigger: true
     passed: [ add-claimed-lock-stable ]
   - aggregate:
-    - get: bellatrix-env-director-state
+    - get: relint-envs
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
     - get: bosh-bootloader
   - task: combine-bbl-plan-patches
     file: runtime-ci/tasks/combine-inputs/task.yml
     input_mapping:
-      first-input: bellatrix-env-director-state
+      first-input: relint-envs
       second-input: bosh-bootloader
     params:
-      FIRST_DIR: bbl-config
+      FIRST_DIR: environments/test/bellatrix/bbl-config
       SECOND_DIR: plan-patches/network-lb-gcp
     output_mapping:
       combined-inputs: combined-plan-patches
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
       BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
       BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
@@ -492,10 +483,10 @@ jobs:
       BBL_ENV_NAME: bellatrix-stable
       BBL_CONFIG_DIR: .
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      bbl-state: relint-envs
       bbl-config: combined-plan-patches
     ensure:
-      put: bellatrix-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
@@ -740,7 +731,7 @@ jobs:
     - aggregate:
       - put: stable-pool
         params: {acquire: true}
-      - get: bellatrix-env-director-state
+      - get: relint-envs
       - get: cf-deployment-concourse-tasks
       - get: every-tuesday-morning
         trigger: true
@@ -749,28 +740,29 @@ jobs:
     - task: combine-bbl-plan-patches
       file: runtime-ci/tasks/combine-inputs/task.yml
       input_mapping:
-        first-input: bellatrix-env-director-state
+        first-input: relint-envs
         second-input: bosh-bootloader
       params:
-        FIRST_DIR: bbl-config
+        FIRST_DIR: environments/test/bellatrix/bbl-config
         SECOND_DIR: plan-patches/network-lb-gcp
       output_mapping:
         combined-inputs: combined-plan-patches
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
+        BBL_STATE_DIR: environments/test/bellatrix/bbl-state
         BBL_IAAS: gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
         BBL_GCP_REGION: us-central1
         BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
         BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
         LB_DOMAIN: bellatrix.cf-app.com
         BBL_CONFIG_DIR: .
       input_mapping:
-        bbl-state: bellatrix-env-director-state
+        bbl-state: relint-envs
         bbl-config: combined-plan-patches
       ensure:
-        put: bellatrix-env-director-state
+        put: relint-envs
         params:
           repository: updated-bbl-state
           rebase: true
@@ -978,18 +970,23 @@ jobs:
   - aggregate:
     - put: stable-pool
       params: {claim: bellatrix}
-    - get: bellatrix-env-director-state
+    - get: relint-envs
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state: bellatrix-env-director-state
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
+      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
     ensure:
-      put: bellatrix-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
