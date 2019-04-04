@@ -12,3 +12,9 @@ inputs:
 
 run:
   path: runtime-ci/tasks/cleanup-after-cats/task
+
+params:
+  CONFIG_FILE_PATH: integration_config.json
+  # - Optional
+  # - Path to the CATs integration configuration file.
+  # - The path is relative to the `integration-config` input.

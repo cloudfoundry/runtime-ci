@@ -1,9 +1,9 @@
 #!/bin/bash -exu
 
 set +x
-  cf_api=$(jq -r .api integration-config/integration_config.json)
-  cf_user=$(jq -r .admin_user integration-config/integration_config.json)
-  cf_password=$(jq -r .admin_password integration-config/integration_config.json)
+  cf_api=$(jq -r .api "integration-config/${CONFIG_FILE_PATH}")
+  cf_user=$(jq -r .admin_user "integration-config/${CONFIG_FILE_PATH}")
+  cf_password=$(jq -r .admin_password "integration-config/${CONFIG_FILE_PATH}")
 
   cf api ${cf_api} --skip-ssl-validation
   cf auth ${cf_user} ${cf_password}
