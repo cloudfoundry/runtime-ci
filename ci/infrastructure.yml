@@ -191,13 +191,6 @@ resources:
     - bbl-state
     - bbl-config
 
-- name: cats-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/cats-env.git
-    private_key: ((cats_env_readwrite_deploy_key.private_key))
-
 - name: baba-yaga-env-director-state
   type: git
   source:
@@ -563,13 +556,14 @@ jobs:
     passed: [ add-claimed-lock-cats ]
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: cats-env-director-state
+    - get: relint-envs
     - get: bosh-bootloader
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_STATE_DIR: environments/test/cats/bbl-state
       BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
       BBL_GCP_REGION: us-central1
       BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
       BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
@@ -577,10 +571,10 @@ jobs:
       BBL_CONFIG_DIR: plan-patches/network-lb-gcp
       BBL_ENV_NAME: cats
     input_mapping:
-      bbl-state: cats-env-director-state
+      bbl-state: relint-envs
       bbl-config: bosh-bootloader
     ensure:
-      put: cats-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
@@ -839,7 +833,7 @@ jobs:
     - aggregate:
       - put: cats-pool
         params: {acquire: true}
-      - get: cats-env-director-state
+      - get: relint-envs
       - get: cf-deployment-concourse-tasks
       - get: bosh-bootloader
       - get: every-tuesday-morning
@@ -847,8 +841,9 @@ jobs:
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
+        BBL_STATE_DIR: environments/test/cats/bbl-state
         BBL_IAAS: gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
+        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
         BBL_GCP_REGION: us-central1
         BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
         BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
@@ -856,10 +851,10 @@ jobs:
         BBL_CONFIG_DIR: plan-patches/network-lb-gcp
         BBL_ENV_NAME: cats
       input_mapping:
-        bbl-state: cats-env-director-state
+        bbl-state: relint-envs
         bbl-config: bosh-bootloader
       ensure:
-        put: cats-env-director-state
+        put: relint-envs
         params:
           repository: updated-bbl-state
           rebase: true
@@ -1042,18 +1037,23 @@ jobs:
   - aggregate:
     - put: cats-pool
       params: {claim: cats}
-    - get: cats-env-director-state
+    - get: relint-envs
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: cats-env-director-state
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/cats/bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
-      bbl-state: cats-env-director-state
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
+      BBL_STATE_DIR: environments/test/cats/bbl-state
     ensure:
-      put: cats-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
