@@ -147,16 +147,6 @@ resources:
     uri: git@github.com:cloudfoundry/maxime-env.git
     private_key: ((maxime_env_readwrite_deploy_key.private_key))
 
-- name: hermione-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/hermione-env.git
-    private_key: ((hermione_env_readwrite_deploy_key.private_key))
-    paths:
-    - bbl-state
-    - bbl-config
-
 - name: relint-envs
   type: git
   source:
@@ -503,10 +493,11 @@ jobs:
     passed: [ add-claimed-lock-experimental ]
   - aggregate:
     - get: cf-deployment-concourse-tasks
-    - get: hermione-env-director-state
+    - get: relint-envs
   - task: setup-infrastructure
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     params:
+      BBL_STATE_DIR: environments/test/hermione/bbl-state
       BBL_IAAS: aws
       BBL_AWS_REGION: us-west-2
       BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
@@ -517,10 +508,10 @@ jobs:
       LB_DOMAIN: hermione.cf-app.com
       BBL_ENV_NAME: hermione-experimental
     input_mapping:
-      bbl-state: hermione-env-director-state
-      bbl-config: hermione-env-director-state
+      bbl-state: relint-envs
+      bbl-config: relint-envs
     ensure:
-      put: hermione-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
@@ -779,13 +770,15 @@ jobs:
     - aggregate:
       - put: experimental-pool
         params: {acquire: true}
-      - get: hermione-env-director-state
+      - get: relint-envs
       - get: cf-deployment-concourse-tasks
       - get: every-tuesday-morning
         trigger: true
     - task: update-infrastructure
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       params:
+        BBL_STATE_DIR: environments/test/hermione/bbl-state
+        BBL_CONFIG_DIR: environments/test/hermione/bbl-config
         BBL_IAAS: aws
         BBL_AWS_REGION: us-west-2
         BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
@@ -794,12 +787,11 @@ jobs:
         BBL_LB_CERT: ((hermione_lbs_certificate))
         BBL_LB_KEY: ((hermione_lbs_private_key))
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ca))
-        BBL_CONFIG_DIR: bbl-config
       input_mapping:
-        bbl-state: hermione-env-director-state
-        bbl-config: hermione-env-director-state
+        bbl-state: relint-envs
+        bbl-config: relint-envs
       ensure:
-        put: hermione-env-director-state
+        put: relint-envs
         params:
           repository: updated-bbl-state
           rebase: true
@@ -999,21 +991,22 @@ jobs:
   - aggregate:
     - put: experimental-pool
       params: {claim: hermione}
-    - get: hermione-env-director-state
+    - get: relint-envs
     - get: cf-deployment-concourse-tasks
   - task: guarantee-no-existing-cf-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: hermione-env-director-state
+      bbl-state: relint-envs
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     params:
+      BBL_STATE_DIR: environments/test/hermione/bbl-state
       BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
       BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
     input_mapping:
-      bbl-state: hermione-env-director-state
+      bbl-state: relint-envs
     ensure:
-      put: hermione-env-director-state
+      put: relint-envs
       params:
         repository: updated-bbl-state
         rebase: true
