@@ -1,3 +1,29 @@
 #!/bin/bash -exu
 
-go run runtime-ci/tasks/ensure-api-healthy/main.go
+clean_up() {
+  cf delete-org healthy-org -f
+}
+
+main() {
+  local CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
+  local TARGET_URL=""
+
+  if [[ "${CHECK_ISOLATION_SEGMENT}" == "true" ]]; then
+    cf api "https://$(jq -r .api "${CONFIG_FILE}")" --skip-ssl-validation
+    cf auth $(jq -r .admin_user "${CONFIG_FILE}") $(jq -r .admin_password "${CONFIG_FILE}")
+    cf create-org healthy-org
+    trap clean_up EXIT
+    cf create-space healthy-space -o healthy-org
+    cf target -o healthy-org -s healthy-space
+    cf enable-org-isolation healthy-org $(jq -r .isolation_segment_name "${CONFIG_FILE}")
+    cf set-space-isolation-segment healthy-space $(jq -r .isolation_segment_name "${CONFIG_FILE}")
+    cf push healthy-app -d $(jq -r .isolation_segment_domain "${CONFIG_FILE}") -p cf-smoke-tests/assets/binary -b binary_buildpack
+    TARGET_URL="https://healthy-app.$(jq -r .isolation_segment_domain "${CONFIG_FILE}")"
+  else
+    TARGET_URL="http://$(jq -r .api "${CONFIG_FILE}")/v2/info"
+  fi
+
+  go run runtime-ci/tasks/ensure-api-healthy/main.go "${TARGET_URL}"
+}
+
+main "$@"

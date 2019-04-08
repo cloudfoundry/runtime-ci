@@ -15,7 +15,7 @@ const MIN_PROPAGATION_DELAY = 240
 
 func main() {
 	client := createHttpsClient()
-	v2InfoURL := fmt.Sprintf("https://api.%s/v2/info", os.Getenv("SYSTEM_DOMAIN"))
+	url := os.Args[1]
 
 	var (
 		firstSuccessTime    time.Time
@@ -23,7 +23,7 @@ func main() {
 	)
 
 	for startTime := time.Now(); time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC; time.Sleep(5 * time.Second) {
-		resp, err := client.Get(v2InfoURL)
+		resp, err := client.Get(url)
 		if err != nil || resp.StatusCode != 200 {
 			numSuccessResponses = 0
 			fmt.Printf("Received error from the API, resetting...\n")
