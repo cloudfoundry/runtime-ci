@@ -1,11 +1,13 @@
 #!/bin/bash -exu
 
+CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
+
 clean_up() {
   cf delete-org healthy-org -f
+  cf delete-isolation-segment $(jq -r .isolation_segment_name "${CONFIG_FILE}") -f
 }
 
 main() {
-  local CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
   local TARGET_URL=""
 
   if [[ "${CHECK_ISOLATION_SEGMENT}" == "true" ]]; then
@@ -15,6 +17,7 @@ main() {
     trap clean_up EXIT
     cf create-space healthy-space -o healthy-org
     cf target -o healthy-org -s healthy-space
+    cf create-isolation-segment $(jq -r .isolation_segment_name "${CONFIG_FILE}")
     cf enable-org-isolation healthy-org $(jq -r .isolation_segment_name "${CONFIG_FILE}")
     cf set-space-isolation-segment healthy-space $(jq -r .isolation_segment_name "${CONFIG_FILE}")
     cf push healthy-app -d $(jq -r .isolation_segment_domain "${CONFIG_FILE}") -p cf-smoke-tests/assets/binary -b binary_buildpack
