@@ -56,11 +56,6 @@ groups:
   - destroy-infrastructure-bbr
   - remove-claimed-lock-bbr
 
-- name: exploratory
-  jobs:
-  - setup-infrastructure-maxime
-  - destroy-infrastructure-maxime
-
 resources:
 # Pools
 - name: fresh-pool
@@ -139,14 +134,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
-# Env repos
-- name: maxime-env-director-state
-  type: git
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/maxime-env.git
-    private_key: ((maxime_env_readwrite_deploy_key.private_key))
-
 - name: relint-envs
   type: git
   source:
@@ -163,13 +150,6 @@ resources:
     interval: 24h
     days: [ Tuesday ]
     location: America/Los_Angeles
-
-- name: daily
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 3:30 -0700
-    interval: 24h
 
 jobs:
 # Add claimed locks
@@ -314,36 +294,6 @@ jobs:
         rebase: true
   - put: fresh-pool
     params: {release: fresh-pool}
-
-- name: setup-infrastructure-maxime
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: maxime-env-director-state
-    - get: cf-deployment-concourse-tasks
-    - get: bosh-bootloader
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: bbl-state
-      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
-      BBL_ENV_NAME: maxime-explore
-      BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_IAAS: gcp
-      BBL_LB_CERT: ((maxime_cf_ssl_cert.certificate))
-      BBL_LB_KEY: ((maxime_cf_ssl_cert.private_key))
-      LB_DOMAIN: maxime.cf-app.com
-    input_mapping:
-      bbl-state: maxime-env-director-state
-      bbl-config: bosh-bootloader
-    ensure:
-      put: maxime-env-director-state
-      params:
-        repository: updated-bbl-state
-        rebase: true
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -1061,34 +1011,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-
-- name: destroy-infrastructure-maxime
-  serial: true
-  public: true
-  build_logs_to_retain: 100
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: maxime-env-director-state
-    - get: cf-deployment-concourse-tasks
-  - try:
-      task: guarantee-no-existing-cf-deployment
-      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-      input_mapping:
-        bbl-state: maxime-env-director-state
-  - try:
-      task: destroy-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-      input_mapping:
-        bbl-state: maxime-env-director-state
-      params:
-        BBL_GCP_SERVICE_ACCOUNT_KEY: google_account_creds.json
-      ensure:
-        put: maxime-env-director-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
 
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
