@@ -1,0 +1,119 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+    tag: v6.5.0
+
+inputs:
+- name: cf-deployment-concourse-tasks  # - This repo
+- name: bbl-state  # - The env repo containing the Director's bbl state dir
+- name: bbl-config  # - The repo containing bbl plan patches
+# - If no plan patches are necessary in your case,
+#   we suggest you use `input_mapping`
+#   to map your `bbl-state` resource to `bbl-config`
+#   in order to satisfy this required input.
+
+outputs:
+- name: updated-bbl-state
+# - The bbl-state resource, with changes git committed,
+# - ready to be `put` to a git resource.
+# - This output _must_ be persisted for these tasks to function properly
+
+run:
+  path: cf-deployment-concourse-tasks/bbl-up/task
+
+params:
+  # AWS Configuration Params
+  # - Required for AWS
+  BBL_AWS_ACCESS_KEY_ID:
+  BBL_AWS_SECRET_ACCESS_KEY:
+  BBL_AWS_REGION:
+
+  # Azure Configuration Params
+  # - Required for Azure
+  BBL_AZURE_CLIENT_ID:
+  BBL_AZURE_CLIENT_SECRET:
+  BBL_AZURE_TENANT_ID:
+  BBL_AZURE_SUBSCRIPTION_ID:
+  BBL_AZURE_REGION:
+
+  # GCP Configuration Params
+  # - Required for GCP
+  BBL_GCP_SERVICE_ACCOUNT_KEY:
+  # - Key content or path to the file containing credentials downloaded from GCP
+  # - Path is relative to the `bbl-state` input
+  BBL_GCP_REGION:
+
+  BBL_STATE_DIR: bbl-state
+  # - Path to the directory containing the `bbl-state.json` file
+  # - The path is relative to the `bbl-state` input
+  # - If blank or '.', uses `bbl-state` input as the location for bbl state
+  # - If the specified path does not exist, it will be created
+
+  BBL_CONFIG_DIR:
+  # - Optional
+  # - Path to the directory containing bbl plan patches
+  # - The path is relative to the `bbl-config` input
+  # - If left empty, no customizations (i.e. ops-files, terraform templates, etc.) will be applied during `bbl up`
+
+  BBL_IAAS:
+  # - Required
+  # - The target IAAS which bbl will create infrastructure
+  # - Must be `aws` or `azure` or `gcp`
+
+  BBL_LB_CERT:
+  # - Required if `SKIP_LB_CREATION` is false
+  # - PEM encoded certificate to be associated with the load balancer
+  #   for SSL termination
+  # - Can be either the certificate content or a path to the certificate
+  # - If a path is provided, path is relative to the BBL_STATE_DIR
+
+  BBL_LB_CERT_CHAIN:
+  # - Optional
+  # - PEM encoded certificate to be associated with the load balancer
+  #   certificate chain
+  # - Can be either the certificate content or a path to the certificate
+  # - If a path is provided, path is relative to the BBL_STATE_DIR
+
+  BBL_LB_KEY:
+  # - Required if `SKIP_LB_CREATION` is false
+  # - PEM-encoded private key to be used for TLS termination on the load
+  #   balancer.
+  # - Can be either the key content or a path to the key
+  # - If a path is provided, path is relative to the BBL_STATE_DIR
+
+  LB_DOMAIN:
+  # - Required if `SKIP_LB_CREATION` is false
+  # - The domain which bbl will register
+
+  BBL_LB_TYPE: cf
+  # - Optional
+  # - The type of Load Balancer bbl should create
+  # - Only used if `SKIP_LB_CREATION` is false
+  # - Must be `cf` or `concourse`
+
+  BBL_ENV_NAME:
+  # - Optional
+  # - A label to apply to the bbl environment
+  # - Label will appear in the IaaS metadata/interface
+
+  GIT_COMMIT_EMAIL: "cf-release-integration@pivotal.io"
+  GIT_COMMIT_USERNAME: "CI Bot"
+  GIT_COMMIT_MESSAGE: "Update bbl state dir"
+  # - Optional
+  # - You may choose the git committer
+  #   username, email address and message by setting these
+
+  SKIP_LB_CREATION: false
+  # - Optional
+  # - Set to `true` to skip load balancer creation,
+  # - for example, a BOSH Lite environment
+
+  DEBUG_MODE: false
+  # - Optional
+  # - BE CAREFUL! For public pipelines it can cause credentials disclosure.
+  # - With `false` all output from BBL calls will be saved in log files inside concourse job only.
+  # - Set this to `true` to see all output straight in the pipeline.

@@ -1,10 +1,9 @@
 ---
 resources:
-- name: cf-deployment-concourse-tasks
+- name: runtime-ci
   type: git
   source:
-    branch: bbl-lb-type # change to master when merged: https://github.com/cloudfoundry/cf-deployment-concourse-tasks/pull/90
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: relint-envs
   type: git
@@ -23,9 +22,9 @@ jobs:
     do:
     - aggregate:
       - get: relint-envs
-      - get: cf-deployment-concourse-tasks
+      - get: runtime-ci
     - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: runtime-ci/bbl-up/task.yml
       params:
         BBL_STATE_DIR: environments/ci/concourse/bbl-state
         BBL_IAAS: gcp

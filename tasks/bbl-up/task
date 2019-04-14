@@ -1,0 +1,116 @@
+#!/bin/bash -xeu
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function check_fast_fails() {
+  set +x
+
+  if [[ "${SKIP_LB_CREATION}" == "false" && "${BBL_LB_TYPE}" == "cf" ]]; then
+    if [ -z "${LB_DOMAIN}" ]; then
+      echo "\$LB_DOMAIN is a required parameter.  Please set the domain."
+      exit 1
+    fi
+
+    if [ -z "${BBL_LB_CERT}"  ]; then
+      echo "\$BBL_LB_CERT is a required parameter"
+      exit 1
+    fi
+
+    if [ -z "${BBL_LB_KEY}"  ]; then
+      echo "\$BBL_LB_KEY is a required parameter"
+      exit 1
+    fi
+  fi
+
+  check_bbl_input_params
+
+  set -x
+}
+
+function write_bbl_certs() {
+  set +x
+  if [ -f "${BBL_LB_CERT}" ]; then
+    bbl_cert_path="${BBL_LB_CERT}"
+  else
+    echo "${BBL_LB_CERT}" > /tmp/bbl-cert
+    bbl_cert_path="/tmp/bbl-cert"
+  fi
+  if [ -f "${BBL_LB_CERT_CHAIN}" ]; then
+    bbl_cert_chain_flag="--lb-chain=${BBL_LB_CERT_CHAIN}"
+  elif [ ! -z "${BBL_LB_CERT_CHAIN// }" ]; then
+    echo "${BBL_LB_CERT_CHAIN}" > /tmp/bbl-cert-chain
+    bbl_cert_chain_flag="--lb-chain=/tmp/bbl-cert-chain"
+  fi
+  if [ -f "${BBL_LB_KEY}" ]; then
+    bbl_key_path="${BBL_LB_KEY}"
+  else
+    echo "${BBL_LB_KEY}" > /tmp/bbl-key
+    bbl_key_path="/tmp/bbl-key"
+  fi
+  set -x
+}
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  check_fast_fails
+
+  if [ "${BBL_IAAS}" == "gcp" ]; then
+    pushd "bbl-state"
+      write_gcp_service_account_key
+    popd
+  fi
+
+  mkdir -p "bbl-state/${BBL_STATE_DIR}"
+  pushd "bbl-state/${BBL_STATE_DIR}"
+    bbl version
+
+    local name_flag
+    name_flag=""
+
+    if [ -n "${BBL_ENV_NAME}" -a ! -f bbl-state.json ]; then
+      name_flag="--name ${BBL_ENV_NAME}"
+    fi
+
+    local lb_flags
+    lb_flags=""
+
+    if [[ "${SKIP_LB_CREATION}" == "false" && "${BBL_LB_TYPE}" == "cf" ]]; then
+      local bbl_cert_chain_flag
+      bbl_cert_chain_flag=""
+      local bbl_cert_path
+      local bbl_cert_key
+      write_bbl_certs
+
+      lb_flags="--lb-type=cf --lb-cert=${bbl_cert_path} ${bbl_cert_chain_flag} --lb-key=${bbl_key_path} --lb-domain=${LB_DOMAIN}"
+    elif [[ "${SKIP_LB_CREATION}" == "false" && -n "${BBL_LB_TYPE}" ]]; then
+      lb_flags="--lb-type=${BBL_LB_TYPE}"
+    fi
+
+    set -o pipefail
+    local drain
+    drain=">"
+
+    if [ "${DEBUG_MODE}" == "true" ] ; then
+      drain="| tee"
+    fi
+
+    eval bbl plan --debug \
+      ${name_flag} \
+      ${lb_flags} "2>&1" ${drain} "${root_dir}/bbl_plan.log"
+
+    if [ -n "${BBL_CONFIG_DIR}" ]; then
+      cp -r ${root_dir}/bbl-config/${BBL_CONFIG_DIR}/. .
+    fi
+
+    eval bbl --debug up \
+      ${name_flag} \
+      ${lb_flags} "2>&1" ${drain} "${root_dir}/bbl_up.log"
+  popd
+}
+
+trap "commit_bbl_state_dir ${PWD} '${GIT_COMMIT_MESSAGE}'" EXIT
+
+main ${PWD}
