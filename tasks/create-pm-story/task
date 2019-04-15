@@ -33,6 +33,7 @@ main() {
   local labels
   labels=$(parse_labels)
 
+  echo "$(create_tracker_request_body)"
   curl -f \
     -H "X-TrackerToken: ${TRACKER_API_TOKEN}" \
     -H "Content-Type: application/json" \
