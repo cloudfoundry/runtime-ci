@@ -5,12 +5,27 @@ resources:
   source:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
 - name: relint-envs
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/relint-envs.git
     private_key: ((hagrid_env_readwrite_deploy_key.private_key))
+
+# Time
+- name: every-monday-morning
+  type: time
+  source:
+    start: 0:00
+    stop: 0:30
+    interval: 24h
+    days: [ Monday ]
+    location: America/Los_Angeles
 
 jobs:
 - name: update-infrastructure-concourse
@@ -23,8 +38,11 @@ jobs:
     - aggregate:
       - get: relint-envs
       - get: runtime-ci
+      - get: cf-deployment-concourse-tasks
+      - get: every-monday-morning
+        trigger: true
     - task: update-infrastructure
-      file: runtime-ci/bbl-up/task.yml
+      file: runtime-ci/tasks/bbl-up/task.yml
       params:
         BBL_STATE_DIR: environments/ci/concourse/bbl-state
         BBL_IAAS: gcp
