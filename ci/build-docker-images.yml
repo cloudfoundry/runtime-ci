@@ -6,6 +6,9 @@ groups:
   jobs:
   - build-relint-base-docker-image
   - build-bosh-cli-docker-image
+- name: private-cats-image
+  jobs:
+  - build-relint-private-docker-image
 
 resources:
 - name: runtime-ci
@@ -112,6 +115,20 @@ resources:
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+
+- name: diego-docker-app-custom
+  type: docker-image
+  source:
+    repository: cloudfoundry/diego-docker-app-custom
+
+- name: relint-private-cats-image
+  type: docker-image
+  source:
+    repository: relintprivateregistry/privatecats
+    username: ((private_dockerhub.username))
+    password: ((private_dockerhub.password))
+    email: cf-release-integration+private-registry@pivotal.io
 
 - name: ubuntu-bionic-image
   type: docker-image
@@ -240,3 +257,18 @@ jobs:
         build: runtime-ci-bosh-cli/dockerfiles/bosh-cli/
         push: true
         build_args_file: version-json/version.json
+
+- name: build-relint-private-docker-image
+  public: true
+  build_logs_to_retain: 100
+  plan:
+  - timeout: 4h
+    do:
+    - get: diego-docker-app-custom
+      trigger: true
+      params:
+        save: true
+    - put: relint-private-cats-image
+      params:
+        load: diego-docker-app-custom
+        push: true
