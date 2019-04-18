@@ -140,7 +140,6 @@ jobs:
 - name: build-cf-deployment-concourse-tasks-docker-image
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -193,7 +192,6 @@ jobs:
 
 - name: build-relint-base-docker-image
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -209,7 +207,6 @@ jobs:
 
 - name: build-bosh-cli-docker-image
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:
@@ -260,7 +257,6 @@ jobs:
 
 - name: build-relint-private-docker-image
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 4h
     do:

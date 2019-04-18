@@ -31,7 +31,6 @@ jobs:
 - name: update-infrastructure-concourse
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:

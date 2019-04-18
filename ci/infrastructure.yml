@@ -156,7 +156,6 @@ jobs:
 - name: add-claimed-lock-fresh
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -171,7 +170,6 @@ jobs:
 - name: add-claimed-lock-lite
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -186,7 +184,6 @@ jobs:
 - name: add-claimed-lock-upgrade
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -201,7 +198,6 @@ jobs:
 - name: add-claimed-lock-stable
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -216,7 +212,6 @@ jobs:
 - name: add-claimed-lock-experimental
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -231,7 +226,6 @@ jobs:
 - name: add-claimed-lock-cats
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -246,7 +240,6 @@ jobs:
 - name: add-claimed-lock-bbr
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - task: prepare-to-modify-pool-resource
@@ -262,7 +255,6 @@ jobs:
 - name: setup-infrastructure-fresh
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: fresh-pool
     trigger: true
@@ -298,7 +290,6 @@ jobs:
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: lite-pool
     trigger: true
@@ -340,7 +331,6 @@ jobs:
 - name: setup-infrastructure-upgrade
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: upgrade-pool
     trigger: true
@@ -375,7 +365,6 @@ jobs:
 - name: setup-infrastructure-stable
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: stable-pool
     trigger: true
@@ -421,7 +410,6 @@ jobs:
 - name: setup-infrastructure-experimental
   serial_groups: [hermione]
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: experimental-pool
     trigger: true
@@ -456,7 +444,6 @@ jobs:
 - name: setup-infrastructure-cats
   serial_groups: [cats]
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: cats-pool
     trigger: true
@@ -491,7 +478,6 @@ jobs:
 - name: setup-infrastructure-bbr
   serial_groups: [bbr]
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: bbr-pool
     trigger: true
@@ -527,7 +513,6 @@ jobs:
 - name: update-infrastructure-fresh
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -566,7 +551,6 @@ jobs:
 - name: update-infrastructure-lite
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -617,7 +601,6 @@ jobs:
 - name: update-infrastructure-upgrade
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -654,7 +637,6 @@ jobs:
 - name: update-infrastructure-stable
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -702,7 +684,6 @@ jobs:
 - name: update-infrastructure-experimental
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -740,7 +721,6 @@ jobs:
 - name: update-infrastructure-cats
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -778,7 +758,6 @@ jobs:
 - name: update-infrastructure-bbr
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - timeout: 12h
     do:
@@ -817,7 +796,6 @@ jobs:
 - name: destroy-infrastructure-fresh
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: fresh-pool
@@ -846,7 +824,6 @@ jobs:
 - name: destroy-infrastructure-lite
   serial_groups: [snitch]
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: lite-pool
@@ -877,7 +854,6 @@ jobs:
 - name: destroy-infrastructure-upgrade
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: upgrade-pool
@@ -900,7 +876,6 @@ jobs:
 - name: destroy-infrastructure-stable
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: stable-pool
@@ -929,7 +904,6 @@ jobs:
 - name: destroy-infrastructure-experimental
   serial_groups: [hermione]
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: experimental-pool
@@ -957,7 +931,6 @@ jobs:
 - name: destroy-infrastructure-cats
   serial_groups: [cats]
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: cats-pool
@@ -986,7 +959,6 @@ jobs:
 - name: destroy-infrastructure-bbr
   serial_groups: [bbr]
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - put: bbr-pool
@@ -1016,7 +988,6 @@ jobs:
 - name: remove-claimed-lock-fresh
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: fresh-pool
@@ -1034,7 +1005,6 @@ jobs:
 - name: remove-claimed-lock-lite
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: lite-pool
@@ -1052,7 +1022,6 @@ jobs:
 - name: remove-claimed-lock-upgrade
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: upgrade-pool
@@ -1070,7 +1039,6 @@ jobs:
 - name: remove-claimed-lock-stable
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: stable-pool
@@ -1088,7 +1056,6 @@ jobs:
 - name: remove-claimed-lock-experimental
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: experimental-pool
@@ -1106,7 +1073,6 @@ jobs:
 - name: remove-claimed-lock-cats
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: cats-pool
@@ -1124,7 +1090,6 @@ jobs:
 - name: remove-claimed-lock-bbr
   serial: true
   public: true
-  build_logs_to_retain: 100
   plan:
   - get: runtime-ci
   - get: bbr-pool

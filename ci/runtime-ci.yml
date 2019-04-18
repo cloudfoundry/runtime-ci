@@ -48,7 +48,6 @@ resources:
 jobs:
 - name: all-jobs-public
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -58,7 +57,6 @@ jobs:
 
 - name: verify-every-task-is-used-in-a-pipeline
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
@@ -76,7 +74,6 @@ jobs:
 
 - name: stale-job-alert
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: daily
@@ -87,7 +84,6 @@ jobs:
 
 - name: run-update-manifest-releases-unit-tests
   public: true
-  build_logs_to_retain: 100
   plan:
   - aggregate:
     - get: runtime-ci
