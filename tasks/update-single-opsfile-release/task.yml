@@ -11,6 +11,8 @@ inputs:
   path: go/src/github.com/cloudfoundry/runtime-ci
 - name: original-ops-file
 - name: release
+- name: current-commit-message
+  optional: true
 
 outputs:
 - name: commit-message
