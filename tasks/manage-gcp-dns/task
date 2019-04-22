@@ -1,0 +1,92 @@
+#!/bin/bash -exu
+
+ROOT="${PWD}"
+
+function write_service_account_key_to_file() {
+  local service_account_path
+  service_account_path="$1"
+
+  set +x
+    echo "${GCP_DNS_SERVICE_ACCOUNT_KEY}" > "${service_account_path}"
+  set -x
+}
+
+function main() {
+  local gcp_service_account_key_path
+  gcp_service_account_key_path="/tmp/service_account_key.json"
+
+  write_service_account_key_to_file "${gcp_service_account_key_path}"
+  local GCP_DNS_SERVICE_ACCOUNT_EMAIL="$(jq -r .client_email ${gcp_service_account_key_path})"
+  gcloud auth activate-service-account "${GCP_DNS_SERVICE_ACCOUNT_EMAIL}" --key-file="${gcp_service_account_key_path}"
+
+  local dns_servers
+  dns_servers=()
+  if [[ -d "${ROOT}/bbl-states-repo" ]]; then
+    for dns_server in $(bbl --state-dir "${ROOT}/bbl-states-repo/${BBL_STATE_DIR}" lbs --json | jq -r ".cf_system_domain_dns_servers[] | ."); do
+      dns_servers+=("${dns_server}")
+    done
+  else
+    dns_servers=($(jq -r ".env_dns_zone_name_servers | join(\" \")" env-state/metadata))
+    GCP_DNS_RECORD_SET_NAME="$(cat env-state/name).${GCP_DNS_SUFFIX}"
+  fi
+
+  # Check for re-entrance
+  local GCP_DNS_PROJECT_ID="$(jq -r .project_id ${gcp_service_account_key_path})"
+  local zone_info
+  zone_info=$(gcloud --project="${GCP_DNS_PROJECT_ID}" dns record-sets list -z "${GCP_DNS_ZONE_NAME}" --filter "${GCP_DNS_RECORD_SET_NAME}" 2> /dev/null)
+
+
+ if [[ "${ACTION}" = "remove" && -z "${zone_info}" ]]; then
+   echo "DNS entry for \"${GCP_DNS_RECORD_SET_NAME}\" not found in zone \"${GCP_DNS_ZONE_NAME}\"."
+   return
+ fi
+
+  gcloud --project="${GCP_DNS_PROJECT_ID}" dns record-sets transaction start -z "${GCP_DNS_ZONE_NAME}"
+
+  if [[ -n "${zone_info}" ]]; then
+    outdated_dns_servers=$(echo "${zone_info}" | awk 'NR==2{print $4}' | sed 's/,/ /g')
+
+    gcloud --project="${GCP_DNS_PROJECT_ID}" dns record-sets transaction remove -z "${GCP_DNS_ZONE_NAME}" \
+      --name "${GCP_DNS_RECORD_SET_NAME}" \
+      --ttl "${GCP_DNS_RECORD_TTL}" \
+      --type NS \
+      ${outdated_dns_servers[@]}
+  fi
+
+  if [[ "${ACTION}" = "add" ]]; then
+    gcloud --project="${GCP_DNS_PROJECT_ID}" dns record-sets transaction add -z "${GCP_DNS_ZONE_NAME}" \
+      --name "${GCP_DNS_RECORD_SET_NAME}" \
+      --ttl "${GCP_DNS_RECORD_TTL}" \
+      --type NS \
+      "${dns_servers[@]}"
+  fi
+
+  gcloud --project="${GCP_DNS_PROJECT_ID}" dns record-sets transaction execute -z "${GCP_DNS_ZONE_NAME}"
+
+  # If you end up hitting your domain immediately after it has been added to
+  # the specified zone you run the risk of caching an NXDOMAIN response for
+  # requested domain. We need to wait at least 90 seconds to attempt to avoid
+  # this. NXDOMAIN caching can be as long as 5 minutes (resulting in flakes).
+
+  if [[ "${CHECK_DNS}" == "true" && "${ACTION}" == "add" ]]; then
+    sleep 90
+    check_dns "pcf.${GCP_DNS_RECORD_SET_NAME}"
+  fi
+}
+
+check_dns(){
+  local domain=${1?"there is no domain specified"}
+  local count=0
+  local max_successes="${MAX_SUCCESS_COUNT}"
+  while [[ "$count" -lt "$max_successes" ]]; do
+    if host "${domain}"; then
+      count=$((count + 1))
+    else
+      count=0
+    fi
+
+    sleep 5
+  done
+}
+
+main
