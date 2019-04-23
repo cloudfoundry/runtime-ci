@@ -7,8 +7,8 @@ image_resource:
     repository: cfinfrastructure/deployment
 
 inputs:
-  - name: ci
-  - name: bbl-states-repo
+  - name: runtime-ci
+  - name: bbl-state
 
 params:
   BBL_STATE_DIR:

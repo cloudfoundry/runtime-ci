@@ -21,8 +21,8 @@ function main() {
 
   local dns_servers
   dns_servers=()
-  if [[ -d "${ROOT}/bbl-states-repo" ]]; then
-    for dns_server in $(bbl --state-dir "${ROOT}/bbl-states-repo/${BBL_STATE_DIR}" lbs --json | jq -r ".cf_system_domain_dns_servers[] | ."); do
+  if [[ -d "${ROOT}/bbl-state" ]]; then
+    for dns_server in $(bbl --state-dir "${ROOT}/bbl-state/${BBL_STATE_DIR}" lbs --json | jq -r ".cf_system_domain_dns_servers[] | ."); do
       dns_servers+=("${dns_server}")
     done
   else
