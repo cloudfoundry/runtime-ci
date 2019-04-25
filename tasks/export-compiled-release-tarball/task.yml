@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: bbl-state
+- name: cf-deployment-concourse-tasks
+- name: manifest
+- name: runtime-ci
+
+outputs:
+- name: compiled-release-tarball
+
+run:
+  path: runtime-ci/tasks/export-compiled-release-tarball/task
+
+params:
+  BBL_STATE_DIR: bbl-state
+  DEPLOYMENT_NAME: cf
+  RELEASE_NAME:
+  MANIFEST_FILENAME: cf-deployment.yml
+  STEMCELL_OPS_FILE_PATH:

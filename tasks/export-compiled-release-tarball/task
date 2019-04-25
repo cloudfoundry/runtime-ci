@@ -1,0 +1,44 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function validate_variables() {
+  RELEASE_NAME="${RELEASE_NAME:?"RELEASE_NAME must be provided"}"
+}
+
+function export_release() {
+  local manifest_path="manifest/${MANIFEST_FILENAME}"
+
+  local interpolated_manifest_path
+  interpolated_manifest_path="$(mktemp)"
+
+  if [[ -f "manifest/${STEMCELL_OPS_FILE_PATH}" ]]; then
+    bosh int "${manifest_path}" -o "manifest/${STEMCELL_OPS_FILE_PATH}" > "${interpolated_manifest_path}"
+    manifest_path="${interpolated_manifest_path}"
+  fi
+
+  local stemcell_os
+  stemcell_os="$(bosh interpolate "${manifest_path}" --path "/stemcells/alias=default/os")"
+
+  local stemcell_os_version
+  stemcell_os_version="$(bosh interpolate "${manifest_path}" --path "/stemcells/os=${stemcell_os}/version")"
+
+  local bosh_release_version
+  bosh_release_version="$(bosh interpolate "${manifest_path}" --path "/releases/name=${RELEASE_NAME}/version")"
+
+  pushd compiled-release-tarball
+    bosh export-release -d "${DEPLOYMENT_NAME}" "${RELEASE_NAME}/${bosh_release_version}" "${stemcell_os}/${stemcell_os_version}"
+  popd
+}
+
+function main() {
+  validate_variables
+
+  setup_bosh_env_vars
+
+  export_release
+}
+
+main
