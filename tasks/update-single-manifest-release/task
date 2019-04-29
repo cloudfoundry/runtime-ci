@@ -9,7 +9,7 @@ function main() {
 
   ln -s release "${RELEASE_NAME}-release"
 
-  cp -r deployment-configuration/* updated-deployment-manifest
+  git clone deployment-configuration updated-deployment-manifest
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target manifest
