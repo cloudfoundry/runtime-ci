@@ -11,6 +11,8 @@ function main() {
 
   ln -s compiled-release-tarball "${RELEASE_NAME}-compiled-release-tarball"
 
+  cp -r original-compiled-release-ops-file/* updated-compiled-release-ops-file
+
   if [ -f current-commit-message/"${COMMIT_MESSAGE_PATH}" ]; then
     cp current-commit-message/"${COMMIT_MESSAGE_PATH}" commit-message/"${COMMIT_MESSAGE_PATH}"
   fi

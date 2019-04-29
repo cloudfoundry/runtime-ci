@@ -9,6 +9,8 @@ function main() {
 
   ln -s release "${RELEASE_NAME}-release"
 
+  cp -r original-ops-file/* updated-ops-file
+
   if [ -f current-commit-message/"${COMMIT_MESSAGE_PATH}" ]; then
     cp current-commit-message/"${COMMIT_MESSAGE_PATH}" commit-message/"${COMMIT_MESSAGE_PATH}"
   fi
