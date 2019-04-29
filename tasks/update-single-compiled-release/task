@@ -1,5 +1,9 @@
 #!/bin/bash -exu
 
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
+
 function main() {
   local root_dir
   root_dir="${1}"
@@ -11,15 +15,13 @@ function main() {
 
   ln -s compiled-release-tarball "${RELEASE_NAME}-compiled-release-tarball"
 
-  git clone original-compiled-release-ops-file updated-compiled-release-ops-file
-
-  if [ -f current-commit-message/"${COMMIT_MESSAGE_PATH}" ]; then
-    cp current-commit-message/"${COMMIT_MESSAGE_PATH}" commit-message/"${COMMIT_MESSAGE_PATH}"
-  fi
+  git clone original-compiled-releases-ops-file updated-compiled-releases-ops-file
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target "compiledReleasesOpsfile"
   popd
+
+  commit_with_message "${root_dir}/updated-compiled-releases-ops-file" "${root_dir}/commit-message/${COMMIT_MESSAGE_PATH}"
 }
 
 main "${PWD}"

@@ -36,7 +36,7 @@ func getReleaseNames(buildDir string) ([]string, error) {
 }
 
 func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error {
-	commitMessageFile := filepath.Join(buildDir, "commit-message", commitMessagePath)
+	commitMessageFile := filepath.Join(buildDir, commitMessagePath)
 
 	existingCommitMessage, err := ioutil.ReadFile(commitMessageFile)
 

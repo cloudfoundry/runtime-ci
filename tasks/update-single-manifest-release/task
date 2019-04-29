@@ -1,5 +1,9 @@
 #!/bin/bash -exu
 
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
+
 function main() {
   local root_dir
   root_dir="${1}"
@@ -14,6 +18,8 @@ function main() {
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target manifest
   popd
+
+  commit_with_message "${root_dir}/updated-deployment-manifest" "${root_dir}/commit-message/${COMMIT_MESSAGE_PATH}"
 }
 
 main "${PWD}"

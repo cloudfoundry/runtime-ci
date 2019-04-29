@@ -14,14 +14,12 @@ inputs:
 - name: stemcell
 
 outputs:
-- name: commit-message
 - name: updated-deployment-manifest
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-manifest-release/task
 
 params:
-  COMMIT_MESSAGE_PATH: commit-message.txt
   ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
   RELEASE_NAME:

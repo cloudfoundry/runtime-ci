@@ -12,17 +12,14 @@ inputs:
 - name: original-compiled-releases-ops-file
 - name: release
 - name: compiled-release-tarball
-- name: current-commit-message
 
 outputs:
-- name: commit-message
 - name: updated-compiled-releases-ops-file
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-compiled-release/task
 
 params:
-  COMMIT_MESSAGE_PATH: commit-message.txt
   RELEASE_NAME:
   ORIGINAL_OPS_FILE_PATH:
   UPDATED_OPS_FILE_PATH:

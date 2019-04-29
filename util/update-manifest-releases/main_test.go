@@ -130,7 +130,6 @@ var _ = Describe("main", func() {
 
 		BeforeEach(func() {
 			for _, dir := range []string{
-				"commit-message",
 				"original-ops-file",
 				"updated-ops-file",
 			} {
@@ -225,7 +224,7 @@ var _ = Describe("main", func() {
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(0))
 
-				commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+				commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
@@ -323,7 +322,7 @@ some_client: some_value
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
@@ -451,7 +450,6 @@ stemcells:
 
 		BeforeEach(func() {
 			for _, dir := range []string{
-				"commit-message",
 				"deployment-configuration",
 				"updated-deployment-manifest",
 				"stemcell",
@@ -530,7 +528,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version, ubuntu-trusty stemcell updated-stemcell-version"))
@@ -670,7 +668,6 @@ stemcells:
 
 		BeforeEach(func() {
 			for _, dir := range []string{
-				"commit-message",
 				"original-compiled-releases-ops-file",
 				"updated-compiled-releases-ops-file",
 			} {
@@ -728,7 +725,7 @@ stemcells:
 		})
 
 		It("does not overwrite the commit message if it says that there are changes", func() {
-			ioutil.WriteFile(filepath.Join(buildDir, "commit-message", os.Getenv("COMMIT_MESSAGE_PATH")), []byte("previous commit message with changes"), 0666)
+			ioutil.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("previous commit message with changes"), 0666)
 
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -736,14 +733,14 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("previous commit message with changes"))
 		})
 
 		It("updates commit message if current commit message says that there are no changes", func() {
-			ioutil.WriteFile(filepath.Join(buildDir, "commit-message", os.Getenv("COMMIT_MESSAGE_PATH")), []byte("No manifest release or stemcell version updates"), 0666)
+			ioutil.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("No manifest release or stemcell version updates"), 0666)
 
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -751,7 +748,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message", "commit-message.txt"))
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated compiled releases with release1 0.2.0"))

@@ -11,18 +11,14 @@ inputs:
   path: go/src/github.com/cloudfoundry/runtime-ci
 - name: original-ops-file
 - name: release
-- name: current-commit-message
-  optional: true
 
 outputs:
-- name: commit-message
 - name: updated-ops-file
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-opsfile-release/task
 
 params:
-  COMMIT_MESSAGE_PATH: commit-message.txt
   RELEASE_NAME:
   ORIGINAL_OPS_FILE_PATH:
   UPDATED_OPS_FILE_PATH:
