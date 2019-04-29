@@ -21,7 +21,7 @@ function main() {
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target "compiledReleasesOpsfile"
   popd
 
-  commit_with_message "${root_dir}/updated-compiled-releases-ops-file" "${root_dir}/commit-message/${COMMIT_MESSAGE_PATH}"
+  commit_with_message "${root_dir}/updated-compiled-releases-ops-file" "${root_dir}/${COMMIT_MESSAGE_PATH}"
 }
 
 main "${PWD}"

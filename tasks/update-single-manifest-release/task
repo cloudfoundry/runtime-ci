@@ -19,7 +19,7 @@ function main() {
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target manifest
   popd
 
-  commit_with_message "${root_dir}/updated-deployment-manifest" "${root_dir}/commit-message/${COMMIT_MESSAGE_PATH}"
+  commit_with_message "${root_dir}/updated-deployment-manifest" "${root_dir}/${COMMIT_MESSAGE_PATH}"
 }
 
 main "${PWD}"
