@@ -1,0 +1,10 @@
+#!/bin/bash -exu
+
+export GOPATH="$GOPATH:$PWD/go"
+
+pushd go/src/github.com/cloudfoundry/cf-acceptance-tests
+  gvt update github.com/cloudfoundry-incubator/cf-test-helpers
+
+  git add ./vendor
+  git commit -m "Update cf-test-helpers dependency"
+popd
