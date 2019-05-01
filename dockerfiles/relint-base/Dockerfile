@@ -21,6 +21,7 @@ RUN \
   tar xzvf /tmp/go1.12.1.linux-amd64.tar.gz -C /usr/local && \
   mkdir $GOPATH && \
   go get -u github.com/onsi/ginkgo/... && \
+  go get -u github.com/FiloSottile/gvt && \
   rm -rf /tmp/*
 
 # jq
