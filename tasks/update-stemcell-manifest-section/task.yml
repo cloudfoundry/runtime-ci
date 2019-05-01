@@ -13,7 +13,6 @@ inputs:
 - name: stemcell
 
 outputs:
-- name: commit-message
 - name: updated-deployment-manifest
 
 run:
