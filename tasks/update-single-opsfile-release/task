@@ -19,6 +19,12 @@ function main() {
     go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target opsfile
   popd
 
+  mkdir -p "${root_dir}/modified-ops-files"
+
+  pushd "${root_dir}/updated-ops-file"
+    git status --porcelain | awk '$1 == "M" { print $2 }' | xargs -n1 -I{} cp -pv {} "${root_dir}/modified-ops-files"
+  popd
+
   commit_with_message "${root_dir}/updated-ops-file" "${root_dir}/${COMMIT_MESSAGE_PATH}"
 }
 

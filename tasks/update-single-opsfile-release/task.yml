@@ -14,6 +14,7 @@ inputs:
 
 outputs:
 - name: updated-ops-file
+- name: modified-ops-files
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-opsfile-release/task
