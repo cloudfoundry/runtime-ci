@@ -13,7 +13,6 @@ inputs:
 
 outputs:
 - name: updated-stemcell-ops-file
-- name: commit-message
 
 run:
   path: runtime-ci/tasks/update-windows-stemcell-ops/task

@@ -1,15 +1,19 @@
 #!/bin/bash -exu
 
-update_windows_stemcell_opsfile() {
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/shared-functions
+
+function update_windows_stemcell_opsfile() {
   local windows_stemcell_version
   windows_stemcell_version=$(cat windows-stemcell/version)
 
   local windows_stack
   # e.g https://bosh-windows-stemcells-production.s3.amazonaws.com/1803/light-bosh-stemcell-1803.1-google-kvm-windows1803-go_agent.tgz
-  windows_stack=$(cat windows-stemcell/url | cut -d/ -f5 | cut -d- -f7)
+  windows_stack="$(cat windows-stemcell/url | cut -d/ -f5 | cut -d- -f7)"
 
   local stemcell_alias
-  stemcell_alias=$(bosh int ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH} --path=/path=~1stemcells~1-/value/alias)
+  stemcell_alias="$(bosh int "ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH}" --path=/path=~1stemcells~1-/value/alias)"
 
   update_windows_stemcell_ops_file=$(mktemp)
 (
@@ -27,29 +31,37 @@ cat << EOF
 EOF
 ) > "${update_windows_stemcell_ops_file}"
 
-  bosh interpolate ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH} -o "${update_windows_stemcell_ops_file}" > updated-stemcell-ops-file/${UPDATED_WINDOWS_OPS_FILE_PATH}
+  bosh interpolate "ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH}" -o "${update_windows_stemcell_ops_file}" > "updated-stemcell-ops-file/${UPDATED_WINDOWS_OPS_FILE_PATH}"
 }
 
-output_commit_message() {
+function generate_commit_message() {
   local current_stemcell_version
-  current_stemcell_version=$(bosh interpolate ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH} --path=/path=~1stemcells~1-/value/version)
+  current_stemcell_version="$(bosh interpolate "ops-files/${ORIGINAL_WINDOWS_OPS_FILE_PATH}" --path=/path=~1stemcells~1-/value/version)"
 
   local windows_stemcell_version
   windows_stemcell_version=$(cat windows-stemcell/version)
 
   local windows_stack
-  windows_stack=$(cat windows-stemcell/url | cut -d'/' -f6 | cut -d'-' -f4)
+  windows_stack="$(cat windows-stemcell/url | cut -d'/' -f6 | cut -d'-' -f4)"
 
   if [ "${current_stemcell_version}" == "${windows_stemcell_version}" ]; then
-    echo "No windows stemcell update" > commit-message/${COMMIT_MESSAGE_PATH}
+    echo "No windows stemcell update"
   else
-    echo "${windows_stack} stemcell updated to ${windows_stemcell_version}" > commit-message/${COMMIT_MESSAGE_PATH}
+    echo "${windows_stack} stemcell updated to ${windows_stemcell_version}"
   fi
 }
 
-main() {
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  git clone ops-files updated-stemcell-ops-file
+
   update_windows_stemcell_opsfile
-  output_commit_message
+
+  generate_commit_message > "${root_dir}/${COMMIT_MESSAGE_PATH}"
+
+  commit_with_message "${root_dir}/updated-stemcell-ops-file" "${root_dir}/${COMMIT_MESSAGE_PATH}"
 }
 
-main
+main "${PWD}"
