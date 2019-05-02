@@ -19,17 +19,16 @@ main() {
   local build_dir
   build_dir=$PWD
   pushd "${build_dir}/cf-deployment" > /dev/null
-		local version
+    local version
     version=$(cat "${build_dir}/release/version")
-
-		local branch_name
-		branch_name="update-${RELEASE_NAME}-release-${version}"
+    local branch_name
+    branch_name="update-${RELEASE_NAME}-release-${version}"
 
     if $(branch_exists . "${branch_name}") ; then
       echo "Branch already exists"
-			git log origin/develop...origin/${branch_name}
+      git log origin/develop...origin/${branch_name}
     else
-  		git checkout -B "${branch_name}"
+      git checkout -B "${branch_name}"
       git push -u origin "${branch_name}"
     fi
   popd > /dev/null
