@@ -1,32 +1,36 @@
-#! /bin/bash -eux
+#!/bin/bash -eux
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
 source runtime-ci/tasks/shared-functions
 
 main() {
+  local build_dir="${1}"
+
   set +x
-  deploy_key_location=$(mktemp)
+  local deploy_key_location
+  deploy_key_location="$(mktemp)"
+
   echo "${DEPLOY_KEY}" > "${deploy_key_location}"
   chmod 0600 "${deploy_key_location}"
   eval "$(ssh-agent -s)"
   ssh-add "${deploy_key_location}"
   rm "${deploy_key_location}"
+
   mkdir -p "${HOME}/.ssh"
   ssh-keyscan github.com,192.30.255.113 github.com,192.30.255.112 >> "${HOME}/.ssh/known_hosts"
   set -x
 
-  local build_dir
-  build_dir=$PWD
   pushd "${build_dir}/cf-deployment" > /dev/null
     local version
     version=$(cat "${build_dir}/release/version")
+
     local branch_name
     branch_name="update-${RELEASE_NAME}-release-${version}"
 
-      echo "Branch already exists"
-      git log origin/develop...origin/${branch_name}
     if branch_exists "." "${branch_name}"; then
+      echo "Branch already exists."
+      git log "origin/develop...origin/${branch_name}"
     else
       git checkout -B "${branch_name}"
       git push -u origin "${branch_name}"
@@ -34,4 +38,4 @@ main() {
   popd > /dev/null
 }
 
-main
+main "${PWD}"
