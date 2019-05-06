@@ -21,7 +21,17 @@ main() {
   ssh-keyscan github.com,192.30.255.113 github.com,192.30.255.112 >> "${HOME}/.ssh/known_hosts"
   set -x
 
-  pushd "${build_dir}/cf-deployment" > /dev/null
+  local cf_deployment_remote=""
+  pushd "${build_dir}/cf-deployment-develop" > /dev/null
+    cf_deployment_remote="$(git remote -v | awk '$3 == "(push)" { print $2 }')"
+  popd > /dev/null
+
+  if [[ -z "${cf_deployment_remote}" ]]; then
+    echo "Failed to determine cf-deployment remote."
+    exit 1
+  fi
+
+  pushd "${build_dir}/cf-deployment-release-candidate" > /dev/null
     local version
     version=$(cat "${build_dir}/release/version")
 
@@ -33,6 +43,7 @@ main() {
       git log "origin/develop...origin/${branch_name}"
     else
       git checkout -B "${branch_name}"
+      git remote set-url --push origin "${cf_deployment_remote}"
       git push -u origin "${branch_name}"
     fi
   popd > /dev/null
