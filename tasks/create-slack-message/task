@@ -1,0 +1,9 @@
+#!/bin/bash -exu
+
+main() {
+  go run runtime-ci/tasks/create-slack-message/main.go \
+    relint-team/team/cf-teams.yml \
+    $RELEASE_NAME
+}
+
+main
