@@ -24,9 +24,9 @@ main() {
     local branch_name
     branch_name="update-${RELEASE_NAME}-release-${version}"
 
-    if $(branch_exists . "${branch_name}") ; then
       echo "Branch already exists"
       git log origin/develop...origin/${branch_name}
+    if branch_exists "." "${branch_name}"; then
     else
       git checkout -B "${branch_name}"
       git push -u origin "${branch_name}"
