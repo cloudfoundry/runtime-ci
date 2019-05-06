@@ -13,5 +13,9 @@ inputs:
 - name: cf-acceptance-tests
   path: go/src/github.com/cloudfoundry/cf-acceptance-tests
 
+outputs:
+- name: updated-cf-acceptance-tests
+  path: go/src/github.com/cloudfoundry/cf-acceptance-tests
+
 run:
   path: runtime-ci/tasks/bump-cf-test-helpers/task
