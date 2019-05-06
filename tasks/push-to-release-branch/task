@@ -31,7 +31,7 @@ main() {
     exit 1
   fi
 
-  pushd "${build_dir}/cf-deployment-release-candidate" > /dev/null
+  pushd "${build_dir}/updated-cf-deployment" > /dev/null
     local version
     version=$(cat "${build_dir}/release/version")
 

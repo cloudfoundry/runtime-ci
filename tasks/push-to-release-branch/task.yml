@@ -7,10 +7,10 @@ image_resource:
     repository: relintdockerhubpushbot/bosh-cli
 
 inputs:
-- name: runtime-ci
-- name: cf-deployment-release-candidate
 - name: cf-deployment-develop
 - name: release
+- name: runtime-ci
+- name: updated-cf-deployment
 
 run:
   path: runtime-ci/tasks/push-to-release-branch/task
