@@ -36,7 +36,7 @@ main() {
     version=$(cat "${build_dir}/release/version")
 
     local branch_name
-    branch_name="update-${RELEASE_NAME}-release-${version}"
+    branch_name="$(branch_name ${RELEASE_NAME} ${version})"
 
     if branch_exists "." "${branch_name}"; then
       echo "Branch already exists."

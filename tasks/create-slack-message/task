@@ -1,0 +1,39 @@
+#!/bin/bash -exu
+
+source runtime-ci/tasks/shared-functions
+
+function create_message_file() {
+  cat > slack-message/message.txt <<EOF
+cf-deployment: $RELEASE_NAME/$RELEASE_VERSION> failed. Please review the details and reach out Rel-Int(<#$RELINT_SLACK_CHANNEL|release-integration>) for any questions.
+
+https://github.com/cloudfoundry/cf-deployment/tree/$(branch_name $RELEASE_NAME $RELEASE_VERSION)
+
+$LOGS_LINK
+EOF
+}
+
+function main() {
+  local RELEASE_VERSION="$(cat release/version)"
+  local BRANCH_NAME="$(branch_name $RELEASE_NAME $RELEASE_VERSION)"
+
+  export GOPATH="$PWD/go"
+  export PATH=$GOPATH/bin:$PATH
+
+  local cwd=$PWD
+
+  pushd runtime-ci/tasks/create-slack-message/
+    go run get-slack-channel.go \
+      -cf-teams=$cwd/relint-team/team/cf-teams.yml \
+      -release $RELEASE_NAME \
+      > $cwd/slack-message/channel.txt
+    local error_code=$?
+    if [[ "$error_code" != 0 ]]; then
+      echo "Failed to get slack channel for $RELEASE_NAME"
+      exit $error_code
+    fi
+  popd
+
+  create_message_file
+}
+
+main "$@"

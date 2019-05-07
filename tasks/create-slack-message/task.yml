@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+- name: runtime-ci
+- name: relint-team
+- name: release
+
+outputs:
+- name: slack-message
+
+run:
+  path: runtime-ci/tasks/create-slack-message/task
+
+params:
+  RELEASE_NAME:
+  RELINT_SLACK_CHANNEL: C0FAEKGUQ
+  LOGS_LINK: placeholder

@@ -43,3 +43,7 @@ function commit_with_message() {
     git show --color | cat
   popd > /dev/null
 }
+
+function branch_name() {
+  echo "update-$1-release-$2"
+}
