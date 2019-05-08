@@ -24,11 +24,11 @@ function main() {
   pushd runtime-ci/tasks/create-slack-message/
     go run get-slack-channel.go \
       -cf-teams=$cwd/relint-team/team/cf-teams.yml \
-      -release $RELEASE_NAME \
+      -repository $REPOSITORY \
       > $cwd/slack-message/channel.txt
     local error_code=$?
     if [[ "$error_code" != 0 ]]; then
-      echo "Failed to get slack channel for $RELEASE_NAME"
+      echo "Failed to get slack channel for $REPOSITORY"
       exit $error_code
     fi
   popd

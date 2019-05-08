@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -23,16 +22,16 @@ type cfTeam struct {
 func main() {
 	var cfTeamsPath string
 	flag.StringVar(&cfTeamsPath, "cf-teams", "", "path to the CF Teams yaml file")
-	var releaseName string
-	flag.StringVar(&releaseName, "release", "", "name of release, without -release suffix (e.g. pxc)")
+	var repository string
+	flag.StringVar(&repository, "repository", "", "repository, as it appears on bosh.io (e.g. cloudfoundry/capi-release)")
 	flag.Parse()
 
 	if cfTeamsPath == "" {
 		fmt.Fprintf(os.Stderr, "-cf-teams is a required flag\n")
 		os.Exit(1)
 	}
-	if releaseName == "" {
-		fmt.Fprintf(os.Stderr, "-release is a required flag\n")
+	if repository == "" {
+		fmt.Fprintf(os.Stderr, "-repository is a required flag\n")
 		os.Exit(1)
 	}
 
@@ -46,7 +45,7 @@ func main() {
 
 	for _, team := range teams.Teams {
 		for _, release := range team.Releases {
-			if strings.Contains(release, releaseName) {
+			if release == repository {
 				teamSlackChannel = team.SlackChannel
 			}
 		}

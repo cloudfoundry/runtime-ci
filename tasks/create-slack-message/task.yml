@@ -19,5 +19,6 @@ run:
 
 params:
   RELEASE_NAME:
+  REPOSITORY:
   RELINT_SLACK_CHANNEL: C0FAEKGUQ
   LOGS_LINK: placeholder
