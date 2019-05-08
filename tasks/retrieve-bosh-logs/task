@@ -5,7 +5,7 @@ source cf-deployment-concourse-tasks/shared-functions
 
 main() {
   setup_bosh_env_vars
-  bosh logs --dir=bosh-logs
+  bosh -d "${DEPLOYMENT_NAME}" logs --dir=bosh-logs
 }
 
 main "$@"

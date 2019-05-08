@@ -19,3 +19,4 @@ run:
 
 params:
   BBL_STATE_DIR: bbl-state
+  DEPLOYMENT_NAME: cf
