@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: relint-team
 - name: release
+- name: bosh-logs
 
 outputs:
 - name: slack-message
@@ -21,4 +22,4 @@ params:
   RELEASE_NAME:
   REPOSITORY:
   RELINT_SLACK_CHANNEL: C0FAEKGUQ
-  LOGS_LINK: placeholder
+  BOSH_LOGS_PREFIX:
