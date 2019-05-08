@@ -1,0 +1,11 @@
+#!/bin/bash -exu
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+main() {
+  setup_bosh_env_vars
+  bosh logs --dir=bosh-logs
+}
+
+main "$@"
