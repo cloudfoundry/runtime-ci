@@ -2,11 +2,12 @@
 
 set -eux
 
-has_no_commits_in_last_month () {
-  local BRANCH=$1
-  local MONTHS=$2
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/shared-functions
 
-  [[ -z $(git log -1 --since="$MONTHS months ago" -s "$BRANCH") ]]
+has_no_commits_in_last_months () {
+  [[ -z $(git log -1 --since="$2 months ago" -s "$1") ]]
 }
 
 fetch_all_branches () {
@@ -24,7 +25,7 @@ main() {
     fetch_all_branches
     branches=$(git branch -r | grep -v -- "->" )
     for branch in ${branches}; do
-      if has_no_commits_in_last_month "$branch" "$MONTHS"; then
+      if has_no_commits_in_last_months "$branch" "$MONTHS"; then
         stale_branches+=("$branch")
 
         if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
