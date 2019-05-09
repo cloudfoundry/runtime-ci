@@ -3,7 +3,10 @@
 set -eux
 
 has_no_commits_in_last_month () {
-  [[ -z $(git log -1 --since='2 months ago' -s "$1") ]]
+  local BRANCH=$1
+  local MONTHS=$2
+
+  [[ -z $(git log -1 --since="$MONTHS months ago" -s "$BRANCH") ]]
 }
 
 fetch_all_branches () {
@@ -11,21 +14,32 @@ fetch_all_branches () {
   git fetch --all
 }
 
-declare -a stale_branches=()
-pushd repo > /dev/null
-  fetch_all_branches
-  branches=$(git branch -r | grep -v -- "->" )
-  for branch in ${branches}; do
-    if has_no_commits_in_last_month "$branch"; then
-      stale_branches+=("$branch")
-    fi
-  done
-popd
+main() {
+  if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
+    load_github_deploy_key "${DEPLOY_KEY}"
+  fi
 
-num_stale_branches=${#stale_branches[@]}
-if [[ $num_stale_branches -ne 0 ]]; then
-  echo "The following branches have not been updated in the last two months:"
-  echo "${stale_branches[@]}"
-  exit 1
-fi
+  declare -a stale_branches=()
+  pushd repo > /dev/null
+    fetch_all_branches
+    branches=$(git branch -r | grep -v -- "->" )
+    for branch in ${branches}; do
+      if has_no_commits_in_last_month "$branch" "$MONTHS"; then
+        stale_branches+=("$branch")
 
+        if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
+          git push origin --delete "${branch}"
+        fi
+      fi
+    done
+  popd
+
+  num_stale_branches=${#stale_branches[@]}
+  if [[ $num_stale_branches -ne 0 ]]; then
+    echo "The following branches have not been updated in the last $MONTHS months:"
+    echo "${stale_branches[@]}"
+    exit 1
+  fi
+}
+
+main "$@"

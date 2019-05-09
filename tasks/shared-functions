@@ -47,3 +47,21 @@ function commit_with_message() {
 function branch_name() {
   echo "update-$1-release-$2"
 }
+
+function load_github_deploy_key() {
+  local DEPLOY_KEY=$1
+
+  set +x
+  local deploy_key_location
+  deploy_key_location="$(mktemp)"
+
+  echo "${DEPLOY_KEY}" > "${deploy_key_location}"
+  chmod 0600 "${deploy_key_location}"
+  eval "$(ssh-agent -s)"
+  ssh-add "${deploy_key_location}"
+  rm "${deploy_key_location}"
+
+  mkdir -p "${HOME}/.ssh"
+  ssh-keyscan github.com,192.30.255.113 github.com,192.30.255.112 >> "${HOME}/.ssh/known_hosts"
+  set -x
+}

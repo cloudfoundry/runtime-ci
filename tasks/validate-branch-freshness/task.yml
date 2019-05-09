@@ -12,3 +12,8 @@ inputs:
 
 run:
   path: runtime-ci/tasks/validate-branch-freshness/task
+
+params:
+  MONTHS: 2
+  DELETE_STALE_BRANCHES: false
+  DEPLOY_KEY:
