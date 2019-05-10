@@ -24,7 +24,11 @@ get_git_tag() {
 clone_git_repo() {
   local destination
   destination=${1}
+
+  set +x
   load_github_deploy_key "${DEPLOY_KEY}"
+  set -x
+
   git clone git@github.com:cloudfoundry/cf-acceptance-tests.git ${destination}
 }
 

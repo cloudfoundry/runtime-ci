@@ -7,7 +7,9 @@ source runtime-ci/tasks/shared-functions
 main() {
   local build_dir="${1}"
 
+  set +x
   load_github_deploy_key "${DEPLOY_KEY}"
+  set -x
 
   local cf_deployment_remote=""
   pushd "${build_dir}/cf-deployment-develop" > /dev/null

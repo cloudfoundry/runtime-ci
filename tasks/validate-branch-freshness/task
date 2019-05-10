@@ -17,7 +17,9 @@ fetch_all_branches () {
 
 main() {
   if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
+    set +x
     load_github_deploy_key "${DEPLOY_KEY}"
+    set -x
   fi
 
   declare -a stale_branches=()
