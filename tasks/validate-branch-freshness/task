@@ -38,7 +38,7 @@ main() {
   popd
 
   num_stale_branches=${#stale_branches[@]}
-  if [[ $num_stale_branches -ne 0 ]]; then
+  if [[ $num_stale_branches -ne 0 &&  "$DELETE_STALE_BRANCHES" == "false" ]]; then
     echo "The following branches have not been updated in the last $MONTHS months:"
     echo "${stale_branches[@]}"
     exit 1
