@@ -31,7 +31,7 @@ main() {
         stale_branches+=("$branch")
 
         if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
-          git push origin --delete "${branch}"
+          git push origin --delete "$(sed -e 's?origin/??' ${branch})"
         fi
       fi
     done
