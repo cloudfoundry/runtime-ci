@@ -28,4 +28,4 @@ pushd repository
   commit_with_message "$PWD" <(echo "Update cf-test-helpers dependency")
 popd
 
-cp -r repository/* updated-repository
+cp -r repository/. updated-repository
