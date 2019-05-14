@@ -4,9 +4,15 @@ source runtime-ci/tasks/shared-functions
 
 export GOPATH="$GOPATH:$PWD/go"
 
-pushd go/src/github.com/cloudfoundry/cf-acceptance-tests
-  gvt update github.com/cloudfoundry-incubator/cf-test-helpers
+pushd go/src/github.com/cloudfoundry-incubator/cf-test-helpers
+  CF_TEST_HELPERS_SHA=$(git rev-parse HEAD)
+popd
 
-  git add ./vendor
+pushd go/src/github.com/cloudfoundry/cf-acceptance-tests
+  go get "github.com/cloudfoundry-incubator/cf-test-helpers@${CF_TEST_HELPERS_SHA}"
+  go mod tidy
+  go mod vendor
+
+  git add go.sum go.mod ./vendor
   commit_with_message $PWD <(echo "Update cf-test-helpers dependency")
 popd
