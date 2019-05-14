@@ -3,6 +3,7 @@
 source runtime-ci/tasks/shared-functions
 
 export GOPATH="$GOPATH:$PWD/go"
+export GO111MODULE=on
 
 pushd go/src/github.com/cloudfoundry-incubator/cf-test-helpers
   CF_TEST_HELPERS_SHA=$(git rev-parse HEAD)
