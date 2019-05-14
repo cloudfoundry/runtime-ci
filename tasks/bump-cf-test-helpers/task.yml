@@ -13,7 +13,7 @@ inputs:
 - name: repository
 
 outputs:
-- name: update-repository
+- name: updated-repository
 
 run:
   path: runtime-ci/tasks/bump-cf-test-helpers/task
