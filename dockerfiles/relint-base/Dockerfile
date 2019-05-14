@@ -1,4 +1,6 @@
-FROM ubuntu:trusty
+FROM ubuntu:bionic
+
+ENV go_version 1.12.5
 
 RUN \
   apt-get update && \
@@ -9,7 +11,8 @@ RUN \
     unzip \
     wget \
     curl \
-    ack-grep
+    ack-grep \
+    go-dep
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
@@ -17,11 +20,10 @@ ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 # https://golang.org/dl/ SHA256 Checksum: 2a3fdabf665496a0db5f41ec6af7a9b15a49fbe71a85a50ca38b1f13a103aeec
 RUN \
-  wget https://dl.google.com/go/go1.12.1.linux-amd64.tar.gz -P /tmp && \
-  tar xzvf /tmp/go1.12.1.linux-amd64.tar.gz -C /usr/local && \
-  mkdir $GOPATH && \
+  wget https://golang.org/dl/go${go_version}.linux-amd64.tar.gz -P /tmp && \
+  tar xzvf /tmp/go${go_version}.linux-amd64.tar.gz -C /usr/local && \
+  mkdir ${GOPATH} && \
   go get -u github.com/onsi/ginkgo/... && \
-  go get -u github.com/FiloSottile/gvt && \
   rm -rf /tmp/*
 
 # jq
