@@ -56,7 +56,7 @@ main() {
     fi
     git remote add master-cats ${build_dir}/cf-acceptance-tests
     git remote update
-    git merge --ff-only master-cats/master
+    git merge --ff-only "master-cats/${CATS_BRANCH}"
     git push
   popd > /dev/null
 }
