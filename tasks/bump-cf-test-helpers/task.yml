@@ -10,12 +10,14 @@ inputs:
 - name: runtime-ci
 - name: cf-test-helpers
   path: go/src/github.com/cloudfoundry-incubator/cf-test-helpers
-- name: cf-acceptance-tests
-  path: go/src/github.com/cloudfoundry/cf-acceptance-tests
+- name: repository
 
 outputs:
-- name: updated-cf-acceptance-tests
-  path: go/src/github.com/cloudfoundry/cf-acceptance-tests
+- name: update-repository
 
 run:
   path: runtime-ci/tasks/bump-cf-test-helpers/task
+
+params:
+  USE_GO_MOD: true
+  REPOSITORY: ""
