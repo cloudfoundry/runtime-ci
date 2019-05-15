@@ -22,6 +22,7 @@ function commit_with_message() {
 
   pushd "${repo_dir}" > /dev/null
     if [[ -z "$(git status --porcelain)" ]]; then
+      popd > /dev/null
       return
     fi
 
