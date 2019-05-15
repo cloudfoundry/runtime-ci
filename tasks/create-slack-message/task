@@ -3,12 +3,16 @@
 source runtime-ci/tasks/shared-functions
 
 function create_message_file() {
+  local BOSH_LOGS_LINK=""
+  if [[ -e "$BOSH_LOGS_PREFIX/$(basename bosh-logs/cf-*.tgz)" ]]; then
+    BOSH_LOGS_LINK="$BOSH_LOGS_PREFIX/$(basename bosh-logs/cf-*.tgz)" 
+  fi
   cat > slack-message/message.txt <<EOF
 cf-deployment: $RELEASE_NAME/$RELEASE_VERSION> failed. Please review the details and reach out to Rel-Int(<#$RELINT_SLACK_CHANNEL|release-integration>) for any questions.
 
 https://github.com/cloudfoundry/cf-deployment/tree/$(branch_name $RELEASE_NAME $RELEASE_VERSION)
 
-$BOSH_LOGS_PREFIX/$(basename bosh-logs/cf-*.tgz)
+$BOSH_LOGS_LINK
 EOF
 }
 
