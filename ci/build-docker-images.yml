@@ -2,6 +2,8 @@ groups:
 - name: cf-deployment-concourse-tasks
   jobs:
   - build-cf-deployment-concourse-tasks-docker-image
+  - ship-it-major
+  - ship-it-minor
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -31,6 +33,7 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     private_key: ((cfdct_readwrite_deploy_key.private_key))
     paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
+
 - name: uptimer
   type: git
   source:
@@ -99,6 +102,16 @@ resources:
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
+
+- name: cf-deployment-concourse-tasks-docker-image-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
+    branch: master
+    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
+    git_user: "CF RELINT BOT <cf-release-integration@pivotal.io>"
+    file: cf-deployment-concourse-tasks-docker-image-version
 
 - name: relint-base-image
   type: docker-image
@@ -189,6 +202,56 @@ jobs:
           new-cf-dct-release
         TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
         DESCRIPTION_FILE: version.json
+
+- name: ship-it-major
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks-docker-image-version
+      params: {bump: major}
+    - get: cf-deployment-concourse-tasks-pipeline-image
+      passed:
+      - build-cf-deployment-concourse-tasks-docker-image
+  - task: generate-major-version-file
+    file: runtime-ci/tasks/generate-major-version-file/task.yml
+    input_mapping:
+      semantic_version: cf-deployment-concourse-tasks-docker-image-version
+  - put: cf-deployment-concourse-tasks-pipeline-image
+    params:
+      tag_file: major_version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-pipeline-image
+    params:
+      tag_file: cf-deployment-concourse-tasks-docker-image-version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-docker-image-version
+    params: {bump: major}
+
+- name: ship-it-minor
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks-docker-image-version
+      params: {bump: minor}
+    - get: cf-deployment-concourse-tasks-pipeline-image
+      passed:
+      - build-cf-deployment-concourse-tasks-docker-image
+  - task: generate-major-version-file
+    file: runtime-ci/tasks/generate-major-version-file/task.yml
+    input_mapping:
+      semantic_version: cf-deployment-concourse-tasks-docker-image-version
+  - put: cf-deployment-concourse-tasks-pipeline-image
+    params:
+      tag_file: major_version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-pipeline-image
+    params:
+      tag_file: cf-deployment-concourse-tasks-docker-image-version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-docker-image-version
+    params: {bump: minor}
 
 - name: build-relint-base-docker-image
   public: true
