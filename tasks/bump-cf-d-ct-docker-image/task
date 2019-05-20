@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+
+source runtime-ci/tasks/shared-functions
+
+function main() {
+  pushd cf-deployment-concourse-tasks
+    local OLD_VERSION="$(bosh int tasks/bbl-up/task.yml --path /image_resource/source/tag)"
+    local NEW_VERSION=$(cat version/version)
+    perl -pi -e "s/$OLD_VERSION/v$NEW_VERSION/g" **/task.yml
+    git add */task.yml
+    commit_with_message $PWD <(echo "Update docker image to $NEW_VERSION")
+  popd
+}
+
+main

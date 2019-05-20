@@ -4,6 +4,7 @@ groups:
   - build-cf-deployment-concourse-tasks-docker-image
   - ship-it-major
   - ship-it-minor
+  - bump-cf-d-ct-docker-image
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -252,6 +253,26 @@ jobs:
       tag_prefix: v
   - put: cf-deployment-concourse-tasks-docker-image-version
     params: {bump: minor}
+
+- name: bump-cf-d-ct-docker-image
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-image-version
+      trigger: true
+      passed:
+      - ship-it-minor
+      - ship-it-major
+  - task: bump-cf-d-ct-docker-image
+    file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
+    input_mapping:
+      version: cf-deployment-concourse-tasks-docker-image-version
+  - put: cf-deployment-concourse-tasks
+    params:
+      repository: cf-deployment-concourse-tasks-updated
+      rebase: true
 
 - name: build-relint-base-docker-image
   public: true
