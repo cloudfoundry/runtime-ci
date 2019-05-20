@@ -1,0 +1,36 @@
+#!/bin/bash -eux
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function main() {
+  check_input_params
+  setup_bosh_env_vars
+  setup_interpolate_env_vars_for_first_ops_file
+  bosh_interpolate
+  if [ "$REGENERATE_CREDENTIALS" == true ]; then
+    remove_credentials_from_credhub
+  fi
+  upload_stemcells
+  # shellcheck disable=SC2086
+  bosh_deploy ${BOSH_DEPLOY_ARGS}
+}
+
+main
+
+function setup_interpolate_env_vars_for_first_ops_file() {
+  local ops_to_test
+  set +e
+  ops_to_test=$(find ops-files -name '*.yml' -not -path '*/community/*' | cut -d'/' -f 2,3,4,5 | grep -v 'operations/dry-run.yml')
+  set -e
+
+  for ops in $ops_to_test; do
+    local ops_file=$ops
+    break
+  done
+
+  export MANIFEST_FILE
+  MANIFEST_FILE=cf-deployment.yml
+
+  OPS_FILES="$OPS_FILES $ops_file"
+}
