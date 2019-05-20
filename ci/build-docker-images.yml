@@ -1,10 +1,14 @@
 groups:
 - name: cf-deployment-concourse-tasks
   jobs:
+  - bump-cf-d-ct-docker-image
+  - ship-it-minor-cf-d-ct
+  - ship-it-major-cf-d-ct
+- name: cf-deployment-concourse-tasks-docker-image
+  jobs:
   - build-cf-deployment-concourse-tasks-docker-image
   - ship-it-major
   - ship-it-minor
-  - bump-cf-d-ct-docker-image
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -27,13 +31,20 @@ resources:
     stop: 7:30 -0700
     interval: 168h
 
-- name: cf-deployment-concourse-tasks
+- name: cf-deployment-concourse-tasks-dockerfile
   type: git
   source:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     private_key: ((cfdct_readwrite_deploy_key.private_key))
     paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
+
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    private_key: ((cfdct_readwrite_deploy_key.private_key))
 
 - name: uptimer
   type: git
@@ -114,6 +125,16 @@ resources:
     git_user: "CF RELINT BOT <cf-release-integration@pivotal.io>"
     file: cf-deployment-concourse-tasks-docker-image-version
 
+- name: cf-deployment-concourse-tasks-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
+    branch: master
+    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
+    git_user: "CF RELINT BOT <cf-release-integration@pivotal.io>"
+    file: cf-deployment-concourse-tasks-version
+
 - name: relint-base-image
   type: docker-image
   source:
@@ -163,7 +184,7 @@ jobs:
         trigger: true
       - get: uptimer
         trigger: true
-      - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-dockerfile
         trigger: true
       - get: terraform-github-release
         trigger: true
@@ -187,7 +208,7 @@ jobs:
       params:
         build: cf-deployment-concourse-tasks-updated/dockerfiles/cf-deployment-concourse-tasks
         push: true
-    - put: cf-deployment-concourse-tasks
+    - put: cf-deployment-concourse-tasks-dockerfile
       params:
         repository: cf-deployment-concourse-tasks-updated
         rebase: true
@@ -273,6 +294,38 @@ jobs:
     params:
       repository: cf-deployment-concourse-tasks-updated
       rebase: true
+
+- name: ship-it-minor-cf-d-ct
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks-version
+      params: {bump: minor}
+    - get: cf-deployment-concourse-tasks
+  - put: cf-deployment-concourse-tasks
+    params:
+      repository: cf-deployment-concourse-tasks
+      tag: cf-deployment-concourse-tasks-version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-version
+    params: {bump: minor}
+
+- name: ship-it-major-cf-d-ct
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks-version
+      params: {bump: major}
+    - get: cf-deployment-concourse-tasks
+  - put: cf-deployment-concourse-tasks
+    params:
+      repository: cf-deployment-concourse-tasks
+      tag: cf-deployment-concourse-tasks-version/version
+      tag_prefix: v
+  - put: cf-deployment-concourse-tasks-version
+    params: {bump: major}
 
 - name: build-relint-base-docker-image
   public: true
