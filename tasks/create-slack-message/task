@@ -1,43 +1,53 @@
-#!/bin/bash -exu
+#!/bin/bash -eu
 
+# shellcheck disable=SC1091
 source runtime-ci/tasks/shared-functions
 
 function create_message_file() {
-  local BOSH_LOGS_LINK=""
-  if [[ -e "$BOSH_LOGS_PREFIX/$(basename bosh-logs/cf-*.tgz)" ]]; then
-    BOSH_LOGS_LINK="$BOSH_LOGS_PREFIX/$(basename bosh-logs/cf-*.tgz)" 
+  local release_version
+  release_version="$1"
+
+  local release_branch
+  release_branch="$2"
+
+  local bosh_logs_link=""
+  if [[ -e "bosh-logs/$(basename bosh-logs/cf-*.tgz)" ]]; then
+    bosh_logs_link="${BOSH_LOGS_PREFIX}/$(basename bosh-logs/cf-*.tgz)"
+  else
+    bosh_logs_link="unavailable"
   fi
+
   cat > slack-message/message.txt <<EOF
-cf-deployment: $RELEASE_NAME/$RELEASE_VERSION> failed. Please review the details and reach out to Rel-Int(<#$RELINT_SLACK_CHANNEL|release-integration>) for any questions.
+cf-deployment: ${RELEASE_NAME}/${release_version} failed. Please review the details and reach out in <#${RELINT_SLACK_CHANNEL}|release-integration> with any questions.
 
-https://github.com/cloudfoundry/cf-deployment/tree/$(branch_name $RELEASE_NAME $RELEASE_VERSION)
+CI job: ${RELINT_CI_URL_PREFIX}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}
 
-$BOSH_LOGS_LINK
+Branch containing changes: https://github.com/cloudfoundry/cf-deployment/tree/${release_branch}
+
+BOSH logs: ${bosh_logs_link}
 EOF
 }
 
 function main() {
-  local RELEASE_VERSION="$(cat release/version)"
-  local BRANCH_NAME="$(branch_name $RELEASE_NAME $RELEASE_VERSION)"
+  local release_version
+  release_version="$(cat release/version)"
 
-  export GOPATH="$PWD/go"
-  export PATH=$GOPATH/bin:$PATH
+  local release_branch
+  release_branch="$(branch_name "${RELEASE_NAME}" "${release_version}")"
 
-  local cwd=$PWD
+  local cwd="${PWD}"
+
+  export GOPATH="${cwd}/go"
+  export PATH="${GOPATH}/bin:${PATH}"
 
   pushd runtime-ci/tasks/create-slack-message/
     go run get-slack-channel.go \
-      -cf-teams=$cwd/relint-team/team/cf-teams.yml \
-      -repository $REPOSITORY \
-      > $cwd/slack-message/channel.txt
-    local error_code=$?
-    if [[ "$error_code" != 0 ]]; then
-      echo "Failed to get slack channel for $REPOSITORY"
-      exit $error_code
-    fi
+      -cf-teams="${cwd}/relint-team/team/cf-teams.yml" \
+      -repository="${REPOSITORY}" \
+      > "${cwd}/slack-message/channel.txt"
   popd
 
-  create_message_file
+  create_message_file "${release_version}" "${release_branch}"
 }
 
 main "$@"

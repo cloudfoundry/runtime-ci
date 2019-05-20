@@ -19,7 +19,8 @@ run:
   path: runtime-ci/tasks/create-slack-message/task
 
 params:
-  RELEASE_NAME:
-  REPOSITORY:
-  RELINT_SLACK_CHANNEL: C0FAEKGUQ
   BOSH_LOGS_PREFIX:
+  RELEASE_NAME:
+  RELINT_CI_URL_PREFIX: https://release-integration.ci.cf-app.com
+  RELINT_SLACK_CHANNEL: C0FAEKGUQ
+  REPOSITORY:
