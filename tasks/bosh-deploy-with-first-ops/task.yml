@@ -10,6 +10,7 @@ inputs:
 - name: bbl-state
 - name: cf-deployment
 - name: ops-files
+- name: modified-ops-files
 - name: vars-files
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
