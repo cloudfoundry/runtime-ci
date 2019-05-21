@@ -18,7 +18,12 @@ function main() {
   git clone original-compiled-releases-ops-file updated-compiled-releases-ops-file
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target "compiledReleasesOpsfile"
+    go run main.go \
+      --build-dir "${root_dir}" \
+      --input-dir "original-compiled-releases-ops-file" \
+      --output-dir "updated-compiled-releases-ops-file" \
+      --release "${RELEASE_NAME}" \
+      --target "compiledReleasesOpsfile"
   popd
 
   commit_with_message "${root_dir}/updated-compiled-releases-ops-file" "${root_dir}/${COMMIT_MESSAGE_PATH}"

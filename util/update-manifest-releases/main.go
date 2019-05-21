@@ -137,6 +137,12 @@ func main() {
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 
+	var inputDir string
+	flag.StringVar(&inputDir, "input-dir", "", "path to the input directory")
+
+	var outputDir string
+	flag.StringVar(&outputDir, "output-dir", "", "path to the output directory")
+
 	var release string
 	flag.StringVar(&release, "release", "", "name of release, without -release suffix")
 
@@ -161,8 +167,8 @@ func main() {
 			releases,
 			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
 			os.Getenv("UPDATED_OPS_FILE_PATH"),
-			"original-ops-file",
-			"updated-ops-file",
+			inputDir,
+			outputDir,
 			buildDir,
 			commitMessagePath,
 			opsfile.UpdateReleases,
@@ -175,8 +181,8 @@ func main() {
 			releases,
 			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
 			os.Getenv("UPDATED_OPS_FILE_PATH"),
-			"original-compiled-releases-ops-file",
-			"updated-compiled-releases-ops-file",
+			inputDir,
+			outputDir,
 			buildDir,
 			commitMessagePath,
 			compiledreleasesops.UpdateCompiledReleases,
@@ -189,8 +195,8 @@ func main() {
 			releases,
 			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),
 			os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH"),
-			"cf-deployment",
-			"updated-cf-deployment",
+			inputDir,
+			outputDir,
 			buildDir,
 			commitMessagePath,
 			manifest.UpdateReleasesAndStemcells,
