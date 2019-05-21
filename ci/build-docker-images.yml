@@ -1,14 +1,14 @@
 groups:
-- name: cf-deployment-concourse-tasks
-  jobs:
-  - bump-cf-d-ct-docker-image
-  - ship-it-minor-cf-d-ct
-  - ship-it-major-cf-d-ct
 - name: cf-deployment-concourse-tasks-docker-image
   jobs:
   - build-cf-deployment-concourse-tasks-docker-image
-  - ship-it-major
-  - ship-it-minor
+  - ship-it-major-docker-image
+  - ship-it-minor-docker-image
+  - update-cf-d-ct-docker-image-version
+- name: cf-deployment-concourse-tasks
+  jobs:
+  - ship-it-minor-cf-d-ct
+  - ship-it-major-cf-d-ct
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -226,7 +226,7 @@ jobs:
         TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
         DESCRIPTION_FILE: version.json
 
-- name: ship-it-major
+- name: ship-it-major-docker-image
   public: true
   plan:
   - aggregate:
@@ -251,7 +251,7 @@ jobs:
   - put: cf-deployment-concourse-tasks-docker-image-version
     params: {bump: major}
 
-- name: ship-it-minor
+- name: ship-it-minor-docker-image
   public: true
   plan:
   - aggregate:
@@ -276,7 +276,7 @@ jobs:
   - put: cf-deployment-concourse-tasks-docker-image-version
     params: {bump: minor}
 
-- name: bump-cf-d-ct-docker-image
+- name: update-cf-d-ct-docker-image-version
   public: true
   plan:
   - aggregate:
@@ -285,9 +285,9 @@ jobs:
     - get: cf-deployment-concourse-tasks-docker-image-version
       trigger: true
       passed:
-      - ship-it-minor
-      - ship-it-major
-  - task: bump-cf-d-ct-docker-image
+      - ship-it-major-docker-image
+      - ship-it-minor-docker-image
+  - task: update-cf-d-ct-docker-image-version
     file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
     input_mapping:
       version: cf-deployment-concourse-tasks-docker-image-version
