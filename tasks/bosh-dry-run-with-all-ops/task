@@ -26,8 +26,7 @@ function setup_interpolate_env_vars_for_dry_run() {
   local ops_file
   ops_file=$1
 
-  export MANIFEST_FILE
-  MANIFEST_FILE=cf-deployment.yml
+  export MANIFEST_FILE=cf-deployment.yml
 
   OPS_FILES="$ops_file operations/dry-run.yml"
 }
