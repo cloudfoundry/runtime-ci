@@ -9,12 +9,12 @@ image_resource:
 inputs:
 - name: runtime-ci
   path: go/src/github.com/cloudfoundry/runtime-ci
-- name: deployment-configuration # repo containing the original manifest
+- name: cf-deployment # repo containing the original manifest
 - name: release
 - name: stemcell
 
 outputs:
-- name: updated-deployment-manifest
+- name: updated-cf-deployment
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-manifest-release/task

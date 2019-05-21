@@ -11,13 +11,13 @@ function main() {
   export GOPATH="${root_dir}/go"
   export PATH=$GOPATH/bin:$PATH
 
-  git clone deployment-configuration updated-deployment-manifest
+  git clone cf-deployment updated-cf-deployment
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
     go run main.go --build-dir "${root_dir}"
   popd
 
-  commit_with_message "${root_dir}/updated-deployment-manifest" "${root_dir}/${COMMIT_MESSAGE_PATH}"
+  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
 }
 
 main "${PWD}"

@@ -7,13 +7,13 @@ image_resource:
     repository: golang
 
 inputs:
-- name: deployment-configuration
+- name: cf-deployment
 - name: runtime-ci
   path: go/src/github.com/cloudfoundry/runtime-ci
 - name: stemcell
 
 outputs:
-- name: updated-deployment-manifest
+- name: updated-cf-deployment
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-stemcell-manifest-section/task

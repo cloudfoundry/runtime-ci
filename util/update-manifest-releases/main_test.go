@@ -450,15 +450,15 @@ stemcells:
 
 		BeforeEach(func() {
 			for _, dir := range []string{
-				"deployment-configuration",
-				"updated-deployment-manifest",
+				"cf-deployment",
+				"updated-cf-deployment",
 				"stemcell",
 			} {
 				err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "deployment-configuration", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
+			err = ioutil.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
@@ -502,7 +502,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "updated-manifest.yml"))
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedSingleReleaseAndStemcells))
@@ -515,7 +515,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "updated-manifest.yml"))
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
@@ -543,7 +543,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-deployment-manifest", "doesnt-exist", "updated-manifest.yml"))
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
