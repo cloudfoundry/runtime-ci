@@ -16,7 +16,12 @@ function main() {
   git clone cf-deployment updated-cf-deployment
 
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    go run main.go --build-dir "${root_dir}" --release "${RELEASE_NAME}" --target manifest
+    go run main.go \
+      --build-dir "${root_dir}" \
+      --input-dir "cf-deployment" \
+      --output-dir "updated-cf-deployment" \
+      --release "${RELEASE_NAME}" \
+      --target manifest
   popd
 
   commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
