@@ -1,0 +1,38 @@
+#!/bin/bash -exu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  export GOPATH="${root_dir}/go"
+  export PATH="${GOPATH}/bin:${PATH}"
+
+  git clone cf-deployment updated-cf-deployment
+
+  # Bump all the compiled releases.
+  # This will bump all releases based on directories matching "*-release".
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+    go run main.go \
+      --build-dir "${root_dir}" \
+      --input-dir "cf-deployment" \
+      --output-dir "updated-cf-deployment" \
+      --target "compiledReleasesOpsfile"
+  popd
+
+  # Bump the stemcell in the main manifest.
+  # This is last so that it generates the commit message we use.
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+    go run main.go \
+      --build-dir "${root_dir}" \
+      --input-dir "cf-deployment" \
+      --output-dir "updated-cf-deployment"
+  popd
+
+  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
+}
+
+main "${PWD}"
