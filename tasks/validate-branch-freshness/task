@@ -1,45 +1,42 @@
-#!/bin/bash
-
-set -eux
+#!/bin/bash -eu
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
 source runtime-ci/tasks/shared-functions
 
-has_no_commits_in_last_months () {
+function has_no_commits_in_last_months() {
   [[ -z $(git log -1 --since="$2 months ago" -s "$1") ]]
 }
 
-fetch_all_branches () {
+function fetch_all_branches() {
   sed -i -e 's/develop/*/g' .git/config
   git fetch --all
 }
 
-main() {
-  if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
-    set +x
+function main() {
+  if [[ "${DELETE_STALE_BRANCHES}" == "true" ]]; then
     load_github_deploy_key "${DEPLOY_KEY}"
-    set -x
   fi
 
   declare -a stale_branches=()
   pushd repo > /dev/null
     fetch_all_branches
-    branches=$(git branch -r | grep -v -- "->" | grep "${BRANCH_REGEXP}")
+    branches="$(git branch -r | grep -v -- "->" | grep "${BRANCH_REGEXP}")"
+
     for branch in ${branches}; do
-      if has_no_commits_in_last_months "$branch" "$MONTHS"; then
+      if has_no_commits_in_last_months "${branch}" "${MONTHS}"; then
         stale_branches+=("$branch")
 
-        if [[ "$DELETE_STALE_BRANCHES" == "true" ]]; then
-          git push origin --delete "$(sed -e 's?origin/??' <(echo ${branch}))"
+        if [[ "${DELETE_STALE_BRANCHES}" == "true" ]]; then
+          git push origin --delete "$(sed -e 's?origin/??' <(echo "${branch}"))"
         fi
       fi
     done
   popd
 
   num_stale_branches=${#stale_branches[@]}
-  if [[ $num_stale_branches -ne 0 &&  "$DELETE_STALE_BRANCHES" == "false" ]]; then
-    echo "The following branches have not been updated in the last $MONTHS months:"
+  if [[ ${num_stale_branches} -ne 0 &&  "${DELETE_STALE_BRANCHES}" == "false" ]]; then
+    echo "The following branches have not been updated in the last ${MONTHS} months:"
     echo "${stale_branches[@]}"
     exit 1
   fi
