@@ -21,21 +21,27 @@ function main() {
   declare -a stale_branches=()
   pushd repo > /dev/null
     fetch_all_branches
+    set +e
     branches="$(git branch -r | grep -v -- "->" | grep "${BRANCH_REGEXP}")"
+    set -e
+
+    if [[ -z "${branches}" ]]; then
+      return
+    fi
 
     for branch in ${branches}; do
       if has_no_commits_in_last_months "${branch}" "${MONTHS}"; then
-        stale_branches+=("$branch")
-
         if [[ "${DELETE_STALE_BRANCHES}" == "true" ]]; then
           git push origin --delete "$(sed -e 's?origin/??' <(echo "${branch}"))"
+        else
+          stale_branches+=("$branch")
         fi
       fi
     done
   popd
 
   num_stale_branches=${#stale_branches[@]}
-  if [[ ${num_stale_branches} -ne 0 &&  "${DELETE_STALE_BRANCHES}" == "false" ]]; then
+  if [[ ${num_stale_branches} -ne 0 ]]; then
     echo "The following branches have not been updated in the last ${MONTHS} months:"
     echo "${stale_branches[@]}"
     exit 1
