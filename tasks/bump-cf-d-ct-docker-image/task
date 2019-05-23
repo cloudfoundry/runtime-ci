@@ -12,7 +12,7 @@ function main() {
     local old_version
     old_version="$(bosh int bbl-up/task.yml --path /image_resource/source/tag)"
 
-    sed -e "s/${old_version}/v${new_version}/g" ./*/task.yml
+    sed -i -e "s/${old_version}/v${new_version}/g" ./*/task.yml
     git add ./*/task.yml
     commit_with_message "${PWD}" <(echo "Update docker image to ${new_version}")
   popd
