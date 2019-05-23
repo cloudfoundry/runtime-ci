@@ -20,8 +20,6 @@ function create_message_file() {
   cat > slack-message/message.txt <<EOF
 cf-deployment: ${RELEASE_NAME}/${release_version} failed. Please review the details and reach out in <#${RELINT_SLACK_CHANNEL}|release-integration> with any questions.
 
-CI job: ${RELINT_CI_URL_PREFIX}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}
-
 Branch containing changes: https://github.com/cloudfoundry/cf-deployment/tree/${release_branch}
 
 BOSH logs: ${bosh_logs_link}
