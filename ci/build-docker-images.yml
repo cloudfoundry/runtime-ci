@@ -4,7 +4,8 @@ groups:
   - build-cf-deployment-concourse-tasks-docker-image
   - ship-it-major-docker-image
   - ship-it-minor-docker-image
-  - update-cf-d-ct-docker-image-version
+  - update-cf-d-ct-docker-image-major-version
+  - update-cf-d-ct-docker-image-minor-version
 - name: cf-deployment-concourse-tasks
   jobs:
   - ship-it-minor-cf-d-ct
@@ -292,7 +293,7 @@ jobs:
     params:
       bump: minor
 
-- name: update-cf-d-ct-docker-image-version
+- name: update-cf-d-ct-docker-image-major-version
   public: true
   plan:
   - aggregate:
@@ -302,6 +303,24 @@ jobs:
       trigger: true
       passed:
       - ship-it-major-docker-image
+  - task: update-cf-d-ct-docker-image-version
+    file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
+    input_mapping:
+      version: cf-deployment-concourse-tasks-docker-image-version
+  - put: cf-deployment-concourse-tasks
+    params:
+      repository: cf-deployment-concourse-tasks-updated
+      rebase: true
+
+- name: update-cf-d-ct-docker-image-minor-version
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-docker-image-version
+      trigger: true
+      passed:
       - ship-it-minor-docker-image
   - task: update-cf-d-ct-docker-image-version
     file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
