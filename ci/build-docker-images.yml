@@ -232,8 +232,11 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-docker-image-version
-      params: {bump: major}
+      params:
+        bump: major
     - get: cf-deployment-concourse-tasks-pipeline-image
+      params:
+        save: true
       passed:
       - build-cf-deployment-concourse-tasks-docker-image
   - task: generate-major-version-file
@@ -242,14 +245,19 @@ jobs:
       semantic_version: cf-deployment-concourse-tasks-docker-image-version
   - put: cf-deployment-concourse-tasks-pipeline-image
     params:
+      load: cf-deployment-concourse-tasks-pipeline-image
       tag_file: major_version/version
       tag_prefix: v
+    get_params:
+      save: true
   - put: cf-deployment-concourse-tasks-pipeline-image
     params:
+      load: cf-deployment-concourse-tasks-pipeline-image
       tag_file: cf-deployment-concourse-tasks-docker-image-version/version
       tag_prefix: v
   - put: cf-deployment-concourse-tasks-docker-image-version
-    params: {bump: major}
+    params:
+      bump: major
 
 - name: ship-it-minor-docker-image
   public: true
@@ -257,8 +265,11 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-docker-image-version
-      params: {bump: minor}
+      params:
+        bump: minor
     - get: cf-deployment-concourse-tasks-pipeline-image
+      params:
+        save: true
       passed:
       - build-cf-deployment-concourse-tasks-docker-image
   - task: generate-major-version-file
@@ -267,14 +278,19 @@ jobs:
       semantic_version: cf-deployment-concourse-tasks-docker-image-version
   - put: cf-deployment-concourse-tasks-pipeline-image
     params:
+      load: cf-deployment-concourse-tasks-pipeline-image
       tag_file: major_version/version
       tag_prefix: v
+    get_params:
+      save: true
   - put: cf-deployment-concourse-tasks-pipeline-image
     params:
+      load: cf-deployment-concourse-tasks-pipeline-image
       tag_file: cf-deployment-concourse-tasks-docker-image-version/version
       tag_prefix: v
   - put: cf-deployment-concourse-tasks-docker-image-version
-    params: {bump: minor}
+    params:
+      bump: minor
 
 - name: update-cf-d-ct-docker-image-version
   public: true
