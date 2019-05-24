@@ -1,13 +1,14 @@
 package compiledreleasesops
 
 import (
-	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
+	"crypto/sha1"
 	"errors"
 	"fmt"
-	"strings"
-	"path/filepath"
 	"io/ioutil"
-	"crypto/sha1"
+	"path/filepath"
+	"strings"
+
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
 
@@ -27,6 +28,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 	var commitMessage string
 
 	for _, releaseName := range releaseNames {
+		fmt.Printf("Updating release %s...\n", releaseName)
 		var newRelease common.Release
 		var err error
 
@@ -86,28 +88,28 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 func newStemcellOp(newRelease common.Release) opsfile.Op {
 	return opsfile.Op{
 		TypeField: "replace",
-		Path: fmt.Sprintf("/releases/name=%s/stemcell?", newRelease.Name),
-		Value: newRelease.Stemcell,
+		Path:      fmt.Sprintf("/releases/name=%s/stemcell?", newRelease.Name),
+		Value:     newRelease.Stemcell,
 	}
 }
 
 func appendNewRelease(newRelease common.Release, opsFile []opsfile.Op) []opsfile.Op {
 	newReleaseOpsURL := opsfile.Op{
 		TypeField: "replace",
-		Path: fmt.Sprintf("/releases/name=%s/url", newRelease.Name),
-		Value: newRelease.URL,
+		Path:      fmt.Sprintf("/releases/name=%s/url", newRelease.Name),
+		Value:     newRelease.URL,
 	}
 
 	newReleaseOpsVersion := opsfile.Op{
 		TypeField: "replace",
-		Path: fmt.Sprintf("/releases/name=%s/version", newRelease.Name),
-		Value: newRelease.Version,
+		Path:      fmt.Sprintf("/releases/name=%s/version", newRelease.Name),
+		Value:     newRelease.Version,
 	}
 
 	newReleaseOpsSHA1 := opsfile.Op{
 		TypeField: "replace",
-		Path: fmt.Sprintf("/releases/name=%s/sha1", newRelease.Name),
-		Value: newRelease.SHA1,
+		Path:      fmt.Sprintf("/releases/name=%s/sha1", newRelease.Name),
+		Value:     newRelease.SHA1,
 	}
 
 	newReleaseOpsStemcell := newStemcellOp(newRelease)

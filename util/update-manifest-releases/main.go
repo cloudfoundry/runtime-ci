@@ -95,6 +95,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 	}
 
 	for inputPath, outputFileName := range filesToUpdate {
+		fmt.Printf("Processing %s...\n", inputPath)
 		originalFile, err := ioutil.ReadFile(inputPath)
 		if err != nil {
 			return err
