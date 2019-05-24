@@ -1,4 +1,4 @@
-#!/bin/bash -exu
+#!/bin/bash -eu
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
