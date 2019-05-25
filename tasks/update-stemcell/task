@@ -13,6 +13,15 @@ function main() {
 
   git clone cf-deployment updated-cf-deployment
 
+  # Bump the stemcell in the main manifest.
+  # This is first so that it generates the commit message we use.
+  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+    go run main.go \
+      --build-dir "${root_dir}" \
+      --input-dir "cf-deployment" \
+      --output-dir "updated-cf-deployment"
+  popd
+
   # Bump all the compiled releases.
   # This will bump all releases based on directories matching "*-release".
   pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
@@ -21,15 +30,6 @@ function main() {
       --input-dir "cf-deployment" \
       --output-dir "updated-cf-deployment" \
       --target "compiledReleasesOpsfile"
-  popd
-
-  # Bump the stemcell in the main manifest.
-  # This is last so that it generates the commit message we use.
-  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
-    go run main.go \
-      --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment"
   popd
 
   commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
