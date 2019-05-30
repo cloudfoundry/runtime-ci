@@ -2,7 +2,6 @@ require 'tmpdir'
 require 'rspec'
 require 'fileutils'
 require_relative './binary_changes.rb'
-require 'webmock/rspec'
 
 describe 'BinaryUpdates' do
   before(:all) do
