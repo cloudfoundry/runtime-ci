@@ -9,7 +9,8 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: cf-deployment-concourse-tasks-master
+- name: cf-deployment-concourse-tasks
+- name: cf-deployment-concourse-tasks-latest-release
 
 outputs:
 - name: release-notes-template
