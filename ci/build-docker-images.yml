@@ -8,6 +8,7 @@ groups:
   - update-cf-d-ct-docker-image-minor-version
 - name: cf-deployment-concourse-tasks
   jobs:
+  - release-notes-template
   - ship-it-minor-cf-d-ct
   - ship-it-major-cf-d-ct
 - name: runtime-ci-common-images
@@ -46,6 +47,14 @@ resources:
     branch: master
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     private_key: ((cfdct_readwrite_deploy_key.private_key))
+
+- name: cf-deployment-concourse-tasks-latest-release
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    private_key: ((cfdct_readwrite_deploy_key.private_key))
+    tag_filter: '*'
 
 - name: uptimer
   type: git
@@ -330,6 +339,16 @@ jobs:
     params:
       repository: cf-deployment-concourse-tasks-updated
       rebase: true
+
+- name: release-notes-template
+  public: true
+  plan:
+  - aggregate:
+    - get: runtime-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest-release
+  - task: generate-release-notes-template
+    file: runtime-ci/tasks/cf-decota-release-notes-template/task.yml
 
 - name: ship-it-minor-cf-d-ct
   public: true
