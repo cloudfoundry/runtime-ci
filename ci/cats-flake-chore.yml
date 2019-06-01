@@ -1,0 +1,22 @@
+---
+resource:
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/runtime-ci
+
+- name: monday-morning
+  type: time
+  source:
+    start: 7:00 AM
+    stop: 8:00 AM
+    location: America/Los_Angeles
+
+jobs:
+- name: create-cats-flake
+  plan:
+  - get: runtime-ci
+  - get: time
+    trigger: true
+  - task: create-cats-flake-application

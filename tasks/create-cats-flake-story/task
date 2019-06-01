@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+
+go run runtime-ci/tasks/create-cats-flake-story/main.go
