@@ -25,18 +25,32 @@ describe 'Renderer' do
       updates
     end
 
+    let(:task_updates) do
+      {
+        "new" => ["new-task"],
+        "updated" => ["updated-task"],
+        "deleted" => ["deleted-task"]
+      }
+    end
+
     it 'includes a section header for Notices' do
       rendered_output = renderer.render(binary_updates: binary_updates)
       expect(rendered_output).to include ("## Notices")
     end
 
     it 'includes a section header for Notices, as well as sub-headers for New and Updated Tasks' do
-      rendered_output = renderer.render(binary_updates: binary_updates)
+      rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
       expect(rendered_output).to include (
 <<-NOTICES
 ## Notices
 ### :point_right: New Tasks :point_left:
+-**`new-task`**
+
 ### :point_right: Updated Tasks :point_left:
+-**`updated-task`**
+
+### :point_right: Deleted Tasks :point_left:
+-**`deleted-task`**
 
 NOTICES
       )

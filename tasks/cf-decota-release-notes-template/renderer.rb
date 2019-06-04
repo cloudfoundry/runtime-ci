@@ -1,10 +1,17 @@
 class Renderer
-  def render(binary_updates:)
+  def render(binary_updates:, task_updates: {})
     binaries_table = render_table(binary_updates)
+
 <<-HEREDOC
 ## Notices
 ### :point_right: New Tasks :point_left:
+#{render_tasks(task_updates['new'])}
+
 ### :point_right: Updated Tasks :point_left:
+#{render_tasks(task_updates['updated'])}
+
+### :point_right: Deleted Tasks :point_left:
+#{render_tasks(task_updates['deleted'])}
 
 ## Binary Updates
 #{binaries_table}
@@ -28,5 +35,15 @@ HEADER
 
   def render_version(binary_update, type)
     return binary_update.send(type + '_version')
+  end
+
+  def render_tasks(tasks)
+    if tasks.nil?
+      return ""
+    end
+
+    tasks.map do |task|
+      "-**`#{task}`**"
+    end.join("\n")
   end
 end

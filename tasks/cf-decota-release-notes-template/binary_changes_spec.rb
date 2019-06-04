@@ -25,7 +25,10 @@ describe 'BinaryUpdates' do
     end
 
     subject(:updates) do
-      BinaryUpdates.load_from_file(filename)
+      BinaryUpdates.new(
+        "cf-deployment-concourse-tasks-latest-release/#{filename}",
+        "cf-deployment-concourse-tasks/#{filename}"
+      )
     end
 
     before do
