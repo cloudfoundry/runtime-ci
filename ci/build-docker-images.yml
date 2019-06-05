@@ -346,6 +346,7 @@ jobs:
   - aggregate:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
+      trigger: true
     - get: cf-deployment-concourse-tasks-latest-release
   - task: generate-release-notes-template
     file: runtime-ci/tasks/cf-decota-release-notes-template/task.yml
