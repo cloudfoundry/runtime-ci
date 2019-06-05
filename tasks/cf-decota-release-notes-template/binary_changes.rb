@@ -45,7 +45,7 @@ class BinaryUpdates
   end
 
   def each
-    @updates.each do |binary_name, binary_update|
+    @updates.sort.each do |binary_name, binary_update|
       yield binary_name, binary_update
     end
   end

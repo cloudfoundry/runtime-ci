@@ -2,7 +2,7 @@ require 'rspec'
 require_relative './task_updates.rb'
 
 describe 'TaskUpdates' do
-  subject { TaskUpdates.new.generate('latest-release', 'master') }
+  subject { TaskUpdates.new('latest-release', 'master') }
 
   before(:all) do
     @current_work_dir = Dir.pwd
@@ -55,11 +55,9 @@ HEREDOC
       end
 
       it 'returns a map with no changes' do
-        expect(subject).to include(
-          'new' => [],
-          'updated' => [],
-          'deleted' => []
-        )
+        expect(subject.new_tasks).to be_empty
+        expect(subject.deleted_tasks).to be_empty
+        expect(subject.updated_tasks).to be_empty
       end
     end
 
@@ -71,11 +69,9 @@ HEREDOC
       end
 
       it 'returns a map with three lists of changes' do
-        expect(subject).to include(
-          'new' => ['new-task'],
-          'updated' => ['updated-task'],
-          'deleted' => ['deleted-task']
-        )
+        expect(subject.new_tasks).to contain_exactly('new-task')
+        expect(subject.deleted_tasks).to contain_exactly('deleted-task')
+        expect(subject.updated_tasks).to contain_exactly('updated-task')
       end
     end
   end

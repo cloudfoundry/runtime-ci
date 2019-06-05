@@ -1,17 +1,17 @@
 class Renderer
-  def render(binary_updates:, task_updates: {})
+  def render(binary_updates:, task_updates:)
     binaries_table = render_table(binary_updates)
 
 <<-HEREDOC
 ## Notices
 ### :point_right: New Tasks :point_left:
-#{render_tasks(task_updates['new'])}
+#{render_tasks(task_updates.new_tasks)}
 
 ### :point_right: Updated Tasks :point_left:
-#{render_tasks(task_updates['updated'])}
+#{render_tasks(task_updates.updated_tasks)}
 
 ### :point_right: Deleted Tasks :point_left:
-#{render_tasks(task_updates['deleted'])}
+#{render_tasks(task_updates.deleted_tasks)}
 
 ## Binary Updates
 #{binaries_table}
@@ -42,7 +42,7 @@ HEADER
       return ""
     end
 
-    tasks.map do |task|
+    tasks.sort.map do |task|
       "-**`#{task}`**"
     end.join("\n")
   end

@@ -26,15 +26,15 @@ describe 'Renderer' do
     end
 
     let(:task_updates) do
-      {
-        "new" => ["new-task"],
-        "updated" => ["updated-task"],
-        "deleted" => ["deleted-task"]
-      }
+      updates = double('TaskUpdates')
+      allow(updates).to receive(:new_tasks).and_return(['new-task'])
+      allow(updates).to receive(:deleted_tasks).and_return(['deleted-task'])
+      allow(updates).to receive(:updated_tasks).and_return(['updated-task'])
+      updates
     end
 
     it 'includes a section header for Notices' do
-      rendered_output = renderer.render(binary_updates: binary_updates)
+      rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
       expect(rendered_output).to include ("## Notices")
     end
 
@@ -57,13 +57,14 @@ NOTICES
     end
 
     it 'inlcudes a section header for Binary Updates' do
-      rendered_output = renderer.render(binary_updates: binary_updates)
+      rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
       expect(rendered_output).to include ("## Binary Updates\n")
     end
 
     describe 'Binary table' do
       it 'includes a header' do
-        expect(renderer.render(binary_updates: binary_updates)).to include(
+        rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
+        expect(rendered_output).to include(
 <<-HEADER
 | Binary | Old Version | New Version |
 | ------- | ----------- | ----------- |
@@ -72,12 +73,12 @@ HEADER
       end
 
       it 'places the table header immediately after the section header' do
-        rendered_output = renderer.render(binary_updates: binary_updates)
+        rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
         expect(rendered_output).to include ("## Binary Updates\n| Binary | Old Version | New Version |")
       end
 
       it 'shows the binary name, old version, and new version for each binary' do
-        rendered_output = renderer.render(binary_updates: binary_updates)
+        rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
         expect(rendered_output).to include('| binary-1 | 1.1.0 | 1.3.0 |')
         expect(rendered_output).to include('| binary-2 | 1.2.0 | 1.4.0 |')
       end
@@ -98,7 +99,7 @@ HEADER
         end
 
         it 'renders them as empty strings' do
-          rendered_output = renderer.render(binary_updates: binary_updates)
+          rendered_output = renderer.render(binary_updates: binary_updates, task_updates: task_updates)
           expect(rendered_output).to include('| binary-1 | 1.1.0 |  |')
           expect(rendered_output).to include('| binary-2 |  | 1.4.0 |')
         end
