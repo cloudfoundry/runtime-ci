@@ -384,7 +384,7 @@ some_client: some_value
 
 	Context("manifest", func() {
 		const (
-			expectedReleasesAndStemcells = `
+			expectedReleases = `
 name: cf-deployment
 releases:
 - name: release1
@@ -406,10 +406,10 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  version: updated-stemcell-version
+  version: original-stemcell-version
 `
 
-			expectedSingleReleaseAndStemcells = `
+			expectedSingleRelease = `
 name: cf-deployment
 releases:
 - name: release1
@@ -427,7 +427,7 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  version: updated-stemcell-version
+  version: original-stemcell-version
 `
 
 			originalManifest = `
@@ -505,7 +505,7 @@ stemcells:
 			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(updatedManifest).To(MatchYAML(expectedSingleReleaseAndStemcells))
+			Expect(updatedManifest).To(MatchYAML(expectedSingleRelease))
 		})
 
 		It("updates the given manifest with new releases and stemcells", func() {
@@ -518,7 +518,7 @@ stemcells:
 			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
+			Expect(updatedManifest).To(MatchYAML(expectedReleases))
 		})
 
 		It("writes the commit message to COMMIT_MESSAGE_PATH", func() {
@@ -531,7 +531,7 @@ stemcells:
 			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version, ubuntu-trusty stemcell updated-stemcell-version"))
+			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version"))
 		})
 
 		It("creates nested directory when the directory to write out the updated manifest does not exist", func() {
@@ -546,7 +546,7 @@ stemcells:
 			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(updatedManifest).To(MatchYAML(expectedReleasesAndStemcells))
+			Expect(updatedManifest).To(MatchYAML(expectedReleases))
 		})
 
 		Context("failure cases", func() {
@@ -584,12 +584,173 @@ stemcells:
 
 				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
 			})
+		})
+	})
+
+	Context("stemcell", func() {
+		const (
+			expectedStemcells = `
+name: cf-deployment
+releases:
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: updated-stemcell-version
+`
+
+			originalManifest = `
+name: cf-deployment
+releases:
+- name: release1
+  url: original-release1-url
+  version: original-release1-version
+  sha1: original-release1-sha
+- name: release2
+  url: original-release2-url
+  version: original-release2-version
+  sha1: original-release2-sha
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: original-stemcell-version
+`
+		)
+
+		BeforeEach(func() {
+			for _, dir := range []string{
+				"cf-deployment",
+				"updated-cf-deployment",
+				"stemcell",
+			} {
+				err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
+				Expect(err).NotTo(HaveOccurred())
+			}
+
+			err = ioutil.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+
+			// for _, release := range []map[string]string{
+			// 	{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
+			// 	{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
+			// } {
+			// 	releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
+			// 	err = os.Mkdir(releaseDir, os.ModePerm)
+			// 	Expect(err).NotTo(HaveOccurred())
+
+			// 	for _, value := range []string{"version", "url", "sha1"} {
+			// 		err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+			// 		Expect(err).NotTo(HaveOccurred())
+			// 	}
+			// }
+
+			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+
+			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+
+			inputPath = os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
+			outputPath = os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH")
+
+			os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", "original-manifest.yml")
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
+		})
+
+		AfterEach(func() {
+			os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", inputPath)
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", outputPath)
+		})
+
+		It("only updates the manifest with the new stemcell", func() {
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedManifest).To(MatchYAML(expectedStemcells))
+		})
+
+		It("writes the commit message to COMMIT_MESSAGE_PATH", func() {
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(string(commitMessage)).To(Equal("Updated manifest with ubuntu-trusty stemcell updated-stemcell-version"))
+		})
+
+		It("creates nested directory when the directory to write out the updated manifest does not exist", func() {
+			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join("doesnt-exist", "updated-manifest.yml"))
+
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(session).Should(gexec.Exit())
+			Expect(session.ExitCode()).To(Equal(0))
+
+			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(updatedManifest).To(MatchYAML(expectedStemcells))
+		})
+
+		Context("failure cases", func() {
+			It("errors when the build dir does not exist", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring(fmt.Sprintf("%v: no such file or directory", fakeDirName)))
+			})
+
+			It("errors when the deployment manifest does not exist", func() {
+				os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", emptyDir)
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("no such file or directory"))
+			})
+
+			It("errors when the directory to write out the commit message does not exist", func() {
+				os.Setenv("COMMIT_MESSAGE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
+
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("doesnt-exist: no such file or directory"))
+			})
 
 			It("errors when a required stemcell file is missing", func() {
 				err := os.Remove(filepath.Join(buildDir, "stemcell", "version"))
 				Expect(err).NotTo(HaveOccurred())
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "stemcell"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())

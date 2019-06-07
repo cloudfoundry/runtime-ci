@@ -1,16 +1,17 @@
 package compiledreleasesops_test
 
 import (
+	"io/ioutil"
+
+	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
-	"io/ioutil"
 	"gopkg.in/yaml.v2"
 )
 
 var _ = Describe("UpdateCompiledReleases", func() {
 	var (
-		compiledReleaseBuildDir    string
+		compiledReleaseBuildDir string
 
 		originalOpsFile []byte
 		desiredOpsFile  []byte
@@ -44,14 +45,6 @@ var _ = Describe("UpdateCompiledReleases", func() {
 		_, _, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(Equal("expected to find exactly 1 compiled release tarball"))
-	})
-
-	It("returns error when release folder doesn't have a version file", func() {
-		releaseNames := []string{"no-version"}
-
-		_, _, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("could not find necessary release info:"))
 	})
 
 	It("adds release if it cannot be found in the ops file", func() {
@@ -95,3 +88,4 @@ var _ = Describe("UpdateCompiledReleases", func() {
 		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
 	})
 })
+

@@ -19,7 +19,8 @@ function main() {
     go run main.go \
       --build-dir "${root_dir}" \
       --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment"
+      --output-dir "updated-cf-deployment" \
+      --target "stemcell"
   popd
 
   # Bump all the compiled releases.
