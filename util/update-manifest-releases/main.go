@@ -191,6 +191,20 @@ func main() {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
+	} else if target == "stemcell" {
+		if err = update(
+			releases,
+			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),
+			os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH"),
+			inputDir,
+			outputDir,
+			buildDir,
+			commitMessagePath,
+			manifest.UpdateStemcell,
+		); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 	} else {
 		if err = update(
 			releases,
@@ -200,7 +214,7 @@ func main() {
 			outputDir,
 			buildDir,
 			commitMessagePath,
-			manifest.UpdateReleasesAndStemcells,
+			manifest.UpdateReleases,
 		); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

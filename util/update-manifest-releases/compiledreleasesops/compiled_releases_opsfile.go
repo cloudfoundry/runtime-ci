@@ -86,11 +86,6 @@ func appendNewRelease(newRelease common.Release, opsFile []opsfile.Op) []opsfile
 }
 
 func getCompiledReleaseForBuild(buildDir, releaseName string) (common.Release, error) {
-	release, err := common.GetReleaseFromFile(buildDir, releaseName)
-	if err != nil {
-		return common.Release{}, fmt.Errorf("could not find necessary release info: %s", err.Error())
-	}
-
 	releaseTarballGlob := filepath.Join(buildDir, fmt.Sprintf("%s-compiled-release-tarball", releaseName), "*.tgz")
 
 	matches, err := filepath.Glob(releaseTarballGlob)
@@ -104,7 +99,8 @@ func getCompiledReleaseForBuild(buildDir, releaseName string) (common.Release, e
 	releaseTarballPath := matches[0]
 	releaseTarballName := filepath.Base(releaseTarballPath)
 
-	release.Stemcell.Version, release.Stemcell.OS, err = common.StemcellInfoFromTarballName(releaseTarballName, release.Name, release.Version)
+	release := common.Release{Name: releaseName}
+	release.Version, release.Stemcell.Version, release.Stemcell.OS, err = common.InfoFromTarballName(releaseTarballName, releaseName)
 	if err != nil {
 		return common.Release{}, err
 	}

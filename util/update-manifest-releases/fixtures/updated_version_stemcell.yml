@@ -1,0 +1,4 @@
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: updated-stemcell-version

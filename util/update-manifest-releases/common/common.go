@@ -1,12 +1,12 @@
 package common
 
 import (
-	"path/filepath"
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"path/filepath"
 	"regexp"
-	"errors"
+	"strings"
 )
 
 const NoChangesCommitMessage = "No manifest release or stemcell version updates"
@@ -60,26 +60,27 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 	return newRelease, nil
 }
 
-func StemcellInfoFromTarballName(tarballName string, releaseName string, releaseVersion string) (string, string, error) {
+func InfoFromTarballName(tarballName string, releaseName string) (string, string, string, error) {
 	// a valid tarball name is e.g. package-name-1.0-stemcell-name-2.0-45-23-44.tgz
 	// ^package-name '-' package-version '-'  <stemcell name + version >-(\d+) -\d+-\d+-\d+$
 
-	versionRegexString := fmt.Sprintf(`%s-%s-(.*)-([\d.]+)-\d+-\d+-\d+.tgz`,
-		regexp.QuoteMeta(releaseName), regexp.QuoteMeta(releaseVersion))
+	versionRegexString := fmt.Sprintf(`%s-([\d.]+)-(.*)-([\d.]+)-\d+-\d+-\d+.tgz`,
+		regexp.QuoteMeta(releaseName))
 	versionRegex := regexp.MustCompile(versionRegexString)
 
 	allMatches := versionRegex.FindAllStringSubmatch(tarballName, 1)
 
 	if len(allMatches) != 1 {
-		return "", "", fmt.Errorf("invalid tarball name syntax: %s, %s", tarballName, versionRegexString)
+		return "", "", "", fmt.Errorf("invalid tarball name syntax: %s, %s", tarballName, versionRegexString)
 	}
 
-	if len(allMatches[0]) != 3 {
-		return "", "", errors.New("internal error: len allMatches[0] should be 2, but it is not.")
+	if len(allMatches[0]) != 4 {
+		return "", "", "", errors.New("internal error: len allMatches[0] should be 4, but it is not.")
 	}
 
-	versionMatch := allMatches[0][2]
-	osMatch := allMatches[0][1]
+	releaseVersionMatch := allMatches[0][1]
+	stemcellOsMatch := allMatches[0][2]
+	stemcellVersionMatch := allMatches[0][3]
 
-	return versionMatch, osMatch, nil
+	return releaseVersionMatch, stemcellVersionMatch, stemcellOsMatch, nil
 }

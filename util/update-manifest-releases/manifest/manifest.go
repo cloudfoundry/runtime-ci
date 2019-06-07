@@ -40,14 +40,14 @@ func stemcellOSfromURL(url string) (string, error) {
 	// url example:
 	// https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-0.1-google-kvm-ubuntu-foo-go_agent.tgz
 	urlSplit := strings.Split(url, "/")
-	tarballName:= urlSplit[len(urlSplit) - 1]
+	tarballName := urlSplit[len(urlSplit)-1]
 
 	versionRegex := regexp.MustCompile(`(ubuntu-\w+)`)
 
 	allMatches := versionRegex.FindAllStringSubmatch(tarballName, 1)
 
 	if len(allMatches) != 1 {
-		return "", fmt.Errorf("Stemcell URL syntax doesn't contain 'ubuntu':  %s", url)
+		return "", fmt.Errorf("Stemcell URL does not contain 'ubuntu': %s", strings.Trim(url, "\n"))
 	}
 
 	osMatch := allMatches[0][1]
@@ -55,7 +55,7 @@ func stemcellOSfromURL(url string) (string, error) {
 	return osMatch, nil
 }
 
-func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+func updateReleasesOrStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, stemcellBump bool, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
 	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))
@@ -87,71 +87,78 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 		return nil, "", err
 	}
 
-	releasesByName := make(map[string]common.Release)
-	for _, release := range releasesAndStemcells.Releases {
-		releasesByName[release.Name] = release
-	}
-
-	stemcellsVersions := map[string]string{}
-	for _, stemcell := range releasesAndStemcells.Stemcells {
-		stemcellsVersions[stemcell.Alias] = stemcell.Version
-	}
-
-	releaseMap := map[string]bool{}
-	for _, r := range releases {
-		releaseMap[r] = true
-	}
-
 	releasesAndStemcells.Releases = mergeReleases(releasesAndStemcells.Releases, releases)
 
 	var changes []string
 	cfDeploymentReleasesAndStemcells := Manifest{}
-	for _, release := range releasesAndStemcells.Releases {
-		var newRelease common.Release
 
-		if _, found := releaseMap[release.Name]; found {
-			var err error
-
-			newRelease, err = common.GetReleaseFromFile(buildDir, release.Name)
-			if err != nil {
-				return nil, "", err
-			}
-
-			if releasesByName[newRelease.Name] != newRelease {
-				changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
-			}
-		} else {
-			newRelease = release
+	if stemcellBump {
+		stemcellsVersions := map[string]string{}
+		for _, stemcell := range releasesAndStemcells.Stemcells {
+			stemcellsVersions[stemcell.Alias] = stemcell.Version
 		}
-		cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, newRelease)
-	}
 
-	stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
-	if err != nil {
-		return nil, "", err
-	}
-	trimmedStemcellVersion := strings.TrimSpace(string(stemcellVersion))
+		stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
+		if err != nil {
+			return nil, "", err
+		}
+		trimmedStemcellVersion := strings.TrimSpace(string(stemcellVersion))
 
-	stemcellURL, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "url"))
-	if err != nil {
-		return nil, "", err
-	}
+		stemcellURL, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "url"))
+		if err != nil {
+			return nil, "", err
+		}
 
-	stemcellOS, err := stemcellOSfromURL(string(stemcellURL))
-	if err != nil {
-		return nil, "", err
-	}
+		stemcellOS, err := stemcellOSfromURL(string(stemcellURL))
+		if err != nil {
+			return nil, "", err
+		}
 
-	cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
-		{
-			Alias:   "default",
-			OS:      stemcellOS,
-			Version: trimmedStemcellVersion,
-		},
-	}
+		cfDeploymentReleasesAndStemcells.Releases = releasesAndStemcells.Releases
+		cfDeploymentReleasesAndStemcells.Stemcells = []Stemcell{
+			{
+				Alias:   "default",
+				OS:      stemcellOS,
+				Version: trimmedStemcellVersion,
+			},
+		}
 
-	if stemcellsVersions["default"] != trimmedStemcellVersion {
-		changes = append(changes, fmt.Sprintf("%s stemcell %s", stemcellOS, trimmedStemcellVersion))
+		if stemcellsVersions["default"] != trimmedStemcellVersion {
+			changes = append(changes, fmt.Sprintf("%s stemcell %s", stemcellOS, trimmedStemcellVersion))
+		}
+	} else {
+		releasesByName := make(map[string]common.Release)
+		for _, release := range releasesAndStemcells.Releases {
+			releasesByName[release.Name] = release
+		}
+
+		releaseMap := map[string]bool{}
+		for _, r := range releases {
+			releaseMap[r] = true
+		}
+
+		for _, release := range releasesAndStemcells.Releases {
+			var newRelease common.Release
+
+			if _, found := releaseMap[release.Name]; found {
+				var err error
+
+				newRelease, err = common.GetReleaseFromFile(buildDir, release.Name)
+				if err != nil {
+					return nil, "", err
+				}
+
+				if releasesByName[newRelease.Name] != newRelease {
+					changes = append(changes, fmt.Sprintf("%s-release %s", newRelease.Name, newRelease.Version))
+				}
+			} else {
+				newRelease = release
+			}
+
+			cfDeploymentReleasesAndStemcells.Releases = append(cfDeploymentReleasesAndStemcells.Releases, newRelease)
+		}
+
+		cfDeploymentReleasesAndStemcells.Stemcells = releasesAndStemcells.Stemcells
 	}
 
 	cfDeploymentReleasesAndStemcellsYaml, err := marshalFunc(cfDeploymentReleasesAndStemcells)
@@ -165,4 +172,12 @@ func UpdateReleasesAndStemcells(releases []string, buildDir string, cfDeployment
 	}
 
 	return append(cfDeploymentPreamble, cfDeploymentReleasesAndStemcellsYaml...), changeMessage, err
+}
+
+func UpdateReleases(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+	return updateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, false, marshalFunc, unmarshalFunc)
+}
+
+func UpdateStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+	return updateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, true, marshalFunc, unmarshalFunc)
 }
