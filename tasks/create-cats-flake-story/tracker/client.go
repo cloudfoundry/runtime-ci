@@ -1,8 +1,6 @@
 package tracker
 
 import (
-	"strings"
-
 	"gopkg.in/salsita/go-pivotaltracker.v2/v5/pivotal"
 )
 
@@ -14,24 +12,18 @@ type TrackerAPI interface {
 type Client struct {
 	api TrackerAPI
 
-	projectID string
+	projectID int
 }
 
-func NewClient(api TrackerAPI, projectID string) Client {
+func NewClient(api TrackerAPI, projectID int) Client {
 	return Client{api: api, projectID: projectID}
 }
 
-func (c Client) ScanForFlakeStory() bool {
-	stories, _ := c.api.List(88, "")
-
-	for _, story := range stories {
-		if story.State == "accepted" {
-			continue
-		}
-
-		if strings.HasPrefix(story.Name, "CAT Failure Fix") {
-			return true
-		}
+func (c Client) ScanForFlakeStory() (bool, error) {
+	stories, err := c.api.List(c.projectID, "label:cats-flake-fix AND -state:accepted")
+	if err != nil {
+		return false, err
 	}
-	return false
+
+	return len(stories) != 0, nil
 }

@@ -1,6 +1,8 @@
 package tracker_test
 
 import (
+	"errors"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gopkg.in/salsita/go-pivotaltracker.v2/v5/pivotal"
@@ -12,13 +14,14 @@ import (
 var _ = Describe("Client", func() {
 	var (
 		trackerAPI *fakes.FakeTrackerAPI
-		projectID  string
+		projectID  int
 
 		client Client
 	)
 
 	BeforeEach(func() {
 		trackerAPI = new(fakes.FakeTrackerAPI)
+		projectID = 0
 	})
 
 	JustBeforeEach(func() {
@@ -27,57 +30,67 @@ var _ = Describe("Client", func() {
 
 	Describe("ScanForFlakeStory", func() {
 		var (
-			stories []*pivotal.Story
+			returnStories []*pivotal.Story
+			returnErr     error
 
 			actualExists bool
+			actualErr    error
 		)
 
 		BeforeEach(func() {
-			stories = nil
+			projectID = 12345
+
+			returnStories = nil
+
 			actualExists = false
+			actualErr = nil
 		})
 
 		JustBeforeEach(func() {
-			trackerAPI.ListReturns(stories, nil)
+			trackerAPI.ListReturns(returnStories, returnErr)
 
-			actualExists = client.ScanForFlakeStory()
+			actualExists, actualErr = client.ScanForFlakeStory()
 		})
 
 		It("uses the projectID query the API", func() {
 			Expect(trackerAPI.ListCallCount()).To(Equal(1), "expected call count")
+			expectedID, _ := trackerAPI.ListArgsForCall(0)
+			Expect(expectedID).To(Equal(projectID), "expcted projectID value")
+		})
+
+		It("filters by 'label:cats-flake-fix AND -state:accepted'", func() {
+			Expect(trackerAPI.ListCallCount()).To(Equal(1), "expected call count")
+			_, filter := trackerAPI.ListArgsForCall(0)
+			Expect(filter).To(Equal("label:cats-flake-fix AND -state:accepted"), "expected filter value")
 		})
 
 		Context("when no stories are returned", func() {
-			BeforeEach(func() { stories = nil })
-			It("returns false for existing CATs flake", func() { Expect(actualExists).To(Equal(false)) })
+			BeforeEach(func() {
+				returnStories = nil
+			})
+
+			It("returns false for existing CATs flake", func() {
+				Expect(actualExists).To(BeFalse())
+			})
 		})
 
 		Context("when at least one story is returned", func() {
 			BeforeEach(func() {
-				stories = append(stories, &pivotal.Story{Name: "DOG Failure Fix"})
+				returnStories = append(returnStories, &pivotal.Story{Name: "Some Tracker Story"})
 			})
 
-			Context("when a flake story does exist", func() {
-				var story *pivotal.Story
+			It("returns true for existing CATs flake", func() {
+				Expect(actualExists).To(BeTrue(), "expected story to exist")
+			})
+		})
 
-				BeforeEach(func() {
-					story = &pivotal.Story{Name: "CAT Failure Fix"}
-					stories = append(stories, story)
-				})
-
-				Context("when the flake is in the accepted state", func() {
-					BeforeEach(func() { story.State = "accepted" })
-					It("returns false for existing CATs flake", func() { Expect(actualExists).To(Equal(false)) })
-				})
-
-				Context("when the flake is in any other state", func() {
-					BeforeEach(func() { story.State = "some state" })
-					It("returns true for existing CATs flake", func() { Expect(actualExists).To(Equal(true)) })
-				})
+		Context("when the api returns an error", func() {
+			BeforeEach(func() {
+				returnErr = errors.New("a crazy error")
 			})
 
-			Context("when a flake story doesn't exist", func() {
-				It("returns false for existing CATs flake", func() { Expect(actualExists).To(Equal(false)) })
+			It("returns an error", func() {
+				Expect(actualErr).To(MatchError(returnErr), "expected an error")
 			})
 		})
 	})
