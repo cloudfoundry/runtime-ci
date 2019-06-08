@@ -11,6 +11,7 @@ inputs:
 - name: relint-team
 - name: release
 - name: bosh-logs
+  optional: true
 
 outputs:
 - name: slack-message
