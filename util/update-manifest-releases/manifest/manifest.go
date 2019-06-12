@@ -55,7 +55,7 @@ func stemcellOSfromURL(url string) (string, error) {
 	return osMatch, nil
 }
 
-func updateReleasesOrStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, stemcellBump bool, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
+func UpdateReleasesOrStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, stemcellBump bool, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	r := regexp.MustCompile(`(?m:^releases:$)`)
 
 	submatches := r.FindSubmatchIndex([]byte(cfDeploymentManifest))
@@ -175,9 +175,9 @@ func updateReleasesOrStemcell(releases []string, buildDir string, cfDeploymentMa
 }
 
 func UpdateReleases(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	return updateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, false, marshalFunc, unmarshalFunc)
+	return UpdateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, false, marshalFunc, unmarshalFunc)
 }
 
 func UpdateStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	return updateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, true, marshalFunc, unmarshalFunc)
+	return UpdateReleasesOrStemcell(releases, buildDir, cfDeploymentManifest, true, marshalFunc, unmarshalFunc)
 }
