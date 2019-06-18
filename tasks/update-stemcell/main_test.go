@@ -203,35 +203,113 @@ stemcells:
 		os.Setenv("UPDATED_OPS_FILE_PATH", outputPath)
 	})
 
-	Context("required flags", func() {
-		It("verifies that the build-dir flag is required", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary), GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
+	Context("required parameters", func() {
+		Context("when the build-dir flag is missing", func() {
+			It("returns an error", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
 
-			Eventually(session).Should(gexec.Exit())
-			Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
 
-			Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: build-dir"))
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: build-dir"))
+			})
 		})
 
-		It("verifies that the input-dir flag is required", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
+		Context("when the input-dir flag is missing", func() {
+			It("returns an error", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
 
-			Eventually(session).Should(gexec.Exit())
-			Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
 
-			Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: input-dir"))
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: input-dir"))
+			})
 		})
 
-		It("verifies that the output-dir flag is required", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment"}...), GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
+		Context("when the output-dir flag is missing", func() {
+			It("returns an error", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
 
-			Eventually(session).Should(gexec.Exit())
-			Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
 
-			Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: output-dir"))
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: output-dir"))
+			})
+		})
+
+		Context("when the path to the input deployment manifest is missing", func() {
+			BeforeEach(func() {
+				os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", "")
+			})
+
+			It("returns an error", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing path to input deployment manifest"))
+
+			})
+		})
+
+		Context("when the path to the output deployment manifest is missing", func() {
+			BeforeEach(func() {
+				os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", "")
+			})
+
+			It("returns an error", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing path to output deployment manifest"))
+
+			})
+		})
+
+		Context("when the path to the input compiled release ops-file is missing", func() {
+			BeforeEach(func() {
+				os.Setenv("ORIGINAL_OPS_FILE_PATH", "")
+			})
+
+			It("returns an error", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing path to input compiled release ops-file"))
+
+			})
+		})
+
+		Context("when the path to the output compiled release ops-file is missing", func() {
+			BeforeEach(func() {
+				os.Setenv("UPDATED_OPS_FILE_PATH", "")
+			})
+
+			It("returns an error", func() {
+				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1))
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing path to output compiled release ops-file"))
+
+			})
 		})
 	})
 
@@ -285,7 +363,7 @@ stemcells:
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(1))
 
-				Expect(string(session.Err.Contents())).To(ContainSubstring(fmt.Sprintf("%v: no such file or directory", fakeDirName)))
+				Expect(string(session.Err.Contents())).To(ContainSubstring(fmt.Sprintf("%v/cf-deployment/original-manifest.yml: no such file or directory", fakeDirName)))
 			})
 
 			It("errors when the deployment manifest does not exist", func() {

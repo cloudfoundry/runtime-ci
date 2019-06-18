@@ -3,17 +3,17 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/manifest"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
 )
-
 
 type updateFunc func([]string, string, []byte, common.MarshalFunc, common.UnmarshalFunc) ([]byte, string, error)
 
@@ -36,7 +36,6 @@ func getReleaseNames(buildDir string) ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Println("asdf")
 	releases := []string{}
 	for _, file := range files {
 		if strings.HasSuffix(file.Name(), "-release") {
@@ -50,13 +49,8 @@ func getReleaseNames(buildDir string) ([]string, error) {
 
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
 	filesToUpdate := make(map[string]string)
-	ignoreNotFoundAndBadFormatErrors := false
 
-	if inputPath == "" && outputPath == "" {
-		ignoreNotFoundAndBadFormatErrors = true
-	} else {
-		filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
-	}
+	filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
 
 	for inputPath, outputFileName := range filesToUpdate {
 		var err error
@@ -72,7 +66,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 			isBadFormatError := err.Error() == opsfile.BadReleaseOpsFormatErrorMessage
 			isNotFoundOrBadFormat := isNotFoundError || isBadFormatError
 
-			if !(isNotFoundOrBadFormat && ignoreNotFoundAndBadFormatErrors) {
+			if !isNotFoundOrBadFormat {
 				return err
 			}
 		}
@@ -129,6 +123,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	inputDeploymentmanifestPath := os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
+	outputDeploymentmanifestPath := os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH")
+
+	inputCompiledReleasesOpsFilePath := os.Getenv("ORIGINAL_OPS_FILE_PATH")
+	outputCompiledReleasesOpsFilePath := os.Getenv("UPDATED_OPS_FILE_PATH")
+
+	if inputDeploymentmanifestPath == "" {
+		fmt.Fprintln(os.Stderr, "missing path to input deployment manifest")
+		os.Exit(1)
+	}
+
+	if outputDeploymentmanifestPath == "" {
+		fmt.Fprintln(os.Stderr, "missing path to output deployment manifest")
+		os.Exit(1)
+	}
+
+	if inputCompiledReleasesOpsFilePath == "" {
+		fmt.Fprintln(os.Stderr, "missing path to input compiled release ops-file")
+		os.Exit(1)
+	}
+
+	if outputCompiledReleasesOpsFilePath == "" {
+		fmt.Fprintln(os.Stderr, "missing path to output compiled release ops-file")
+		os.Exit(1)
+	}
+
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
 	if target == "compiledReleasesOpsfile" {
@@ -141,12 +161,10 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Println(releases)
-
 		if err := update(
 			releases,
-			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
-			os.Getenv("UPDATED_OPS_FILE_PATH"),
+			inputCompiledReleasesOpsFilePath,
+			outputCompiledReleasesOpsFilePath,
 			inputDir,
 			outputDir,
 			buildDir,
@@ -159,8 +177,8 @@ func main() {
 	} else if target == "manifest" {
 		if err := update(
 			[]string{},
-			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),
-			os.Getenv("UPDATED_DEPLOYMENT_MANIFEST_PATH"),
+			inputDeploymentmanifestPath,
+			outputDeploymentmanifestPath,
 			inputDir,
 			outputDir,
 			buildDir,
@@ -171,10 +189,9 @@ func main() {
 			os.Exit(1)
 		}
 	}
-
-
 }
 
 func UpdateStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	return manifest.UpdateReleasesOrStemcell([]string{}, buildDir, cfDeploymentManifest, true, marshalFunc, unmarshalFunc)
 }
+
