@@ -1,11 +1,14 @@
 package tracker
 
 import (
+	"net/http"
+
 	"gopkg.in/salsita/go-pivotaltracker.v2/v5/pivotal"
 )
 
 //go:generate counterfeiter . TrackerAPI
 type TrackerAPI interface {
+	Create(projectID int, story *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)
 	List(projectID int, filter string) ([]*pivotal.Story, error)
 }
 
@@ -26,4 +29,15 @@ func (c Client) ScanForFlakeStory() (bool, error) {
 	}
 
 	return len(stories) != 0, nil
+}
+
+func (c Client) CreateCATsFlakeStory() error {
+	request := new(pivotal.StoryRequest)
+
+	_, _, err := c.api.Create(c.projectID, request)
+	if err != nil {
+		panic(err)
+	}
+
+	return nil
 }

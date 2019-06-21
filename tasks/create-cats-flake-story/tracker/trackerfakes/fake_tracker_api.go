@@ -2,6 +2,7 @@
 package trackerfakes
 
 import (
+	"net/http"
 	"sync"
 
 	"github.com/cloudfoundry/runtime-ci/tasks/create-cats-flake-story/tracker"
@@ -9,6 +10,22 @@ import (
 )
 
 type FakeTrackerAPI struct {
+	CreateStub        func(int, *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)
+	createMutex       sync.RWMutex
+	createArgsForCall []struct {
+		arg1 int
+		arg2 *pivotal.StoryRequest
+	}
+	createReturns struct {
+		result1 *pivotal.Story
+		result2 *http.Response
+		result3 error
+	}
+	createReturnsOnCall map[int]struct {
+		result1 *pivotal.Story
+		result2 *http.Response
+		result3 error
+	}
 	ListStub        func(int, string) ([]*pivotal.Story, error)
 	listMutex       sync.RWMutex
 	listArgsForCall []struct {
@@ -25,6 +42,73 @@ type FakeTrackerAPI struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeTrackerAPI) Create(arg1 int, arg2 *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error) {
+	fake.createMutex.Lock()
+	ret, specificReturn := fake.createReturnsOnCall[len(fake.createArgsForCall)]
+	fake.createArgsForCall = append(fake.createArgsForCall, struct {
+		arg1 int
+		arg2 *pivotal.StoryRequest
+	}{arg1, arg2})
+	fake.recordInvocation("Create", []interface{}{arg1, arg2})
+	fake.createMutex.Unlock()
+	if fake.CreateStub != nil {
+		return fake.CreateStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.createReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeTrackerAPI) CreateCallCount() int {
+	fake.createMutex.RLock()
+	defer fake.createMutex.RUnlock()
+	return len(fake.createArgsForCall)
+}
+
+func (fake *FakeTrackerAPI) CreateCalls(stub func(int, *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)) {
+	fake.createMutex.Lock()
+	defer fake.createMutex.Unlock()
+	fake.CreateStub = stub
+}
+
+func (fake *FakeTrackerAPI) CreateArgsForCall(i int) (int, *pivotal.StoryRequest) {
+	fake.createMutex.RLock()
+	defer fake.createMutex.RUnlock()
+	argsForCall := fake.createArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeTrackerAPI) CreateReturns(result1 *pivotal.Story, result2 *http.Response, result3 error) {
+	fake.createMutex.Lock()
+	defer fake.createMutex.Unlock()
+	fake.CreateStub = nil
+	fake.createReturns = struct {
+		result1 *pivotal.Story
+		result2 *http.Response
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeTrackerAPI) CreateReturnsOnCall(i int, result1 *pivotal.Story, result2 *http.Response, result3 error) {
+	fake.createMutex.Lock()
+	defer fake.createMutex.Unlock()
+	fake.CreateStub = nil
+	if fake.createReturnsOnCall == nil {
+		fake.createReturnsOnCall = make(map[int]struct {
+			result1 *pivotal.Story
+			result2 *http.Response
+			result3 error
+		})
+	}
+	fake.createReturnsOnCall[i] = struct {
+		result1 *pivotal.Story
+		result2 *http.Response
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeTrackerAPI) List(arg1 int, arg2 string) ([]*pivotal.Story, error) {
@@ -94,6 +178,8 @@ func (fake *FakeTrackerAPI) ListReturnsOnCall(i int, result1 []*pivotal.Story, r
 func (fake *FakeTrackerAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.createMutex.RLock()
+	defer fake.createMutex.RUnlock()
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
