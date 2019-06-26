@@ -45,7 +45,7 @@ instance_groups:
         api: "https://api.((system_domain))"
         apps_domain: "((system_domain))"
         user: admin
-        password: "((/bosh-bellatrix-stable/cf/cf_admin_password))"
+        password: "((/bosh-bbl-env-tanganyika-2019-06-25t22-06z/cf/cf_admin_password))"
         org: cf_smoke_tests_org
         space: cf_smoke_tests_space
         cf_dial_timeout_in_seconds: 300
@@ -73,7 +73,7 @@ instance_groups:
         api: "https://api.((system_domain))"
         apps_domain: "((system_domain))"
         user: admin
-        password: "((/bosh-bellatrix-stable/cf/cf_admin_password))"
+        password: "((/bosh-bbl-env-tanganyika-2019-06-25t22-06z/cf/cf_admin_password))"
         org: cf_smoke_tests_org
         space: cf_smoke_tests_space
         cf_dial_timeout_in_seconds: 300
