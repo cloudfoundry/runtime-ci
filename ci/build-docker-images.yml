@@ -188,7 +188,7 @@ jobs:
   plan:
   - timeout: 4h
     do:
-    - aggregate:
+    - in_parallel:
       - get: runtime-ci
       - get: weekly
         trigger: true
@@ -239,7 +239,7 @@ jobs:
 - name: ship-it-major-docker-image
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-docker-image-version
       params:
@@ -272,7 +272,7 @@ jobs:
 - name: ship-it-minor-docker-image
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-docker-image-version
       params:
@@ -305,7 +305,7 @@ jobs:
 - name: update-cf-d-ct-docker-image-major-version
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-concourse-tasks-docker-image-version
@@ -324,7 +324,7 @@ jobs:
 - name: update-cf-d-ct-docker-image-minor-version
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment-concourse-tasks-docker-image-version
@@ -343,7 +343,7 @@ jobs:
 - name: release-notes-template
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks
       trigger: true
@@ -354,7 +354,7 @@ jobs:
 - name: ship-it-minor-cf-d-ct
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-version
       params: {bump: minor}
@@ -370,7 +370,7 @@ jobs:
 - name: ship-it-major-cf-d-ct
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
     - get: cf-deployment-concourse-tasks-version
       params: {bump: major}
@@ -388,7 +388,7 @@ jobs:
   plan:
   - timeout: 4h
     do:
-    - aggregate:
+    - in_parallel:
       - get: weekly
         trigger: true
       - get: runtime-ci-relint-base
@@ -403,7 +403,7 @@ jobs:
   plan:
   - timeout: 4h
     do:
-    - aggregate:
+    - in_parallel:
       - get: weekly
         trigger: true
       - get: runtime-ci

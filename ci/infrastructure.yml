@@ -259,7 +259,7 @@ jobs:
   - get: fresh-pool
     trigger: true
     passed: [ add-claimed-lock-fresh ]
-  - aggregate:
+  - in_parallel:
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
@@ -294,7 +294,7 @@ jobs:
   - get: lite-pool
     trigger: true
     passed: [ add-claimed-lock-lite ]
-  - aggregate:
+  - in_parallel:
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
@@ -335,7 +335,7 @@ jobs:
   - get: upgrade-pool
     trigger: true
     passed: [add-claimed-lock-upgrade]
-  - aggregate:
+  - in_parallel:
     - get: cf-deployment-concourse-tasks
     - get: relint-envs
     - get: runtime-ci
@@ -369,7 +369,7 @@ jobs:
   - get: stable-pool
     trigger: true
     passed: [ add-claimed-lock-stable ]
-  - aggregate:
+  - in_parallel:
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
     - get: runtime-ci
@@ -414,7 +414,7 @@ jobs:
   - get: experimental-pool
     trigger: true
     passed: [ add-claimed-lock-experimental ]
-  - aggregate:
+  - in_parallel:
     - get: cf-deployment-concourse-tasks
     - get: relint-envs
   - task: setup-infrastructure
@@ -448,7 +448,7 @@ jobs:
   - get: cats-pool
     trigger: true
     passed: [ add-claimed-lock-cats ]
-  - aggregate:
+  - in_parallel:
     - get: cf-deployment-concourse-tasks
     - get: relint-envs
     - get: bosh-bootloader
@@ -482,7 +482,7 @@ jobs:
   - get: bbr-pool
     trigger: true
     passed: [add-claimed-lock-bbr]
-  - aggregate:
+  - in_parallel:
     - get: cf-deployment-concourse-tasks
     - get: relint-envs
     - get: bosh-bootloader
@@ -516,7 +516,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: fresh-pool
         params: {acquire: true}
       - get: relint-envs
@@ -554,7 +554,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: lite-pool
         params: {acquire: true}
       - get: relint-envs
@@ -604,7 +604,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: upgrade-pool
         params: {acquire: true}
       - get: relint-envs
@@ -640,7 +640,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: stable-pool
         params: {acquire: true}
       - get: relint-envs
@@ -687,7 +687,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: experimental-pool
         params: {acquire: true}
       - get: relint-envs
@@ -724,7 +724,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: cats-pool
         params: {acquire: true}
       - get: relint-envs
@@ -761,7 +761,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - put: bbr-pool
         params: {acquire: true}
       - get: relint-envs
@@ -797,7 +797,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: fresh-pool
       params: {claim: luna}
     - get: relint-envs
@@ -825,7 +825,7 @@ jobs:
   serial_groups: [snitch]
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: lite-pool
       params: {claim: snitch}
     - get: relint-envs
@@ -855,7 +855,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: upgrade-pool
       params: {claim: trelawney}
     - get: relint-envs
@@ -877,7 +877,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: stable-pool
       params: {claim: bellatrix}
     - get: relint-envs
@@ -905,7 +905,7 @@ jobs:
   serial_groups: [hermione]
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: experimental-pool
       params: {claim: hermione}
     - get: relint-envs
@@ -932,7 +932,7 @@ jobs:
   serial_groups: [cats]
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: cats-pool
       params: {claim: cats}
     - get: relint-envs
@@ -960,7 +960,7 @@ jobs:
   serial_groups: [bbr]
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - put: bbr-pool
       params: {claim: baba-yaga}
     - get: relint-envs

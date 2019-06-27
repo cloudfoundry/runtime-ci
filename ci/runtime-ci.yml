@@ -40,7 +40,7 @@ jobs:
 - name: all-jobs-public
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
       trigger: true
   - task: validate-all-jobs-public
@@ -49,7 +49,7 @@ jobs:
 - name: verify-every-task-is-used-in-a-pipeline
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
       trigger: true
     - get: cf-deployment
@@ -64,7 +64,7 @@ jobs:
 - name: stale-job-alert
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: daily
       trigger: true
     - get: runtime-ci
@@ -74,7 +74,7 @@ jobs:
 - name: run-update-manifest-releases-unit-tests
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: runtime-ci
       trigger: true
   - task: run-update-manifest-releases-unit-tests

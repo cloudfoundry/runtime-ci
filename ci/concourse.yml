@@ -34,7 +34,7 @@ jobs:
   plan:
   - timeout: 12h
     do:
-    - aggregate:
+    - in_parallel:
       - get: relint-envs
       - get: runtime-ci
       - get: cf-deployment-concourse-tasks
