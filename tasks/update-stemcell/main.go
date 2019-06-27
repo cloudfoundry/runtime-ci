@@ -30,63 +30,62 @@ func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error
 	return nil
 }
 
-func getReleaseNames(buildDir string) ([]string, error) {
-	files, err := ioutil.ReadDir(buildDir)
+func getReleaseNames(inputDeploymentmanifestPath string) ([]string, error) {
+	fileContents, err := ioutil.ReadFile(inputDeploymentmanifestPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var manifest manifest.Manifest
+	err = yaml.Unmarshal(fileContents, &manifest)
 	if err != nil {
 		return nil, err
 	}
 
 	releases := []string{}
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), "-release") {
-			fmt.Println(file.Name())
-			releases = append(releases, strings.TrimSuffix(file.Name(), "-release"))
-		}
+	for _, release := range manifest.Releases {
+		releases = append(releases, release.Name)
 	}
 
 	return releases, nil
 }
 
 func update(releases []string, inputPath, outputPath, inputDir, outputDir, buildDir, commitMessagePath string, f updateFunc) error {
-	filesToUpdate := make(map[string]string)
+	inputFilePath := filepath.Join(buildDir, inputDir, inputPath)
 
-	filesToUpdate[filepath.Join(buildDir, inputDir, inputPath)] = outputPath
+	var err error
+	fmt.Printf("Processing %s...\n", inputFilePath)
+	originalFile, err := ioutil.ReadFile(inputFilePath)
+	if err != nil {
+		return err
+	}
 
-	for inputPath, outputFileName := range filesToUpdate {
-		var err error
-		fmt.Printf("Processing %s...\n", inputPath)
-		originalFile, err := ioutil.ReadFile(inputPath)
+	updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
+	if err != nil {
+		isNotFoundError := strings.Contains(err.Error(), "Opsfile does not contain release named")
+		isBadFormatError := err.Error() == opsfile.BadReleaseOpsFormatErrorMessage
+		isNotFoundOrBadFormat := isNotFoundError || isBadFormatError
+
+		if !isNotFoundOrBadFormat {
+			return err
+		}
+	}
+
+	if commitMessage != common.NoOpsFileChangesCommitMessage {
+		if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
+			return err
+		}
+
+		updatedOpsFilePath := filepath.Join(buildDir, outputDir, filepath.Dir(outputPath))
+
+		err := os.MkdirAll(updatedOpsFilePath, os.ModePerm)
 		if err != nil {
 			return err
 		}
 
-		updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
-		if err != nil {
-			isNotFoundError := strings.Contains(err.Error(), "Opsfile does not contain release named")
-			isBadFormatError := err.Error() == opsfile.BadReleaseOpsFormatErrorMessage
-			isNotFoundOrBadFormat := isNotFoundError || isBadFormatError
-
-			if !isNotFoundOrBadFormat {
-				return err
-			}
-		}
-
-		if commitMessage != common.NoOpsFileChangesCommitMessage {
-			if err := writeCommitMessage(buildDir, commitMessage, commitMessagePath); err != nil {
-				return err
-			}
-
-			updatedOpsFilePath := filepath.Join(buildDir, outputDir, filepath.Dir(outputFileName))
-
-			err := os.MkdirAll(updatedOpsFilePath, os.ModePerm)
-			if err != nil {
-				return err
-			}
-
-			fmt.Printf("Updating file: %s\n", inputPath)
-			if err := ioutil.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputFileName)), updatedFile, 0666); err != nil {
-				return err
-			}
+		fmt.Printf("Updating file: %s\n", inputFilePath)
+		if err := ioutil.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputPath)), updatedFile, 0666); err != nil {
+			return err
 		}
 	}
 
@@ -152,10 +151,7 @@ func main() {
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
 	if target == "compiledReleasesOpsfile" {
-		var err error
-		releases := []string{}
-
-		releases, err = getReleaseNames(buildDir)
+		releases, err := getReleaseNames(filepath.Join(buildDir, inputDir, inputDeploymentmanifestPath))
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -194,4 +190,3 @@ func main() {
 func UpdateStemcell(releases []string, buildDir string, cfDeploymentManifest []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
 	return manifest.UpdateReleasesOrStemcell([]string{}, buildDir, cfDeploymentManifest, true, marshalFunc, unmarshalFunc)
 }
-

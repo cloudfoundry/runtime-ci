@@ -102,7 +102,7 @@ stemcells:
   value: 0.0.0
 - path: /releases/name=release1/sha1
   type: replace
-  value: 8867c88b56e0bfb82cffaf15a66bc8d107d6754a
+  value: 2062e90b3ea10a86ff666a76c41aa0d9e9d88f4e
 - path: /releases/name=release1/stemcell?
   type: replace
   value:
@@ -116,7 +116,7 @@ stemcells:
   value: 0.0.1
 - path: /releases/name=release2/sha1
   type: replace
-  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+  value: 5dfc64fff3b07c7c01ebd39706ec3cf3e6c37464
 - path: /releases/name=release2/stemcell?
   type: replace
   value:
@@ -162,15 +162,7 @@ stemcells:
 		os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", "original-manifest.yml")
 		os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", "updated-manifest.yml")
 
-		for _, dir := range []string{
-			"original-compiled-releases-ops-file",
-			"updated-compiled-releases-ops-file",
-		} {
-			err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
-			Expect(err).NotTo(HaveOccurred())
-		}
-
-		err = ioutil.WriteFile(filepath.Join(buildDir, "original-compiled-releases-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
+		err = ioutil.WriteFile(filepath.Join(buildDir, "cf-deployment", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
 
 		inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
@@ -188,7 +180,7 @@ stemcells:
 			Expect(err).NotTo(HaveOccurred())
 
 			compiledReleaseTarballName := fmt.Sprintf("%s-%s-stemcell2-2.0-20180808-195254-497840039.tgz", release["name"], release["version"])
-			err = ioutil.WriteFile(filepath.Join(compiledReleaseDir, compiledReleaseTarballName), []byte("anything"), os.ModePerm)
+			err = ioutil.WriteFile(filepath.Join(compiledReleaseDir, compiledReleaseTarballName), []byte(release["name"]), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 		}
 	})
@@ -407,13 +399,13 @@ stemcells:
 
 	Context("compiled releases opsfile", func() {
 		It("updates the original ops file with new stemcell", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-compiled-releases-ops-file", "--output-dir", "updated-compiled-releases-ops-file", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "updated_ops_file.yml"))
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
@@ -422,13 +414,13 @@ stemcells:
 		It("creates nested directory when the directory to write out the updated ops file path does not exist", func() {
 			os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join("doesnt-exist", "updated_ops_file.yml"))
 
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-compiled-releases-ops-file", "--output-dir", "updated-compiled-releases-ops-file"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "doesnt-exist", "updated_ops_file.yml"))
+			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
@@ -438,7 +430,7 @@ stemcells:
 			It("errors when the original ops file does not exist", func() {
 				os.Setenv("ORIGINAL_OPS_FILE_PATH", emptyDir)
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--input-dir", "original-compiled-releases-ops-file", "--output-dir", "updated-compiled-releases-ops-file"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
