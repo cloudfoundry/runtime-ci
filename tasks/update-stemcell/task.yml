@@ -1,0 +1,27 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+
+inputs:
+- name: cf-deployment
+- name: runtime-ci
+- name: stemcell
+
+outputs:
+- name: updated-cf-deployment
+
+run:
+  path: runtime-ci/tasks/update-stemcell/task
+
+params:
+  COMMIT_MESSAGE_PATH: commit-message.txt
+
+  ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  ORIGINAL_OPS_FILE_PATH: operations/use-compiled-releases.yml
+
+  UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  UPDATED_OPS_FILE_PATH: operations/use-compiled-releases.yml

@@ -15,6 +15,12 @@ function main() {
       --build-dir "${root_dir}" \
       --input-dir "cf-deployment" \
       --output-dir "updated-cf-deployment"
+
+    go run main.go \
+      --target "compiledReleasesOpsfile" \
+      --build-dir "${root_dir}" \
+      --input-dir "cf-deployment" \
+      --output-dir "updated-cf-deployment"
   popd
 
   commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
