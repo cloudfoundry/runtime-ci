@@ -2,7 +2,9 @@ package tracker_test
 
 import (
 	"errors"
+	"io/ioutil"
 	"net/http"
+	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -106,11 +108,10 @@ var _ = Describe("Client", func() {
 
 		BeforeEach(func() {
 			returnStory = nil
-			returnResp = nil
+			returnResp = &http.Response{
+				Body: ioutil.NopCloser(strings.NewReader("Fake body")),
+			}
 			returnErr = nil
-
-			actualErr = nil
-			_ = actualErr
 		})
 
 		JustBeforeEach(func() {
@@ -146,15 +147,30 @@ var _ = Describe("Client", func() {
 		})
 
 		Context("when the request succeeds", func() {
-			BeforeEach(func() {})
-
 			It("successfully returns", func() {})
 		})
 
 		Context("when the request fails", func() {
-			BeforeEach(func() {})
+			Context("do to a a failure to create the request", func() {
+				BeforeEach(func() {
+					returnErr = errors.New("oh no banana")
+				})
 
-			It("returns the error", func() {})
+				It("returns the error", func() {
+					Expect(actualErr).To(MatchError("invalid request: oh no banana"))
+				})
+			})
+
+			Context("do to a bad response", func() {
+				BeforeEach(func() {
+					returnResp.StatusCode = http.StatusTeapot
+					returnResp.Status = "418 I'm a teapot"
+				})
+
+				It("returns the error", func() {
+					Expect(actualErr).To(MatchError("invalid response: 418 I'm a teapot"))
+				})
+			})
 		})
 	})
 })

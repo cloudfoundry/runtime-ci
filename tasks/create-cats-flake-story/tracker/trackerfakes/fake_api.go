@@ -9,7 +9,7 @@ import (
 	"gopkg.in/salsita/go-pivotaltracker.v2/v5/pivotal"
 )
 
-type FakeTrackerAPI struct {
+type FakeAPI struct {
 	CreateStub        func(int, *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)
 	createMutex       sync.RWMutex
 	createArgsForCall []struct {
@@ -44,7 +44,7 @@ type FakeTrackerAPI struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeTrackerAPI) Create(arg1 int, arg2 *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error) {
+func (fake *FakeAPI) Create(arg1 int, arg2 *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error) {
 	fake.createMutex.Lock()
 	ret, specificReturn := fake.createReturnsOnCall[len(fake.createArgsForCall)]
 	fake.createArgsForCall = append(fake.createArgsForCall, struct {
@@ -63,26 +63,26 @@ func (fake *FakeTrackerAPI) Create(arg1 int, arg2 *pivotal.StoryRequest) (*pivot
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeTrackerAPI) CreateCallCount() int {
+func (fake *FakeAPI) CreateCallCount() int {
 	fake.createMutex.RLock()
 	defer fake.createMutex.RUnlock()
 	return len(fake.createArgsForCall)
 }
 
-func (fake *FakeTrackerAPI) CreateCalls(stub func(int, *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)) {
+func (fake *FakeAPI) CreateCalls(stub func(int, *pivotal.StoryRequest) (*pivotal.Story, *http.Response, error)) {
 	fake.createMutex.Lock()
 	defer fake.createMutex.Unlock()
 	fake.CreateStub = stub
 }
 
-func (fake *FakeTrackerAPI) CreateArgsForCall(i int) (int, *pivotal.StoryRequest) {
+func (fake *FakeAPI) CreateArgsForCall(i int) (int, *pivotal.StoryRequest) {
 	fake.createMutex.RLock()
 	defer fake.createMutex.RUnlock()
 	argsForCall := fake.createArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeTrackerAPI) CreateReturns(result1 *pivotal.Story, result2 *http.Response, result3 error) {
+func (fake *FakeAPI) CreateReturns(result1 *pivotal.Story, result2 *http.Response, result3 error) {
 	fake.createMutex.Lock()
 	defer fake.createMutex.Unlock()
 	fake.CreateStub = nil
@@ -93,7 +93,7 @@ func (fake *FakeTrackerAPI) CreateReturns(result1 *pivotal.Story, result2 *http.
 	}{result1, result2, result3}
 }
 
-func (fake *FakeTrackerAPI) CreateReturnsOnCall(i int, result1 *pivotal.Story, result2 *http.Response, result3 error) {
+func (fake *FakeAPI) CreateReturnsOnCall(i int, result1 *pivotal.Story, result2 *http.Response, result3 error) {
 	fake.createMutex.Lock()
 	defer fake.createMutex.Unlock()
 	fake.CreateStub = nil
@@ -111,7 +111,7 @@ func (fake *FakeTrackerAPI) CreateReturnsOnCall(i int, result1 *pivotal.Story, r
 	}{result1, result2, result3}
 }
 
-func (fake *FakeTrackerAPI) List(arg1 int, arg2 string) ([]*pivotal.Story, error) {
+func (fake *FakeAPI) List(arg1 int, arg2 string) ([]*pivotal.Story, error) {
 	fake.listMutex.Lock()
 	ret, specificReturn := fake.listReturnsOnCall[len(fake.listArgsForCall)]
 	fake.listArgsForCall = append(fake.listArgsForCall, struct {
@@ -130,26 +130,26 @@ func (fake *FakeTrackerAPI) List(arg1 int, arg2 string) ([]*pivotal.Story, error
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeTrackerAPI) ListCallCount() int {
+func (fake *FakeAPI) ListCallCount() int {
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
 	return len(fake.listArgsForCall)
 }
 
-func (fake *FakeTrackerAPI) ListCalls(stub func(int, string) ([]*pivotal.Story, error)) {
+func (fake *FakeAPI) ListCalls(stub func(int, string) ([]*pivotal.Story, error)) {
 	fake.listMutex.Lock()
 	defer fake.listMutex.Unlock()
 	fake.ListStub = stub
 }
 
-func (fake *FakeTrackerAPI) ListArgsForCall(i int) (int, string) {
+func (fake *FakeAPI) ListArgsForCall(i int) (int, string) {
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
 	argsForCall := fake.listArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeTrackerAPI) ListReturns(result1 []*pivotal.Story, result2 error) {
+func (fake *FakeAPI) ListReturns(result1 []*pivotal.Story, result2 error) {
 	fake.listMutex.Lock()
 	defer fake.listMutex.Unlock()
 	fake.ListStub = nil
@@ -159,7 +159,7 @@ func (fake *FakeTrackerAPI) ListReturns(result1 []*pivotal.Story, result2 error)
 	}{result1, result2}
 }
 
-func (fake *FakeTrackerAPI) ListReturnsOnCall(i int, result1 []*pivotal.Story, result2 error) {
+func (fake *FakeAPI) ListReturnsOnCall(i int, result1 []*pivotal.Story, result2 error) {
 	fake.listMutex.Lock()
 	defer fake.listMutex.Unlock()
 	fake.ListStub = nil
@@ -175,7 +175,7 @@ func (fake *FakeTrackerAPI) ListReturnsOnCall(i int, result1 []*pivotal.Story, r
 	}{result1, result2}
 }
 
-func (fake *FakeTrackerAPI) Invocations() map[string][][]interface{} {
+func (fake *FakeAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.createMutex.RLock()
@@ -189,7 +189,7 @@ func (fake *FakeTrackerAPI) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *FakeTrackerAPI) recordInvocation(key string, args []interface{}) {
+func (fake *FakeAPI) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -201,4 +201,4 @@ func (fake *FakeTrackerAPI) recordInvocation(key string, args []interface{}) {
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ tracker.API = new(FakeTrackerAPI)
+var _ tracker.API = new(FakeAPI)
