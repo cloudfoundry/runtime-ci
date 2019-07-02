@@ -1,0 +1,19 @@
+#!/bin/bash -eu
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+export GOMODULE111=on
+
+function main() {
+  local cwd="${PWD}"
+
+  setup_bosh_env_vars
+
+  pushd runtime-ci/tasks/export-all-compiled-release-tarballs
+    go run main.go
+    mv *.tgz "${cwd}/compiled-releases"
+  popd
+}
+
+main
