@@ -6,7 +6,7 @@ source cf-deployment-concourse-tasks/shared-functions
 function setup_interpolate_env_vars_for_first_ops_file() {
   local ops_to_test
   set +e
-  ops_to_test=$(find modified-ops-files -name '*.yml' -not -path '*/community/*' | cut -d'/' -f 2- |  head -1 | xargs find ops-files -type f -name | cut -d'/' -f 2-)
+  ops_to_test=$(find modified-ops-files -name '*.yml' -not -path '*/community/*' | cut -d'/' -f 2- |  head -1 | xargs find ops-files -type f -not -path '*/community/*' -name | cut -d'/' -f 2-)
   set -e
 
   export MANIFEST_FILE=cf-deployment.yml
