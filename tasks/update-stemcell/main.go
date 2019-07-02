@@ -93,6 +93,15 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 }
 
 func main() {
+	// pseudo-code:
+	// parse flags
+	// update stemcell in base manifest
+	// generate list of compiled releases
+	// for each compiled release:
+	//	 retrieve name/version from tarball (bosh inspect-local-release)
+	//	 append to list of ops-file entries
+	// marshal and write ops-file
+
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 

@@ -8,22 +8,20 @@ function main() {
   local root_dir
   root_dir="${1}"
 
+  local commit_message_path="commit-message.txt"
+
   git clone cf-deployment updated-cf-deployment
 
   pushd "runtime-ci/tasks/update-stemcell"
     go run main.go \
-      --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment"
-
-    go run main.go \
-      --target "compiledReleasesOpsfile" \
-      --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment"
+      --commit-message-file "${root_dir}/${commit_message_path}" \
+      --compiled-release-tarball-dir "${root_dir}/compiled-releases" \
+      --stemcell-dir "${root_dir}/stemcell" \
+      --original-cf-d-dir "${root_dir}/cf-deployment" \
+      --updated-cf-d-dir "${root_dir}/updated-cf-deployment"
   popd
 
-  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
+  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${commit_message_path}"
 }
 
 main "${PWD}"
