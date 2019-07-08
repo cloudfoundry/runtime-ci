@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+- name: relint-team
+- name: runtime-ci
+
+outputs:
+- name: slack-channel
+
+run:
+  path: runtime-ci/tasks/lookup-slack-channel-for-release-owner/task
+
+params:
+  RELEASE_REPOSITORY:

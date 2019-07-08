@@ -33,18 +33,6 @@ function main() {
   local release_branch
   release_branch="$(branch_name "${RELEASE_NAME}" "${release_version}")"
 
-  local cwd="${PWD}"
-
-  export GOPATH="${cwd}/go"
-  export PATH="${GOPATH}/bin:${PATH}"
-
-  pushd runtime-ci/tasks/create-slack-message/
-    go run get-slack-channel.go \
-      -cf-teams="${cwd}/relint-team/team/cf-teams.yml" \
-      -repository="${REPOSITORY}" \
-      > "${cwd}/slack-message/channel.txt"
-  popd
-
   create_message_file "${release_version}" "${release_branch}"
 }
 

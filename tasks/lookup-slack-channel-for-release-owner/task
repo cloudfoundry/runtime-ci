@@ -1,0 +1,17 @@
+#!/bin/bash -eu
+
+function main() {
+  local cwd="${PWD}"
+
+  export GOPATH="${cwd}/go"
+  export PATH="${GOPATH}/bin:${PATH}"
+
+  pushd runtime-ci/tasks/lookup-slack-channel-for-release-owner
+    go run main.go \
+      -cf-teams="${cwd}/relint-team/team/cf-teams.yml" \
+      -release-repository="${RELEASE_REPOSITORY}" \
+      > "${cwd}/slack-channel/channel.txt"
+  popd
+}
+
+main "$@"

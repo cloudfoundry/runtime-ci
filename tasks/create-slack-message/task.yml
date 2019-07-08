@@ -7,11 +7,10 @@ image_resource:
     repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
 
 inputs:
-- name: runtime-ci
-- name: relint-team
-- name: release
 - name: bosh-logs
   optional: true
+- name: release
+- name: runtime-ci
 
 outputs:
 - name: slack-message
@@ -23,4 +22,3 @@ params:
   BOSH_LOGS_PREFIX:
   RELEASE_NAME:
   RELINT_SLACK_CHANNEL: C0FAEKGUQ
-  REPOSITORY:
