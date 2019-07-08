@@ -2,7 +2,7 @@
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source runtime-ci/tasks/shared-functions
+source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
 
 function main() {
   local root_dir
@@ -12,8 +12,9 @@ function main() {
 
   git clone cf-deployment updated-cf-deployment
 
-  pushd "runtime-ci/tasks/update-stemcell"
+  pushd "go/src/github.com/cloudfoundry/rruntime-ci/tasks/update-stemcell"
     go run main.go \
+      --build-dir "${root_dir}"
       --commit-message-file "${root_dir}/${commit_message_path}" \
       --compiled-release-tarball-dir "${root_dir}/compiled-releases" \
       --stemcell-dir "${root_dir}/stemcell" \

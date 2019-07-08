@@ -93,23 +93,25 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 }
 
 func main() {
-	// pseudo-code:
+	// TODO: remove pseudo-code comments:
 	// parse flags
-	// update stemcell in base manifest
-	// generate list of compiled releases
-	// for each compiled release:
-	//	 retrieve name/version from tarball (bosh inspect-local-release)
-	//	 append to list of ops-file entries
-	// marshal and write ops-file
-
 	var buildDir string
 	flag.StringVar(&buildDir, "build-dir", "", "path to the build directory")
 
-	var inputDir string
-	flag.StringVar(&inputDir, "input-dir", "", "path to the original cf-deployment")
+	var commitMessageFile string
+	flag.StringVar(&commitMessageFile, "commit-message-file", "", "path to the commit message file")
 
-	var outputDir string
-	flag.StringVar(&outputDir, "output-dir", "", "path to the updated cf-deployment")
+	var compiledReleaseTarballDir string
+	flag.StringVar(&compiledReleaseTarballDir, "compiled-release-tarball-dir", "", "path to the compiled releases tarballs directory")
+
+	var stemcellDir string
+	flag.StringVar(&stemcellDir, "stemcell-dir", "", "path to the stemcell directory")
+
+	var originalCfdDir string
+	flag.StringVar(&originalCfdDir, "original-cf-d-dir", "", "path to the original cf-deployment")
+
+	var updatedCfdDir string
+	flag.StringVar(&updatedCfdDir, "updated-cf-d-dir", "", "path to the updated cf-deployment")
 
 	var target string
 	flag.StringVar(&target, "target", "manifest", "choose whether to update releases in manifest or opsfile")
@@ -121,13 +123,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	if inputDir == "" {
-		fmt.Fprintln(os.Stderr, "missing required flag: input-dir")
+	if compiledReleaseTarballDir == "" {
+		fmt.Fprintln(os.Stderr, "missing required flag: compiled-release-tarball-dir")
 		os.Exit(1)
 	}
 
-	if outputDir == "" {
-		fmt.Fprintln(os.Stderr, "missing required flag: output-dir")
+	if stemcellDir == "" {
+		fmt.Fprintln(os.Stderr, "missing required flag: stemcell-dir")
+		os.Exit(1)
+	}
+
+	if originalCfdDir == "" {
+		fmt.Fprintln(os.Stderr, "missing required flag: original-cf-d-dir")
+		os.Exit(1)
+	}
+
+	if updatedCfdDir == "" {
+		fmt.Fprintln(os.Stderr, "missing required flag: updated-cf-d-dir")
 		os.Exit(1)
 	}
 
@@ -157,10 +169,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	// update stemcell in base manifest
+	// generate list of compiled releases
+	// for each compiled release:
+	//	 retrieve name/version from tarball (bosh inspect-local-release)
+	//	 append to list of ops-file entries
+	// marshal and write ops-file
+
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
 	if target == "compiledReleasesOpsfile" {
-		releases, err := getReleaseNames(filepath.Join(buildDir, inputDir, inputDeploymentmanifestPath))
+		releases, err := getReleaseNames(filepath.Join(buildDir, originalCfdDir, inputDeploymentmanifestPath))
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -170,8 +189,8 @@ func main() {
 			releases,
 			inputCompiledReleasesOpsFilePath,
 			outputCompiledReleasesOpsFilePath,
-			inputDir,
-			outputDir,
+			originalCfdDir,
+			updatedCfdDir,
 			buildDir,
 			commitMessagePath,
 			compiledreleasesops.UpdateCompiledReleases,
@@ -184,8 +203,8 @@ func main() {
 			[]string{},
 			inputDeploymentmanifestPath,
 			outputDeploymentmanifestPath,
-			inputDir,
-			outputDir,
+			originalCfdDir,
+			updatedCfdDir,
 			buildDir,
 			commitMessagePath,
 			UpdateStemcell,

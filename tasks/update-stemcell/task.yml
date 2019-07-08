@@ -19,3 +19,6 @@ outputs:
 
 run:
   path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/task
+
+params:
+  COMMIT_MESSAGE_PATH: commit-message.txt

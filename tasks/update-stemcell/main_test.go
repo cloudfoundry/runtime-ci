@@ -142,6 +142,7 @@ stemcells:
 			"cf-deployment",
 			"updated-cf-deployment",
 			"stemcell",
+			"compiled-releases",
 		} {
 			err = os.Mkdir(filepath.Join(buildDir, dir), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -208,7 +209,7 @@ stemcells:
 			})
 		})
 
-		Context("when the input-dir flag is missing", func() {
+		Context("when the compiled-release-tarball-dir flag is missing", func() {
 			It("returns an error", func() {
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
@@ -216,19 +217,43 @@ stemcells:
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
 
-				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: input-dir"))
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: compiled-release-tarball-dir"))
 			})
 		})
 
-		Context("when the output-dir flag is missing", func() {
+		Context("stemcell-dir flag is missing", func() {
 			It("returns an error", func() {
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
 
-				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: output-dir"))
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: stemcell-dir"))
+			})
+		})
+
+		Context("when the original-cf-d-dir flag is missing", func() {
+			It("returns an error", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: original-cf-d-dir"))
+			})
+		})
+
+		Context("when the updated-cf-d-dir flag is missing", func() {
+			It("returns an error", func() {
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(session).Should(gexec.Exit())
+				Expect(session.ExitCode()).To(Equal(1), "expected command to fail")
+
+				Expect(string(session.Err.Contents())).To(ContainSubstring("missing required flag: updated-cf-d-dir"))
 			})
 		})
 
@@ -239,7 +264,7 @@ stemcells:
 
 			It("returns an error", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -257,7 +282,7 @@ stemcells:
 
 			It("returns an error", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -275,7 +300,7 @@ stemcells:
 
 			It("returns an error", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -293,7 +318,7 @@ stemcells:
 
 			It("returns an error", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -307,7 +332,7 @@ stemcells:
 
 	Context("stemcell", func() {
 		It("only updates the manifest with the new stemcell", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
@@ -319,7 +344,7 @@ stemcells:
 		})
 
 		It("writes the commit message to COMMIT_MESSAGE_PATH", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
@@ -334,7 +359,7 @@ stemcells:
 		It("creates nested directory when the directory to write out the updated manifest does not exist", func() {
 			os.Setenv("UPDATED_DEPLOYMENT_MANIFEST_PATH", filepath.Join("doesnt-exist", "updated-manifest.yml"))
 
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
@@ -349,7 +374,7 @@ stemcells:
 		Context("failure cases", func() {
 			It("errors when the build dir does not exist", func() {
 				fakeDirName := fmt.Sprintf("fake-dir-%v", time.Now().Unix())
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", fakeDirName, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -361,7 +386,7 @@ stemcells:
 			It("errors when the deployment manifest does not exist", func() {
 				os.Setenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH", emptyDir)
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -373,7 +398,7 @@ stemcells:
 			It("errors when the directory to write out the commit message does not exist", func() {
 				os.Setenv("COMMIT_MESSAGE_PATH", filepath.Join(emptyDir, "doesnt-exist"))
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -386,7 +411,7 @@ stemcells:
 				err := os.Remove(filepath.Join(buildDir, "stemcell", "version"))
 				Expect(err).NotTo(HaveOccurred())
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
@@ -399,7 +424,7 @@ stemcells:
 
 	Context("compiled releases opsfile", func() {
 		It("updates the original ops file with new stemcell", func() {
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
@@ -414,7 +439,7 @@ stemcells:
 		It("creates nested directory when the directory to write out the updated ops file path does not exist", func() {
 			os.Setenv("UPDATED_OPS_FILE_PATH", filepath.Join("doesnt-exist", "updated_ops_file.yml"))
 
-			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(gexec.Exit())
@@ -430,7 +455,7 @@ stemcells:
 			It("errors when the original ops file does not exist", func() {
 				os.Setenv("ORIGINAL_OPS_FILE_PATH", emptyDir)
 
-				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--input-dir", "cf-deployment", "--output-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
+				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", emptyDir, "--compiled-release-tarball-dir", "compiled-releases", "--stemcell-dir", "stemcell", "--original-cf-d-dir", "cf-deployment", "--updated-cf-d-dir", "updated-cf-deployment", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(session).Should(gexec.Exit())
