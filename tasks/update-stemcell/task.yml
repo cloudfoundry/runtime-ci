@@ -22,3 +22,7 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
+  ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
+  ORIGINAL_OPS_FILE_PATH:
+  UPDATED_OPS_FILE_PATH:

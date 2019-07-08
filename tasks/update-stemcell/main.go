@@ -149,6 +149,8 @@ func main() {
 	inputCompiledReleasesOpsFilePath := os.Getenv("ORIGINAL_OPS_FILE_PATH")
 	outputCompiledReleasesOpsFilePath := os.Getenv("UPDATED_OPS_FILE_PATH")
 
+	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
+
 	if inputDeploymentmanifestPath == "" {
 		fmt.Fprintln(os.Stderr, "missing path to input deployment manifest")
 		os.Exit(1)
@@ -170,48 +172,41 @@ func main() {
 	}
 
 	// update stemcell in base manifest
+	if err := update(
+		[]string{},
+		inputDeploymentmanifestPath,
+		outputDeploymentmanifestPath,
+		originalCfdDir,
+		updatedCfdDir,
+		buildDir,
+		commitMessagePath,
+		UpdateStemcell,
+	); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 	// generate list of compiled releases
+	releases, err := getReleaseNames(filepath.Join(buildDir, originalCfdDir, inputDeploymentmanifestPath))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 	// for each compiled release:
 	//	 retrieve name/version from tarball (bosh inspect-local-release)
 	//	 append to list of ops-file entries
 	// marshal and write ops-file
-
-	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
-
-	if target == "compiledReleasesOpsfile" {
-		releases, err := getReleaseNames(filepath.Join(buildDir, originalCfdDir, inputDeploymentmanifestPath))
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-
-		if err := update(
-			releases,
-			inputCompiledReleasesOpsFilePath,
-			outputCompiledReleasesOpsFilePath,
-			originalCfdDir,
-			updatedCfdDir,
-			buildDir,
-			commitMessagePath,
-			compiledreleasesops.UpdateCompiledReleases,
-		); err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
-	} else if target == "manifest" {
-		if err := update(
-			[]string{},
-			inputDeploymentmanifestPath,
-			outputDeploymentmanifestPath,
-			originalCfdDir,
-			updatedCfdDir,
-			buildDir,
-			commitMessagePath,
-			UpdateStemcell,
-		); err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
+	if err := update(
+		releases,
+		inputCompiledReleasesOpsFilePath,
+		outputCompiledReleasesOpsFilePath,
+		originalCfdDir,
+		updatedCfdDir,
+		buildDir,
+		commitMessagePath,
+		compiledreleasesops.UpdateCompiledReleases,
+	); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
 	}
 }
 
