@@ -11,18 +11,10 @@ inputs:
 - name: cf-deployment
 - name: compiled-releases
 - name: runtime-ci
-  path: go/src/github.com/cloudfoundry/runtime-ci
 - name: stemcell
 
-outputs:
-- name: updated-cf-deployment
+  outputs:
+    - name: updated-cf-deployment
 
 run:
-  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/task
-
-params:
-  COMMIT_MESSAGE_PATH: commit-message.txt
-  ORIGINAL_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
-  UPDATED_DEPLOYMENT_MANIFEST_PATH: cf-deployment.yml
-  ORIGINAL_OPS_FILE_PATH:
-  UPDATED_OPS_FILE_PATH:
+  path: runtime-ci/tasks/update-stemcell/task

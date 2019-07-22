@@ -2,27 +2,28 @@
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
+source runtime-ci/tasks/shared-functions
 
 function main() {
   local root_dir
   root_dir="${1}"
 
-  local commit_message_path="commit-message.txt"
-
   git clone cf-deployment updated-cf-deployment
 
-  pushd "go/src/github.com/cloudfoundry/rruntime-ci/tasks/update-stemcell"
+ // get releases tarballs ls ${root_dir}/compiled-releases
+ // prepend https://storage.googleapis.com/cf-deployment-compiled-releases/
+ // take the link + tarballs ---> replace in used-compiled opsfile
+ // replace stemcells on all in opsfile
+
+  pushd "runtime-ci/tasks/update-stemcell"
     go run main.go \
-      --build-dir "${root_dir}"
-      --commit-message-file "${root_dir}/${commit_message_path}" \
-      --compiled-release-tarball-dir "${root_dir}/compiled-releases" \
-      --stemcell-dir "${root_dir}/stemcell" \
-      --original-cf-d-dir "${root_dir}/cf-deployment" \
-      --updated-cf-d-dir "${root_dir}/updated-cf-deployment"
+      --stemcell-dir="${root_dir}/stemcell" \
+      --compiled-releases-dir="${root_dir}/compiled-releases" \
+      --cf-deployment-dir="${root_dir}/updated-cf-deployment" \
+      --commit-message-path="${root_dir}/commit-message.txt"
   popd
 
-  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${commit_message_path}"
+  commit_with_message updated-cf-deployment commit-message.txt
 }
 
 main "${PWD}"
