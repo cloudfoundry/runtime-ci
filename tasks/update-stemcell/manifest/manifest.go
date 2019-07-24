@@ -21,6 +21,5 @@ func Update(manifestContent []byte, stemcell Stemcell) ([]byte, error) {
   os: %s
 	version: %s`, stemcell.OS, stemcell.Version)))
 
-	fmt.Printf("Updated: %q\n", string(updatedManifestContent))
 	return updatedManifestContent, nil
 }

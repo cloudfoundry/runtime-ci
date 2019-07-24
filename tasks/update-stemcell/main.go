@@ -1,9 +1,38 @@
 package main
 
+import (
+	"fmt"
+	"os"
+
+	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
+	"github.com/spf13/pflag"
+)
+
 func main() {
-	// Update base manifest
+	buildDir := pflag.Arg(0)
+	runner, err := concourseio.NewRunner(buildDir)
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
 
-	// Update use-compiled-releases.yml
+	// runner.ReadStemcell(stemcell.Parse)
 
-	// Write commit message
+	// runner.UpdateManifest()
+	// if err != nil {
+	// 	fmt.Print(err)
+	// 	os.Exit(1)
+	// }
+
+	// runner.UpdateCompiledReleases()
+	// if err != nil {
+	// 	fmt.Print(err)
+	// 	os.Exit(1)
+	// }
+
+	// runner.WriteCommitMessage()
+	// if err != nil {
+	// 	fmt.Print(err)
+	// 	os.Exit(1)
+	// }
 }

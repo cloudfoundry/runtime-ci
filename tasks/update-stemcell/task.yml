@@ -13,8 +13,8 @@ inputs:
 - name: runtime-ci
 - name: stemcell
 
-  outputs:
-    - name: updated-cf-deployment
+outputs:
+- name: updated-cf-deployment
 
 run:
   path: runtime-ci/tasks/update-stemcell/task
