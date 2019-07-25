@@ -62,10 +62,9 @@ func (r *Runner) ReadStemcell() error {
 	return nil
 }
 
-func (r *Runner) UpdateFile(file string, updateFunc) error {
+func (r *Runner) Update() error {
 	return nil
 }
-
 
 func readFile(path string) (string, error) {
 	content, err := ioutil.ReadFile(path)

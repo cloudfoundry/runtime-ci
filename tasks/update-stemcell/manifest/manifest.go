@@ -11,10 +11,10 @@ type Stemcell struct {
 }
 
 func Update(manifestContent []byte, stemcell Stemcell) ([]byte, error) {
-	releasePattern := regexp.MustCompile(`stemcells:
-- alias: (.*)
-  os: .*
-	version: .*`)
+	if manifestContent == nil {
+		return manifestContent, fmt.Errorf("manifest file has no content")
+	}
+	releasePattern := regexp.MustCompile(`(?s)stemcells:.*- alias: (.*) os: .* version: .*`)
 
 	updatedManifestContent := releasePattern.ReplaceAll(manifestContent, []byte(fmt.Sprintf(`stemcells:
 - alias: $1

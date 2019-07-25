@@ -16,7 +16,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// runner.ReadStemcell(stemcell.Parse)
+	runner.ReadStemcell()
 
 	// runner.UpdateManifest()
 	// if err != nil {

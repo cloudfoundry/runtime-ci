@@ -140,21 +140,51 @@ var _ = Describe("Runner", func() {
 		})
 	})
 
-	Describe("UpdateManifest", func() {
+	Describe("Update", func() {
 		var (
 			runner Runner
+		)
 
-			updateFunc UpdateFunc
-			actualErr  error
+		Context("When ...", func() {
+			It("Updates the manifest and compiled releases opsfiles", func() {
+				Expect(runner.Update()).To(BeNil())
+			})
+		})
+	})
+
+	Describe("UpdateManifest", func() {
+		var (
+			actualErr              error
+			stemcell               manifest.Stemcell
+			manifestContent        []byte
+			updatedManifestContent []byte
 		)
 
 		JustBeforeEach(func() {
-			actualErr = runner.UpdateFile("cf-deployment.yml", updateFunc)
-
+			updatedManifestContent, actualErr = manifest.Update(manifestContent, stemcell)
 		})
-		Context("when the manifest file does not exist", func() {
-			It("returns a missing file err", func() {
-				Expect(actualErr).To(MatchError("cf-deployment.yml does not exist"))
+
+		Context("when the manifest has no content", func() {
+			It("returns an error", func() {
+				Expect(actualErr).To(MatchError("manifest file has no content"))
+			})
+		})
+
+		Context("when the manifest has the necessary content", func() {
+			BeforeEach(func() {
+				manifestContent = []byte(`stemcells:
+- alias: default
+	os: some-os
+	version: 1.0`)
+				stemcell = manifest.Stemcell{OS: "some-os", Version: "1.1"}
+			})
+			It("Updates the stemcell section of the manifest", func() {
+				expectedManifestContent := []byte(`stemcells:
+- alias: default
+	os: some-os
+	version: 1.1`)
+				Expect(actualErr).ToNot(HaveOccurred())
+				Expect(string(updatedManifestContent)).To(Equal(string(expectedManifestContent)), "Manifest should be updated with stemcell %s", stemcell)
 			})
 		})
 	})
