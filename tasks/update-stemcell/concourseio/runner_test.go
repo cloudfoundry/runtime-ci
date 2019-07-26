@@ -142,49 +142,64 @@ var _ = Describe("Runner", func() {
 
 	Describe("Update", func() {
 		var (
-			runner Runner
+			buildDir                string
+			expectedCFDeploymentDir string
+			runner                  Runner
+			expectedStemcell        manifest.Stemcell
+			expectedInFile          []byte
+
+			manifestUpdateSpy UpdateFunc
+			actualInFile      []byte
+			actualStemcell    manifest.Stemcell
 		)
+
+		BeforeEach(func() {
+			// MAKE A DIR with the cf-deployment yml
+			var err error
+			buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+			Expect(err).ToNot(HaveOccurred())
+			expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment")
+			Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
+			expectedInFile = []byte("This is my manifest")
+			manifestPath := filepath.Join(expectedCFDeploymentDir, "cf-deployment.yml")
+			Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).
+				To(Succeed())
+
+			expectedStemcell = manifest.Stemcell{
+				OS:      "gundam",
+				Version: "1.1.0",
+			}
+			runner = Runner{
+				stemcell: expectedStemcell,
+				In: Inputs{
+					cfDeploymentDir: expectedCFDeploymentDir,
+				},
+			}
+
+			manifestUpdateSpy = func(file []byte, stemcell manifest.Stemcell) ([]byte, error) {
+				actualInFile = file
+				actualStemcell = stemcell
+
+				return []byte("updated manifest"), nil
+			}
+		})
+
+		AfterEach(func() {
+			Expect(os.RemoveAll(buildDir)).To(Succeed())
+		})
 
 		Context("When ...", func() {
 			It("Updates the manifest and compiled releases opsfiles", func() {
-				Expect(runner.Update()).To(BeNil())
+				Expect(runner.UpdateManifest(manifestUpdateSpy)).To(BeNil())
+
+				Expect(actualStemcell).To(Equal(expectedStemcell))
+				Expect(actualInFile).To(Equal(expectedInFile))
+
+				//eventually write the new Thing to the output cf deployment file
 			})
-		})
-	})
 
-	Describe("UpdateManifest", func() {
-		var (
-			actualErr              error
-			stemcell               manifest.Stemcell
-			manifestContent        []byte
-			updatedManifestContent []byte
-		)
+			It("writes the file to the output file", func() {
 
-		JustBeforeEach(func() {
-			updatedManifestContent, actualErr = manifest.Update(manifestContent, stemcell)
-		})
-
-		Context("when the manifest has no content", func() {
-			It("returns an error", func() {
-				Expect(actualErr).To(MatchError("manifest file has no content"))
-			})
-		})
-
-		Context("when the manifest has the necessary content", func() {
-			BeforeEach(func() {
-				manifestContent = []byte(`stemcells:
-- alias: default
-	os: some-os
-	version: 1.0`)
-				stemcell = manifest.Stemcell{OS: "some-os", Version: "1.1"}
-			})
-			It("Updates the stemcell section of the manifest", func() {
-				expectedManifestContent := []byte(`stemcells:
-- alias: default
-	os: some-os
-	version: 1.1`)
-				Expect(actualErr).ToNot(HaveOccurred())
-				Expect(string(updatedManifestContent)).To(Equal(string(expectedManifestContent)), "Manifest should be updated with stemcell %s", stemcell)
 			})
 		})
 	})

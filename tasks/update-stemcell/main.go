@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
+	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 	"github.com/spf13/pflag"
 )
 
@@ -16,13 +17,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	runner.ReadStemcell()
+	err = runner.ReadStemcell()
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
 
-	// runner.UpdateManifest()
-	// if err != nil {
-	// 	fmt.Print(err)
-	// 	os.Exit(1)
-	// }
+	err = runner.UpdateManifest(manifest.Update)
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
 
 	// runner.UpdateCompiledReleases()
 	// if err != nil {

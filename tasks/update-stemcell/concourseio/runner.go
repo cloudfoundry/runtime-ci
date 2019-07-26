@@ -62,7 +62,19 @@ func (r *Runner) ReadStemcell() error {
 	return nil
 }
 
-func (r *Runner) Update() error {
+type UpdateFunc func([]byte, manifest.Stemcell) ([]byte, error)
+
+func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
+	manifest, err := ioutil.ReadFile(filepath.Join(r.In.cfDeploymentDir, "cf-deployment.yml"))
+	if err != nil {
+		return err
+	}
+
+	_, err = updateFunction(manifest, r.stemcell)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

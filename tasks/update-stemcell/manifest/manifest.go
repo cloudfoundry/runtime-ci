@@ -14,12 +14,15 @@ func Update(manifestContent []byte, stemcell Stemcell) ([]byte, error) {
 	if manifestContent == nil {
 		return manifestContent, fmt.Errorf("manifest file has no content")
 	}
-	releasePattern := regexp.MustCompile(`(?s)stemcells:.*- alias: (.*) os: .* version: .*`)
+	releasePattern := regexp.MustCompile(`(?s)stemcells:.*- alias: ([\w\-]*).*os: .* version: .*`)
 
-	updatedManifestContent := releasePattern.ReplaceAll(manifestContent, []byte(fmt.Sprintf(`stemcells:
+	stemcellsTemplate := `stemcells:
 - alias: $1
   os: %s
-	version: %s`, stemcell.OS, stemcell.Version)))
+  version: %s
+`
+	updatedManifestContent := releasePattern.ReplaceAll(manifestContent,
+		[]byte(fmt.Sprintf(stemcellsTemplate, stemcell.OS, stemcell.Version)))
 
 	return updatedManifestContent, nil
 }
