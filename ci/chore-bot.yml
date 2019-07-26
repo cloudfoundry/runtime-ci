@@ -2,6 +2,7 @@
 resources:
 - name: chore-bot-source
   type: git
+  icon: github-box
   source:
     branch: master
     uri: git@github.com:pivotal-cf-experimental/relint-trackerbot.git
@@ -9,6 +10,7 @@ resources:
 
 - name: chore-bot-config-and-manifest
   type: git
+  icon: github-box
   source:
     branch: master
     uri: git@github.com:cloudfoundry/relint-team.git
@@ -18,12 +20,14 @@ resources:
 
 - name: runtime-ci
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci
 
 - name: pws
   type: cf
+  icon: cloud
   source:
     api: https://api.run.pivotal.io
     username: ((pws_user.username))

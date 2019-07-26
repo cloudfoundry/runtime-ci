@@ -60,6 +60,7 @@ resources:
 # Pools
 - name: fresh-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -68,6 +69,7 @@ resources:
 
 - name: lite-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -76,6 +78,7 @@ resources:
 
 - name: upgrade-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -84,6 +87,7 @@ resources:
 
 - name: stable-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -92,6 +96,7 @@ resources:
 
 - name: experimental-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -100,6 +105,7 @@ resources:
 
 - name: cats-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -108,6 +114,7 @@ resources:
 
 - name: bbr-pool
   type: pool
+  icon: pool
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: master
@@ -117,6 +124,7 @@ resources:
 # Plan patches
 - name: bosh-bootloader
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-bootloader
@@ -124,18 +132,21 @@ resources:
 # Code repos
 - name: cf-deployment-concourse-tasks
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: runtime-ci
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: relint-envs
   type: git
+  icon: github-box
   source:
     branch: master
     uri: git@github.com:cloudfoundry/relint-envs.git
@@ -144,6 +155,7 @@ resources:
 # Time
 - name: every-tuesday-morning
   type: time
+  icon: clock-outline
   source:
     start: 4:20
     stop: 4:50

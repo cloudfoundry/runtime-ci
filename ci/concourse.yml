@@ -2,16 +2,19 @@
 resources:
 - name: runtime-ci
   type: git
+  icon: github-box
   source:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: cf-deployment-concourse-tasks
   type: git
+  icon: github-box
   source:
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: relint-envs
   type: git
+  icon: github-box
   source:
     branch: master
     uri: git@github.com:cloudfoundry/relint-envs.git
@@ -20,6 +23,7 @@ resources:
 # Time
 - name: every-monday-morning
   type: time
+  icon: clock-outline
   source:
     start: 0:00
     stop: 0:30

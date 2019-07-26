@@ -1,12 +1,14 @@
 resources:
 - name: runtime-ci
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: cf-deployment
   type: git
+  icon: github-box
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-deployment.git
@@ -15,6 +17,7 @@ resources:
 
 - name: cf-acceptance-tests
   type: git
+  icon: github-box
   source:
     branch: develop
     uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
@@ -23,6 +26,7 @@ resources:
 
 - name: cf-smoke-tests-release
   type: git
+  icon: github-box
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-smoke-tests-release.git
@@ -31,6 +35,7 @@ resources:
 
 - name: daily
   type: time
+  icon: clock-outline
   source:
     start: 3:00 -0700
     stop: 4:30 -0700
