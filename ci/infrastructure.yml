@@ -59,8 +59,7 @@ groups:
 - name: maxime-for-dev
   jobs:
   - setup-infrastructure-maxime
-  - update-infrastructure-maxime
-  # - destroy-infrastructure-maxime
+  - destroy-infrastructure-maxime
 
 resources:
 # Pools
@@ -167,6 +166,15 @@ resources:
     stop: 4:50
     interval: 24h
     days: [ Tuesday ]
+    location: America/Los_Angeles
+
+- name: every-day
+  type: time
+  icon: clock-outline
+  source:
+    start: 4:20
+    stop: 4:50
+    interval: 24h
     location: America/Los_Angeles
 
 jobs:
@@ -531,7 +539,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
@@ -839,37 +847,6 @@ jobs:
     - put: bbr-pool
       params: {release: bbr-pool}
 
-- name: update-infrastructure-maxime
-  serial: true
-  public: true
-  plan:
-  - timeout: 12h
-    do:
-    - in_parallel:
-      - get: relint-envs
-      - get: cf-deployment-concourse-tasks
-      - get: bosh-bootloader
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/dev/maxime/bbl-state
-        BBL_IAAS: gcp
-        BBL_ENV_NAME: maxime-for-dev
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/dev/maxime/google_account_creds.json
-        # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
-        BBL_GCP_REGION: us-west1
-        BBL_LB_CERT: ((maxime_cf_lb_cert.certificate))
-        BBL_LB_KEY: ((maxime_cf_lb_cert.private_key))
-        LB_DOMAIN: maxime.cf-app.com
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: bosh-bootloader
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
-
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
   serial: true
@@ -1061,6 +1038,36 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+
+- name: destroy-infrastructure-maxime
+  serial: true
+  public: true
+  plan:
+  - in_parallel:
+    - get: every-day
+      trigger: true
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - try:
+      do:
+      - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        input_mapping:
+          bbl-state: relint-envs
+        params:
+          BBL_STATE_DIR: environments/dev/maxime/bbl-state
+      - task: destroy-infrastructure
+        file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+        input_mapping:
+          bbl-state: relint-envs
+        params:
+          BBL_GCP_SERVICE_ACCOUNT_KEY: environments/dev/maxime/google_account_creds.json
+          BBL_STATE_DIR: environments/dev/maxime/bbl-state
+        ensure:
+          put: relint-envs
+          params:
+            repository: updated-bbl-state
+            rebase: true
 
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
