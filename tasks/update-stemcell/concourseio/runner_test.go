@@ -140,47 +140,46 @@ var _ = Describe("Runner", func() {
 		})
 	})
 
-	Describe("Update", func() {
+	Describe("UpdateManifest", func() {
 		var (
-			buildDir                string
-			expectedCFDeploymentDir string
-			runner                  Runner
-			expectedStemcell        manifest.Stemcell
-			expectedInFile          []byte
+			buildDir string
+			runner   Runner
 
-			manifestUpdateSpy UpdateFunc
-			actualInFile      []byte
-			actualStemcell    manifest.Stemcell
+			expectedCFDeploymentDir        string
+			expectedUpdatedCFDeploymentDir string
+			expectedStemcell               manifest.Stemcell
+
+			manifestUpdateSpy        UpdateFunc
+			manifestUpdateFileOutput []byte
+
+			actualInFile   []byte
+			actualStemcell manifest.Stemcell
+
+			actualErr error
 		)
 
 		BeforeEach(func() {
-			// MAKE A DIR with the cf-deployment yml
 			var err error
 			buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
 			Expect(err).ToNot(HaveOccurred())
+
 			expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment")
 			Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
-			expectedInFile = []byte("This is my manifest")
-			manifestPath := filepath.Join(expectedCFDeploymentDir, "cf-deployment.yml")
-			Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).
-				To(Succeed())
+			expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
+			Expect(os.Mkdir(expectedUpdatedCFDeploymentDir, 0777)).To(Succeed())
 
-			expectedStemcell = manifest.Stemcell{
-				OS:      "gundam",
-				Version: "1.1.0",
-			}
+			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
 			runner = Runner{
 				stemcell: expectedStemcell,
-				In: Inputs{
-					cfDeploymentDir: expectedCFDeploymentDir,
-				},
+				In:       Inputs{cfDeploymentDir: expectedCFDeploymentDir},
+				Out:      Outputs{updatedCFDeploymentDir: expectedUpdatedCFDeploymentDir},
 			}
 
 			manifestUpdateSpy = func(file []byte, stemcell manifest.Stemcell) ([]byte, error) {
 				actualInFile = file
 				actualStemcell = stemcell
 
-				return []byte("updated manifest"), nil
+				return manifestUpdateFileOutput, nil
 			}
 		})
 
@@ -188,18 +187,42 @@ var _ = Describe("Runner", func() {
 			Expect(os.RemoveAll(buildDir)).To(Succeed())
 		})
 
-		Context("When ...", func() {
-			It("Updates the manifest and compiled releases opsfiles", func() {
-				Expect(runner.UpdateManifest(manifestUpdateSpy)).To(BeNil())
+		JustBeforeEach(func() {
+			actualErr = runner.UpdateManifest(manifestUpdateSpy)
+		})
 
-				Expect(actualStemcell).To(Equal(expectedStemcell))
-				Expect(actualInFile).To(Equal(expectedInFile))
+		Context("When there exists a valid manifest", func() {
+			var (
+				expectedInFile []byte
+			)
 
-				//eventually write the new Thing to the output cf deployment file
+			BeforeEach(func() {
+				expectedInFile = []byte("This is my manifest")
+				manifestPath := filepath.Join(expectedCFDeploymentDir, "cf-deployment.yml")
+				Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
 			})
 
-			It("writes the file to the output file", func() {
+			It("Updates the manifest and compiled releases opsfiles", func() {
+				Expect(actualStemcell).To(Equal(expectedStemcell))
+				Expect(actualInFile).To(Equal(expectedInFile))
+			})
 
+			Context("when the manifest update function returns an updated Manifest", func() {
+				BeforeEach(func() {
+					manifestUpdateFileOutput = []byte("updated manifest")
+					expectedInFile = []byte("This is the manifest in my updatedCFDeploymentDir")
+
+					manifestPath := filepath.Join(expectedUpdatedCFDeploymentDir, "cf-deployment.yml")
+					Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
+				})
+
+				It("writes the file to the output file", func() {
+					Expect(actualErr).ToNot(HaveOccurred())
+					actualOutFile, err := ioutil.ReadFile(filepath.Join(expectedUpdatedCFDeploymentDir, "cf-deployment.yml"))
+					Expect(err).ToNot(HaveOccurred())
+
+					Expect(actualOutFile).To(Equal(manifestUpdateFileOutput))
+				})
 			})
 		})
 	})

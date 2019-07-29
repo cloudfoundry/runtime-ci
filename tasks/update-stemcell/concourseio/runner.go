@@ -65,13 +65,19 @@ func (r *Runner) ReadStemcell() error {
 type UpdateFunc func([]byte, manifest.Stemcell) ([]byte, error)
 
 func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
-	manifest, err := ioutil.ReadFile(filepath.Join(r.In.cfDeploymentDir, "cf-deployment.yml"))
+	originalFile := manifestPath(r.In.cfDeploymentDir)
+	manifest, err := ioutil.ReadFile(originalFile)
 	if err != nil {
 		return err
 	}
 
-	_, err = updateFunction(manifest, r.stemcell)
+	updatedContent, err := updateFunction(manifest, r.stemcell)
 	if err != nil {
+		return err
+	}
+
+	updatedFile := manifestPath(r.Out.updatedCFDeploymentDir)
+	if err := ioutil.WriteFile(updatedFile, updatedContent, 0755); err != nil {
 		return err
 	}
 
@@ -135,4 +141,8 @@ func buildSubDir(buildDir, subdir string) (string, error) {
 	}
 
 	return dir, nil
+}
+
+func manifestPath(cfDir string) string {
+	return filepath.Join(cfDir, "cf-deployment.yml")
 }
