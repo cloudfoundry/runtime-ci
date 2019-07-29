@@ -56,7 +56,7 @@ groups:
   - destroy-infrastructure-bbr
   - remove-claimed-lock-bbr
 
-- name: maxime-for-dev
+- name: dev
   jobs:
   - setup-infrastructure-maxime
   - destroy-infrastructure-maxime
@@ -548,7 +548,7 @@ jobs:
     params:
       BBL_STATE_DIR: environments/dev/maxime/bbl-state
       BBL_IAAS: gcp
-      BBL_ENV_NAME: maxime-for-dev
+      BBL_ENV_NAME: maxime
       BBL_GCP_SERVICE_ACCOUNT_KEY: environments/dev/maxime/google_account_creds.json
       # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
       BBL_GCP_REGION: us-west1
