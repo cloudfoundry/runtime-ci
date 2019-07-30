@@ -30,10 +30,6 @@ var _ = Describe("Runner", func() {
 		})
 
 		JustBeforeEach(func() {
-			// for key, val := range envs {
-			// 	os.SetEnv(key, val)
-			// }
-
 			actualRunner, actualErr = NewRunner(buildDir)
 		})
 
@@ -77,15 +73,31 @@ var _ = Describe("Runner", func() {
 				expectedUpdatedCFDeploymentDir string
 			)
 
-			BeforeEach(func() {
-				expectedCompiledReleasesDir = filepath.Join(buildDir, "compiled-releases")
-				Expect(os.Mkdir(expectedCompiledReleasesDir, 0777)).To(Succeed())
-				expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
-				Expect(os.Mkdir(expectedUpdatedCFDeploymentDir, 0777)).To(Succeed())
+			Context("when compiled-releases dir is missing", func() {
+				BeforeEach(func() {
+					expectedCompiledReleasesDir = filepath.Join(buildDir, "cf-deployment")
+					Expect(os.Mkdir(expectedCompiledReleasesDir, 0777)).To(Succeed())
+					expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
+					Expect(os.Mkdir(expectedUpdatedCFDeploymentDir, 0777)).To(Succeed())
+				})
+
+				It("will fail stating all the missing directories", func() {
+					Expect(actualErr).To(MatchError("missing directories: 'compiled-releases'"))
+				})
 			})
 
-			It("will fail stating all the missing directories", func() {
-				Expect(actualErr).To(MatchError("missing directories: 'cf-deployment'"))
+			Context("when cf-deployment dir is missing", func() {
+				BeforeEach(func() {
+					expectedCompiledReleasesDir = filepath.Join(buildDir, "compiled-releases")
+					Expect(os.Mkdir(expectedCompiledReleasesDir, 0777)).To(Succeed())
+					expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
+					Expect(os.Mkdir(expectedUpdatedCFDeploymentDir, 0777)).To(Succeed())
+				})
+
+				It("will fail stating all the missing directories", func() {
+					Expect(actualErr).To(MatchError("missing directories: 'cf-deployment'"))
+
+				})
 			})
 		})
 	})

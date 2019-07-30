@@ -137,7 +137,7 @@ func buildSubDir(buildDir, subdir string) (string, error) {
 	dir := filepath.Join(buildDir, subdir)
 	_, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		return "", fmt.Errorf("missing directories: 'cf-deployment'")
+		return "", fmt.Errorf("missing directories: '%s'", subdir)
 	}
 
 	return dir, nil
