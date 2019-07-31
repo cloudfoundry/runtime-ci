@@ -1,6 +1,7 @@
 package compiledrelease
 
 import (
+	"bytes"
 	"crypto/sha1"
 	"fmt"
 	"io/ioutil"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
+	"gopkg.in/yaml.v3"
 )
 
 type Opsfile struct {
@@ -21,7 +23,11 @@ type Opsfile struct {
 	releases []manifest.Release
 }
 
-type Op struct{}
+type Op struct {
+	Type  string
+	Path  string
+	Value manifest.Release
+}
 
 func NewOpsfile(compiledReleasesInDir string, opsFileOutPath string) *Opsfile {
 	return &Opsfile{compiledReleasesDir: compiledReleasesInDir, opsFileOutPath: opsFileOutPath}
@@ -86,7 +92,17 @@ func (o Opsfile) Update(manifest.Stemcell) error {
 }
 
 func (o Opsfile) Write() error {
-	return nil
+	buf := new(bytes.Buffer)
+	fmt.Fprintln(buf, "## GENERATED FILE. DO NOT EDIT")
+	fmt.Fprintln(buf, "---")
+
+	encoder := yaml.NewEncoder(buf)
+	encoder.SetIndent(2)
+	if err := encoder.Encode(o.Ops); err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(o.opsFileOutPath, buf.Bytes(), 0755)
 }
 
 func computeSHA1Sum(filepath string) (string, error) {
