@@ -3,6 +3,7 @@ package compiledrelease
 import (
 	"bytes"
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -15,7 +16,7 @@ import (
 )
 
 type Opsfile struct {
-	Ops []Op
+	ops []Op
 
 	compiledReleasesDir string
 	opsFileOutPath      string
@@ -29,6 +30,14 @@ type Op struct {
 	Value manifest.Release
 }
 
+type NoReleasesErr struct{}
+
+var _ error = new(NoReleasesErr)
+
+func (*NoReleasesErr) Error() string {
+	return "no releases found"
+}
+
 func NewOpsfile(compiledReleasesInDir string, opsFileOutPath string) *Opsfile {
 	return &Opsfile{compiledReleasesDir: compiledReleasesInDir, opsFileOutPath: opsFileOutPath}
 }
@@ -37,6 +46,10 @@ func (o *Opsfile) Load() error {
 	err := filepath.Walk(o.compiledReleasesDir, o.extractReleases())
 	if err != nil {
 		return err
+	}
+
+	if len(o.releases) == 0 {
+		return new(NoReleasesErr)
 	}
 
 	return nil
@@ -52,11 +65,11 @@ func (o *Opsfile) extractReleases() filepath.WalkFunc {
 		if err != nil {
 			return err
 		}
+
 		if info.IsDir() {
 			return nil
 		}
 
-		//extract this fat function
 		tarballName := info.Name()
 
 		allMatches := versionRegex.FindAllStringSubmatch(tarballName, 1)
@@ -87,18 +100,40 @@ func (o *Opsfile) extractReleases() filepath.WalkFunc {
 	}
 }
 
-func (o Opsfile) Update(manifest.Stemcell) error {
+func (o *Opsfile) Update(stemcell manifest.Stemcell) error {
+	if len(o.releases) == 0 {
+		return new(NoReleasesErr)
+	}
+
+	for _, release := range o.releases {
+		if release.Stemcell != stemcell {
+			return errors.New("stemcell mismatch")
+		}
+
+		op := Op{
+			Type:  "replace",
+			Path:  fmt.Sprintf("/releases/name=%s", release.Name),
+			Value: release,
+		}
+
+		o.ops = append(o.ops, op)
+	}
+
 	return nil
 }
 
 func (o Opsfile) Write() error {
+	if len(o.ops) == 0 {
+		return new(NoReleasesErr)
+	}
+
 	buf := new(bytes.Buffer)
 	fmt.Fprintln(buf, "## GENERATED FILE. DO NOT EDIT")
 	fmt.Fprintln(buf, "---")
 
 	encoder := yaml.NewEncoder(buf)
 	encoder.SetIndent(2)
-	if err := encoder.Encode(o.Ops); err != nil {
+	if err := encoder.Encode(o.ops); err != nil {
 		return err
 	}
 
