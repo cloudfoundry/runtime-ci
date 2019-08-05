@@ -969,6 +969,8 @@ jobs:
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
       bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/hermione/bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     params:
