@@ -11,12 +11,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Opsfile", func() {
+var _ = Describe("OpsfileUpdater", func() {
 	var (
 		buildDir string
 
 		opsfileOutPath string
-		opsfile        *Opsfile
+		opsfileUpdater *OpsfileUpdater
 	)
 
 	BeforeEach(func() {
@@ -26,7 +26,7 @@ var _ = Describe("Opsfile", func() {
 
 		opsfileOutPath = filepath.Join(buildDir, "ops-file.yml")
 
-		opsfile = NewOpsfile(buildDir, opsfileOutPath)
+		opsfileUpdater = NewOpsfileUpdater(buildDir, opsfileOutPath)
 	})
 
 	AfterEach(func() {
@@ -42,7 +42,7 @@ var _ = Describe("Opsfile", func() {
 		)
 
 		JustBeforeEach(func() {
-			actualError = opsfile.Load()
+			actualError = opsfileUpdater.Load()
 		})
 
 		Context("when there are releases", func() {
@@ -80,7 +80,7 @@ var _ = Describe("Opsfile", func() {
 					},
 				}
 
-				Expect(opsfile.releases).To(ConsistOf(expectedReleases))
+				Expect(opsfileUpdater.releases).To(ConsistOf(expectedReleases))
 			})
 		})
 
@@ -111,12 +111,12 @@ var _ = Describe("Opsfile", func() {
 		)
 
 		JustBeforeEach(func() {
-			actualError = opsfile.Update(stemcellArg)
+			actualError = opsfileUpdater.Update(stemcellArg)
 		})
 
-		Context("when the opsfile has releases", func() {
+		Context("when the opsfileUpdater has releases", func() {
 			BeforeEach(func() {
-				opsfile.releases = []manifest.Release{
+				opsfileUpdater.releases = []manifest.Release{
 					{
 						Name: "some-buildpack",
 						SHA1: "123456",
@@ -145,10 +145,10 @@ var _ = Describe("Opsfile", func() {
 				}
 			})
 
-			It("populates the ops in the opsfile", func() {
+			It("populates the ops in the opsfileUpdater", func() {
 				Expect(actualError).ToNot(HaveOccurred())
 
-				Expect(opsfile.ops).To(ConsistOf(
+				Expect(opsfileUpdater.ops).To(ConsistOf(
 					Op{
 						Type: "replace",
 						Path: "/releases/name=some-buildpack",
@@ -207,7 +207,7 @@ var _ = Describe("Opsfile", func() {
 		)
 
 		JustBeforeEach(func() {
-			actualError = opsfile.Write()
+			actualError = opsfileUpdater.Write()
 		})
 
 		Context("when there are somehow no ops from releases", func() {
@@ -219,9 +219,9 @@ var _ = Describe("Opsfile", func() {
 			})
 		})
 
-		Context("when the opsfile has a filled array of ops", func() {
+		Context("when the opsfileUpdater has a filled array of ops", func() {
 			BeforeEach(func() {
-				opsfile.ops = []Op{
+				opsfileUpdater.ops = []Op{
 					{
 						Type: "replace",
 						Path: "/releases/name=some-buildpack",
@@ -253,7 +253,7 @@ var _ = Describe("Opsfile", func() {
 				}
 			})
 
-			It("generates the opsfile for compiled releases with the updated stemcell", func() {
+			It("generates the opsfileUpdater for compiled releases with the updated stemcell", func() {
 				Expect(actualError).NotTo(HaveOccurred())
 
 				actualContents, err := ioutil.ReadFile(opsfileOutPath)

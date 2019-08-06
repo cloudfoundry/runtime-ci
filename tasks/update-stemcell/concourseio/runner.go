@@ -20,12 +20,12 @@ type Runner struct {
 
 type Inputs struct {
 	cfDeploymentDir     string
-	compiledReleasesDir string
+	CompiledReleasesDir string
 	stemcellDir         string
 }
 
 type Outputs struct {
-	updatedCFDeploymentDir string
+	UpdatedCFDeploymentDir string
 }
 
 func NewRunner(buildDir string) (Runner, error) {
@@ -76,11 +76,25 @@ func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 		return err
 	}
 
-	updatedFile := manifestPath(r.Out.updatedCFDeploymentDir)
+	updatedFile := manifestPath(r.Out.UpdatedCFDeploymentDir)
 	if err := ioutil.WriteFile(updatedFile, updatedContent, 0755); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// Remove the line that enforces the interface from the counterfeiter to
+// prevent circular dependency (e.g. var _ myInterface = StemcellUpdater)
+//go:generate counterfeiter . StemcellUpdater
+type StemcellUpdater interface {
+	Load() error
+	Update(manifest.Stemcell) error
+	Write() error
+}
+
+func (r *Runner) UpdateStemcell(updaters ...StemcellUpdater) error {
+	
 	return nil
 }
 

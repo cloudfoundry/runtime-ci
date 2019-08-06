@@ -15,7 +15,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Opsfile struct {
+type OpsfileUpdater struct {
 	ops []Op
 
 	compiledReleasesDir string
@@ -38,11 +38,11 @@ func (*NoReleasesErr) Error() string {
 	return "no releases found"
 }
 
-func NewOpsfile(compiledReleasesInDir string, opsFileOutPath string) *Opsfile {
-	return &Opsfile{compiledReleasesDir: compiledReleasesInDir, opsFileOutPath: opsFileOutPath}
+func NewOpsfileUpdater(compiledReleasesInDir string, opsFileOutPath string) *OpsfileUpdater {
+	return &OpsfileUpdater{compiledReleasesDir: compiledReleasesInDir, opsFileOutPath: opsFileOutPath}
 }
 
-func (o *Opsfile) Load() error {
+func (o *OpsfileUpdater) Load() error {
 	err := filepath.Walk(o.compiledReleasesDir, o.extractReleases())
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (o *Opsfile) Load() error {
 	return nil
 }
 
-func (o *Opsfile) extractReleases() filepath.WalkFunc {
+func (o *OpsfileUpdater) extractReleases() filepath.WalkFunc {
 	const compiledReleaseGCSPrefix = "https://storage.googleapis.com/cf-deployment-compiled-releases"
 
 	versionRegexString := `(.*)-([\d.]+)-(.*)-([\d.]+)-\d+-\d+-\d+.tgz`
@@ -100,7 +100,7 @@ func (o *Opsfile) extractReleases() filepath.WalkFunc {
 	}
 }
 
-func (o *Opsfile) Update(stemcell manifest.Stemcell) error {
+func (o *OpsfileUpdater) Update(stemcell manifest.Stemcell) error {
 	if len(o.releases) == 0 {
 		return new(NoReleasesErr)
 	}
@@ -122,7 +122,7 @@ func (o *Opsfile) Update(stemcell manifest.Stemcell) error {
 	return nil
 }
 
-func (o Opsfile) Write() error {
+func (o OpsfileUpdater) Write() error {
 	if len(o.ops) == 0 {
 		return new(NoReleasesErr)
 	}
@@ -149,4 +149,4 @@ func computeSHA1Sum(filepath string) (string, error) {
 	return fmt.Sprintf("%x", sha1.Sum(fileContents)), nil
 }
 
-var _ concourseio.StemcellUpdater = new(Opsfile)
+var _ concourseio.StemcellUpdater = new(OpsfileUpdater)

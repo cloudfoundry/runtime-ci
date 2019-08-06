@@ -10,17 +10,13 @@ function main() {
 
   git clone cf-deployment updated-cf-deployment
 
- // get releases tarballs ls ${root_dir}/compiled-releases
- // prepend https://storage.googleapis.com/cf-deployment-compiled-releases/
- // take the link + tarballs ---> replace in used-compiled opsfile
- // replace stemcells on all in opsfile
+ # get releases tarballs ls ${root_dir}/compiled-releases
+ # prepend https://storage.googleapis.com/cf-deployment-compiled-releases/
+ # take the link + tarballs ---> replace in used-compiled opsfile
+ # replace stemcells on all in opsfile
 
   pushd "runtime-ci/tasks/update-stemcell"
-    go run main.go \
-      --stemcell-dir="${root_dir}/stemcell" \
-      --compiled-releases-dir="${root_dir}/compiled-releases" \
-      --cf-deployment-dir="${root_dir}/updated-cf-deployment" \
-      --commit-message-path="${root_dir}/commit-message.txt"
+    go run main.go "${root_dir}"
   popd
 
   commit_with_message updated-cf-deployment commit-message.txt

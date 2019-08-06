@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio/concourseiofakes"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -57,11 +58,11 @@ var _ = Describe("Runner", func() {
 				Expect(actualRunner).To(Equal(Runner{
 					In: Inputs{
 						cfDeploymentDir:     expectedCFDeploymentDir,
-						compiledReleasesDir: expectedCompiledReleasesDir,
+						CompiledReleasesDir: expectedCompiledReleasesDir,
 						stemcellDir:         expectedStemcellDir,
 					},
 					Out: Outputs{
-						updatedCFDeploymentDir: expectedUpdatedCFDeploymentDir,
+						UpdatedCFDeploymentDir: expectedUpdatedCFDeploymentDir,
 					},
 				}))
 			})
@@ -184,7 +185,7 @@ var _ = Describe("Runner", func() {
 			runner = Runner{
 				stemcell: expectedStemcell,
 				In:       Inputs{cfDeploymentDir: expectedCFDeploymentDir},
-				Out:      Outputs{updatedCFDeploymentDir: expectedUpdatedCFDeploymentDir},
+				Out:      Outputs{UpdatedCFDeploymentDir: expectedUpdatedCFDeploymentDir},
 			}
 
 			manifestUpdateSpy = func(file []byte, stemcell manifest.Stemcell) ([]byte, error) {
@@ -236,6 +237,21 @@ var _ = Describe("Runner", func() {
 					Expect(actualOutFile).To(Equal(manifestUpdateFileOutput))
 				})
 			})
+		})
+	})
+
+	Describe("UpdateStemcell", func() {
+		var (
+			updater *concourseiofakes.FakeStemcellUpdater // gibe the counterfeit
+		)
+
+		BeforeEach(func() {
+			updater = new(concourseiofakes.FakeStemcellUpdater)
+		})
+		It("Calls the StemcellUpdater", func() {
+			Expect(updater.LoadCallCount()).To(Equal(1), "Expected updater to call load once")
+			Expect(updater.UpdateCallCount()).To(Equal(1), "Expected updater to call update once")
+			Expect(updater.WriteCallCount()).To(Equal(1), "Expected updater to call write once")
 		})
 	})
 })
