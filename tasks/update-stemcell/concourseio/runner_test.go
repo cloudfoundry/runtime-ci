@@ -87,7 +87,7 @@ var _ = Describe("Runner", func() {
 				})
 
 				It("will fail stating all the missing directories", func() {
-					Expect(actualErr).To(MatchError("missing directories: 'compiled-releases'"))
+					Expect(actualErr).To(MatchError(fmt.Sprintf("missing sub directory 'compiled-releases' in build directory '%s'", buildDir)))
 				})
 			})
 
@@ -100,8 +100,7 @@ var _ = Describe("Runner", func() {
 				})
 
 				It("will fail stating all the missing directories", func() {
-					Expect(actualErr).To(MatchError("missing directories: 'cf-deployment'"))
-
+					Expect(actualErr).To(MatchError(fmt.Sprintf("missing sub directory 'cf-deployment' in build directory '%s'", buildDir)))
 				})
 			})
 		})
@@ -282,7 +281,7 @@ var _ = Describe("Runner", func() {
 
 			actualCommitMessage, err := ioutil.ReadFile(commitMessagePath)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(string(actualCommitMessage)).To(Equal(fmt.Sprintf("Update stemcell to %s %s",
+			Expect(string(actualCommitMessage)).To(Equal(fmt.Sprintf("Update stemcell to %s \"%s\"",
 				expectedStemcell.OS, expectedStemcell.Version)))
 		})
 	})

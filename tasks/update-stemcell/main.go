@@ -8,11 +8,10 @@ import (
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/compiledrelease"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
-	"github.com/spf13/pflag"
 )
 
 func main() {
-	buildDir := pflag.Arg(0)
+	buildDir := os.Args[1]
 	runner, err := concourseio.NewRunner(buildDir)
 	if err != nil {
 		fmt.Print(err)
@@ -42,7 +41,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	commitMessagePath := filepath.Join(buildDir, "commit-message.txt")
+	commitMessagePath := filepath.Join(runner.Out.UpdatedCFDeploymentDir, "commit-message.txt")
 
 	err = runner.WriteCommitMessage(commitMessagePath)
 	if err != nil {

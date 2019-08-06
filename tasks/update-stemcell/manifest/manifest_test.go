@@ -49,7 +49,7 @@ releases:
 stemcells:
 - alias: some-stemcell
   os: some-old-os
-  version: some-old-version
+  version: "some-old-version"
 `)
 			stemcellArg.OS = "some-new-os"
 			stemcellArg.Version = "some-new-version"
@@ -74,7 +74,7 @@ releases:
 stemcells:
 - alias: some-stemcell
   os: some-new-os
-  version: some-new-version
+  version: "some-new-version"
 `))
 		})
 	})

@@ -113,7 +113,7 @@ func (r *Runner) UpdateStemcell(updaters ...StemcellUpdater) error {
 }
 
 func (r *Runner) WriteCommitMessage(commitMessagePath string) error {
-	commitMessage := fmt.Sprintf("Update stemcell to %s %s", r.stemcell.OS, r.stemcell.Version)
+	commitMessage := fmt.Sprintf("Update stemcell to %s \"%s\"", r.stemcell.OS, r.stemcell.Version)
 
 	err := ioutil.WriteFile(commitMessagePath, []byte(commitMessage), 0644)
 	if err != nil {
@@ -172,11 +172,11 @@ func setupOutputs(buildDir string) (Outputs, error) {
 	return Outputs{updatedCFDeploymentDir}, nil
 }
 
-func buildSubDir(buildDir, subdir string) (string, error) {
-	dir := filepath.Join(buildDir, subdir)
+func buildSubDir(buildDir, subDir string) (string, error) {
+	dir := filepath.Join(buildDir, subDir)
 	_, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		return "", fmt.Errorf("missing directories: '%s'", subdir)
+		return "", fmt.Errorf("missing sub directory '%s' in build directory '%s'", subDir, buildDir)
 	}
 
 	return dir, nil

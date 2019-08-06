@@ -27,7 +27,7 @@ func Update(manifestContent []byte, stemcell Stemcell) ([]byte, error) {
 	stemcellsTemplate := `stemcells:
 - alias: $1
   os: %s
-  version: %s
+  version: "%s"
 `
 	updatedManifestContent := releasePattern.ReplaceAll(manifestContent,
 		[]byte(fmt.Sprintf(stemcellsTemplate, stemcell.OS, stemcell.Version)))
