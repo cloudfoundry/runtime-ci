@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"fmt"
+
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio/concourseiofakes"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 	. "github.com/onsi/ginkgo"
@@ -12,23 +14,25 @@ import (
 )
 
 var _ = Describe("Runner", func() {
+	var (
+		buildDir string
+	)
+
+	BeforeEach(func() {
+		var err error
+		buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		Expect(os.RemoveAll(buildDir)).To(Succeed())
+	})
+
 	Describe("NewRunner", func() {
 		var (
-			buildDir string
-
 			actualRunner Runner
 			actualErr    error
 		)
-
-		BeforeEach(func() {
-			var err error
-			buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		AfterEach(func() {
-			Expect(os.RemoveAll(buildDir)).To(Succeed())
-		})
 
 		JustBeforeEach(func() {
 			actualRunner, actualErr = NewRunner(buildDir)
@@ -106,25 +110,16 @@ var _ = Describe("Runner", func() {
 	Describe("ReadStemcell", func() {
 		var (
 			runner      Runner
-			buildDir    string
 			stemcellDir string
 
 			actualErr error
 		)
 
 		BeforeEach(func() {
-			var err error
-			buildDir, err = ioutil.TempDir("", "concourseio-stemcelldir-")
-			Expect(err).ToNot(HaveOccurred())
-
 			stemcellDir = filepath.Join(buildDir, "stemcell")
 			Expect(os.Mkdir(stemcellDir, 0777)).To(Succeed())
 
 			runner = Runner{In: Inputs{stemcellDir: stemcellDir}}
-		})
-
-		AfterEach(func() {
-			Expect(os.RemoveAll(buildDir)).To(Succeed())
 		})
 
 		JustBeforeEach(func() {
@@ -155,8 +150,7 @@ var _ = Describe("Runner", func() {
 
 	Describe("UpdateManifest", func() {
 		var (
-			buildDir string
-			runner   Runner
+			runner Runner
 
 			expectedCFDeploymentDir        string
 			expectedUpdatedCFDeploymentDir string
@@ -172,10 +166,6 @@ var _ = Describe("Runner", func() {
 		)
 
 		BeforeEach(func() {
-			var err error
-			buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
-			Expect(err).ToNot(HaveOccurred())
-
 			expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment")
 			Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
 			expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
@@ -194,10 +184,6 @@ var _ = Describe("Runner", func() {
 
 				return manifestUpdateFileOutput, nil
 			}
-		})
-
-		AfterEach(func() {
-			Expect(os.RemoveAll(buildDir)).To(Succeed())
 		})
 
 		JustBeforeEach(func() {
@@ -242,16 +228,62 @@ var _ = Describe("Runner", func() {
 
 	Describe("UpdateStemcell", func() {
 		var (
-			updater *concourseiofakes.FakeStemcellUpdater // gibe the counterfeit
+			updater          *concourseiofakes.FakeStemcellUpdater
+			runner           Runner
+			expectedStemcell manifest.Stemcell
+			actualErr        error
 		)
 
 		BeforeEach(func() {
 			updater = new(concourseiofakes.FakeStemcellUpdater)
+			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
+			runner = Runner{
+				stemcell: expectedStemcell,
+			}
 		})
+
+		JustBeforeEach(func() {
+			actualErr = runner.UpdateStemcell(updater)
+		})
+
 		It("Calls the StemcellUpdater", func() {
+			Expect(actualErr).ToNot(HaveOccurred())
 			Expect(updater.LoadCallCount()).To(Equal(1), "Expected updater to call load once")
+
 			Expect(updater.UpdateCallCount()).To(Equal(1), "Expected updater to call update once")
+			Expect(updater.UpdateArgsForCall(0)).To(Equal(expectedStemcell))
+
 			Expect(updater.WriteCallCount()).To(Equal(1), "Expected updater to call write once")
+		})
+	})
+
+	Describe("WriteCommitMessage", func() {
+		var (
+			runner            Runner
+			expectedStemcell  manifest.Stemcell
+			actualErr         error
+			commitMessagePath string
+		)
+
+		BeforeEach(func() {
+			commitMessagePath = filepath.Join(buildDir, "commit-message.txt")
+			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
+			runner = Runner{
+				stemcell: expectedStemcell,
+			}
+		})
+
+		JustBeforeEach(func() {
+			actualErr = runner.WriteCommitMessage(commitMessagePath)
+		})
+
+		It("Writes a message with the new stemcell version", func() {
+			Expect(actualErr).ToNot(HaveOccurred())
+
+			actualCommitMessage, err := ioutil.ReadFile(commitMessagePath)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(string(actualCommitMessage)).To(Equal(fmt.Sprintf("Update stemcell to %s %s",
+				expectedStemcell.OS, expectedStemcell.Version)))
 		})
 	})
 })

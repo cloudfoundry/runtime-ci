@@ -94,7 +94,32 @@ type StemcellUpdater interface {
 }
 
 func (r *Runner) UpdateStemcell(updaters ...StemcellUpdater) error {
-	
+	for _, updater := range updaters {
+		err := updater.Load()
+		if err != nil {
+			return err
+		}
+		err = updater.Update(r.stemcell)
+		if err != nil {
+			return err
+		}
+		err = updater.Write()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *Runner) WriteCommitMessage(commitMessagePath string) error {
+	commitMessage := fmt.Sprintf("Update stemcell to %s %s", r.stemcell.OS, r.stemcell.Version)
+
+	err := ioutil.WriteFile(commitMessagePath, []byte(commitMessage), 0644)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
