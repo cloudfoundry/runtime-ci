@@ -11,6 +11,8 @@ inputs:
 - name: cats-integration-config
 - name: cf-smoke-tests
   optional: true
+- name: pool-lock
+  optional: true
 
 run:
   path: runtime-ci/tasks/ensure-api-healthy/task
@@ -18,3 +20,5 @@ run:
 params:
   CHECK_ISOLATION_SEGMENT: false
   CONFIG_FILE_PATH:
+
+  BBL_JSON_CONFIG:
