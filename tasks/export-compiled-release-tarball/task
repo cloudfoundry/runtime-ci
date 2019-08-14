@@ -34,6 +34,8 @@ function export_release() {
 }
 
 function main() {
+  load_from_json_config
+
   validate_variables
 
   setup_bosh_env_vars

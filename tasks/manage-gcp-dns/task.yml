@@ -23,6 +23,8 @@ params:
   MAX_SUCCESS_COUNT: 3
 
   BBL_JSON_CONFIG:
+  # - Optional
+  # - For if you need a dynamic config for BBL
 
 run:
   path: runtime-ci/tasks/manage-gcp-dns/task

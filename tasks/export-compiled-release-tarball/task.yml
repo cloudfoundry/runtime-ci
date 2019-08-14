@@ -11,6 +11,8 @@ inputs:
 - name: cf-deployment-concourse-tasks
 - name: manifest
 - name: runtime-ci
+- name: pool-lock
+  optional: true
 
 outputs:
 - name: compiled-release-tarball
@@ -24,3 +26,7 @@ params:
   RELEASE_NAME:
   MANIFEST_FILENAME: cf-deployment.yml
   STEMCELL_OPS_FILE_PATH:
+
+  BBL_JSON_CONFIG:
+  # - Optional
+  # - For if you need a dynamic config for BBL
