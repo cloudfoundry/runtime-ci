@@ -66,3 +66,19 @@ function load_github_deploy_key() {
   ssh-keyscan github.com,192.30.255.113 github.com,192.30.255.112 >> "${HOME}/.ssh/known_hosts"
   set -x
 }
+
+function load_from_json_config() {
+  set +ux
+
+  if [ -z "${BBL_JSON_CONFIG}" ]; then
+    set -ux
+    return
+  fi
+
+  keys=$( jq -r 'keys[]' "${BBL_JSON_CONFIG}" )
+  for key in $keys; do
+    echo "Getting $key from BBL_JSON_CONFIG"
+    export $key=$( jq -r ".$key" "${BBL_JSON_CONFIG}" )
+  done
+  set -ux
+}

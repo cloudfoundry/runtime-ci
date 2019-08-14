@@ -9,6 +9,8 @@ image_resource:
 inputs:
   - name: runtime-ci
   - name: bbl-state
+  - name: pool-lock
+    optional: true
 
 params:
   BBL_STATE_DIR:
@@ -19,6 +21,8 @@ params:
   ACTION: add
   CHECK_DNS: false
   MAX_SUCCESS_COUNT: 3
+
+  BBL_JSON_CONFIG:
 
 run:
   path: runtime-ci/tasks/manage-gcp-dns/task

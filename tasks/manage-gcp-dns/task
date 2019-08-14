@@ -1,5 +1,7 @@
 #!/bin/bash -exu
 
+source runtime-ci/tasks/shared-functions
+
 ROOT="${PWD}"
 
 function write_service_account_key_to_file() {
@@ -12,6 +14,8 @@ function write_service_account_key_to_file() {
 }
 
 function main() {
+  load_from_json_config
+
   local gcp_service_account_key_path
   gcp_service_account_key_path="/tmp/service_account_key.json"
 
