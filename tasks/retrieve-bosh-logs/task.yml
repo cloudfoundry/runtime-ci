@@ -10,6 +10,8 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 - name: bbl-state
+- name: pool-lock
+  optional: true
 
 outputs:
 - name: bosh-logs
@@ -20,3 +22,7 @@ run:
 params:
   BBL_STATE_DIR: bbl-state
   DEPLOYMENT_NAME: cf
+
+  BBL_JSON_CONFIG:
+  # - Optional
+  # - For if you need a dynamic config for BBL

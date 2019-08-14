@@ -4,6 +4,7 @@
 source cf-deployment-concourse-tasks/shared-functions
 
 main() {
+  load_from_json_config
   setup_bosh_env_vars
   bosh -d "${DEPLOYMENT_NAME}" logs --dir=bosh-logs
 }
