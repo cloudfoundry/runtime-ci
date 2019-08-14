@@ -15,6 +15,8 @@ function setup_interpolate_env_vars_for_first_ops_file() {
 }
 
 function main() {
+  load_from_json_config
+
   check_input_params
   setup_bosh_env_vars
   setup_interpolate_env_vars_for_first_ops_file
