@@ -2,7 +2,6 @@
 
 source runtime-ci/tasks/shared-functions
 
-CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
 
 clean_up() {
   cf delete-org healthy-org -f
@@ -13,6 +12,7 @@ main() {
   local TARGET_URL=""
 
   load_from_json_config
+  export CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
 
   if [[ "${CHECK_ISOLATION_SEGMENT}" == "true" ]]; then
     cf api "https://$(jq -r .api "${CONFIG_FILE}")" --skip-ssl-validation
