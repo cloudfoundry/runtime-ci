@@ -19,3 +19,4 @@ params:
   BBL_STATE_DIR: bbl-state
   RELEASE_NAME: cf-smoke-tests
   SYSTEM_DOMAIN:
+  CREDHUB_ENV_NAME:
