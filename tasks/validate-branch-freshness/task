@@ -11,7 +11,6 @@ function has_no_commits_in_last_months() {
 function fetch_all_branches() {
   sed -i -e 's/develop/*/g' .git/config
   git fetch --all
-  git branch -r
 }
 
 function main() {
