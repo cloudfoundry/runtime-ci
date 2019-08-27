@@ -44,6 +44,7 @@ describe 'BinaryUpdates' do
     let(:filename) { 'dockerfiles/cf-deployment-concourse-tasks/Dockerfile' }
     let(:file_contents_latest_release) do
 <<-HEREDOC
+ENV JQ_VERSION 1.5
 ENV go_version 1.11.1
 ENV cf_cli_version 6.40.0
 ENV bosh_cli_version 5.3.1
@@ -56,6 +57,7 @@ HEREDOC
 
     let(:file_contents_current) do
 <<-HEREDOC
+ENV JQ_VERSION 1.6
 ENV go_version 1.12.5
 ENV cf_cli_version 6.43.0
 ENV bosh_cli_version 5.5.1
@@ -67,14 +69,42 @@ HEREDOC
     end
 
     it 'reads the given file in the two inputs, and returns the binary updates' do
-      release_1_update = updates.get_update_by_name('go')
-      release_2_update = updates.get_update_by_name('cf_cli')
+      expect(updates.count).to eq 7
 
-      expect(release_1_update.old_version).to eq '1.11.1'
-      expect(release_1_update.new_version).to eq '1.12.5'
+      go_release_update = updates.get_update_by_name('go')
 
-      expect(release_2_update.old_version).to eq '6.40.0'
-      expect(release_2_update.new_version).to eq '6.43.0'
+      expect(go_release_update.old_version).to eq '1.11.1'
+      expect(go_release_update.new_version).to eq '1.12.5'
+
+      cf_cli_release_update = updates.get_update_by_name('cf_cli')
+
+      expect(cf_cli_release_update.old_version).to eq '6.40.0'
+      expect(cf_cli_release_update.new_version).to eq '6.43.0'
+
+      bosh_cli_release_update = updates.get_update_by_name('bosh_cli')
+
+      expect(bosh_cli_release_update.old_version).to eq '5.3.1'
+      expect(bosh_cli_release_update.new_version).to eq '5.5.1'
+
+      bbl_update = updates.get_update_by_name('bbl')
+
+      expect(bbl_update.old_version).to eq '6.10.18'
+      expect(bbl_update.new_version).to eq '8.0.0'
+
+      terraform_update = updates.get_update_by_name('terraform')
+
+      expect(terraform_update.old_version).to eq '0.11.10'
+      expect(terraform_update.new_version).to eq '0.12.0'
+
+      credhub_cli_update = updates.get_update_by_name('credhub_cli')
+
+      expect(credhub_cli_update.old_version).to eq '2.1.0'
+      expect(credhub_cli_update.new_version).to eq '2.4.0'
+
+      jq_update = updates.get_update_by_name('jq')
+
+      expect(jq_update.old_version).to eq '1.5'
+      expect(jq_update.new_version).to eq '1.6'
     end
 
     context 'when the old version of the file is empty' do

@@ -44,6 +44,10 @@ class BinaryUpdates
     @updates[binary_name]
   end
 
+  def count
+    @updates.count
+  end
+
   def each
     @updates.sort.each do |binary_name, binary_update|
       yield binary_name, binary_update
@@ -59,7 +63,7 @@ class BinaryUpdates
   private
 
   def collect_binaries(dockerfile_path)
-    binaries = `grep 'ENV .*_version' #{dockerfile_path} | awk 'gsub("_version", "")' | awk '{print $2 ":" $3}'`
+    binaries = `grep -i 'ENV .*_version' #{dockerfile_path} | awk '{print tolower($0)}' | awk 'gsub("_version", "")' | awk '{print $2 ":" $3}'`
     binaries.split("\n").map do |b|
       {
         "name" => b.split(":")[NAME_INDEX],
