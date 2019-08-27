@@ -73,14 +73,6 @@ describe 'OpsFileFinder' do
       end
     end
 
-    context 'and the directory is the legacy directory' do
-      let(:subfolder) { 'legacy' }
-
-      it 'does not return the ops-files prepended with "legacy"' do
-        expect_ops_files_to_be_excluded
-      end
-    end
-
     context 'and the directory is the workaround directory' do
       let(:subfolder) { 'workaround' }
 
