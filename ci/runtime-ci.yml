@@ -33,6 +33,15 @@ resources:
     paths:
     - ci/*
 
+- name: uptimer
+  type: git
+  icon: github-box
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/uptimer.git
+    paths:
+    - ci/*
+
 - name: daily
   type: time
   icon: clock-outline
@@ -62,6 +71,8 @@ jobs:
     - get: cf-acceptance-tests
       trigger: true
     - get: cf-smoke-tests-release
+      trigger: true
+    - get: uptimer
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
