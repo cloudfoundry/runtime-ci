@@ -1,0 +1,7 @@
+#!/bin/bash -exu
+
+export GOPATH="$GOPATH:$PWD/go"
+
+pushd go/src/github.com/cloudfoundry/uptimer
+  ginkgo -r
+popd
