@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
@@ -11,6 +13,7 @@ import (
 
 const (
 	cfDeployment = "cf-deployment"
+	stemcell     = "stemcell"
 )
 
 var (
@@ -23,22 +26,44 @@ func init() {
 	rootDir := pflag.Arg(0)
 
 	cfDeploymentDir = filepath.Join(rootDir, cfDeployment)
+
+	stemcellDir = filepath.Join(rootDir, stemcell)
 }
 
 func main() {
 	boshCLI := new(command.BoshCLI)
 
-	content, _ := ioutil.ReadFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"))
-	manifest, _ := bosh.NewManifestFromFile(content)
+	fmt.Println("Reading cf-deployment")
+	content, err := ioutil.ReadFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	manifest, err := bosh.NewManifestFromFile(content)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	releases := manifest.Releases
 
-	stemcell, _ := bosh.NewStemcellFromInput(stemcellDir)
+	fmt.Println("Reading stemcell")
+	stemcell, err := bosh.NewStemcellFromInput(stemcellDir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	newManifest := bosh.Manifest{
 		Releases:  releases,
 		Stemcells: []bosh.Stemcell{stemcell},
-		Name:      "releases",
+		Name:      "cf-compilation",
 	}
 
-	newManifest.Deploy(boshCLI)
+	fmt.Println("Deploying manifest")
+	if err := newManifest.Deploy(boshCLI); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

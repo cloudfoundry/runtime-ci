@@ -1,0 +1,20 @@
+name: cf-compilation
+update:
+    canaries: 1
+    canary_watch_time: 1
+    max_in_flight: 1
+    update_watch_time: 1
+instance_groups: []
+releases:
+  - name: release-a
+    sha1: ""
+    url: ""
+    version: ""
+  - name: release-b
+    sha1: ""
+    url: ""
+    version: ""
+stemcells:
+  - alias: default
+    os: some-os
+    version: 1.2.3
