@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: cf-smoke-tests-release
+
+outputs:
+- name: updated-cf-smoke-tests-release
+
+run:
+  path: runtime-ci/tasks/bump-cf-smoke-tests/task

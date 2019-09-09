@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+
+source runtime-ci/tasks/shared-functions
+
+pushd cf-smoke-tests-release
+  pushd src/smoke_tests
+    git checkout master
+    git pull
+  popd
+
+  git add .
+  commit_with_message "$PWD" <(echo "Update cf-smoke-tests submodule")
+popd
+
+cp -r cf-smoke-tests-release/. updated-cf-smoke-tests-release
