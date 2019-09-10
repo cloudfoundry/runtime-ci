@@ -1,0 +1,19 @@
+#!/bin/bash -eu
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function main() {
+  setup_bosh_env_vars
+
+  pushd stemcell
+    if [ -r url ]; then
+      bosh upload-stemcell $(cat url)
+    else
+      echo "Missing stemcell url file"
+      exit 1
+    fi
+  popd
+}
+
+main
