@@ -31,6 +31,7 @@ func (cli BoshCLI) Cmd(name string, args ...string) (io.Reader, error) {
 func parseErr(r io.Reader, runErr error) error {
 	var output struct {
 		Blocks []string
+		Lines  []string
 	}
 
 	err := json.NewDecoder(r).Decode(&output)
@@ -38,10 +39,14 @@ func parseErr(r io.Reader, runErr error) error {
 		return err
 	}
 
-	for _, block := range output.Blocks {
-		if strings.HasPrefix(block, "Error:") {
-			return errors.New(block)
+	if len(output.Blocks) > 0 {
+		for _, block := range output.Blocks {
+			if strings.HasPrefix(block, "Error:") {
+				return errors.New(block)
+			}
 		}
+	} else {
+		return errors.New(strings.Join(output.Lines, "\n"))
 	}
 
 	return runErr

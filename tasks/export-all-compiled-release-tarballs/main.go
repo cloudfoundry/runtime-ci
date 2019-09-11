@@ -29,13 +29,21 @@ func main() {
 	}
 
 	var errOccured bool
+	// var wg sync.WaitGroup
+
 	for _, boshRelease := range releases {
+		// wg.Add(1)
+		// go func(boshRelease release.Release, wg sync.WaitGroup) {
 		err := release.Export(boshCLI, boshRelease, stemcells[0])
 		if err != nil {
 			errOccured = true
 			fmt.Printf("Failed to export release: %s\n", err)
 		}
+		// wg.Done()
+		// }(boshRelease, wg)
 	}
+
+	// wg.Wait()
 
 	if errOccured {
 		os.Exit(1)

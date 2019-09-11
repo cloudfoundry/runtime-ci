@@ -19,4 +19,4 @@ run:
 
 params:
   BBL_STATE_DIR:
-  BOSH_DEPLOYMENT: cf
+  BOSH_DEPLOYMENT:
