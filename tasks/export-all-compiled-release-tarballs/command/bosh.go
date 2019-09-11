@@ -46,7 +46,18 @@ func parseErr(r io.Reader, runErr error) error {
 			}
 		}
 	} else {
-		return errors.New(strings.Join(output.Lines, "\n"))
+		var errLines []string
+		for _, line := range output.Lines {
+			if strings.HasPrefix(line, "Using environment") {
+				continue
+			}
+			if strings.HasPrefix(line, "Exit code") {
+				continue
+			}
+
+			errLines = append(errLines, line)
+		}
+		return errors.New(strings.Join(errLines, "\n"))
 	}
 
 	return runErr

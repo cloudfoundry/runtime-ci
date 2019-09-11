@@ -40,4 +40,24 @@ var _ = Describe("parseErr", func() {
 			Expect(actualErr).To(MatchError("Error: Release 'bad' doesn't exist"))
 		})
 	})
+
+	Context("with an empty block error", func() {
+		BeforeEach(func() {
+			readerArg = strings.NewReader(`{
+		"Tables": null,
+		"Blocks": null,
+		"Lines": [
+			"Using environment 'https://10.0.0.6:25555' as client 'admin'",
+			"Expected non-empty deployment name",
+			"Exit code 1"
+		]
+}`)
+		})
+
+		It("returns the filtered error message", func() {
+			Expect(actualErr).To(MatchError("Expected non-empty deployment name"))
+		})
+	})
+	{
+	}
 })
