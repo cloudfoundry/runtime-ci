@@ -22,7 +22,7 @@ func (cli BoshCLI) Cmd(name string, args ...string) (io.Reader, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		return nil, parseErr(errBuf, err)
+		return nil, parseErr(outBuf, err)
 	}
 
 	return outBuf, nil

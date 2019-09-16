@@ -1,4 +1,4 @@
-package release_test
+package deployment_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestReleases(t *testing.T) {
+func TestDeployment(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Releases Suite")
+	RunSpecs(t, "Deployments Suite")
 }

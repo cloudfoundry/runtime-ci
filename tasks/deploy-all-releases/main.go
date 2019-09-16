@@ -55,15 +55,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	newManifest := bosh.Manifest{
-		Releases:  releases,
-		Stemcells: []bosh.Stemcell{stemcell},
-		Name:      "cf-compilation",
-	}
+	for _, release := range releases {
+		newManifest := bosh.Manifest{
+			Releases:  []bosh.Release{release},
+			Stemcells: []bosh.Stemcell{stemcell},
+			Name:      fmt.Sprintf("%s-compilation", release),
+		}
 
-	fmt.Println("Deploying manifest")
-	if err := newManifest.Deploy(boshCLI); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		fmt.Println("Deploying manifest")
+
+		if err := newManifest.Deploy(boshCLI, fmt.Sprintf("%s-compilation", release)); err != nil {
+			fmt.Println(err)
+		}
 	}
 }
