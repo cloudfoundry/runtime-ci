@@ -62,9 +62,8 @@ func (m Manifest) Deploy(boshCLI boshCLI, name string) error {
 		return err
 	}
 
-	r, err := boshCLI.Cmd("deploy", tempFile.Name(), "-d", name, "-n")
+	_, err = boshCLI.Cmd("deploy", tempFile.Name(), "-d", name, "-n", "--json")
 	if err != nil {
-		io.Copy(os.Stdout, r)
 		return err
 	}
 

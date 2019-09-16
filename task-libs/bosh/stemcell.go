@@ -23,7 +23,7 @@ func NewStemcellFromInput(stemcellDir string) (Stemcell, error) {
 	if err != nil {
 		return stemcell, err
 	}
-	stemcell.Version = version
+	stemcell.Version = strings.Trim(version, "\n")
 
 	url, err := readFile(filepath.Join(stemcellDir, "url"))
 	if err != nil {

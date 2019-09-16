@@ -59,12 +59,12 @@ func main() {
 		newManifest := bosh.Manifest{
 			Releases:  []bosh.Release{release},
 			Stemcells: []bosh.Stemcell{stemcell},
-			Name:      fmt.Sprintf("%s-compilation", release),
+			Name:      fmt.Sprintf("%s-compilation", release.Name),
 		}
 
 		fmt.Println("Deploying manifest")
 
-		if err := newManifest.Deploy(boshCLI, fmt.Sprintf("%s-compilation", release)); err != nil {
+		if err := newManifest.Deploy(boshCLI, fmt.Sprintf("%s-compilation", release.Name)); err != nil {
 			fmt.Println(err)
 		}
 	}
