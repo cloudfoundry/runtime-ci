@@ -1,43 +1,31 @@
 ---
-- path: /releases/name=test/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/test-0.1.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
-- path: /releases/name=test/version
-  type: replace
-  value: 0.1.0
-- path: /releases/name=test/sha1
-  type: replace
-  value: 02573f83a7f467e55a7bb49424e80f541288a041
-- path: /releases/name=test/stemcell?
+- path: /releases/name=test
   type: replace
   value:
-    os: awesome-stemcell
-    version: "1.0"
-- path: /releases/name=no-version/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/no-version-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
-- path: /releases/name=no-version/version
-  type: replace
-  value: 0.0.1
-- path: /releases/name=no-version/sha1
-  type: replace
-  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
-- path: /releases/name=no-version/stemcell?
+    name: test
+    sha1: 02573f83a7f467e55a7bb49424e80f541288a041
+    stemcell:
+      os: awesome-stemcell
+      version: "1.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/test-0.1.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
+    version: 0.1.0
+- path: /releases/name=no-version
   type: replace
   value:
-    os: cute-stemcell
-    version: "0.0"
-- path: /releases/name=more-than-1/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/more-than-1-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
-- path: /releases/name=more-than-1/version
-  type: replace
-  value: 0.0.1
-- path: /releases/name=more-than-1/sha1
-  type: replace
-  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
-- path: /releases/name=more-than-1/stemcell?
+    name: no-version
+    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: cute-stemcell
+      version: "0.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/no-version-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+    version: 0.0.1
+- path: /releases/name=more-than-1
   type: replace
   value:
-    os: cute-stemcell
-    version: "0.0"
+    name: more-than-1
+    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: cute-stemcell
+      version: "0.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/more-than-1-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+    version: 0.0.1
