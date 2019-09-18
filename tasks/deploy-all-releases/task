@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+export GOMODULE111=on
+
+function main() {
+  local cwd="${PWD}"
+
+  setup_bosh_env_vars
+
+  pushd runtime-ci/tasks/deploy-all-releases
+    go run main.go $cwd
+  popd
+}
+
+main
