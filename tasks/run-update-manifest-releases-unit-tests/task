@@ -4,10 +4,7 @@ function main() {
   local root_dir
   root_dir="${1}"
 
-  export GOPATH="${root_dir}/go"
-  export PATH=$GOPATH/bin:$PATH
-
-  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+  pushd "${root_dir}/runtime-ci/util/update-manifest-releases"
     go get github.com/onsi/ginkgo/...
     ginkgo -r -randomizeSuites -randomizeAllSpecs .
   popd
