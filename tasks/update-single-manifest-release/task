@@ -2,20 +2,17 @@
 
 # Not able to resolve our import via shellcheck, so disable warning
 # shellcheck disable=SC1091
-source go/src/github.com/cloudfoundry/runtime-ci/tasks/shared-functions
+source runtime-ci/tasks/shared-functions
 
 function main() {
   local root_dir
   root_dir="${1}"
 
-  export GOPATH="${root_dir}/go"
-  export PATH=$GOPATH/bin:$PATH
-
   ln -s release "${RELEASE_NAME}-release"
 
   git clone cf-deployment updated-cf-deployment
 
-  pushd "${GOPATH}/src/github.com/cloudfoundry/runtime-ci/util/update-manifest-releases"
+  pushd "${root_dir}/runtime-ci/util/update-manifest-releases"
     go run main.go \
       --build-dir "${root_dir}" \
       --input-dir "cf-deployment" \

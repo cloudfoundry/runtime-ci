@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-  path: go/src/github.com/cloudfoundry/runtime-ci
 - name: cf-deployment # repo containing the original manifest
 - name: release
 - name: stemcell
@@ -17,7 +16,7 @@ outputs:
 - name: updated-cf-deployment
 
 run:
-  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-manifest-release/task
+  path: runtime-ci/tasks/update-single-manifest-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt

@@ -9,14 +9,13 @@ image_resource:
 inputs:
 - name: cf-deployment
 - name: runtime-ci
-  path: go/src/github.com/cloudfoundry/runtime-ci
 - name: stemcell
 
 outputs:
 - name: updated-cf-deployment
 
 run:
-  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-stemcell-manifest-section/task
+  path: runtime-ci/tasks/update-stemcell-manifest-section/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt

@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-  path: go/src/github.com/cloudfoundry/runtime-ci
 - name: original-compiled-releases-ops-file
 - name: release
 - name: compiled-release-tarball
@@ -17,7 +16,7 @@ outputs:
 - name: updated-compiled-releases-ops-file
 
 run:
-  path: go/src/github.com/cloudfoundry/runtime-ci/tasks/update-single-compiled-release/task
+  path: runtime-ci/tasks/update-single-compiled-release/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
