@@ -62,7 +62,7 @@ func main() {
 			Name:      fmt.Sprintf("%s-compilation", release.Name),
 		}
 
-		fmt.Printf("Deploying %s...", release.Name)
+		fmt.Printf("Deploying %s...\n", release.Name)
 
 		if err := newManifest.Deploy(boshCLI, fmt.Sprintf("%s-compilation", release.Name)); err != nil {
 			fmt.Println(err)
