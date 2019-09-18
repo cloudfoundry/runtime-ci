@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: bbl-state
+- name: cf-deployment-concourse-tasks
+- name: runtime-ci
+
+outputs:
+- name: compiled-releases
+
+run:
+  path: runtime-ci/tasks/export-all-compiled-release-tarballs/task
+
+params:
+  BBL_STATE_DIR:
