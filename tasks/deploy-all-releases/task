@@ -3,8 +3,6 @@
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
-export GOMODULE111=on
-
 function main() {
   local cwd="${PWD}"
 
