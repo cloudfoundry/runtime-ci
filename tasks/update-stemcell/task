@@ -10,27 +10,11 @@ function main() {
 
   git clone cf-deployment updated-cf-deployment
 
-  # Bump the stemcell in the main manifest.
-  # This is first so that it generates the commit message we use.
-  pushd "${root_dir}/runtime-ci/util/update-manifest-releases"
-    go run main.go \
-      --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment" \
-      --target "stemcell"
+  pushd "runtime-ci/tasks/update-stemcell"
+    go run main.go "${root_dir}"
   popd
 
-  # Bump all the compiled releases.
-  # This will bump all releases based on directories matching "*-release".
-  pushd "${root_dir}/runtime-ci/util/update-manifest-releases"
-    go run main.go \
-      --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
-      --output-dir "updated-cf-deployment" \
-      --target "compiledReleasesOpsfile"
-  popd
-
-  commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
+  commit_with_message updated-cf-deployment commit-message.txt
 }
 
 main "${PWD}"
