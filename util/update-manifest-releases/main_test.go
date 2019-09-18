@@ -604,65 +604,49 @@ stemcells:
 		const (
 			originalOpsFile string = `
 ---
-- path: /releases/name=release1/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz
-- path: /releases/name=release1/version
-  type: replace
-  value: 0.0.0
-- path: /releases/name=release1/sha1
-  type: replace
-  value: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
-- path: /releases/name=release1/stemcell?
+- path: /releases/name=release1
   type: replace
   value:
-    os: stemcell1
-    version: "0.0"
-- path: /releases/name=release2/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
-- path: /releases/name=release2/version
-  type: replace
-  value: 0.0.1
-- path: /releases/name=release2/sha1
-  type: replace
-  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
-- path: /releases/name=release2/stemcell?
+    name: release1
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz
+    version: 0.0.0
+    sha1: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: stemcell1
+      version: "0.0"
+- path: /releases/name=release2
   type: replace
   value:
-    os: stemcell1
-    version: "0.0"
+    name: release2
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
+    version: 0.0.1
+    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: stemcell1
+      version: "0.0"
 `
 			expectedOpsFile string = `
 ---
-- path: /releases/name=release1/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz
-- path: /releases/name=release1/version
-  type: replace
-  value: 0.2.0
-- path: /releases/name=release1/sha1
-  type: replace
-  value: 8867c88b56e0bfb82cffaf15a66bc8d107d6754a
-- path: /releases/name=release1/stemcell?
+- path: /releases/name=release1
   type: replace
   value:
-    os: stemcell2
-    version: "2.0"
-- path: /releases/name=release2/url
-  type: replace
-  value: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
-- path: /releases/name=release2/version
-  type: replace
-  value: 0.0.1
-- path: /releases/name=release2/sha1
-  type: replace
-  value: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
-- path: /releases/name=release2/stemcell?
+    name: release1
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz
+    version: 0.2.0
+    sha1: 8867c88b56e0bfb82cffaf15a66bc8d107d6754a
+    stemcell:
+      os: stemcell2
+      version: "2.0"
+- path: /releases/name=release2
   type: replace
   value:
-    os: stemcell1
-    version: "0.0"
+    name: release2
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
+    version: 0.0.1
+    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: stemcell1
+      version: "0.0"
 `
 		)
 
