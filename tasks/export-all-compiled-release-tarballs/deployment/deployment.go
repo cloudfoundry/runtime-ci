@@ -116,5 +116,6 @@ func ExportRelease(boshCLI BoshCLI, release Release, stemcell stemcell.Stemcell,
 		return err
 	}
 
+	fmt.Printf("Finished exporting %s\n", release.String())
 	return nil
 }
