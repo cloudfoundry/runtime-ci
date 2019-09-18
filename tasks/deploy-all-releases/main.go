@@ -33,7 +33,7 @@ func init() {
 func main() {
 	boshCLI := new(command.BoshCLI)
 
-	fmt.Println("Reading cf-deployment")
+	fmt.Println("Reading cf-deployment...")
 	content, err := ioutil.ReadFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"))
 	if err != nil {
 		fmt.Println(err)
@@ -48,7 +48,7 @@ func main() {
 
 	releases := manifest.Releases
 
-	fmt.Println("Reading stemcell")
+	fmt.Println("Reading stemcell information...")
 	stemcell, err := bosh.NewStemcellFromInput(stemcellDir)
 	if err != nil {
 		fmt.Println(err)
@@ -62,7 +62,7 @@ func main() {
 			Name:      fmt.Sprintf("%s-compilation", release.Name),
 		}
 
-		fmt.Println("Deploying manifest")
+		fmt.Printf("Deploying %s...", release.Name)
 
 		if err := newManifest.Deploy(boshCLI, fmt.Sprintf("%s-compilation", release.Name)); err != nil {
 			fmt.Println(err)
