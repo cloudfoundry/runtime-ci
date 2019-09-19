@@ -15,7 +15,7 @@ type cfTeams struct {
 
 type cfTeam struct {
 	Name                     string   `yaml:"name"`
-	EnableSlackNotifications bool     `yaml:"enable_slack_notifications"`
+	EnableSlackNotifications *bool    `yaml:"enable_slack_notifications"`
 	Releases                 []string `yaml:"releases"`
 	SlackChannel             string   `yaml:"slack_channel"`
 }
@@ -52,11 +52,11 @@ func main() {
 	for _, team := range teams.Teams {
 		for _, release := range team.Releases {
 			if release == releaseRepository {
-				if team.EnableSlackNotifications {
+				if team.EnableSlackNotifications != nil && *team.EnableSlackNotifications == false {
+					fmt.Fprintf(os.Stderr, "Found %s team. Slack notifications are disabled.\n", team.Name)
+				} else {
 					fmt.Fprintf(os.Stderr, "Found %s team. Slack notifications are enabled.\n", team.Name)
 					teamSlackChannel = team.SlackChannel
-				} else {
-					fmt.Fprintf(os.Stderr, "Found %s team. Slack notifications are disabled.\n", team.Name)
 				}
 
 				break
