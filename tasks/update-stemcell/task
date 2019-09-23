@@ -14,7 +14,7 @@ function main() {
     go run main.go "${root_dir}"
   popd
 
-  commit_with_message updated-cf-deployment commit-message.txt
+  commit_with_message updated-cf-deployment "${root_dir}/commit-message.txt"
 }
 
 main "${PWD}"

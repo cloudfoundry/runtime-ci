@@ -41,7 +41,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	commitMessagePath := filepath.Join(runner.Out.UpdatedCFDeploymentDir, "commit-message.txt")
+	commitMessagePath := filepath.Join(buildDir, "commit-message.txt")
 
 	err = runner.WriteCommitMessage(commitMessagePath)
 	if err != nil {
