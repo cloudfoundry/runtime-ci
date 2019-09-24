@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+    tag: latest
+
+inputs:
+- name: cf-deployment-prev
+- name: cf-deployment-next
+- name: runtime-ci
+
+outputs:
+- name: release-list
+
+run:
+  path: runtime-ci/tasks/detect-release-version-bumps/task

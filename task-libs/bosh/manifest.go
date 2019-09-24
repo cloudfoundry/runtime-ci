@@ -9,11 +9,11 @@ import (
 )
 
 type Manifest struct {
-	Name           string
-	Update         block
-	InstanceGroups []yaml.Node `yaml:"instance_groups"`
-	Releases       []Release
-	Stemcells      []Stemcell
+	Name           string      `yaml:",omitempty"`
+	Update         block       `yaml:",omitempty"`
+	InstanceGroups []yaml.Node `yaml:"instance_groups,omitempty"`
+	Releases       []Release   `yaml:"releases,omitempty"`
+	Stemcells      []Stemcell  `yaml:",omitempty"`
 }
 
 type block map[string]interface{}
