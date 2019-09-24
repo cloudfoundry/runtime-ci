@@ -11,6 +11,9 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 - name: cf-deployment
+  optional: true
+- name: release-list
+  optional: true
 - name: stemcell
 
 run:

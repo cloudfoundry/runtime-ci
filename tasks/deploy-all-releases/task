@@ -9,7 +9,7 @@ function main() {
   setup_bosh_env_vars
 
   pushd runtime-ci/tasks/deploy-all-releases
-    go run main.go $cwd
+    go run main.go "${cwd}"
   popd
 }
 

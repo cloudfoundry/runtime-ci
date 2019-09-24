@@ -13,11 +13,13 @@ import (
 
 const (
 	cfDeployment = "cf-deployment"
+	releaseList  = "release-list"
 	stemcell     = "stemcell"
 )
 
 var (
 	cfDeploymentDir string
+	releaseListDir  string
 	stemcellDir     string
 )
 
@@ -26,15 +28,29 @@ func init() {
 	rootDir := pflag.Arg(0)
 
 	cfDeploymentDir = filepath.Join(rootDir, cfDeployment)
-
+	releaseListDir = filepath.Join(rootDir, releaseList)
 	stemcellDir = filepath.Join(rootDir, stemcell)
 }
 
 func main() {
 	boshCLI := new(command.BoshCLI)
 
-	fmt.Println("Reading cf-deployment...")
-	content, err := ioutil.ReadFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"))
+	releaseListPath := filepath.Join(releaseListDir, "releases.yml")
+	var fileToRead string
+
+	_, err := os.Stat(releaseListPath)
+	if err == nil {
+		fmt.Println("Reading releases.yml...")
+		fileToRead = releaseListPath
+	} else if os.IsNotExist(err) {
+		fmt.Println("Reading cf-deployment.yml...")
+		fileToRead = filepath.Join(cfDeploymentDir, "cf-deployment.yml")
+	} else {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	content, err := ioutil.ReadFile(fileToRead)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
