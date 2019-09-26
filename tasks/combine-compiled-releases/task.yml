@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment-next
+- name: compiled-releases-prev
+- name: compiled-releases-next
+
+outputs:
+- name: compiled-releases-combined
+
+run:
+  command: runtime-ci/tasks/combine-compiled-releases/task
