@@ -7,6 +7,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -15,7 +16,9 @@ const taskYAMLPath = "../task.yml"
 var _ = Describe("Runner", func() {
 	Describe("NewRunner", func() {
 		var (
-			buildDir string
+			buildDir     string
+			actualRunner Runner
+			actualErr    error
 		)
 
 		BeforeEach(func() {
@@ -23,12 +26,31 @@ var _ = Describe("Runner", func() {
 			buildDir, err = generateBuildDir(taskYAMLPath)
 			Expect(err).NotTo(HaveOccurred())
 		})
+
+		JustBeforeEach(func() {
+			actualRunner, actualErr = NewRunner(buildDir)
+		})
+
+		It("creates a new runner", func() {
+			Expect(actualErr).ToNot(HaveOccurred())
+			Expect(actualRunner).To(Equal(Runner{
+				In: Inputs{
+					compiledReleasesPrevDir: filepath.Join(buildDir, "compiled-releases-prev"),
+					compiledReleasesNextDir: filepath.Join(buildDir, "compiled-releases-next"),
+					cfDeploymentNextDir:     filepath.Join(buildDir, "cf-deployment-next"),
+				},
+				Out: Outputs{
+					compliledReleasesCombinedDir: filepath.Join(buildDir, "compiled-releases-combined"),
+				},
+			}))
+		})
 	})
 
-	JustBeforeEach(func() {
-		runner, err = 
+	Describe("Run", func() {
+		BeforeEach(func() {
+			// create fake tarballcombiner
+		})
 	})
-
 })
 
 type task struct {

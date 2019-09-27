@@ -3,11 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/cloudfoundry/runtime-ci/tasks/combine-compiled-releases/taskio"
 )
 
 func main() {
 	buildDir := os.Args[1]
 
+	//go:generate concourseTaskRunner task.ym
 	runner, err := taskio.NewRunner(buildDir)
 	if err != nil {
 		fmt.Print(err)
@@ -20,7 +23,6 @@ func main() {
 		os.Exit(1)
 	}
 	// readBaseManifestReleases
-
 	// loadPreviousTarballs
 	// loadNextTarballs
 
@@ -28,5 +30,7 @@ func main() {
 	// for each release in manifest return file path
 	// checkNextFirst
 	// checkPrev
-	// fail
+	// fail
+
+	// write to outDir
 }

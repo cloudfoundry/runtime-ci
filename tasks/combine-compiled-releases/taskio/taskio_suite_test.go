@@ -1,4 +1,4 @@
-package taskio_test
+package taskio
 
 import (
 	"testing"
