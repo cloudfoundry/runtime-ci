@@ -17,7 +17,13 @@ import (
 )
 
 var cfDeploymentIgnoreDirs = []string{".git", "scripts", "example-vars-files", "iaas-support", "ci", "units"}
-var cfDeploymentIgnoreFiles = []string{"cf-deployment.yml", ".overcommit.yml", "use-offline-windows2016fs.yml"}
+var cfDeploymentIgnoreFiles = []string{
+	"cf-deployment.yml",
+	".overcommit.yml",
+	"use-offline-windows2016fs.yml",
+	"use-offline-windows1803fs.yml",
+	"use-offline-windows2019fs.yml",
+}
 
 func getReleaseNames(buildDir string) ([]string, error) {
 	files, err := ioutil.ReadDir(buildDir)
