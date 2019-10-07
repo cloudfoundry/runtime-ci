@@ -5,7 +5,9 @@ class OpsFileFinder
       File.join(repo_dir, 'operations', '**', '*.yml')
     ).grep_v folders_to_exclude
 
-    opsfile_list = ops_files_and_directories.select { |fd| File.file?(fd) }
+    opsfile_list = ops_files_and_directories.select do |fd|
+      File.file?(fd) unless fd.match(/use-compiled-releases.yml/)
+    end
 
     opsfile_list.map { |opsfile| opsfile.gsub!("#{repo_dir}/operations/", '') }
   end

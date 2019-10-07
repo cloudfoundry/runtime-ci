@@ -21,6 +21,7 @@ describe 'OpsFileFinder' do
     before do
       File.open('test-cf-deployment/operations/ops.yml', 'w')
       File.open('test-cf-deployment/operations/ops2.yml', 'w')
+      File.open('test-cf-deployment/operations/use-compiled-releases.yml', 'w')
       File.open('test-cf-deployment/operations/README.md', 'w')
     end
 
@@ -32,6 +33,12 @@ describe 'OpsFileFinder' do
     it 'does not return any files that are not yaml files' do
       expect(subject).not_to include 'README.md'
     end
+
+    context 'and the file is the use-compiled-releases.yml ops-file' do
+      it 'does not return the use-compiled-releases.yml ops-file' do
+        expect(subject).not_to include "use-compiled-releases.yml"
+      end
+    end
   end
 
   context 'when there is another directory in the operations directory' do
@@ -39,16 +46,6 @@ describe 'OpsFileFinder' do
       FileUtils.mkdir_p("test-cf-deployment/operations/#{subfolder}")
       File.open("test-cf-deployment/operations/#{subfolder}/ops.yml", 'w')
       File.open("test-cf-deployment/operations/#{subfolder}/ops2.yml", 'w')
-    end
-
-    let(:expect_ops_files_to_be_included) do
-      expect(subject).to include "#{subfolder}/ops.yml"
-      expect(subject).to include "#{subfolder}/ops2.yml"
-    end
-
-    let(:expect_ops_files_to_be_excluded) do
-      expect(subject).not_to include "#{subfolder}/ops.yml"
-      expect(subject).not_to include "#{subfolder}/ops2.yml"
     end
 
     let(:subfolder) { 'nested' }
@@ -61,7 +58,8 @@ describe 'OpsFileFinder' do
       let(:subfolder) { 'experimental' }
 
       it 'returns the ops-files prepended with "experimentlal"' do
-        expect_ops_files_to_be_included
+        expect(subject).to include "#{subfolder}/ops.yml"
+        expect(subject).to include "#{subfolder}/ops2.yml"
       end
     end
 
@@ -69,7 +67,8 @@ describe 'OpsFileFinder' do
       let(:subfolder) { 'addons' }
 
       it 'returns the ops-files prepended with "addons"' do
-        expect_ops_files_to_be_included
+        expect(subject).to include "#{subfolder}/ops.yml"
+        expect(subject).to include "#{subfolder}/ops2.yml"
       end
     end
 
@@ -77,7 +76,8 @@ describe 'OpsFileFinder' do
       let(:subfolder) { 'workaround' }
 
       it 'does not return the ops-files prepended with "workaround"' do
-        expect_ops_files_to_be_excluded
+        expect(subject).not_to include "#{subfolder}/ops.yml"
+        expect(subject).not_to include "#{subfolder}/ops2.yml"
       end
     end
 
