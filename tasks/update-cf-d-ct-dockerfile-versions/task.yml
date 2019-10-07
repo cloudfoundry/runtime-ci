@@ -15,6 +15,7 @@ inputs:
 - name: cf-cli
 - name: terraform-github-release
 - name: golang-docker-image
+- name: uptimer
 
 outputs:
 - name: cf-deployment-concourse-tasks-updated
