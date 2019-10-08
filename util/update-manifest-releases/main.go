@@ -20,6 +20,7 @@ var cfDeploymentIgnoreDirs = []string{".git", "scripts", "example-vars-files", "
 var cfDeploymentIgnoreFiles = []string{
 	"cf-deployment.yml",
 	".overcommit.yml",
+	"use-compiled-releases.yml",
 	"use-offline-windows2016fs.yml",
 	"use-offline-windows1803fs.yml",
 	"use-offline-windows2019fs.yml",
