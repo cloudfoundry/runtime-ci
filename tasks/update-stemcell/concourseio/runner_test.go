@@ -7,8 +7,9 @@ import (
 
 	"fmt"
 
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio/concourseiofakes"
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -136,7 +137,7 @@ var _ = Describe("Runner", func() {
 			It("sets the stemcell OS and Version", func() {
 				Expect(actualErr).ToNot(HaveOccurred())
 
-				Expect(runner.stemcell).To(Equal(manifest.Stemcell{OS: "ubuntu-some-os", Version: "some-version"}))
+				Expect(runner.stemcell).To(Equal(bosh.Stemcell{OS: "ubuntu-some-os", Version: "some-version"}))
 			})
 		})
 
@@ -153,13 +154,13 @@ var _ = Describe("Runner", func() {
 
 			expectedCFDeploymentDir        string
 			expectedUpdatedCFDeploymentDir string
-			expectedStemcell               manifest.Stemcell
+			expectedStemcell               bosh.Stemcell
 
 			manifestUpdateSpy        UpdateFunc
 			manifestUpdateFileOutput []byte
 
 			actualInFile   []byte
-			actualStemcell manifest.Stemcell
+			actualStemcell bosh.Stemcell
 
 			actualErr error
 		)
@@ -170,14 +171,14 @@ var _ = Describe("Runner", func() {
 			expectedUpdatedCFDeploymentDir = filepath.Join(buildDir, "updated-cf-deployment")
 			Expect(os.Mkdir(expectedUpdatedCFDeploymentDir, 0777)).To(Succeed())
 
-			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
+			expectedStemcell = bosh.Stemcell{OS: "gundam", Version: "1.1.0"}
 			runner = Runner{
 				stemcell: expectedStemcell,
 				In:       Inputs{cfDeploymentDir: expectedCFDeploymentDir},
 				Out:      Outputs{UpdatedCFDeploymentDir: expectedUpdatedCFDeploymentDir},
 			}
 
-			manifestUpdateSpy = func(file []byte, stemcell manifest.Stemcell) ([]byte, error) {
+			manifestUpdateSpy = func(file []byte, stemcell bosh.Stemcell) ([]byte, error) {
 				actualInFile = file
 				actualStemcell = stemcell
 
@@ -229,13 +230,13 @@ var _ = Describe("Runner", func() {
 		var (
 			updater          *concourseiofakes.FakeStemcellUpdater
 			runner           Runner
-			expectedStemcell manifest.Stemcell
+			expectedStemcell bosh.Stemcell
 			actualErr        error
 		)
 
 		BeforeEach(func() {
 			updater = new(concourseiofakes.FakeStemcellUpdater)
-			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
+			expectedStemcell = bosh.Stemcell{OS: "gundam", Version: "1.1.0"}
 			runner = Runner{
 				stemcell: expectedStemcell,
 			}
@@ -259,14 +260,14 @@ var _ = Describe("Runner", func() {
 	Describe("WriteCommitMessage", func() {
 		var (
 			runner            Runner
-			expectedStemcell  manifest.Stemcell
+			expectedStemcell  bosh.Stemcell
 			actualErr         error
 			commitMessagePath string
 		)
 
 		BeforeEach(func() {
 			commitMessagePath = filepath.Join(buildDir, "commit-message.txt")
-			expectedStemcell = manifest.Stemcell{OS: "gundam", Version: "1.1.0"}
+			expectedStemcell = bosh.Stemcell{OS: "gundam", Version: "1.1.0"}
 			runner = Runner{
 				stemcell: expectedStemcell,
 			}

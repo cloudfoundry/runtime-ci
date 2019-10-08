@@ -8,11 +8,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 )
 
 type Runner struct {
-	stemcell manifest.Stemcell
+	stemcell bosh.Stemcell
 
 	In  Inputs
 	Out Outputs
@@ -62,7 +62,7 @@ func (r *Runner) ReadStemcell() error {
 	return nil
 }
 
-type UpdateFunc func([]byte, manifest.Stemcell) ([]byte, error)
+type UpdateFunc func([]byte, bosh.Stemcell) ([]byte, error)
 
 func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 	originalFile := manifestPath(r.In.cfDeploymentDir)
@@ -89,7 +89,7 @@ func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 //go:generate counterfeiter . StemcellUpdater
 type StemcellUpdater interface {
 	Load() error
-	Update(manifest.Stemcell) error
+	Update(bosh.Stemcell) error
 	Write() error
 }
 

@@ -10,7 +10,7 @@ import (
 )
 
 type Stemcell struct {
-	Alias   string
+	Alias   string `yaml:",omitempty"`
 	OS      string
 	Version string
 }

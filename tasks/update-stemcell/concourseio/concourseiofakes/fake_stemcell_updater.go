@@ -2,9 +2,9 @@
 package concourseiofakes
 
 import (
-	sync "sync"
+	"sync"
 
-	manifest "github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 )
 
 type FakeStemcellUpdater struct {
@@ -18,10 +18,10 @@ type FakeStemcellUpdater struct {
 	loadReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UpdateStub        func(manifest.Stemcell) error
+	UpdateStub        func(bosh.Stemcell) error
 	updateMutex       sync.RWMutex
 	updateArgsForCall []struct {
-		arg1 manifest.Stemcell
+		arg1 bosh.Stemcell
 	}
 	updateReturns struct {
 		result1 error
@@ -95,11 +95,11 @@ func (fake *FakeStemcellUpdater) LoadReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeStemcellUpdater) Update(arg1 manifest.Stemcell) error {
+func (fake *FakeStemcellUpdater) Update(arg1 bosh.Stemcell) error {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
 	fake.updateArgsForCall = append(fake.updateArgsForCall, struct {
-		arg1 manifest.Stemcell
+		arg1 bosh.Stemcell
 	}{arg1})
 	fake.recordInvocation("Update", []interface{}{arg1})
 	fake.updateMutex.Unlock()
@@ -119,13 +119,13 @@ func (fake *FakeStemcellUpdater) UpdateCallCount() int {
 	return len(fake.updateArgsForCall)
 }
 
-func (fake *FakeStemcellUpdater) UpdateCalls(stub func(manifest.Stemcell) error) {
+func (fake *FakeStemcellUpdater) UpdateCalls(stub func(bosh.Stemcell) error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = stub
 }
 
-func (fake *FakeStemcellUpdater) UpdateArgsForCall(i int) manifest.Stemcell {
+func (fake *FakeStemcellUpdater) UpdateArgsForCall(i int) bosh.Stemcell {
 	fake.updateMutex.RLock()
 	defer fake.updateMutex.RUnlock()
 	argsForCall := fake.updateArgsForCall[i]

@@ -14,7 +14,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/tasks/export-all-compiled-release-tarballs/stemcell"
 )
 
-var _ = FDescribe("List", func() {
+var _ = Describe("List", func() {
 	var (
 		fakeCLI *deploymentfakes.FakeBoshCLI
 

@@ -34,7 +34,7 @@ type boshCLI interface {
 	Cmd(name string, args ...string) (io.Reader, error)
 }
 
-func (m Manifest) Deploy(boshCLI boshCLI, name string) error {
+func (m Manifest) Deploy(boshCLI boshCLI) error {
 	m.Update = block{
 		"canaries":          1,
 		"max_in_flight":     1,
@@ -62,7 +62,7 @@ func (m Manifest) Deploy(boshCLI boshCLI, name string) error {
 		return err
 	}
 
-	_, err = boshCLI.Cmd("deploy", tempFile.Name(), "-d", name, "-n", "--json")
+	_, err = boshCLI.Cmd("deploy", tempFile.Name(), "-d", m.Name, "-n", "--json")
 	if err != nil {
 		return err
 	}

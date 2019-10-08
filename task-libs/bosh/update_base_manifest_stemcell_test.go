@@ -1,16 +1,15 @@
-package manifest_test
+package bosh_test
 
 import (
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 )
 
 var _ = Describe("Update Manifest", func() {
 	var (
 		contentArg  []byte
-		stemcellArg manifest.Stemcell
+		stemcellArg bosh.Stemcell
 
 		actualContent []byte
 		actualError   error
@@ -18,11 +17,11 @@ var _ = Describe("Update Manifest", func() {
 
 	BeforeEach(func() {
 		contentArg = nil
-		stemcellArg = manifest.Stemcell{}
+		stemcellArg = bosh.Stemcell{}
 	})
 
 	JustBeforeEach(func() {
-		actualContent, actualError = manifest.UpdateStemcellSection(contentArg, stemcellArg)
+		actualContent, actualError = bosh.UpdateStemcellSection(contentArg, stemcellArg)
 	})
 
 	Context("when the manifest has no content", func() {

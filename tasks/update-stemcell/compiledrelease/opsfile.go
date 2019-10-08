@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,13 +21,13 @@ type OpsfileUpdater struct {
 	compiledReleasesDir string
 	opsFileOutPath      string
 
-	releases []manifest.Release
+	releases []bosh.Release
 }
 
 type Op struct {
 	Type  string
 	Path  string
-	Value manifest.Release
+	Value bosh.Release
 }
 
 type NoReleasesErr struct{}
@@ -83,10 +83,10 @@ func (o *OpsfileUpdater) extractReleases() filepath.WalkFunc {
 			return err
 		}
 
-		release := manifest.Release{
+		release := bosh.Release{
 			Name: allMatches[0][1],
 			SHA1: sha1,
-			Stemcell: manifest.Stemcell{
+			Stemcell: bosh.Stemcell{
 				OS:      allMatches[0][3],
 				Version: allMatches[0][4],
 			},
@@ -100,7 +100,7 @@ func (o *OpsfileUpdater) extractReleases() filepath.WalkFunc {
 	}
 }
 
-func (o *OpsfileUpdater) Update(stemcell manifest.Stemcell) error {
+func (o *OpsfileUpdater) Update(stemcell bosh.Stemcell) error {
 	if len(o.releases) == 0 {
 		return new(NoReleasesErr)
 	}

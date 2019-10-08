@@ -1,22 +1,9 @@
-package manifest
+package bosh
 
 import (
 	"fmt"
 	"regexp"
 )
-
-type Stemcell struct {
-	OS      string
-	Version string
-}
-
-type Release struct {
-	Name     string
-	SHA1     string
-	Stemcell Stemcell
-	Version  string
-	URL      string
-}
 
 func UpdateStemcellSection(manifestContent []byte, stemcell Stemcell) ([]byte, error) {
 	if manifestContent == nil {

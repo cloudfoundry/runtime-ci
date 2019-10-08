@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/compiledrelease"
 	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/concourseio"
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = runner.UpdateManifest(manifest.UpdateStemcellSection)
+	err = runner.UpdateManifest(bosh.UpdateStemcellSection)
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)

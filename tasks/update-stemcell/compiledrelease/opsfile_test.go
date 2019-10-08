@@ -6,7 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloudfoundry/runtime-ci/tasks/update-stemcell/manifest"
+	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -57,11 +58,11 @@ var _ = Describe("OpsfileUpdater", func() {
 			It("load a list of Releases from the compiled-releases directory", func() {
 				Expect(actualError).NotTo(HaveOccurred())
 
-				expectedReleases := []manifest.Release{
+				expectedReleases := []bosh.Release{
 					{
 						Name: "product-with-hyphens",
 						SHA1: "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
-						Stemcell: manifest.Stemcell{
+						Stemcell: bosh.Stemcell{
 							OS:      "some-stemcell",
 							Version: "1.2",
 						},
@@ -71,7 +72,7 @@ var _ = Describe("OpsfileUpdater", func() {
 					{
 						Name: "singleword",
 						SHA1: "89f53c408c8bd119b92a295f30963de7dcb00f2f",
-						Stemcell: manifest.Stemcell{
+						Stemcell: bosh.Stemcell{
 							OS:      "some-stemcell",
 							Version: "1.2",
 						},
@@ -105,7 +106,7 @@ var _ = Describe("OpsfileUpdater", func() {
 
 	Describe("Update", func() {
 		var (
-			stemcellArg manifest.Stemcell
+			stemcellArg bosh.Stemcell
 
 			actualError error
 		)
@@ -116,11 +117,11 @@ var _ = Describe("OpsfileUpdater", func() {
 
 		Context("when the opsfileUpdater has releases", func() {
 			BeforeEach(func() {
-				opsfileUpdater.releases = []manifest.Release{
+				opsfileUpdater.releases = []bosh.Release{
 					{
 						Name: "some-buildpack",
 						SHA1: "123456",
-						Stemcell: manifest.Stemcell{
+						Stemcell: bosh.Stemcell{
 							OS:      "some-stemcell",
 							Version: "1.2",
 						},
@@ -130,7 +131,7 @@ var _ = Describe("OpsfileUpdater", func() {
 					{
 						Name: "some-component",
 						SHA1: "aabbff",
-						Stemcell: manifest.Stemcell{
+						Stemcell: bosh.Stemcell{
 							OS:      "some-stemcell",
 							Version: "1.2",
 						},
@@ -139,7 +140,7 @@ var _ = Describe("OpsfileUpdater", func() {
 					},
 				}
 
-				stemcellArg = manifest.Stemcell{
+				stemcellArg = bosh.Stemcell{
 					OS:      "some-stemcell",
 					Version: "1.2",
 				}
@@ -152,10 +153,10 @@ var _ = Describe("OpsfileUpdater", func() {
 					Op{
 						Type: "replace",
 						Path: "/releases/name=some-buildpack",
-						Value: manifest.Release{
+						Value: bosh.Release{
 							Name: "some-buildpack",
 							SHA1: "123456",
-							Stemcell: manifest.Stemcell{
+							Stemcell: bosh.Stemcell{
 								OS:      "some-stemcell",
 								Version: "1.2",
 							},
@@ -166,10 +167,10 @@ var _ = Describe("OpsfileUpdater", func() {
 					Op{
 						Type: "replace",
 						Path: "/releases/name=some-component",
-						Value: manifest.Release{
+						Value: bosh.Release{
 							Name: "some-component",
 							SHA1: "aabbff",
-							Stemcell: manifest.Stemcell{
+							Stemcell: bosh.Stemcell{
 								OS:      "some-stemcell",
 								Version: "1.2",
 							},
@@ -182,7 +183,7 @@ var _ = Describe("OpsfileUpdater", func() {
 
 			Context("when the stemcell does not match", func() {
 				BeforeEach(func() {
-					stemcellArg = manifest.Stemcell{
+					stemcellArg = bosh.Stemcell{
 						OS:      "some-stemcell",
 						Version: "3.4",
 					}
@@ -225,10 +226,10 @@ var _ = Describe("OpsfileUpdater", func() {
 					{
 						Type: "replace",
 						Path: "/releases/name=some-buildpack",
-						Value: manifest.Release{
+						Value: bosh.Release{
 							Name: "some-buildpack",
 							SHA1: "123456",
-							Stemcell: manifest.Stemcell{
+							Stemcell: bosh.Stemcell{
 								OS:      "some-stemcell",
 								Version: "1.2",
 							},
@@ -239,10 +240,10 @@ var _ = Describe("OpsfileUpdater", func() {
 					{
 						Type: "replace",
 						Path: "/releases/name=some-component",
-						Value: manifest.Release{
+						Value: bosh.Release{
 							Name: "some-component",
 							SHA1: "aabbff",
-							Stemcell: manifest.Stemcell{
+							Stemcell: bosh.Stemcell{
 								OS:      "some-stemcell",
 								Version: "1.2",
 							},
@@ -268,8 +269,8 @@ var _ = Describe("OpsfileUpdater", func() {
     stemcell:
       os: some-stemcell
       version: "1.2"
-    version: 1.2.3
     url: some-url/some-buildpack.com
+    version: 1.2.3
 - type: replace
   path: /releases/name=some-component
   value:
@@ -278,8 +279,8 @@ var _ = Describe("OpsfileUpdater", func() {
     stemcell:
       os: some-stemcell
       version: "1.2"
-    version: 4.5.6
     url: some-url/some-component.com
+    version: 4.5.6
 `))
 			})
 		})

@@ -82,8 +82,8 @@ name: some-name
 
 				cmd, args := fakeBoshCLI.CmdArgsForCall(0)
 				Expect(cmd).To(Equal("deploy"), "expected boshCLI command")
-				Expect(args).To(HaveLen(4), "expected boshCLI arg len")
-				Expect(strings.Join(args[1:], " ")).To(Equal("-d cf-compilation -n"))
+				Expect(args).To(HaveLen(5), "expected boshCLI arg len")
+				Expect(strings.Join(args[1:], " ")).To(Equal("-d cf-compilation -n --json"))
 
 				Expect(string(actualManifest)).To(Equal(`name: cf-compilation
 update:
@@ -91,7 +91,6 @@ update:
     canary_watch_time: 1
     max_in_flight: 1
     update_watch_time: 1
-instance_groups: []
 releases:
   - name: release-a
     sha1: ""
