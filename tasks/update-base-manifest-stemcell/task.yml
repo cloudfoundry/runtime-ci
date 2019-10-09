@@ -16,4 +16,4 @@ outputs:
 - name: updated-cf-deployment
 
 run:
-  path: runtime-ci/tasks/update-stemcell/task
+  path: runtime-ci/tasks/update-base-manifest-stemcell/task

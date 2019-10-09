@@ -10,7 +10,7 @@ function main() {
 
   git clone cf-deployment updated-cf-deployment
 
-  pushd "runtime-ci/tasks/update-stemcell"
+  pushd "runtime-ci/tasks/update-base-manifest-stemcell"
     go run main.go "${root_dir}"
   popd
 
