@@ -1,0 +1,20 @@
+#!/bin/bash -eu
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source runtime-ci/tasks/shared-functions
+
+function main() {
+  local root_dir
+  root_dir="${1}"
+
+  git clone cf-deployment updated-cf-deployment
+
+  pushd "runtime-ci/tasks/update-stemcell"
+    go run main.go "${root_dir}"
+  popd
+
+  commit_with_message updated-cf-deployment "${root_dir}/commit-message.txt"
+}
+
+main "${PWD}"
