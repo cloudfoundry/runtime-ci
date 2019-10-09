@@ -22,7 +22,7 @@ function main() {
 
     go run main.go \
       --build-dir "${root_dir}" \
-      --input-dir "cf-deployment" \
+      --input-dir "updated-cf-deployment" \
       --output-dir "updated-cf-deployment" \
       --release "${RELEASE_NAME}" \
       --target stemcell
