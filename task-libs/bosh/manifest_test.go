@@ -29,6 +29,10 @@ var _ = Describe("Manifest", func() {
 		BeforeEach(func() {
 			fileArg = []byte(`---
 name: some-name
+stemcells:
+- alias: default
+  os: some-os
+  version: some-version
 `)
 		})
 
@@ -37,6 +41,13 @@ name: some-name
 
 			Expect(actualManifest).To(Equal(Manifest{
 				Name: "some-name",
+				Stemcells: []Stemcell{
+					{
+						Alias:   "default",
+						OS:      "some-os",
+						Version: "some-version",
+					},
+				},
 			}))
 		})
 	})

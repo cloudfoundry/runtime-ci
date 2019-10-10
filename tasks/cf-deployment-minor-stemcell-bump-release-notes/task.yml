@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/relint-base
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment-master
+- name: stemcell
+
+outputs:
+- name: cf-deployment-minor-stemcell-bump-release-notes
+
+run:
+  path: runtime-ci/tasks/cf-deployment-minor-stemcell-bump-release-notes/task

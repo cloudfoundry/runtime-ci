@@ -1,0 +1,13 @@
+#!/bin/bash
+set -eu
+
+function main() {
+  root_dir="$PWD"
+  pushd "$(dirname $0)"
+    go run main.go "${root_dir}"
+  popd
+
+  cat "cf-deployment-minor-stemcell-bump-release-notes/release-notes.txt"
+}
+
+main
