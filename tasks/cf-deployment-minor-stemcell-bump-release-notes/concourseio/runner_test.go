@@ -31,9 +31,10 @@ var _ = Describe("Runner", func() {
 
 	Describe("NewRunner", func() {
 		var (
-			expectedCFDeploymentDir string
-			expectedStemcellDir     string
-			expectedReleaseNotesDir string
+			expectedCFDeploymentDir   string
+			expectedReleaseVersionDir string
+			expectedStemcellDir       string
+			expectedReleaseNotesDir   string
 
 			actualRunner concourseio.Runner
 			actualErr    error
@@ -47,6 +48,8 @@ var _ = Describe("Runner", func() {
 			BeforeEach(func() {
 				expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
 				Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
+				expectedReleaseVersionDir = filepath.Join(buildDir, "release-version")
+				Expect(os.Mkdir(expectedReleaseVersionDir, 0777)).To(Succeed())
 				expectedStemcellDir = filepath.Join(buildDir, "stemcell")
 				Expect(os.Mkdir(expectedStemcellDir, 0777)).To(Succeed())
 				expectedReleaseNotesDir = filepath.Join(buildDir, "cf-deployment-minor-stemcell-bump-release-notes")
@@ -57,8 +60,9 @@ var _ = Describe("Runner", func() {
 				Expect(actualErr).NotTo(HaveOccurred())
 				Expect(actualRunner).To(Equal(concourseio.Runner{
 					In: concourseio.Inputs{
-						CFDeploymentDir: expectedCFDeploymentDir,
-						StemcellDir:     expectedStemcellDir,
+						CFDeploymentDir:   expectedCFDeploymentDir,
+						ReleaseVersionDir: expectedReleaseVersionDir,
+						StemcellDir:       expectedStemcellDir,
 					},
 					Out: concourseio.Outputs{
 						ReleaseNotesDir: expectedReleaseNotesDir,
@@ -85,6 +89,9 @@ var _ = Describe("Runner", func() {
 				BeforeEach(func() {
 					expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
 					Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
+					expectedReleaseVersionDir = filepath.Join(buildDir, "release-version")
+					Expect(os.Mkdir(expectedReleaseVersionDir, 0777)).To(Succeed())
+					expectedStemcellDir = filepath.Join(buildDir, "stemcell")
 					expectedReleaseNotesDir = filepath.Join(buildDir, "cf-deployment-minor-stemcell-bump-release-notes")
 					Expect(os.Mkdir(expectedReleaseNotesDir, 0777)).To(Succeed())
 				})
@@ -109,11 +116,11 @@ var _ = Describe("Runner", func() {
 			cfDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
 			Expect(os.Mkdir(cfDeploymentDir, 0777)).To(Succeed())
 
-			stemcellDir := filepath.Join(buildDir, "stemcell")
-			Expect(os.Mkdir(stemcellDir, 0777)).To(Succeed())
-
-			releaseNotesDir := filepath.Join(buildDir, "cf-deployment-minor-stemcell-bump-release-notes")
-			Expect(os.Mkdir(releaseNotesDir, 0777)).To(Succeed())
+			runner = concourseio.Runner{
+				In: concourseio.Inputs{
+					CFDeploymentDir: cfDeploymentDir,
+				},
+			}
 
 			stemcellAlias = "default"
 		})
@@ -134,10 +141,6 @@ stemcells:
   version: some-other-version
 `)
 				Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
-
-				var err error
-				runner, err = concourseio.NewRunner(buildDir)
-				Expect(err).ToNot(HaveOccurred())
 			})
 
 			It("returns a stemcell struct from the specified stemcell", func() {
@@ -153,6 +156,7 @@ stemcells:
 		Context("failure cases", func() {
 			Context("when the manifest does not exist", func() {
 				It("returns a wrapped error", func() {
+					Expect(actualErr).To(HaveOccurred())
 					Expect(actualErr.Error()).To(ContainSubstring("failed to read cf-deployment.yml"))
 					innerErr := errors.Unwrap(actualErr)
 					Expect(innerErr.Error()).To(ContainSubstring("no such file or directory"))
@@ -163,13 +167,10 @@ stemcells:
 				BeforeEach(func() {
 					cfDeploymentManifest := []byte(`%%%`)
 					Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
-
-					var err error
-					runner, err = concourseio.NewRunner(buildDir)
-					Expect(err).ToNot(HaveOccurred())
 				})
 
 				It("returns a wrapped yaml error", func() {
+					Expect(actualErr).To(HaveOccurred())
 					Expect(actualErr.Error()).To(ContainSubstring("failed to unmarshal cf-deployment.yml"))
 					innerErr := errors.Unwrap(actualErr)
 					Expect(innerErr.Error()).To(ContainSubstring("yaml: could not find expected directive name"))
@@ -186,14 +187,11 @@ stemcells:
 `)
 					Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
 
-					var err error
-					runner, err = concourseio.NewRunner(buildDir)
-					Expect(err).ToNot(HaveOccurred())
-
 					stemcellAlias = "missing-alias"
 				})
 
 				It("returns an error", func() {
+					Expect(actualErr).To(HaveOccurred())
 					Expect(actualErr.Error()).To(ContainSubstring(`failed to find stemcell version for alias "missing-alias"`))
 				})
 			})
@@ -287,7 +285,7 @@ stemcells:
 
 			It("writes the release notes output to a file", func() {
 				Expect(actualErr).NotTo(HaveOccurred())
-				outputFilePath := filepath.Join(expectedReleaseNotesDir, "release-notes.txt")
+				outputFilePath := filepath.Join(expectedReleaseNotesDir, "body.txt")
 				Expect(outputFilePath).To(BeAnExistingFile())
 				releaseNotesContent, err := ioutil.ReadFile(outputFilePath)
 				Expect(err).NotTo(HaveOccurred())
@@ -296,6 +294,89 @@ stemcells:
 | - | - | - |
 | ubuntu xenial | some-old-version | some-new-version |
 `))
+			})
+		})
+
+		Context("when the release notes file cannot be written", func() {
+			BeforeEach(func() {
+				expectedReleaseNotesDir = filepath.Join(buildDir, "missing-dir")
+			})
+
+			It("returns the error", func() {
+				Expect(actualErr).To(HaveOccurred())
+				Expect(actualErr.Error()).To(ContainSubstring("failed to write release notes file"))
+				innerErr := errors.Unwrap(actualErr)
+				Expect(innerErr.Error()).To(ContainSubstring("no such file or directory"))
+			})
+		})
+	})
+
+	Describe("GenerateReleaseName", func() {
+		var (
+			expectedReleaseVersionDir string
+			expectedReleaseNotesDir   string
+			actualErr                 error
+			version                   string
+		)
+
+		BeforeEach(func() {
+			version = "1.2.3"
+			expectedReleaseVersionDir = filepath.Join(buildDir, "release-version")
+			Expect(os.Mkdir(expectedReleaseVersionDir, 0777)).To(Succeed())
+			expectedReleaseNotesDir = filepath.Join(buildDir, "cf-deployment-minor-stemcell-bump-release-notes")
+			Expect(os.Mkdir(expectedReleaseNotesDir, 0777)).To(Succeed())
+		})
+
+		JustBeforeEach(func() {
+			runner := concourseio.Runner{
+				In: concourseio.Inputs{
+					ReleaseVersionDir: expectedReleaseVersionDir,
+				},
+				Out: concourseio.Outputs{
+					ReleaseNotesDir: expectedReleaseNotesDir,
+				},
+			}
+			actualErr = runner.GenerateReleaseName()
+		})
+
+		Context("happy path", func() {
+			BeforeEach(func() {
+				err := ioutil.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("Writes the v-prefixed release version to the name file", func() {
+				Expect(actualErr).NotTo(HaveOccurred())
+				outputFilePath := filepath.Join(expectedReleaseNotesDir, "name.txt")
+				Expect(outputFilePath).To(BeAnExistingFile())
+				releaseNotesContent, err := ioutil.ReadFile(outputFilePath)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(string(releaseNotesContent)).To(Equal(fmt.Sprintf("v%s", version)))
+			})
+		})
+
+		Context("when the release version file does not exist", func() {
+			It("returns the error", func() {
+				Expect(actualErr).To(HaveOccurred())
+				Expect(actualErr.Error()).To(ContainSubstring("failed to read release version"))
+				innerErr := errors.Unwrap(actualErr)
+				Expect(innerErr.Error()).To(ContainSubstring("no such file or directory"))
+			})
+		})
+
+		Context("when the release name file cannot be written", func() {
+			BeforeEach(func() {
+				err := ioutil.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
+				Expect(err).NotTo(HaveOccurred())
+
+				expectedReleaseNotesDir = filepath.Join(buildDir, "missing-dir")
+			})
+
+			It("returns the error", func() {
+				Expect(actualErr).To(HaveOccurred())
+				Expect(actualErr.Error()).To(ContainSubstring("failed to write release name file"))
+				innerErr := errors.Unwrap(actualErr)
+				Expect(innerErr.Error()).To(ContainSubstring("no such file or directory"))
 			})
 		})
 	})

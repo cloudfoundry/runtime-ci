@@ -10,6 +10,7 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-master
 - name: stemcell
+- name: release-version
 
 outputs:
 - name: cf-deployment-minor-stemcell-bump-release-notes

@@ -16,8 +16,9 @@ type Runner struct {
 }
 
 type Inputs struct {
-	CFDeploymentDir string
-	StemcellDir     string
+	CFDeploymentDir   string
+	ReleaseVersionDir string
+	StemcellDir       string
 }
 
 type Outputs struct {
@@ -77,8 +78,26 @@ func (r Runner) GenerateReleaseNotes(oldStemcell, newStemcell bosh.Stemcell) err
 | %s | %s | %s |
 `
 	content := fmt.Sprintf(template, strings.ReplaceAll(oldStemcell.OS, "-", " "), oldStemcell.Version, newStemcell.Version)
-	err := ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "release-notes.txt"), []byte(content), 0644)
-	return err
+	err := ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "body.txt"), []byte(content), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write release notes file: %w", err)
+	}
+
+	return nil
+}
+
+func (r Runner) GenerateReleaseName() error {
+	releaseVersion, err := ioutil.ReadFile(filepath.Join(r.In.ReleaseVersionDir, "version"))
+	if err != nil {
+		return fmt.Errorf("failed to read release version: %w", err)
+	}
+
+	err = ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "name.txt"), []byte(fmt.Sprintf("v%s", releaseVersion)), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write release name file: %w", err)
+	}
+
+	return nil
 }
 
 func setupInputs(buildDir string) (Inputs, error) {
@@ -86,12 +105,18 @@ func setupInputs(buildDir string) (Inputs, error) {
 	if err != nil {
 		return Inputs{}, err
 	}
+
+	releaseVersionDir, err := buildSubDir(buildDir, "release-version")
+	if err != nil {
+		return Inputs{}, err
+	}
+
 	stemcellDir, err := buildSubDir(buildDir, "stemcell")
 	if err != nil {
 		return Inputs{}, err
 	}
 
-	return Inputs{cfDeploymentDir, stemcellDir}, nil
+	return Inputs{cfDeploymentDir, releaseVersionDir, stemcellDir}, nil
 }
 
 func setupOutputs(buildDir string) (Outputs, error) {

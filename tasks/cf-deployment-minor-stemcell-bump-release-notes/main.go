@@ -39,4 +39,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to generate release notes: %s", err)
 	}
+
+	fmt.Println("Generating release name...")
+	err = runner.GenerateReleaseName()
+	if err != nil {
+		log.Fatalf("Failed to generate release name: %s", err)
+	}
 }

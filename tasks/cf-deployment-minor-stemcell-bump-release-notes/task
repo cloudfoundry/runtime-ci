@@ -7,7 +7,7 @@ function main() {
     go run main.go "${root_dir}"
   popd
 
-  cat "cf-deployment-minor-stemcell-bump-release-notes/release-notes.txt"
+  cat "cf-deployment-minor-stemcell-bump-release-notes/body.txt"
 }
 
 main
