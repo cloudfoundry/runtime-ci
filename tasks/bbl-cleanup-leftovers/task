@@ -27,7 +27,8 @@ function main() {
       --filter "${BBL_ENV_NAME}"
 
     echo "Removing contents of ${PWD}..."
-    rm -rf "./*"
+    shopt -s dotglob
+    rm -rf ./*
   popd
 }
 
