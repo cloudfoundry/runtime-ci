@@ -12,6 +12,7 @@ inputs:
 - name: cf-deployment-concourse-tasks
 - name: bbl-state   # - The env repo containing the Director's bbl state dir
 - name: pool-lock
+  optional: true
 
 outputs:
 - name: updated-bbl-state
@@ -56,6 +57,11 @@ params:
   # - Creates a tarball of the bbl-state directory, instead of treating it
   # - as a git repo and committing.
   # - This is useful if you want to store your state file in S3 or GCS.
+
+  BBL_ENV_NAME:
+  # - Optional
+  # - A label to apply to the bbl environment
+  # - Label will appear in the IaaS metadata/interface
 
   BBL_JSON_CONFIG:
   # - Optional
