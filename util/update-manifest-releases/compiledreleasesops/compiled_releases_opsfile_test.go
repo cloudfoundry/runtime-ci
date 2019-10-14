@@ -60,32 +60,29 @@ var _ = Describe("UpdateCompiledReleases", func() {
 
 	It("adds stemcell section if the release doesn't have one in the existing compiled releases ops file", func() {
 		releaseNames := []string{"no-stemcell-section"}
-		originalOpsFile := `
-- path: /releases/name=no-stemcell-section
-  type: replace
+		originalOpsFile := `- type: replace
+  path: /releases/name=no-stemcell-section
   value:
     name: no-stemcell-section
+    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/no-stemcell-section-0.0.0-cute-stemcell-0.0-20180808-195254-497840039.tgz
     version: 0.0.1
-    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
 `
-		desiredOpsFile := `
-- path: /releases/name=no-stemcell-section
-  type: replace
+		desiredOpsFile := `- type: replace
+  path: /releases/name=no-stemcell-section
   value:
     name: no-stemcell-section
-    url: https://storage.googleapis.com/cf-deployment-compiled-releases/no-stemcell-section-0.3.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
-    version: 0.3.0
     sha1: 02573f83a7f467e55a7bb49424e80f541288a041
     stemcell:
       os: awesome-stemcell
       version: "1.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/no-stemcell-section-0.3.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
+    version: 0.3.0
 `
 		updatedOpsFile, commitMessage, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, []byte(originalOpsFile), yaml.Marshal, yaml.Unmarshal)
 
 		Expect(err).NotTo(HaveOccurred())
 		Expect(commitMessage).To(Equal("Updated compiled releases with no-stemcell-section 0.3.0"))
-		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
+		Expect(string(updatedOpsFile)).To(Equal(desiredOpsFile))
 	})
 })
-

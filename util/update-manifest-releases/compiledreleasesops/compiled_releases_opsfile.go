@@ -14,8 +14,16 @@ import (
 
 const compiledReleasesURLPrefix = "https://storage.googleapis.com/cf-deployment-compiled-releases"
 
+type Release struct {
+	Name     string                    `yaml:"name"`
+	SHA1     string                    `yaml:"sha1"`
+	Stemcell common.StemcellForRelease `yaml:"stemcell,omitempty"`
+	URL      string                    `yaml:"url"`
+	Version  string                    `yaml:"version"`
+}
+
 func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	if releaseNames == nil || len(releaseNames) == 0 {
+	if len(releaseNames) == 0 {
 		err := errors.New("releaseNames provided to UpdateReleases must contain at least one release name")
 		return nil, "", err
 	}
@@ -29,7 +37,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 
 	for _, releaseName := range releaseNames {
 		fmt.Printf("Updating release %s...\n", releaseName)
-		var newRelease common.Release
+		var newRelease Release
 		var err error
 
 		foundRelease := false
@@ -67,15 +75,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 	return updatedOpsFile, commitMessage, nil
 }
 
-func newStemcellOp(newRelease common.Release) opsfile.Op {
-	return opsfile.Op{
-		TypeField: "replace",
-		Path:      fmt.Sprintf("/releases/name=%s/stemcell?", newRelease.Name),
-		Value:     newRelease.Stemcell,
-	}
-}
-
-func appendNewRelease(newRelease common.Release, opsFile []opsfile.Op) []opsfile.Op {
+func appendNewRelease(newRelease Release, opsFile []opsfile.Op) []opsfile.Op {
 	newReleaseOps := opsfile.Op{
 		TypeField: "replace",
 		Path:      fmt.Sprintf("/releases/name=%s", newRelease.Name),
@@ -85,29 +85,29 @@ func appendNewRelease(newRelease common.Release, opsFile []opsfile.Op) []opsfile
 	return append(opsFile, newReleaseOps)
 }
 
-func getCompiledReleaseForBuild(buildDir, releaseName string) (common.Release, error) {
+func getCompiledReleaseForBuild(buildDir, releaseName string) (Release, error) {
 	releaseTarballGlob := filepath.Join(buildDir, fmt.Sprintf("%s-compiled-release-tarball", releaseName), "*.tgz")
 
 	matches, err := filepath.Glob(releaseTarballGlob)
 	if err != nil {
-		return common.Release{}, err
+		return Release{}, err
 	}
 	if len(matches) != 1 {
-		return common.Release{}, errors.New("expected to find exactly 1 compiled release tarball")
+		return Release{}, errors.New("expected to find exactly 1 compiled release tarball")
 	}
 
 	releaseTarballPath := matches[0]
 	releaseTarballName := filepath.Base(releaseTarballPath)
 
-	release := common.Release{Name: releaseName}
+	release := Release{Name: releaseName}
 	release.Version, release.Stemcell.Version, release.Stemcell.OS, err = common.InfoFromTarballName(releaseTarballName, releaseName)
 	if err != nil {
-		return common.Release{}, err
+		return Release{}, err
 	}
 
 	release.SHA1, err = computeSha1Sum(releaseTarballPath)
 	if err != nil {
-		return common.Release{}, err
+		return Release{}, err
 	}
 
 	release.URL = fmt.Sprintf("%s/%s", compiledReleasesURLPrefix, releaseTarballName)
