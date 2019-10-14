@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
 )
@@ -77,7 +76,7 @@ func (r Runner) GenerateReleaseNotes(oldStemcell, newStemcell bosh.Stemcell) err
 | - | - | - |
 | %s | %s | %s |
 `
-	content := fmt.Sprintf(template, strings.ReplaceAll(oldStemcell.OS, "-", " "), oldStemcell.Version, newStemcell.Version)
+	content := fmt.Sprintf(template, oldStemcell.OS, oldStemcell.Version, newStemcell.Version)
 	err := ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "body.txt"), []byte(content), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write release notes file: %w", err)

@@ -292,7 +292,7 @@ stemcells:
 				Expect(string(releaseNotesContent)).To(Equal(`## Stemcell Updates
 | Release | Old Version | New Version |
 | - | - | - |
-| ubuntu xenial | some-old-version | some-new-version |
+| ubuntu-xenial | some-old-version | some-new-version |
 `))
 			})
 		})
