@@ -3,6 +3,7 @@ module github.com/cloudfoundry/runtime-ci
 go 1.12
 
 require (
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/davecgh/go-spew v1.1.1
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0

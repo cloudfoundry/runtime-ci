@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/blang/semver"
 )
 
 type Stemcell struct {
@@ -58,4 +60,18 @@ func readFile(path string) (string, error) {
 	}
 
 	return string(content), err
+}
+
+func (s Stemcell) CompareVersion(otherStemcell Stemcell) (int, error) {
+	stemcellVersion, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", s.Version, err)
+	}
+
+	otherStemcellVersion, err := semver.Parse(fmt.Sprintf("%s.0", otherStemcell.Version))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", otherStemcell.Version, err)
+	}
+
+	return stemcellVersion.Compare(otherStemcellVersion), nil
 }
