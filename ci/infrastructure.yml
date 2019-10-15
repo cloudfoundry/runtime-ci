@@ -915,6 +915,12 @@ jobs:
       params: {claim: trelawney}
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/trelawney/bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
