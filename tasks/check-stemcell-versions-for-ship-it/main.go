@@ -41,10 +41,10 @@ func main() {
 	}
 
 	if result == -1 {
-		log.Fatalf("Release candidate stemcell version (%s) is smaller than the master stemcell version (%s). Aborting.",
+		log.Fatalf("Release candidate stemcell version (%s) is behind the master stemcell version (%s). Aborting.",
 			releaseCandidateStemcell.Version, masterStemcell.Version)
 	}
 
-	log.Printf("Release candidate stemcell version (%s) is greater or equal to the master stemcell version (%s). Proceeding.",
+	log.Printf("Release candidate stemcell version (%s) is ahead of, or equal to, the master stemcell version (%s). Proceeding.",
 		releaseCandidateStemcell.Version, masterStemcell.Version)
 }
