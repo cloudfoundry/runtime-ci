@@ -675,6 +675,7 @@ jobs:
         BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/trelawney/google_account_creds.json
         BBL_IAAS: gcp
         BBL_GCP_REGION: us-central1
+        BBL_ENV_NAME: trelawney-upgrade
         BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
         BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
         LB_DOMAIN: trelawney.cf-app.com
@@ -759,6 +760,7 @@ jobs:
         BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
         BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
         LB_DOMAIN: hermione.cf-app.com
+        BBL_ENV_NAME: hermione-experimental
         BBL_LB_CERT: ((hermione_lbs_certificate))
         BBL_LB_KEY: ((hermione_lbs_private_key))
         BBL_LB_CERT_CHAIN: ((hermione_lbs_ca))
