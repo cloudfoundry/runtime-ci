@@ -18,6 +18,9 @@ groups:
 - name: private-cats-image
   jobs:
   - build-relint-private-docker-image
+- name: stemcell-version-bump-resource-image
+  jobs:
+  - build-stemcell-version-bump-resource-docker-image
 
 resources:
 - name: runtime-ci
@@ -83,6 +86,15 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
+
+- name: runtime-ci-stemcell-version-bump-resource
+  type: git
+  icon: github-box
+  source:
+    branch: test-docker-image-for-resource
+    uri: https://github.com/cloudfoundry/runtime-ci.git
+    paths:
+    - ci/resources/stemcell-version-bump/**
 
 - name: cf-cli
   type: github-release
@@ -201,6 +213,15 @@ resources:
   source:
     repository: ubuntu
     tag: bionic
+
+- name: stemcell-version-bump-resource-image
+  type: docker-image
+  icon: docker
+  source:
+    repository: relintdockerhubpushbot/stemcell-version-bump-resource
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+    email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
 - name: build-cf-deployment-concourse-tasks-docker-image
@@ -482,3 +503,14 @@ jobs:
       params:
         load: diego-docker-app-custom
         push: true
+
+- name: build-stemcell-version-bump-resource-docker-image
+  public: true
+  plan:
+  - get: runtime-ci-stemcell-version-bump-resource
+    trigger: true
+  - put: stemcell-version-bump-resource-image
+    params:
+      build: runtime-ci-stemcell-version-bump-resource/ci/resources/stemcell-version-bump
+    get_params:
+      skip_download: true
