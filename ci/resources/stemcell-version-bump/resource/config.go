@@ -8,7 +8,6 @@ import (
 )
 
 type Source struct {
-	Name       string
 	JSONKey    string `json:"json_key"`
 	BucketName string `json:"bucket_name"`
 	FileName   string `json:"file_name"`
@@ -33,10 +32,6 @@ func NewConfig(in io.Reader) (Config, error) {
 	}
 
 	var missingFields []string
-
-	if resource.Source.Name == "" {
-		missingFields = append(missingFields, "name")
-	}
 
 	if resource.Source.JSONKey == "" {
 		missingFields = append(missingFields, "json_key")

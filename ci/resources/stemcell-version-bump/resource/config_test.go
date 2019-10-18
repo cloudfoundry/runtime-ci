@@ -61,7 +61,6 @@ func TestNewResource(t *testing.T) {
 			"simple happy case",
 			strings.NewReader(`{
 				"source": {
-					"name": "stemcell-version-bump",
 					"json_key": "some-json-key",
 					"bucket_name": "some-bucket-name",
           "file_name": "some-file-name"
@@ -76,7 +75,6 @@ func TestNewResource(t *testing.T) {
 				expectResource(
 					resource.Config{
 						Source: resource.Source{
-							Name:       "stemcell-version-bump",
 							JSONKey:    "some-json-key",
 							BucketName: "some-bucket-name",
 							FileName:   "some-file-name",
@@ -102,7 +100,6 @@ func TestNewResource(t *testing.T) {
 			"missing single required field",
 			strings.NewReader(`{
 				"source": {
-					"json_key": "some-json-key",
 					"bucket_name": "some-bucket-name",
           "file_name": "some-file-name"
 				},
@@ -112,7 +109,7 @@ func TestNewResource(t *testing.T) {
 				}
 			}`),
 			checks(
-				expectError("missing required fields: 'name'"),
+				expectError("missing required fields: 'json_key'"),
 			),
 		},
 
@@ -120,7 +117,7 @@ func TestNewResource(t *testing.T) {
 			"missing multiple required fields",
 			strings.NewReader(`{}`),
 			checks(
-				expectError("missing required fields: 'name', 'json_key', 'bucket_name', 'file_name'"),
+				expectError("missing required fields: 'json_key', 'bucket_name', 'file_name'"),
 			),
 		},
 	}
