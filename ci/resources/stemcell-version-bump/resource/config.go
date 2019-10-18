@@ -15,8 +15,8 @@ type Source struct {
 }
 
 type Version struct {
-	Type    string
-	Version string
+	Type    string `json:"type"`
+	Version string `json:"version"`
 }
 
 type Config struct {

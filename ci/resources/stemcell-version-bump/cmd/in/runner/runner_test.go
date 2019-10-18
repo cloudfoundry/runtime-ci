@@ -68,7 +68,7 @@ func TestIn(t *testing.T) {
 			},
 			checks(
 				expectNoError,
-				expectResource(`{"type": "minor", "version": "1.2"}`),
+				expectResource(`{"version": {"type": "minor", "version": "1.2"}}`),
 			),
 		},
 

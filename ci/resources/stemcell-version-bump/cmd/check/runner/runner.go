@@ -6,6 +6,8 @@ import (
 	"stemcell-version-bump/resource"
 )
 
+type CheckResponse []resource.Version
+
 //go:generate counterfeiter . Getter
 type Getter interface {
 	Get(bucketName string, objectPath string) ([]byte, error)
@@ -17,15 +19,19 @@ func Check(config resource.Config, getter Getter) (string, error) {
 		return "", fmt.Errorf("failed to fetch version info from bucket/file (%s, %s): %w", config.Source.BucketName, config.Source.FileName, err)
 	}
 
-	var versionInfo resource.Version
-	err = json.Unmarshal(content, &versionInfo)
+	var currentVersion resource.Version
+	err = json.Unmarshal(content, &currentVersion)
 	if err != nil {
 		return "", fmt.Errorf("failed to unmarshal version info file: %w", err)
 	}
 
-	if versionInfo.Type != config.Source.TypeFilter || versionInfo.Version == config.Version.Version {
+	if currentVersion.Type != config.Source.TypeFilter || currentVersion.Version == config.Version.Version {
 		return "[]", nil
 	}
 
-	return fmt.Sprintf("[%s]", string(content)), nil
+	response := CheckResponse{currentVersion}
+
+	output, err := json.Marshal(response)
+
+	return string(output), err
 }

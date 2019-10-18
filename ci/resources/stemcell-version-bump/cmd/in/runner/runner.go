@@ -6,6 +6,10 @@ import (
 	"stemcell-version-bump/resource"
 )
 
+type InResponse struct {
+	Version resource.Version `json:"version"`
+}
+
 //go:generate counterfeiter . Getter
 type Getter interface {
 	Get(bucketName string, objectPath string) ([]byte, error)
@@ -27,5 +31,11 @@ func In(config resource.Config, getter Getter) (string, error) {
 		return "", fmt.Errorf("failed to retrieve specified version: requested %s, found %s", config.Version, currentVersion)
 	}
 
-	return string(content), nil
+	response := InResponse{
+		Version: currentVersion,
+	}
+
+	output, err := json.Marshal(response)
+
+	return string(output), err
 }
