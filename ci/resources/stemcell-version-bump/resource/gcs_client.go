@@ -1,10 +1,8 @@
 package resource
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"io/ioutil"
 
 	"cloud.google.com/go/storage"
@@ -46,10 +44,8 @@ func (gcsclient GCSClient) Get(bucketName string, objectPath string) ([]byte, er
 }
 
 func (gcsclient GCSClient) Put(bucketName string, objectPath string, contents []byte) error {
-	f := bytes.NewReader(contents)
-
 	wc := gcsclient.client.Bucket(bucketName).Object(objectPath).NewWriter(gcsclient.ctx)
-	_, err := io.Copy(wc, f)
+	_, err := wc.Write(contents)
 	if err != nil {
 		return fmt.Errorf("failed to write version info to writer: %w", err)
 	}

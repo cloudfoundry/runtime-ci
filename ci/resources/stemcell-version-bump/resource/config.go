@@ -24,6 +24,16 @@ type Config struct {
 	Version Version
 }
 
+type OutRequest struct {
+	Source Source
+	Params OutParams
+}
+
+type OutParams struct {
+	VersionFile string `json:"version_file"`
+	TypeFile    string `json:"type_file"`
+}
+
 func NewConfig(in io.Reader) (Config, error) {
 	var resource Config
 	err := json.NewDecoder(in).Decode(&resource)
@@ -47,6 +57,42 @@ func NewConfig(in io.Reader) (Config, error) {
 
 	if len(missingFields) > 0 {
 		return Config{}, fmt.Errorf("missing required fields: '%s'", strings.Join(missingFields, "', '"))
+	}
+
+	return resource, nil
+}
+
+func NewOutRequest(in io.Reader) (OutRequest, error) {
+	var resource OutRequest
+	err := json.NewDecoder(in).Decode(&resource)
+	if err != nil {
+		return OutRequest{}, fmt.Errorf("decoding json: %w", err)
+	}
+
+	var missingFields []string
+
+	if resource.Source.JSONKey == "" {
+		missingFields = append(missingFields, "json_key")
+	}
+
+	if resource.Source.BucketName == "" {
+		missingFields = append(missingFields, "bucket_name")
+	}
+
+	if resource.Source.FileName == "" {
+		missingFields = append(missingFields, "file_name")
+	}
+
+	if resource.Params.VersionFile == "" {
+		missingFields = append(missingFields, "params.version_file")
+	}
+
+	if resource.Params.TypeFile == "" {
+		missingFields = append(missingFields, "params.type_file")
+	}
+
+	if len(missingFields) > 0 {
+		return OutRequest{}, fmt.Errorf("missing required fields: '%s'", strings.Join(missingFields, "', '"))
 	}
 
 	return resource, nil
