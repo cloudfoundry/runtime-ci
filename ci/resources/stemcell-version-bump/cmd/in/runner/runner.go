@@ -3,6 +3,7 @@ package runner
 import (
 	"encoding/json"
 	"fmt"
+
 	"stemcell-version-bump/resource"
 )
 

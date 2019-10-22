@@ -15,12 +15,7 @@ func main() {
 		log.Fatalf("Failed to load config from stdin: %s", err)
 	}
 
-	err = resource.SetupEnvironment(config.Source.JSONKey)
-	if err != nil {
-		log.Fatalf("Failed to setup environment: %s", err)
-	}
-
-	client, err := resource.NewGCSClient()
+	client, err := resource.NewGCSClient(config.Source.JSONKey)
 	if err != nil {
 		log.Fatalf("Failed to create GCS client: %s", err)
 	}
