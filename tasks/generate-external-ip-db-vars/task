@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -eux
+
+root_dir=${PWD}
+VARIABLE_DIR=${root_dir}/bbl-state/${VARS_DIR}
+
+cd bbl-state/$BBL_STATE_DIR
+  set +x
+
+  echo "Grabbing public ips"
+  echo "Outputting public ips to ${VARIABLE_DIR}/external-public-ip-vars.yml"
+  bbl outputs | grep public_ip > ${VARIABLE_DIR}/external-public-ip-vars.yml
+
+  echo "Grabbing DB HOST"
+  DB_HOST=$(bbl outputs | grep db_host | awk '{print $2}')
+
+  echo "Outputting db host to ${VARIABLE_DIR}/external-db-host-vars.yml"
+  rm -f ${VARIABLE_DIR}/external-db-host-vars.yml
+  for key in {cc,uaa,bbs,routing_api,policy_server,silk_controller,locket,credhub}; do
+    echo "external_${key}_database_address: ${DB_HOST}" >> ${VARIABLE_DIR}/external-db-host-vars.yml;
+  done
+
+  set -x
+cd $root_dir
+
+cp -r bbl-state/. updated-bbl-state
