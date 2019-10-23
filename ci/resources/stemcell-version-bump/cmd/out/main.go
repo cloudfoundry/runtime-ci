@@ -19,7 +19,7 @@ func main() {
 		log.Fatalf("Failed to create GCS client: %s", err)
 	}
 
-	output, err := runner.ReadVersionFile(config)
+	output, err := runner.ReadVersionBump(config)
 	if err != nil {
 		log.Fatalf("Failed to read output file: %s", err)
 	}
