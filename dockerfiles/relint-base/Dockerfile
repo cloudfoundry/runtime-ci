@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
 
-ENV go_version 1.12.9
+ENV go_version 1.12.12
 
 RUN \
   apt-get update && \
