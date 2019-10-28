@@ -11,6 +11,7 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 - name: cf-deployment-concourse-tasks-latest-release
+- name: release-version
 
 outputs:
 - name: release-notes-template

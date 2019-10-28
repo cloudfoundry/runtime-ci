@@ -20,3 +20,6 @@ puts template
 
 output_folder = 'release-notes-template'
 File.write("#{output_folder}/template", template)
+
+version = File.read("release-version/version")
+File.write("#{output_folder}/name", "v#{version}")
