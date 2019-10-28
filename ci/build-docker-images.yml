@@ -1,11 +1,4 @@
 groups:
-- name: cf-deployment-concourse-tasks-docker-image
-  jobs:
-  - build-cf-deployment-concourse-tasks-docker-image
-  - ship-it-major-docker-image
-  - ship-it-minor-docker-image
-  - update-cf-d-ct-docker-image-major-version
-  - update-cf-d-ct-docker-image-minor-version
 - name: cf-deployment-concourse-tasks
   jobs:
   - release-notes-template
@@ -38,15 +31,6 @@ resources:
     stop: 7:30 -0700
     interval: 168h
 
-- name: cf-deployment-concourse-tasks-dockerfile
-  type: git
-  icon: github-box
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    private_key: ((cfdct_readwrite_deploy_key.private_key))
-    paths: [dockerfiles/cf-deployment-concourse-tasks/Dockerfile]
-
 - name: cf-deployment-concourse-tasks
   type: git
   icon: github-box
@@ -63,13 +47,6 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     private_key: ((cfdct_readwrite_deploy_key.private_key))
     tag_filter: '*'
-
-- name: uptimer
-  type: git
-  icon: github-box
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/uptimer.git
 
 - name: runtime-ci-relint-base
   type: git
@@ -96,23 +73,6 @@ resources:
     paths:
     - ci/resources/stemcell-version-bump/**
 
-- name: cf-cli
-  type: github-release
-  icon: github-face
-  source:
-    user: cloudfoundry
-    repository: cli
-    access_token: ((release_integration_download_bot_access_token))
-    tag_filter: 'v(6\.[^v].*)'
-
-- name: credhub-cli-github-release
-  type: github-release
-  icon: github-face
-  source:
-    user: cloudfoundry-incubator
-    repository: credhub-cli
-    access_token: ((release_integration_download_bot_access_token))
-
 - name: bosh-cli-github-release
   type: github-release
   icon: github-face
@@ -136,32 +96,6 @@ resources:
     user: cloudfoundry
     repository: bosh-bootloader
     access_token: ((release_integration_download_bot_access_token))
-
-- name: golang-1-12
-  type: docker-image
-  icon: docker
-  source:
-    repository: golang
-    tag: 1.12
-
-- name: cf-deployment-concourse-tasks-pipeline-image
-  type: docker-image
-  icon: docker
-  source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
-    email: cf-release-integration+dockerhub-push-bot@pivotal.io
-
-- name: cf-deployment-concourse-tasks-docker-image-version
-  type: semver
-  source:
-    driver: git
-    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
-    branch: master
-    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
-    git_user: "CF RELINT BOT <cf-release-integration@pivotal.io>"
-    file: cf-deployment-concourse-tasks-docker-image-version
 
 - name: cf-deployment-concourse-tasks-version
   type: semver
@@ -207,13 +141,6 @@ resources:
     password: ((private_dockerhub.password))
     email: cf-release-integration+private-registry@pivotal.io
 
-- name: ubuntu-bionic-image
-  type: docker-image
-  icon: docker
-  source:
-    repository: ubuntu
-    tag: bionic
-
 - name: stemcell-version-bump-resource-image
   type: docker-image
   icon: docker
@@ -224,164 +151,6 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
-- name: build-cf-deployment-concourse-tasks-docker-image
-  serial: true
-  public: true
-  plan:
-  - timeout: 4h
-    do:
-    - in_parallel:
-      - get: runtime-ci
-      - get: weekly
-        trigger: true
-      - get: uptimer
-        trigger: true
-      - get: cf-deployment-concourse-tasks-dockerfile
-        trigger: true
-      - get: terraform-github-release
-        trigger: true
-      - get: bbl-github-release
-        trigger: true
-      - get: bosh-cli-github-release
-        trigger: true
-      - get: credhub-cli-github-release
-        trigger: true
-      - get: cf-cli
-        trigger: true
-      - get: ubuntu-bionic-image
-        trigger: true
-      - get: golang-1-12
-        trigger: true
-    - task: update-dockerfile-versions
-      file: runtime-ci/tasks/update-cf-d-ct-dockerfile-versions/task.yml
-      input_mapping:
-        golang-docker-image: golang-1-12
-        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-dockerfile
-    - put: cf-deployment-concourse-tasks-pipeline-image
-      params:
-        build: cf-deployment-concourse-tasks-updated/dockerfiles/cf-deployment-concourse-tasks
-        push: true
-    - put: cf-deployment-concourse-tasks-dockerfile
-      params:
-        repository: cf-deployment-concourse-tasks-updated
-        rebase: true
-    - task: create-pm-story
-      file: runtime-ci/tasks/create-pm-story/task.yml
-      input_mapping:
-        input-description: version-json
-      params:
-        TRACKER_STORY_NAME: "New cf-deployment-concourse-tasks docker image"
-        TRACKER_STORY_STATE: delivered
-        TRACKER_STORY_LABELS: |
-          needs-pm
-          new-cf-dct-release
-        TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
-        DESCRIPTION_FILE: version.json
-
-- name: ship-it-major-docker-image
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-docker-image-version
-      params:
-        bump: major
-    - get: cf-deployment-concourse-tasks-pipeline-image
-      params:
-        save: true
-      passed:
-      - build-cf-deployment-concourse-tasks-docker-image
-  - task: generate-major-version-file
-    file: runtime-ci/tasks/generate-major-version-file/task.yml
-    input_mapping:
-      semantic_version: cf-deployment-concourse-tasks-docker-image-version
-  - put: cf-deployment-concourse-tasks-pipeline-image
-    params:
-      load: cf-deployment-concourse-tasks-pipeline-image
-      tag_file: major_version/version
-      tag_prefix: v
-    get_params:
-      save: true
-  - put: cf-deployment-concourse-tasks-pipeline-image
-    params:
-      load: cf-deployment-concourse-tasks-pipeline-image
-      tag_file: cf-deployment-concourse-tasks-docker-image-version/version
-      tag_prefix: v
-  - put: cf-deployment-concourse-tasks-docker-image-version
-    params:
-      bump: major
-
-- name: ship-it-minor-docker-image
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-docker-image-version
-      params:
-        bump: minor
-    - get: cf-deployment-concourse-tasks-pipeline-image
-      params:
-        save: true
-      passed:
-      - build-cf-deployment-concourse-tasks-docker-image
-  - task: generate-major-version-file
-    file: runtime-ci/tasks/generate-major-version-file/task.yml
-    input_mapping:
-      semantic_version: cf-deployment-concourse-tasks-docker-image-version
-  - put: cf-deployment-concourse-tasks-pipeline-image
-    params:
-      load: cf-deployment-concourse-tasks-pipeline-image
-      tag_file: major_version/version
-      tag_prefix: v
-    get_params:
-      save: true
-  - put: cf-deployment-concourse-tasks-pipeline-image
-    params:
-      load: cf-deployment-concourse-tasks-pipeline-image
-      tag_file: cf-deployment-concourse-tasks-docker-image-version/version
-      tag_prefix: v
-  - put: cf-deployment-concourse-tasks-docker-image-version
-    params:
-      bump: minor
-
-- name: update-cf-d-ct-docker-image-major-version
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment-concourse-tasks-docker-image-version
-      trigger: true
-      passed:
-      - ship-it-major-docker-image
-  - task: update-cf-d-ct-docker-image-version
-    file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
-    input_mapping:
-      version: cf-deployment-concourse-tasks-docker-image-version
-  - put: cf-deployment-concourse-tasks
-    params:
-      repository: cf-deployment-concourse-tasks-updated
-      rebase: true
-
-- name: update-cf-d-ct-docker-image-minor-version
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment-concourse-tasks-docker-image-version
-      trigger: true
-      passed:
-      - ship-it-minor-docker-image
-  - task: update-cf-d-ct-docker-image-version
-    file: runtime-ci/tasks/bump-cf-d-ct-docker-image/task.yml
-    input_mapping:
-      version: cf-deployment-concourse-tasks-docker-image-version
-  - put: cf-deployment-concourse-tasks
-    params:
-      repository: cf-deployment-concourse-tasks-updated
-      rebase: true
-
 - name: release-notes-template
   public: true
   plan:
