@@ -42,6 +42,14 @@ resources:
     paths:
     - ci/*
 
+- name: cf-deployment-concourse-tasks
+  type: git
+  icon: github-box
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    private_key: ((cfdct_readwrite_deploy_key.private_key))
+
 - name: daily
   type: time
   icon: clock-outline
@@ -73,6 +81,8 @@ jobs:
     - get: cf-smoke-tests-release
       trigger: true
     - get: uptimer
+      trigger: true
+    - get: cf-deployment-concourse-tasks
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml

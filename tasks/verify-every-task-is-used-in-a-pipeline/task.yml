@@ -12,6 +12,7 @@ inputs:
 - name: cf-acceptance-tests
 - name: cf-smoke-tests-release
 - name: uptimer
+- name: cf-deployment-concourse-tasks
 
 run:
   path: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task
