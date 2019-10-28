@@ -5,7 +5,7 @@ require_relative './binary_changes.rb'
 require_relative './task_updates.rb'
 require_relative './renderer.rb'
 
-puts Renderer.new.render(
+template = Renderer.new.render(
   binary_updates: BinaryUpdates.new(
   'cf-deployment-concourse-tasks-latest-release/dockerfiles/cf-deployment-concourse-tasks/Dockerfile',
   'cf-deployment-concourse-tasks/dockerfiles/cf-deployment-concourse-tasks/Dockerfile'
@@ -15,3 +15,8 @@ puts Renderer.new.render(
     'cf-deployment-concourse-tasks'
   )
 )
+
+puts template
+
+output_folder = 'release-notes-template'
+File.write("#{output_folder}/template", template)
