@@ -1,9 +1,4 @@
 groups:
-- name: cf-deployment-concourse-tasks
-  jobs:
-  - release-notes-template
-  - ship-it-minor-cf-d-ct
-  - ship-it-major-cf-d-ct
 - name: runtime-ci-common-images
   jobs:
   - build-relint-base-docker-image
@@ -30,23 +25,6 @@ resources:
     start: 7:00 -0700
     stop: 7:30 -0700
     interval: 168h
-
-- name: cf-deployment-concourse-tasks
-  type: git
-  icon: github-box
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    private_key: ((cfdct_readwrite_deploy_key.private_key))
-
-- name: cf-deployment-concourse-tasks-latest-release
-  type: git
-  icon: github-box
-  source:
-    branch: master
-    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    private_key: ((cfdct_readwrite_deploy_key.private_key))
-    tag_filter: '*'
 
 - name: runtime-ci-relint-base
   type: git
@@ -97,16 +75,6 @@ resources:
     repository: bosh-bootloader
     access_token: ((release_integration_download_bot_access_token))
 
-- name: cf-deployment-concourse-tasks-version
-  type: semver
-  source:
-    driver: git
-    uri: git@github.com:cloudfoundry/cf-relint-ci-semver.git
-    branch: master
-    private_key: ((cf_relint_ci_semver_readwrite_deploy_key.private_key))
-    git_user: "CF RELINT BOT <cf-release-integration@pivotal.io>"
-    file: cf-deployment-concourse-tasks-version
-
 - name: relint-base-image
   type: docker-image
   icon: docker
@@ -151,49 +119,6 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 jobs:
-- name: release-notes-template
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks
-      trigger: true
-    - get: cf-deployment-concourse-tasks-latest-release
-  - task: generate-release-notes-template
-    file: runtime-ci/tasks/cf-decota-release-notes-template/task.yml
-
-- name: ship-it-minor-cf-d-ct
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-version
-      params: {bump: minor}
-    - get: cf-deployment-concourse-tasks
-  - put: cf-deployment-concourse-tasks
-    params:
-      repository: cf-deployment-concourse-tasks
-      tag: cf-deployment-concourse-tasks-version/version
-      tag_prefix: v
-  - put: cf-deployment-concourse-tasks-version
-    params: {bump: minor}
-
-- name: ship-it-major-cf-d-ct
-  public: true
-  plan:
-  - in_parallel:
-    - get: runtime-ci
-    - get: cf-deployment-concourse-tasks-version
-      params: {bump: major}
-    - get: cf-deployment-concourse-tasks
-  - put: cf-deployment-concourse-tasks
-    params:
-      repository: cf-deployment-concourse-tasks
-      tag: cf-deployment-concourse-tasks-version/version
-      tag_prefix: v
-  - put: cf-deployment-concourse-tasks-version
-    params: {bump: major}
-
 - name: build-relint-base-docker-image
   public: true
   plan:
