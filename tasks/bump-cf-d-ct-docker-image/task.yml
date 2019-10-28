@@ -10,9 +10,13 @@ inputs:
 - name: runtime-ci
 - name: cf-deployment-concourse-tasks
 - name: version
+  optional: true
 
 outputs:
 - name: cf-deployment-concourse-tasks-updated
+
+params:
+  NEW_VERSION:
 
 run:
   path: runtime-ci/tasks/bump-cf-d-ct-docker-image/task

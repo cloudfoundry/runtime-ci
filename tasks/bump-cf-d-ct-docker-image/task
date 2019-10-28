@@ -6,7 +6,16 @@ source runtime-ci/tasks/shared-functions
 
 function main() {
   local new_version
-  new_version="$(cat version/version)"
+  if [[ -d version ]]; then
+    new_version="$(cat version/version)"
+  else
+    new_version=$NEW_VERSION
+  fi
+
+  if [[ -z "$new_version" ]]; then
+    echo "version is empty"
+    exit 1
+  fi
 
   git clone cf-deployment-concourse-tasks cf-deployment-concourse-tasks-updated
 
@@ -14,7 +23,7 @@ function main() {
     local old_version
     old_version="$(bosh int bbl-up/task.yml --path /image_resource/source/tag)"
 
-    sed -i -e "s/${old_version}/v${new_version}/g" ./*/task.yml
+    sed -i -e "s/tag: ${old_version}/tag: v${new_version}/g" ./*/task.yml
 
     commit_with_message "${PWD}" <(echo "Update docker image to ${new_version}")
   popd
