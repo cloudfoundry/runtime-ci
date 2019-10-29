@@ -62,16 +62,38 @@ func readFile(path string) (string, error) {
 	return string(content), err
 }
 
-func (s Stemcell) CompareVersion(otherStemcell Stemcell) (int, error) {
-	stemcellVersion, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
+func (s Stemcell) CompareVersion(base Stemcell) (int, error) {
+	version, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", s.Version, err)
 	}
 
-	otherStemcellVersion, err := semver.Parse(fmt.Sprintf("%s.0", otherStemcell.Version))
+	baseVersion, err := semver.Parse(fmt.Sprintf("%s.0", base.Version))
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", otherStemcell.Version, err)
+		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", base.Version, err)
 	}
 
-	return stemcellVersion.Compare(otherStemcellVersion), nil
+	return version.Compare(baseVersion), nil
+}
+
+func (s Stemcell) DetectBumpTypeFrom(base Stemcell) (string, error) {
+	version, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse stemcell version %q: %w", s.Version, err)
+	}
+
+	baseVersion, err := semver.Parse(fmt.Sprintf("%s.0", base.Version))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse stemcell version %q: %w", base.Version, err)
+	}
+
+	if version.Major > baseVersion.Major {
+		return "major", nil
+	}
+
+	if version.Major == baseVersion.Major && version.Minor > baseVersion.Minor {
+		return "minor", nil
+	}
+
+	return "", fmt.Errorf("Change from %s to %s is not a forward bump", base.Version, s.Version)
 }

@@ -3,6 +3,7 @@ package bosh_test
 import (
 	"io/ioutil"
 	"path/filepath"
+	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -133,6 +134,64 @@ var _ = Describe("Stemcell", func() {
 			_, actualErr := stemcell1.CompareVersion(stemcell2)
 
 			Expect(actualErr).To(MatchError("failed to parse stemcell version \"\": No Major.Minor.Patch elements found"))
+		})
+	})
+
+	Describe("DetectBumpTypeFrom", func() {
+		var (
+			targetStemcell Stemcell
+			baseStemcell Stemcell
+		)
+
+		Context("is a forward bump", func(){
+			It("returns \"minor\" when the stemcells have the same major version but the target's minor version is greater", func() {
+				targetStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "456.2",
+				}
+				baseStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "456.1",
+				}
+
+				actualResult, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
+
+				Expect(actualErr).NotTo(HaveOccurred())
+				Expect(actualResult).To(Equal("minor"))
+			})
+
+			It("returns \"major\" when target stemcell's major version is greater", func() {
+				targetStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "460.0",
+				}
+				baseStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "456.1",
+				}
+
+				actualResult, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
+
+				Expect(actualErr).NotTo(HaveOccurred())
+				Expect(actualResult).To(Equal("major"))
+			})
+		})
+
+		Context("is NOT a forward bump", func(){
+
+			It("returns a non-forward bump error", func() {
+				targetStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "456.1",
+				}
+				baseStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "456.2",
+				}
+
+				_, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
+				Expect(actualErr).To(MatchError(fmt.Errorf("Change from 456.2 to 456.1 is not a forward bump")))
+			})
 		})
 	})
 })
