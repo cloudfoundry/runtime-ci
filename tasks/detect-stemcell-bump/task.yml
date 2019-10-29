@@ -15,3 +15,6 @@ inputs:
 
 outputs:
   - name: stemcell-bump-type
+
+run:
+  path: runtime-ci/tasks/detect-stemcell-bump/task
