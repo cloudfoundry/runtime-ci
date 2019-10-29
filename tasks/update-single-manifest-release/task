@@ -19,13 +19,6 @@ function main() {
       --output-dir "updated-cf-deployment" \
       --release "${RELEASE_NAME}" \
       --target manifest
-
-    go run main.go \
-      --build-dir "${root_dir}" \
-      --input-dir "updated-cf-deployment" \
-      --output-dir "updated-cf-deployment" \
-      --release "${RELEASE_NAME}" \
-      --target stemcell
   popd
 
   commit_with_message "${root_dir}/updated-cf-deployment" "${root_dir}/${COMMIT_MESSAGE_PATH}"
