@@ -4,12 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"os"
 	"stemcell-version-bump/resource"
 )
 
 func ReadVersionBump(outRequest resource.OutRequest) ([]byte, error) {
 	versionContent, err := ioutil.ReadFile(outRequest.Params.VersionFile)
 	if err != nil {
+		dir, _ := os.Getwd()
+		log.Printf("Current working directory: %s\n", dir)
 		return nil, fmt.Errorf("reading version file: %w", err)
 	}
 
