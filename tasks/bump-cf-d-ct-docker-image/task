@@ -6,13 +6,13 @@ source runtime-ci/tasks/shared-functions
 
 function main() {
   local new_version
-  if [[ -d version ]]; then
+  if [[ -n "${NEW_VERSION}" ]]; then
+    new_version=${NEW_VERSION}
+  elif [[ -d version ]]; then
     new_version="$(cat version/version)"
-  else
-    new_version=$NEW_VERSION
   fi
 
-  if [[ -z "$new_version" ]]; then
+  if [[ -z "${new_version}" ]]; then
     echo "version is empty"
     exit 1
   fi
