@@ -7,9 +7,9 @@ source runtime-ci/tasks/shared-functions
 function main() {
   local new_version
   if [[ -n "${NEW_VERSION}" ]]; then
-    new_version="v${NEW_VERSION}"
+    new_version="${NEW_VERSION}"
   elif [[ -d version ]]; then
-    new_version="$(cat version/version)"
+    new_version="v$(cat version/version)"
   fi
 
   if [[ -z "${new_version}" ]]; then
