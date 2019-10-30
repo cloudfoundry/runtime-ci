@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -34,4 +35,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to upload version info to GCS: %s", err)
 	}
+
+	fmt.Println(string(output))
 }
