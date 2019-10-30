@@ -1,4 +1,4 @@
-#! /bin/bash -eu
+#!/bin/bash -eu
 
 function main() {
   root_dir="$PWD"
@@ -6,3 +6,5 @@ function main() {
     go run main.go "${root_dir}"
   popd
 }
+
+main
