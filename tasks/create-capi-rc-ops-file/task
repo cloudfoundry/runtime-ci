@@ -10,6 +10,7 @@ function main() {
   value:
     name: capi
     url: ${capi_url}
+    version: latest
 EOT
 }
 
