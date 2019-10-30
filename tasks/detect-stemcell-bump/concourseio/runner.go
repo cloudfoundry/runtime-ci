@@ -62,7 +62,7 @@ func (r *Runner) ReadStemcell() error {
 		return err
 	}
 
-	fmt.Printf("Found Stemcell {OS: %q, Version: %q} \n", r.stemcell.OS, r.stemcell.Version)
+	fmt.Printf("Found Stemcell {OS: %q, Version: %q}\n", r.stemcell.OS, r.stemcell.Version)
 	return nil
 }
 
@@ -80,25 +80,25 @@ func (r *Runner) ReadCFDeploymentStemcell() error {
 
 	r.manifestStemcell = manifest.Stemcells[0]
 
-	fmt.Printf("Found manifest Stemcell {OS: %q, Version: %q} \n", r.manifestStemcell.OS, r.manifestStemcell.Version)
+	fmt.Printf("Found manifest Stemcell {OS: %q, Version: %q}\n", r.manifestStemcell.OS, r.manifestStemcell.Version)
 	return nil
 }
 
 func (r *Runner) DetectStemcellBump() error {
-	fmt.Printf("Detecting stemcell bump from manifest stemcell %s to new stemcell %s", r.manifestStemcell, r.stemcell)
+	fmt.Printf("Detecting stemcell bump from manifest stemcell %s to new stemcell %s\n", r.manifestStemcell, r.stemcell)
 	bumpType, err := r.stemcell.DetectBumpTypeFrom(r.manifestStemcell)
 	if err != nil {
 		return err
 	}
 
 	r.bumpType = bumpType
-	fmt.Printf("Found bump type %q", r.bumpType)
+	fmt.Printf("Found bump type %q\n", r.bumpType)
 	return nil
 }
 
 func (r *Runner) WriteStemcellBumpTypeToFile() error {
 	bumpTypeFilePath := filepath.Join(r.Out.bumpTypeDir, "result")
-	fmt.Printf("Writing bump type %q to %s...", r.bumpType, bumpTypeFilePath)
+	fmt.Printf("Writing bump type %q to %s...\n", r.bumpType, bumpTypeFilePath)
 	err := ioutil.WriteFile(bumpTypeFilePath, []byte(r.bumpType), 0644)
 	if err != nil {
 		return err
