@@ -16,25 +16,30 @@ func main() {
 		log.Fatalf("Failed to move into build dir: %s", err)
 	}
 
-	config, err := resource.NewOutRequest(os.Stdin)
+	request, err := resource.NewOutRequest(os.Stdin)
 	if err != nil {
-		log.Fatalf("Failed to load config from stdin: %s", err)
+		log.Fatalf("Failed to load request from stdin: %s", err)
 	}
 
-	client, err := resource.NewGCSClient(config.Source.JSONKey)
+	client, err := resource.NewGCSClient(request.Source.JSONKey)
 	if err != nil {
 		log.Fatalf("Failed to create GCS client: %s", err)
 	}
 
-	output, err := runner.ReadVersionBump(config)
+	version, err := runner.NewVersion(request)
 	if err != nil {
 		log.Fatalf("Failed to read output file: %s", err)
 	}
 
-	err = runner.Out(config, client, output)
+	err = runner.UploadVersion(request, client, version)
 	if err != nil {
 		log.Fatalf("Failed to upload version info to GCS: %s", err)
 	}
 
-	fmt.Println(string(output))
+	resourceVersion, err := runner.GenerateResourceOutput(version)
+	if err != nil {
+		log.Fatalf("Failed to upload version info to GCS: %s", err)
+	}
+
+	fmt.Println(resourceVersion)
 }

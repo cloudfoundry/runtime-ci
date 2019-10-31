@@ -9,17 +9,21 @@ import (
 	"stemcell-version-bump/resource"
 )
 
-func ReadVersionBump(outRequest resource.OutRequest) ([]byte, error) {
-	versionContent, err := ioutil.ReadFile(outRequest.Params.VersionFile)
+type OutResponse struct {
+	Version resource.Version `json:"version"`
+}
+
+func NewVersion(request resource.OutRequest) (resource.Version, error) {
+	versionContent, err := ioutil.ReadFile(request.Params.VersionFile)
 	if err != nil {
 		dir, _ := os.Getwd()
 		log.Printf("Current working directory: %s\n", dir)
-		return nil, fmt.Errorf("reading version file: %w", err)
+		return resource.Version{}, fmt.Errorf("reading version file: %w", err)
 	}
 
-	bumpTypeContent, err := ioutil.ReadFile(outRequest.Params.TypeFile)
+	bumpTypeContent, err := ioutil.ReadFile(request.Params.TypeFile)
 	if err != nil {
-		return nil, fmt.Errorf("reading bump type file: %w", err)
+		return resource.Version{}, fmt.Errorf("reading bump type file: %w", err)
 	}
 
 	stemcellVersionBump := resource.Version{
@@ -29,10 +33,10 @@ func ReadVersionBump(outRequest resource.OutRequest) ([]byte, error) {
 
 	err = validateBumpType(stemcellVersionBump.Type)
 	if err != nil {
-		return nil, err
+		return resource.Version{}, err
 	}
 
-	return json.Marshal(stemcellVersionBump)
+	return stemcellVersionBump, nil
 }
 
 //go:generate counterfeiter . Putter
@@ -40,13 +44,29 @@ type Putter interface {
 	Put(bucketName string, objectPath string, contents []byte) error
 }
 
-func Out(config resource.OutRequest, putter Putter, contents []byte) error {
-	err := putter.Put(config.Source.BucketName, config.Source.FileName, contents)
+func UploadVersion(request resource.OutRequest, putter Putter, version resource.Version) error {
+	contents, err := json.Marshal(version)
 	if err != nil {
-		return fmt.Errorf("updating version info in bucket/file (%s, %s): %w", config.Source.BucketName, config.Source.FileName, err)
+		return fmt.Errorf("failed to marshal version bump info for put: %w", err)
 	}
+
+	err = putter.Put(request.Source.BucketName, request.Source.FileName, contents)
+	if err != nil {
+		return fmt.Errorf("updating version info in bucket/file (%s, %s): %w", request.Source.BucketName, request.Source.FileName, err)
+	}
+
+
 	return nil
 }
+
+func GenerateResourceOutput(version resource.Version) (string, error) {
+	output, err := json.Marshal(OutResponse{Version: version})
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal concourse output version info: %w", err)
+	}
+	return string(output), nil
+}
+
 
 func validateBumpType(bumpType string) error {
 	if bumpType != "minor" && bumpType != "major" {
