@@ -13,10 +13,10 @@ type Getter interface {
 	Get(bucketName string, objectPath string) ([]byte, error)
 }
 
-func Check(config resource.Config, getter Getter) (string, error) {
-	content, err := getter.Get(config.Source.BucketName, config.Source.FileName)
+func Check(request resource.CheckInRequest, getter Getter) (string, error) {
+	content, err := getter.Get(request.Source.BucketName, request.Source.FileName)
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch version info from bucket/file (%s, %s): %w", config.Source.BucketName, config.Source.FileName, err)
+		return "", fmt.Errorf("failed to fetch version info from bucket/file (%s, %s): %w", request.Source.BucketName, request.Source.FileName, err)
 	}
 
 	var currentVersion resource.Version
@@ -25,7 +25,7 @@ func Check(config resource.Config, getter Getter) (string, error) {
 		return "", fmt.Errorf("failed to unmarshal version info file: %w", err)
 	}
 
-	if currentVersion.Type != config.Source.TypeFilter || currentVersion.Version == config.Version.Version {
+	if currentVersion.Type != request.Source.TypeFilter || currentVersion.Version == request.Version.Version {
 		return "[]", nil
 	}
 

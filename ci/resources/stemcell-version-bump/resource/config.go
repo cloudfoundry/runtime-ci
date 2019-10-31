@@ -19,7 +19,7 @@ type Version struct {
 	Version string `json:"version"`
 }
 
-type Config struct {
+type CheckInRequest struct {
 	Source  Source
 	Version Version
 }
@@ -34,11 +34,11 @@ type OutParams struct {
 	TypeFile    string `json:"type_file"`
 }
 
-func NewConfig(in io.Reader) (Config, error) {
-	var resource Config
+func NewCheckInRequest(in io.Reader) (CheckInRequest, error) {
+	var resource CheckInRequest
 	err := json.NewDecoder(in).Decode(&resource)
 	if err != nil {
-		return Config{}, fmt.Errorf("decoding json: %w", err)
+		return CheckInRequest{}, fmt.Errorf("decoding json: %w", err)
 	}
 
 	var missingFields []string
@@ -56,7 +56,7 @@ func NewConfig(in io.Reader) (Config, error) {
 	}
 
 	if len(missingFields) > 0 {
-		return Config{}, fmt.Errorf("missing required fields: '%s'", strings.Join(missingFields, "', '"))
+		return CheckInRequest{}, fmt.Errorf("missing required fields: '%s'", strings.Join(missingFields, "', '"))
 	}
 
 	return resource, nil

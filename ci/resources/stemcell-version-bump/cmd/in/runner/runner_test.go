@@ -42,8 +42,8 @@ func TestIn(t *testing.T) {
 	}
 
 	type in struct {
-		config resource.Config
-		getter runner.Getter
+		request resource.CheckInRequest
+		getter  runner.Getter
 	}
 
 	type testcase struct {
@@ -55,7 +55,7 @@ func TestIn(t *testing.T) {
 		testcase{
 			"happy path, fetch succeeds",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						TypeFilter: "minor",
 					},
@@ -75,7 +75,7 @@ func TestIn(t *testing.T) {
 		testcase{
 			"fail to fetch resource",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						BucketName: "some-bucket",
 						FileName:   "path/to/file",
@@ -95,7 +95,7 @@ func TestIn(t *testing.T) {
 		testcase{
 			"bad version info",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						BucketName: "some-bucket",
 						FileName:   "path/to/file",
@@ -115,7 +115,7 @@ func TestIn(t *testing.T) {
 		testcase{
 			"old version request",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						BucketName: "some-bucket",
 						FileName:   "path/to/file",
@@ -136,7 +136,7 @@ func TestIn(t *testing.T) {
 	for _, test := range tests {
 		arg, checks := test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			actualOutput, actualErr := runner.In(arg.config, arg.getter)
+			actualOutput, actualErr := runner.In(arg.request, arg.getter)
 
 			for _, check := range checks {
 				check(t, actualOutput, actualErr)

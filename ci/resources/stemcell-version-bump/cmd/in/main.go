@@ -10,17 +10,17 @@ import (
 )
 
 func main() {
-	config, err := resource.NewConfig(os.Stdin)
+	request, err := resource.NewCheckInRequest(os.Stdin)
 	if err != nil {
-		log.Fatalf("Failed to load config from stdin: %s", err)
+		log.Fatalf("Failed to load request from stdin: %s", err)
 	}
 
-	client, err := resource.NewGCSClient(config.Source.JSONKey)
+	client, err := resource.NewGCSClient(request.Source.JSONKey)
 	if err != nil {
 		log.Fatalf("Failed to create GCS client: %s", err)
 	}
 
-	currentVersion, err := runner.In(config, client)
+	currentVersion, err := runner.In(request, client)
 	if err != nil {
 		log.Fatalf("Failed to fetch resource: %s", err)
 	}

@@ -12,30 +12,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewConfig(t *testing.T) {
-	type checkNewResourceFunc func(*testing.T, resource.Config, error)
+func TestNewCheckInRequest(t *testing.T) {
+	type checkNewResourceFunc func(*testing.T, resource.CheckInRequest, error)
 	checks := func(cs ...checkNewResourceFunc) []checkNewResourceFunc { return cs }
 
-	var expectResource = func(expectedResource resource.Config) checkNewResourceFunc {
-		return func(t *testing.T, actualResource resource.Config, _ error) {
+	var expectResource = func(expectedResource resource.CheckInRequest) checkNewResourceFunc {
+		return func(t *testing.T, actualResource resource.CheckInRequest, _ error) {
 			assert.Equal(t, expectedResource, actualResource)
 		}
 	}
 
-	var expectNoError = func(t *testing.T, _ resource.Config, actualErr error) {
+	var expectNoError = func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
 		if !assert.NoError(t, actualErr) {
 			t.FailNow()
 		}
 	}
 
 	var expectError = func(expectedErr string) checkNewResourceFunc {
-		return func(t *testing.T, _ resource.Config, actualErr error) {
+		return func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
 
 	var expectWrappedError = func(expectedOuter string, expectedInner error) checkNewResourceFunc {
-		return func(t *testing.T, _ resource.Config, actualErr error) {
+		return func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
 			if !assert.Error(t, actualErr) {
 				t.FailNow()
 			}
@@ -73,7 +73,7 @@ func TestNewConfig(t *testing.T) {
 			checks(
 				expectNoError,
 				expectResource(
-					resource.Config{
+					resource.CheckInRequest{
 						Source: resource.Source{
 							JSONKey:    "some-json-key",
 							BucketName: "some-bucket-name",
@@ -125,7 +125,7 @@ func TestNewConfig(t *testing.T) {
 	for _, test := range tests {
 		arg, checks := test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			actualOutput, actualErr := resource.NewConfig(arg)
+			actualOutput, actualErr := resource.NewCheckInRequest(arg)
 
 			for _, check := range checks {
 				check(t, actualOutput, actualErr)
@@ -134,7 +134,7 @@ func TestNewConfig(t *testing.T) {
 	}
 }
 
-func TestNewOutputConfig(t *testing.T) {
+func TestNewOutputCheckInRequest(t *testing.T) {
 	type checkNewResourceFunc func(*testing.T, resource.OutRequest, error)
 	checks := func(cs ...checkNewResourceFunc) []checkNewResourceFunc { return cs }
 

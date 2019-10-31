@@ -42,8 +42,8 @@ func TestCheck(t *testing.T) {
 	}
 
 	type in struct {
-		config resource.Config
-		getter runner.Getter
+		request resource.CheckInRequest
+		getter  runner.Getter
 	}
 
 	type testcase struct {
@@ -55,7 +55,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"initial check, no previous version",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						TypeFilter: "minor",
 					},
@@ -75,7 +75,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"check with version bump that matches the type filter",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						TypeFilter: "minor",
 					},
@@ -95,7 +95,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"check with version bump that does not match the type filter",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						TypeFilter: "minor",
 					},
@@ -115,7 +115,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"check with no version bump",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Version: resource.Version{
 						Type:    "minor",
 						Version: "1.1",
@@ -132,7 +132,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"fail to get version info",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						BucketName: "some-bucket",
 						FileName:   "path/to/file",
@@ -152,7 +152,7 @@ func TestCheck(t *testing.T) {
 		testcase{
 			"bad version info",
 			in{
-				config: resource.Config{
+				request: resource.CheckInRequest{
 					Source: resource.Source{
 						BucketName: "some-bucket",
 						FileName:   "path/to/file",
@@ -173,7 +173,7 @@ func TestCheck(t *testing.T) {
 	for _, test := range tests {
 		arg, checks := test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			actualOutput, actualErr := runner.Check(arg.config, arg.getter)
+			actualOutput, actualErr := runner.Check(arg.request, arg.getter)
 
 			for _, check := range checks {
 				check(t, actualOutput, actualErr)
