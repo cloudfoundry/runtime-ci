@@ -15,7 +15,10 @@ parse_labels() {
 }
 
 create_tracker_request_body() {
-  cat << EOF
+  if [[ -d tracker-story-post-body ]]; then
+    cat tracker-story-post-body/body.json
+  else
+    cat << EOF
 {
   "name": "${TRACKER_STORY_NAME_PREFIX} ${TRACKER_STORY_NAME}",
   "story_type": "${TRACKER_STORY_TYPE}",
@@ -24,6 +27,7 @@ create_tracker_request_body() {
   "labels": [${labels}]
 }
 EOF
+  fi
 }
 
 set +x
