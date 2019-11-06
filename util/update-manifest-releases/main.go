@@ -24,6 +24,7 @@ var cfDeploymentIgnoreFiles = []string{
 	"use-offline-windows2016fs.yml",
 	"use-offline-windows1803fs.yml",
 	"use-offline-windows2019fs.yml",
+	"windows2016-cell.yml",
 }
 
 func getReleaseNames(buildDir string) ([]string, error) {
