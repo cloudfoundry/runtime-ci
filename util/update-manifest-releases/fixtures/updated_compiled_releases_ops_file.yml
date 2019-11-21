@@ -9,6 +9,16 @@
       version: "1.0"
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/test-0.1.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
     version: 0.1.0
+- path: /releases/name=test-agent
+  type: replace
+  value:
+    name: test-agent
+    sha1: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
+    stemcell:
+      os: cute-stemcell
+      version: "0.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/test-agent-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+    version: 0.0.0
 - path: /releases/name=no-version
   type: replace
   value:

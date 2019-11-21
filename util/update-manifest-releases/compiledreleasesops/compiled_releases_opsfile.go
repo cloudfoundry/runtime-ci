@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"strings"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
@@ -45,8 +44,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 		matchingReleasePath := fmt.Sprintf("/releases/name=%s", releaseName)
 
 		for i, op := range deserializedOpsFile {
-
-			if strings.Contains(op.Path, matchingReleasePath) {
+			if op.Path == matchingReleasePath {
 				newRelease, err = getCompiledReleaseForBuild(buildDir, releaseName)
 				if err != nil {
 					return nil, "", err
