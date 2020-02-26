@@ -293,6 +293,7 @@ stemcells:
 | Release | Old Version | New Version |
 | - | - | - |
 | ubuntu-xenial | some-old-version | some-new-version |
+stemcell-only
 `))
 			})
 		})

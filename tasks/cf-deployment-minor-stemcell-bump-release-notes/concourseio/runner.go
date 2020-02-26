@@ -75,6 +75,7 @@ func (r Runner) GenerateReleaseNotes(oldStemcell, newStemcell bosh.Stemcell) err
 | Release | Old Version | New Version |
 | - | - | - |
 | %s | %s | %s |
+stemcell-only
 `
 	content := fmt.Sprintf(template, oldStemcell.OS, oldStemcell.Version, newStemcell.Version)
 	err := ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "body.txt"), []byte(content), 0644)
