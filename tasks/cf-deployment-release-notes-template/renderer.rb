@@ -12,7 +12,8 @@ class Renderer
 
 ## Other Updates
 
-## Release and Stemcell Updates
+## Release Updates
+_Warning: The Release Notes column only highlights noteworthy updates for each release bump. However, it is not exhaustive and we recommend you visit the actual release notes below before every upgrade._
 #{releases_table}
 HEREDOC
   end
@@ -21,13 +22,13 @@ HEREDOC
 
   def render_table(release_updates)
     header = <<-HEADER
-| Release | Old Version | New Version |
-| ------- | ----------- | ----------- |
+| Release | Old Version | New Version | Release Notes |
+| ------- | ----------- | ----------- | ------------- |
 HEADER
 
     table = ""
     release_updates.each do |release_name, release_update|
-      table << "| #{release_name} | #{render_version(release_update, 'old')} | #{render_version(release_update, 'new')} |\n"
+      table << "| #{release_name} | #{render_version(release_update, 'old')} | #{render_version(release_update, 'new')} | |\n"
     end
     "#{header}#{table}"
   end

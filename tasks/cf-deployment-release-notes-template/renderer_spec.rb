@@ -56,30 +56,40 @@ OPSFILES
       expect(rendered_output).to include ("## Other Updates\n\n")
     end
 
-    it 'inlcudes a section header for Release and Stemcell Updates' do
+    it 'includes a section header for Release and Stemcell Updates' do
       rendered_output = renderer.render(release_updates: release_updates)
-      expect(rendered_output).to include ("## Release and Stemcell Updates\n")
+      expect(rendered_output).to include ("## Release Updates\n")
     end
 
     describe 'Release and stemcell table' do
       it 'includes a header' do
         expect(renderer.render(release_updates: release_updates)).to include(
 <<-HEADER
-| Release | Old Version | New Version |
-| ------- | ----------- | ----------- |
+| Release | Old Version | New Version | Release Notes |
+| ------- | ----------- | ----------- | ------------- |
 HEADER
         )
       end
 
-      it 'places the table header immediately after the section header' do
+      it 'includes an italicized disclaimer' do
         rendered_output = renderer.render(release_updates: release_updates)
-        expect(rendered_output).to include ("## Release and Stemcell Updates\n| Release | Old Version | New Version |")
+        expect(rendered_output).to include ("_Warning: The Release Notes column only highlights noteworthy updates for each release bump. However, it is not exhaustive and we recommend you visit the actual release notes below before every upgrade._")
       end
 
-      it 'shows the release name, old version, and new version for each release' do
+      it 'places the disclaimer immediately after the section header' do
         rendered_output = renderer.render(release_updates: release_updates)
-        expect(rendered_output).to include('| release-1 | [1.1.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0) | [1.3.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.3.0) |')
-        expect(rendered_output).to include('| release-2 | [1.2.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.2.0) | [1.4.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0) |')
+        expect(rendered_output).to include ("## Release Updates\n_Warning:")
+      end
+
+      it 'places the table header immediately after the disclaimer' do
+        rendered_output = renderer.render(release_updates: release_updates)
+        expect(rendered_output).to match (/Warning:.*\n| Release |/)
+      end
+
+      it 'shows the release name, old version, new version, and empty release notes for each release' do
+        rendered_output = renderer.render(release_updates: release_updates)
+        expect(rendered_output).to include('| release-1 | [1.1.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.1.0) | [1.3.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.3.0) | |')
+        expect(rendered_output).to include('| release-2 | [1.2.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.2.0) | [1.4.0](https://github.com/cloudfoundry/capi-release/releases/tag/v1.4.0) | |')
       end
 
       context 'when some versions are nil' do
