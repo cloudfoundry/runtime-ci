@@ -59,7 +59,7 @@ instance_groups:
   vm_type: small
   vm_extensions:
   - 100GB_ephemeral_disk
-  stemcell: windows1803
+  stemcell: windows2019
   update:
     max_in_flight: 1
     serial: true
@@ -84,8 +84,8 @@ stemcells:
 - alias: default
   os: ubuntu-xenial
   version: latest
-- alias: windows1803
-  os: windows1803
+- alias: windows2019
+  os: windows2019
   version: latest
 
 releases:
