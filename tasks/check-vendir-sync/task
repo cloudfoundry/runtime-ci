@@ -1,10 +1,11 @@
 #!/bin/bash
 
-set -excu
+set -exu
 
 # ENV
 : "${REPO_DIR:?}"
 
+HOMEDIR=$(dirname $(readlink -f "$0"))
 cd "$REPO_DIR"
 echo "Verifying vendir sync doesn't create new changes..."
 vendir sync > /dev/null
@@ -16,7 +17,7 @@ git --no-pager diff HEAD
 set -e
 
 git diff-index --quiet HEAD
-echo "Successfully verified running `vendir sync` did not create new changes"
+echo "Successfully verified running 'vendir sync' did not create new changes"
 
 DIR=$PWD
 cd build
@@ -41,6 +42,6 @@ git add .
 git --no-pager diff HEAD
 set -e
 
-git diff-index --quiet HEAD
+git diff -U1 | grep '^[-+][^-+]' | awk -f "$HOMEDIR/count-uniq-lines.awk"
 echo "Successfully verified the build scripts did not create new changes"
 
