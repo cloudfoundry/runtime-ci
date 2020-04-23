@@ -5,7 +5,6 @@
   if (val == 0 || substr($0, 2, 1) == s) {
     next
   }
-  printf("Got a %s in %s\n", s, $0);
   s = substr($0, 2);
   counts[s] += val
 }
