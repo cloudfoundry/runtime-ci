@@ -72,15 +72,6 @@ describe 'OpsFileFinder' do
       end
     end
 
-    context 'and the directory is the workaround directory' do
-      let(:subfolder) { 'workaround' }
-
-      it 'does not return the ops-files prepended with "workaround"' do
-        expect(subject).not_to include "#{subfolder}/ops.yml"
-        expect(subject).not_to include "#{subfolder}/ops2.yml"
-      end
-    end
-
     context 'directory ends with .yml' do
       let(:subfolder) { 'yaml-dir.yml' }
 
