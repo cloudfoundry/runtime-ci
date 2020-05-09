@@ -14,7 +14,8 @@ RUN \
     wget \
     curl \
     ack-grep \
-    go-dep
+    go-dep \
+    python3-pip
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
@@ -37,5 +38,4 @@ RUN \
 
 # yq
 RUN \
-  wget https://github.com/mikefarah/yq/releases/download/1.14.0/yq_linux_amd64 --output-document="/usr/bin/yq" && \
-  chmod +x /usr/bin/yq
+  pip3 install yq
