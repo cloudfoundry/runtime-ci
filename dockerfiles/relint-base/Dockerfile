@@ -1,6 +1,8 @@
 FROM ubuntu:bionic
 
 ENV go_version 1.13.3
+ENV jq_version 1.6
+ENV jq_checksum 056ba5d6bbc617c29d37158ce11fd5a443093949
 
 RUN \
   apt-get update && \
@@ -28,9 +30,9 @@ RUN \
 
 # jq
 RUN \
-  wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 --output-document="/usr/bin/jq" && \
+  wget https://github.com/stedolan/jq/releases/download/jq-${jq_version}/jq-linux64 --output-document="/usr/bin/jq" && \
   cd /usr/bin && \
-  echo "d8e36831c3c94bb58be34dd544f44a6c6cb88568 jq" | sha1sum -c - && \
+  echo "${jq_checksum} jq" | sha1sum -c - && \
   chmod +x jq
 
 # yq
