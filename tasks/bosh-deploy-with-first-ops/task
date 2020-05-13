@@ -11,7 +11,11 @@ function setup_interpolate_env_vars_for_first_ops_file() {
 
   export MANIFEST_FILE=cf-deployment.yml
 
-  OPS_FILES="$OPS_FILES $ops_to_test"
+  if [[ "${PREPEND_OPS_FILE_TO_LIST}" == "true" ]]; then
+    OPS_FILES="$ops_to_test $OPS_FILES"
+  else
+    OPS_FILES="$OPS_FILES $ops_to_test"
+  fi
 }
 
 function main() {

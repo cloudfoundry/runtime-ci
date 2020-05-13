@@ -126,3 +126,7 @@ params:
   BBL_JSON_CONFIG:
   # - Optional
   # - For if you need a dynamic config for BBL
+
+  PREPEND_OPS_FILE_TO_LIST: false
+  # - Optional
+  # - Prepend the ops files to the beginning of the provided list, rather than appending to the end
