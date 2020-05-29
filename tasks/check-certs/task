@@ -1,4 +1,6 @@
-#!/usr/bin/env ruby
-set -eux
+#!/bin/bash
+set -ex
 
-ruby runtime-ci/tasks/check-certs/check-certs.rb --days-left="${DAYS_LEFT_THRESHOLD:-16}" --path="${PATH_TO_VERIFY}"
+path="${PATH_TO_VERIFY:-$(pwd)}"
+
+ruby runtime-ci/tasks/check-certs/check-certs.rb --days-left="${DAYS_LEFT_THRESHOLD:-16}" --path="$path"
