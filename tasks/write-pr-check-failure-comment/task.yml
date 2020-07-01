@@ -9,9 +9,14 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: pull-request
+- name: uptimer-result
+  optional: true
 
 outputs:
 - name: pull-request-comment
+
+params:
+  UPTIMER_RESULT_FILE: result.json
 
 run:
   path: runtime-ci/tasks/write-pr-check-failure-comment/task
