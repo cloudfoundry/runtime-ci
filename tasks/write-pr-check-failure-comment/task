@@ -1,11 +1,13 @@
 #!/bin/bash
 set -eux
 
+apt-get install -y bc
+
 pushd pull-request-comment > /dev/null
   echo "Hello friend, it looks like your pull request has failed one or more of our checks. Please take a look! :eyes:" \
   > comment
 
-  uptimer_result_file=uptimer-result/${UPTIMER_RESULT_FILE}
+  uptimer_result_file=../uptimer-result/${UPTIMER_RESULT_FILE}
   if [[ -f "${uptimer_result_file}" ]]; then
     echo -e "\nUptimer Results:" >> comment
 
