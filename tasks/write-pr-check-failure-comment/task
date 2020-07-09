@@ -12,6 +12,13 @@ pushd pull-request-comment > /dev/null
     echo -e "\nUptimer Results:" >> comment
 
     result=$(cat ${uptimer_result_file})
+    commandExitCode=$(echo "${result}" | jq -r '.commandExitCode')
+    if [[ "${commandExitCode}" == "0" ]]; then
+      echo "PASSED: Deploy command succeeded" >> comment
+    else
+      echo "FAILED: Deploy command exit code: ${commandExitCode}" >> comment
+    fi
+
     for row in $(echo "${result}" | jq -r '.summaries[] | @base64'); do
         _jq() {
          echo ${row} | base64 --decode | jq -r ${1}
