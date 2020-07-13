@@ -15,6 +15,13 @@ main() {
   export CONFIG_FILE="$PWD/cats-integration-config/${CONFIG_FILE_PATH}"
 
   if [[ "${CHECK_ISOLATION_SEGMENT}" == "true" ]]; then
+    cat <<EOT > cf-smoke-tests/assets/binary/manifest.yml
+---
+applications:
+- name: healthy-app
+  routes:
+  - route: healthy-app.$(jq -r .isolation_segment_domain "${CONFIG_FILE}")
+EOT
     cf api "https://$(jq -r .api "${CONFIG_FILE}")" --skip-ssl-validation
     cf auth $(jq -r .admin_user "${CONFIG_FILE}") $(jq -r .admin_password "${CONFIG_FILE}")
     cf create-org healthy-org
@@ -24,7 +31,7 @@ main() {
     cf create-isolation-segment $(jq -r .isolation_segment_name "${CONFIG_FILE}")
     cf enable-org-isolation healthy-org $(jq -r .isolation_segment_name "${CONFIG_FILE}")
     cf set-space-isolation-segment healthy-space $(jq -r .isolation_segment_name "${CONFIG_FILE}")
-    cf push healthy-app -d $(jq -r .isolation_segment_domain "${CONFIG_FILE}") -p cf-smoke-tests/assets/binary -b binary_buildpack
+    cf push healthy-app -f cf-smoke-tests/assets/binary/manifest.yml -p cf-smoke-tests/assets/binary -b binary_buildpack
     TARGET_URL="https://healthy-app.$(jq -r .isolation_segment_domain "${CONFIG_FILE}")"
   else
     TARGET_URL="http://$(jq -r .api "${CONFIG_FILE}")/v2/info"
