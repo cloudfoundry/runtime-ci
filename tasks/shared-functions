@@ -84,3 +84,11 @@ function load_from_json_config() {
   done
   set -ux
 }
+
+function emit_metric() {
+  wavefront_metrics_file="./wavefront_metrics"
+
+  echo "${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME}" > "${wavefront_metrics_file}"
+
+  curl --fail --retry 5 -H "Authorization: Bearer ${WAVEFRONT_API_KEY}" -F file=@"${wavefront_metrics_file}" ${WAVEFRONT_API_ENDPOINT}
+}
