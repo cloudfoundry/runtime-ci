@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-source tasks/shared-functions
+source "$(dirname $0)/../shared-functions"
 
 : "${METRIC_TAGS:=""}"
 
