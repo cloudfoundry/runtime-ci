@@ -88,7 +88,12 @@ function load_from_json_config() {
 function emit_metric() {
   wavefront_metrics_file="./wavefront_metrics"
 
-  echo "${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME}" > "${wavefront_metrics_file}"
+  : "${METRIC_PREFIX:=""}"
+  if [[ -n "${METRIC_PREFIX}" ]]; then
+    METRIC_PREFIX="${METRIC_PREFIX}."
+  fi
+
+  echo "${METRIC_PREFIX}${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME} ${METRIC_TAGS}" > "${wavefront_metrics_file}"
 
   curl --fail --retry 5 -H "Authorization: Bearer ${WAVEFRONT_API_KEY}" -F file=@"${wavefront_metrics_file}" ${WAVEFRONT_API_ENDPOINT}
 }
