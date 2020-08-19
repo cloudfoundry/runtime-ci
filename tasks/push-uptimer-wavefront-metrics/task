@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -eux
+
+source tasks/shared-functions
+
+: "${METRIC_TAGS:=""}"
+
+uptimer_result_file=../uptimer-result/${UPTIMER_RESULT_FILE}
+if [[ -f "${uptimer_result_file}" ]]; then
+  echo -e "\nUptimer Results:" >> comment
+
+  result=$(jq '.summaries = [.summaries[] | .name |= ascii_downcase | .name |= gsub(" "; "_")]' ${uptimer_result_file})
+  commandExitCode=$(echo "${result}" | jq -r '.commandExitCode')
+  if [[ "${commandExitCode}" == "0" ]]; then
+    echo "PASSED: Deploy command succeeded" >> comment
+  else
+    echo "FAILED: Deploy command exit code: ${commandExitCode}" >> comment
+  fi
+
+  
+  
+  for row in $(echo "${result}" | jq -r '.summaries[] | @base64'); do
+      _jq() {
+       echo ${row} | base64 --decode | jq -r ${1}
+      }
+
+      name=$(_jq '.name')
+
+      export METRIC_NAME="${name}.failed"
+      export METRIC_VALUE=$(_jq '.failed')
+      # METRIC_LABEL_IAAS= set by pipeline E.G. gcp, aks, eks, pks
+      # METRIC_LABEL_BRANCH= set by pipeline E.G. main, pull-request
+      emit_metric
+
+      # METRIC_PREFIX= set by pipeline - cf-for-k8s.upgrade
+      export METRIC_VALUE=$(_jq '.total')
+      # METRIC_LABEL_IAAS= set by pipeline E.G. gcp, aks, eks, pks
+      # METRIC_LABEL_BRANCH= set by pipeline E.G. main, pull-request
+      emit_metric
+  done
+  
+fi
