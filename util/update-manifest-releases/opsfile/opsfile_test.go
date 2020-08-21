@@ -111,18 +111,6 @@ var _ = Describe("UpdateReleases", func() {
 		Expect(changes).To(Equal("No opsfile release updates"))
 	})
 
-	It("does not add empty values when both url and sha1 are missing", func() {
-		releases := []string{"missing-url-and-sha1"}
-
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_non_empty_url_and_sha_ops_file.yml")
-		Expect(err).NotTo(HaveOccurred())
-
-		updatedOpsFile, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-		Expect(err).NotTo(HaveOccurred())
-
-		Expect(string(updatedOpsFile)).Should(MatchYAML(desiredOpsFile))
-	})
-
 	Context("failure cases", func() {
 		It("returns errors instead of panicking when url is missing", func() {
 			releases := []string{"missing-url"}

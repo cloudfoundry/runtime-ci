@@ -34,28 +34,37 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 	}
 	releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", releaseName))
 
-	sha1, shaErr := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
-	url, urlErr := ioutil.ReadFile(filepath.Join(releasePath, "url"))
 	version, verErr := ioutil.ReadFile(filepath.Join(releasePath, "version"))
-
-	isShaErr := shaErr != nil
-	isUrlErr := urlErr != nil
-
-	// We accept neither or both of "sha1" and "url".  If we error out on only one or the other, something is wrong.
-	if isShaErr != isUrlErr {
-		if isShaErr {
-			return Release{}, shaErr
-		}
-		return Release{}, urlErr
-	}
 
 	if verErr != nil {
 		return Release{}, verErr
 	}
 
-	newRelease.URL = strings.TrimSpace(string(url))
-	newRelease.SHA1 = strings.TrimSpace(string(sha1))
 	newRelease.Version = strings.TrimSpace(string(version))
+
+	url, urlErr := ioutil.ReadFile(filepath.Join(releasePath, "url"))
+
+	if urlErr != nil {
+		return Release{}, urlErr
+	}
+
+	_, commitShaErr := ioutil.ReadFile(filepath.Join(releasePath, "commit_sha"))
+
+	if commitShaErr != nil {
+		// Bosh.io release
+		fmt.Println("Missing commit_sha file. Assuming bosh.io release...")
+		sha1, shaErr := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
+
+		if shaErr != nil {
+			return Release{}, shaErr
+		}
+
+		newRelease.SHA1 = strings.TrimSpace(string(sha1))
+		newRelease.URL = strings.TrimSpace(string(url))
+	} else {
+		// Github release
+		fmt.Println("Found commit_sha file. Assuming github release...")
+	}
 
 	return newRelease, nil
 }

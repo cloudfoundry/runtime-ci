@@ -17,7 +17,7 @@ var _ = Describe("Common", func() {
 
 	Context("#GetReleaseFromFile", func() {
 		Context("when release folder has all required files", func() {
-			It("returns release desired release from the build dir", func() {
+			It("returns the desired release from the build dir", func() {
 				release, err := common.GetReleaseFromFile(buildDir, "good-release")
 
 				Expect(err).NotTo(HaveOccurred())
@@ -28,15 +28,19 @@ var _ = Describe("Common", func() {
 			})
 		})
 
-		Context("when release folder is missing files", func() {
-			It("doesn't error when both sha1 and url are missing", func() {
-				release, err := common.GetReleaseFromFile(buildDir, "missing-url-and-sha1")
+		Context("when the release folder is from the github-release-resource", func() {
+			It("returns the desired release from the build dir", func() {
+				release, err := common.GetReleaseFromFile(buildDir, "good-github-release")
 
 				Expect(err).NotTo(HaveOccurred())
-				Expect(release.Name).To(Equal("missing-url-and-sha1"))
-				Expect(release.Version).To(Equal("updated-missing-url-and-sha1-version"))
+				Expect(release.Name).To(Equal("good-github-release"))
+				Expect(release.URL).To(BeEmpty())
+				Expect(release.SHA1).To(BeEmpty())
+				Expect(release.Version).To(Equal("1.2.3"))
 			})
+		})
 
+		Context("when release folder is missing files", func() {
 			It("errors when sha1 is missing", func() {
 				_, err := common.GetReleaseFromFile(buildDir, "missing-sha1")
 
