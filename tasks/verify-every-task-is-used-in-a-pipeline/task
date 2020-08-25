@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -u
 
 function main() {
   local PIPELINE_REPOS=(runtime-ci cf-deployment cf-acceptance-tests cf-smoke-tests-release uptimer cf-deployment-concourse-tasks cf-for-k8s)
