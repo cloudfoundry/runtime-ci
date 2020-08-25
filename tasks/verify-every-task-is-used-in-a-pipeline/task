@@ -1,12 +1,13 @@
 #!/bin/bash
 
-set -u
+set -eu
 
-main() {
-  local PIPELINE_REPOS=(runtime-ci cf-deployment cf-acceptance-tests cf-smoke-tests-release uptimer cf-deployment-concourse-tasks)
+function main() {
+  local PIPELINE_REPOS=(runtime-ci cf-deployment cf-acceptance-tests cf-smoke-tests-release uptimer cf-deployment-concourse-tasks cf-for-k8s)
 
   pushd runtime-ci >> /dev/null
     FAIL=false
+
     for task_file in tasks/*/task.yml; do
       FOUND_IN_REPO=false
       for repo in ${PIPELINE_REPOS[@]}; do
@@ -27,7 +28,6 @@ main() {
       exit 1
     fi
   popd >> /dev/null
-
 }
 
 main "$@"
