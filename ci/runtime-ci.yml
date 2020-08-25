@@ -50,6 +50,15 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     private_key: ((cfdct_readwrite_deploy_key.private_key))
 
+- name: cf-for-k8s
+  type: git
+  icon: github-box
+  source:
+    branch: develop
+    uri: https://github.com/cloudfoundry/cf-for-k8s.git
+    paths:
+    - ci/*
+
 - name: daily
   type: time
   icon: clock-outline
@@ -83,6 +92,8 @@ jobs:
     - get: uptimer
       trigger: true
     - get: cf-deployment-concourse-tasks
+      trigger: true
+    - get: cf-for-k8s
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
