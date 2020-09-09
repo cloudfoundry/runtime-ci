@@ -86,56 +86,14 @@ function load_from_json_config() {
 }
 
 function emit_metric() {
-  # expected environment variables:
-  #   METRIC_SOURCE_NAME, WAVEFRONT_API_KEY, WAVEFRONT_API_ENDPOINT
-  METRIC_NAME=$1
-  METRIC_VALUE=$2
-  METRIC_TAGS=$3
-
   wavefront_metrics_file="./wavefront_metrics"
 
-  echo "${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME} ${METRIC_TAGS}" > "${wavefront_metrics_file}"
+  : "${METRIC_PREFIX:=""}"
+  if [[ -n "${METRIC_PREFIX}" ]]; then
+    METRIC_PREFIX="${METRIC_PREFIX}."
+  fi
+
+  echo "${METRIC_PREFIX}${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME} ${METRIC_TAGS}" > "${wavefront_metrics_file}"
 
   curl --fail --retry 5 -H "Authorization: Bearer ${WAVEFRONT_API_KEY}" -F file=@"${wavefront_metrics_file}" ${WAVEFRONT_API_ENDPOINT}
-}
-
-
-function push_uptimer_metrics_to_wavefront() {
-  export METRIC_SOURCE_NAME=$1
-  export UPTIMER_RESULT_FILE=$2
-
-  : "${METRIC_TAGS:=""}"
-
-  uptimer_result_file=../uptimer-result/${UPTIMER_RESULT_FILE}
-  if [[ -f "${uptimer_result_file}" ]]; then
-    exit_code=$(cat ${uptimer_result_file} | jq -r '.commandExitCode')
-    metric_prefix="uptimer"
-
-    if [[ "${exit_code}" == "0" ]]; then
-      for row in $(cat ${uptimer_result_file} | jq -r '.summaries[] | @base64'); do
-          _jq() {
-          echo ${row} | base64 --decode | jq -r ${1}
-          }
-
-          camelcase() {
-            IFS=" " read -ra str <<<"$1"
-            printf '%s' "${str[@]^}"
-          }
-
-          name=$(camelcase $(_jq '.name'))
-
-          num_failed=$(_jq '.failed')
-          num_attempts=$(_jq '.total')
-          num_passed=$(( num_attempts - num_failed ))
-
-          emit_metric "${metric_prefix}.${name}.failed" "${num_failed}"
-          emit_metric "${metric_prefix}.${name}.attempts" "${num_attempts}"
-          emit_metric "${metric_prefix}.${name}.passed" "${num_passed}"
-      done
-
-      emit_metric "${metric_prefix}.upgrade.success" "1"
-    else
-      emit_metric "${metric_prefix}.upgrade.success" "0"
-    fi
-  fi
 }
