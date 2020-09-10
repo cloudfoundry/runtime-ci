@@ -86,14 +86,52 @@ function load_from_json_config() {
 }
 
 function emit_metric() {
+  # expected environment variables:
+  #   METRIC_SOURCE_NAME, WAVEFRONT_API_KEY, WAVEFRONT_API_ENDPOINT
+  METRIC_NAME=$1
+  METRIC_VALUE=$2
+  METRIC_TAGS=$3
+
   wavefront_metrics_file="./wavefront_metrics"
 
-  : "${METRIC_PREFIX:=""}"
-  if [[ -n "${METRIC_PREFIX}" ]]; then
-    METRIC_PREFIX="${METRIC_PREFIX}."
-  fi
+  echo "Emitting metric name: ${METRIC_NAME} value: ${METRIC_VALUE} source: ${METRIC_SOURCE_NAME} tags: ${METRIC_TAGS}"
 
-  echo "${METRIC_PREFIX}${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME} ${METRIC_TAGS}" > "${wavefront_metrics_file}"
+  echo "${METRIC_NAME} ${METRIC_VALUE} source=${METRIC_SOURCE_NAME} ${METRIC_TAGS}" > "${wavefront_metrics_file}"
 
   curl --fail --retry 5 -H "Authorization: Bearer ${WAVEFRONT_API_KEY}" -F file=@"${wavefront_metrics_file}" ${WAVEFRONT_API_ENDPOINT}
+}
+
+
+function push_uptimer_metrics_to_wavefront() {
+  export METRIC_SOURCE_NAME=$1
+  export UPTIMER_RESULT_FILE_PATH=$2
+
+  : "${METRIC_TAGS:=""}"
+
+  if [[ -f "${UPTIMER_RESULT_FILE_PATH}" ]]; then
+    exit_code=$(cat ${UPTIMER_RESULT_FILE_PATH} | jq -r '.commandExitCode')
+    metric_prefix="wavefront-test-2.uptimer"
+
+    if [[ "${exit_code}" == "0" ]]; then
+      for row in $(cat ${UPTIMER_RESULT_FILE_PATH} | jq -r '.summaries[] | @base64'); do
+          _jq() {
+          echo ${row} | base64 -d | jq -r ${1}
+          }
+
+          name="$(_jq '.name' | tr -s " " "-")"
+
+          num_failed=$(_jq '.failed')
+          num_attempts=$(_jq '.total')
+          num_passed=$(( num_attempts - num_failed ))
+
+          emit_metric "${metric_prefix}.${name}.failed" "${num_failed}" "$METRIC_TAGS"
+          emit_metric "${metric_prefix}.${name}.attempts" "${num_attempts}" "$METRIC_TAGS"
+          emit_metric "${metric_prefix}.${name}.passed" "${num_passed}" "$METRIC_TAGS"
+      done
+
+      emit_metric "${metric_prefix}.upgrade.success" "1" "$METRIC_TAGS"
+    else
+      emit_metric "${metric_prefix}.upgrade.success" "0" "$METRIC_TAGS"
+    fi
+  fi
 }
