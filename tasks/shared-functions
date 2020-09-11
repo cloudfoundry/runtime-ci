@@ -110,7 +110,7 @@ function push_uptimer_metrics_to_wavefront() {
 
   if [[ -f "${UPTIMER_RESULT_FILE_PATH}" ]]; then
     exit_code=$(cat ${UPTIMER_RESULT_FILE_PATH} | jq -r '.commandExitCode')
-    metric_prefix="wavefront-test-2.uptimer"
+    metric_prefix="uptimer"
 
     if [[ "${exit_code}" == "0" ]]; then
       for row in $(cat ${UPTIMER_RESULT_FILE_PATH} | jq -r '.summaries[] | @base64'); do
