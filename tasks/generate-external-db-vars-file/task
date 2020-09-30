@@ -12,5 +12,5 @@ cat <<EOT > vars-file/db.tfvars
 cf_db_name = "${DB_NAME}"
 project = "cf-relint-trelawney"
 region = "us-central1"
-service_account_key = '${GCP_SERVICE_ACCOUNT_JSON}'
+service_account_key = "$(echo ${GCP_SERVICE_ACCOUNT_JSON} | sed 's/"/\\"/g')"
 EOT
