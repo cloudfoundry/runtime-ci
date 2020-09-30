@@ -1,6 +1,6 @@
 ---
 groups:
-- name: fresh
+- name: fresh/luna
   jobs:
   - add-claimed-lock-fresh
   - setup-infrastructure-fresh
@@ -8,7 +8,7 @@ groups:
   - destroy-infrastructure-fresh
   - remove-claimed-lock-fresh
 
-- name: lite
+- name: lite/snitch
   jobs:
   - add-claimed-lock-lite
   - setup-infrastructure-lite
@@ -16,7 +16,7 @@ groups:
   - update-infrastructure-lite
   - remove-claimed-lock-lite
 
-- name: upgrade
+- name: upgrade/trelawney
   jobs:
   - add-claimed-lock-upgrade
   - setup-infrastructure-upgrade
@@ -32,7 +32,7 @@ groups:
   - destroy-infrastructure-stable
   - remove-claimed-lock-stable
 
-- name: experimental
+- name: experimental/hermione
   jobs:
   - add-claimed-lock-experimental
   - setup-infrastructure-experimental
