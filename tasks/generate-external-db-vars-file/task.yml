@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+- name: runtime-ci
+- name: bbl-state
+
+outputs:
+- name: vars-file
+
+params:
+  BBL_STATE_DIR: bbl-state
+  GCP_SERVICE_ACCOUNT_JSON:
+  VARS_DIR: bbl-state
+
+run:
+  path: runtime-ci/tasks/generate-external-db-vars-file/task
