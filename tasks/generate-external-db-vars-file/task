@@ -5,12 +5,12 @@ set -eu
 pushd "bbl-state/$BBL_STATE_DIR"
   echo "Grabbing DB name from bbl outputs..."
   DB_NAME=$(bbl outputs | grep db_name | awk '{print $2}')
+popd
 
-  echo "Generating external DB terraform vars file..."
-  cat <<EOT > vars-file/db.tfvars
+echo "Generating external DB terraform vars file..."
+cat <<EOT > vars-file/db.tfvars
 cf_db_name: "${DB_NAME}"
 project: "cf-relint-trelawney"
 region: "us-central1"
 service_account_key: ${GCP_SERVICE_ACCOUNT_JSON}"
 EOT
-popd
