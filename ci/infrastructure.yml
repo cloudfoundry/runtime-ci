@@ -24,7 +24,7 @@ groups:
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-upgrade
 
-- name: stable
+- name: stable/bellatrix
   jobs:
   - add-claimed-lock-stable
   - setup-infrastructure-stable
