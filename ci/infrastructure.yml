@@ -112,7 +112,7 @@ resources:
 # Plan patches
 - name: bosh-bootloader
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-bootloader
@@ -120,21 +120,21 @@ resources:
 # Code repos
 - name: cf-deployment-concourse-tasks
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: runtime-ci
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: relint-envs
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: git@github.com:cloudfoundry/relint-envs.git
