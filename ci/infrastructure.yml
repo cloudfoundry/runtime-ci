@@ -8,14 +8,6 @@ groups:
   - destroy-infrastructure-fresh
   - remove-claimed-lock-fresh
 
-- name: lite/snitch
-  jobs:
-  - add-claimed-lock-lite
-  - setup-infrastructure-lite
-  - destroy-infrastructure-lite
-  - update-infrastructure-lite
-  - remove-claimed-lock-lite
-
 - name: upgrade/trelawney
   jobs:
   - add-claimed-lock-upgrade
@@ -23,14 +15,6 @@ groups:
   - update-infrastructure-upgrade
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-upgrade
-
-- name: stable/bellatrix
-  jobs:
-  - add-claimed-lock-stable
-  - setup-infrastructure-stable
-  - update-infrastructure-stable
-  - destroy-infrastructure-stable
-  - remove-claimed-lock-stable
 
 - name: experimental/hermione
   jobs:
@@ -48,10 +32,153 @@ groups:
   - destroy-infrastructure-bbr
   - remove-claimed-lock-bbr
 
+- name: lite/snitch
+  jobs:
+  - add-claimed-lock-lite
+  - setup-infrastructure-lite
+  - destroy-infrastructure-lite
+  - update-infrastructure-lite
+  - remove-claimed-lock-lite
+
+- name: stable/bellatrix
+  jobs:
+  - add-claimed-lock-stable
+  - setup-infrastructure-stable
+  - update-infrastructure-stable
+  - destroy-infrastructure-stable
+  - remove-claimed-lock-stable
+
 - name: dev
   jobs:
   - setup-infrastructure-maxime
   - destroy-infrastructure-maxime
+
+fresh-bbl-up-task: &fresh-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: bosh-bootloader
+    bbl-state: relint-envs
+  params:
+    BBL_CONFIG_DIR: plan-patches/iso-segs-gcp
+    BBL_ENV_NAME: luna-fresh
+    # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
+    BBL_GCP_REGION: us-west1
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/luna/google_account_creds.json
+    BBL_IAAS: gcp
+    BBL_LB_CERT: ((luna_cf_lb_cert.certificate))
+    BBL_LB_KEY: ((luna_cf_lb_cert.private_key))
+    BBL_STATE_DIR: environments/test/luna/bbl-state
+    LB_DOMAIN: luna.cf-app.com
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+upgrade-bbl-up-task: &upgrade-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: relint-envs
+    bbl-state: relint-envs
+  params:
+    BBL_CONFIG_DIR: environments/test/trelawney/bbl-config
+    BBL_ENV_NAME: trelawney-upgrade
+    BBL_GCP_REGION: us-central1
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/trelawney/google_account_creds.json
+    BBL_IAAS: gcp
+    BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
+    BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
+    BBL_STATE_DIR: environments/test/trelawney/bbl-state
+    LB_DOMAIN: trelawney.cf-app.com
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+experimental-bbl-up-task: &experimental-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: relint-envs
+    bbl-state: relint-envs
+  params:
+    BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+    BBL_AWS_REGION: us-west-2
+    BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+    BBL_CONFIG_DIR: environments/test/hermione/bbl-config
+    BBL_ENV_NAME: hermione-experimental
+    BBL_IAAS: aws
+    BBL_LB_CERT: ((hermione_lbs_certificate))
+    BBL_LB_CERT_CHAIN: ((hermione_lbs_ca))
+    BBL_LB_KEY: ((hermione_lbs_private_key))
+    BBL_STATE_DIR: environments/test/hermione/bbl-state
+    LB_DOMAIN: hermione.cf-app.com
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+bbr-bbl-up-task: &bbr-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-state: relint-envs
+    bbl-config: bosh-bootloader
+  params:
+    BBL_STATE_DIR: environments/test/bbr/bbl-state
+    BBL_IAAS: gcp
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bbr/google_account_creds.json
+    BBL_GCP_REGION: us-central1
+    BBL_LB_CERT: ((baba_yaga_cf_lb_cert.certificate))
+    BBL_LB_KEY: ((baba_yaga_cf_lb_cert.private_key))
+    LB_DOMAIN: baba-yaga.cf-app.com
+    BBL_ENV_NAME: baba-yaga-bbr
+    BBL_CONFIG_DIR: plan-patches/network-lb-gcp
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+lite-bbl-up-task: &lite-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: combined-inputs
+    bbl-state: relint-envs
+  params:
+    BBL_CONFIG_DIR: .
+    BBL_ENV_NAME: snitch-lite
+    BBL_GCP_REGION: us-central1
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/snitch/google_account_creds.json
+    BBL_IAAS: gcp
+    BBL_STATE_DIR: environments/test/snitch/bbl-state
+    SKIP_LB_CREATION: true
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+stable-bbl-up-task: &stable-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: combined-plan-patches
+    bbl-state: relint-envs
+  params:
+    BBL_CONFIG_DIR: .
+    BBL_ENV_NAME: bellatrix-stable
+    BBL_GCP_REGION: us-central1
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
+    BBL_IAAS: gcp
+    BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
+    BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
+    BBL_STATE_DIR: environments/test/bellatrix/bbl-state
+    LB_DOMAIN: bellatrix.cf-app.com
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
 
 resources:
 # Pools
@@ -176,20 +303,6 @@ jobs:
   - put: fresh-pool
     params: {add_claimed: fresh-pool}
 
-- name: add-claimed-lock-lite
-  serial: true
-  public: true
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: snitch
-    output_mapping:
-      pool-resource: lite-pool
-  - put: lite-pool
-    params: {add_claimed: lite-pool}
-
 - name: add-claimed-lock-upgrade
   serial: true
   public: true
@@ -203,20 +316,6 @@ jobs:
       pool-resource: upgrade-pool
   - put: upgrade-pool
     params: {add_claimed: upgrade-pool}
-
-- name: add-claimed-lock-stable
-  serial: true
-  public: true
-  plan:
-  - get: runtime-ci
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: bellatrix
-    output_mapping:
-      pool-resource: stable-pool
-  - put: stable-pool
-    params: {add_claimed: stable-pool}
 
 - name: add-claimed-lock-experimental
   serial: true
@@ -246,6 +345,34 @@ jobs:
   - put: bbr-pool
     params: {add_claimed: bbr-pool}
 
+- name: add-claimed-lock-lite
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {add_claimed: lite-pool}
+
+- name: add-claimed-lock-stable
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {add_claimed: stable-pool}
+
 # Setup infrastructure
 - name: setup-infrastructure-fresh
   serial: true
@@ -259,28 +386,56 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: bosh-bootloader
   - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: environments/test/luna/bbl-state
-      BBL_IAAS: gcp
-      BBL_ENV_NAME: luna-fresh
-      BBL_CONFIG_DIR: plan-patches/iso-segs-gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/luna/google_account_creds.json
-      # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
-      BBL_GCP_REGION: us-west1
-      BBL_LB_CERT: ((luna_cf_lb_cert.certificate))
-      BBL_LB_KEY: ((luna_cf_lb_cert.private_key))
-      LB_DOMAIN: luna.cf-app.com
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: bosh-bootloader
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
+    <<: *fresh-bbl-up-task-config
   - put: fresh-pool
     params: {release: fresh-pool}
+
+- name: setup-infrastructure-upgrade
+  serial: true
+  public: true
+  plan:
+  - get: upgrade-pool
+    trigger: true
+    passed: [add-claimed-lock-upgrade]
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-envs
+    - get: runtime-ci
+  - task: setup-infrastructure
+    <<: *upgrade-bbl-up-task-config
+  - put: upgrade-pool
+    params: {release: upgrade-pool}
+
+- name: setup-infrastructure-experimental
+  serial_groups: [hermione]
+  public: true
+  plan:
+  - get: experimental-pool
+    trigger: true
+    passed: [ add-claimed-lock-experimental ]
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-envs
+  - task: setup-infrastructure
+    <<: *experimental-bbl-up-task-config
+  - put: experimental-pool
+    params: {release: experimental-pool}
+
+- name: setup-infrastructure-bbr
+  serial_groups: [bbr]
+  public: true
+  plan:
+  - get: bbr-pool
+    trigger: true
+    passed: [add-claimed-lock-bbr]
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-envs
+    - get: bosh-bootloader
+  - task: setup-infrastructure
+    <<: *bbr-bbl-up-task-config
+  - put: bbr-pool
+    params: {release: bbr-pool}
 
 - name: setup-infrastructure-lite
   serial_groups: [snitch]
@@ -303,59 +458,9 @@ jobs:
       FIRST_DIR: plan-patches/bosh-lite-gcp
       SECOND_DIR: environments/test/snitch/bbl-config
   - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: combined-inputs
-    params:
-      BBL_STATE_DIR: environments/test/snitch/bbl-state
-      BBL_CONFIG_DIR: .
-      BBL_ENV_NAME: snitch-lite
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/snitch/google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_IAAS: gcp
-      SKIP_LB_CREATION: true
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
+    <<: *lite-bbl-up-task-config
   - put: lite-pool
     params: {release: lite-pool}
-
-- name: setup-infrastructure-upgrade
-  serial: true
-  public: true
-  plan:
-  - get: upgrade-pool
-    trigger: true
-    passed: [add-claimed-lock-upgrade]
-  - in_parallel:
-    - get: cf-deployment-concourse-tasks
-    - get: relint-envs
-    - get: runtime-ci
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: environments/test/trelawney/bbl-state
-      BBL_CONFIG_DIR: environments/test/trelawney/bbl-config
-      BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/trelawney/google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
-      BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
-      LB_DOMAIN: trelawney.cf-app.com
-      BBL_ENV_NAME: trelawney-upgrade
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: relint-envs
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - put: upgrade-pool
-    params: {release: upgrade-pool}
 
 - name: setup-infrastructure-stable
   serial: true
@@ -380,95 +485,9 @@ jobs:
     output_mapping:
       combined-inputs: combined-plan-patches
   - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
-      BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
-      BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
-      LB_DOMAIN: bellatrix.cf-app.com
-      BBL_ENV_NAME: bellatrix-stable
-      BBL_CONFIG_DIR: .
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: combined-plan-patches
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
+    <<: *stable-bbl-up-task-config
   - put: stable-pool
     params: {release: stable-pool}
-
-- name: setup-infrastructure-experimental
-  serial_groups: [hermione]
-  public: true
-  plan:
-  - get: experimental-pool
-    trigger: true
-    passed: [ add-claimed-lock-experimental ]
-  - in_parallel:
-    - get: cf-deployment-concourse-tasks
-    - get: relint-envs
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: environments/test/hermione/bbl-state
-      BBL_IAAS: aws
-      BBL_AWS_REGION: us-west-2
-      BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
-      BBL_LB_CERT: ((hermione_lbs_certificate))
-      BBL_LB_KEY: ((hermione_lbs_private_key))
-      BBL_LB_CERT_CHAIN: ((hermione_lbs_ca))
-      LB_DOMAIN: hermione.cf-app.com
-      BBL_ENV_NAME: hermione-experimental
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: relint-envs
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - put: experimental-pool
-    params: {release: experimental-pool}
-
-- name: setup-infrastructure-bbr
-  serial_groups: [bbr]
-  public: true
-  plan:
-  - get: bbr-pool
-    trigger: true
-    passed: [add-claimed-lock-bbr]
-  - in_parallel:
-    - get: cf-deployment-concourse-tasks
-    - get: relint-envs
-    - get: bosh-bootloader
-  - task: setup-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    params:
-      BBL_STATE_DIR: environments/test/bbr/bbl-state
-      BBL_IAAS: gcp
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bbr/google_account_creds.json
-      BBL_GCP_REGION: us-central1
-      BBL_LB_CERT: ((baba_yaga_cf_lb_cert.certificate))
-      BBL_LB_KEY: ((baba_yaga_cf_lb_cert.private_key))
-      LB_DOMAIN: baba-yaga.cf-app.com
-      BBL_ENV_NAME: baba-yaga-bbr
-      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
-    input_mapping:
-      bbl-state: relint-envs
-      bbl-config: bosh-bootloader
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - put: bbr-pool
-    params: {release: bbr-pool}
 
 - name: setup-infrastructure-maxime
   serial: true
@@ -515,28 +534,65 @@ jobs:
       - get: every-tuesday-morning
         trigger: true
     - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/luna/bbl-state
-        BBL_IAAS: gcp
-        BBL_ENV_NAME: luna-fresh
-        BBL_CONFIG_DIR: plan-patches/iso-segs-gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/luna/google_account_creds.json
-        # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
-        BBL_GCP_REGION: us-west1
-        BBL_LB_CERT: ((luna_cf_lb_cert.certificate))
-        BBL_LB_KEY: ((luna_cf_lb_cert.private_key))
-        LB_DOMAIN: luna.cf-app.com
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: bosh-bootloader
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
+      <<: *fresh-bbl-up-task-config
     - put: fresh-pool
       params: {release: fresh-pool}
+
+- name: update-infrastructure-upgrade
+  serial: true
+  public: true
+  plan:
+  - timeout: 12h
+    do:
+    - in_parallel:
+      - put: upgrade-pool
+        params: {acquire: true}
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-morning
+        trigger: true
+      - get: runtime-ci
+    - task: update-infrastructure
+      <<: *upgrade-bbl-up-task-config
+    - put: upgrade-pool
+      params: {release: upgrade-pool}
+
+- name: update-infrastructure-experimental
+  serial: true
+  public: true
+  plan:
+  - timeout: 12h
+    do:
+    - in_parallel:
+      - put: experimental-pool
+        params: {acquire: true}
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-morning
+        trigger: true
+    - task: update-infrastructure
+      <<: *experimental-bbl-up-task-config
+    - put: experimental-pool
+      params: {release: experimental-pool}
+
+- name: update-infrastructure-bbr
+  serial: true
+  public: true
+  plan:
+  - timeout: 12h
+    do:
+    - in_parallel:
+      - put: bbr-pool
+        params: {acquire: true}
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-bootloader
+      - get: every-tuesday-morning
+        trigger: true
+    - task: update-infrastructure
+      <<: *bbr-bbl-up-task-config
+    - put: bbr-pool
+      params: {release: bbr-pool}
 
 - name: update-infrastructure-lite
   serial: true
@@ -568,62 +624,9 @@ jobs:
         FIRST_DIR: plan-patches/bosh-lite-gcp
         SECOND_DIR: environments/test/snitch/bbl-config
     - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/snitch/bbl-state
-        BBL_IAAS: gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/snitch/google_account_creds.json
-        BBL_GCP_REGION: us-central1
-        BBL_ENV_NAME: snitch-lite
-        SKIP_LB_CREATION: true
-        BBL_CONFIG_DIR: .
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: combined-inputs
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
+      <<: *lite-bbl-up-task-config
     - put: lite-pool
       params: {release: lite-pool}
-
-- name: update-infrastructure-upgrade
-  serial: true
-  public: true
-  plan:
-  - timeout: 12h
-    do:
-    - in_parallel:
-      - put: upgrade-pool
-        params: {acquire: true}
-      - get: relint-envs
-      - get: cf-deployment-concourse-tasks
-      - get: every-tuesday-morning
-        trigger: true
-      - get: runtime-ci
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/trelawney/bbl-state
-        BBL_CONFIG_DIR: environments/test/trelawney/bbl-config
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/trelawney/google_account_creds.json
-        BBL_IAAS: gcp
-        BBL_GCP_REGION: us-central1
-        BBL_ENV_NAME: trelawney-upgrade
-        BBL_LB_CERT: ((trelawney_cf_lb_cert.certificate))
-        BBL_LB_KEY: ((trelawney_cf_lb_cert.private_key))
-        LB_DOMAIN: trelawney.cf-app.com
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: relint-envs
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - put: upgrade-pool
-      params: {release: upgrade-pool}
 
 - name: update-infrastructure-stable
   serial: true
@@ -651,101 +654,9 @@ jobs:
       output_mapping:
         combined-inputs: combined-plan-patches
     - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/bellatrix/bbl-state
-        BBL_IAAS: gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
-        BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: ((bellatrix_cf_lb_cert.certificate))
-        BBL_LB_KEY: ((bellatrix_cf_lb_cert.private_key))
-        LB_DOMAIN: bellatrix.cf-app.com
-        BBL_CONFIG_DIR: .
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: combined-plan-patches
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
+      <<: *stable-bbl-up-task-config
     - put: stable-pool
       params: {release: stable-pool}
-
-- name: update-infrastructure-experimental
-  serial: true
-  public: true
-  plan:
-  - timeout: 12h
-    do:
-    - in_parallel:
-      - put: experimental-pool
-        params: {acquire: true}
-      - get: relint-envs
-      - get: cf-deployment-concourse-tasks
-      - get: every-tuesday-morning
-        trigger: true
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/hermione/bbl-state
-        BBL_CONFIG_DIR: environments/test/hermione/bbl-config
-        BBL_IAAS: aws
-        BBL_AWS_REGION: us-west-2
-        BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
-        BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
-        LB_DOMAIN: hermione.cf-app.com
-        BBL_ENV_NAME: hermione-experimental
-        BBL_LB_CERT: ((hermione_lbs_certificate))
-        BBL_LB_KEY: ((hermione_lbs_private_key))
-        BBL_LB_CERT_CHAIN: ((hermione_lbs_ca))
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: relint-envs
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - put: experimental-pool
-      params: {release: experimental-pool}
-
-- name: update-infrastructure-bbr
-  serial: true
-  public: true
-  plan:
-  - timeout: 12h
-    do:
-    - in_parallel:
-      - put: bbr-pool
-        params: {acquire: true}
-      - get: relint-envs
-      - get: cf-deployment-concourse-tasks
-      - get: bosh-bootloader
-      - get: every-tuesday-morning
-        trigger: true
-    - task: update-infrastructure
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      params:
-        BBL_STATE_DIR: environments/test/bbr/bbl-state
-        BBL_IAAS: gcp
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bbr/google_account_creds.json
-        BBL_GCP_REGION: us-central1
-        BBL_LB_CERT: ((baba_yaga_cf_lb_cert.certificate))
-        BBL_LB_KEY: ((baba_yaga_cf_lb_cert.private_key))
-        LB_DOMAIN: baba-yaga.cf-app.com
-        BBL_ENV_NAME: baba-yaga-bbr
-        BBL_CONFIG_DIR: plan-patches/network-lb-gcp
-      input_mapping:
-        bbl-state: relint-envs
-        bbl-config: bosh-bootloader
-      ensure:
-        put: relint-envs
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - put: bbr-pool
-      params: {release: bbr-pool}
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
@@ -776,36 +687,6 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: destroy-infrastructure-lite
-  serial_groups: [snitch]
-  public: true
-  plan:
-  - in_parallel:
-    - put: lite-pool
-      params: {claim: snitch}
-    - get: relint-envs
-    - get: cf-deployment-concourse-tasks
-  - try:
-      do:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          bbl-state: relint-envs
-        params:
-          BBL_STATE_DIR: environments/test/snitch/bbl-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: relint-envs
-    params:
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/snitch/google_account_creds.json
-      BBL_STATE_DIR: environments/test/snitch/bbl-state
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
-
 - name: destroy-infrastructure-upgrade
   serial: true
   public: true
@@ -828,34 +709,6 @@ jobs:
     params:
       BBL_STATE_DIR: environments/test/trelawney/bbl-state
       BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/trelawney/google_account_creds.json
-    ensure:
-      put: relint-envs
-      params:
-        repository: updated-bbl-state
-        rebase: true
-
-- name: destroy-infrastructure-stable
-  serial: true
-  public: true
-  plan:
-  - in_parallel:
-    - put: stable-pool
-      params: {claim: bellatrix}
-    - get: relint-envs
-    - get: cf-deployment-concourse-tasks
-  - task: guarantee-no-existing-cf-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: relint-envs
-    params:
-      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
-  - task: destroy-infrastructure
-    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
-    input_mapping:
-      bbl-state: relint-envs
-    params:
-      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
-      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
     ensure:
       put: relint-envs
       params:
@@ -919,6 +772,64 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-lite
+  serial_groups: [snitch]
+  public: true
+  plan:
+  - in_parallel:
+    - put: lite-pool
+      params: {claim: snitch}
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - try:
+      do:
+      - task: guarantee-no-existing-cf-deployment
+        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+        input_mapping:
+          bbl-state: relint-envs
+        params:
+          BBL_STATE_DIR: environments/test/snitch/bbl-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/snitch/google_account_creds.json
+      BBL_STATE_DIR: environments/test/snitch/bbl-state
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: destroy-infrastructure-stable
+  serial: true
+  public: true
+  plan:
+  - in_parallel:
+    - put: stable-pool
+      params: {claim: bellatrix}
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/bellatrix/google_account_creds.json
+      BBL_STATE_DIR: environments/test/bellatrix/bbl-state
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
 - name: destroy-infrastructure-maxime
   serial: true
   public: true
@@ -967,23 +878,6 @@ jobs:
   - put: fresh-pool
     params: {remove: fresh-pool}
 
-- name: remove-claimed-lock-lite
-  serial: true
-  public: true
-  plan:
-  - get: runtime-ci
-  - get: lite-pool
-    passed: [ destroy-infrastructure-lite ]
-    trigger: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: snitch
-    output_mapping:
-      pool-resource: lite-pool
-  - put: lite-pool
-    params: {remove: lite-pool}
-
 - name: remove-claimed-lock-upgrade
   serial: true
   public: true
@@ -1000,23 +894,6 @@ jobs:
       pool-resource: upgrade-pool
   - put: upgrade-pool
     params: {remove: upgrade-pool}
-
-- name: remove-claimed-lock-stable
-  serial: true
-  public: true
-  plan:
-  - get: runtime-ci
-  - get: stable-pool
-    passed: [ destroy-infrastructure-stable ]
-    trigger: true
-  - task: prepare-to-modify-pool-resource
-    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
-    params:
-      NAME: bellatrix
-    output_mapping:
-      pool-resource: stable-pool
-  - put: stable-pool
-    params: {remove: stable-pool}
 
 - name: remove-claimed-lock-experimental
   serial: true
@@ -1051,3 +928,37 @@ jobs:
       pool-resource: bbr-pool
   - put: bbr-pool
     params: {remove: bbr-pool}
+
+- name: remove-claimed-lock-lite
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - get: lite-pool
+    passed: [ destroy-infrastructure-lite ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: snitch
+    output_mapping:
+      pool-resource: lite-pool
+  - put: lite-pool
+    params: {remove: lite-pool}
+
+- name: remove-claimed-lock-stable
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - get: stable-pool
+    passed: [ destroy-infrastructure-stable ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: bellatrix
+    output_mapping:
+      pool-resource: stable-pool
+  - put: stable-pool
+    params: {remove: stable-pool}
