@@ -132,6 +132,9 @@ jobs:
     - put: relint-base-image
       params:
         build: runtime-ci-relint-base/dockerfiles/relint-base/
+        build_args:
+          RELINT_CA_CERTIFICATE: ((relint_ca.certificate))
+          PREVIOUS_RELINT_CA_CERTIFICATE: ""
         push: true
 
 - name: build-bosh-cli-docker-image
