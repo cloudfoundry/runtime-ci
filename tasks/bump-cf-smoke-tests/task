@@ -4,7 +4,7 @@ source runtime-ci/tasks/shared-functions
 
 pushd cf-smoke-tests-release
   pushd src/smoke_tests
-    git checkout master
+    git checkout main
     git pull
   popd
 
