@@ -13,7 +13,7 @@ groups:
 resources:
 - name: runtime-ci
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
@@ -28,7 +28,7 @@ resources:
 
 - name: runtime-ci-relint-base
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
@@ -36,7 +36,7 @@ resources:
 
 - name: runtime-ci-bosh-cli
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git
@@ -44,7 +44,7 @@ resources:
 
 - name: runtime-ci-stemcell-version-bump-resource
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: master
     uri: https://github.com/cloudfoundry/runtime-ci.git

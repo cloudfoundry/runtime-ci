@@ -2,19 +2,19 @@
 resources:
 - name: runtime-ci
   type: git
-  icon: github-box
+  icon: github
   source:
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: cf-deployment-concourse-tasks
   type: git
-  icon: github-box
+  icon: github
   source:
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: relint-envs
   type: git
-  icon: github-box
+  icon: github
   source:
     branch: main
     uri: git@github.com:cloudfoundry/relint-envs.git
