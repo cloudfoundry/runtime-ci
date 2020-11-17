@@ -46,7 +46,7 @@ var _ = Describe("Runner", func() {
 
 		Context("when all directories exist", func() {
 			BeforeEach(func() {
-				expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
+				expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-main")
 				Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
 				expectedReleaseVersionDir = filepath.Join(buildDir, "release-version")
 				Expect(os.Mkdir(expectedReleaseVersionDir, 0777)).To(Succeed())
@@ -72,7 +72,7 @@ var _ = Describe("Runner", func() {
 		})
 
 		Context("when some directories are missing", func() {
-			Context("when cf-deployment-master dir is missing", func() {
+			Context("when cf-deployment-main dir is missing", func() {
 				BeforeEach(func() {
 					expectedStemcellDir = filepath.Join(buildDir, "stemcell")
 					Expect(os.Mkdir(expectedStemcellDir, 0777)).To(Succeed())
@@ -81,13 +81,13 @@ var _ = Describe("Runner", func() {
 				})
 
 				It("will fail stating all the missing directories", func() {
-					Expect(actualErr).To(MatchError(fmt.Sprintf("missing sub directory 'cf-deployment-master' in build directory '%s'", buildDir)))
+					Expect(actualErr).To(MatchError(fmt.Sprintf("missing sub directory 'cf-deployment-main' in build directory '%s'", buildDir)))
 				})
 			})
 
 			Context("when stemcell dir is missing", func() {
 				BeforeEach(func() {
-					expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
+					expectedCFDeploymentDir = filepath.Join(buildDir, "cf-deployment-main")
 					Expect(os.Mkdir(expectedCFDeploymentDir, 0777)).To(Succeed())
 					expectedReleaseVersionDir = filepath.Join(buildDir, "release-version")
 					Expect(os.Mkdir(expectedReleaseVersionDir, 0777)).To(Succeed())
@@ -113,7 +113,7 @@ var _ = Describe("Runner", func() {
 		)
 
 		BeforeEach(func() {
-			cfDeploymentDir = filepath.Join(buildDir, "cf-deployment-master")
+			cfDeploymentDir = filepath.Join(buildDir, "cf-deployment-main")
 			Expect(os.Mkdir(cfDeploymentDir, 0777)).To(Succeed())
 
 			runner = concourseio.Runner{

@@ -21,7 +21,7 @@ describe 'ReleaseUpdates' do
 
   describe 'load_from_files' do
     before(:all) do
-      FileUtils.mkdir_p('cf-deployment-master/operations')
+      FileUtils.mkdir_p('cf-deployment-main/operations')
       FileUtils.mkdir_p('cf-deployment-release-candidate/operations')
     end
 
@@ -32,8 +32,8 @@ describe 'ReleaseUpdates' do
     before do
       stub_request(:get, /github.com/)
 
-      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
-        f.write(file_contents_master)
+      File.open(File.join('cf-deployment-main', filename), 'w') do |f|
+        f.write(file_contents_main)
       end
 
       File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
@@ -43,7 +43,7 @@ describe 'ReleaseUpdates' do
 
     let(:filename) { 'cf-deployment.yml' }
     let(:opsfile) { false }
-    let(:file_contents_master) do
+    let(:file_contents_main) do
 <<-HEREDOC
 releases:
 - name: release-1
@@ -99,7 +99,7 @@ HEREDOC
     context('when the file is an ops-file') do
       let(:filename) { 'operations/ops-file.yml' }
       let(:opsfile) { true }
-      let(:file_contents_master) do
+      let(:file_contents_main) do
 <<-HEREDOC
 - type: replace
   path: /releases/-
@@ -164,7 +164,7 @@ HEREDOC
       end
 
       context 'when the ops-file replaces releases and stemcells rather than appending them' do
-        let(:file_contents_master) do
+        let(:file_contents_main) do
 <<-HEREDOC
 - type: replace
   path: /releases/name=garden-windows?
@@ -227,7 +227,7 @@ HEREDOC
     end
 
     context 'when the old version of the file is empty' do
-      let(:file_contents_master) { "" }
+      let(:file_contents_main) { "" }
       context 'and the new version is not empty' do
         let(:file_contents_rc) do
 <<-HEREDOC
@@ -264,7 +264,7 @@ HEREDOC
     context 'when the new version of the file is empty' do
       let(:file_contents_rc) { "" }
       context 'and the old version is not empty' do
-        let(:file_contents_master) do
+        let(:file_contents_main) do
 <<-HEREDOC
 releases:
 - name: release-1
@@ -287,7 +287,7 @@ HEREDOC
       end
 
       context 'and the new version is empty' do
-        let(:file_contents_master) { "" }
+        let(:file_contents_main) { "" }
 
         it 'includes no information about the release' do
           expect(updates.get_update_by_name('ubuntu-trusty')).to be_nil
@@ -298,7 +298,7 @@ HEREDOC
 
     context 'when the old version of the file does not exist' do
       before do
-        File.delete(File.join('cf-deployment-master', filename))
+        File.delete(File.join('cf-deployment-main', filename))
 
         File.open(File.join('cf-deployment-release-candidate', filename), 'w') do |f|
           f.write(file_contents_rc)
@@ -320,8 +320,8 @@ HEREDOC
       before do
         File.delete(File.join('cf-deployment-release-candidate', filename))
 
-        File.open(File.join('cf-deployment-master', filename), 'w') do |f|
-          f.write(file_contents_master)
+        File.open(File.join('cf-deployment-main', filename), 'w') do |f|
+          f.write(file_contents_main)
         end
       end
 
@@ -404,14 +404,14 @@ HEREDOC
 
   describe '#convert_bosh_io_to_github_url' do
     before do
-      File.open(File.join('cf-deployment-master', filename), 'w') do |f|
-        f.write(file_contents_master)
+      File.open(File.join('cf-deployment-main', filename), 'w') do |f|
+        f.write(file_contents_main)
       end
     end
 
     let(:filename) { 'cf-deployment.yml' }
     let(:opsfile) { false }
-    let(:file_contents_master) do
+    let(:file_contents_main) do
 <<-HEREDOC
 releases:
 - name: release-1

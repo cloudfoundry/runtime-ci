@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
-- name: cf-deployment-master
+- name: cf-deployment-main
 - name: stemcell
 - name: release-version
 

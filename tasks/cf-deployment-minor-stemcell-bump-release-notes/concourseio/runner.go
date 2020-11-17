@@ -101,7 +101,7 @@ func (r Runner) GenerateReleaseName() error {
 }
 
 func setupInputs(buildDir string) (Inputs, error) {
-	cfDeploymentDir, err := buildSubDir(buildDir, "cf-deployment-master")
+	cfDeploymentDir, err := buildSubDir(buildDir, "cf-deployment-main")
 	if err != nil {
 		return Inputs{}, err
 	}

@@ -13,11 +13,11 @@ class ReleaseUpdates
       release_candidate = load_yaml_file('cf-deployment-release-candidate', filename)
       release_candidate_releases_list = collect_releases_and_stemcells(release_candidate, opsfile: opsfile)
 
-      master = load_yaml_file('cf-deployment-master', filename)
-      master_releases_list = collect_releases_and_stemcells(master, opsfile: opsfile)
+      main_branch = load_yaml_file('cf-deployment-main', filename)
+      main_releases_list = collect_releases_and_stemcells(main_branch, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
-      change_set = HashDiff.diff(master_releases_list, release_candidate_releases_list)
+      change_set = HashDiff.diff(main_releases_list, release_candidate_releases_list)
       change_set.each do |change|
         release_updates.load_change(change)
       end
