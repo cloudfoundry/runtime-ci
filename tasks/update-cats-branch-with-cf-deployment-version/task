@@ -54,9 +54,9 @@ main() {
       git checkout -b ${cats_branch_name}
       git push -u origin ${cats_branch_name}
     fi
-    git remote add master-cats ${build_dir}/cf-acceptance-tests
+    git remote add main-cats ${build_dir}/cf-acceptance-tests
     git remote update
-    git merge --ff-only "master-cats/${CATS_BRANCH}"
+    git merge --ff-only "main-cats/${CATS_BRANCH}"
     git push
   popd > /dev/null
 }
