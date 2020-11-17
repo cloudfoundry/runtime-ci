@@ -15,7 +15,7 @@ resources:
   type: git
   icon: github
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/runtime-ci.git
 
 - name: weekly
@@ -30,7 +30,7 @@ resources:
   type: git
   icon: github
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/relint-base/Dockerfile]
 
@@ -38,7 +38,7 @@ resources:
   type: git
   icon: github
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths: [dockerfiles/bosh-cli/Dockerfile]
 
@@ -46,7 +46,7 @@ resources:
   type: git
   icon: github
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/runtime-ci.git
     paths:
     - ci/resources/stemcell-version-bump/**
