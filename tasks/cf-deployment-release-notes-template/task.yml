@@ -10,7 +10,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: cf-deployment-release-candidate
-- name: cf-deployment-master
+- name: cf-deployment-main
 
 outputs:
 - name: release-notes-template

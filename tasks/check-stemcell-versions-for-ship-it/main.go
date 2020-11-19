@@ -12,14 +12,14 @@ import (
 func main() {
 	buildDir := os.Args[1]
 
-	content, err := ioutil.ReadFile(filepath.Join(buildDir, "cf-deployment-master", "cf-deployment.yml"))
+	content, err := ioutil.ReadFile(filepath.Join(buildDir, "cf-deployment-main", "cf-deployment.yml"))
 	if err != nil {
-		log.Fatalf("Failed to read master cf-deployment.yml: %s", err)
+		log.Fatalf("Failed to read main cf-deployment.yml: %s", err)
 	}
 
-	masterManifest, err := bosh.NewManifestFromFile(content)
+	mainManifest, err := bosh.NewManifestFromFile(content)
 	if err != nil {
-		log.Fatalf("Failed to unmarshal master cf-deployment.yml: %s", err)
+		log.Fatalf("Failed to unmarshal main cf-deployment.yml: %s", err)
 	}
 
 	content, err = ioutil.ReadFile(filepath.Join(buildDir, "cf-deployment-release-candidate", "cf-deployment.yml"))
@@ -32,19 +32,19 @@ func main() {
 		log.Fatalf("Failed to unmarshal release-candidate cf-deployment.yml: %s", err)
 	}
 
-	masterStemcell := masterManifest.Stemcells[0]
+	mainStemcell := mainManifest.Stemcells[0]
 	releaseCandidateStemcell := releaseCandidateManifest.Stemcells[0]
 
-	result, err := releaseCandidateStemcell.CompareVersion(masterStemcell)
+	result, err := releaseCandidateStemcell.CompareVersion(mainStemcell)
 	if err != nil {
 		log.Fatalf("Failed to compare stemcell versions: %s", err)
 	}
 
 	if result == -1 {
-		log.Fatalf("Release candidate stemcell version (%s) is behind the master stemcell version (%s). Aborting.",
-			releaseCandidateStemcell.Version, masterStemcell.Version)
+		log.Fatalf("Release candidate stemcell version (%s) is behind the main stemcell version (%s). Aborting.",
+			releaseCandidateStemcell.Version, mainStemcell.Version)
 	}
 
-	log.Printf("Release candidate stemcell version (%s) is ahead of, or equal to, the master stemcell version (%s). Proceeding.",
-		releaseCandidateStemcell.Version, masterStemcell.Version)
+	log.Printf("Release candidate stemcell version (%s) is ahead of, or equal to, the main stemcell version (%s). Proceeding.",
+		releaseCandidateStemcell.Version, mainStemcell.Version)
 }

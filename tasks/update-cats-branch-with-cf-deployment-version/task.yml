@@ -19,4 +19,4 @@ run:
 
 params:
   DEPLOY_KEY:
-  CATS_BRANCH: master
+  CATS_BRANCH: main
