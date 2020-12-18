@@ -53,7 +53,7 @@ resources:
 
 - name: bosh-cli-github-release
   type: github-release
-  icon: github-face
+  icon: github
   source:
     user: cloudfoundry
     repository: bosh-cli
@@ -61,7 +61,7 @@ resources:
 
 - name: terraform-github-release
   type: github-release
-  icon: github-face
+  icon: github
   source:
     user: hashicorp
     repository: terraform
@@ -69,7 +69,7 @@ resources:
 
 - name: bbl-github-release
   type: github-release
-  icon: github-face
+  icon: github
   source:
     user: cloudfoundry
     repository: bosh-bootloader
