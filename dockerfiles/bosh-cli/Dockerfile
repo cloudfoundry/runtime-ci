@@ -1,4 +1,4 @@
-FROM relintdockerhubpushbot/relint-base
+FROM cloudfoundry/relint-base
 
 # bosh-cli
 ARG bosh_cli_version

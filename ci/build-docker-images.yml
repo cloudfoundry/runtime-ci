@@ -79,7 +79,7 @@ resources:
   type: docker-image
   icon: docker
   source:
-    repository: relintdockerhubpushbot/relint-base
+    repository: cloudfoundry/relint-base
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -88,7 +88,7 @@ resources:
   type: docker-image
   icon: docker
   source:
-    repository: relintdockerhubpushbot/bosh-cli
+    repository: cloudfoundry/bosh-cli
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
@@ -113,7 +113,7 @@ resources:
   type: docker-image
   icon: docker
   source:
-    repository: relintdockerhubpushbot/stemcell-version-bump-resource
+    repository: cloudfoundry/stemcell-version-bump-resource
     username: ((dockerhub.username))
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
