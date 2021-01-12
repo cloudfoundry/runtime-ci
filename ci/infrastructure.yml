@@ -1,6 +1,6 @@
 ---
 groups:
-- name: fresh/luna
+- name: fresh-luna
   jobs:
   - add-claimed-lock-fresh
   - setup-infrastructure-fresh
@@ -8,7 +8,7 @@ groups:
   - destroy-infrastructure-fresh
   - remove-claimed-lock-fresh
 
-- name: upgrade/trelawney
+- name: upgrade-trelawney
   jobs:
   - add-claimed-lock-upgrade
   - setup-infrastructure-upgrade
@@ -16,13 +16,21 @@ groups:
   - destroy-infrastructure-upgrade
   - remove-claimed-lock-upgrade
 
-- name: experimental/hermione
+- name: experimental-hermione
   jobs:
   - add-claimed-lock-experimental
   - setup-infrastructure-experimental
   - update-infrastructure-experimental
   - destroy-infrastructure-experimental
   - remove-claimed-lock-experimental
+
+- name: cats
+  jobs:
+  - add-claimed-lock-cats
+  - setup-infrastructure-cats
+  - update-infrastructure-cats
+  - destroy-infrastructure-cats
+  - remove-claimed-lock-cats
 
 - name: bbr
   jobs:
@@ -32,7 +40,7 @@ groups:
   - destroy-infrastructure-bbr
   - remove-claimed-lock-bbr
 
-- name: lite/snitch
+- name: lite-snitch
   jobs:
   - add-claimed-lock-lite
   - setup-infrastructure-lite
@@ -40,7 +48,7 @@ groups:
   - update-infrastructure-lite
   - remove-claimed-lock-lite
 
-- name: stable/bellatrix
+- name: stable-bellatrix
   jobs:
   - add-claimed-lock-stable
   - setup-infrastructure-stable
@@ -228,6 +236,15 @@ resources:
     pool: cf-deployment/experimental
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
+- name: cats-pool
+  type: pool
+  icon: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: main
+    pool: cats
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+
 - name: bbr-pool
   type: pool
   icon: pool
@@ -359,6 +376,20 @@ jobs:
   - put: lite-pool
     params: {add_claimed: lite-pool}
 
+- name: add-claimed-lock-cats
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cats
+    output_mapping:
+      pool-resource: cats-pool
+  - put: cats-pool
+    params: {add_claimed: cats-pool}
+
 - name: add-claimed-lock-stable
   serial: true
   public: true
@@ -488,6 +519,40 @@ jobs:
     <<: *stable-bbl-up-task-config
   - put: stable-pool
     params: {release: stable-pool}
+
+- name: setup-infrastructure-cats
+  serial_groups: [cats]
+  public: true
+  plan:
+  - get: cats-pool
+    trigger: true
+    passed: [ add-claimed-lock-cats ]
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+    - get: relint-envs
+    - get: bosh-bootloader
+  - task: setup-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    params:
+      BBL_STATE_DIR: environments/test/cats/bbl-state
+      BBL_IAAS: gcp
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
+      BBL_GCP_REGION: us-central1
+      BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
+      BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
+      LB_DOMAIN: cats.cf-app.com
+      BBL_CONFIG_DIR: plan-patches/network-lb-gcp
+      BBL_ENV_NAME: cats
+    input_mapping:
+      bbl-state: relint-envs
+      bbl-config: bosh-bootloader
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - put: cats-pool
+    params: {release: cats-pool}
 
 - name: setup-infrastructure-maxime
   serial: true
@@ -627,6 +692,43 @@ jobs:
       <<: *lite-bbl-up-task-config
     - put: lite-pool
       params: {release: lite-pool}
+
+- name: update-infrastructure-cats
+  serial: true
+  public: true
+  plan:
+  - timeout: 12h
+    do:
+    - in_parallel:
+      - put: cats-pool
+        params: {acquire: true}
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: bosh-bootloader
+      - get: every-tuesday-morning
+        trigger: true
+    - task: update-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      params:
+        BBL_STATE_DIR: environments/test/cats/bbl-state
+        BBL_IAAS: gcp
+        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
+        BBL_GCP_REGION: us-central1
+        BBL_LB_CERT: ((cats_cf_lb_cert.certificate))
+        BBL_LB_KEY: ((cats_cf_lb_cert.private_key))
+        LB_DOMAIN: cats.cf-app.com
+        BBL_CONFIG_DIR: plan-patches/network-lb-gcp
+        BBL_ENV_NAME: cats
+      input_mapping:
+        bbl-state: relint-envs
+        bbl-config: bosh-bootloader
+      ensure:
+        put: relint-envs
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - put: cats-pool
+      params: {release: cats-pool}
 
 - name: update-infrastructure-stable
   serial: true
@@ -802,6 +904,34 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-cats
+  serial_groups: [cats]
+  public: true
+  plan:
+  - in_parallel:
+    - put: cats-pool
+      params: {claim: cats}
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/cats/bbl-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cats/google_account_creds.json
+      BBL_STATE_DIR: environments/test/cats/bbl-state
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
 - name: destroy-infrastructure-stable
   serial: true
   public: true
@@ -911,6 +1041,23 @@ jobs:
       pool-resource: experimental-pool
   - put: experimental-pool
     params: {remove: experimental-pool}
+
+- name: remove-claimed-lock-cats
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - get: cats-pool
+    passed: [ destroy-infrastructure-cats ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cats
+    output_mapping:
+      pool-resource: cats-pool
+  - put: cats-pool
+    params: {remove: cats-pool}
 
 - name: remove-claimed-lock-bbr
   serial: true
