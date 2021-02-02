@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PROJECT_DIR="$(cd $(dirname $0)/.. && pwd)"
+
 main() {
   local CF_D_PIPELINES=(build-docker-images chore-bot infrastructure runtime-ci concourse)
   local PIPELINE=${1?"Valid input ${CF_D_PIPELINES[@]}"}

@@ -155,6 +155,7 @@ jobs:
         trigger: true
       - get: bbl-github-release
         trigger: true
+        attempts: 3
       - get: terraform-github-release
         trigger: true
     - task: create-bosh-cli-json
