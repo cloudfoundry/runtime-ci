@@ -1,5 +1,0 @@
-#!/bin/bash -eux
-
-cp -R chore-bot-source/* chore-bot-source-with-config
-cp chore-bot-config/apps/chore_bot/config.yml chore-bot-source-with-config
-
