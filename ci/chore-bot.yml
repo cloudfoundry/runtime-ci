@@ -25,33 +25,45 @@ resources:
     branch: main
     uri: https://github.com/cloudfoundry/runtime-ci
 
-- name: pws
-  type: cf
-  icon: cloud
-  source:
-    api: https://api.run.pivotal.io
-    username: ((pws_user.username))
-    password: ((pws_user.password))
-    organization: release-integration
-    space: concourse-bot
-
 jobs:
 - name: deploy-chore-bot
   serial: true
   plan:
-  - get: chore-bot-source
-  - get: chore-bot-config-and-manifest
-    trigger: true
-  - get: runtime-ci
+  - in_parallel:
+    - get: chore-bot-source
+    - get: chore-bot-config-and-manifest
+      trigger: true
+    - get: runtime-ci
   - task: unit-tests
     file: runtime-ci/tasks/run-chore-bot-tests/task.yml
   - task: copy-config-to-app-path
     file: runtime-ci/tasks/copy-chore-bot-config/task.yml
     input_mapping:
       chore-bot-config: chore-bot-config-and-manifest
-  - put: pws
-    params:
-      path: chore-bot-source-with-config
-      manifest: chore-bot-config-and-manifest/apps/chore_bot/manifest.yml
-      environment_variables:
-        TRACKER_API_TOKEN: ((cf_relint_tracker_api_token))
+  - task: cf-push
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: cloudfoundry/cf-for-k8s-ci
+      inputs:
+      - name: chore-bot-source-with-config
+      - name: chore-bot-config-and-manifest
+      params:
+        CF_DOMAIN: long-lived-sli.cf-for-k8s.relint.rocks
+        CF_ORG: team-apps
+        APP_NAME: chore-bot
+      run:
+        path: /bin/bash
+        args:
+        - -euc
+        - |
+          cf api "api.${CF_DOMAIN}" --skip-ssl-validation
+          cf auth ((ll_dep_cf_user)) ((ll_dep_cf_admin_pass))
+
+          # assuming org and space is created when the foundation is
+          cf target -o "${CF_ORG}" -s "${APP_NAME}"
+
+          echo "Pushing ${APP_NAME}"
+          cf push ${APP_NAME} -p chore-bot-source-with-config -f chore-bot-config-and-manifest/apps/chore_bot/manifest.yml | grep -v "value:"
