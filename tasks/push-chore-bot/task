@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+
+cp chore-bot-config-and-manifest/apps/chore_bot/config.yml chore-bot-source/
+
+cf api "api.${CF_DOMAIN}" --skip-ssl-validation
+cf auth "${CF_USERNAME}" "${CF_PASSWORD}"
+
+# assuming org and space is created when the foundation is
+cf target -o "${CF_ORG}" -s "${APP_NAME}"
+
+echo "Pushing ${APP_NAME}"
+cf push "${APP_NAME}" -p chore-bot-source -f chore-bot-config-and-manifest/apps/chore_bot/manifest.yml | grep -v "value:"
