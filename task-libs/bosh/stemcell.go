@@ -63,6 +63,10 @@ func readFile(path string) (string, error) {
 }
 
 func (s Stemcell) CompareVersion(base Stemcell) (int, error) {
+	if s.OS != base.OS {
+		return 0, fmt.Errorf("stemcell OS mismatch: %q vs %q", s.OS, base.OS)
+	}
+
 	version, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse stemcell version %q: %w", s.Version, err)
@@ -77,6 +81,10 @@ func (s Stemcell) CompareVersion(base Stemcell) (int, error) {
 }
 
 func (s Stemcell) DetectBumpTypeFrom(base Stemcell) (string, error) {
+	if s.OS != base.OS {
+		return "major", nil
+	}
+
 	version, err := semver.Parse(fmt.Sprintf("%s.0", s.Version))
 	if err != nil {
 		return "", fmt.Errorf("failed to parse stemcell version %q: %w", s.Version, err)

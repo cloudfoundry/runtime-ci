@@ -1,9 +1,9 @@
 package bosh_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -135,15 +135,30 @@ var _ = Describe("Stemcell", func() {
 
 			Expect(actualErr).To(MatchError("failed to parse stemcell version \"\": No Major.Minor.Patch elements found"))
 		})
+
+		It("returns an error when the stemcell OS do not match", func() {
+			stemcell1 = Stemcell{
+				OS:      "os1",
+				Version: "5",
+			}
+			stemcell2 = Stemcell{
+				OS:      "os2",
+				Version: "1.2",
+			}
+
+			_, actualErr := stemcell1.CompareVersion(stemcell2)
+
+			Expect(actualErr).To(MatchError("stemcell OS mismatch: \"os1\" vs \"os2\""))
+		})
 	})
 
 	Describe("DetectBumpTypeFrom", func() {
 		var (
 			targetStemcell Stemcell
-			baseStemcell Stemcell
+			baseStemcell   Stemcell
 		)
 
-		Context("is a forward bump", func(){
+		Context("is a forward bump for the same OS", func() {
 			It("returns \"minor\" when the stemcells have the same major version but the target's minor version is greater", func() {
 				targetStemcell = Stemcell{
 					OS:      "whatever",
@@ -177,8 +192,7 @@ var _ = Describe("Stemcell", func() {
 			})
 		})
 
-		Context("is NOT a forward bump", func(){
-
+		Context("is NOT a forward bump for the same OS", func() {
 			It("returns a non-forward bump error", func() {
 				targetStemcell = Stemcell{
 					OS:      "whatever",
@@ -191,6 +205,24 @@ var _ = Describe("Stemcell", func() {
 
 				_, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
 				Expect(actualErr).To(MatchError(fmt.Errorf("Change from 456.2 to 456.1 is not a forward bump")))
+			})
+		})
+
+		Context("is a bump to a new OS", func() {
+			It("returns \"major\" when target stemcell's OS changes", func() {
+				targetStemcell = Stemcell{
+					OS:      "new-os",
+					Version: "1.1",
+				}
+				baseStemcell = Stemcell{
+					OS:      "whatever",
+					Version: "460.0",
+				}
+
+				actualResult, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
+
+				Expect(actualErr).NotTo(HaveOccurred())
+				Expect(actualResult).To(Equal("major"))
 			})
 		})
 	})

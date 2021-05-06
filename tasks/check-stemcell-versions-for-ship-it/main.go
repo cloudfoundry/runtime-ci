@@ -35,6 +35,12 @@ func main() {
 	mainStemcell := mainManifest.Stemcells[0]
 	releaseCandidateStemcell := releaseCandidateManifest.Stemcells[0]
 
+	if mainStemcell.OS != releaseCandidateStemcell.OS {
+		log.Printf("Release candidate stemcell OS (%s) is different to the main stemcell OS (%s). Proceeding.",
+			releaseCandidateStemcell.OS, mainStemcell.OS)
+		os.Exit(0)
+	}
+
 	result, err := releaseCandidateStemcell.CompareVersion(mainStemcell)
 	if err != nil {
 		log.Fatalf("Failed to compare stemcell versions: %s", err)
