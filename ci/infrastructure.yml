@@ -67,7 +67,7 @@ fresh-bbl-up-task: &fresh-bbl-up-task-config
     bbl-config: relint-envs
     bbl-state: relint-envs
   params:
-    BBL_CONFIG_DIR: environments/test/trelawney/bbl-config
+    BBL_CONFIG_DIR: environments/test/luna/bbl-config
     BBL_ENV_NAME: luna-fresh
     # This is us-west1 because the bbl isoseg patch has us-west1 hardcoded
     BBL_GCP_REGION: us-west1
