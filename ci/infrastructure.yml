@@ -116,9 +116,9 @@ experimental-bbl-up-task: &experimental-bbl-up-task-config
     BBL_CONFIG_DIR: environments/test/hermione/bbl-config
     BBL_ENV_NAME: hermione-experimental
     BBL_IAAS: aws
-    BBL_LB_CERT: ((hermione_lbs_certificate))
-    BBL_LB_CERT_CHAIN: ((relint_ca.certificate))
-    BBL_LB_KEY: ((hermione_lbs_private_key))
+    BBL_LB_CERT: ((hermione_lb.certificate))
+    BBL_LB_CERT_CHAIN: ((hermione_lb.ca))
+    BBL_LB_KEY: ((hermione_lb.private_key))
     BBL_STATE_DIR: environments/test/hermione/bbl-state
     LB_DOMAIN: hermione.cf-app.com
     TRUSTED_CA: ((relint_ca.certificate))
