@@ -6,7 +6,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.18.1
-	github.com/spf13/pflag v1.0.3
+	github.com/spf13/pflag v1.0.5
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
 )
