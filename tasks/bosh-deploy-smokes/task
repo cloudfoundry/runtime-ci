@@ -8,20 +8,23 @@ function bosh_deploy() {
   cat << EOF > smokes-dev-release.yml
 ---
 name: cf-smoke-tests
+
 update:
   canaries: 1
   canary_watch_time: 30000-1200000
   max_in_flight: 5
   serial: false
   update_watch_time: 5000-1200000
+
 addons:
 - name: bpm
   include:
     stemcell:
-    - os: ubuntu-xenial
+    - os: ubuntu-bionic
   jobs:
   - name: bpm
     release: bpm
+
 instance_groups:
 - name: smoke-tests
   lifecycle: errand
@@ -82,7 +85,7 @@ instance_groups:
 
 stemcells:
 - alias: default
-  os: ubuntu-xenial
+  os: ubuntu-bionic
   version: latest
 - alias: windows2019
   os: windows2019
