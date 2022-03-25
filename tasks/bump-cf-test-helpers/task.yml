@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: cf-test-helpers
-  path: go/src/github.com/cloudfoundry-incubator/cf-test-helpers
+  path: go/src/github.com/cloudfoundry/cf-test-helpers
 - name: repository
 
 outputs:

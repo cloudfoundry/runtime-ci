@@ -5,7 +5,7 @@ source runtime-ci/tasks/shared-functions
 export GOPATH="$GOPATH:$PWD/go"
 export GO111MODULE=on
 
-pushd go/src/github.com/cloudfoundry-incubator/cf-test-helpers
+pushd go/src/github.com/cloudfoundry/cf-test-helpers
   CF_TEST_HELPERS_SHA=$(git rev-parse HEAD)
 popd
 
@@ -14,13 +14,13 @@ mkdir -p go/src/github.com/cloudfoundry
 pushd repository
   if [[ "${USE_GO_MOD}" == "true" ]]; then
     go mod edit -droprequire=launchpad.net/gocheck
-    go get "github.com/cloudfoundry-incubator/cf-test-helpers@${CF_TEST_HELPERS_SHA}"
+    go get "github.com/cloudfoundry/cf-test-helpers@${CF_TEST_HELPERS_SHA}"
     go mod tidy
     go mod vendor
   else
     ln -sf $PWD ../go/src/github.com/$REPOSITORY
     pushd ../go/src/github.com/$REPOSITORY
-      dep ensure -update "github.com/cloudfoundry-incubator/cf-test-helpers"
+      dep ensure -update "github.com/cloudfoundry/cf-test-helpers"
     popd
   fi
 
