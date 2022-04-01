@@ -18,7 +18,7 @@ RUN \
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
-RUN go get -u github.com/onsi/ginkgo/...
+RUN go install github.com/onsi/ginkgo/...@latest
 
 # jq
 RUN \
