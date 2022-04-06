@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 
-set -eux
+set -euo pipefail
 
 # shellcheck disable=SC1091
 source cf-deployment-concourse-tasks/shared-functions
 
 setup_bosh_env_vars
 
-set +x
-  pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
-    BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
-    BOSH_GW_HOST=$(bbl jumpbox-address)
-  popd > /dev/null
-set -x
+pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+  BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
+  BOSH_GW_HOST=$(bbl jumpbox-address)
+popd > /dev/null
 
-setup_password_from_credhub "cf_admin_password"
-
-set +x
 echo '{}' | jq \
---arg cf_deployment_name ${DEPLOYMENT_NAME} \
+--arg cf_deployment_name "${DEPLOYMENT_NAME}" \
 --arg cf_api_url "https://api.${SYSTEM_DOMAIN}" \
---arg cf_admin_password ${cf_admin_password} \
+--arg cf_admin_password "$(get_password_from_credhub cf_admin_password)" \
 --arg bosh_environment "${BOSH_ENVIRONMENT}" \
 --arg bosh_gw_host "${BOSH_GW_HOST}" \
 --arg bosh_gw_private_key "${BOSH_GW_PRIVATE_KEY}" \
@@ -29,6 +24,7 @@ echo '{}' | jq \
 --arg bosh_client_secret "${BOSH_CLIENT_SECRET}" \
 --arg ssh_destination_cidr "${SSH_DESTINATION_CIDR}" \
 --arg nfs_broker_url "http://nfs-broker.${SYSTEM_DOMAIN}" \
+--arg smb_broker_url "http://smbbroker.${SYSTEM_DOMAIN}" \
 --arg credhub_client_secret "$(get_password_from_credhub credhub_admin_client_secret)" \
 '{
     "cf_deployment_name": $cf_deployment_name,
@@ -46,6 +42,9 @@ echo '{}' | jq \
     "nfs_service_name": "nfs",
     "nfs_plan_name": "Existing",
     "nfs_broker_url": $nfs_broker_url,
+    "smb_service_name": "smb",
+    "smb_plan_name": "Existing",
+    "smb_broker_url": $smb_broker_url,
     "timeout_in_minutes": 30,
     "delete_and_redeploy_cf": false,
     "include_cf-app": true,
@@ -55,6 +54,7 @@ echo '{}' | jq \
     "include_cf-routing": true,
     "include_app-uptime": true,
     "include_cf-nfsbroker": true,
+    "include_cf-smbbroker": true,
     "credhub_client_name": "credhub_admin_client",
     "credhub_client_secret": $credhub_client_secret
 }' > drats-config/drats_integration_config.json
