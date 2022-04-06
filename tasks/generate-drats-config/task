@@ -6,6 +6,7 @@ set -euo pipefail
 source cf-deployment-concourse-tasks/shared-functions
 
 setup_bosh_env_vars
+set +x
 
 pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
   BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
