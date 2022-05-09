@@ -20,7 +20,7 @@ addons:
 - name: bpm
   include:
     stemcell:
-    - os: ubuntu-xenial
+    - os: ubuntu-bionic
   jobs:
   - name: bpm
     release: bpm
@@ -85,7 +85,7 @@ instance_groups:
 
 stemcells:
 - alias: default
-  os: ubuntu-xenial
+  os: ubuntu-bionic
   version: latest
 - alias: windows2019
   os: windows2019
