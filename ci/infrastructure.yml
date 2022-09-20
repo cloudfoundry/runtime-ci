@@ -48,6 +48,14 @@ groups:
   - update-infrastructure-lite
   - remove-claimed-lock-lite
 
+- name: windows-cedric
+  jobs:
+  - add-claimed-lock-windows
+  - setup-infrastructure-windows
+  - destroy-infrastructure-windows
+  - update-infrastructure-windows
+  - remove-claimed-lock-windows
+
 - name: stable-bellatrix
   jobs:
   - add-claimed-lock-stable
@@ -169,6 +177,26 @@ lite-bbl-up-task: &lite-bbl-up-task-config
       repository: updated-bbl-state
       rebase: true
 
+windows-bbl-up-task: &windows-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-state: relint-envs
+    bbl-config: relint-envs
+  params:
+    # BBL_ENV_NAME: cedric-windows
+    BBL_GCP_REGION: europe-west3
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cedric/cedric.key.json
+    BBL_IAAS: gcp
+    BBL_LB_CERT: ../cert.pem
+    BBL_LB_KEY: ../key.pem
+    BBL_STATE_DIR: environments/test/cedric/bbl-state
+    LB_DOMAIN: cf.cedric.env.wg-ard.ci.cloudfoundry.org
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
 stable-bbl-up-task: &stable-bbl-up-task-config
   file: cf-deployment-concourse-tasks/bbl-up/task.yml
   input_mapping:
@@ -253,6 +281,15 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: main
     pool: bbr
+    private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
+
+- name: windows-pool
+  type: pool
+  icon: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: main
+    pool: cf-deployment/windows
     private_key: ((relint_ci_pools_readwrite_deploy_key.private_key))
 
 # Plan patches
@@ -404,6 +441,20 @@ jobs:
       pool-resource: stable-pool
   - put: stable-pool
     params: {add_claimed: stable-pool}
+
+- name: add-claimed-lock-windows
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cedric
+    output_mapping:
+      pool-resource: windows-pool
+  - put: windows-pool
+    params: {add_claimed: windows-pool}
 
 # Setup infrastructure
 - name: setup-infrastructure-fresh
@@ -583,6 +634,21 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: setup-infrastructure-windows
+  serial: true
+  public: true
+  plan:
+  - get: windows-pool
+    trigger: true
+    passed: [ add-claimed-lock-windows ]
+  - in_parallel:
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - task: setup-infrastructure
+    <<: *windows-bbl-up-task-config
+  - put: windows-pool
+    params: {release: windows-pool}
+
 # Update infrastructure
 - name: update-infrastructure-fresh
   serial: true
@@ -758,6 +824,24 @@ jobs:
       <<: *stable-bbl-up-task-config
     - put: stable-pool
       params: {release: stable-pool}
+
+- name: update-infrastructure-windows
+  serial: true
+  public: true
+  plan:
+  - timeout: 12h
+    do:
+    - in_parallel:
+      - put: windows-pool
+        params: {acquire: true}
+      - get: relint-envs
+      - get: cf-deployment-concourse-tasks
+      - get: every-tuesday-morning
+        trigger: true
+    - task: update-infrastructure
+      <<: *windows-bbl-up-task-config
+    - put: windows-pool
+      params: {release: windows-pool}
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
@@ -989,6 +1073,34 @@ jobs:
             repository: updated-bbl-state
             rebase: true
 
+- name: destroy-infrastructure-windows
+  serial: true
+  public: true
+  plan:
+  - in_parallel:
+    - put: windows-pool
+      params: {claim: cedric}
+    - get: relint-envs
+    - get: cf-deployment-concourse-tasks
+  - task: guarantee-no-existing-cf-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_STATE_DIR: environments/test/cedric/bbl-state
+  - task: destroy-infrastructure
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: relint-envs
+    params:
+      BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/cedric/cedric.key.json
+      BBL_STATE_DIR: environments/test/cedric/bbl-state
+    ensure:
+      put: relint-envs
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
   serial: true
@@ -1108,3 +1220,20 @@ jobs:
       pool-resource: stable-pool
   - put: stable-pool
     params: {remove: stable-pool}
+
+- name: remove-claimed-lock-windows
+  serial: true
+  public: true
+  plan:
+  - get: runtime-ci
+  - get: windows-pool
+    passed: [ destroy-infrastructure-windows ]
+    trigger: true
+  - task: prepare-to-modify-pool-resource
+    file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+    params:
+      NAME: cedric
+    output_mapping:
+      pool-resource: windows-pool
+  - put: windows-pool
+    params: {remove: windows-pool}
