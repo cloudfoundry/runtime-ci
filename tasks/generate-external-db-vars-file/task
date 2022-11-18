@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
 
-pushd "bbl-state/$BBL_STATE_DIR"
-  echo "Grabbing DB name from bbl outputs..."
+pushd "bbl-state/${BBL_STATE_DIR}"
+  echo "Retrieving DB name from bbl outputs..."
   DB_NAME=$(bbl outputs | grep db_name | awk '{print $2}')
 popd
 
 echo "Generating external DB terraform vars file..."
 cat <<EOT > vars-file/db.tfvars
 cf_db_name = "${DB_NAME}"
-project = "cf-relint-trelawney"
-region = "us-central1"
+project = "${GCP_PROJECT_ID}"
+region = "${GCP_REGION}"
 service_account_key = <<EOF
 $(echo ${GCP_SERVICE_ACCOUNT_JSON} | jq . | sed 's/\n/\\n/g')
 EOF

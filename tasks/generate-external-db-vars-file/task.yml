@@ -15,6 +15,8 @@ outputs:
 
 params:
   BBL_STATE_DIR: bbl-state
+  GCP_PROJECT_ID:
+  GCP_REGION:
   GCP_SERVICE_ACCOUNT_JSON:
   VARS_DIR: bbl-state
 
