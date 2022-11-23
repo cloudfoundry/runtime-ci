@@ -9,6 +9,7 @@ image_resource:
 
 inputs:
 - name: runtime-ci
+- name: cf-deployment
 
 run:
   path: runtime-ci/tasks/summarize-ops-files/task
