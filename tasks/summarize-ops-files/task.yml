@@ -12,3 +12,6 @@ inputs:
 
 run:
   path: runtime-ci/tasks/summarize-ops-files/task
+
+params:
+  TASK_LIST: "bosh-deploy-cf-latest-release bosh-deploy-cf-develop"
