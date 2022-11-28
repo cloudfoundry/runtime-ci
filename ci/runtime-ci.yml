@@ -56,6 +56,15 @@ resources:
     paths:
     - ci/*
 
+- name: cf-test-helpers
+  type: git
+  icon: github
+  source:
+    branch: main
+    uri: https://github.com/cloudfoundry/cf-test-helpers.git
+    paths:
+      - ci/*
+
 - name: daily
   type: time
   icon: clock-outline
@@ -91,6 +100,8 @@ jobs:
     - get: cf-deployment-concourse-tasks
       trigger: true
     - get: cf-for-k8s
+      trigger: true
+    - get: cf-test-helpers
       trigger: true
   - task: verify-every-task-is-used-in-a-pipeline
     file: runtime-ci/tasks/verify-every-task-is-used-in-a-pipeline/task.yml
