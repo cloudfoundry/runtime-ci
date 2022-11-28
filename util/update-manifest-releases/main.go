@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 )
 
-var cfDeploymentIgnoreDirs = []string{".git", "scripts", "example-vars-files", "iaas-support", "ci", "units"}
+var cfDeploymentIgnoreDirs = []string{".git", ".github", "scripts", "example-vars-files", "iaas-support", "ci", "units"}
 var cfDeploymentIgnoreFiles = []string{
 	"cf-deployment.yml",
 	".overcommit.yml",
