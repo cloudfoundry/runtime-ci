@@ -3,5 +3,5 @@
 export GOPATH="$GOPATH:$PWD/go"
 
 pushd go/src/github.com/cloudfoundry/cf-acceptance-tests/helpers
-  ginkgo -r
+  go run github.com/onsi/ginkgo/v2/ginkgo -r --procs=3 --compilers=3 --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
 popd
