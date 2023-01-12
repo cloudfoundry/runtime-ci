@@ -13,7 +13,6 @@ RUN \
     wget \
     curl \
     ack-grep \
-    go-dep \
     python3-pip
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
