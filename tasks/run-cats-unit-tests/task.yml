@@ -9,7 +9,6 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: cf-acceptance-tests
-  path: go/src/github.com/cloudfoundry/cf-acceptance-tests
 
 run:
   path: runtime-ci/tasks/run-cats-unit-tests/task
