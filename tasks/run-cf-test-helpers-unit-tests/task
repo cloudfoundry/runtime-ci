@@ -1,9 +1,6 @@
 #!/bin/bash -exu
 
-export GOPATH="$GOPATH:$PWD/go"
-
-go install github.com/onsi/ginkgo/...@latest
-
-pushd go/src/github.com/cloudfoundry/cf-test-helpers
-  ginkgo -r
+pushd cf-test-helpers
+  go install github.com/onsi/ginkgo/v2/ginkgo
+  ginkgo -r --procs=3 --compilers=3 --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
 popd
