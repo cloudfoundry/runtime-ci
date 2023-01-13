@@ -1,9 +1,6 @@
 require 'yaml'
 
 Dir.glob("pipelines/*.yml").each do |f|
-  if f == "pipelines/chore-bot.yml"
-    next
-  end
   job_array = YAML.load_file(f)['jobs'].map{ |j| {:name => j['name'], :public => j['public']} }
   job_array.each do |job|
     RSpec.describe "pipeline jobs" do
