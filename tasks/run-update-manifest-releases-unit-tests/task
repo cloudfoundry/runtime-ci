@@ -1,13 +1,5 @@
 #!/bin/bash -exu
 
-function main() {
-  local root_dir
-  root_dir="${1}"
-
-  pushd "${root_dir}/runtime-ci/util/update-manifest-releases"
-    go install github.com/onsi/ginkgo/...@latest
-    ginkgo -r -randomizeSuites -randomizeAllSpecs .
-  popd
-}
-
-main "${PWD}"
+pushd "runtime-ci/util/update-manifest-releases" > /dev/null
+  go run github.com/onsi/ginkgo/v2/ginkgo -r --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
+popd > /dev/null
