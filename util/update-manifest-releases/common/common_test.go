@@ -2,7 +2,7 @@ package common_test
 
 import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

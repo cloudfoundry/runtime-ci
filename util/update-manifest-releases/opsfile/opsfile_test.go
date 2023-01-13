@@ -8,7 +8,7 @@ import (
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
