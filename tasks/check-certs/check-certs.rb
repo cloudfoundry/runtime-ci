@@ -25,12 +25,15 @@ class CertChecker
   end
 
   def check_file(input_file)
-    puts "Checking #{input_file}..." if @verbose # #{File.basename(input_file)}..." if @verbose
-    certs = YAML::load(File.open(input_file))
-
-    @found_certs = {}
-    find_certs(certs, [])
-    puts "Found #{@found_certs.size} cert(s)" if @found_certs.size > 0 && @verbose
+    puts "Checking #{input_file}..." if @verbose
+    if File.extname(input_file) == ".yml"
+      certs = YAML::load(File.open(input_file))
+      @found_certs = {}
+      find_certs(certs, [])
+      puts "Found #{@found_certs.size} cert(s)" if @found_certs.size > 0 && @verbose
+    elsif File.extname(input_file) == ".crt"
+      @found_certs = {"certificate": File.read(input_file)}
+    end
 
     status = true
     @found_certs.each do |k, cert|
@@ -137,10 +140,12 @@ options = parse(ARGV)
 overall_exit_code = 0
 ok_files = %{ 'director-vars-store.yml': true, 'jumpbox-vars-store.yml': true, 'vars.yml': true }
 Find.find(options.path) do |input_file|
-  next if FileTest.directory?(input_file) || !ok_files[File.basename(input_file)]
-  checker = CertChecker.new(options.days_left_threshold)
-  if !checker.check_file(input_file)
-    overall_exit_code = 1
+  next if FileTest.directory?(input_file)
+  if ok_files[File.basename(input_file)] || File.extname(input_file) == ".crt"
+    checker = CertChecker.new(options.days_left_threshold)
+    if !checker.check_file(input_file)
+      overall_exit_code = 1
+    end
   end
 end
 
