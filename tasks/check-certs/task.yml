@@ -13,6 +13,9 @@ inputs:
 params:
   DAYS_LEFT_THRESHOLD: 16
   PATH_TO_VERIFY: relint-envs
+  PATHS_TO_IGNORE:
+  # - Optional
+  # - List of paths to ignore, relative to `PATH_TO_VERIFY`
 
 run:
   path: runtime-ci/tasks/check-certs/task
