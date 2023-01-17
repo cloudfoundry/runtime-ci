@@ -5,6 +5,7 @@ require 'find'
 require 'open3'
 require 'optparse'
 require 'ostruct'
+require 'pathname'
 require 'yaml'
 
 class CertChecker
@@ -109,6 +110,7 @@ def parse(args)
   options = OpenStruct.new
   options.days_left_threshold = 16
   options.path = Dir.pwd
+  options.ignore_paths = []
 
   opt_parser = OptionParser.new do |opts|
     opts.banner = "Usage: check-certs.rb [options]"
@@ -126,6 +128,11 @@ def parse(args)
       options.path = path
     end
 
+    opts.on("-i", "--ignore-paths PATH", Array,
+            "Paths to ignore (relative to --path)") do | path|
+      options.ignore_paths = path
+    end
+
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
@@ -139,8 +146,13 @@ options = parse(ARGV)
 
 overall_exit_code = 0
 ok_files = %{ 'director-vars-store.yml': true, 'jumpbox-vars-store.yml': true, 'vars.yml': true }
+if options.ignore_paths.length > 0
+  puts "Ignoring files in #{options.ignore_paths.length} path(s): #{options.ignore_paths}"
+end
+
 Find.find(options.path) do |input_file|
   next if FileTest.directory?(input_file)
+  next if options.ignore_paths.include? Pathname.new(input_file).relative_path_from(options.path).dirname.to_s
   if ok_files[File.basename(input_file)] || File.extname(input_file) == ".crt"
     checker = CertChecker.new(options.days_left_threshold)
     if !checker.check_file(input_file)
