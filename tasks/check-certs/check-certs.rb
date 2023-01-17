@@ -158,7 +158,7 @@ end
 
 Find.find(options.path) do |input_file|
   next if FileTest.directory?(input_file)
-  next if ignore_paths.include? Pathname.new(input_file).relative_path_from(options.path).dirname.to_s
+  next if ignore_paths.include? Pathname.new(input_file).relative_path_from(Pathname.new(options.path)).dirname.to_s
   if ok_files[File.basename(input_file)] || File.extname(input_file) == ".crt"
     checker = CertChecker.new(options.days_left_threshold)
     if !checker.check_file(input_file)
