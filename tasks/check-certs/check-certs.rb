@@ -124,12 +124,14 @@ def parse(args)
     end
 
     opts.on("-p", "--path PATH", String,
-            "Path to dir to test") do | path|
+            "Path to dir to test") do |path|
       options.path = path
     end
 
-    opts.on("-i", "--ignore-paths PATH", Array,
-            "Paths to ignore (relative to --path)") do | path|
+    # this will be passed as YAML fragment from Concourse tasks
+    # use "Object" to allow empty value
+    opts.on("-i", "--ignore-paths PATH", Object,
+            "Paths to ignore (relative to --path)") do |path|
       options.ignore_paths = path
     end
 
@@ -146,13 +148,17 @@ options = parse(ARGV)
 
 overall_exit_code = 0
 ok_files = %{ 'director-vars-store.yml': true, 'jumpbox-vars-store.yml': true, 'vars.yml': true }
+
 if options.ignore_paths.length > 0
-  puts "Ignoring files in #{options.ignore_paths.length} path(s): #{options.ignore_paths}"
+  ignore_paths = YAML::load(options.ignore_paths)
+  puts "Ignoring files in #{ignore_paths.length} path(s): #{ignore_paths}"
+else
+  ignore_paths = []
 end
 
 Find.find(options.path) do |input_file|
   next if FileTest.directory?(input_file)
-  next if options.ignore_paths.include? Pathname.new(input_file).relative_path_from(options.path).dirname.to_s
+  next if ignore_paths.include? Pathname.new(input_file).relative_path_from(options.path).dirname.to_s
   if ok_files[File.basename(input_file)] || File.extname(input_file) == ".crt"
     checker = CertChecker.new(options.days_left_threshold)
     if !checker.check_file(input_file)
