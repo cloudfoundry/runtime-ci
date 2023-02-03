@@ -9,7 +9,6 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: uptimer
-  path: go/src/github.com/cloudfoundry/uptimer
 
 run:
   path: runtime-ci/tasks/run-uptimer-unit-tests/task

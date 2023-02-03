@@ -1,7 +1,5 @@
 #!/bin/bash -exu
 
-export GOPATH="$GOPATH:$PWD/go"
-
-pushd go/src/github.com/cloudfoundry/uptimer
-  ginkgo -r
+pushd uptimer
+  go run github.com/onsi/ginkgo/v2/ginkgo -r --procs=3 --compilers=3 --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
 popd
