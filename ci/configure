@@ -7,7 +7,7 @@ main() {
   local PIPELINE=${1?"Valid input ${CF_D_PIPELINES[@]}"}
 
   set -ex
-  fly -t relint-ci sp -p "${PIPELINE}" -c "${PROJECT_DIR}/ci/${PIPELINE}.yml"
+  fly -t ard sp -p "${PIPELINE}" -c "${PROJECT_DIR}/ci/${PIPELINE}.yml"
 }
 
 main "$@"
