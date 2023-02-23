@@ -103,18 +103,18 @@ update:
     max_in_flight: 1
     update_watch_time: 1
 releases:
-  - name: release-a
-    sha1: ""
-    url: ""
-    version: ""
-  - name: release-b
-    sha1: ""
-    url: ""
-    version: ""
+    - name: release-a
+      sha1: ""
+      url: ""
+      version: ""
+    - name: release-b
+      sha1: ""
+      url: ""
+      version: ""
 stemcells:
-  - alias: default
-    os: some-os
-    version: 1.2.3
+    - alias: default
+      os: some-os
+      version: 1.2.3
 `))
 			})
 		})
