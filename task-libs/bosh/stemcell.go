@@ -2,7 +2,6 @@ package bosh
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -54,7 +53,7 @@ func parseOSfromURL(url string) (string, error) {
 }
 
 func readFile(path string) (string, error) {
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		return "", fmt.Errorf("missing files: %T", err)
 	}
