@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	yaml "gopkg.in/yaml.v2"
@@ -52,7 +51,7 @@ func main() {
 	for _, team := range teams.Teams {
 		for _, release := range team.Releases {
 			if release == releaseRepository {
-				if team.EnableSlackNotifications != nil && *team.EnableSlackNotifications == false {
+				if team.EnableSlackNotifications != nil && !*team.EnableSlackNotifications {
 					fmt.Fprintf(os.Stderr, "Found %s team. Slack notifications are disabled.\n", team.Name)
 				} else {
 					fmt.Fprintf(os.Stderr, "Found %s team. Slack notifications are enabled.\n", team.Name)
@@ -69,7 +68,7 @@ func main() {
 
 func getTeams(teamsPath string) (cfTeams, error) {
 	var teams cfTeams
-	yamlFile, err := ioutil.ReadFile(teamsPath)
+	yamlFile, err := os.ReadFile(teamsPath)
 	if err != nil {
 		return teams, err
 	}
