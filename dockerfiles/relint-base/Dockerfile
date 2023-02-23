@@ -17,8 +17,6 @@ RUN \
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
-RUN go install github.com/onsi/ginkgo/...@latest
-
 # jq
 RUN \
   wget https://github.com/stedolan/jq/releases/download/jq-${jq_version}/jq-linux64 --output-document="/usr/bin/jq" && \
