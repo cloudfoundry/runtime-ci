@@ -2,6 +2,7 @@ package manifest_test
 
 import (
 	"errors"
+	"os"
 	"regexp"
 
 	"gopkg.in/yaml.v2"

@@ -2,6 +2,7 @@ package opsfile_test
 
 import (
 	"errors"
+	"os"
 
 	yaml "gopkg.in/yaml.v2"
 

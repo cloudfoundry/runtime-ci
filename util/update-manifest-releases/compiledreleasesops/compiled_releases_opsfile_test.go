@@ -1,7 +1,7 @@
 package compiledreleasesops_test
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 	. "github.com/onsi/ginkgo/v2"
