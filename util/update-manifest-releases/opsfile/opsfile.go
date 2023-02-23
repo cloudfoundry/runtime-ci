@@ -17,7 +17,7 @@ type Op struct {
 const BadReleaseOpsFormatErrorMessage = "cannot update ops file: make sure all release information is updated with one operation in the ops file"
 
 func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, marshalFunc common.MarshalFunc, unmarshalFunc common.UnmarshalFunc) ([]byte, string, error) {
-	if releaseNames == nil || len(releaseNames) == 0 {
+	if len(releaseNames) == 0 {
 		err := errors.New("releaseNames provided to UpdateReleases must contain at least one release name")
 		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
@@ -70,8 +70,8 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 		}
 	}
 
-	if releaseFound == false {
-		err := errors.New(fmt.Sprintf("Opsfile does not contain release named %s", releaseNames[0]))
+	if !releaseFound {
+		err := fmt.Errorf("Opsfile does not contain release named %s", releaseNames[0])
 		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 
