@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/cloudfoundry/runtime-ci/task-libs/bosh"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
 )
@@ -270,11 +270,10 @@ var _ = Describe("Runner", func() {
 		})
 	})
 
-
 	Describe("WriteStemcellBumpTypeToFile", func() {
 		var (
-			runner    Runner
-			actualErr error
+			runner              Runner
+			actualErr           error
 			expectedBumpTypeDir string
 		)
 
@@ -282,7 +281,7 @@ var _ = Describe("Runner", func() {
 			actualErr = runner.WriteStemcellBumpTypeToFile()
 		})
 
-		BeforeEach(func(){
+		BeforeEach(func() {
 			expectedBumpTypeDir = filepath.Join(buildDir, "stemcell-bump-type")
 			Expect(os.Mkdir(expectedBumpTypeDir, 0777)).To(Succeed())
 			runner.Out = Outputs{expectedBumpTypeDir}

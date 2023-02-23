@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/cloudfoundry/runtime-ci/tasks/export-all-compiled-release-tarballs/stemcell"
@@ -21,7 +21,7 @@ var _ = Describe("List", func() {
 		returnedError  error
 
 		actualStemcells []stemcell.Stemcell
-		actualErr      error
+		actualErr       error
 	)
 
 	BeforeEach(func() {
@@ -79,8 +79,8 @@ var _ = Describe("List", func() {
 				Expect(actualErr).ToNot(HaveOccurred())
 				Expect(actualStemcells).To(ConsistOf(
 					stemcell.Stemcell{
-						Name: "some-stemcell",
-						OS: "some-os",
+						Name:    "some-stemcell",
+						OS:      "some-os",
 						Version: "1.2",
 					},
 				))
