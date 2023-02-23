@@ -3,7 +3,7 @@ package bosh_test
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	. "github.com/onsi/ginkgo"
@@ -68,7 +68,7 @@ stemcells:
 				path := args[0]
 
 				var err error
-				actualManifest, err = ioutil.ReadFile(path)
+				actualManifest, err = os.ReadFile(path)
 				return new(bytes.Buffer), err
 			}
 		})

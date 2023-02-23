@@ -2,7 +2,6 @@ package concourseio
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -99,7 +98,7 @@ func (r *Runner) DetectStemcellBump() error {
 func (r *Runner) WriteStemcellBumpTypeToFile() error {
 	bumpTypeFilePath := filepath.Join(r.Out.bumpTypeDir, "result")
 	fmt.Printf("Writing bump type %q to %s...\n", r.bumpType, bumpTypeFilePath)
-	err := ioutil.WriteFile(bumpTypeFilePath, []byte(r.bumpType), 0644)
+	err := os.WriteFile(bumpTypeFilePath, []byte(r.bumpType), 0644)
 	if err != nil {
 		return err
 	}
@@ -107,7 +106,7 @@ func (r *Runner) WriteStemcellBumpTypeToFile() error {
 }
 
 func readFile(path string) (string, error) {
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		pathDir := filepath.Base(filepath.Dir(path))
 		return "", fmt.Errorf("missing files: '%s'", filepath.Join(pathDir, filepath.Base(path)))

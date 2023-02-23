@@ -2,7 +2,6 @@ package bosh
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -51,13 +50,13 @@ func (m Manifest) Deploy(boshCLI boshCLI) error {
 	if err != nil {
 		return err
 	}
-	tempFile, err := ioutil.TempFile(currentDir, "manifest*.yml")
+	tempFile, err := os.CreateTemp(currentDir, "manifest*.yml")
 	if err != nil {
 		return err
 	}
 	defer os.Remove(tempFile.Name())
 
-	err = ioutil.WriteFile(tempFile.Name(), manifestFile, 0644)
+	err = os.WriteFile(tempFile.Name(), manifestFile, 0644)
 	if err != nil {
 		return err
 	}

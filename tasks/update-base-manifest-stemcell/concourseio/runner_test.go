@@ -1,7 +1,6 @@
 package concourseio
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -20,7 +19,7 @@ var _ = Describe("Runner", func() {
 
 	BeforeEach(func() {
 		var err error
-		buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+		buildDir, err = os.MkdirTemp("", "concourseio-rootdir-")
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -107,9 +106,9 @@ var _ = Describe("Runner", func() {
 
 		Context("when the stemcell dir contains all necessary files", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
 					To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
 					To(Succeed())
 			})
 
@@ -177,7 +176,7 @@ var _ = Describe("Runner", func() {
 			BeforeEach(func() {
 				expectedInFile = []byte("This is my manifest")
 				manifestPath := filepath.Join(expectedCFDeploymentDir, "cf-deployment.yml")
-				Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
+				Expect(os.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
 			})
 
 			It("Updates the manifest", func() {
@@ -191,12 +190,12 @@ var _ = Describe("Runner", func() {
 					expectedInFile = []byte("This is the manifest in my updatedCFDeploymentDir")
 
 					manifestPath := filepath.Join(expectedUpdatedCFDeploymentDir, "cf-deployment.yml")
-					Expect(ioutil.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
+					Expect(os.WriteFile(manifestPath, expectedInFile, 0777)).To(Succeed())
 				})
 
 				It("writes the file to the output file", func() {
 					Expect(actualErr).ToNot(HaveOccurred())
-					actualOutFile, err := ioutil.ReadFile(filepath.Join(expectedUpdatedCFDeploymentDir, "cf-deployment.yml"))
+					actualOutFile, err := os.ReadFile(filepath.Join(expectedUpdatedCFDeploymentDir, "cf-deployment.yml"))
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(actualOutFile).To(Equal(manifestUpdateFileOutput))
@@ -228,7 +227,7 @@ var _ = Describe("Runner", func() {
 		It("Writes a message with the new stemcell version", func() {
 			Expect(actualErr).ToNot(HaveOccurred())
 
-			actualCommitMessage, err := ioutil.ReadFile(commitMessagePath)
+			actualCommitMessage, err := os.ReadFile(commitMessagePath)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(actualCommitMessage)).To(Equal(fmt.Sprintf("Update stemcell to %s \"%s\"",
 				expectedStemcell.OS, expectedStemcell.Version)))

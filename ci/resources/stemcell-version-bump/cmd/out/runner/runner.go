@@ -3,7 +3,6 @@ package runner
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"stemcell-version-bump/resource"
@@ -14,14 +13,14 @@ type OutResponse struct {
 }
 
 func NewVersion(request resource.OutRequest) (resource.Version, error) {
-	versionContent, err := ioutil.ReadFile(request.Params.VersionFile)
+	versionContent, err := os.ReadFile(request.Params.VersionFile)
 	if err != nil {
 		dir, _ := os.Getwd()
 		log.Printf("Current working directory: %s\n", dir)
 		return resource.Version{}, fmt.Errorf("reading version file: %w", err)
 	}
 
-	bumpTypeContent, err := ioutil.ReadFile(request.Params.TypeFile)
+	bumpTypeContent, err := os.ReadFile(request.Params.TypeFile)
 	if err != nil {
 		return resource.Version{}, fmt.Errorf("reading bump type file: %w", err)
 	}
@@ -55,7 +54,6 @@ func UploadVersion(request resource.OutRequest, putter Putter, version resource.
 		return fmt.Errorf("updating version info in bucket/file (%s, %s): %w", request.Source.BucketName, request.Source.FileName, err)
 	}
 
-
 	return nil
 }
 
@@ -66,7 +64,6 @@ func GenerateResourceOutput(version resource.Version) (string, error) {
 	}
 	return string(output), nil
 }
-
 
 func validateBumpType(bumpType string) error {
 	if bumpType != "minor" && bumpType != "major" {

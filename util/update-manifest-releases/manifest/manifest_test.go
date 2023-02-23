@@ -2,7 +2,6 @@ package manifest_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"regexp"
 
 	"gopkg.in/yaml.v2"
@@ -30,13 +29,13 @@ var _ = Describe("UpdateReleases", func() {
 
 		var err error
 
-		cfDeploymentManifest, err = ioutil.ReadFile("../fixtures/cf-deployment.yml")
+		cfDeploymentManifest, err = os.ReadFile("../fixtures/cf-deployment.yml")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("updates the releases without modifying the rest and returns the list of changes when the sha changes", func() {
 		releases := []string{"release1", "release2"}
-		updatedReleasesFixture, err := ioutil.ReadFile("../fixtures/updated_sha_releases.yml")
+		updatedReleasesFixture, err := os.ReadFile("../fixtures/updated_sha_releases.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedManifest, changes, err := manifest.UpdateReleases(releases, "../fixtures/build-with-updated-sha", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
@@ -58,7 +57,7 @@ var _ = Describe("UpdateReleases", func() {
 
 	It("updates the releases without modifying the rest and returns the list of changes when the version changes", func() {
 		releases := []string{"release1", "release2"}
-		updatedReleasesFixture, err := ioutil.ReadFile("../fixtures/updated_version_releases.yml")
+		updatedReleasesFixture, err := os.ReadFile("../fixtures/updated_version_releases.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedManifest, changes, err := manifest.UpdateReleases(releases, "../fixtures/build-with-updated-version", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
@@ -80,7 +79,7 @@ var _ = Describe("UpdateReleases", func() {
 
 	It("updates the releases without modifying the rest and returns the list of changes when the url changes", func() {
 		releases := []string{"release1", "release2"}
-		updatedReleasesFixture, err := ioutil.ReadFile("../fixtures/updated_url_releases.yml")
+		updatedReleasesFixture, err := os.ReadFile("../fixtures/updated_url_releases.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedManifest, changes, err := manifest.UpdateReleases(releases, "../fixtures/build-with-updated-url", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
@@ -267,12 +266,12 @@ var _ = Describe("UpdateStemcell", func() {
 
 		var err error
 
-		cfDeploymentManifest, err = ioutil.ReadFile("../fixtures/cf-deployment.yml")
+		cfDeploymentManifest, err = os.ReadFile("../fixtures/cf-deployment.yml")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("updates the stemcell without modifying the rest and returns the list of changes when the version changes", func() {
-		updatedStemcellFixture, err := ioutil.ReadFile("../fixtures/updated_version_stemcell.yml")
+		updatedStemcellFixture, err := os.ReadFile("../fixtures/updated_version_stemcell.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedManifest, changes, err := manifest.UpdateStemcell([]string{}, "../fixtures/build-with-updated-stemcell-version", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)
@@ -293,7 +292,7 @@ var _ = Describe("UpdateStemcell", func() {
 	})
 
 	It("takes stemcell OS from the stemcell input when the OS is different from the one in the base manifest", func() {
-		updatedStemcellFixture, err := ioutil.ReadFile("../fixtures/updated_stemcell_os_and_releases.yml")
+		updatedStemcellFixture, err := os.ReadFile("../fixtures/updated_stemcell_os_and_releases.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedManifest, changes, err := manifest.UpdateStemcell(nil, "../fixtures/build-with-different-stemcell-os", cfDeploymentManifest, yaml.Marshal, yaml.Unmarshal)

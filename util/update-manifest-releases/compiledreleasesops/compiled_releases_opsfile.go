@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/common"
@@ -114,7 +114,7 @@ func getCompiledReleaseForBuild(buildDir, releaseName string) (Release, error) {
 }
 
 func computeSha1Sum(filepath string) (string, error) {
-	fileContents, err := ioutil.ReadFile(filepath)
+	fileContents, err := os.ReadFile(filepath)
 	if err != nil {
 		return "", err
 	}

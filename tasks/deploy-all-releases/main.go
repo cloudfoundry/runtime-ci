@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -50,7 +49,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	content, err := ioutil.ReadFile(fileToRead)
+	content, err := os.ReadFile(fileToRead)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

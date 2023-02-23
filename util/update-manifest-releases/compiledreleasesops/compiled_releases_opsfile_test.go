@@ -22,10 +22,10 @@ var _ = Describe("UpdateCompiledReleases", func() {
 	BeforeEach(func() {
 		compiledReleaseBuildDir = "../fixtures/build-with-compiled-release"
 
-		desiredOpsFile, err = ioutil.ReadFile("../fixtures/updated_compiled_releases_ops_file.yml")
+		desiredOpsFile, err = os.ReadFile("../fixtures/updated_compiled_releases_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		originalOpsFile, err = ioutil.ReadFile("../fixtures/original_compiled_releases_ops_file.yml")
+		originalOpsFile, err = os.ReadFile("../fixtures/original_compiled_releases_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -49,7 +49,7 @@ var _ = Describe("UpdateCompiledReleases", func() {
 
 	It("adds release if it cannot be found in the ops file", func() {
 		releaseNames := []string{"extraneous"}
-		desiredOpsFile, err = ioutil.ReadFile("../fixtures/updated_compiled_releases_ops_file_with_new_release.yml")
+		desiredOpsFile, err = os.ReadFile("../fixtures/updated_compiled_releases_ops_file_with_new_release.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedOpsFile, commitMessage, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)

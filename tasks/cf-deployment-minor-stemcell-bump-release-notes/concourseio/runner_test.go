@@ -2,7 +2,6 @@ package concourseio_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -21,7 +20,7 @@ var _ = Describe("Runner", func() {
 
 	BeforeEach(func() {
 		var err error
-		buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+		buildDir, err = os.MkdirTemp("", "concourseio-rootdir-")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -140,7 +139,7 @@ stemcells:
   os: some-other-os
   version: some-other-version
 `)
-				Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
 			})
 
 			It("returns a stemcell struct from the specified stemcell", func() {
@@ -166,7 +165,7 @@ stemcells:
 			Context("when the manifest yml is invalid", func() {
 				BeforeEach(func() {
 					cfDeploymentManifest := []byte(`%%%`)
-					Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
+					Expect(os.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
 				})
 
 				It("returns a wrapped yaml error", func() {
@@ -185,7 +184,7 @@ stemcells:
   os: some-ubuntu
   version: some-version
 `)
-					Expect(ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
+					Expect(os.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifest, 0644)).To(Succeed())
 
 					stemcellAlias = "missing-alias"
 				})
@@ -287,7 +286,7 @@ stemcells:
 				Expect(actualErr).NotTo(HaveOccurred())
 				outputFilePath := filepath.Join(expectedReleaseNotesDir, "body.txt")
 				Expect(outputFilePath).To(BeAnExistingFile())
-				releaseNotesContent, err := ioutil.ReadFile(outputFilePath)
+				releaseNotesContent, err := os.ReadFile(outputFilePath)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(releaseNotesContent)).To(Equal(`## Stemcell Updates
 | Release | Old Version | New Version |
@@ -342,7 +341,7 @@ stemcell-only
 
 		Context("happy path", func() {
 			BeforeEach(func() {
-				err := ioutil.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
+				err := os.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -350,7 +349,7 @@ stemcell-only
 				Expect(actualErr).NotTo(HaveOccurred())
 				outputFilePath := filepath.Join(expectedReleaseNotesDir, "name.txt")
 				Expect(outputFilePath).To(BeAnExistingFile())
-				releaseNotesContent, err := ioutil.ReadFile(outputFilePath)
+				releaseNotesContent, err := os.ReadFile(outputFilePath)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(releaseNotesContent)).To(Equal(fmt.Sprintf("v%s", version)))
 			})
@@ -367,7 +366,7 @@ stemcell-only
 
 		Context("when the release name file cannot be written", func() {
 			BeforeEach(func() {
-				err := ioutil.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
+				err := os.WriteFile(filepath.Join(expectedReleaseVersionDir, "version"), []byte(version), 0644)
 				Expect(err).NotTo(HaveOccurred())
 
 				expectedReleaseNotesDir = filepath.Join(buildDir, "missing-dir")

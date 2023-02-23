@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,7 +11,7 @@ import (
 func main() {
 	buildDir := os.Args[1]
 
-	content, err := ioutil.ReadFile(filepath.Join(buildDir, "cf-deployment-main", "cf-deployment.yml"))
+	content, err := os.ReadFile(filepath.Join(buildDir, "cf-deployment-main", "cf-deployment.yml"))
 	if err != nil {
 		log.Fatalf("Failed to read main cf-deployment.yml: %s", err)
 	}
@@ -22,7 +21,7 @@ func main() {
 		log.Fatalf("Failed to unmarshal main cf-deployment.yml: %s", err)
 	}
 
-	content, err = ioutil.ReadFile(filepath.Join(buildDir, "cf-deployment-release-candidate", "cf-deployment.yml"))
+	content, err = os.ReadFile(filepath.Join(buildDir, "cf-deployment-release-candidate", "cf-deployment.yml"))
 	if err != nil {
 		log.Fatalf("Failed to read release-candidate cf-deployment.yml: %s", err)
 	}

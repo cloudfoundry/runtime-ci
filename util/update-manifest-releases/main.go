@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,7 +27,7 @@ var cfDeploymentIgnoreFiles = []string{
 }
 
 func getReleaseNames(buildDir string) ([]string, error) {
-	files, err := ioutil.ReadDir(buildDir)
+	files, err := os.ReadDir(buildDir)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +45,10 @@ func getReleaseNames(buildDir string) ([]string, error) {
 func writeCommitMessage(buildDir, commitMessage, commitMessagePath string) error {
 	commitMessageFile := filepath.Join(buildDir, commitMessagePath)
 
-	existingCommitMessage, err := ioutil.ReadFile(commitMessageFile)
+	existingCommitMessage, err := os.ReadFile(commitMessageFile)
 
 	if err != nil || strings.TrimSpace(string(existingCommitMessage)) == common.NoChangesCommitMessage {
-		if err := ioutil.WriteFile(commitMessageFile, []byte(commitMessage), 0666); err != nil {
+		if err := os.WriteFile(commitMessageFile, []byte(commitMessage), 0666); err != nil {
 			return err
 		}
 	}
@@ -104,7 +103,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 
 	for inputPath, outputFileName := range filesToUpdate {
 		fmt.Printf("Processing %s...\n", inputPath)
-		originalFile, err := ioutil.ReadFile(inputPath)
+		originalFile, err := os.ReadFile(inputPath)
 		if err != nil {
 			return err
 		}
@@ -133,7 +132,7 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 			}
 
 			fmt.Printf("Updating file: %s\n", inputPath)
-			if err := ioutil.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputFileName)), updatedFile, 0666); err != nil {
+			if err := os.WriteFile(filepath.Join(updatedOpsFilePath, filepath.Base(outputFileName)), updatedFile, 0666); err != nil {
 				return err
 			}
 		}

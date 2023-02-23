@@ -2,7 +2,6 @@ package compiledrelease
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -22,7 +21,7 @@ var _ = Describe("OpsfileUpdater", func() {
 
 	BeforeEach(func() {
 		var err error
-		buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+		buildDir, err = os.MkdirTemp("", "concourseio-rootdir-")
 		Expect(err).ToNot(HaveOccurred())
 
 		opsfileOutPath = filepath.Join(buildDir, "ops-file.yml")
@@ -51,8 +50,8 @@ var _ = Describe("OpsfileUpdater", func() {
 				hyphenPath = "product-with-hyphens-1.2.3-some-stemcell-1.2-00000000-000000-000000000.tgz"
 				singlewordPath = "singleword-4.5.6-some-stemcell-1.2-00000000-000000-000000000.tgz"
 
-				Expect(ioutil.WriteFile(filepath.Join(buildDir, hyphenPath), []byte("hello world"), 0777)).To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(buildDir, singlewordPath), []byte("hello kitty"), 0777)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(buildDir, hyphenPath), []byte("hello world"), 0777)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(buildDir, singlewordPath), []byte("hello kitty"), 0777)).To(Succeed())
 			})
 
 			It("load a list of Releases from the compiled-releases directory", func() {
@@ -95,7 +94,7 @@ var _ = Describe("OpsfileUpdater", func() {
 			BeforeEach(func() {
 				singlewordPath = "invalid-1.2.3.tgz"
 
-				Expect(ioutil.WriteFile(filepath.Join(buildDir, singlewordPath), []byte("hello kitty"), 0777)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(buildDir, singlewordPath), []byte("hello kitty"), 0777)).To(Succeed())
 			})
 
 			It("will return an error", func() {
@@ -215,7 +214,7 @@ var _ = Describe("OpsfileUpdater", func() {
 			It("will return an error and not write to the Outfile", func() {
 				Expect(actualError).To(MatchError(&NoReleasesErr{}))
 
-				_, err := ioutil.ReadFile(opsfileOutPath)
+				_, err := os.ReadFile(opsfileOutPath)
 				Expect(os.IsNotExist(err)).To(BeTrue())
 			})
 		})
@@ -257,7 +256,7 @@ var _ = Describe("OpsfileUpdater", func() {
 			It("generates the opsfileUpdater for compiled releases with the updated stemcell", func() {
 				Expect(actualError).NotTo(HaveOccurred())
 
-				actualContents, err := ioutil.ReadFile(opsfileOutPath)
+				actualContents, err := os.ReadFile(opsfileOutPath)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(actualContents)).To(Equal(`## GENERATED FILE. DO NOT EDIT
 ---

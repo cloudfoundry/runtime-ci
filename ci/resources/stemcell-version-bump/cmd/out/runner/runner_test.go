@@ -2,7 +2,6 @@ package runner_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -323,7 +322,7 @@ func TestNewVersion(t *testing.T) {
 	for _, test := range tests {
 		setup, arg, checks := test.setup, test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			tmpDir, err := ioutil.TempDir("", test.name+"-")
+			tmpDir, err := os.MkdirTemp("", test.name+"-")
 			if err != nil {
 				t.Fatalf("failed setup: %v", err)
 			}
@@ -333,14 +332,14 @@ func TestNewVersion(t *testing.T) {
 			}
 
 			if setup.versionPath != "" {
-				err := ioutil.WriteFile(setup.versionPath, setup.versionContent, 0755)
+				err := os.WriteFile(setup.versionPath, setup.versionContent, 0755)
 				if err != nil {
 					t.Fatalf("failed setup: %v", err)
 				}
 			}
 
 			if setup.bumpTypePath != "" {
-				err := ioutil.WriteFile(setup.bumpTypePath, setup.bumpTypeContent, 0755)
+				err := os.WriteFile(setup.bumpTypePath, setup.bumpTypeContent, 0755)
 				if err != nil {
 					t.Fatalf("failed setup: %v", err)
 				}

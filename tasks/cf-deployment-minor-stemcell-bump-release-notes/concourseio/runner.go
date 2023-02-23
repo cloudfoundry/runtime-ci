@@ -2,7 +2,6 @@ package concourseio
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -39,7 +38,7 @@ func NewRunner(buildDir string) (Runner, error) {
 }
 
 func (r Runner) ReadStemcellInfoFromManifest(stemcellAlias string) (bosh.Stemcell, error) {
-	content, err := ioutil.ReadFile(filepath.Join(r.In.CFDeploymentDir, "cf-deployment.yml"))
+	content, err := os.ReadFile(filepath.Join(r.In.CFDeploymentDir, "cf-deployment.yml"))
 	if err != nil {
 		return bosh.Stemcell{}, fmt.Errorf("failed to read cf-deployment.yml: %w", err)
 	}
@@ -78,7 +77,7 @@ func (r Runner) GenerateReleaseNotes(oldStemcell, newStemcell bosh.Stemcell) err
 stemcell-only
 `
 	content := fmt.Sprintf(template, oldStemcell.OS, oldStemcell.Version, newStemcell.Version)
-	err := ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "body.txt"), []byte(content), 0644)
+	err := os.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "body.txt"), []byte(content), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write release notes file: %w", err)
 	}
@@ -87,12 +86,12 @@ stemcell-only
 }
 
 func (r Runner) GenerateReleaseName() error {
-	releaseVersion, err := ioutil.ReadFile(filepath.Join(r.In.ReleaseVersionDir, "version"))
+	releaseVersion, err := os.ReadFile(filepath.Join(r.In.ReleaseVersionDir, "version"))
 	if err != nil {
 		return fmt.Errorf("failed to read release version: %w", err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "name.txt"), []byte(fmt.Sprintf("v%s", releaseVersion)), 0644)
+	err = os.WriteFile(filepath.Join(r.Out.ReleaseNotesDir, "name.txt"), []byte(fmt.Sprintf("v%s", releaseVersion)), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write release name file: %w", err)
 	}
