@@ -2,7 +2,7 @@ package manifest
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -98,13 +98,13 @@ func updateReleasesOrStemcell(releases []string, buildDir string, cfDeploymentMa
 			stemcellsVersions[stemcell.Alias] = stemcell.Version
 		}
 
-		stemcellVersion, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
+		stemcellVersion, err := os.ReadFile(filepath.Join(buildDir, "stemcell", "version"))
 		if err != nil {
 			return nil, "", err
 		}
 		trimmedStemcellVersion := strings.TrimSpace(string(stemcellVersion))
 
-		stemcellURL, err := ioutil.ReadFile(filepath.Join(buildDir, "stemcell", "url"))
+		stemcellURL, err := os.ReadFile(filepath.Join(buildDir, "stemcell", "url"))
 		if err != nil {
 			return nil, "", err
 		}

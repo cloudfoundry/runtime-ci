@@ -2,7 +2,6 @@ package concourseio
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -19,7 +18,7 @@ var _ = Describe("Runner", func() {
 
 	BeforeEach(func() {
 		var err error
-		buildDir, err = ioutil.TempDir("", "concourseio-rootdir-")
+		buildDir, err = os.MkdirTemp("", "concourseio-rootdir-")
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -129,9 +128,9 @@ var _ = Describe("Runner", func() {
 
 		Context("when the stemcell dir contains all necessary files", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
 					To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
 					To(Succeed())
 			})
 
@@ -150,7 +149,7 @@ var _ = Describe("Runner", func() {
 
 		Context("when the stemcell dir is missing the url file", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
 					To(Succeed())
 			})
 
@@ -161,9 +160,9 @@ var _ = Describe("Runner", func() {
 
 		Context("when the stemcell dir contains all necessary files, but refers to an unsupported stemcell", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "version"), []byte("some-version"), 0777)).
 					To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-windows-some-os-go_agent.tgz"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDir, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-windows-some-os-go_agent.tgz"), 0777)).
 					To(Succeed())
 			})
 
@@ -201,7 +200,7 @@ var _ = Describe("Runner", func() {
 				cfDeploymentManifestContent, err := yaml.Marshal(cfDeploymentManifest)
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifestContent, 0644)
+				err = os.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), cfDeploymentManifestContent, 0644)
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -226,7 +225,7 @@ var _ = Describe("Runner", func() {
 
 				runner = Runner{In: Inputs{cfDeploymentDir: cfDeploymentDir}}
 
-				err := ioutil.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), []byte("%%%"), 0644)
+				err := os.WriteFile(filepath.Join(cfDeploymentDir, "cf-deployment.yml"), []byte("%%%"), 0644)
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -270,11 +269,10 @@ var _ = Describe("Runner", func() {
 		})
 	})
 
-
 	Describe("WriteStemcellBumpTypeToFile", func() {
 		var (
-			runner    Runner
-			actualErr error
+			runner              Runner
+			actualErr           error
 			expectedBumpTypeDir string
 		)
 
@@ -282,7 +280,7 @@ var _ = Describe("Runner", func() {
 			actualErr = runner.WriteStemcellBumpTypeToFile()
 		})
 
-		BeforeEach(func(){
+		BeforeEach(func() {
 			expectedBumpTypeDir = filepath.Join(buildDir, "stemcell-bump-type")
 			Expect(os.Mkdir(expectedBumpTypeDir, 0777)).To(Succeed())
 			runner.Out = Outputs{expectedBumpTypeDir}
@@ -293,7 +291,7 @@ var _ = Describe("Runner", func() {
 			actualErr = runner.WriteStemcellBumpTypeToFile()
 			Expect(actualErr).ToNot(HaveOccurred())
 
-			actualResultContent, err := ioutil.ReadFile(filepath.Join(expectedBumpTypeDir, "result"))
+			actualResultContent, err := os.ReadFile(filepath.Join(expectedBumpTypeDir, "result"))
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(string(actualResultContent)).To(Equal("major"))

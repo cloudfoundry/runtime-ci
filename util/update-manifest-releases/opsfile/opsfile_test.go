@@ -2,7 +2,6 @@ package opsfile_test
 
 import (
 	"errors"
-	"io/ioutil"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -28,15 +27,15 @@ var _ = Describe("UpdateReleases", func() {
 
 		var err error
 
-		originalOpsFile, err = ioutil.ReadFile("../fixtures/original_ops_file.yml")
+		originalOpsFile, err = os.ReadFile("../fixtures/original_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("does not update release when opsfile is removing that release", func() {
-		originalOpsFile, err := ioutil.ReadFile("../fixtures/original_release_removal_opsfile.yml")
+		originalOpsFile, err := os.ReadFile("../fixtures/original_release_removal_opsfile.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_release_removal_opsfile.yml")
+		desiredOpsFile, err := os.ReadFile("../fixtures/updated_release_removal_opsfile.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		releaseNames := []string{"release1"}
@@ -50,10 +49,10 @@ var _ = Describe("UpdateReleases", func() {
 	It("updates releases when opsfile does not use append syntax", func() {
 		releaseNames := []string{"non-append"}
 
-		originalOpsFile, err := ioutil.ReadFile("../fixtures/original_non_append_opsfile.yml")
+		originalOpsFile, err := os.ReadFile("../fixtures/original_non_append_opsfile.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_non_append_opsfile.yml")
+		desiredOpsFile, err := os.ReadFile("../fixtures/updated_non_append_opsfile.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
@@ -66,7 +65,7 @@ var _ = Describe("UpdateReleases", func() {
 	It("updates releases with different shas", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_sha_ops_file.yml")
+		desiredOpsFile, err := os.ReadFile("../fixtures/updated_sha_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-sha", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
@@ -79,7 +78,7 @@ var _ = Describe("UpdateReleases", func() {
 	It("updates releases with different versions", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_version_ops_file.yml")
+		desiredOpsFile, err := os.ReadFile("../fixtures/updated_version_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-version", originalOpsFile, yaml.Marshal, yaml.Unmarshal)
@@ -92,7 +91,7 @@ var _ = Describe("UpdateReleases", func() {
 	It("updates releases with different urls", func() {
 		releaseNames := []string{"release1", "release2"}
 
-		desiredOpsFile, err := ioutil.ReadFile("../fixtures/updated_url_ops_file.yml")
+		desiredOpsFile, err := os.ReadFile("../fixtures/updated_url_ops_file.yml")
 		Expect(err).NotTo(HaveOccurred())
 
 		updatedOpsFile, changes, err := opsfile.UpdateReleases(releaseNames, "../fixtures/build-with-updated-url", originalOpsFile, yaml.Marshal, yaml.Unmarshal)

@@ -3,7 +3,7 @@ package common
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -34,7 +34,7 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 	}
 	releasePath := filepath.Join(buildDir, fmt.Sprintf("%s-release", releaseName))
 
-	version, verErr := ioutil.ReadFile(filepath.Join(releasePath, "version"))
+	version, verErr := os.ReadFile(filepath.Join(releasePath, "version"))
 
 	if verErr != nil {
 		return Release{}, verErr
@@ -42,18 +42,18 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 
 	newRelease.Version = strings.TrimSpace(string(version))
 
-	url, urlErr := ioutil.ReadFile(filepath.Join(releasePath, "url"))
+	url, urlErr := os.ReadFile(filepath.Join(releasePath, "url"))
 
 	if urlErr != nil {
 		return Release{}, urlErr
 	}
 
-	_, commitShaErr := ioutil.ReadFile(filepath.Join(releasePath, "commit_sha"))
+	_, commitShaErr := os.ReadFile(filepath.Join(releasePath, "commit_sha"))
 
 	if commitShaErr != nil {
 		// Bosh.io release
 		fmt.Println("Missing commit_sha file. Assuming bosh.io release...")
-		sha1, shaErr := ioutil.ReadFile(filepath.Join(releasePath, "sha1"))
+		sha1, shaErr := os.ReadFile(filepath.Join(releasePath, "sha1"))
 
 		if shaErr != nil {
 			return Release{}, shaErr

@@ -2,7 +2,6 @@ package concourseio
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -66,7 +65,7 @@ type UpdateFunc func([]byte, bosh.Stemcell) ([]byte, error)
 
 func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 	originalFile := manifestPath(r.In.cfDeploymentDir)
-	manifest, err := ioutil.ReadFile(originalFile)
+	manifest, err := os.ReadFile(originalFile)
 	if err != nil {
 		return err
 	}
@@ -77,7 +76,7 @@ func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 	}
 
 	updatedFile := manifestPath(r.Out.UpdatedCFDeploymentDir)
-	if err := ioutil.WriteFile(updatedFile, updatedContent, 0755); err != nil {
+	if err := os.WriteFile(updatedFile, updatedContent, 0755); err != nil {
 		return err
 	}
 
@@ -86,6 +85,7 @@ func (r *Runner) UpdateManifest(updateFunction UpdateFunc) error {
 
 // Remove the line that enforces the interface from the counterfeiter to
 // prevent circular dependency (e.g. var _ myInterface = StemcellUpdater)
+//
 //go:generate counterfeiter . StemcellUpdater
 type StemcellUpdater interface {
 	Load() error
@@ -115,7 +115,7 @@ func (r *Runner) UpdateStemcell(updaters ...StemcellUpdater) error {
 func (r *Runner) WriteCommitMessage(commitMessagePath string) error {
 	commitMessage := fmt.Sprintf("Update stemcell to %s \"%s\"", r.stemcell.OS, r.stemcell.Version)
 
-	err := ioutil.WriteFile(commitMessagePath, []byte(commitMessage), 0644)
+	err := os.WriteFile(commitMessagePath, []byte(commitMessage), 0644)
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func (r *Runner) WriteCommitMessage(commitMessagePath string) error {
 }
 
 func readFile(path string) (string, error) {
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		pathDir := filepath.Base(filepath.Dir(path))
 		return "", fmt.Errorf("missing files: '%s'", filepath.Join(pathDir, filepath.Base(path)))

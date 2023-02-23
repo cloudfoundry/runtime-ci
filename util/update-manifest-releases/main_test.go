@@ -2,7 +2,6 @@ package main_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,10 +29,10 @@ var _ = Describe("main", func() {
 		pathToBinary, err = gexec.Build("github.com/cloudfoundry/runtime-ci/util/update-manifest-releases")
 		Expect(err).NotTo(HaveOccurred())
 
-		buildDir, err = ioutil.TempDir("", "")
+		buildDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
-		emptyDir, err = ioutil.TempDir("", "")
+		emptyDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
 		CommitMessagePath = os.Getenv("COMMIT_MESSAGE_PATH")
@@ -137,7 +136,7 @@ var _ = Describe("main", func() {
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "original-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
@@ -155,7 +154,7 @@ var _ = Describe("main", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				for _, value := range []string{"version", "url", "sha1"} {
-					err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
 			}
@@ -176,10 +175,10 @@ var _ = Describe("main", func() {
 				err = os.MkdirAll(anotherOpsFileDir, os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
-				err = ioutil.WriteFile(filepath.Join(anotherOpsFileDir, "another_original_ops_file.yml"), []byte(anotherOriginalOpsFileWithRelease4), os.ModePerm)
+				err = os.WriteFile(filepath.Join(anotherOpsFileDir, "another_original_ops_file.yml"), []byte(anotherOriginalOpsFileWithRelease4), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "ops_file_that_should_stay_the_same.yml"), []byte(opsFileWithoutRelease4), os.ModePerm)
+				err = os.WriteFile(filepath.Join(buildDir, "original-ops-file", "ops_file_that_should_stay_the_same.yml"), []byte(opsFileWithoutRelease4), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				for _, release := range []map[string]string{
@@ -191,7 +190,7 @@ var _ = Describe("main", func() {
 					Expect(err).NotTo(HaveOccurred())
 
 					for _, value := range []string{"version", "url", "sha1"} {
-						err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+						err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 						Expect(err).NotTo(HaveOccurred())
 					}
 				}
@@ -204,13 +203,13 @@ var _ = Describe("main", func() {
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(0))
 
-				updatedOpsFile1, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
+				updatedOpsFile1, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
+				updatedOpsFile2, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				_, err = ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
+				_, err = os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
 				Expect(err).To(HaveOccurred())
 
 				Expect(updatedOpsFile1).To(MatchYAML(expectedOpsFile))
@@ -224,7 +223,7 @@ var _ = Describe("main", func() {
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(0))
 
-				commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+				commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
@@ -247,7 +246,7 @@ stemcells:
   os: ubuntu-trusty
   version: original-stemcell-version
 `
-				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "cf-deployment.yml"), []byte(manifest), os.ModePerm)
+				err = os.WriteFile(filepath.Join(buildDir, "original-ops-file", "cf-deployment.yml"), []byte(manifest), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-ops-file", "--output-dir", "updated-ops-file", "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
@@ -256,13 +255,13 @@ stemcells:
 				Eventually(session).Should(gexec.Exit())
 				Expect(session.ExitCode()).To(Equal(0))
 
-				updatedOpsFile1, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
+				updatedOpsFile1, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				updatedOpsFile2, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
+				updatedOpsFile2, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "nested-dir", "another_original_ops_file.yml"))
 				Expect(err).NotTo(HaveOccurred())
 
-				_, err = ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
+				_, err = os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "ops_file_that_should_stay_the_same.yml"))
 				Expect(err).To(HaveOccurred())
 
 				Expect(updatedOpsFile1).To(MatchYAML(expectedOpsFile))
@@ -275,7 +274,7 @@ some_client: some_value
 `
 				err = os.Mkdir(filepath.Join(buildDir, "original-ops-file", "scripts"), os.ModePerm)
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "scripts", "vars-store.yml"), []byte(vars), os.ModePerm)
+				err = os.WriteFile(filepath.Join(buildDir, "original-ops-file", "scripts", "vars-store.yml"), []byte(vars), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-ops-file", "--output-dir", "updated-ops-file", "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
@@ -291,7 +290,7 @@ some_client: some_value
 `
 				err = os.Mkdir(filepath.Join(buildDir, "original-ops-file", "units"), os.ModePerm)
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "original-ops-file", "units", "vars-store.yml"), []byte(vars), os.ModePerm)
+				err = os.WriteFile(filepath.Join(buildDir, "original-ops-file", "units", "vars-store.yml"), []byte(vars), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
 				session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-ops-file", "--output-dir", "updated-ops-file", "--target", "opsfile"}...), GinkgoWriter, GinkgoWriter)
@@ -309,7 +308,7 @@ some_client: some_value
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", "updated_ops_file.yml"))
+			updatedOpsFile, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
@@ -322,7 +321,7 @@ some_client: some_value
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated ops file(s) with release4-release new-release4-version"))
@@ -338,7 +337,7 @@ some_client: some_value
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-ops-file", updatedOpsFilePath))
+			updatedOpsFile, err := os.ReadFile(filepath.Join(buildDir, "updated-ops-file", updatedOpsFilePath))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
@@ -458,7 +457,7 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
@@ -472,15 +471,15 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 
 				for _, value := range []string{"version", "url", "sha1"} {
-					err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			inputPath = os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
@@ -502,7 +501,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
+			updatedManifest, err := os.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedSingleRelease))
@@ -515,7 +514,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
+			updatedManifest, err := os.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedReleases))
@@ -528,7 +527,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated manifest with release3-release new-release3-version, release4-release new-release4-version"))
@@ -543,7 +542,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
+			updatedManifest, err := os.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedReleases))
@@ -634,13 +633,13 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "cf-deployment", "original-manifest.yml"), []byte(originalManifest), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "stemcell", "version"), []byte("updated-stemcell-version"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "stemcell", "url"), []byte("https://foo.com/bosh-stemcell-ubuntu-trusty.tgz"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			inputPath = os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH")
@@ -662,7 +661,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
+			updatedManifest, err := os.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedStemcells))
@@ -675,7 +674,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated manifest with ubuntu-trusty stemcell updated-stemcell-version"))
@@ -690,7 +689,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedManifest, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
+			updatedManifest, err := os.ReadFile(filepath.Join(buildDir, "updated-cf-deployment", "doesnt-exist", "updated-manifest.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedManifest).To(MatchYAML(expectedStemcells))
@@ -806,7 +805,7 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 			}
 
-			err = ioutil.WriteFile(filepath.Join(buildDir, "original-compiled-releases-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
+			err = os.WriteFile(filepath.Join(buildDir, "original-compiled-releases-ops-file", "original_ops_file.yml"), []byte(originalOpsFile), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 			inputPath = os.Getenv("ORIGINAL_OPS_FILE_PATH")
@@ -823,7 +822,7 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 
 				for _, value := range []string{"version", "url", "sha1"} {
-					err = ioutil.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
+					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
 
@@ -832,7 +831,7 @@ stemcells:
 				Expect(err).NotTo(HaveOccurred())
 
 				compiledReleaseTarballName := "release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz"
-				err = ioutil.WriteFile(filepath.Join(compiledReleaseDir, compiledReleaseTarballName), []byte("anything"), os.ModePerm)
+				err = os.WriteFile(filepath.Join(compiledReleaseDir, compiledReleaseTarballName), []byte("anything"), os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 			}
 		})
@@ -849,14 +848,14 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "updated_ops_file.yml"))
+			updatedOpsFile, err := os.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))
 		})
 
 		It("does not overwrite the commit message if it says that there are changes", func() {
-			ioutil.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("previous commit message with changes"), 0666)
+			os.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("previous commit message with changes"), 0666)
 
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-compiled-releases-ops-file", "--output-dir", "updated-compiled-releases-ops-file", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -864,14 +863,14 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("previous commit message with changes"))
 		})
 
 		It("updates commit message if current commit message says that there are no changes", func() {
-			ioutil.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("No manifest release or stemcell version updates"), 0666)
+			os.WriteFile(filepath.Join(buildDir, os.Getenv("COMMIT_MESSAGE_PATH")), []byte("No manifest release or stemcell version updates"), 0666)
 
 			session, err := gexec.Start(exec.Command(pathToBinary, []string{"--build-dir", buildDir, "--input-dir", "original-compiled-releases-ops-file", "--output-dir", "updated-compiled-releases-ops-file", "--target", "compiledReleasesOpsfile"}...), GinkgoWriter, GinkgoWriter)
 			Expect(err).NotTo(HaveOccurred())
@@ -879,7 +878,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			commitMessage, err := ioutil.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
+			commitMessage, err := os.ReadFile(filepath.Join(buildDir, "commit-message.txt"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(commitMessage)).To(Equal("Updated compiled releases with release1 0.2.0"))
@@ -894,7 +893,7 @@ stemcells:
 			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).To(Equal(0))
 
-			updatedOpsFile, err := ioutil.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "doesnt-exist", "updated_ops_file.yml"))
+			updatedOpsFile, err := os.ReadFile(filepath.Join(buildDir, "updated-compiled-releases-ops-file", "doesnt-exist", "updated_ops_file.yml"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedOpsFile).To(MatchYAML(expectedOpsFile))

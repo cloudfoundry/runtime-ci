@@ -3,7 +3,7 @@ package resource
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/option"
@@ -35,7 +35,7 @@ func (gcsclient GCSClient) Get(bucketName string, objectPath string) ([]byte, er
 	}
 	defer rc.Close()
 
-	data, err := ioutil.ReadAll(rc)
+	data, err := io.ReadAll(rc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read version info from reader: %w", err)
 	}

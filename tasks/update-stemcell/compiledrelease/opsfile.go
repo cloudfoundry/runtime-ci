@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -137,11 +136,11 @@ func (o OpsfileUpdater) Write() error {
 		return err
 	}
 
-	return ioutil.WriteFile(o.opsFileOutPath, buf.Bytes(), 0755)
+	return os.WriteFile(o.opsFileOutPath, buf.Bytes(), 0755)
 }
 
 func computeSHA1Sum(filepath string) (string, error) {
-	fileContents, err := ioutil.ReadFile(filepath)
+	fileContents, err := os.ReadFile(filepath)
 	if err != nil {
 		return "", err
 	}

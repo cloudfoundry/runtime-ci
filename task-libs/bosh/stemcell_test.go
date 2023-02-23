@@ -2,7 +2,7 @@ package bosh_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	. "github.com/onsi/ginkgo"
@@ -22,7 +22,7 @@ var _ = Describe("Stemcell", func() {
 
 		BeforeEach(func() {
 			var err error
-			stemcellDirArg, err = ioutil.TempDir("", "stemcell-input-")
+			stemcellDirArg, err = os.MkdirTemp("", "stemcell-input-")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -32,9 +32,9 @@ var _ = Describe("Stemcell", func() {
 
 		Context("when the stemcell dir contains all necessary files", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDirArg, "version"), []byte("some-version"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDirArg, "version"), []byte("some-version"), 0777)).
 					To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(stemcellDirArg, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
+				Expect(os.WriteFile(filepath.Join(stemcellDirArg, "url"), []byte("https://s3.amazonaws.com/some-stemcell/stuff-ubuntu-some-os-go_agent.tgz"), 0777)).
 					To(Succeed())
 			})
 
