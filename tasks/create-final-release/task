@@ -33,8 +33,8 @@ EOF
 create_release() {
   local sem_ver=$(cat semantic-version/version)
   pushd release-repo > /dev/null
-    git config user.name "CF MEGA BOT"
-    git config user.email "cf-mega@pivotal.io"
+    git config user.name "ARD WG Bot"
+    git config user.email "app-deployments@cloudfoundry.org"
 
     bosh -n create-release --final --version=$sem_ver
 

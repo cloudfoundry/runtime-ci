@@ -12,7 +12,7 @@ pushd cf-deployment-rc-with-updated-version
   sed -i "s/manifest_version: ${old_version}/manifest_version: ${new_version}/g" cf-deployment.yml
 
   git add cf-deployment.yml
-  git config user.email "cf-release-integration@pivotal.io"
-  git config user.name  "CI (automated)"
+  git config user.name "ARD WG Bot"
+  git config user.email "app-deployments@cloudfoundry.org"
   git commit -m "Update cf-deployment manifest version to ${new_version}"
 popd
