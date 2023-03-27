@@ -44,7 +44,7 @@ resources:
   icon: github
   source:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    private_key: ((cfdct_readwrite_deploy_key.private_key))
+    private_key: ((ard_wg_gitbot_ssh_key.private_key))
 
 - name: cf-for-k8s
   type: git
