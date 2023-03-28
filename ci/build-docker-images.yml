@@ -57,7 +57,7 @@ resources:
   source:
     user: cloudfoundry
     repository: bosh-cli
-    access_token: ((release_integration_download_bot_access_token))
+    access_token: ((ard_wg_gitbot_token))
 
 - name: terraform-github-release
   type: github-release
@@ -65,7 +65,7 @@ resources:
   source:
     user: hashicorp
     repository: terraform
-    access_token: ((release_integration_download_bot_access_token))
+    access_token: ((ard_wg_gitbot_token))
 
 - name: bbl-github-release
   type: github-release
@@ -73,7 +73,7 @@ resources:
   source:
     user: cloudfoundry
     repository: bosh-bootloader
-    access_token: ((release_integration_download_bot_access_token))
+    access_token: ((ard_wg_gitbot_token))
 
 - name: relint-base-image
   type: docker-image
