@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -24,9 +25,20 @@ func main() {
 
 	for startTime := time.Now(); time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC; time.Sleep(5 * time.Second) {
 		resp, err := client.Get(url)
-		if err != nil || resp.StatusCode != 200 {
+		if err != nil {
 			numSuccessResponses = 0
-			fmt.Printf("Received error from the API, resetting...\n")
+			fmt.Printf("Received error when requesting API, resetting...\n")
+			fmt.Printf(err.Error() + "\n")
+			continue
+		}
+		if resp.StatusCode != 200 {
+			numSuccessResponses = 0
+			fmt.Printf("Received HTTP %d from the API, resetting...\n", resp.StatusCode)
+			body, err := io.ReadAll(resp.Body)
+			if err == nil {
+				fmt.Printf(string(body) + "\n")
+				resp.Body.Close()
+			}
 			continue
 		}
 
