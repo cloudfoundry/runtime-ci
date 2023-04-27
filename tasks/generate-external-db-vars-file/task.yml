@@ -8,7 +8,7 @@ image_resource:
     tag: 'v15.0.0'
 
 inputs:
-- name: runtime-ci
+- name: runtime-ci-cdct-v15.0.0
 - name: bbl-state
 
 outputs:
