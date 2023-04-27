@@ -22,4 +22,4 @@ params:
   VARS_DIR: bbl-state
 
 run:
-  path: runtime-ci/tasks/generate-external-db-vars-file/task
+  path: runtime-ci-cdct-v15.0.0/tasks/generate-external-db-vars-file/task
