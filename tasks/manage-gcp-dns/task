@@ -14,7 +14,6 @@ function write_service_account_key_to_file() {
 }
 
 function main() {
-  terraform init
   load_from_json_config
 
   local gcp_service_account_key_path
@@ -27,6 +26,9 @@ function main() {
   local dns_servers
   dns_servers=()
   if [[ -d "${ROOT}/bbl-state" ]]; then
+    pushd "${ROOT}/bbl-state/${BBL_STATE_DIR}/terraform" > /dev/null
+      terraform init
+    popd > /dev/null
     for dns_server in $(bbl --state-dir "${ROOT}/bbl-state/${BBL_STATE_DIR}" lbs --json | jq -r ".cf_system_domain_dns_servers[] | ."); do
       dns_servers+=("${dns_server}")
     done
