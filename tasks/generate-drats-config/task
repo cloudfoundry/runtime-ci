@@ -9,6 +9,10 @@ setup_bosh_env_vars
 set +x
 
 pushd bbl-state/"${BBL_STATE_DIR}" > /dev/null
+  echo "Initializing Terraform..."
+  pushd "terraform"
+    terraform init
+  popd
   BOSH_GW_PRIVATE_KEY="$(bbl ssh-key)"
   BOSH_GW_HOST=$(bbl jumpbox-address)
 popd > /dev/null
