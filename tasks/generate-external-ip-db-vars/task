@@ -8,6 +8,10 @@ VARIABLE_DIR=${root_dir}/bbl-state/${VARS_DIR}
 cd bbl-state/$BBL_STATE_DIR
   set +x
 
+  echo "Initializing Terraform..."
+  pushd "./terraform"
+    terraform init
+  popd
   echo "Grabbing public ips"
   echo "Outputting public ips to ${VARIABLE_DIR}/external-public-ip-vars.yml"
   bbl outputs | grep public_ip > ${VARIABLE_DIR}/external-public-ip-vars.yml

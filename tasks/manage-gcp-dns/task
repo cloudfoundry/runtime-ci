@@ -26,6 +26,9 @@ function main() {
   local dns_servers
   dns_servers=()
   if [[ -d "${ROOT}/bbl-state" ]]; then
+    pushd "${ROOT}/bbl-state/${BBL_STATE_DIR}/terraform"
+      terraform init
+    popd
     for dns_server in $(bbl --state-dir "${ROOT}/bbl-state/${BBL_STATE_DIR}" lbs --json | jq -r ".cf_system_domain_dns_servers[] | ."); do
       dns_servers+=("${dns_server}")
     done

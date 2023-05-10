@@ -3,6 +3,10 @@
 set -euo pipefail
 
 pushd "bbl-state/${BBL_STATE_DIR}"
+  echo "Initializing Terraform..."
+  pushd "./terraform"
+    terraform init
+  popd
   echo "Retrieving DB name from bbl outputs..."
   DB_NAME=$(bbl outputs | grep db_name | awk '{print $2}')
 popd
