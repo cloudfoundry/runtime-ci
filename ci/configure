@@ -3,7 +3,7 @@
 export PROJECT_DIR="$(cd $(dirname $0)/.. && pwd)"
 
 main() {
-  local CF_D_PIPELINES=(build-docker-images runtime-ci)
+  local CF_D_PIPELINES=(build-docker-images infrastructure runtime-ci)
   local PIPELINE=${1?"Valid input ${CF_D_PIPELINES[@]}"}
 
   set -ex
