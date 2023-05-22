@@ -34,11 +34,13 @@ func main() {
 		if resp.StatusCode != 200 {
 			numSuccessResponses = 0
 			fmt.Printf("Received HTTP %d from the API, resetting...\n", resp.StatusCode)
-			body, err := io.ReadAll(resp.Body)
-			if err == nil {
-				fmt.Printf(string(body) + "\n")
-				resp.Body.Close()
-			}
+			func() {
+				body, err := io.ReadAll(resp.Body)
+				if err == nil {
+					fmt.Printf(string(body) + "\n")
+				}
+				defer resp.Body.Close()
+			}()
 			continue
 		}
 
