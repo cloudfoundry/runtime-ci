@@ -947,14 +947,6 @@ jobs:
       params: {claim: snitch}
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
-  - try:
-      do:
-      - task: guarantee-no-existing-cf-deployment
-        file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-        input_mapping:
-          bbl-state: relint-envs
-        params:
-          BBL_STATE_DIR: environments/test/snitch/bbl-state
   - task: destroy-infrastructure
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
     input_mapping:
