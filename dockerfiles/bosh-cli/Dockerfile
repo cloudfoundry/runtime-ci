@@ -10,7 +10,7 @@ RUN \
 # bbl and dependencies
 ARG bbl_version
 RUN \
-  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v{bbl_version}/bbl-v{bbl_version}_linux_amd64 -P /tmp && \
+  wget https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${bbl_version}/bbl-v${bbl_version}_linux_amd64 -P /tmp && \
   mv /tmp/bbl-* /usr/local/bin/bbl && \
   cd /usr/local/bin && \
   chmod +x bbl
