@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-// Constants
 const MAX_TIMEOUT_IN_SEC = 900
 const MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES = 20
 const MIN_PROPAGATION_DELAY = 240
@@ -24,23 +23,11 @@ func main() {
 	)
 
 	for startTime := time.Now(); time.Since(startTime).Seconds() < MAX_TIMEOUT_IN_SEC; time.Sleep(5 * time.Second) {
-		resp, err := client.Get(url)
+		err := pollApi(client, url)
 		if err != nil {
 			numSuccessResponses = 0
 			fmt.Printf("Received error when requesting API, resetting...\n")
 			fmt.Printf(err.Error() + "\n")
-			continue
-		}
-		if resp.StatusCode != 200 {
-			numSuccessResponses = 0
-			fmt.Printf("Received HTTP %d from the API, resetting...\n", resp.StatusCode)
-			func() {
-				body, err := io.ReadAll(resp.Body)
-				if err == nil {
-					fmt.Printf(string(body) + "\n")
-				}
-				defer resp.Body.Close()
-			}()
 			continue
 		}
 
@@ -67,6 +54,26 @@ func main() {
 
 	fmt.Printf("API is unhealthy: could not get %d successful API responses in the row with %ds timeout\n", MIN_NUM_SUCCESSFUL_SEQUENTIAL_RESPONSES, MAX_TIMEOUT_IN_SEC)
 	os.Exit(1)
+}
+
+func pollApi(client *http.Client, url string) error {
+	resp, err := client.Get(url)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("expected HTTP status 200, got %d", resp.StatusCode)
+		}
+
+		return fmt.Errorf("expected HTTP status 200, got %d\n%s", resp.StatusCode, string(body))
+	}
+
+	return nil
 }
 
 func createHttpsClient() *http.Client {
