@@ -32,6 +32,14 @@ groups:
   - destroy-infrastructure-cats
   - remove-claimed-lock-cats
 
+- name: smoke-tests
+  jobs:
+    - add-claimed-lock-smoke-tests
+    - setup-infrastructure-smoke-tests
+    - update-infrastructure-smoke-tests
+    - destroy-infrastructure-smoke-tests
+    - remove-claimed-lock-smoke-tests
+
 - name: bbr
   jobs:
   - add-claimed-lock-bbr
@@ -254,6 +262,29 @@ cats-bbl-up-task: &cats-bbl-up-task-config
       repository: updated-bbl-state
       rebase: true
 
+smoke-tests-bbl-up-task: &smoke-tests-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-state: relint-envs
+    bbl-config: relint-envs
+  params:
+    BBL_ENV_NAME: smoke-tests
+    BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/smoke-tests/smoke-tests.key.json
+    BBL_GCP_REGION: europe-west3
+    BBL_IAAS: gcp
+    BBL_LB_CERT: ((smoke-tests_lb.certificate))
+    BBL_LB_KEY: ((smoke-tests_lb.private_key))
+    BBL_STATE_DIR: environments/test/smoke-tests/bbl-state
+    GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+    GIT_COMMIT_USERNAME: "ARD WG Bot"
+    LB_DOMAIN: cf.smoke-tests.env.wg-ard.ci.cloudfoundry.org
+    TRUSTED_CA: ((relint_ca.certificate))
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
 resources:
 # Pools
 - name: fresh-pool
@@ -308,6 +339,15 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: main
     pool: cats
+    private_key: ((ard_wg_gitbot_ssh_key.private_key))
+
+- name: smoke-tests-pool
+  type: pool
+  icon: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: main
+    pool: smoke-tests
     private_key: ((ard_wg_gitbot_ssh_key.private_key))
 
 - name: bbr-pool
@@ -464,6 +504,20 @@ jobs:
   - put: cats-pool
     params: {add_claimed: cats-pool}
 
+- name: add-claimed-lock-smoke-tests
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: smoke-tests
+      output_mapping:
+        pool-resource: smoke-tests-pool
+    - put: smoke-tests-pool
+      params: {add_claimed: smoke-tests-pool}
+
 - name: add-claimed-lock-stable
   serial: true
   public: true
@@ -608,6 +662,21 @@ jobs:
     <<: *cats-bbl-up-task-config
   - put: cats-pool
     params: {release: cats-pool}
+
+- name: setup-infrastructure-smoke-tests
+  serial_groups: [smoke-tests]
+  public: true
+  plan:
+    - get: smoke-tests-pool
+      trigger: true
+      passed: [ add-claimed-lock-smoke-tests ]
+    - in_parallel:
+        - get: cf-deployment-concourse-tasks
+        - get: relint-envs
+    - task: setup-infrastructure
+      <<: *smoke-tests-bbl-up-task-config
+    - put: smoke-tests-pool
+      params: {release: smoke-tests-pool}
 
 - name: setup-infrastructure-maxime
   serial: true
@@ -779,6 +848,24 @@ jobs:
       <<: *cats-bbl-up-task-config
     - put: cats-pool
       params: {release: cats-pool}
+
+- name: update-infrastructure-smoke-tests
+  serial: true
+  public: true
+  plan:
+    - timeout: 12h
+      do:
+        - in_parallel:
+            - put: smoke-tests-pool
+              params: {acquire: true}
+            - get: relint-envs
+            - get: cf-deployment-concourse-tasks
+            - get: every-tuesday-morning
+              trigger: true
+        - task: update-infrastructure
+          <<: *smoke-tests-bbl-up-task-config
+        - put: smoke-tests-pool
+          params: {release: smoke-tests-pool}
 
 - name: update-infrastructure-stable
   serial: true
@@ -992,6 +1079,36 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-smoke-tests
+  serial_groups: [smoke-tests]
+  public: true
+  plan:
+    - in_parallel:
+        - put: smoke-tests-pool
+          params: {claim: smoke-tests}
+        - get: relint-envs
+        - get: cf-deployment-concourse-tasks
+    - task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/smoke-tests/bbl-state
+    - task: destroy-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/smoke-tests/ard-smoke-tests.key.json
+        BBL_STATE_DIR: environments/test/smoke-tests/bbl-state
+        GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+        GIT_COMMIT_USERNAME: "ARD WG Bot"
+      ensure:
+        put: relint-envs
+        params:
+          repository: updated-bbl-state
+          rebase: true
+
 - name: destroy-infrastructure-stable
   serial: true
   public: true
@@ -1152,6 +1269,23 @@ jobs:
       pool-resource: cats-pool
   - put: cats-pool
     params: {remove: cats-pool}
+
+- name: remove-claimed-lock-smoke-tests
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - get: smoke-tests-pool
+      passed: [ destroy-infrastructure-smoke-tests ]
+      trigger: true
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: smoke-tests
+      output_mapping:
+        pool-resource: smoke-tests-pool
+    - put: smoke-tests-pool
+      params: {remove: smoke-tests-pool}
 
 - name: remove-claimed-lock-bbr
   serial: true
