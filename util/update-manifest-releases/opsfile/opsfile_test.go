@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os"
 
-	yaml "gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/opsfile"
 

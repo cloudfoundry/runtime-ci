@@ -6,7 +6,7 @@ import (
 	"github.com/cloudfoundry/runtime-ci/util/update-manifest-releases/compiledreleasesops"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 )
 
 var _ = Describe("UpdateCompiledReleases", func() {
