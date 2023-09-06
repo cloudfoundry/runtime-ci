@@ -1,4 +1,4 @@
-FROM golang:1.20.7-bullseye
+FROM golang:1.21.1-bullseye
 
 ENV jq_version 1.6
 ENV jq_checksum 056ba5d6bbc617c29d37158ce11fd5a443093949
