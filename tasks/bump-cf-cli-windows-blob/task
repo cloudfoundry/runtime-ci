@@ -21,7 +21,7 @@ function compare_and_remove() {
   local comparison_version="${2}"
 
   if ! [[ $blob =~ ^cf8-cli_[0-9]+.[0-9]+.[0-9]+_winx64.zip$ ]]; then
-    printf "Blob at path '%s' does not appear to be a cf8 CLI Windows zip. Skipping it\n" "${blob}"
+    printf "Skipping blob '%s', as it does not appear to be a cf8 CLI Windows zip\n\n" "${blob}"
     return 0
   fi
 
@@ -32,14 +32,12 @@ function compare_and_remove() {
   local newer_version
   newer_version="$(echo "${sorted_versions}" | tail -n1)"
   if [[ "${newer_version}" == "${blob_version}" ]]; then
-    echo -n "Blob at path '${blob}' is newer than ${comparison_version}..."
-    echo " Skipping removing it and not planning to upload ${comparison_version} as a blob anymore."
-    echo "If this is not desired, please remove this blob: ${blob}"
+    printf "Skipping blob '%s', as it appears to be newer than %s\n" "${blob}" "${comparison_version}"
+    printf "NOTE: this means no new blob will be uploaded, if that is not desired then please remove blob '%s' from the BOSH release\n\n" "${blob}"
     UPLOAD_NEW_BLOB=false
     return 0
   fi
 
-  printf "Removing blob at path '%s'\n" "${blob}"
   bosh remove-blob --dir release-repo "${blob}"
 }
 
@@ -49,8 +47,9 @@ function fetch_zip() {
   local version="${1}"
   local output_file="${2}"
 
+  echo "Fetching the desired zip file from the internet"
+
   local url="https://packages.cloudfoundry.org/stable?release=windows64-exe&source=github-rel&version=${version}"
-  echo "Fetching zip from: ${url}"
   wget "${url}" -O "${output_file}"
 }
 
@@ -81,7 +80,7 @@ NEW_BLOB_PATH="cf8-cli_${CF_CLI_INPUT_VERSION}_winx64.zip"
 # MAIN
 # =============================================================================
 
-printf 'Comparing and potentially removing the following blobs against cf CLI %s:\n%s\n' "${CF_CLI_INPUT_VERSION}" "${BLOBS}"
+printf 'Comparing and potentially removing the following blobs against cf CLI %s:\n%s\n\n' "${CF_CLI_INPUT_VERSION}" "${BLOBS}"
 for blob in $BLOBS; do
   compare_and_remove "${blob}" "${CF_CLI_INPUT_VERSION}"
 done
@@ -89,19 +88,17 @@ done
 pushd release-repo > /dev/null
   echo -n "Checking whether or not to upload ${CF_CLI_INPUT_VERSION} as a blob... "
   if [[ $UPLOAD_NEW_BLOB == true ]]; then
-    echo 'Yup, lets do it'
+    printf 'Yup, lets do it\n\n'
 
     fetch_zip "${CF_CLI_INPUT_VERSION}" "${TMP_DIR}/${NEW_BLOB_PATH}"
 
-    echo 'Adding the new blob'
     bosh add-blob "${TMP_DIR}/${NEW_BLOB_PATH}" "${NEW_BLOB_PATH}"
 
     echo "${PRIVATE_YML}" > config/private.yml
 
-    echo 'Uploading new blob'
     bosh upload-blobs
   else
-    echo "No need. There is already a newer blob than ${CF_CLI_INPUT_VERSION}"
+    printf "No need\n\n"
   fi
 
   commit_with_message "${PWD}" <(echo "Update Windows cf CLI blob to v${CF_CLI_INPUT_VERSION}")
