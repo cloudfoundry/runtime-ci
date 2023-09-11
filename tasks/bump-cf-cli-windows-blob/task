@@ -1,0 +1,107 @@
+#!/bin/bash
+
+set -eu
+
+# shellcheck disable=SC1091
+source runtime-ci/tasks/shared-functions
+
+# =============================================================================
+# FUNCTION DECLARATIONS
+# =============================================================================
+
+# compare_and_remove() will compare the given `blob` with the given
+# `comparison_version` and remove the blob if:
+# - It matches the expected format for a cf8 CLI release for Windows blob.
+# - Its version is less than than the `comparison_version`.
+#
+# Note: global var `UPLOAD_NEW_BLOB` is set to false if a given `blob` has a
+# version that's greater than the `comparison_version`.
+function compare_and_remove() {
+  local blob="${1}"
+  local comparison_version="${2}"
+
+  if ! [[ $blob =~ ^cf8-cli_[0-9]+.[0-9]+.[0-9]+_winx64.zip$ ]]; then
+    printf "Skipping blob '%s', as it does not appear to be a cf8 CLI Windows zip\n\n" "${blob}"
+    return 0
+  fi
+
+  local blob_version
+  blob_version="$(echo "${blob}" | grep -oE "${VERSION_REGEX}")"
+  local sorted_versions
+  sorted_versions="$(printf "%s\n%s" "${blob_version}" "${comparison_version}" | sort -V)"
+  local newer_version
+  newer_version="$(echo "${sorted_versions}" | tail -n1)"
+  if [[ "${newer_version}" == "${blob_version}" ]]; then
+    printf "Skipping blob '%s', as it appears to be newer than %s\n" "${blob}" "${comparison_version}"
+    printf "NOTE: this means no new blob will be uploaded, if that is not desired then please remove blob '%s' from the BOSH release\n\n" "${blob}"
+    UPLOAD_NEW_BLOB=false
+    return 0
+  fi
+
+  bosh remove-blob --dir release-repo "${blob}"
+}
+
+# fetch_zip() will retrieve the zip file containing the Windows binary for the
+# cf8 CLI of the given `version` into the given `output_file`.
+function fetch_zip() {
+  local version="${1}"
+  local output_file="${2}"
+
+  echo "Fetching the desired zip file from the internet"
+
+  local url="https://packages.cloudfoundry.org/stable?release=windows64-exe&source=github-rel&version=${version}"
+  wget "${url}" -O "${output_file}"
+}
+
+# =============================================================================
+# GLOBAL VARS
+# =============================================================================
+
+# Determine whether or not to upload new blob
+UPLOAD_NEW_BLOB=true
+
+# Regex for extracting a semver version
+VERSION_REGEX='[0-9]+.[0-9]+.[0-9]+'
+
+# Version of the cf-cli-release without the 'v' prefix
+CF_CLI_INPUT_VERSION=$(grep -oE "${VERSION_REGEX}" "cf-cli-release/version")
+
+# String list of blobs in the release-repo
+BLOBS="$(bosh --column="Path" blobs --dir release-repo | awk '{print $1}')"
+
+# Location to fetch zip file to and later delete
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "${TMP_DIR}"' EXIT
+
+# The path of the new blob
+NEW_BLOB_PATH="cf8-cli_${CF_CLI_INPUT_VERSION}_winx64.zip"
+
+# =============================================================================
+# MAIN
+# =============================================================================
+
+printf 'Comparing and potentially removing the following blobs against cf CLI %s:\n%s\n\n' "${CF_CLI_INPUT_VERSION}" "${BLOBS}"
+for blob in $BLOBS; do
+  compare_and_remove "${blob}" "${CF_CLI_INPUT_VERSION}"
+done
+
+pushd release-repo > /dev/null
+  echo -n "Checking whether or not to upload ${CF_CLI_INPUT_VERSION} as a blob... "
+  if [[ $UPLOAD_NEW_BLOB == true ]]; then
+    printf 'Yup, lets do it\n\n'
+
+    fetch_zip "${CF_CLI_INPUT_VERSION}" "${TMP_DIR}/${NEW_BLOB_PATH}"
+
+    bosh add-blob "${TMP_DIR}/${NEW_BLOB_PATH}" "${NEW_BLOB_PATH}"
+
+    echo "${PRIVATE_YML}" > config/private.yml
+
+    bosh upload-blobs
+  else
+    printf "No need\n\n"
+  fi
+
+  commit_with_message "${PWD}" <(echo "Update Windows cf CLI blob to v${CF_CLI_INPUT_VERSION}")
+popd > /dev/null
+
+cp -r release-repo/. updated-release-repo
