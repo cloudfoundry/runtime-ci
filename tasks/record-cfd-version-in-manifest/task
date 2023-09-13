@@ -5,11 +5,15 @@ set -exu
 git clone cf-deployment-release-candidate cf-deployment-rc-with-updated-version
 
 new_version="v$(cat cf-deployment-version/version)"
+new_version_major="$(cut -d . -f 1 cf-deployment-version/version)"
 
 pushd cf-deployment-rc-with-updated-version
   old_version="$(bosh int cf-deployment.yml --path /manifest_version)"
+  old_version_major="$(echo "${old_version}" | cut -d . -f 1 | sed 's/v//')"
 
   sed -i "s/manifest_version: ${old_version}/manifest_version: ${new_version}/g" cf-deployment.yml
+  sed -i "s/build: ${old_version} # AUTO-POPULATED/build: ${new_version} # AUTO-POPULATED/g" cf-deployment.yml
+  sed -i "s/version: ${old_version_major} # AUTO-POPULATED/version: ${new_version_major} # AUTO-POPULATED/g" cf-deployment.yml
 
   git add cf-deployment.yml
   git config user.name "ARD WG Bot"
