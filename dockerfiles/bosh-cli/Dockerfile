@@ -2,10 +2,24 @@ FROM cloudfoundry/relint-base
 
 # bosh-cli
 ARG bosh_cli_version
-RUN \
-  wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${bosh_cli_version}-linux-amd64 --output-document="/usr/bin/bosh" && \
-  cd /usr/bin && \
-  chmod +x bosh
+RUN set -eux; \
+      apt-get -y install \
+        build-essential \
+        libreadline-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        libyaml-dev \
+        openssl \
+        ruby \
+        ruby-dev \
+        sqlite3 \
+        zlib1g-dev; \
+      url="https://github.com/cloudfoundry/bosh-cli/releases/download/v${bosh_cli_version}/bosh-cli-${bosh_cli_version}-linux-amd64"; \
+      wget "${url}" -O /usr/local/bin/bosh; \
+      chmod +x /usr/local/bin/bosh; \
+      bosh --version
 
 # bbl and dependencies
 ARG bbl_version
