@@ -4,20 +4,9 @@ RUN \
   apt-get update && \
   apt-get -y install \
     ack-grep \
-    build-essential \
-    curl \
-    git \
-    jq \
-    python3-pip \
-    ruby \
-    unzip \
-    wget
+    jq
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
-
-# yq
-RUN \
-  pip3 install yq
 
 # Add trusted relint ca certificate
 ARG RELINT_CA_CERTIFICATE
