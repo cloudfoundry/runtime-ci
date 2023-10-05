@@ -3,15 +3,15 @@ FROM golang:1.20.7-bullseye
 RUN \
   apt-get update && \
   apt-get -y install \
+    ack-grep \
     build-essential \
+    curl \
     git \
     jq \
+    python3-pip \
     ruby \
     unzip \
-    wget \
-    curl \
-    ack-grep \
-    python3-pip
+    wget
 
 RUN dpkg-divert --local --divert /usr/bin/ack --rename --add /usr/bin/ack-grep
 
