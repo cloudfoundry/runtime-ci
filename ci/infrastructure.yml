@@ -591,7 +591,7 @@ jobs:
 
 - name: add-claimed-lock-fips
   serial: true
-  public: false
+  public: true
   plan:
     - get: runtime-ci
     - task: prepare-to-modify-pool-resource
@@ -782,7 +782,7 @@ jobs:
 
 - name: setup-infrastructure-fips
   serial_groups: [snape]
-  public: false
+  public: true
   plan:
     - get: fips-pool
       trigger: true
@@ -977,7 +977,7 @@ jobs:
 
 - name: update-infrastructure-fips
   serial: true
-  public: false
+  public: true
   plan:
     - timeout: 12h
       do:
@@ -1293,7 +1293,7 @@ jobs:
 
 - name: destroy-infrastructure-fips
   serial_groups: [snape]
-  public: false
+  public: true
   plan:
     - in_parallel:
         - put: experimental-pool
@@ -1478,7 +1478,7 @@ jobs:
 
 - name: remove-claimed-lock-fips
   serial: true
-  public: false
+  public: true
   plan:
     - get: runtime-ci
     - get: experimental-pool
