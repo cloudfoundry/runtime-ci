@@ -77,6 +77,14 @@ groups:
   - setup-infrastructure-maxime
   - destroy-infrastructure-maxime
 
+- name: fips-snape
+  jobs:
+    - add-claimed-lock-fips
+    - setup-infrastructure-fips
+    - update-infrastructure-fips
+    - destroy-infrastructure-fips
+    - remove-claimed-lock-fips
+
 fresh-bbl-up-task: &fresh-bbl-up-task-config
   file: cf-deployment-concourse-tasks/bbl-up/task.yml
   input_mapping:
@@ -142,6 +150,32 @@ experimental-bbl-up-task: &experimental-bbl-up-task-config
     GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
     GIT_COMMIT_USERNAME: "ARD WG Bot"
     LB_DOMAIN: cf.hermione.env.wg-ard.ci.cloudfoundry.org
+    TRUSTED_CA: ((relint_ca.certificate))
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
+fips-bbl-up-task: &fips-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: relint-envs
+    bbl-state: relint-envs
+  params:
+    BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+    BBL_AWS_REGION: eu-central-1
+    BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+    BBL_CONFIG_DIR: environments/test/snape/bbl-config
+    BBL_ENV_NAME: snape-fips
+    BBL_IAAS: aws
+    BBL_LB_CERT: ((snape_lb.certificate))
+    BBL_LB_CERT_CHAIN: ((snape_lb.ca))
+    BBL_LB_KEY: ((snape_lb.private_key))
+    BBL_STATE_DIR: environments/test/snape/bbl-state
+    GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+    GIT_COMMIT_USERNAME: "ARD WG Bot"
+    LB_DOMAIN: cf.snape.env.wg-ard.ci.cloudfoundry.org
     TRUSTED_CA: ((relint_ca.certificate))
   ensure:
     put: relint-envs
@@ -368,6 +402,15 @@ resources:
     pool: cf-deployment/windows
     private_key: ((ard_wg_gitbot_ssh_key.private_key))
 
+- name: fips-pool
+  type: pool
+  icon: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: main
+    pool: cf-deployment/fips
+    private_key: ((ard_wg_gitbot_ssh_key.private_key))
+
 # Plan patches
 - name: bosh-bootloader
   type: git
@@ -546,6 +589,20 @@ jobs:
   - put: windows-pool
     params: {add_claimed: windows-pool}
 
+- name: add-claimed-lock-fips
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: snape
+      output_mapping:
+        pool-resource: fips-pool
+    - put: fips-pool
+      params: {add_claimed: fips-pool}
+
 # Setup infrastructure
 - name: setup-infrastructure-fresh
   serial: true
@@ -722,6 +779,21 @@ jobs:
     <<: *windows-bbl-up-task-config
   - put: windows-pool
     params: {release: windows-pool}
+
+- name: setup-infrastructure-fips
+  serial_groups: [snape]
+  public: true
+  plan:
+    - get: fips-pool
+      trigger: true
+      passed: [ add-claimed-lock-fips ]
+    - in_parallel:
+        - get: cf-deployment-concourse-tasks
+        - get: relint-envs
+    - task: setup-infrastructure
+      <<: *fips-bbl-up-task-config
+    - put: fips-pool
+      params: {release: fips-pool}
 
 # Update infrastructure
 - name: update-infrastructure-fresh
@@ -902,6 +974,24 @@ jobs:
       <<: *windows-bbl-up-task-config
     - put: windows-pool
       params: {release: windows-pool}
+
+- name: update-infrastructure-fips
+  serial: true
+  public: true
+  plan:
+    - timeout: 12h
+      do:
+        - in_parallel:
+            - put: fips-pool
+              params: {acquire: true}
+            - get: relint-envs
+            - get: cf-deployment-concourse-tasks
+            - get: every-tuesday-morning
+              trigger: true
+        - task: update-infrastructure
+          <<: *fips-bbl-up-task-config
+        - put: fips-pool
+          params: {release: fips-pool}
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
@@ -1201,6 +1291,37 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
+- name: destroy-infrastructure-fips
+  serial_groups: [snape]
+  public: true
+  plan:
+    - in_parallel:
+        - put: experimental-pool
+          params: {claim: snape}
+        - get: relint-envs
+        - get: cf-deployment-concourse-tasks
+    - task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/snape/bbl-state
+    - task: destroy-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+      params:
+        BBL_STATE_DIR: environments/test/snape/bbl-state
+        BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+        BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+        GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+        GIT_COMMIT_USERNAME: "ARD WG Bot"
+      input_mapping:
+        bbl-state: relint-envs
+      ensure:
+        put: relint-envs
+        params:
+          repository: updated-bbl-state
+          rebase: true
+
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
   serial: true
@@ -1354,3 +1475,20 @@ jobs:
       pool-resource: windows-pool
   - put: windows-pool
     params: {remove: windows-pool}
+
+- name: remove-claimed-lock-fips
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - get: experimental-pool
+      passed: [ destroy-infrastructure-fips ]
+      trigger: true
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: snape
+      output_mapping:
+        pool-resource: experimental-pool
+    - put: experimental-pool
+      params: {remove: experimental-pool}
