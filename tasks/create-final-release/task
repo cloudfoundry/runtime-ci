@@ -10,14 +10,7 @@ if [ ! -f semantic-version/version ]; then
 fi
 }
 
-setup_aws_access() {
-  set +x
-  BLOBS_BUCKET_ACCESS_KEY_ID="${BLOBS_BUCKET_ACCESS_KEY_ID:?"\$BLOBS_BUCKET_ACCESS_KEY_ID not set"}"
-  BLOBS_BUCKET_SECRET_KEY="${BLOBS_BUCKET_SECRET_KEY:?"\$BLOBS_BUCKET_SECRET_KEY not set"}"
-  set -x
-}
-
-write_config_private() {
+write_aws_config_private() {
   set +x
 cat > "release-repo/config/private.yml" <<EOF
 ---
@@ -26,6 +19,19 @@ blobstore:
   options:
     access_key_id: ${BLOBS_BUCKET_ACCESS_KEY_ID}
     secret_access_key: ${BLOBS_BUCKET_SECRET_KEY}
+EOF
+  set -x
+}
+
+write_gcp_config_private() {
+  set +x
+cat > "release-repo/config/private.yml" <<EOF
+---
+blobstore:
+  options:
+    credentials_source: static
+    json_key: |
+      ${BLOBS_BUCKET_GCS_JSON_KEY}
 EOF
   set -x
 }
@@ -47,9 +53,16 @@ create_release() {
 main() {
   fail_fast
 
-  setup_aws_access
-
-  write_config_private
+  if [[ -n "${BLOBS_BUCKET_ACCESS_KEY_ID}" ]] && [[ -n "${BLOBS_BUCKET_SECRET_KEY}" ]]; then
+    echo "Using AWS credentials"
+    write_aws_config_private
+  elif [[ -n "${BLOBS_BUCKET_GCS_JSON_KEY}" ]]; then
+    echo "Using GCP credentials"
+    write_gcp_config_private
+  else
+    echo "Error: Either BLOBS_BUCKET_ACCESS_KEY_ID and BLOBS_BUCKET_SECRET_KEY or BLOBS_BUCKET_GCS_JSON_KEY must be set."
+    exit 1
+  fi
 
   create_release
 
