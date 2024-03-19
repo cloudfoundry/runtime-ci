@@ -3,34 +3,34 @@ updates:
 - package-ecosystem: "gomod"
   directory: "/"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "gomod"
   directory: "/ci/resources/stemcell-version-bump"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "gomod"
   directory: "/tasks/lookup-slack-channel-for-release-owner"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "gomod"
   directory: "/util/cat-search-tool"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "gomod"
   directory: "/util/update-manifest-releases"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "docker"
   directory: "/dockerfiles/bosh-cli"
   schedule:
-    interval: "daily"
+    interval: "weekly"
 
 - package-ecosystem: "docker"
   directory: "/dockerfiles/relint-base"
   schedule:
-    interval: "daily"
+    interval: "weekly"
