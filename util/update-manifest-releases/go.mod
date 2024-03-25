@@ -3,7 +3,7 @@ module github.com/cloudfoundry/runtime-ci/util/update-manifest-releases
 go 1.21
 
 require (
-	github.com/onsi/ginkgo/v2 v2.17.0
+	github.com/onsi/ginkgo/v2 v2.17.1
 	github.com/onsi/gomega v1.32.0
 	gopkg.in/yaml.v2 v2.4.0
 )
