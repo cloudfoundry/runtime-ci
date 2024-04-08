@@ -9,15 +9,16 @@ image_resource:
 inputs:
 - name: runtime-ci
 - name: ops-files
-- name: windows-stemcell
+- name: stemcell
 
 outputs:
 - name: updated-stemcell-ops-file
 
 run:
-  path: runtime-ci/tasks/update-windows-stemcell-ops/task
+  path: runtime-ci/tasks/update-stemcell-ops/task
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  ORIGINAL_WINDOWS_OPS_FILE_PATH: operations/windows2012R2-cell.yml
-  UPDATED_WINDOWS_OPS_FILE_PATH: windows2012R2-cell.yml
+  STEMCELL_STACK: windows2019
+  ORIGINAL_OPS_FILE_PATH:
+  UPDATED_OPS_FILE_PATH:
