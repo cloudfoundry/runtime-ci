@@ -19,6 +19,6 @@ run:
 
 params:
   COMMIT_MESSAGE_PATH: commit-message.txt
-  STEMCELL_STACK: windows2019
+  STEMCELL_STACK:
   ORIGINAL_OPS_FILE_PATH:
   UPDATED_OPS_FILE_PATH:
