@@ -93,7 +93,6 @@ resources:
     password: ((dockerhub.password))
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
-
 - name: diego-docker-app-custom
   type: docker-image
   icon: docker
@@ -104,10 +103,10 @@ resources:
   type: docker-image
   icon: docker
   source:
-    repository: relintprivateregistry/privatecats
-    username: ((private_dockerhub.username))
-    password: ((private_dockerhub.password))
-    email: cf-release-integration+private-registry@pivotal.io
+    repository: cfdeploymentprivateregistry/privatecats
+    username: ((ardwg_private_dockerhub.username))
+    password: ((ardwg_private_dockerhub.password))
+    email: deployments@cloudfoundry.org
 
 - name: stemcell-version-bump-resource-image
   type: docker-image
