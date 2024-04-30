@@ -9,7 +9,7 @@ describe 'OpsFileFinder' do
     @tmp_work_dir = Dir.mktmpdir('test-cf-deployment')
 
     Dir.chdir(@tmp_work_dir)
-    FileUtils.mkdir_p('test-cf-deployment/operations')
+    FileUtils.mkdir_p('test-cf-deployment/operations/test')
   end
 
   after(:all) do
@@ -22,6 +22,7 @@ describe 'OpsFileFinder' do
       File.open('test-cf-deployment/operations/ops.yml', 'w')
       File.open('test-cf-deployment/operations/ops2.yml', 'w')
       File.open('test-cf-deployment/operations/use-compiled-releases.yml', 'w')
+      File.open('test-cf-deployment/operations/test/fips-stemcell.yml', 'w')
       File.open('test-cf-deployment/operations/README.md', 'w')
     end
 
@@ -34,9 +35,12 @@ describe 'OpsFileFinder' do
       expect(subject).not_to include 'README.md'
     end
 
-    context 'and the file is the use-compiled-releases.yml ops-file' do
+    context 'and the file is explicitly excluded' do
       it 'does not return the use-compiled-releases.yml ops-file' do
         expect(subject).not_to include "use-compiled-releases.yml"
+      end
+      it 'does not return the fips-stemcell.yml ops-file' do
+        expect(subject).not_to include "test/fips-stemcell.yml"
       end
     end
   end
