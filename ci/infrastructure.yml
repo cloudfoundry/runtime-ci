@@ -1190,7 +1190,7 @@ jobs:
       input_mapping:
         bbl-state: relint-envs
       params:
-        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/smoke-tests/ard-smoke-tests.key.json
+        BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/smoke-tests/smoke-tests.key.json
         BBL_STATE_DIR: environments/test/smoke-tests/bbl-state
         GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
         GIT_COMMIT_USERNAME: "ARD WG Bot"
