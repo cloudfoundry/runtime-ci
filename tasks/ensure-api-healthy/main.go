@@ -26,8 +26,8 @@ func main() {
 		err := pollApi(client, url)
 		if err != nil {
 			numSuccessResponses = 0
-			fmt.Printf("Received error when requesting API, resetting...\n")
-			fmt.Printf(err.Error() + "\n")
+			fmt.Println("Received error when requesting API, resetting...")
+			fmt.Println(err.Error())
 			continue
 		}
 
