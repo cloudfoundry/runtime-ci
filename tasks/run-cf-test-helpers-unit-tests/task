@@ -1,6 +1,5 @@
 #!/bin/bash -exu
 
 pushd cf-test-helpers
-  go install github.com/onsi/ginkgo/v2/ginkgo
-  ginkgo -r --procs=3 --compilers=3 --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
+  go run github.com/onsi/ginkgo/v2/ginkgo -r --procs=3 --compilers=3 --randomize-all --randomize-suites --fail-on-pending --keep-going --race --trace
 popd
