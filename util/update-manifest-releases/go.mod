@@ -1,6 +1,7 @@
 module github.com/cloudfoundry/runtime-ci/util/update-manifest-releases
 
-go 1.21
+go 1.22.0
+
 toolchain go1.22.5
 
 require (
