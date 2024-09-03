@@ -103,6 +103,8 @@ fresh-bbl-up-task: &fresh-bbl-up-task-config
     GIT_COMMIT_USERNAME: "ARD WG Bot"
     LB_DOMAIN: cf.luna.env.wg-ard.ci.cloudfoundry.org
     TRUSTED_CA: ((relint_ca.certificate))
+    TF_VAR_iso_lb_cert: ((luna-iso_lb.certificate))
+    TF_VAR_iso_lb_key: ((luna-iso_lb.private_key))
   ensure:
     put: relint-envs
     params:
