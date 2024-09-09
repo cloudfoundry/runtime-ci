@@ -1,4 +1,4 @@
-FROM golang:1.22.6-bullseye
+FROM golang:1.22.7-bullseye
 
 RUN set -eux; \
       apt-get update; \
