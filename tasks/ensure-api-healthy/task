@@ -34,7 +34,7 @@ EOT
     cf push healthy-app -f cf-smoke-tests/assets/binary/manifest.yml -p cf-smoke-tests/assets/binary -b binary_buildpack
     TARGET_URL="https://healthy-app.$(jq -r .isolation_segment_domain "${CONFIG_FILE}")"
   else
-    TARGET_URL="http://$(jq -r .api "${CONFIG_FILE}")/v2/info"
+    TARGET_URL="https://$(jq -r .api "${CONFIG_FILE}")/v3/info"
   fi
 
   go run runtime-ci/tasks/ensure-api-healthy/main.go "${TARGET_URL}"
