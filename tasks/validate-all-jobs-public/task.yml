@@ -5,13 +5,13 @@ image_resource:
   type: docker-image
   source:
     repository: ruby
-    tag: 2.3-slim
+    tag: 3.1-slim
 
 inputs:
 - name: runtime-ci
 
 run:
-  path: runtime-ci/tasks/validate-all-jobs-public/task
+  path: runtime-ci/tasks/validate-all-jobs-public/task.rb
 
 params:
-  RUNTIME_CI_DIR: runtime-ci
+  RUNTIME_CI_DIR: runtime-ci/ci
