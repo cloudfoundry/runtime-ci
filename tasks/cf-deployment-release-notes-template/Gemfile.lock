@@ -72,6 +72,3 @@ DEPENDENCIES
   hashdiff
   rspec
   webmock
-
-BUNDLED WITH
-   2.0.1
