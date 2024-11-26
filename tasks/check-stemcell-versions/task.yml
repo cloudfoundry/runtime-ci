@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/relint-base
+
+inputs:
+- name: runtime-ci
+- name: cf-deployment-main
+- name: cf-deployment-release-candidate
+  optional: true
+- name: cf-deployment-develop
+  optional: true
+  
+params:
+  BRANCH_TO_COMPARE: release-candidate
+run:
+  path: runtime-ci/tasks/check-stemcell-versions/task

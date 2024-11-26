@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eu
+
+function main() {
+  root_dir="$PWD"
+  : "${BRANCH_TO_COMPARE:=release-candidate}"
+  pushd "$(dirname $0)"
+    BRANCH_TO_COMPARE=$BRANCH_TO_COMPARE  go run main.go "${root_dir}"
+  popd
+}
+
+main
