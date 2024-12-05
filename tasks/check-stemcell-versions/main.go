@@ -9,8 +9,12 @@ import (
 )
 
 func main() {
+	if len(os.Args) < 3 {
+		log.Fatalf("Usage: %s <buildDir> <branchToCompare>", os.Args[0])
+	}
+
 	buildDir := os.Args[1]
-	branchToCompare := os.Getenv("BRANCH_TO_COMPARE")
+	branchToCompare := os.Args[2]
 
 	content, err := os.ReadFile(filepath.Join(buildDir, "cf-deployment-main", "cf-deployment.yml"))
 	if err != nil {
