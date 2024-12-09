@@ -5,7 +5,7 @@ class OpsFileFinder
     )
 
     opsfile_list = ops_files_and_directories.select do |fd|
-      File.file?(fd) unless fd.match(/(use-compiled-releases.yml|test\/fips-stemcell.yml)/)
+      File.file?(fd) unless fd.match(/(use-compiled-releases.yml|test\/fips-stemcell.yml|experimental\/use-noble-stemcell.yml)/)
     end
 
     opsfile_list.map { |opsfile| opsfile.gsub!("#{repo_dir}/operations/", '') }
