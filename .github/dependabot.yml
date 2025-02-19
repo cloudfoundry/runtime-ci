@@ -1,36 +1,23 @@
 version: 2
 updates:
-- package-ecosystem: "gomod"
+- package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "weekly"
 
 - package-ecosystem: "gomod"
-  directory: "/ci/resources/stemcell-version-bump"
-  schedule:
-    interval: "weekly"
-
-- package-ecosystem: "gomod"
-  directory: "/tasks/lookup-slack-channel-for-release-owner"
-  schedule:
-    interval: "weekly"
-
-- package-ecosystem: "gomod"
-  directory: "/util/cat-search-tool"
-  schedule:
-    interval: "weekly"
-
-- package-ecosystem: "gomod"
-  directory: "/util/update-manifest-releases"
+  directories:
+  - "/"
+  - "/ci/resources/stemcell-version-bump"
+  - "/tasks/lookup-slack-channel-for-release-owner"
+  - "/util/cat-search-tool"
+  - "/util/update-manifest-releases"
   schedule:
     interval: "weekly"
 
 - package-ecosystem: "docker"
-  directory: "/dockerfiles/bosh-cli"
-  schedule:
-    interval: "weekly"
-
-- package-ecosystem: "docker"
-  directory: "/dockerfiles/relint-base"
+  directories:
+  - "/dockerfiles/bosh-cli"
+  - "/dockerfiles/relint-base"
   schedule:
     interval: "weekly"
