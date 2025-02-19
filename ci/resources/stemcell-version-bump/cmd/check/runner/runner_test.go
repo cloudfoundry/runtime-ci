@@ -9,6 +9,7 @@ import (
 	"stemcell-version-bump/resource"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCheck(t *testing.T) {
@@ -21,22 +22,24 @@ func TestCheck(t *testing.T) {
 	}
 
 	type checkCheckFunc func(*testing.T, string, error)
+
 	checks := func(cs ...checkCheckFunc) []checkCheckFunc { return cs }
+	expectNoError := func(t *testing.T, _ string, actualErr error) {
+		t.Helper()
 
-	var expectNoError = func(t *testing.T, _ string, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
+		require.NoError(t, actualErr)
 	}
-
-	var expectError = func(expectedErr string) checkCheckFunc {
+	expectError := func(expectedErr string) checkCheckFunc {
 		return func(t *testing.T, _ string, actualErr error) {
+			t.Helper()
+
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
+	expectVersionList := func(expectedVersions string) checkCheckFunc {
+		return func(t *testing.T, actualOutput string, _ error) {
+			t.Helper()
 
-	var expectVersionList = func(expectedVersions string) checkCheckFunc {
-		return func(t *testing.T, actualOutput string, actualErr error) {
 			assert.JSONEq(t, expectedVersions, actualOutput)
 		}
 	}
@@ -51,8 +54,9 @@ func TestCheck(t *testing.T) {
 		inArg  in
 		checks []checkCheckFunc
 	}
+
 	tests := []testcase{
-		testcase{
+		{
 			"initial check, no previous version",
 			in{
 				request: resource.CheckInRequest{
@@ -72,7 +76,7 @@ func TestCheck(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"check with version bump that matches the type filter",
 			in{
 				request: resource.CheckInRequest{
@@ -92,7 +96,7 @@ func TestCheck(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"check with version bump that does not match the type filter",
 			in{
 				request: resource.CheckInRequest{
@@ -112,7 +116,7 @@ func TestCheck(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"check with no version bump",
 			in{
 				request: resource.CheckInRequest{
@@ -129,7 +133,7 @@ func TestCheck(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail to get version info",
 			in{
 				request: resource.CheckInRequest{
@@ -149,7 +153,7 @@ func TestCheck(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"bad version info",
 			in{
 				request: resource.CheckInRequest{

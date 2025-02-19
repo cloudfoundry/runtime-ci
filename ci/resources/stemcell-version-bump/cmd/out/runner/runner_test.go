@@ -10,6 +10,7 @@ import (
 	"stemcell-version-bump/resource"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUploadVersion(t *testing.T) {
@@ -22,27 +23,27 @@ func TestUploadVersion(t *testing.T) {
 	}
 
 	type checkUploadVersionFunc func(*testing.T, runner.Putter, error)
+
 	checks := func(cs ...checkUploadVersionFunc) []checkUploadVersionFunc { return cs }
 
-	var expectNoError = func(t *testing.T, _ runner.Putter, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
-	}
+	expectNoError := func(t *testing.T, _ runner.Putter, actualErr error) {
+		t.Helper()
 
-	var expectError = func(expectedErr string) checkUploadVersionFunc {
+		require.NoError(t, actualErr)
+	}
+	expectError := func(expectedErr string) checkUploadVersionFunc {
 		return func(t *testing.T, _ runner.Putter, actualErr error) {
+			t.Helper()
 
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
+	expectPutArgs := func(bucketName, fileName, output string) checkUploadVersionFunc {
+		return func(t *testing.T, fakePutter runner.Putter, _ error) {
+			t.Helper()
 
-	var expectPutArgs = func(bucketName, fileName, output string) checkUploadVersionFunc {
-		return func(t *testing.T, fakePutter runner.Putter, actualErr error) {
 			fake, ok := fakePutter.(*runnerfakes.FakePutter)
-			if !assert.Truef(t, ok, "expected %T to be of type '*runnerfakes.FakePutter'", fakePutter) {
-				t.FailNow()
-			}
+			require.Truef(t, ok, "expected %T to be of type '*runnerfakes.FakePutter'", fakePutter)
 
 			actualBucket, actualFileName, actualUploadVersionput := fake.PutArgsForCall(0)
 
@@ -65,7 +66,7 @@ func TestUploadVersion(t *testing.T) {
 	}
 
 	tests := []testcase{
-		testcase{
+		{
 			"happy path, post succeeds",
 			in{
 				request: resource.OutRequest{
@@ -83,7 +84,7 @@ func TestUploadVersion(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail to put resource",
 			in{
 				request: resource.OutRequest{
@@ -104,7 +105,6 @@ func TestUploadVersion(t *testing.T) {
 	for _, test := range tests {
 		arg, checks := test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			_ = arg
 			actualErr := runner.UploadVersion(arg.request, arg.putter, arg.versionBump)
 
 			for _, check := range checks {
@@ -116,16 +116,18 @@ func TestUploadVersion(t *testing.T) {
 
 func TestGenerateResourceOutput(t *testing.T) {
 	type checkGenerateResourceOutputFunc func(*testing.T, string, error)
+
 	checks := func(cs ...checkGenerateResourceOutputFunc) []checkGenerateResourceOutputFunc { return cs }
 
-	var expectNoError = func(t *testing.T, actualOutput string, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
-	}
+	expectNoError := func(t *testing.T, _ string, actualErr error) {
+		t.Helper()
 
-	var expectGenerateResourceOutputput = func(output string) checkGenerateResourceOutputFunc {
+		require.NoError(t, actualErr)
+	}
+	expectGenerateResourceOutputput := func(output string) checkGenerateResourceOutputFunc {
 		return func(t *testing.T, actualGenerateResourceOutputput string, _ error) {
+			t.Helper()
+
 			assert.JSONEq(t, output, actualGenerateResourceOutputput)
 		}
 	}
@@ -141,7 +143,7 @@ func TestGenerateResourceOutput(t *testing.T) {
 	}
 
 	tests := []testcase{
-		testcase{
+		{
 			"happy path, output generation succeeds",
 			in{
 				version: resource.Version{Version: "some-version", Type: "minor"},
@@ -156,7 +158,6 @@ func TestGenerateResourceOutput(t *testing.T) {
 	for _, test := range tests {
 		arg, checks := test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			_ = arg
 			actualOutput, actualErr := runner.GenerateResourceOutput(arg.version)
 
 			for _, check := range checks {
@@ -168,41 +169,38 @@ func TestGenerateResourceOutput(t *testing.T) {
 
 func TestNewVersion(t *testing.T) {
 	type checkNewVersionFunc func(*testing.T, resource.Version, error)
+
 	checks := func(cs ...checkNewVersionFunc) []checkNewVersionFunc { return cs }
+	expectNoError := func(t *testing.T, _ resource.Version, actualErr error) {
+		t.Helper()
 
-	var expectNoError = func(t *testing.T, _ resource.Version, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
+		require.NoError(t, actualErr)
 	}
-
-	var expectError = func(expectedErr string) checkNewVersionFunc {
+	expectError := func(expectedErr string) checkNewVersionFunc {
 		return func(t *testing.T, _ resource.Version, actualErr error) {
+			t.Helper()
+
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
-
-	_ = expectError
-
-	var expectWrappedError = func(expectedOuter string, expectedInner error) checkNewVersionFunc {
+	expectWrappedError := func(expectedOuter string, expectedInner error) checkNewVersionFunc {
 		return func(t *testing.T, _ resource.Version, actualErr error) {
-			if !assert.Error(t, actualErr) {
-				t.FailNow()
-			}
+			t.Helper()
+
+			require.Error(t, actualErr)
 
 			assert.Contains(t, actualErr.Error(), expectedOuter)
 
 			actualInner := errors.Unwrap(actualErr)
-			if !assert.Error(t, actualInner) {
-				t.FailNow()
-			}
+			require.Error(t, actualInner)
 
 			assert.IsType(t, expectedInner, actualInner)
 		}
 	}
-
-	var expectStemcellBumpTypeContent = func(expectedVersion resource.Version) checkNewVersionFunc {
+	expectStemcellBumpTypeContent := func(expectedVersion resource.Version) checkNewVersionFunc {
 		return func(t *testing.T, actualVersion resource.Version, _ error) {
+			t.Helper()
+
 			assert.Equal(t, expectedVersion, actualVersion)
 		}
 	}
@@ -224,8 +222,9 @@ func TestNewVersion(t *testing.T) {
 		inArg  in
 		checks []checkNewVersionFunc
 	}
+
 	tests := []testcase{
-		testcase{
+		{
 			"happy path, read succeeds",
 			setup{
 				versionPath:     "version-file",
@@ -251,7 +250,7 @@ func TestNewVersion(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail to read required version file",
 			setup{},
 			in{
@@ -271,7 +270,7 @@ func TestNewVersion(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail to read required bump type file",
 			setup{
 				versionPath: "version-file",
@@ -293,7 +292,7 @@ func TestNewVersion(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail on invalid bump type",
 			setup{
 				versionPath:     "version-file",
@@ -322,11 +321,9 @@ func TestNewVersion(t *testing.T) {
 	for _, test := range tests {
 		setup, arg, checks := test.setup, test.inArg, test.checks
 		t.Run(test.name, func(t *testing.T) {
-			tmpDir, err := os.MkdirTemp("", test.name+"-")
-			if err != nil {
-				t.Fatalf("failed setup: %v", err)
-			}
-			err = os.Chdir(tmpDir)
+			tmpDir := t.TempDir()
+
+			err := os.Chdir(tmpDir)
 			if err != nil {
 				t.Fatalf("failed setup: %v", err)
 			}
