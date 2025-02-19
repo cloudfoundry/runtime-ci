@@ -36,6 +36,7 @@ type OutParams struct {
 
 func NewCheckInRequest(in io.Reader) (CheckInRequest, error) {
 	var resource CheckInRequest
+
 	err := json.NewDecoder(in).Decode(&resource)
 	if err != nil {
 		return CheckInRequest{}, fmt.Errorf("decoding json: %w", err)
@@ -64,6 +65,7 @@ func NewCheckInRequest(in io.Reader) (CheckInRequest, error) {
 
 func NewOutRequest(in io.Reader) (OutRequest, error) {
 	var resource OutRequest
+
 	err := json.NewDecoder(in).Decode(&resource)
 	if err != nil {
 		return OutRequest{}, fmt.Errorf("decoding json: %w", err)

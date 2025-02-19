@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"stemcell-version-bump/resource"
 )
 
@@ -62,6 +63,7 @@ func GenerateResourceOutput(version resource.Version) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal concourse output version info: %w", err)
 	}
+
 	return string(output), nil
 }
 

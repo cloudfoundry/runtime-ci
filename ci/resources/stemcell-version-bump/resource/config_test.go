@@ -10,54 +10,57 @@ import (
 	"stemcell-version-bump/resource"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewCheckInRequest(t *testing.T) {
 	type checkNewResourceFunc func(*testing.T, resource.CheckInRequest, error)
+
 	checks := func(cs ...checkNewResourceFunc) []checkNewResourceFunc { return cs }
 
-	var expectResource = func(expectedResource resource.CheckInRequest) checkNewResourceFunc {
+	expectResource := func(expectedResource resource.CheckInRequest) checkNewResourceFunc {
 		return func(t *testing.T, actualResource resource.CheckInRequest, _ error) {
+			t.Helper()
+
 			assert.Equal(t, expectedResource, actualResource)
 		}
 	}
 
-	var expectNoError = func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
+	expectNoError := func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
+		t.Helper()
+
+		require.NoError(t, actualErr)
 	}
 
-	var expectError = func(expectedErr string) checkNewResourceFunc {
+	expectError := func(expectedErr string) checkNewResourceFunc {
 		return func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
+			t.Helper()
+
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
 
-	var expectWrappedError = func(expectedOuter string, expectedInner error) checkNewResourceFunc {
+	expectWrappedError := func(expectedOuter string, expectedInner error) checkNewResourceFunc {
 		return func(t *testing.T, _ resource.CheckInRequest, actualErr error) {
-			if !assert.Error(t, actualErr) {
-				t.FailNow()
-			}
+			t.Helper()
+
+			require.Error(t, actualErr)
 
 			assert.Contains(t, actualErr.Error(), expectedOuter)
 
 			actualInner := errors.Unwrap(actualErr)
-			if !assert.Error(t, actualInner) {
-				t.FailNow()
-			}
+			require.Error(t, actualInner)
 
 			assert.IsType(t, expectedInner, actualInner)
 		}
 	}
 
-	type testcase struct {
+	tests := []struct {
 		name   string
 		inArg  io.Reader
 		checks []checkNewResourceFunc
-	}
-	tests := []testcase{
-		testcase{
+	}{
+		{
 			"simple happy case",
 			strings.NewReader(`{
 				"source": {
@@ -88,7 +91,7 @@ func TestNewCheckInRequest(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"invalid json provided",
 			strings.NewReader(`%%%`),
 			checks(
@@ -96,7 +99,7 @@ func TestNewCheckInRequest(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"missing single required field",
 			strings.NewReader(`{
 				"source": {
@@ -113,7 +116,7 @@ func TestNewCheckInRequest(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"missing multiple required fields",
 			strings.NewReader(`{}`),
 			checks(
@@ -136,50 +139,50 @@ func TestNewCheckInRequest(t *testing.T) {
 
 func TestNewOutputCheckInRequest(t *testing.T) {
 	type checkNewResourceFunc func(*testing.T, resource.OutRequest, error)
+
 	checks := func(cs ...checkNewResourceFunc) []checkNewResourceFunc { return cs }
 
-	var expectResource = func(expectedResource resource.OutRequest) checkNewResourceFunc {
+	expectResource := func(expectedResource resource.OutRequest) checkNewResourceFunc {
 		return func(t *testing.T, actualResource resource.OutRequest, _ error) {
+			t.Helper()
+
 			assert.Equal(t, expectedResource, actualResource)
 		}
 	}
+	expectNoError := func(t *testing.T, _ resource.OutRequest, actualErr error) {
+		t.Helper()
 
-	var expectNoError = func(t *testing.T, _ resource.OutRequest, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
+		require.NoError(t, actualErr)
 	}
-
-	var expectError = func(expectedErr string) checkNewResourceFunc {
+	expectError := func(expectedErr string) checkNewResourceFunc {
 		return func(t *testing.T, _ resource.OutRequest, actualErr error) {
+			t.Helper()
+
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
-
-	var expectWrappedError = func(expectedOuter string, expectedInner error) checkNewResourceFunc {
+	expectWrappedError := func(expectedOuter string, expectedInner error) checkNewResourceFunc {
 		return func(t *testing.T, _ resource.OutRequest, actualErr error) {
-			if !assert.Error(t, actualErr) {
-				t.FailNow()
-			}
+			t.Helper()
+
+			require.Error(t, actualErr)
 
 			assert.Contains(t, actualErr.Error(), expectedOuter)
 
 			actualInner := errors.Unwrap(actualErr)
-			if !assert.Error(t, actualInner) {
-				t.FailNow()
-			}
+			require.Error(t, actualInner)
 
 			assert.IsType(t, expectedInner, actualInner)
 		}
 	}
 
-	type testcase struct {
+	tests := []struct {
 		name   string
 		inArg  io.Reader
 		checks []checkNewResourceFunc
-	}
-	tests := []testcase{
-		testcase{"simple happy case",
+	}{
+		{
+			"simple happy case",
 			strings.NewReader(`{
 				"source": {
 					"json_key": "some-json-key",
@@ -209,14 +212,16 @@ func TestNewOutputCheckInRequest(t *testing.T) {
 			),
 		},
 
-		testcase{"invalid json provided",
+		{
+			"invalid json provided",
 			strings.NewReader(`%%%`),
 			checks(
 				expectWrappedError("decoding json", new(json.SyntaxError)),
 			),
 		},
 
-		testcase{"missing single required field",
+		{
+			"missing single required field",
 			strings.NewReader(`{
 				"source": {
 					"bucket_name": "some-bucket-name",
@@ -232,7 +237,8 @@ func TestNewOutputCheckInRequest(t *testing.T) {
 			),
 		},
 
-		testcase{"missing multiple required fields",
+		{
+			"missing multiple required fields",
 			strings.NewReader(`{}`),
 			checks(
 				expectError("missing required fields: 'json_key', 'bucket_name', 'file_name', 'params.version_file', 'params.type_file'"),

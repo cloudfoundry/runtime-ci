@@ -3,6 +3,7 @@ package runner
 import (
 	"encoding/json"
 	"fmt"
+
 	"stemcell-version-bump/resource"
 )
 
@@ -20,6 +21,7 @@ func Check(request resource.CheckInRequest, getter Getter) (string, error) {
 	}
 
 	var currentVersion resource.Version
+
 	err = json.Unmarshal(content, &currentVersion)
 	if err != nil {
 		return "", fmt.Errorf("failed to unmarshal version info file: %w", err)

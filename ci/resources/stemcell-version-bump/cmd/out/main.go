@@ -11,6 +11,7 @@ import (
 
 func main() {
 	buildDir := os.Args[1]
+
 	err := os.Chdir(buildDir)
 	if err != nil {
 		log.Fatalf("Failed to move into build dir: %s", err)

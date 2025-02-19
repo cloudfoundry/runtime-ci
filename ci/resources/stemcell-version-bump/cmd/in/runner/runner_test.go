@@ -9,6 +9,7 @@ import (
 	"stemcell-version-bump/resource"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestIn(t *testing.T) {
@@ -21,22 +22,25 @@ func TestIn(t *testing.T) {
 	}
 
 	type checkInFunc func(*testing.T, string, error)
+
 	checks := func(cs ...checkInFunc) []checkInFunc { return cs }
+	expectNoError := func(t *testing.T, _ string, actualErr error) {
+		t.Helper()
 
-	var expectNoError = func(t *testing.T, _ string, actualErr error) {
-		if !assert.NoError(t, actualErr) {
-			t.FailNow()
-		}
+		require.NoError(t, actualErr)
 	}
-
-	var expectError = func(expectedErr string) checkInFunc {
+	expectError := func(expectedErr string) checkInFunc {
 		return func(t *testing.T, _ string, actualErr error) {
+			t.Helper()
+
 			assert.EqualError(t, actualErr, expectedErr)
 		}
 	}
 
-	var expectResource = func(expectedResourceJSON string) checkInFunc {
-		return func(t *testing.T, actualOutput string, actualErr error) {
+	expectResource := func(expectedResourceJSON string) checkInFunc {
+		return func(t *testing.T, actualOutput string, _ error) {
+			t.Helper()
+
 			assert.JSONEq(t, expectedResourceJSON, actualOutput)
 		}
 	}
@@ -51,8 +55,9 @@ func TestIn(t *testing.T) {
 		inArg  in
 		checks []checkInFunc
 	}
+
 	tests := []testcase{
-		testcase{
+		{
 			"happy path, fetch succeeds",
 			in{
 				request: resource.CheckInRequest{
@@ -72,7 +77,7 @@ func TestIn(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"fail to fetch resource",
 			in{
 				request: resource.CheckInRequest{
@@ -92,7 +97,7 @@ func TestIn(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"bad version info",
 			in{
 				request: resource.CheckInRequest{
@@ -112,7 +117,7 @@ func TestIn(t *testing.T) {
 			),
 		},
 
-		testcase{
+		{
 			"old version request",
 			in{
 				request: resource.CheckInRequest{
