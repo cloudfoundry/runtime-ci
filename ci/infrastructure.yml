@@ -271,6 +271,7 @@ stable-bbl-up-task: &stable-bbl-up-task-config
     GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
     GIT_COMMIT_USERNAME: "ARD WG Bot"
     LB_DOMAIN: cf.bellatrix.env.wg-ard.ci.cloudfoundry.org
+    TRUSTED_CA: ((relint_ca.certificate))
   ensure:
     put: relint-envs
     params:
