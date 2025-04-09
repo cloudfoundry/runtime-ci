@@ -456,7 +456,7 @@ resources:
   source:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: main
-    pool: cf-deployment/ipv6
+    pool: ipv6
     private_key: ((ard_wg_gitbot_ssh_key.private_key))
 
 # Plan patches
