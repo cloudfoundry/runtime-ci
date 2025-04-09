@@ -85,6 +85,14 @@ groups:
     - destroy-infrastructure-fips
     - remove-claimed-lock-fips
 
+- name: ipv6-dobby
+  jobs:
+    - add-claimed-lock-ipv6
+    - setup-infrastructure-ipv6
+    - update-infrastructure-ipv6
+    - destroy-infrastructure-ipv6
+    - remove-claimed-lock-ipv6
+
 fresh-bbl-up-task: &fresh-bbl-up-task-config
   file: cf-deployment-concourse-tasks/bbl-up/task.yml
   input_mapping:
@@ -324,6 +332,32 @@ smoke-tests-bbl-up-task: &smoke-tests-bbl-up-task-config
       repository: updated-bbl-state
       rebase: true
 
+ipv6-bbl-up-task: &ipv6-bbl-up-task-config
+  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  input_mapping:
+    bbl-config: relint-envs
+    bbl-state: relint-envs
+  params:
+    BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+    BBL_AWS_REGION: eu-central-1
+    BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+    BBL_CONFIG_DIR: environments/test/dobby/bbl-config
+    BBL_ENV_NAME: dobby
+    BBL_IAAS: aws
+    BBL_LB_CERT: ((dobby_lb.certificate))
+    BBL_LB_CERT_CHAIN: ((dobby_lb.ca))
+    BBL_LB_KEY: ((dobby_lb.private_key))
+    BBL_STATE_DIR: environments/test/dobby/bbl-state
+    GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+    GIT_COMMIT_USERNAME: "ARD WG Bot"
+    LB_DOMAIN: cf.dobby.env.wg-ard.ci.cloudfoundry.org
+    TRUSTED_CA: ((relint_ca.certificate))
+  ensure:
+    put: relint-envs
+    params:
+      repository: updated-bbl-state
+      rebase: true
+
 resources:
 # Pools
 - name: fresh-pool
@@ -414,6 +448,15 @@ resources:
     uri: git@github.com:cloudfoundry/relint-ci-pools
     branch: main
     pool: cf-deployment/fips
+    private_key: ((ard_wg_gitbot_ssh_key.private_key))
+
+- name: ipv6-pool
+  type: pool
+  icon: pool
+  source:
+    uri: git@github.com:cloudfoundry/relint-ci-pools
+    branch: main
+    pool: cf-deployment/ipv6
     private_key: ((ard_wg_gitbot_ssh_key.private_key))
 
 # Plan patches
@@ -608,6 +651,20 @@ jobs:
     - put: fips-pool
       params: {add_claimed: fips-pool}
 
+- name: add-claimed-lock-ipv6
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: dobby
+      output_mapping:
+        pool-resource: ipv6-pool
+    - put: ipv6-pool
+      params: {add_claimed: ipv6-pool}
+
 # Setup infrastructure
 - name: setup-infrastructure-fresh
   serial: true
@@ -799,6 +856,21 @@ jobs:
       <<: *fips-bbl-up-task-config
     - put: fips-pool
       params: {release: fips-pool}
+
+- name: setup-infrastructure-ipv6
+  serial_groups: [dobby]
+  public: true
+  plan:
+    - get: ipv6-pool
+      trigger: true
+      passed: [ add-claimed-lock-ipv6 ]
+    - in_parallel:
+        - get: cf-deployment-concourse-tasks
+        - get: relint-envs
+    - task: setup-infrastructure
+      <<: *ipv6-bbl-up-task-config
+    - put: ipv6-pool
+      params: {release: ipv6-pool}
 
 # Update infrastructure
 - name: update-infrastructure-fresh
@@ -997,6 +1069,24 @@ jobs:
           <<: *fips-bbl-up-task-config
         - put: fips-pool
           params: {release: fips-pool}
+
+- name: update-infrastructure-ipv6
+  serial: true
+  public: true
+  plan:
+    - timeout: 12h
+      do:
+        - in_parallel:
+            - put: ipv6-pool
+              params: {acquire: true}
+            - get: relint-envs
+            - get: cf-deployment-concourse-tasks
+            - get: every-tuesday-morning
+              trigger: true
+        - task: update-infrastructure
+          <<: *ipv6-bbl-up-task-config
+        - put: ipv6-pool
+          params: {release: ipv6-pool}
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
@@ -1327,6 +1417,37 @@ jobs:
           repository: updated-bbl-state
           rebase: true
 
+- name: destroy-infrastructure-ipv6
+  serial_groups: [dobby]
+  public: true
+  plan:
+    - in_parallel:
+        - put: ipv6-pool
+          params: {claim: dobby}
+        - get: relint-envs
+        - get: cf-deployment-concourse-tasks
+    - task: guarantee-no-existing-cf-deployment
+      file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+      input_mapping:
+        bbl-state: relint-envs
+      params:
+        BBL_STATE_DIR: environments/test/dobby/bbl-state
+    - task: destroy-infrastructure
+      file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+      params:
+        BBL_STATE_DIR: environments/test/dobby/bbl-state
+        BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
+        BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
+        GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
+        GIT_COMMIT_USERNAME: "ARD WG Bot"
+      input_mapping:
+        bbl-state: relint-envs
+      ensure:
+        put: relint-envs
+        params:
+          repository: updated-bbl-state
+          rebase: true
+
 # Remove claimed locks
 - name: remove-claimed-lock-fresh
   serial: true
@@ -1497,3 +1618,20 @@ jobs:
         pool-resource: experimental-pool
     - put: experimental-pool
       params: {remove: experimental-pool}
+
+- name: remove-claimed-lock-ipv6
+  serial: true
+  public: true
+  plan:
+    - get: runtime-ci
+    - get: ipv6-pool
+      passed: [ destroy-infrastructure-ipv6 ]
+      trigger: true
+    - task: prepare-to-modify-pool-resource
+      file: runtime-ci/tasks/prepare-to-modify-pool-resource/task.yml
+      params:
+        NAME: dobby
+      output_mapping:
+        pool-resource: ipv6-pool
+    - put: ipv6-pool
+      params: {remove: ipv6-pool}
