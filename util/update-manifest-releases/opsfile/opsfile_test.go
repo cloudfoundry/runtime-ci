@@ -197,7 +197,7 @@ releases:
     version: 1.0.0
 `)
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
-			Expect(err).To(MatchError("Opsfile does not contain release named fun-times"))
+			Expect(err).To(MatchError("opsfile does not contain release named fun-times"))
 		})
 
 		It("returns an error when the release name array is nil or empty", func() {

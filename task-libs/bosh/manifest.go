@@ -54,7 +54,7 @@ func (m Manifest) Deploy(boshCLI boshCLI) error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(tempFile.Name())
+	defer os.Remove(tempFile.Name()) //nolint:errcheck
 
 	err = os.WriteFile(tempFile.Name(), manifestFile, 0644)
 	if err != nil {

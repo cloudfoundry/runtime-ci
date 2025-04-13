@@ -62,7 +62,7 @@ func pollApi(client *http.Client, url string) error {
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != 200 {
 		body, err := io.ReadAll(resp.Body)

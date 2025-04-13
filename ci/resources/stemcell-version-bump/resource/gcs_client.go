@@ -29,7 +29,7 @@ func (gcsclient GCSClient) Get(bucketName string, objectPath string) ([]byte, er
 	if err != nil {
 		return nil, fmt.Errorf("failed to get version info from GCS (%s, %s): %w", bucketName, objectPath, err)
 	}
-	defer rc.Close()
+	defer rc.Close() //nolint:errcheck
 
 	data, err := io.ReadAll(rc)
 	if err != nil {
