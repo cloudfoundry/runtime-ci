@@ -71,7 +71,7 @@ func UpdateReleases(releaseNames []string, buildDir string, opsFile []byte, mars
 	}
 
 	if !releaseFound {
-		err := fmt.Errorf("Opsfile does not contain release named %s", releaseNames[0])
+		err := fmt.Errorf("opsfile does not contain release named %s", releaseNames[0])
 		return nil, common.NoOpsFileChangesCommitMessage, err
 	}
 

@@ -110,11 +110,11 @@ func update(releases []string, inputPath, outputPath, inputDir, outputDir, build
 
 		updatedFile, commitMessage, err := f(releases, buildDir, originalFile, yaml.Marshal, yaml.Unmarshal)
 		if err != nil {
-			isNotFoundError := strings.Contains(err.Error(), "Opsfile does not contain release named")
+			isNotFoundError := strings.Contains(err.Error(), "opsfile does not contain release named")
 			isBadFormatError := err.Error() == opsfile.BadReleaseOpsFormatErrorMessage
 			isNotFoundOrBadFormat := isNotFoundError || isBadFormatError
 
-			if !(isNotFoundOrBadFormat && ignoreNotFoundAndBadFormatErrors) {
+			if !isNotFoundOrBadFormat || !ignoreNotFoundAndBadFormatErrors {
 				return err
 			}
 		}
@@ -170,7 +170,8 @@ func main() {
 
 	commitMessagePath := os.Getenv("COMMIT_MESSAGE_PATH")
 
-	if target == "opsfile" {
+	switch target {
+	case "opsfile":
 		if err = update(
 			releases,
 			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
@@ -184,7 +185,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
-	} else if target == "compiledReleasesOpsfile" {
+	case "compiledReleasesOpsfile":
 		if err = update(
 			releases,
 			os.Getenv("ORIGINAL_OPS_FILE_PATH"),
@@ -198,7 +199,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
-	} else if target == "stemcell" {
+	case "stemcell":
 		if err = update(
 			releases,
 			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),
@@ -212,7 +213,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
-	} else {
+	default:
 		if err = update(
 			releases,
 			os.Getenv("ORIGINAL_DEPLOYMENT_MANIFEST_PATH"),

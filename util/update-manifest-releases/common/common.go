@@ -84,7 +84,7 @@ func InfoFromTarballName(tarballName string, releaseName string) (string, string
 	}
 
 	if len(allMatches[0]) != 4 {
-		return "", "", "", errors.New("internal error: len allMatches[0] should be 4, but it is not.")
+		return "", "", "", errors.New("internal error: len allMatches[0] should be 4, but it is not")
 	}
 
 	releaseVersionMatch := allMatches[0][1]
