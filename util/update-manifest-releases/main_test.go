@@ -15,7 +15,6 @@ import (
 
 var _ = Describe("main", func() {
 	var (
-		pathToBinary      string
 		inputPath         string
 		outputPath        string
 		CommitMessagePath string
@@ -24,9 +23,7 @@ var _ = Describe("main", func() {
 	)
 
 	BeforeEach(func() {
-		pathToBinary, err = gexec.Build("github.com/cloudfoundry/runtime-ci/util/update-manifest-releases")
-		Expect(err).NotTo(HaveOccurred())
-
+		var err error
 		buildDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
