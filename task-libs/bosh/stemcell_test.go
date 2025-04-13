@@ -204,7 +204,7 @@ var _ = Describe("Stemcell", func() {
 				}
 
 				_, actualErr := targetStemcell.DetectBumpTypeFrom(baseStemcell)
-				Expect(actualErr).To(MatchError(fmt.Errorf("Change from 456.2 to 456.1 is not a forward bump")))
+				Expect(actualErr).To(MatchError(fmt.Errorf("change from 456.2 to 456.1 is not a forward bump")))
 			})
 		})
 
