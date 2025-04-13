@@ -102,5 +102,5 @@ func (s Stemcell) DetectBumpTypeFrom(base Stemcell) (string, error) {
 		return "minor", nil
 	}
 
-	return "", fmt.Errorf("Change from %s to %s is not a forward bump", base.Version, s.Version)
+	return "", fmt.Errorf("change from %s to %s is not a forward bump", base.Version, s.Version)
 }
