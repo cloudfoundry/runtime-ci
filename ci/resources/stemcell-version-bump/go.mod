@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	cloud.google.com/go/storage v1.55.0
 	github.com/stretchr/testify v1.10.0
-	google.golang.org/api v0.240.0
+	google.golang.org/api v0.241.0
 )
 
 require (
