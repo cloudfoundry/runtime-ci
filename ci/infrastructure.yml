@@ -101,7 +101,7 @@ fresh-bbl-up-task: &fresh-bbl-up-task-config
   params:
     BBL_CONFIG_DIR: environments/test/luna/bbl-config
     BBL_ENV_NAME: luna-fresh
-    BBL_GCP_REGION: europe-west3
+    BBL_GCP_REGION: us-east1
     BBL_GCP_SERVICE_ACCOUNT_KEY: environments/test/luna/luna-fresh.key.json
     BBL_IAAS: gcp
     BBL_LB_CERT: ((luna_lb.certificate))
