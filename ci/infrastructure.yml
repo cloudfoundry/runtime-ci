@@ -358,6 +358,10 @@ ipv6-bbl-up-task: &ipv6-bbl-up-task-config
       repository: updated-bbl-state
       rebase: true
 
+common_build_log_retention: &common_build_log_retention
+  days: 30
+  minimum_succeeded_builds: 3
+
 resources:
 # Pools
 - name: fresh-pool
@@ -667,6 +671,7 @@ jobs:
 
 # Setup infrastructure
 - name: setup-infrastructure-fresh
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -682,6 +687,7 @@ jobs:
     params: {release: fresh-pool}
 
 - name: setup-infrastructure-upgrade
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -698,6 +704,7 @@ jobs:
     params: {release: upgrade-pool}
 
 - name: setup-infrastructure-experimental
+  build_log_retention: *common_build_log_retention
   serial_groups: [hermione]
   public: true
   plan:
@@ -713,6 +720,7 @@ jobs:
     params: {release: experimental-pool}
 
 - name: setup-infrastructure-bbr
+  build_log_retention: *common_build_log_retention
   serial_groups: [bbr]
   public: true
   plan:
@@ -728,6 +736,7 @@ jobs:
     params: {release: bbr-pool}
 
 - name: setup-infrastructure-lite
+  build_log_retention: *common_build_log_retention
   serial_groups: [snitch]
   public: true
   plan:
@@ -753,6 +762,7 @@ jobs:
     params: {release: lite-pool}
 
 - name: setup-infrastructure-stable
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -768,6 +778,7 @@ jobs:
     params: {release: stable-pool}
 
 - name: setup-infrastructure-cats
+  build_log_retention: *common_build_log_retention
   serial_groups: [cats]
   public: true
   plan:
@@ -798,6 +809,7 @@ jobs:
       params: {release: smoke-tests-pool}
 
 - name: setup-infrastructure-maxime
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -828,6 +840,7 @@ jobs:
         rebase: true
 
 - name: setup-infrastructure-windows
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -858,6 +871,7 @@ jobs:
       params: {release: fips-pool}
 
 - name: setup-infrastructure-ipv6
+  build_log_retention: *common_build_log_retention
   serial_groups: [dobby]
   public: true
   plan:
@@ -874,6 +888,7 @@ jobs:
 
 # Update infrastructure
 - name: update-infrastructure-fresh
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -892,6 +907,7 @@ jobs:
       params: {release: fresh-pool}
 
 - name: update-infrastructure-upgrade
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -911,6 +927,7 @@ jobs:
       params: {release: upgrade-pool}
 
 - name: update-infrastructure-experimental
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -929,6 +946,7 @@ jobs:
       params: {release: experimental-pool}
 
 - name: update-infrastructure-bbr
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -947,6 +965,7 @@ jobs:
       params: {release: bbr-pool}
 
 - name: update-infrastructure-lite
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -981,6 +1000,7 @@ jobs:
       params: {release: lite-pool}
 
 - name: update-infrastructure-cats
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -999,6 +1019,7 @@ jobs:
       params: {release: cats-pool}
 
 - name: update-infrastructure-smoke-tests
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1017,6 +1038,7 @@ jobs:
           params: {release: smoke-tests-pool}
 
 - name: update-infrastructure-stable
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1035,6 +1057,7 @@ jobs:
       params: {release: stable-pool}
 
 - name: update-infrastructure-windows
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1053,6 +1076,7 @@ jobs:
       params: {release: windows-pool}
 
 - name: update-infrastructure-fips
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1071,6 +1095,7 @@ jobs:
           params: {release: fips-pool}
 
 - name: update-infrastructure-ipv6
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1090,6 +1115,7 @@ jobs:
 
 # Destroy infrastructure
 - name: destroy-infrastructure-fresh
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1120,6 +1146,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-upgrade
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1150,6 +1177,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-experimental
+  build_log_retention: *common_build_log_retention
   serial_groups: [hermione]
   public: true
   plan:
@@ -1181,6 +1209,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-bbr
+  build_log_retention: *common_build_log_retention
   serial_groups: [bbr]
   public: true
   plan:
@@ -1211,6 +1240,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-lite
+  build_log_retention: *common_build_log_retention
   serial_groups: [snitch]
   public: true
   plan:
@@ -1235,6 +1265,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-cats
+  build_log_retention: *common_build_log_retention
   serial_groups: [cats]
   public: true
   plan:
@@ -1265,6 +1296,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-smoke-tests
+  build_log_retention: *common_build_log_retention
   serial_groups: [smoke-tests]
   public: true
   plan:
@@ -1295,6 +1327,7 @@ jobs:
           rebase: true
 
 - name: destroy-infrastructure-stable
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1325,6 +1358,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-maxime
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1357,6 +1391,7 @@ jobs:
             rebase: true
 
 - name: destroy-infrastructure-windows
+  build_log_retention: *common_build_log_retention
   serial: true
   public: true
   plan:
@@ -1387,6 +1422,7 @@ jobs:
         rebase: true
 
 - name: destroy-infrastructure-fips
+  build_log_retention: *common_build_log_retention
   serial_groups: [snape]
   public: true
   plan:
@@ -1418,6 +1454,7 @@ jobs:
           rebase: true
 
 - name: destroy-infrastructure-ipv6
+  build_log_retention: *common_build_log_retention
   serial_groups: [dobby]
   public: true
   plan:
