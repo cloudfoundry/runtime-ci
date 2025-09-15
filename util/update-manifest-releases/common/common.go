@@ -53,13 +53,13 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 	if commitShaErr != nil {
 		// Bosh.io release
 		fmt.Println("Missing commit_sha file. Assuming bosh.io release...")
-		sha1, shaErr := os.ReadFile(filepath.Join(releasePath, "sha1"))
+		sha1, shaErr := os.ReadFile(filepath.Join(releasePath, "sha256"))
 
 		if shaErr != nil {
 			return Release{}, shaErr
 		}
 
-		newRelease.SHA1 = strings.TrimSpace(string(sha1))
+		newRelease.SHA1 = strings.TrimSpace("sha256:" + string(sha1))
 		newRelease.URL = strings.TrimSpace(string(url))
 	} else {
 		// Github release
