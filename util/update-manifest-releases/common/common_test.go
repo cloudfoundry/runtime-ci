@@ -23,7 +23,7 @@ var _ = Describe("Common", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(release.Name).To(Equal("good-release"))
 				Expect(release.URL).To(Equal("https://download.com/release1"))
-				Expect(release.SHA1).To(Equal("XXXXXXXXXXXXXX"))
+				Expect(release.SHA1).To(Equal("sha256:XXXXXXXXXXXXXX"))
 				Expect(release.Version).To(Equal("1.1"))
 			})
 		})

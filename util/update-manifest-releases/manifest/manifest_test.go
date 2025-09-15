@@ -127,7 +127,7 @@ stemcells:
 			Name:    "release1",
 			URL:     "original-release1-url",
 			Version: "original-release1-version",
-			SHA1:    "original-release1-sha1",
+			SHA1:    "sha256:original-release1-sha1",
 		}))
 
 	})
