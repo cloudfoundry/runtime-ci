@@ -50,14 +50,14 @@ var _ = Describe("main", func() {
     name: release1
     url: original-release1-url
     version: original-release1-version
-    sha1: original-release1-sha
+    sha1: sha256:original-release1-sha
 - type: replace
   path: /releases/-
   value:
     name: release4
     url: original-release4-url
     version: original-release4-version
-    sha1: original-release4-sha
+    sha1: sha256:original-release4-sha
 `
 			expectedOpsFile = `
 - type: replace
@@ -66,14 +66,14 @@ var _ = Describe("main", func() {
     name: release1
     url: original-release1-url
     version: original-release1-version
-    sha1: original-release1-sha
+    sha1: sha256:original-release1-sha
 - type: replace
   path: /releases/-
   value:
     name: release4
     url: new-release4-url
     version: new-release4-version
-    sha1: new-release4-sha
+    sha1: sha256:new-release4-sha
 `
 			anotherOriginalOpsFileWithRelease4 = `
 - type: replace
@@ -82,14 +82,14 @@ var _ = Describe("main", func() {
     name: release2
     url: original-release2-url
     version: original-release2-version
-    sha1: original-release2-sha
+    sha1: sha256:original-release2-sha
 - type: replace
   path: /releases/-
   value:
     name: release4
     url: original-release4-url
     version: original-release4-version
-    sha1: original-release4-sha
+    sha1: sha256:original-release4-sha
 `
 			anotherExpectedOpsFileWithRelease4 = `
 - type: replace
@@ -98,14 +98,14 @@ var _ = Describe("main", func() {
     name: release2
     url: original-release2-url
     version: original-release2-version
-    sha1: original-release2-sha
+    sha1: sha256:original-release2-sha
 - type: replace
   path: /releases/-
   value:
     name: release4
     url: new-release4-url
     version: new-release4-version
-    sha1: new-release4-sha
+    sha1: sha256:new-release4-sha
 `
 			opsFileWithoutRelease4 = `
 - type: replace
@@ -114,14 +114,14 @@ var _ = Describe("main", func() {
     name: release2
     url: original-release2-url
     version: original-release2-version
-    sha1: original-release2-sha
+    sha1: sha256:original-release2-sha
 - type: replace
   path: /releases/-
   value:
     name: release5
     url: original-release5-url
     version: original-release5-version
-    sha1: original-release5-sha
+    sha1: sha256:original-release5-sha
 `
 		)
 
@@ -240,11 +240,11 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -398,19 +398,19 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 - name: release3
   url: new-release3-url
   version: new-release3-version
-  sha1: new-release3-sha
+  sha1: sha256:new-release3-sha
 - name: release4
   url: new-release4-url
   version: new-release4-version
-  sha1: new-release4-sha
+  sha1: sha256:new-release4-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -423,15 +423,15 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 - name: release3
   url: new-release3-url
   version: new-release3-version
-  sha1: new-release3-sha
+  sha1: sha256:new-release3-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -444,11 +444,11 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -610,11 +610,11 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -627,11 +627,11 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: original-release1-sha
+  sha1: sha256:original-release1-sha
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: original-release2-sha
+  sha1: sha256:original-release2-sha
 stemcells:
 - alias: default
   os: ubuntu-trusty
@@ -779,7 +779,7 @@ stemcells:
     name: release1
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.0
-    sha1: 4ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:4ee0dfe1f1b9acd14c18863061268f4156c291a4
     stemcell:
       os: stemcell1
       version: "0.0"
@@ -789,7 +789,7 @@ stemcells:
     name: release2
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.1
-    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
     stemcell:
       os: stemcell1
       version: "0.0"
@@ -802,7 +802,7 @@ stemcells:
     name: release1
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.2.0-stemcell2-2.0-20180808-195254-497840039.tgz
     version: 0.2.0
-    sha1: 8867c88b56e0bfb82cffaf15a66bc8d107d6754a
+    sha1: sha256:ee0874170b7f6f32b8c2ac9573c428d35b575270a66b757c2c0185d2bd09718d
     stemcell:
       os: stemcell2
       version: "2.0"
@@ -812,7 +812,7 @@ stemcells:
     name: release2
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.1
-    sha1: 5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
     stemcell:
       os: stemcell1
       version: "0.0"
@@ -840,7 +840,7 @@ stemcells:
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
-				{"name": "release1", "version": "0.2.0", "url": "https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz", "sha1": "4ee0dfe1f1b9acd14c18863061268f4156c291a4"},
+				{"name": "release1", "version": "0.2.0", "url": "https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz", "sha1": "sha256:4ee0dfe1f1b9acd14c18863061268f4156c291a4"},
 			} {
 				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 				err = os.Mkdir(releaseDir, os.ModePerm)

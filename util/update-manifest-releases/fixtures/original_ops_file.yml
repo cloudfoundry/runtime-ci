@@ -69,7 +69,7 @@
     name: release1
     version: original-release1-version
     url: original-release1-url
-    sha1: original-release1-sha1
+    sha1: sha256:original-release1-sha1
 
 - type: replace
   path: /releases/-
@@ -77,7 +77,7 @@
     name: release2
     version: original-release2-version
     url: original-release2-url
-    sha1: original-release2-sha1
+    sha1: sha256:original-release2-sha1
 
 - type: replace
   path: /releases/-
@@ -85,7 +85,7 @@
     name: missing-url
     version: original-missing-url-version
     url: original-missing-url-url
-    sha1: original-missing-url-sha1
+    sha1: sha256:original-missing-url-sha1
 
 - type: replace
   path: /releases/-
@@ -93,7 +93,7 @@
     name: missing-version
     version: original-missing-version-version
     url: original-missing-version-url
-    sha1: original-missing-version-sha1
+    sha1: sha256:original-missing-version-sha1
 
 - type: replace
   path: /releases/-
@@ -101,7 +101,7 @@
     name: missing-sha1
     version: original-missing-sha1-version
     url: original-missing-sha1-url
-    sha1: original-missing-sha1-sha1
+    sha1: sha256:original-missing-sha1-sha1
 
 - type: replace
   path: /stemcells/-

@@ -59,7 +59,7 @@ func GetReleaseFromFile(buildDir, releaseName string) (Release, error) {
 			return Release{}, shaErr
 		}
 
-		newRelease.SHA1 = strings.TrimSpace(string(sha1))
+		newRelease.SHA1 = strings.TrimSpace("sha256:" + string(sha1))
 		newRelease.URL = strings.TrimSpace(string(url))
 	} else {
 		// Github release
