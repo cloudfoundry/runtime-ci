@@ -64,7 +64,7 @@ var _ = Describe("UpdateCompiledReleases", func() {
   path: /releases/name=no-stemcell-section
   value:
     name: no-stemcell-section
-    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:62c6bb48e76d31b2d6348ce5120bb99773bc1fc31724be710ffd1ca8aa836538
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/no-stemcell-section-0.0.0-cute-stemcell-0.0-20180808-195254-497840039.tgz
     version: 0.0.1
 `

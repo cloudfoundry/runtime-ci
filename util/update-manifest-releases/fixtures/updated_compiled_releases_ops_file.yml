@@ -13,7 +13,7 @@
   type: replace
   value:
     name: test-agent
-    sha1: sha256:4ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:bb7252db83b8037f44696af7bdb80a8c92e2f79e6ca1001222db7171b3c694e8
     stemcell:
       os: cute-stemcell
       version: "0.0"
@@ -23,7 +23,7 @@
   type: replace
   value:
     name: no-version
-    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:085b6b4a335f5d6f54b55e831ff125c5b7f95ecb85c89e06a932dec56dc7d077
     stemcell:
       os: cute-stemcell
       version: "0.0"
@@ -33,7 +33,7 @@
   type: replace
   value:
     name: more-than-1
-    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:a69d14ddcc53531e044e69c9c6db33a51500a5e3f851666ee3946d27cd5e3996
     stemcell:
       os: cute-stemcell
       version: "0.0"

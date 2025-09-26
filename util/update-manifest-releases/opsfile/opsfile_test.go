@@ -219,7 +219,7 @@ releases:
   value: 0.0.0
 - path: /releases/name=test/sha1
   type: replace
-  value: sha256:4ee0dfe1f1b9acd14c18863061268f4156c291a4
+  value: sha256:616699e1335fb334f4f2d7b96fdbb705c1f34e1d9196fe06e4f0cefd7c5993ef
 `)
 			_, _, err := opsfile.UpdateReleases(releases, goodBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 			Expect(err).To(MatchError(opsfile.BadReleaseOpsFormatErrorMessage))

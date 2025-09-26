@@ -779,7 +779,7 @@ stemcells:
     name: release1
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release1-0.0.0-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.0
-    sha1: sha256:4ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:616699e1335fb334f4f2d7b96fdbb705c1f34e1d9196fe06e4f0cefd7c5993ef
     stemcell:
       os: stemcell1
       version: "0.0"
@@ -789,7 +789,7 @@ stemcells:
     name: release2
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.1
-    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:a12ed23fcb56206f4987adbfc0a1151eca8017c5304728e242718b4fb609084a
     stemcell:
       os: stemcell1
       version: "0.0"
@@ -812,7 +812,7 @@ stemcells:
     name: release2
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/release2-0.0.1-stemcell1-0.0-20180808-202210-307673159.tgz
     version: 0.0.1
-    sha1: sha256:5ee0dfe1f1b9acd14c18863061268f4156c291a4
+    sha1: sha256:a12ed23fcb56206f4987adbfc0a1151eca8017c5304728e242718b4fb609084a
     stemcell:
       os: stemcell1
       version: "0.0"
