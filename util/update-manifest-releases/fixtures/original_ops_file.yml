@@ -69,7 +69,7 @@
     name: release1
     version: original-release1-version
     url: original-release1-url
-    sha1: sha256:original-release1-sha1
+    sha1: sha256:original-release1-sha256
 
 - type: replace
   path: /releases/-

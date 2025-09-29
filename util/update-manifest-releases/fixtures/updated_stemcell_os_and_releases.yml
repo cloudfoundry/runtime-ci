@@ -24,7 +24,7 @@ releases:
 - name: release1
   url: original-release1-url
   version: original-release1-version
-  sha1: sha256:original-release1-sha1
+  sha1: sha256:original-release1-sha256
 - name: inert-release
   url: original-inert-release-url
   version: original-inert-release-version
