@@ -129,11 +129,11 @@ var _ = Describe("UpdateReleases", func() {
 		})
 
 		It("returns errors instead of panicking when sha1 is missing", func() {
-			releases := []string{"missing-sha1"}
+			releases := []string{"missing-sha256"}
 
 			_, _, err := opsfile.UpdateReleases(releases, brokenBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
 
-			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-sha1-release/sha1: no such file or directory"))
+			Expect(err).To(MatchError("open ../fixtures/broken-build/missing-sha256-release/sha1: no such file or directory"))
 		})
 
 		It("returns an error when the manifest is not valid yaml", func() {

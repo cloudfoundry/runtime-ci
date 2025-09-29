@@ -28,11 +28,11 @@ releases:
 - name: inert-release
   url: original-inert-release-url
   version: original-inert-release-version
-  sha1: sha256:original-inert-release-sha1
+  sha1: sha256:original-inert-release-sha256
 - name: release2
   url: original-release2-url
   version: original-release2-version
-  sha1: sha256:original-release2-sha1
+  sha1: sha256:original-release2-sha256
 stemcells:
 - alias: default
   os: ubuntu-foo
