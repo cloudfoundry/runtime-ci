@@ -1,7 +1,7 @@
 package compiledreleasesops
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"os"
@@ -103,7 +103,7 @@ func getCompiledReleaseForBuild(buildDir, releaseName string) (Release, error) {
 		return Release{}, err
 	}
 
-	release.SHA1, err = computeSha1Sum(releaseTarballPath)
+	release.SHA1, err = computeSha256Sum(releaseTarballPath)
 	if err != nil {
 		return Release{}, err
 	}
@@ -113,11 +113,11 @@ func getCompiledReleaseForBuild(buildDir, releaseName string) (Release, error) {
 	return release, nil
 }
 
-func computeSha1Sum(filepath string) (string, error) {
+func computeSha256Sum(filepath string) (string, error) {
 	fileContents, err := os.ReadFile(filepath)
 	if err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", sha1.Sum(fileContents)), nil
+	return "sha256:" + fmt.Sprintf("%x", sha256.Sum256(fileContents)), nil
 }
