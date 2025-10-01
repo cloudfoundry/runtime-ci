@@ -41,11 +41,11 @@ var _ = Describe("Common", func() {
 		})
 
 		Context("when release folder is missing files", func() {
-			It("errors when sha1 is missing", func() {
+			It("errors when sha256 is missing", func() {
 				_, err := common.GetReleaseFromFile(buildDir, "missing-sha256")
 
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("open ../fixtures/broken-build/missing-sha256-release/sha1: no such file or directory"))
+				Expect(err.Error()).To(Equal("open ../fixtures/broken-build/missing-sha256-release/sha256: no such file or directory"))
 			})
 
 			It("errors when url is missing", func() {
