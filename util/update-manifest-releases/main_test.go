@@ -146,14 +146,14 @@ var _ = Describe("main", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
-				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
-				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha1": "new-release4-sha"},
+				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha256": "original-release1-sha"},
+				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha256": "new-release4-sha"},
 			} {
 				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 				err = os.Mkdir(releaseDir, os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
-				for _, value := range []string{"version", "url", "sha1"} {
+				for _, value := range []string{"version", "url", "sha256"} {
 					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
@@ -186,14 +186,14 @@ var _ = Describe("main", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				for _, release := range []map[string]string{
-					{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
-					{"name": "release5", "version": "original-release5-version", "url": "original-release5-url", "sha1": "original-release5-sha"},
+					{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha256": "original-release2-sha"},
+					{"name": "release5", "version": "original-release5-version", "url": "original-release5-url", "sha256": "original-release5-sha"},
 				} {
 					releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 					err = os.Mkdir(releaseDir, os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 
-					for _, value := range []string{"version", "url", "sha1"} {
+					for _, value := range []string{"version", "url", "sha256"} {
 						err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 						Expect(err).NotTo(HaveOccurred())
 					}
@@ -470,16 +470,16 @@ stemcells:
 			Expect(err).NotTo(HaveOccurred())
 
 			for _, release := range []map[string]string{
-				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha1": "original-release1-sha"},
-				{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha1": "original-release2-sha"},
-				{"name": "release3", "version": "new-release3-version", "url": "new-release3-url", "sha1": "new-release3-sha"},
-				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha1": "new-release4-sha"},
+				{"name": "release1", "version": "original-release1-version", "url": "original-release1-url", "sha256": "original-release1-sha"},
+				{"name": "release2", "version": "original-release2-version", "url": "original-release2-url", "sha256": "original-release2-sha"},
+				{"name": "release3", "version": "new-release3-version", "url": "new-release3-url", "sha256": "new-release3-sha"},
+				{"name": "release4", "version": "new-release4-version", "url": "new-release4-url", "sha256": "new-release4-sha"},
 			} {
 				releaseDir := filepath.Join(buildDir, fmt.Sprintf("%s-release", release["name"]))
 				err = os.Mkdir(releaseDir, os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
-				for _, value := range []string{"version", "url", "sha1"} {
+				for _, value := range []string{"version", "url", "sha256"} {
 					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
@@ -846,7 +846,7 @@ stemcells:
 				err = os.Mkdir(releaseDir, os.ModePerm)
 				Expect(err).NotTo(HaveOccurred())
 
-				for _, value := range []string{"version", "url", "sha1"} {
+				for _, value := range []string{"version", "url", "sha256"} {
 					err = os.WriteFile(filepath.Join(releaseDir, value), []byte(release[value]), os.ModePerm)
 					Expect(err).NotTo(HaveOccurred())
 				}
