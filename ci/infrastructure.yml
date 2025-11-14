@@ -220,7 +220,7 @@ bbr-bbl-up-task: &bbr-bbl-up-task-config
       rebase: true
 
 lite-bbl-up-task: &lite-bbl-up-task-config
-  file: cf-deployment-concourse-tasks/bbl-up/task.yml
+  file: cf-deployment-concourse-tasks-bbl-9.0.36/bbl-up/task.yml
   input_mapping:
     bbl-config: combined-inputs
     bbl-state: relint-envs
@@ -474,6 +474,13 @@ resources:
   icon: github
   source:
     uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+- name: cf-deployment-concourse-tasks-bbl-9.0.36
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    branch: bbl-9.0.36
 
 - name: runtime-ci
   type: git
@@ -738,6 +745,7 @@ jobs:
   - in_parallel:
     - get: relint-envs
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-bbl-9.0.36
     - get: bosh-bootloader
     - get: runtime-ci
   - task: combine-bbl-configs
@@ -958,6 +966,7 @@ jobs:
         params: {acquire: true}
       - get: relint-envs
       - get: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-bbl-9.0.36
       - get: bosh-bootloader
       - get: runtime-ci
       - get: every-tuesday-morning
