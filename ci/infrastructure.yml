@@ -351,6 +351,7 @@ ipv6-bbl-up-task: &ipv6-bbl-up-task-config
     BBL_LB_CERT: ((dobby_lb.certificate))
     BBL_LB_CERT_CHAIN: ((dobby_lb.ca))
     BBL_LB_KEY: ((dobby_lb.private_key))
+    BBL_LB_TYPE: nlb
     BBL_STATE_DIR: environments/test/dobby/bbl-state
     GIT_COMMIT_EMAIL: "app-deployments@cloudfoundry.org"
     GIT_COMMIT_USERNAME: "ARD WG Bot"
