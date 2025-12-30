@@ -14,7 +14,7 @@ type GCSClient struct {
 }
 
 func NewGCSClient(jsonKey string) (GCSClient, error) {
-	client, err := storage.NewClient(context.TODO(), option.WithAuthCredentialsJSON(option.ServiceAccount, []byte(jsonKey)))
+	client, err := storage.NewClient(context.TODO(), option.WithCredentialsJSON([]byte(jsonKey)))
 	if err != nil {
 		return GCSClient{}, fmt.Errorf("failed to create GCS storage client: %w", err)
 	}
