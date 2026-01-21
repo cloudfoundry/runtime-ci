@@ -44,7 +44,7 @@ func UpdateCompiledReleases(releaseNames []string, buildDir string, opsFile []by
 		matchingReleasePath := fmt.Sprintf("/releases/name=%s", releaseName)
 
 		for i, op := range deserializedOpsFile {
-			if op.Path == matchingReleasePath {
+			if op.Path == matchingReleasePath || op.Path == matchingReleasePath+"?" {
 				newRelease, err = getCompiledReleaseForBuild(buildDir, releaseName)
 				if err != nil {
 					return nil, "", err
