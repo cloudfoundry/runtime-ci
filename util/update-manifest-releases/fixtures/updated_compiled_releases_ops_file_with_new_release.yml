@@ -38,6 +38,16 @@
       version: "0.0"
     url: https://storage.googleapis.com/cf-deployment-compiled-releases/more-than-1-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
     version: 0.0.1
+- path: /releases/name=release-may-not-exist-in-template?
+  type: replace
+  value:
+    name: release-may-not-exist-in-template
+    sha1: sha256:b52cb52c940719d52588b5e8fc48e9b645bf1ce5a250f4bad00a1e3851a37874
+    stemcell:
+      os: cute-stemcell
+      version: "0.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release-may-not-exist-in-template-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+    version: 0.0.1
 - path: /releases/name=extraneous
   type: replace
   value:

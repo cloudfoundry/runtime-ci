@@ -5,10 +5,10 @@
     name: test
     sha1: sha256:280c8373b5cc2d96119e00f10e496b54e44e4e34fae2415718ac3b90558e26e5
     stemcell:
-      os: awesome-stemcell
-      version: "1.0"
-    url: https://storage.googleapis.com/cf-deployment-compiled-releases/test-0.1.0-awesome-stemcell-1.0-20180808-195254-497840039.tgz
-    version: 0.1.0
+      os: cute-stemcell
+      version: "0.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/test-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+    version: 0.0.0
 - path: /releases/name=test-agent
   type: replace
   value:
@@ -45,7 +45,7 @@
     name: release-may-not-exist-in-template
     sha1: sha256:b52cb52c940719d52588b5e8fc48e9b645bf1ce5a250f4bad00a1e3851a37874
     stemcell:
-      os: cute-stemcell
-      version: "0.0"
-    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release-may-not-exist-in-template-0.0.0-cute-stemcell-0.0-20180808-202210-307673159.tgz
+      os: awesome-stemcell
+      version: "1.0"
+    url: https://storage.googleapis.com/cf-deployment-compiled-releases/release-may-not-exist-in-template-0.0.1-awesome-stemcell-1.0-20180808-195254-497840039.tgz
     version: 0.0.1

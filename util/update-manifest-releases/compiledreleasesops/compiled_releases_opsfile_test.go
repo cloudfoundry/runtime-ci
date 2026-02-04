@@ -85,4 +85,15 @@ var _ = Describe("UpdateCompiledReleases", func() {
 		Expect(commitMessage).To(Equal("Updated compiled releases with no-stemcell-section 0.3.0"))
 		Expect(string(updatedOpsFile)).To(Equal(desiredOpsFile))
 	})
+
+	It("updates an optional release (with '?' at end of path)", func() {
+		releaseNames := []string{"release-may-not-exist-in-template"}
+		desiredOpsFile, err = os.ReadFile("../fixtures/updated_compiled_releases_ops_file_with_optional_release.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		updatedOpsFile, commitMessage, err := compiledreleasesops.UpdateCompiledReleases(releaseNames, compiledReleaseBuildDir, originalOpsFile, yaml.Marshal, yaml.Unmarshal)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(commitMessage).To(Equal("Updated compiled releases with release-may-not-exist-in-template 0.0.1"))
+		Expect(updatedOpsFile).To(MatchYAML(desiredOpsFile))
+	})
 })
