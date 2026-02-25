@@ -1,13 +1,11 @@
 module stemcell-version-bump
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.25.0
 
 require (
 	cloud.google.com/go/storage v1.60.0
 	github.com/stretchr/testify v1.11.1
-	google.golang.org/api v0.266.0
+	google.golang.org/api v0.268.0
 )
 
 require (
