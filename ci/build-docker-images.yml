@@ -76,7 +76,7 @@ resources:
     access_token: ((ard_wg_gitbot_token))
 
 - name: relint-base-image
-  type: docker-image
+  type: registry-image
   icon: docker
   source:
     repository: cloudfoundry/relint-base
@@ -85,7 +85,7 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: bosh-cli-image
-  type: docker-image
+  type: registry-image
   icon: docker
   source:
     repository: cloudfoundry/bosh-cli
@@ -94,13 +94,13 @@ resources:
     email: cf-release-integration+dockerhub-push-bot@pivotal.io
 
 - name: diego-docker-app-custom
-  type: docker-image
+  type: registry-image
   icon: docker
   source:
     repository: cloudfoundry/diego-docker-app-custom
 
 - name: relint-private-cats-image
-  type: docker-image
+  type: registry-image
   icon: docker
   source:
     repository: cfdeploymentprivateregistry/privatecats
@@ -109,7 +109,7 @@ resources:
     email: deployments@cloudfoundry.org
 
 - name: stemcell-version-bump-resource-image
-  type: docker-image
+  type: registry-image
   icon: docker
   source:
     repository: cloudfoundry/stemcell-version-bump-resource
