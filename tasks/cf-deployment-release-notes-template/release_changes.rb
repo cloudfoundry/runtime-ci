@@ -33,7 +33,7 @@ class ReleaseUpdates
       return nil unless File.exist? filepath
 
       file_text = File.read(filepath)
-      YAML.load(file_text) || nil
+      YAML.load(file_text, aliases: true) || nil
     end
 
     def collect_releases_and_stemcells(manifest, opsfile: false)
