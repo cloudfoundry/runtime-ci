@@ -14,7 +14,7 @@ describe 'ReleaseUpdates' do
 
   after(:all) do
     Dir.chdir(@current_work_dir)
-    FileUtils.rm_rf(@tmp_work_dir) if File.exists?(@tmp_work_dir)
+    FileUtils.rm_rf(@tmp_work_dir) if File.exist?(@tmp_work_dir)
   end
 
   let(:ru) { ReleaseUpdates.new }
@@ -363,7 +363,7 @@ HEREDOC
     end
 
     context 'when the operation is "-"' do
-      let (:op) { '-' }
+      let(:op) { '-' }
       it 'saves the version as old_version' do
         updates.load_change(change)
         expect(updates.get_update_by_name(name).old_version).to eq version

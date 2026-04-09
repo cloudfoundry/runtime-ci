@@ -17,7 +17,12 @@ class ReleaseUpdates
       main_releases_list = collect_releases_and_stemcells(main_branch, opsfile: opsfile)
 
       release_updates = ReleaseUpdates.new
-      change_set = HashDiff.diff(main_releases_list, release_candidate_releases_list)
+      hashdiff = if Object.const_defined?(:HashDiff)
+                   Object.const_get(:HashDiff)
+                 else
+                   Object.const_get(:Hashdiff)
+                 end
+      change_set = hashdiff.diff(main_releases_list, release_candidate_releases_list)
       change_set.each do |change|
         release_updates.load_change(change)
       end

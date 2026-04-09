@@ -4,7 +4,3 @@ gem 'hashdiff'
 gem 'rspec'
 gem 'webmock'
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec', require: false
-end
