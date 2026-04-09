@@ -5,7 +5,7 @@ image_resource:
   type: registry-image
   source:
     repository: ruby
-    tag: 2.6-slim
+    tag: 3.2-slim
 
 inputs:
 - name: runtime-ci

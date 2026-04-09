@@ -4,9 +4,13 @@ set -exu
 SCRIPT_DIR=runtime-ci/tasks/cf-deployment-release-notes-template
 
 pushd $SCRIPT_DIR
-  PARSED_BUNDLE_VERSION=$(sed -n '/BUNDLED WITH/{;n;p;}' Gemfile.lock)
-  gem uninstall bundler
-  gem install bundler --version "$PARSED_BUNDLE_VERSION"
+  PARSED_BUNDLE_VERSION=$(sed -n '/BUNDLED WITH/{;n;p;}' Gemfile.lock | xargs)
+
+  # Ruby images ship bundler as a default gem; only install the locked version if missing.
+  if ! gem list -i bundler -v "$PARSED_BUNDLE_VERSION"; then
+    gem install bundler --version "$PARSED_BUNDLE_VERSION"
+  fi
+
   bundle install --without development
 popd
 
