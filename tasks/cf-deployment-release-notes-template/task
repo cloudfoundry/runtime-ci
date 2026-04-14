@@ -4,10 +4,8 @@ set -exu
 SCRIPT_DIR=runtime-ci/tasks/cf-deployment-release-notes-template
 
 pushd $SCRIPT_DIR
-  PARSED_BUNDLE_VERSION=$(sed -n '/BUNDLED WITH/{;n;p;}' Gemfile.lock)
-  gem uninstall bundler
-  gem install bundler --version "$PARSED_BUNDLE_VERSION"
-  bundle install --without development
+  bundle config set --local without development
+  bundle install
 popd
 
 BUNDLE_GEMFILE=$SCRIPT_DIR/Gemfile \
