@@ -104,7 +104,7 @@ func readFile(path string) (string, error) {
 }
 
 func parseOSfromURL(url string) (string, error) {
-	versionRegex := regexp.MustCompile(`(ubuntu-.*)-go_agent.tgz`)
+	versionRegex := regexp.MustCompile(`(ubuntu-[a-z]+(?:-[a-z]+)*?)(?:-go_agent)?\.tgz`)
 
 	allMatches := versionRegex.FindAllStringSubmatch(url, 1)
 
