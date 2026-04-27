@@ -8,18 +8,20 @@ function update_stemcell_opsfile() {
   local stemcell_version
   stemcell_version=$(cat stemcell/version)
 
+  local stemcell_ops_path="${STEMCELL_OPS_PATH:-/stemcells/-}"
+
   local stemcell_alias
-  stemcell_alias="$(bosh int "ops-files/${ORIGINAL_OPS_FILE_PATH}" --path=/path=~1stemcells~1-/value/alias)"
+  stemcell_alias="$(bosh int "ops-files/${ORIGINAL_OPS_FILE_PATH}" --path=/path=${stemcell_ops_path//\//~1}/value/alias)"
 
   update_stemcell_ops_file=$(mktemp)
 (
 cat << EOF
 ---
 - type: replace
-  path: /path=~1stemcells~1-
+  path: /path=${stemcell_ops_path//\//~1}
   value:
     type: replace
-    path: /stemcells/-
+    path: ${stemcell_ops_path}
     value:
       alias: "${stemcell_alias}"
       os: "${STEMCELL_STACK}"
@@ -31,8 +33,10 @@ EOF
 }
 
 function generate_commit_message() {
+  local stemcell_ops_path="${STEMCELL_OPS_PATH:-/stemcells/-}"
+
   local current_stemcell_version
-  current_stemcell_version="$(bosh interpolate "ops-files/${ORIGINAL_OPS_FILE_PATH}" --path=/path=~1stemcells~1-/value/version)"
+  current_stemcell_version="$(bosh interpolate "ops-files/${ORIGINAL_OPS_FILE_PATH}" --path=/path=${stemcell_ops_path//\//~1}/value/version)"
 
   local stemcell_version
   stemcell_version=$(cat stemcell/version)
