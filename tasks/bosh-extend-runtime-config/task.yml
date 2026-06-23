@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/bosh-cli
+
+inputs:
+- name: runtime-ci
+- name: bbl-state
+- name: ops-file
+- name: cf-deployment-concourse-tasks
+
+run:
+  path: runtime-ci/tasks/bosh-extend-runtime-config/task
+
+params:
+  BBL_STATE_DIR: bbl-state
+  OPS_FILE_PATH:
+  RUNTIME_CONFIG_NAME:
