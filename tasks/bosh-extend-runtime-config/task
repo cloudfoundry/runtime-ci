@@ -1,0 +1,15 @@
+#!/bin/bash -exu
+
+set -o pipefail
+
+# Not able to resolve our import via shellcheck, so disable warning
+# shellcheck disable=SC1091
+source cf-deployment-concourse-tasks/shared-functions
+
+function main() {
+  setup_bosh_env_vars
+
+  bosh update-runtime-config -n --name ${RUNTIME_CONFIG_NAME} <(bosh int <(bosh runtime-config --name ${RUNTIME_CONFIG_NAME}) -o ops-file/${OPS_FILE_PATH})
+}
+
+main
