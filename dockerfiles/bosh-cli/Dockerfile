@@ -38,9 +38,3 @@ RUN \
   cd /usr/local/bin && \
   chmod +x terraform && \
   rm -rf /tmp/*
-
-RUN \
-  wget -q -O cf.deb \
-  "https://cli.run.pivotal.io/stable?release=debian64&version=6.28.0&source=github-rel"
-
-RUN dpkg -i cf.deb
