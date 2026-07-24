@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-deployment-concourse-tasks
+
+inputs:
+- name: runtime-ci
+
+params:
+  GITHUB_TOKEN:
+  GITHUB_REPO:
+  WORKFLOW_FILE:
+  WORKFLOW_REF: main
+  WORKFLOW_INPUTS: "{}"
+
+run:
+  path: runtime-ci/tasks/trigger-github-workflow/task
