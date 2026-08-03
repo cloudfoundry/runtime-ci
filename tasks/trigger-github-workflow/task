@@ -93,6 +93,63 @@ if [ -z "${RUN_ID}" ]; then
 fi
 
 # ── watch the run until completion ──────────────────────────────────
+# `gh run watch` re-renders the full status snapshot every few seconds. Without
+# a TTY (e.g. in Concourse) it cannot overwrite in place, so it floods the log
+# with duplicated output. Instead, poll the run and emit a single line per step
+# only when it finishes, plus the final conclusion.
 echo "Watching: https://github.com/${GITHUB_REPO}/actions/runs/${RUN_ID}"
 set -o pipefail
-gh run watch "${RUN_ID}" --repo "${GITHUB_REPO}" --exit-status | tr -d '\r'
+
+SEEN_FILE=$(mktemp)
+trap 'rm -f "${SEEN_FILE}"' EXIT
+
+RUN_STATUS=""
+RUN_CONCLUSION=""
+while true; do
+  # Fetch status and conclusion in a single API call. The jq filter emits two
+  # tab-separated fields; a missing conclusion (run still in progress) yields an
+  # empty second field.
+  RUN_INFO=$(gh api "/repos/${GITHUB_REPO}/actions/runs/${RUN_ID}" \
+    --jq '[.status // "", .conclusion // ""] | @tsv' 2>/dev/null || printf '\t')
+  IFS=$'\t' read -r RUN_STATUS RUN_CONCLUSION <<< "${RUN_INFO}"
+
+  # Print each newly-completed step exactly once. Guard the whole pipeline with
+  # `|| true` so a transient API/network error does not abort the watch loop
+  # (set -e + pipefail would otherwise exit the script mid-run).
+  gh api "/repos/${GITHUB_REPO}/actions/runs/${RUN_ID}/jobs" 2>/dev/null \
+    | jq -r '.jobs[]
+        | .name as $job
+        | .steps[]
+        | select(.status == "completed")
+        | "\($job)\t\(.number)\t\(.conclusion)\t\(.name)"' \
+    | while IFS=$'\t' read -r job number conclusion name; do
+        key="${job}#${number}"
+        if ! grep -qxF "${key}" "${SEEN_FILE}" 2>/dev/null; then
+          echo "${key}" >> "${SEEN_FILE}"
+          case "${conclusion}" in
+            success) mark=$'\033[32m✓\033[0m' ;;
+            skipped) mark=$'\033[33m○\033[0m' ;;
+            *)       mark=$'\033[31m✗\033[0m' ;;
+          esac
+          echo -e "${mark} [${job}] ${name} (${conclusion})"
+        fi
+      done || true
+
+  if [ "${RUN_STATUS}" = "completed" ]; then
+    break
+  fi
+  sleep 10
+done
+
+if [ "${RUN_CONCLUSION}" = "success" ]; then
+  echo -e "\033[32m════════════════════════════════════════\033[0m"
+  echo -e "\033[32m  ✓ ${WORKFLOW_FILE} passed\033[0m"
+  echo -e "\033[32m════════════════════════════════════════\033[0m"
+else
+  echo -e "\033[31m════════════════════════════════════════\033[0m"
+  echo -e "\033[31m  ✗ ${WORKFLOW_FILE} failed\033[0m"
+  echo -e "\033[31m════════════════════════════════════════\033[0m"
+  echo "── Failed step logs ──"
+  gh run view "${RUN_ID}" --repo "${GITHUB_REPO}" --log-failed | tr -d '\r' || true
+  exit 1
+fi
