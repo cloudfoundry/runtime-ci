@@ -127,11 +127,11 @@ while true; do
         if ! grep -qxF "${key}" "${SEEN_FILE}" 2>/dev/null; then
           echo "${key}" >> "${SEEN_FILE}"
           case "${conclusion}" in
-            success) mark="✓" ;;
-            skipped) mark="○" ;;
-            *)       mark="✗" ;;
+            success) mark=$'\033[32m✓\033[0m' ;;
+            skipped) mark=$'\033[33m○\033[0m' ;;
+            *)       mark=$'\033[31m✗\033[0m' ;;
           esac
-          echo "${mark} [${job}] ${name} (${conclusion})"
+          echo -e "${mark} [${job}] ${name} (${conclusion})"
         fi
       done || true
 
