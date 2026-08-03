@@ -141,9 +141,15 @@ while true; do
   sleep 10
 done
 
-echo "Run completed with conclusion: ${RUN_CONCLUSION}"
-if [ "${RUN_CONCLUSION}" != "success" ]; then
-  echo "── Logs for failed steps ──"
+if [ "${RUN_CONCLUSION}" = "success" ]; then
+  echo -e "\033[32m════════════════════════════════════════\033[0m"
+  echo -e "\033[32m  ✓ ${WORKFLOW_FILE} passed\033[0m"
+  echo -e "\033[32m════════════════════════════════════════\033[0m"
+else
+  echo -e "\033[31m════════════════════════════════════════\033[0m"
+  echo -e "\033[31m  ✗ ${WORKFLOW_FILE} failed\033[0m"
+  echo -e "\033[31m════════════════════════════════════════\033[0m"
+  echo "── Failed step logs ──"
   gh run view "${RUN_ID}" --repo "${GITHUB_REPO}" --log-failed | tr -d '\r' || true
   exit 1
 fi
