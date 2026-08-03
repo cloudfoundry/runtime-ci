@@ -94,4 +94,5 @@ fi
 
 # ── watch the run until completion ──────────────────────────────────
 echo "Watching: https://github.com/${GITHUB_REPO}/actions/runs/${RUN_ID}"
-gh run watch "${RUN_ID}" --repo "${GITHUB_REPO}" --exit-status
+set -o pipefail
+gh run watch "${RUN_ID}" --repo "${GITHUB_REPO}" --exit-status | tr -d '\r'
