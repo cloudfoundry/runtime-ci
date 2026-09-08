@@ -3,7 +3,7 @@ module stemcell-version-bump
 go 1.25.8
 
 require (
-	cloud.google.com/go/storage v1.64.0
+	cloud.google.com/go/storage v1.65.0
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/api v0.293.0
 )
