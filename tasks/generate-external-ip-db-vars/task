@@ -26,6 +26,17 @@ cd bbl-state/$BBL_STATE_DIR
     echo "external_${key}_database_address: ${DB_HOST}" >> ${VARIABLE_DIR}/external-db-host-vars.yml;
   done
 
+  echo "Grabbing CloudSQL server CA cert"
+  DB_CA_CERT=$(jq -r '[.resources[] | select(.type == "google_sql_database_instance") | .instances[0].attributes.server_ca_cert[0].cert] | first // empty' vars/terraform.tfstate 2>/dev/null || true)
+
+  if [[ -n "${DB_CA_CERT}" ]]; then
+    echo "Outputting CloudSQL CA cert to ${VARIABLE_DIR}/credhub-db-ca-vars.yml"
+    printf 'credhub_db_tls_ca: |\n' > "${VARIABLE_DIR}/credhub-db-ca-vars.yml"
+    echo "${DB_CA_CERT}" | sed 's/^/  /' >> "${VARIABLE_DIR}/credhub-db-ca-vars.yml"
+  else
+    echo "No CloudSQL CA cert output found; skipping credhub-db-ca-vars.yml"
+  fi
+
   set -x
 cd $root_dir
 
