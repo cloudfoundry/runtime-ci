@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+: "${VARS_FILE:?}"
+: "${BUCKET_KEY:?}"
+
+vars_path="vars-file/${VARS_FILE}"
+
+read_key() {
+  local key="$1"
+  local value
+  value="$(yq -r ".${key}" "${vars_path}")"
+  if [ -z "${value}" ] || [ "${value}" == "null" ]; then
+    echo "Could not read key '${key}' from ${vars_path}" >&2
+    exit 1
+  fi
+  echo "${value}"
+}
+
+bucket="$(read_key "${BUCKET_KEY}")"
+
+set +x
+AWS_ACCESS_KEY_ID="$(read_key aws_access_key_id)"
+AWS_SECRET_ACCESS_KEY="$(read_key aws_secret_access_key)"
+export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+set -x
+
+AWS_REGION="$(read_key region)"
+export AWS_REGION
+
+# Empty the bucket's objects, but never delete the bucket resource itself.
+# `aws s3 rm --recursive` is a no-op (exit 0) when the bucket is already empty.
+aws s3 rm "s3://${bucket}" --recursive

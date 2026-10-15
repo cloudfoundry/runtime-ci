@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/bbl-deployment
+
+inputs:
+- name: runtime-ci
+- name: vars-file
+
+params:
+  VARS_FILE:
+  BUCKET_KEY:
+
+run:
+  path: runtime-ci/tasks/empty-s3-bucket/task

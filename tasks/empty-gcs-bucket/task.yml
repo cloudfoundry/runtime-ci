@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/bbl-deployment
+
+inputs:
+- name: runtime-ci
+- name: vars-file
+
+params:
+  GCP_SERVICE_ACCOUNT_JSON:
+  VARS_FILE:
+  BUCKET_KEY:
+
+run:
+  path: runtime-ci/tasks/empty-gcs-bucket/task
