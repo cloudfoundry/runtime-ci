@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+: "${GCP_SERVICE_ACCOUNT_JSON:?}"
+: "${VARS_FILE:?}"
+: "${BUCKET_KEY:?}"
+
+bucket="$(yq -r ".${BUCKET_KEY}" "vars-file/${VARS_FILE}")"
+if [ -z "${bucket}" ] || [ "${bucket}" == "null" ]; then
+  echo "Could not read key '${BUCKET_KEY}' from vars-file/${VARS_FILE}" >&2
+  exit 1
+fi
+
+key_file="$(mktemp)"
+trap 'rm -f "${key_file}"' EXIT
+
+set +x
+echo "${GCP_SERVICE_ACCOUNT_JSON}" > "${key_file}"
+set -x
+
+service_account_email="$(jq -r .client_email "${key_file}")"
+gcloud auth activate-service-account "${service_account_email}" --key-file="${key_file}"
+
+object_glob="gs://${bucket}/**"
+
+# Empty the bucket's objects, but never delete the bucket resource itself.
+if gcloud storage ls "${object_glob}" >/dev/null 2>&1; then
+  gcloud storage rm "${object_glob}"
+else
+  echo "No objects found in gs://${bucket}; nothing to delete"
+fi
