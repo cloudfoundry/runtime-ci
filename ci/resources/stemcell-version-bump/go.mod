@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	cloud.google.com/go/storage v1.70.0
 	github.com/stretchr/testify v1.12.1
-	google.golang.org/api v0.307.0
+	google.golang.org/api v0.308.0
 )
 
 require (
