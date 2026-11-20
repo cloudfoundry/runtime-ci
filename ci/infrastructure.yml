@@ -176,7 +176,7 @@ fips-bbl-up-task: &fips-bbl-up-task-config
     bbl-state: relint-envs
   params:
     BBL_AWS_ACCESS_KEY_ID: ((hermione_aws_access_key_id))
-    BBL_AWS_REGION: eu-central-1
+    BBL_AWS_REGION: eu-west-1
     BBL_AWS_SECRET_ACCESS_KEY: ((hermione_aws_secret_access_key))
     BBL_CONFIG_DIR: environments/test/snape/bbl-config
     BBL_ENV_NAME: snape-fips
@@ -1406,7 +1406,7 @@ jobs:
   public: true
   plan:
     - in_parallel:
-        - put: experimental-pool
+        - put: fips-pool
           params: {claim: snape}
         - get: relint-envs
         - get: cf-deployment-concourse-tasks
@@ -1622,7 +1622,7 @@ jobs:
   public: true
   plan:
     - get: runtime-ci
-    - get: experimental-pool
+    - get: fips-pool
       passed: [ destroy-infrastructure-fips ]
       trigger: true
     - task: prepare-to-modify-pool-resource
@@ -1630,9 +1630,9 @@ jobs:
       params:
         NAME: snape
       output_mapping:
-        pool-resource: experimental-pool
-    - put: experimental-pool
-      params: {remove: experimental-pool}
+        pool-resource: fips-pool
+    - put: fips-pool
+      params: {remove: fips-pool}
 
 - name: remove-claimed-lock-ipv6
   serial: true
